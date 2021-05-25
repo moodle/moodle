@@ -67,22 +67,22 @@ define([
             var icon = null;
             var isBranch = (node.expandable || node.haschildren) ? true : false;
 
+            li.attr('role', 'treeitem');
             p.addClass('tree_item');
             p.attr('id', id);
-            p.attr('role', 'treeitem');
             // Negative tab index to allow it to receive focus.
             p.attr('tabindex', '-1');
 
             if (node.requiresajaxloading) {
-                p.attr('data-requires-ajax', true);
-                p.attr('data-node-id', node.id);
-                p.attr('data-node-key', node.key);
-                p.attr('data-node-type', node.type);
+                li.attr('data-requires-ajax', true);
+                li.attr('data-node-id', node.id);
+                li.attr('data-node-key', node.key);
+                li.attr('data-node-type', node.type);
             }
 
             if (isBranch) {
                 li.addClass('collapsed contains_branch');
-                p.attr('aria-expanded', false);
+                li.attr('aria-expanded', false);
                 p.addClass('branch');
             }
 
@@ -140,14 +140,14 @@ define([
             ul.append(li);
 
             if (node.children && node.children.length) {
-                buildDOM(p, node.children);
+                buildDOM(li, node.children);
             } else if (isBranch && !node.requiresajaxloading) {
                 li.removeClass('contains_branch');
                 p.addClass('emptybranch');
             }
         });
 
-        rootElement.parent().append(ul);
+        rootElement.append(ul);
         var id = rootElement.attr('id') + '_group';
         ul.attr('id', id);
         rootElement.attr('aria-owns', id);
@@ -166,8 +166,8 @@ define([
                 item.attr('aria-expanded', true);
                 Aria.unhide(group);
             } else {
-                if (element.parent().hasClass('contains_branch')) {
-                    element.parent().removeClass('contains_branch');
+                if (element.hasClass('contains_branch')) {
+                    element.removeClass('contains_branch');
                     element.addClass('emptybranch');
                 }
             }
