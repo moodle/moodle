@@ -23,32 +23,31 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([
-            'jquery',
-            'core/event',
-            'core/str',
-            'core/notification',
-            'core/templates',
-            'core/custom_interaction_events',
-            'core/modal',
-            'core/modal_registry',
-            'core/fragment',
-            'core_calendar/events',
-            'core_calendar/repository'
-        ],
-        function(
-            $,
-            Event,
-            Str,
-            Notification,
-            Templates,
-            CustomEvents,
-            Modal,
-            ModalRegistry,
-            Fragment,
-            CalendarEvents,
-            Repository
-        ) {
-
+    'jquery',
+    'core_form/events',
+    'core/str',
+    'core/notification',
+    'core/templates',
+    'core/custom_interaction_events',
+    'core/modal',
+    'core/modal_registry',
+    'core/fragment',
+    'core_calendar/events',
+    'core_calendar/repository'
+],
+function(
+    $,
+    FormEvents,
+    Str,
+    Notification,
+    Templates,
+    CustomEvents,
+    Modal,
+    ModalRegistry,
+    Fragment,
+    CalendarEvents,
+    Repository
+) {
     var registered = false;
     var SELECTORS = {
         SAVE_BUTTON: '[data-action="save"]',
@@ -416,7 +415,7 @@ define([
         // If we found invalid fields, focus on the first one and do not submit via ajax.
         if (invalid.length) {
             invalid.first().focus();
-            return;
+            return Promise.resolve();
         }
 
         loadingContainer.removeClass('hidden');
@@ -465,6 +464,8 @@ define([
      * Set up all of the event handling for the modal.
      *
      * @method registerEventListeners
+     * @fires event:uploadStarted
+     * @fires event:formSubmittedByJavascript
      */
     ModalEventForm.prototype.registerEventListeners = function() {
         // Apply parent event listeners.
@@ -482,7 +483,7 @@ define([
         // Catch the submit event before it is actually processed by the browser and
         // prevent the submission. We'll take it from here.
         this.getModal().on('submit', function(e) {
-            Event.notifyFormSubmitAjax(this.getForm()[0]);
+            FormEvents.notifyFormSubmittedByJavascript(this.getForm()[0]);
 
             this.save();
 

@@ -21,31 +21,42 @@
  * @copyright  2015 John Okely <john@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/tree'], function($, Tree) {
-    return {
-        init: function(instanceid, siteAdminNodeId) {
-            var adminTree = new Tree(".block_settings .block_tree");
-            if (siteAdminNodeId) {
-                var siteAdminNode = adminTree.treeRoot.find('#' + siteAdminNodeId);
-                var siteAdminLink = siteAdminNode.children('a').first();
-                siteAdminLink.replaceWith('<span tabindex="0">' + siteAdminLink.html() + '</span>');
-            }
-            adminTree.finishExpandingGroup = function(item) {
-                Tree.prototype.finishExpandingGroup.call(this, item);
-                Y.use('moodle-core-event', function() {
-                    Y.Global.fire(M.core.globalEvents.BLOCK_CONTENT_UPDATED, {
-                        instanceid: instanceid
-                    });
-                });
-            };
-            adminTree.collapseGroup = function(item) {
-                Tree.prototype.collapseGroup.call(this, item);
-                Y.use('moodle-core-event', function() {
-                    Y.Global.fire(M.core.globalEvents.BLOCK_CONTENT_UPDATED, {
-                        instanceid: instanceid
-                    });
-                });
-            };
-        }
+import {notifyBlockContentUpdated} from 'core_block/events';
+import Tree from 'core/tree';
+
+export const init = (instanceId, siteAdminNodeId) => {
+    const adminTree = new Tree(".block_settings .block_tree");
+    const blockNode = document.querySelector(`[data-instance-id="${instanceId}"]`);
+
+    if (siteAdminNodeId) {
+        const siteAdminLink = adminTree.treeRoot.get(0).querySelector(`#${siteAdminNodeId} a`);
+        const newContainer = document.createElement('span');
+        newContainer.setAttribute('tabindex', '0');
+        siteAdminLink.childNodes.forEach(node => newContainer.appendChild(node));
+        siteAdminLink.replaceWith(newContainer);
+    }
+
+    /**
+     * The method to call when then the navtree finishes expanding a group.
+     *
+     * @method finishExpandingGroup
+     * @param {Object} item
+     * @fires event:blockContentUpdated
+     */
+    adminTree.finishExpandingGroup = function(item) {
+        Tree.prototype.finishExpandingGroup.call(adminTree, item);
+        notifyBlockContentUpdated(blockNode);
     };
-});
+
+    /**
+     * The method to call whe then the navtree collapses a group
+     *
+     * @method collapseGroup
+     * @param {Object} item
+     * @fires event:blockContentUpdated
+     */
+    adminTree.collapseGroup = function(item) {
+        Tree.prototype.collapseGroup.call(adminTree, item);
+        notifyBlockContentUpdated(blockNode);
+    };
+};

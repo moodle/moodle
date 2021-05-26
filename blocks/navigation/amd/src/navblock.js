@@ -21,26 +21,40 @@
  * @copyright  2015 John Okely <john@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/tree'], function($, Tree) {
-    return {
-        init: function(instanceid) {
-            var navTree = new Tree(".block_navigation .block_tree");
-            navTree.finishExpandingGroup = function(item) {
-                Tree.prototype.finishExpandingGroup.call(this, item);
-                Y.use('moodle-core-event', function() {
-                    Y.Global.fire(M.core.globalEvents.BLOCK_CONTENT_UPDATED, {
-                        instanceid: instanceid
-                    });
-                });
-            };
-            navTree.collapseGroup = function(item) {
-                Tree.prototype.collapseGroup.call(this, item);
-                Y.use('moodle-core-event', function() {
-                    Y.Global.fire(M.core.globalEvents.BLOCK_CONTENT_UPDATED, {
-                        instanceid: instanceid
-                    });
-                });
-            };
-        }
+import {notifyBlockContentUpdated} from 'core_block/events';
+import Tree from 'core/tree';
+
+/**
+ * Initialise the navblock javascript for the specified block instance.
+ *
+ * @method
+ * @param {Number} instanceId
+ */
+export const init = instanceId => {
+    const navTree = new Tree(".block_navigation .block_tree");
+    const blockNode = document.querySelector(`[data-instance-id="${instanceId}"]`);
+
+    /**
+     * The method to call when then the navtree finishes expanding a group.
+     *
+     * @method finishExpandingGroup
+     * @param {Object} item
+     * @fires event:blockContentUpdated
+     */
+    navTree.finishExpandingGroup = item => {
+        Tree.prototype.finishExpandingGroup.call(navTree, item);
+        notifyBlockContentUpdated(blockNode);
     };
-});
+
+    /**
+     * The method to call whe then the navtree collapses a group
+     *
+     * @method collapseGroup
+     * @param {Object} item
+     * @fires event:blockContentUpdated
+     */
+    navTree.collapseGroup = item => {
+        Tree.prototype.collapseGroup.call(navTree, item);
+        notifyBlockContentUpdated(blockNode);
+    };
+};

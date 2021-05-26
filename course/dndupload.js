@@ -765,7 +765,7 @@ M.course_dndupload = {
                 this.originalUnloadEvent = window.onbeforeunload;
                 // Trigger form upload start events.
                 require(['core_form/events'], function(FormEvent) {
-                    FormEvent.triggerUploadStarted(section.get('id'));
+                    FormEvent.notifyUploadStarted(section.get('id'));
                 });
             }
             if (xhr.readyState == 4) {
@@ -796,7 +796,7 @@ M.course_dndupload = {
                 }
                 // Trigger form upload complete events.
                 require(['core_form/events'], function(FormEvent) {
-                    FormEvent.triggerUploadCompleted(section.get('id'));
+                    FormEvent.notifyUploadCompleted(section.get('id'));
                 });
             }
         };
@@ -1031,7 +1031,7 @@ M.course_dndupload = {
                 this.originalUnloadEvent = window.onbeforeunload;
                 // Trigger form upload start events.
                 require(['core_form/events'], function(FormEvent) {
-                    FormEvent.triggerUploadStarted(section.get('id'));
+                    FormEvent.notifyUploadStarted(section.get('id'));
                 });
             }
             if (xhr.readyState == 4) {
@@ -1052,7 +1052,7 @@ M.course_dndupload = {
                             resel.parent.removeChild(resel.li);
                             // Trigger form upload complete events.
                             require(['core_form/events'], function(FormEvent) {
-                                FormEvent.triggerUploadCompleted(section.get('id'));
+                                FormEvent.notifyUploadCompleted(section.get('id'));
                             });
                             new M.core.alert({message: result.error});
                         }
@@ -1060,13 +1060,13 @@ M.course_dndupload = {
                 } else {
                     // Trigger form upload complete events.
                     require(['core_form/events'], function(FormEvent) {
-                        FormEvent.triggerUploadCompleted(section.get('id'));
+                        FormEvent.notifyUploadCompleted(section.get('id'));
                     });
                     new M.core.alert({message: M.util.get_string('servererror', 'moodle')});
                 }
                 // Trigger form upload complete events.
                 require(['core_form/events'], function(FormEvent) {
-                    FormEvent.triggerUploadCompleted(section.get('id'));
+                    FormEvent.notifyUploadCompleted(section.get('id'));
                 });
             }
         };
