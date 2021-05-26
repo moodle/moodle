@@ -1388,12 +1388,26 @@ class page_requirements_manager {
         }
 
         // First include must be to a module with no dependencies, this prevents multiple requests.
-        $prefix = 'M.util.js_pending("core/first");';
-        $prefix .= "require(['core/first'], function() {\n";
-        $prefix .= "require(['core/prefetch']);\n";
-        $suffix = 'M.util.js_complete("core/first");';
-        $suffix .= "\n});";
-        $output .= html_writer::script($prefix . implode(";\n", $this->amdjscode) . $suffix);
+        $prefix = <<<EOF
+M.util.js_pending("core/first");
+require(['core/first'], function() {
+
+EOF;
+
+        if (during_initial_install()) {
+            // Do not run a prefetch during initial install as the DB is not available to service WS calls.
+            $prefetch = '';
+        } else {
+            $prefetch = "require(['core/prefetch'])\n";
+        }
+
+        $suffix = <<<EOF
+
+    M.util.js_complete("core/first");
+});
+EOF;
+
+        $output .= html_writer::script($prefix . $prefetch . implode(";\n", $this->amdjscode) . $suffix);
         return $output;
     }
 
