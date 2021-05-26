@@ -77,6 +77,7 @@ $string['grade_highest_attempt'] = 'Highest grade';
 $string['grade_average_attempt'] = 'Average grade';
 $string['grade_last_attempt'] = 'Last attempt';
 $string['grade_first_attempt'] = 'First attempt';
+$string['grade_h5p'] = 'Grade: {$a}';
 $string['h5pactivity:addinstance'] = 'Add a new H5P';
 $string['h5pactivity:reviewattempts'] = 'Review H5P attempts';
 $string['h5pactivity:submit'] = 'Submit H5P attempts';
@@ -94,6 +95,7 @@ Any question attempts are marked automatically, and the grade is recorded in the
 $string['modulename_link'] = 'mod/h5pactivity/view';
 $string['modulenameplural'] = 'H5P';
 $string['myattempts'] = 'My attempts';
+$string['newsubmissions'] = 'H5P submitted';
 $string['no_compatible_track'] = 'This interaction ({$a}) does not provide tracking information or the tracking
         provided is not compatible with the current activity version.';
 $string['noparticipants'] = 'No participants to display';
