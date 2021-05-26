@@ -334,43 +334,48 @@ trait FpdiTrait
         // try to use the existing content stream
         $pageDict = $page->getPageDictionary();
 
-        $contentsObject = PdfType::resolve(PdfDictionary::get($pageDict, 'Contents'), $reader->getParser(), true);
-        $contents =  PdfType::resolve($contentsObject, $reader->getParser());
+        try {
+            $contentsObject = PdfType::resolve(PdfDictionary::get($pageDict, 'Contents'), $reader->getParser(), true);
+            $contents =  PdfType::resolve($contentsObject, $reader->getParser());
 
-        // just copy the stream reference if it is only a single stream
-        if (
-            ($contentsIsStream = ($contents instanceof PdfStream))
-            || ($contents instanceof PdfArray && \count($contents->value) === 1)
-        ) {
-            if ($contentsIsStream) {
-                /**
-                 * @var PdfIndirectObject $contentsObject
-                 */
-                $stream = $contents;
+            // just copy the stream reference if it is only a single stream
+            if (
+                ($contentsIsStream = ($contents instanceof PdfStream))
+                || ($contents instanceof PdfArray && \count($contents->value) === 1)
+            ) {
+                if ($contentsIsStream) {
+                    /**
+                     * @var PdfIndirectObject $contentsObject
+                     */
+                    $stream = $contents;
+                } else {
+                    $stream = PdfType::resolve($contents->value[0], $reader->getParser());
+                }
+
+                $filter = PdfDictionary::get($stream->value, 'Filter');
+                if (!$filter instanceof PdfNull) {
+                    $dict->value['Filter'] = $filter;
+                }
+                $length = PdfType::resolve(PdfDictionary::get($stream->value, 'Length'), $reader->getParser());
+                $dict->value['Length'] = $length;
+                $stream->value = $dict;
+                // otherwise extract it from the array and re-compress the whole stream
             } else {
-                $stream = PdfType::resolve($contents->value[0], $reader->getParser());
+                $streamContent = $this->compress
+                    ? \gzcompress($page->getContentStream())
+                    : $page->getContentStream();
+
+                $dict->value['Length'] = PdfNumeric::create(\strlen($streamContent));
+                if ($this->compress) {
+                    $dict->value['Filter'] = PdfName::create('FlateDecode');
+                }
+
+                $stream = PdfStream::create($dict, $streamContent);
             }
-
-            $filter = PdfDictionary::get($stream->value, 'Filter');
-            if (!$filter instanceof PdfNull) {
-                $dict->value['Filter'] = $filter;
-            }
-            $length = PdfType::resolve(PdfDictionary::get($stream->value, 'Length'), $reader->getParser());
-            $dict->value['Length'] = $length;
-            $stream->value = $dict;
-
-        // otherwise extract it from the array and re-compress the whole stream
-        } else {
-            $streamContent = $this->compress
-                ? \gzcompress($page->getContentStream())
-                : $page->getContentStream();
-
-            $dict->value['Length'] = PdfNumeric::create(\strlen($streamContent));
-            if ($this->compress) {
-                $dict->value['Filter'] = PdfName::create('FlateDecode');
-            }
-
-            $stream = PdfStream::create($dict, $streamContent);
+        // Catch faulty pages and use an empty content stream
+        } catch (FpdiException $e) {
+            $dict->value['Length'] = PdfNumeric::create(0);
+            $stream = PdfStream::create($dict, '');
         }
 
         $this->importedPages[$pageId] = [
