@@ -17,7 +17,6 @@
  * Javascript controller for the "User summary" panel at the top of the page.
  *
  * @module     mod_assign/grading_navigation_user_info
- * @class      UserInfo
  * @copyright  2016 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
@@ -27,7 +26,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
     /**
      * UserInfo class.
      *
-     * @class UserInfo
+     * @class mod_assign/grading_navigation_user_info
      * @param {String} selector The selector for the page region containing the user navigation.
      */
     var UserInfo = function(selector) {

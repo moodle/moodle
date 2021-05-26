@@ -31,22 +31,27 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
      */
     var dragDropToImageForm = {
         /**
-         * @var {Object} with properties width and height.
+         * @var {Object} maxBgImageSize Properties width and height.
+         * @private
          */
         maxBgImageSize: null,
 
         /**
-         * @var {Object} with properties width and height.
+         * @var {Object} maxDragImageSize with properties width and height.
+         * @private
          */
         maxDragImageSize: null,
 
         /**
-         * @var {object} for interacting with the file pickers.
+         * @property {object} fp for interacting with the file pickers.
+         * @private
          */
         fp: null, // Object containing functions associated with the file picker.
 
         /**
          * Initialise the form javascript features.
+         *
+         * @method
          */
         init: function() {
             dragDropToImageForm.fp = dragDropToImageForm.filePickers();
@@ -502,13 +507,7 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
         }
     };
 
-    /**
-     * @alias module:qtype_ddimageortext/form
-     */
     return {
-        /**
-         * Initialise the form JavaScript features.
-         */
         init: dragDropToImageForm.init
     };
 });

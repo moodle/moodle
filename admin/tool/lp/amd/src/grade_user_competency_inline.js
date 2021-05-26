@@ -16,6 +16,7 @@
 /**
  * Module to enable inline editing of a comptency grade.
  *
+ * @module     tool_lp/grade_user_competency_inline
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,6 +33,7 @@ define(['jquery',
     /**
      * InlineEditor
      *
+     * @class tool_lp/grade_user_competency_inline
      * @param {String} selector The selector to trigger the grading.
      * @param {Number} scaleId The id of the scale for this competency.
      * @param {Number} competencyId The id of the competency.
@@ -155,6 +157,5 @@ define(['jquery',
     /** @property {GradeDialogue} The grading dialogue. */
     InlineEditor.prototype._dialogue = null;
 
-    return /** @alias module:tool_lp/grade_user_competency_inline */ InlineEditor;
-
+    return InlineEditor;
 });

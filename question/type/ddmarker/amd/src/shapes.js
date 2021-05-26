@@ -21,7 +21,7 @@
  * These classes can represent shapes, let you alter them, can go to and from a string
  * representation, and can give you an SVG representation.
  *
- * @subpackage shapes
+ * @module qtype_ddmarker/shapes
  * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -16,6 +16,7 @@
 /**
  * Module to enable inline editing of a comptency grade.
  *
+ * @module     tool_lp/user_competency_course_navigation
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,6 +26,7 @@ define(['jquery'], function($) {
     /**
      * UserCompetencyCourseNavigation
      *
+     * @class tool_lp/user_competency_course_navigation
      * @param {String} userSelector The selector of the user element.
      * @param {String} competencySelector The selector of the competency element.
      * @param {String} baseUrl The base url for the page (no params).
@@ -77,6 +79,5 @@ define(['jquery'], function($) {
     /** @property {Boolean} Ignore the first change event for competencies. */
     UserCompetencyCourseNavigation.prototype._ignoreFirstCompetency = null;
 
-    return /** @alias module:tool_lp/user_competency_course_navigation */ UserCompetencyCourseNavigation;
-
+    return UserCompetencyCourseNavigation;
 });

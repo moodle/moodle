@@ -21,6 +21,7 @@
  * This will receive a object with either a single 'competencyId', or an array in 'competencyIds'
  * depending on the value of multiSelect.
  *
+ * @module     tool_lp/competencypicker_user_plans
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,6 +39,7 @@ define(['jquery',
     /**
      * Competency picker in plan class.
      *
+     * @class tool_lp/competencypicker_user_plans
      * @param {Number} userId
      * @param {Number|false} singlePlan The ID of the plan when limited to one.
      * @param {Boolean} multiSelect Support multi-select in the tree.
@@ -236,6 +238,5 @@ define(['jquery',
         });
     };
 
-    return /** @alias module:tool_lp/competencypicker_user_plans */ Picker;
-
+    return Picker;
 });

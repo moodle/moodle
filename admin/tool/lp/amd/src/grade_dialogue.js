@@ -16,6 +16,7 @@
 /**
  * Grade dialogue.
  *
+ * @module     tool_lp/grade_dialogue
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,6 +31,8 @@ define(['jquery',
 
     /**
      * Grade dialogue class.
+     *
+     * @class tool_lp/grade_dialogue
      * @param {Array} ratingOptions
      */
     var Grade = function(ratingOptions) {
@@ -148,6 +151,5 @@ define(['jquery',
         return Templates.render('tool_lp/competency_grader', context);
     };
 
-    return /** @alias module:tool_lp/grade_dialogue */ Grade;
-
+    return Grade;
 });

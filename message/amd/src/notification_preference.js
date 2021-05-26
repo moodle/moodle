@@ -18,7 +18,6 @@
  * message preference page.
  *
  * @module     core_message/notification_preference
- * @class      notification_preference
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,6 +32,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
     /**
      * Constructor for the Preference.
      *
+     * @class
      * @param {object} element jQuery object root element of the preference
      * @param {int} userId The current user id
      */

@@ -27,11 +27,17 @@ import {get_string as getString} from 'core/str';
 
 const templatePath = 'mod_forum/local/grades/local/grader';
 
+/**
+ * The Grader User Picker.
+ *
+ * @class mod_forum/local/grades/local/grader/user_picker
+ */
 class UserPicker {
 
     /**
      * Constructor for the User Picker.
      *
+     * @constructor mod_forum/local/grades/local/grader/user_picker
      * @param {Array} userList List of users
      * @param {Function} showUserCallback The callback used to display the user
      * @param {Function} preChangeUserCallback The callback to use before changing user

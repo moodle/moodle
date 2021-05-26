@@ -33,6 +33,7 @@ define(['jquery',
     /**
      * Constructor
      *
+     * @class tool_lp/competencies
      * @param {Number} itemid
      * @param {String} itemtype
      * @param {Number} pagectxid

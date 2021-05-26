@@ -23,7 +23,7 @@
  */
 define(['jquery'], function($) {
 
-    return /** @alias module:mod_assign/grading_form_change_checker */ {
+    return {
         /**
          * Save the values in the form to a data attribute so they can be compared later for changes.
          *

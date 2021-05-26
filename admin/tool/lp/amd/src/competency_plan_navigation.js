@@ -16,6 +16,7 @@
 /**
  * Event click on selecting competency in the competency autocomplete.
  *
+ * @module     tool_lp/competency_plan_navigation
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,6 +26,7 @@ define(['jquery'], function($) {
     /**
      * CompetencyPlanNavigation
      *
+     * @class
      * @param {String} competencySelector The selector of the competency element.
      * @param {String} baseUrl The base url for the page (no params).
      * @param {Number} userId The user id
@@ -68,6 +70,5 @@ define(['jquery'], function($) {
     /** @property {Boolean} Ignore the first change event for competencies. */
     CompetencyPlanNavigation.prototype._ignoreFirstCompetency = null;
 
-    return /** @alias module:tool_lp/competency_plan_navigation */ CompetencyPlanNavigation;
-
+    return CompetencyPlanNavigation;
 });
