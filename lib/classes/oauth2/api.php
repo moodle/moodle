@@ -428,8 +428,8 @@ class api {
         }
         // Get all the scopes!
         $scopes = self::get_system_scopes_for_issuer($issuer);
-
-        $client = new \core\oauth2\client($issuer, null, $scopes, true);
+        $class = self::get_client_classname($issuer->get('servicetype'));
+        $client = new $class($issuer, null, $scopes, true);
 
         if (!$client->is_logged_in()) {
             if (!$client->upgrade_refresh_token($systemaccount)) {
@@ -451,9 +451,31 @@ class api {
      */
     public static function get_user_oauth_client(issuer $issuer, moodle_url $currenturl, $additionalscopes = '',
             $autorefresh = false) {
-        $client = new \core\oauth2\client($issuer, $currenturl, $additionalscopes, false, $autorefresh);
+        $class = self::get_client_classname($issuer->get('servicetype'));
+        $client = new $class($issuer, $currenturl, $additionalscopes, false, $autorefresh);
 
         return $client;
+    }
+
+    /**
+     * Get the client classname for an issuer.
+     *
+     * @param string $type The OAuth issuer type (google, facebook...).
+     * @return string The classname for the custom client or core client class if the class for the defined type
+     *                 doesn't exist or null type is defined.
+     */
+    protected static function get_client_classname(?string $type): string {
+        // Default core client class.
+        $classname = 'core\\oauth2\\client';
+
+        if (!empty($type)) {
+            $typeclassname = 'core\\oauth2\\client\\' . $type;
+            if (class_exists($typeclassname)) {
+                $classname = $typeclassname;
+            }
+        }
+
+        return $classname;
     }
 
     /**
@@ -798,8 +820,8 @@ class api {
         $scopes = self::get_system_scopes_for_issuer($issuer);
 
         // Allow callbacks to inject non-standard scopes to the auth request.
-
-        $client = new client($issuer, $returnurl, $scopes, true);
+        $class = self::get_client_classname($issuer->get('servicetype'));
+        $client = new $class($issuer, $returnurl, $scopes, true);
 
         if (!optional_param('response', false, PARAM_BOOL)) {
             $client->log_out();
