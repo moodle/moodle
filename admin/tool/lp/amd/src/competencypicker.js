@@ -20,6 +20,7 @@
  * This will receive a object with either a single 'competencyId', or an array in 'competencyIds'
  * depending on the value of multiSelect.
  *
+ * @module     tool_lp/competencypicker
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -467,6 +468,6 @@ define(['jquery',
         this._eventNode.trigger(type, [data]);
     };
 
-    return /** @alias module:tool_lp/competencypicker */ Picker;
+    return Picker;
 
 });

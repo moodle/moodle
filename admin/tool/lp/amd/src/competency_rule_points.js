@@ -16,6 +16,7 @@
 /**
  * Competency rule points module.
  *
+ * @module     tool_lp/competency_rule_all
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -195,6 +196,5 @@ define(['jquery',
         return valid;
     };
 
-    return /** @alias module:tool_lp/competency_rule_all */ Rule;
-
+    return Rule;
 });

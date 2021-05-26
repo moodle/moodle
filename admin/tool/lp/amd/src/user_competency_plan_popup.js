@@ -16,6 +16,7 @@
 /**
  * Module to open user competency plan in popup
  *
+ * @module     tool_lp/user_competency_plan_popup
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

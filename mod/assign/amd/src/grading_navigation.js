@@ -28,7 +28,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
     /**
      * GradingNavigation class.
      *
-     * @class GradingNavigation
+     * @class mod_assign/grading_navigation
      * @param {String} selector The selector for the page region containing the user navigation.
      */
     var GradingNavigation = function(selector) {

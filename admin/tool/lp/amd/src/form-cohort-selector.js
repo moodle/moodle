@@ -17,7 +17,6 @@
  * Cohort selector module.
  *
  * @module     tool_lp/form-cohort-selector
- * @class      form-cohort-selector
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
