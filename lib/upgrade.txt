@@ -20,6 +20,7 @@ information provided here is intended especially for developers.
     eventTypes.formSubmittedByJavascript.
 * The block template now includues a block-instanceid data attribute.
 * The core/event::getLegacyEvents() function has been deprecated and should no longer be used.
+* Typo3 has now been removed. Use native mbstring or iconv functions.
 
 === 3.11 ===
 * PHPUnit has been upgraded to 9.5 (see MDL-71036 for details).

@@ -1690,7 +1690,6 @@ function purge_caches($options = []) {
  */
 function purge_other_caches() {
     global $DB, $CFG;
-    core_text::reset_caches();
     if (class_exists('core_plugin_manager')) {
         core_plugin_manager::reset_caches();
     }
