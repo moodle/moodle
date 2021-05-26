@@ -85,6 +85,7 @@ $string['issuershowonloginpage'] = 'Show on login page';
 $string['issuerrequireconfirmation_help'] = 'Require that all users verify their email address before they can log in with OAuth. This applies to newly created accounts as part of the login process, or when an existing Moodle account is connected to an OAuth login via matching email addresses.';
 $string['issuerrequireconfirmation'] = 'Require email verification';
 $string['issuers'] = 'Issuers';
+$string['linkedin_service'] = 'Create new LinkedIn service';
 $string['loginissuer'] = 'Allow login';
 $string['notconfigured'] = 'Not configured';
 $string['notdiscovered'] = 'Service discovery not successful';

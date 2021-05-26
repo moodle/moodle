@@ -290,6 +290,68 @@ class api {
     }
 
     /**
+     * Create a linkedin OAuth2 issuer
+     *
+     * @return issuer
+     */
+    private static function init_linkedin(): issuer {
+        $record = (object) [
+            'name' => 'LinkedIn',
+            'image' => 'https://static.licdn.com/scds/common/u/images/logos/favicons/v1/favicon.ico',
+            'baseurl' => 'https://api.linkedin.com/v2',
+            'loginscopes' => 'r_liteprofile r_emailaddress',
+            'loginscopesoffline' => 'r_liteprofile r_emailaddress',
+            'showonloginpage' => true
+        ];
+
+        $issuer = new issuer(0, $record);
+        return $issuer;
+    }
+
+    /**
+     * Create endpoints for linkedin issuers.
+     *
+     * @param issuer $issuer
+     * @throws \coding_exception
+     * @throws \core\invalid_persistent_exception
+     */
+    private static function create_endpoints_for_linkedin(issuer $issuer) {
+        $endpoints = [
+            'authorization_endpoint' => 'https://www.linkedin.com/oauth/v2/authorization',
+            'token_endpoint' => 'https://www.linkedin.com/oauth/v2/accessToken',
+            'email_endpoint' => 'https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))',
+            'userinfo_endpoint' => "https://api.linkedin.com/v2/me?projection=(localizedFirstName,localizedLastName,"
+                . "profilePicture(displayImage~digitalmediaAsset:playableStreams))",
+        ];
+        foreach ($endpoints as $name => $url) {
+            $record = (object) [
+                'issuerid' => $issuer->get('id'),
+                'name' => $name,
+                'url' => $url
+            ];
+            $endpoint = new endpoint(0, $record);
+            $endpoint->create();
+        }
+
+        // Create the field mappings.
+        $mapping = [
+            'localizedFirstName' => 'firstname',
+            'localizedLastName' => 'lastname',
+            'elements[0]-handle~-emailAddress' => 'email',
+            'profilePicture-displayImage~-elements[0]-identifiers[0]-identifier' => 'picture'
+        ];
+        foreach ($mapping as $external => $internal) {
+            $record = (object) [
+                'issuerid' => $issuer->get('id'),
+                'externalfield' => $external,
+                'internalfield' => $internal
+            ];
+            $userfieldmapping = new user_field_mapping(0, $record);
+            $userfieldmapping->create();
+        }
+    }
+
+    /**
      * Initializes a record for one of the standard issuers to be displayed in the settings.
      * The issuer is not yet created in the database.
      * @param string $type One of google, facebook, microsoft, nextcloud
@@ -305,6 +367,8 @@ class api {
             return self::init_facebook();
         } else if ($type == 'nextcloud') {
             return self::init_nextcloud();
+        } else if ($type == 'linkedin') {
+            return self::init_linkedin();
         } else {
             throw new moodle_exception('OAuth 2 service type not recognised: ' . $type);
         }
@@ -328,6 +392,8 @@ class api {
             return self::create_endpoints_for_facebook($issuer);
         } else if ($type == 'nextcloud') {
             return self::create_endpoints_for_nextcloud($issuer);
+        } else if ($type == 'linkedin') {
+            return self::create_endpoints_for_linkedin($issuer);
         } else {
             throw new moodle_exception('OAuth 2 service type not recognised: ' . $type);
         }
@@ -466,8 +532,8 @@ class api {
         }
         // Get all the scopes!
         $scopes = self::get_system_scopes_for_issuer($issuer);
-
-        $client = new \core\oauth2\client($issuer, null, $scopes, true);
+        $class = self::get_client_classname($issuer->get('name'));
+        $client = new $class($issuer, null, $scopes, true);
 
         if (!$client->is_logged_in()) {
             if (!$client->upgrade_refresh_token($systemaccount)) {
@@ -489,9 +555,28 @@ class api {
      */
     public static function get_user_oauth_client(issuer $issuer, moodle_url $currenturl, $additionalscopes = '',
             $autorefresh = false) {
-        $client = new \core\oauth2\client($issuer, $currenturl, $additionalscopes, false, $autorefresh);
+        $class = self::get_client_classname($issuer->get('name'));
+        $client = new $class($issuer, $currenturl, $additionalscopes, false, $autorefresh);
 
         return $client;
+    }
+
+    /**
+     * Get the client classname for an issuer.
+     *
+     * @param string $type The OAuth issuer name
+     * @return string The classname for the custom client or core client class if the class for the defined type
+     *                 doesn't exist or null type is defined.
+     */
+    protected static function get_client_classname(?string $type): string {
+        // Default core client class.
+        $classname = 'core\\oauth2\\client';
+
+        if (strpos(strtolower($type), 'linkedin') !== false) {
+            $classname = 'core\\oauth2\\client\\linkedin';
+        }
+
+        return $classname;
     }
 
     /**
@@ -893,8 +978,8 @@ class api {
         $scopes = self::get_system_scopes_for_issuer($issuer);
 
         // Allow callbacks to inject non-standard scopes to the auth request.
-
-        $client = new client($issuer, $returnurl, $scopes, true);
+        $class = self::get_client_classname($issuer->get('name'));
+        $client = new $class($issuer, $returnurl, $scopes, true);
 
         if (!optional_param('response', false, PARAM_BOOL)) {
             $client->log_out();
