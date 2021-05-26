@@ -17,7 +17,6 @@
  * Javascript controller for the "Actions" panel at the bottom of the page.
  *
  * @module     mod_assign/grading_actions
- * @class      GradingActions
  * @copyright  2016 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
@@ -27,7 +26,7 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
     /**
      * GradingActions class.
      *
-     * @class GradingActions
+     * @class mod_assign/grading_actions
      * @param {String} selector The selector for the page region containing the actions panel.
      */
     var GradingActions = function(selector) {

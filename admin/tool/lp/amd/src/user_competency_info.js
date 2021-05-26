@@ -16,6 +16,7 @@
 /**
  * Module to refresh a user competency summary in a page.
  *
+ * @module     tool_lp/user_competency_info
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

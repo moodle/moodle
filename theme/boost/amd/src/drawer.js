@@ -16,6 +16,7 @@
 /**
  * Contain the logic for a drawer.
  *
+ * @module theme_boost/drawer
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

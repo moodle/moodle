@@ -2,7 +2,6 @@
  * Tour management code.
  *
  * @module     tool_usertours/managetours
- * @class      managetours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  */
 define(

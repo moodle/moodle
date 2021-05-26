@@ -17,7 +17,6 @@
  * Potential contexts selector module.
  *
  * @module     tool_analytics/potential-contexts
- * @class      potential-contexts
  * @copyright  2019 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

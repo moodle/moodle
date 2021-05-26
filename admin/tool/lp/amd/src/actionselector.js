@@ -20,6 +20,7 @@
  * This will receive the information to display in popup.
  * The actions have the format [{'text': sometext, 'value' : somevalue}].
  *
+ * @module     tool_lp/actionselector
  * @copyright  2016 Serge Gauthier - <serge.gauthier.2@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,6 +35,8 @@ define(['jquery',
 
     /**
      * Action selector class.
+     *
+     * @class tool_lp/actionselector
      * @param {String} title The title of popup.
      * @param {String} message The message to display.
      * @param {object} actions The actions that can be selected.
@@ -190,6 +193,6 @@ define(['jquery',
         this._selectedValue = '';
     };
 
-    return /** @alias module:tool_lp/actionselector */ ActionSelector;
+    return ActionSelector;
 
 });

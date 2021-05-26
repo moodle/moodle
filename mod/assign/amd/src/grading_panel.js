@@ -31,7 +31,7 @@ function($, Y, notification, templates, fragment, ajax, str, checker, GradingEve
     /**
      * GradingPanel class.
      *
-     * @class GradingPanel
+     * @class mod_assign/grading_panel
      * @param {String} selector The selector for the page region containing the user navigation.
      */
     var GradingPanel = function(selector) {

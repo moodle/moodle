@@ -20,7 +20,6 @@
  * See template: mod_lti/contentitem
  *
  * @module     mod_lti/contentitem
- * @class      contentitem
  * @copyright  2016 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2

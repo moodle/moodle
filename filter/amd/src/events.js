@@ -19,6 +19,13 @@
  * @copyright  2021 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      4.0
+ *
+ * @example <caption>Example of listening to a filter event.</caption>
+ * import {eventTypes as filterEventTypes} from 'core_filter/events';
+ *
+ * document.addEventListener(filterEventTypes.filterContentUpdated, e => {
+ *     window.console.log(e.detail.nodes); // A list of the HTMLElements whose content was updated
+ * });
  */
 
 import {dispatchEvent} from 'core/event_dispatcher';
