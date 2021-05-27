@@ -1284,7 +1284,7 @@ function fix_utf8($value) {
         if ($buggyiconv) {
             if (function_exists('mb_convert_encoding')) {
                 $subst = mb_substitute_character();
-                mb_substitute_character('');
+                mb_substitute_character('none');
                 $result = mb_convert_encoding($value, 'utf-8', 'utf-8');
                 mb_substitute_character($subst);
 
