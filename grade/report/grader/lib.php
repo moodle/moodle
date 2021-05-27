@@ -438,9 +438,8 @@ class grade_report_grader extends grade_report {
         list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context, '', 0, $showonlyactiveenrol);
 
         // Fields we need from the user table.
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $userfieldsapi = \core_user\fields::for_identity($this->context, false)->with_userpic();
-        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+        $userfieldsapi = \core_user\fields::for_identity($this->context)->with_userpic();
+        $userfieldssql = $userfieldsapi->get_sql('u', true, '', '', false);
 
         // We want to query both the current context and parent contexts.
         list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
@@ -472,9 +471,10 @@ class grade_report_grader extends grade_report {
 
             $params = array_merge($gradebookrolesparams, $this->userwheresql_params, $this->groupwheresql_params, $enrolledparams, $relatedctxparams);
         }
-
-        $sql = "SELECT $userfields
+        $params = array_merge($userfieldssql->params, $params);
+        $sql = "SELECT {$userfieldssql->selects}
                   FROM {user} u
+                        {$userfieldssql->joins}
                   JOIN ($enrolledsql) je ON je.id = u.id
                        $this->groupsql
                        $sortjoin
@@ -659,8 +659,7 @@ class grade_report_grader extends grade_report {
 
         $strfeedback  = $this->get_lang_string("feedback");
 
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = \core_user\fields::get_identity_fields($this->context, false);
+        $extrafields = \core_user\fields::get_identity_fields($this->context);
 
         $arrows = $this->get_sort_arrows($extrafields);
 
