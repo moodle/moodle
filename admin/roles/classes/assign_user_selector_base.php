@@ -45,6 +45,7 @@ abstract class core_role_assign_user_selector_base extends user_selector_base {
             $this->context = context::instance_by_id($options['contextid']);
         }
         $options['accesscontext'] = $this->context;
+        $options['includecustomfields'] = true;
         parent::__construct($name, $options);
         $this->roleid = $options['roleid'];
         require_once($CFG->dirroot . '/group/lib.php');
