@@ -53,20 +53,23 @@ class core_text {
      * @return bool
      */
     public static function is_charset_supported(string $charset): bool {
-        $encodings = mb_list_encodings();
-        $encodings = array_map('strtolower', $encodings);
-        if (!in_array(strtolower($charset), $encodings)) {
-            return false;
-        } else {
-            // We haven't found the charset, check if mb has aliases for the charset.
-            try {
-                mb_encoding_aliases($charset);
-            } catch (Exception $e) {
-                // A ValueError will be thrown if unsupported.
-                return false;
-            }
+        static $cache = null;
+        if (!$cache) {
+            $cache = array_flip(array_map('strtolower', mb_list_encodings()));
         }
-        return true;
+
+        if (isset($cache[strtolower($charset)])) {
+            return true;
+        }
+
+        // We haven't found the charset, check if mb has aliases for the charset.
+        try {
+            return mb_encoding_aliases($charset) !== false;
+        } catch (Throwable $e) {
+            // A ValueError will be thrown if unsupported.
+        }
+
+        return false;
     }
 
     /**
