@@ -639,6 +639,7 @@ function h5pactivity_get_recent_mod_activity(array &$activities, int &$index, in
 
     $params['cminstance'] = $cm->instance;
     $params['timestart'] = $timestart;
+    $params['cmid'] = $cmid;
 
     $userfieldsapi = \core_user\fields::for_userpic();
     $userfields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
@@ -651,6 +652,7 @@ function h5pactivity_get_recent_mod_activity(array &$activities, int &$index, in
               JOIN {user} u ON u.id = h5pa.userid $groupjoin
              WHERE h5pa.timemodified > :timestart
                AND h5p.id = :cminstance $userselect $groupselect
+               AND cm.id = :cmid
           ORDER BY h5pa.timemodified ASC";
 
     if (!$submissions = $DB->get_records_sql($sql, $params)) {
