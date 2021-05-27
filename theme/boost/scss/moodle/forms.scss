@@ -342,6 +342,9 @@ select.form-control {
     &[size],
     &[multiple] {
         padding-right: 0;
+        option {
+            width: fit-content;
+        }
     }
 }
 
