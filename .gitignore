@@ -32,7 +32,6 @@ CVS
 .DS_Store
 /.settings/
 /.project
-.phpstorm.*
 /.buildpath
 /.cache
 .phpunit.result.cache
