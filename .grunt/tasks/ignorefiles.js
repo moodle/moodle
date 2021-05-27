@@ -50,6 +50,7 @@ module.exports = grunt => {
             'theme/boost/style/moodle.css',
             'theme/classic/style/moodle.css',
             'jsdoc/styles/*.css',
+            'admin/tool/componentlibrary/hugo/dist/css/docs.css',
         ].concat(thirdPartyPaths);
         grunt.file.write('.stylelintignore', stylelintIgnores.join('\n') + '\n');
     };

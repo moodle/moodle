@@ -129,6 +129,9 @@ module.exports = grunt => {
         },
     });
 
+    // Add the 'componentlibrary' task as a startup task.
+    grunt.moodleEnv.startupTasks.push('componentlibrary');
+
     return {
         docsBuild,
         cssBuild,

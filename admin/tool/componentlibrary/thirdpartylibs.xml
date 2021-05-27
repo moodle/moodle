@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/lunr.js</location>
+    <name>lunr - http://lunrjs.com</name>
+    <license>MIT</license>
+    <version>2.3.8</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

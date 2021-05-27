@@ -1,0 +1,104 @@
+// stylelint-disable declaration-no-important
+$navbar-height: 50px;
+
+.sidebar {
+    line-height: 1.8;
+    font-size: 90%;
+}
+
+@include media-breakpoint-up(sm) {
+    .sidebar {
+        border-right: 1px solid $border-color;
+        border-bottom: 1px solid $border-color;
+    }
+}
+
+.sidebar .dropdown-menu .dropdown-item {
+    white-space: normal;
+    text-transform: capitalize;
+}
+
+.docs-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.docs-sidebar > ul {
+    padding: 0 2px;
+}
+
+.docs-sidebar a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    color: $body-color;
+    text-decoration: none;
+    padding: .3rem 0.5rem;
+    border-top: solid 1px $border-color;
+    &.dropdown-toggle::after {
+        margin-left: auto;
+        font-size: 14px;
+        color: $gray-400;
+    }
+}
+
+.docs-sidebar a:hover {
+    background-color: $gray-200;
+}
+
+.docs-sidebar > ul > li li a {
+    padding-left: 1rem;
+    border-top: solid 1px transparent;
+}
+
+.docs-sidebar > ul ul > li li a {
+    padding-left: 2rem;
+    border-top: solid 1px transparent;
+}
+
+@media screen and (max-width: 480px) {
+    .docs-sidebar > ul > li:last-child a {
+        border-bottom: solid 1px $border-color;
+    }
+}
+
+.docs-sidebar .active > a {
+    background: $border-color;
+    font-weight: bold;
+}
+
+.docs-sidebar .slide-menu .has-sub-menu:not(.parent) ul {
+    display: none;
+}
+
+.secondnav {
+    z-index: 0;
+    position: fixed;
+    width: 100%;
+    height: calc(100vh - #{$navbar-height});
+    top: $navbar-height;
+    overflow-y: auto;
+}
+
+#TableOfContents > ul {
+    font-size: 90%;
+    padding-left: 0;
+    padding-top: 1rem;
+    border-left: 1px solid $border-color;
+    ul {
+        padding-left: 1rem;
+    }
+    li {
+        display: block;
+        a {
+            display: block;
+            padding: .125rem 1.5rem;
+            color: $body-color;
+            &:hover {
+                color: $primary;
+                text-decoration: none;
+            }
+        }
+    }
+}
