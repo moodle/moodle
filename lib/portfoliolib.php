@@ -1028,15 +1028,15 @@ function portfolio_filesize_info() {
 function portfolio_expected_time_db($recordcount) {
     global $CFG;
 
-    if (empty($CFG->portfolio_moderate_dbsize_threshold)) {
-        set_config('portfolio_moderate_dbsize_threshold', 10);
+    if (empty($CFG->portfolio_moderate_db_threshold)) {
+        set_config('portfolio_moderate_db_threshold', 20);
     }
-    if (empty($CFG->portfolio_high_dbsize_threshold)) {
-        set_config('portfolio_high_dbsize_threshold', 50);
+    if (empty($CFG->portfolio_high_db_threshold)) {
+        set_config('portfolio_high_db_threshold', 50);
     }
-    if ($recordcount < $CFG->portfolio_moderate_dbsize_threshold) {
+    if ($recordcount < $CFG->portfolio_moderate_db_threshold) {
         return PORTFOLIO_TIME_LOW;
-    } else if ($recordcount < $CFG->portfolio_high_dbsize_threshold) {
+    } else if ($recordcount < $CFG->portfolio_high_db_threshold) {
         return PORTFOLIO_TIME_MODERATE;
     }
     return PORTFOLIO_TIME_HIGH;
