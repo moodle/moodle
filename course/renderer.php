@@ -1479,6 +1479,13 @@ class core_course_renderer extends plugin_renderer_base {
         if (!$chelper->get_categories_display_option('nodisplay')) {
             $subcategories = $coursecat->get_children($chelper->get_categories_display_options());
         }
+        
+        // IOMAD:  Filter out unwanted categories
+        if (!is_siteadmin()) {
+            $subcategories = iomad::iomad_filter_categories($subcategories);
+        }
+        //iomad ends
+        
         $totalcount = $coursecat->get_children_count();
         if (!$totalcount) {
             // Note that we call core_course_category::get_children_count() AFTER core_course_category::get_children()
@@ -2086,6 +2093,10 @@ class core_course_renderer extends plugin_renderer_base {
             $rcourses = get_my_remotecourses($USER->id);
             $rhosts   = get_my_remotehosts();
         }
+        
+        //  IOMAD - deal with licensed courses
+        iomad::iomad_add_license_courses($courses);
+        //iomad ends
 
         if (!empty($courses) || !empty($rcourses) || !empty($rhosts)) {
 
