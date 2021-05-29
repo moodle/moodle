@@ -498,7 +498,13 @@ class profile_field_base {
         if (has_capability('moodle/user:update', $systemcontext)) {
             return true;
         }
-
+    
+        // IOMAD: is this a company manager and can they edit this user.
+        if ((company::check_can_manage($this->userid) || empty($this->userid)) && iomad::has_capability('block/iomad_company_admin:user_create', $systemcontext)) {
+            return true;
+        }
+        //iomad ends
+        
         return false;
     }
 
@@ -588,8 +594,20 @@ function profile_get_user_fields_with_data(int $userid): array {
     if ($userid > 0) {
         $sql .= 'LEFT JOIN {user_info_data} uind ON uif.id = uind.fieldid AND uind.userid = :userid ';
     }
+    
+    //IOMAD - Filter the categories
+    $params = array('userid' => $userid);
+    if (!iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+        $sql .= " AND (uif.categoryid IN (
+                  SELECT c.profileid FROM {company} c JOIN {company_users} cu ON (c.id = cu.companyid AND cu.userid = :companyuserid))
+                  OR uif.categoryid IN (
+                  SELECT id FROM {user_info_category} WHERE id NOT IN (SELECT profileid from {company}))) ";
+        $params['companyuserid'] = $userid;
+    }    
+    //iomad ends
+    
     $sql .= 'ORDER BY uic.sortorder ASC, uif.sortorder ASC ';
-    $fields = $DB->get_records_sql($sql, ['userid' => $userid]);
+    $fields = $DB->get_records_sql($sql, $params);
     $data = [];
     foreach ($fields as $field) {
         require_once($CFG->dirroot . '/user/profile/field/' . $field->datatype . '/field.class.php');
@@ -637,6 +655,11 @@ function profile_load_data(stdClass $user): void {
  */
 function profile_definition(MoodleQuickForm $mform, int $userid = 0): void {
     $categories = profile_get_user_fields_with_data_by_category($userid);
+    
+     // IOMAD - Filter categories which only apply to this company.
+    $categories = iomad::iomad_filter_profile_categories($categories, $userid);
+    //iomad ends
+    
     foreach ($categories as $categoryid => $fields) {
         // Check first if *any* fields will be displayed.
         $fieldstodisplay = [];
@@ -731,6 +754,21 @@ function profile_display_fields($userid) {
  * @since Moodle 3.2
  */
 function profile_get_signup_fields(): array {
+    global $CFG, $DB, $SESSION;
+    
+    // IOMAD - Need to ignore profile fields which belong to another company.
+    if (!empty($SESSION->company)) {
+        $wheresql = " WHERE ic.id IN (
+                       SELECT profileid FROM {company} where id = :companyid)
+                     OR ic.id IN (
+                       SELECT id FROM {user_info_category} WHERE id NOT IN (SELECT profileid from {company})) ";
+        $sqlarray = array('companyid' => $SESSION->company->id);
+    } else {
+        $wheresql = " WHERE ic.id NOT IN (SELECT profileid from {company}) ";
+        $sqlarray = array();
+    }
+    //iomad ends
+    
     $profilefields = array();
     $fieldobjects = profile_get_user_fields_with_data(0);
     foreach ($fieldobjects as $fieldobject) {
@@ -926,6 +964,23 @@ function profile_has_required_custom_fields_set($userid) {
             return false;
         }
     }
+    
+    //iomad added
+    global $DB;
+    $sql = "SELECT f.id
+              FROM {user_info_field} f
+         LEFT JOIN {user_info_data} d ON (d.fieldid = f.id AND d.userid = ?)
+             WHERE f.required = 1 AND f.visible > 0 AND f.locked = 0 AND d.id IS NULL";
+    // IOMAD - Need to ignore profile fields which belong to another company.
+    $sql .= " AND (f.categoryid IN (
+                  SELECT c.profileid FROM {company} c JOIN {company_users} cu ON (c.id = cu.companyid AND cu.userid = ?))
+                OR f.categoryid IN (
+                  SELECT id FROM {user_info_category} WHERE id NOT IN (SELECT profileid from {company}))) ";
 
+    if ($DB->record_exists_sql($sql, [$userid, $userid])) {
+        return false;
+    }
+    //iomad ends
+    
     return true;
 }
