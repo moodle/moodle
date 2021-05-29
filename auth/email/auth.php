@@ -129,6 +129,25 @@ class auth_plugin_email extends auth_plugin_base {
 
         // Save any custom profile field information.
         profile_save_data($user);
+        
+        // IOMAD imported from iomad_310_stable
+        if (!empty($user->companyid)) {
+            require_once($CFG->dirroot.'/local/iomad/lib/company.php');
+            $company = new company($user->companyid);
+
+            // assign the user to the company.
+            $company->assign_user_to_company($user->id);
+
+            // Assign them to any department.
+            if (!empty($user->departmentid)) {
+                $company->assign_user_to_department($user->departmentid, $user->id);
+            }
+
+            if ($CFG->local_iomad_signup_autoenrol) {
+                $company->autoenrol($user);
+            }
+        }
+        //iomad import ends
 
         // Save wantsurl against user's profile, so we can return them there upon confirmation.
         if (!empty($SESSION->wantsurl)) {
