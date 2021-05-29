@@ -38,6 +38,10 @@ use moodle_exception;
 use moodle_url;
 use required_capability_exception;
 
+//iomad start
+require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
+//iomad ends
+
 /**
  * Class for doing things with competency frameworks.
  *
@@ -581,6 +585,15 @@ class api {
         }
 
         $framework = $framework->create();
+        
+        /* Iomad stuff */
+        // Set the companyid
+        global $CFG;
+        require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
+        $companyid = \iomad::get_my_companyid(context_system::instance(), false);
+
+       $framework->data['companyid'] = $companyid;
+        //iomad ends
 
         // Trigger a competency framework created event.
         \core\event\competency_framework_created::create_from_framework($framework)->trigger();
@@ -650,6 +663,15 @@ class api {
         } catch (\Exception $e) {
             $transaction->rollback($e);
         }
+        
+        /* Iomad stuff */
+        // Set the companyid
+        global $CFG;
+        require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
+        $companyid = \iomad::get_my_companyid(context_system::instance(), false);
+
+        $framework->data['companyid'] = $companyid;
+        //iomad ends
 
         // Trigger a competency framework created event.
         \core\event\competency_framework_created::create_from_framework($framework)->trigger();
@@ -853,6 +875,18 @@ class api {
             $inparams['namelike'] = '%' . $DB->sql_like_escape($query) . '%';
             $inparams['idnlike'] = '%' . $DB->sql_like_escape($query) . '%';
         }
+        
+        // IOMAD.  Set up the user's companyid if they aren't an adamin.
+        if (!\iomad::has_capability('block/iomad_company_admin:company_view_all', $context)) {
+            $companyid = \iomad::get_my_companyid(context_system::instance());
+            $companyframeworks = \iomad::get_company_frameworkids($companyid);
+            if (!empty($companyframeworks)) {
+                $select .= " AND id IN (" . implode(',', array_keys($companyframeworks)) . ")";
+            } else {
+                $select .= " AND 1 = 2";
+            }
+        }
+        //iomad ends
 
         return competency_framework::get_records_select($select, $inparams, $sort . ' ' . $order, '*', $skip, $limit);
     }
