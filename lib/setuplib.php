@@ -823,6 +823,22 @@ function initialise_fullme() {
         initialise_fullme_cli();
         return;
     }
+    
+    // IOMAD - Set the theme if the server hostname matches one of ours.
+    if(!CLI_SCRIPT && !during_initial_install()){
+        $CFG->wwwrootdefault = $CFG->wwwroot;
+
+        // Does this match a company hostname?
+        if ($companyrec = $DB->get_record('company', array('hostname' => $_SERVER['SERVER_NAME']))) {
+            $company = new company($companyrec->id);
+
+            // Set the wwwroot to the company one using the same protocol.
+            $CFG->wwwroot  = $company->get_wwwroot();
+
+        }
+    }
+    //iomad ends
+    
     if (!empty($CFG->overridetossl)) {
         if (strpos($CFG->wwwroot, 'http://') === 0) {
             $CFG->wwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
@@ -865,6 +881,10 @@ function initialise_fullme() {
                 throw new moodle_exception('requirecorrectaccess', 'error', '', null,
                     'You called ' . $calledurl .', you should have called ' . $correcturl);
             }
+            //iomad starts
+            require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
+            iomad::check_redirect($wwwroot, $rurl);
+            //iomad ends
             redirect($CFG->wwwroot, get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
         }
     }
