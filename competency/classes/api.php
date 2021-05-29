@@ -1810,6 +1810,15 @@ class api {
         // OK - all set.
         $template = $template->create();
 
+        /* Iomad stuff */
+        // Set the companyid
+        global $CFG;
+        require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
+        $companyid = \iomad::get_my_companyid(context_system::instance(), false);
+
+        $template->data['companyid'] = $companyid;
+        //iomad ends
+        
         // Trigger a template created event.
         \core\event\competency_template_created::create_from_template($template)->trigger();
 
@@ -1847,6 +1856,15 @@ class api {
         foreach ($competencies as $competency) {
             self::add_competency_to_template($duplicatedtemplate->get('id'), $competency->get('id'));
         }
+        
+        /* Iomad stuff */
+        // Set the companyid
+        global $CFG;
+        require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
+        $companyid = \iomad::get_my_companyid(context_system::instance(), false);
+
+        $duplicatedtemplate->data['companyid'] = $companyid;
+        //iomad ends
 
         // Trigger a template created event.
         \core\event\competency_template_created::create_from_template($duplicatedtemplate)->trigger();
@@ -2051,6 +2069,19 @@ class api {
             $select .= " AND visible = :visible";
             $params['visible'] = 1;
         }
+        
+        // IOMAD.  Set up the user's companyid.
+        if (!\iomad::has_capability('block/iomad_company_admin:company_view_all', $context)) {
+            $companyid = \iomad::get_my_companyid(context_system::instance());
+            $companytemplates = \iomad::get_company_templateids($companyid);
+            if (!empty($companytemplates)) {
+                $select .= " AND id IN (" . implode(',', array_keys($companytemplates)) . ")";
+            } else {
+                $select .= " AND 1 = 2";
+            }
+        }
+        //iomad ends
+        
         return $template->get_records_select($select, $params, $orderby, '*', $skip, $limit);
     }
 
@@ -2105,6 +2136,12 @@ class api {
         if (has_capability('moodle/competency:templatemanage', $context)) {
             $onlyvisible = 0;
         }
+        
+        //iomad begins
+         if (\iomad::has_capability('moodle/competency:templatemanage', $context)) {
+            $onlyvisible = 0;
+        }
+        //iomad ends
 
         // OK - all set.
         return template_competency::count_templates($competencyid, $onlyvisible);
@@ -2130,6 +2167,12 @@ class api {
         if (has_capability('moodle/competency:templatemanage', $context)) {
             $onlyvisible = 0;
         }
+        
+        //iomad begins'
+        if (\iomad::has_capability('moodle/competency:templatemanage', $context)) {
+            $onlyvisible = 0;
+        }
+        //iomad ends
 
         // OK - all set.
         return template_competency::list_templates($competencyid, $onlyvisible);
