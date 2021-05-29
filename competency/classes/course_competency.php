@@ -293,7 +293,19 @@ class course_competency extends persistent {
                     ON coursecomp.competencyid = comp.id
                  WHERE coursecomp.courseid = ?';
         $params = array($courseid);
-
+        
+        // IOMAD.  Set up the user's companyid.
+        if (!\iomad::has_capability('block/iomad_company_admin:company_view_all', \context_system::instance())) {
+            $companyid = \iomad::get_my_companyid(\context_system::instance());
+            $companyframeworks = \iomad::get_company_frameworkids($companyid);
+            if (!empty($companyframeworks)) {
+                $sql .= " AND comp.competencyframeworkid IN (" . implode(',', array_keys($companyframeworks)) . ")";
+            } else {
+                $sql .= " AND 1 = 2";
+            }
+        }
+        //iomad ends
+        
         $sql .= ' ORDER BY coursecomp.sortorder ASC';
         $results = $DB->get_recordset_sql($sql, $params);
         $instances = array();
@@ -323,6 +335,18 @@ class course_competency extends persistent {
                  WHERE crscomp.courseid = ? AND crscomp.competencyid = ?';
         $params = array($courseid, $competencyid);
 
+        // IOMAD.  Set up the user's companyid.
+        if (!\iomad::has_capability('block/iomad_company_admin:company_view_all', \context_system::instance())) {
+            $companyid = \iomad::get_my_companyid(\context_system::instance());
+            $companyframeworks = \iomad::get_company_frameworkids($companyid);
+            if (!empty($companyframeworks)) {
+                $sql .= " AND comp.competencyframeworkid IN (" . implode(',', array_keys($companyframeworks)) . ")";
+            } else {
+                $sql .= " AND 1 = 2";
+            }
+        }
+        //iomad ends
+        
         $result = $DB->get_record_sql($sql, $params);
         if (!$result) {
             throw new coding_exception('The competency does not belong to this course: ' . $competencyid . ', ' . $courseid);
@@ -387,6 +411,18 @@ class course_competency extends persistent {
                  WHERE coursecomp.courseid = ?';
         $params = array($courseid);
 
+        // IOMAD.  Set up the user's companyid.
+        if (!\iomad::has_capability('block/iomad_company_admin:company_view_all', \context_system::instance())) {
+            $companyid = \iomad::get_my_companyid(\context_system::instance());
+            $companyframeworks = \iomad::get_company_frameworkids($companyid);
+            if (!empty($companyframeworks)) {
+                $sql .= " AND comp.competencyframeworkid IN (" . implode(',', array_keys($companyframeworks)) . ")";
+            } else {
+                $sql .= " AND 1 = 2";
+            }
+        }
+        //iomad ends
+        
         $sql .= ' ORDER BY coursecomp.sortorder ASC';
         $results = $DB->get_recordset_sql($sql, $params);
         $instances = array();
