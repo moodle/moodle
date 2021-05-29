@@ -1,0 +1,348 @@
+.blockmovetarget .accesshide {
+    position: relative;
+    left: initial;
+}
+
+.block:target {
+    padding-top: 0 !important; /* stylelint-disable declaration-no-important */
+    margin-top: 0 !important;
+}
+
+.block_search_forums .searchform {
+    /* Override plugin's default. */
+    text-align: left;
+}
+
+.block.block_navigation .block_tree ul,
+.block_settings .block_tree ul {
+    margin-left: 0;
+}
+
+.block .block-controls {
+    .dropdown-toggle {
+        /* So that the caret takes the colour of the icon. */
+        color: $body-color;
+    }
+}
+
+$blocks-column-width: 360px !default;
+
+[data-region="blocks-column"] {
+    width: $blocks-column-width;
+    float: right;
+}
+
+$blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
+
+/* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
+#region-main-settings-menu {
+    position: relative;
+    float: left;
+    width: 100%;
+}
+#region-main-settings-menu > div {
+    position: absolute;
+    right: 0;
+    z-index: 100;
+    margin: 1rem;
+}
+.region_main_settings_menu_proxy {
+    width: 4rem;
+    height: 2rem;
+    background-color: $body-bg;
+    margin-left: $card-spacer-x / 2;
+    margin-bottom: $card-spacer-x / 2;
+    border-bottom-left-radius: 0.5rem;
+    float: right;
+}
+
+// Required for IE11 to prevent blocks being pushed under the content.
+#region-main-settings-menu.has-blocks,
+#region-main.has-blocks {
+    display: inline-block;
+    width: calc(100% - #{$blocks-plus-gutter});
+    @include media-breakpoint-down(lg) {
+        width: 100%;
+        /* MDL-63102 - Remove extra space at bottom.
+        If modifying make sure block-region is horizontally stacked when in full screen */
+        display: block;
+    }
+}
+
+.header-action {
+    #region-main-settings-menu {
+        position: unset;
+        float: none;
+        width: auto;
+
+        & > div {
+            position: unset;
+            right: auto;
+            margin: 0;
+        }
+    }
+}
+
+[data-region="blocks-column"] {
+    @include media-breakpoint-down(lg) {
+        width: 100%;
+    }
+}
+
+$card-gutter : $card-deck-margin * 2;
+
+.block .empty-placeholder-image-lg {
+    height: 5rem;
+}
+
+.block .block-cards {
+    .course-info-container {
+        padding: 0.8rem;
+    }
+    .progress {
+        height: 0.5rem;
+    }
+    .course-summaryitem {
+        border: $border-width solid $border-color;
+        background-color: $body-bg;
+    }
+    .icon {
+        margin-right: 0;
+    }
+    .card .coursemenubtn {
+        margin-top: -0.5rem;
+    }
+    a.coursename,
+    span.categoryname,
+    .btn-link {
+        color: inherit;
+    }
+    .multiline {
+        white-space: normal;
+    }
+    .btn.btn-link.btn-icon {
+        height: 36px;
+        width: 36px;
+        padding: 0;
+        border-radius: 50%;
+
+        @include hover-focus {
+            background-color: $gray-200;
+        }
+    }
+}
+
+.dashboard-card-deck.one-row {
+    flex-flow: nowrap;
+    overflow-x: scroll;
+}
+
+.summaryimage {
+    height: 5rem;
+    width: 5rem;
+    background-position: center;
+    background-size: cover;
+}
+
+.dashboard-card-deck {
+    .dashboard-card {
+        margin-bottom: $card-gutter;
+        flex-basis: auto;
+        width: 100%;
+        flex-grow: 0;
+        flex-shrink: 0;
+        .dashboard-card-img {
+            height: 7rem;
+            background-position: center;
+            background-size: cover;
+        }
+        .dashboard-card-footer {
+            padding: 0.8rem;
+        }
+    }
+
+    &.fixed-width-cards {
+        .dashboard-card {
+            width: 300px;
+        }
+    }
+}
+
+.dashboard-card-deck:not(.fixed-width-cards) {
+    @media (min-width: 576px) {
+        .dashboard-card {
+            width: calc(50% - #{$card-gutter});
+        }
+    }
+    @media (min-width: 840px) {
+        .dashboard-card {
+            width: calc(33.33% - #{$card-gutter});
+        }
+    }
+    @media (min-width: 1100px) {
+        .dashboard-card {
+            width: calc(25% - #{$card-gutter});
+        }
+    }
+    @media (min-width: 1360px) {
+        .dashboard-card {
+            width: calc(20% - #{$card-gutter});
+        }
+    }
+}
+
+#region-main.has-blocks {
+    .dashboard-card-deck:not(.fixed-width-cards) {
+        @media (min-width: 1200px) {
+            .dashboard-card {
+                width: calc(33.33% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1470px) {
+            .dashboard-card {
+                width: calc(25% - #{$card-gutter});
+            }
+        }
+    }
+}
+
+body.drawer-open-left {
+    .dashboard-card-deck:not(.fixed-width-cards) {
+        @media (min-width: 768px) {
+            .dashboard-card {
+                width: calc(100% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 861px) {
+            .dashboard-card {
+                width: calc(50% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1122px) {
+            .dashboard-card {
+                width: calc(33.33% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1381px) {
+            .dashboard-card {
+                width: calc(25% - #{$card-gutter});
+            }
+        }
+    }
+}
+
+body.drawer-open-left #region-main.has-blocks {
+    .dashboard-card-deck:not(.fixed-width-cards) {
+        @media (min-width: 1200px) {
+            .dashboard-card {
+                width: calc(100% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1236px) {
+            .dashboard-card {
+                width: calc(50% - #{$card-gutter});
+            }
+        }
+        @media (min-width: 1497px) {
+            .dashboard-card {
+                width: calc(33.33% - #{$card-gutter});
+            }
+        }
+    }
+}
+
+@media (min-width: 1200px) {
+    #block-region-side-pre {
+        .dashboard-card-deck:not(.fixed-width-cards) {
+            margin-left: 0;
+            margin-right: 0;
+            .dashboard-card {
+                width: calc(100% - #{$card-gutter}) !important;
+            }
+        }
+    }
+}
+
+.block_recentlyaccessedcourses {
+    .paging-bar-container {
+        margin-top: -2.4rem;
+        justify-content: flex-end;
+    }
+
+    @include media-breakpoint-down(xs) {
+        .paging-bar-container {
+            margin-top: 0;
+        }
+    }
+}
+
+#block-region-side-pre {
+    .block_recentlyaccessedcourses {
+        .paging-bar-container {
+            margin-top: 0;
+        }
+    }
+}
+
+.block_recentlyaccesseditems {
+    img.icon {
+        height: auto;
+        width: auto;
+        margin-right: 6px;
+    }
+}
+
+.block_myoverview {
+    .content {
+        min-height: 19.35rem;
+    }
+    .paged-content-page-container {
+        min-height: 13rem;
+    }
+}
+
+// Show expand collapse with font-awesome.
+.block_settings .block_tree [aria-expanded="true"],
+.block_settings .block_tree [aria-expanded="true"].emptybranch,
+.block_settings .block_tree [aria-expanded="false"],
+.block_navigation .block_tree [aria-expanded="true"],
+.block_navigation .block_tree [aria-expanded="true"].emptybranch,
+.block_navigation .block_tree [aria-expanded="false"] {
+    background-image: none;
+}
+.block_settings .block_tree [aria-expanded="true"]:before,
+.block_navigation .block_tree [aria-expanded="true"]:before {
+    content: $fa-var-angle-down;
+    margin-right: 0;
+    @include fa-icon();
+    font-size: 16px;
+    width: 16px;
+}
+
+.block_settings .block_tree [aria-expanded="false"]:before,
+.block_navigation .block_tree [aria-expanded="false"]:before {
+    content: $fa-var-angle-right;
+    margin-right: 0;
+    @include fa-icon();
+    font-size: 16px;
+    width: 16px;
+}
+.dir-rtl {
+    .block_settings .block_tree [aria-expanded="false"]:before,
+    .block_navigation .block_tree [aria-expanded="false"]:before {
+        content: $fa-var-angle-left;
+    }
+}
+
+.block_navigation .block_tree p.hasicon,
+.block_settings .block_tree p.hasicon {
+    text-indent: -3px;
+
+    .icon {
+        margin-right: 2px;
+    }
+}
+
+.block.invisibleblock .card-title {
+    color: $text-muted;
+}

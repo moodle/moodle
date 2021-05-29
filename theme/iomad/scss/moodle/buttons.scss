@@ -1,0 +1,72 @@
+.singlebutton {
+    display: inline-block;
+
+    + .singlebutton {
+        margin-left: $spacer / 2;
+    }
+}
+
+.continuebutton {
+    text-align: center;
+}
+
+p.arrow_button {
+    margin-top: 5em;
+    text-align: center;
+
+    #remove {
+        margin: 3em auto 5em;
+    }
+
+    input {
+        @extend .btn-block;
+    }
+}
+
+#addcontrols {
+    // This is displayed in a column between 2 20 row multi-selects. This should be just short of half way.
+    margin-top: 8 * $line-height-base * $font-size-base;
+    text-align: center;
+    margin-bottom: 3em;
+
+    label {
+        display: inline;
+    }
+}
+
+#addcontrols,
+#removecontrols {
+    input {
+        @extend .btn-block;
+        margin: auto;
+    }
+}
+
+.btn-lineup {
+    margin: 0 0 10px 5px;
+}
+
+.btn.btn-icon {
+    @extend .btn-link;
+
+    height: ($icon-width + 20px);
+    width: ($icon-width + 20px);
+    font-size: $icon-width;
+    line-height: $icon-width;
+    padding: 0;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    @include hover-focus {
+        background-color: $gray-200;
+    }
+
+    @each $size, $length in $iconsizes {
+        &.icon-size-#{$size} {
+            height: ($length + 20px) !important; /* stylelint-disable-line declaration-no-important */
+            width: ($length + 20px) !important; /* stylelint-disable-line declaration-no-important */
+            font-size: $length !important; /* stylelint-disable-line declaration-no-important */
+            line-height: $length !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
+}

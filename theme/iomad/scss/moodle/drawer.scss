@@ -1,0 +1,137 @@
+/* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
+$fixed-header-y: $navbar-height;
+
+$drawer-width: 285px !default;
+$drawer-padding-x: 20px !default;
+$drawer-padding-y: 20px !default;
+$drawer-offscreen-gutter: 20px !default;
+
+:target::before {
+    content: " ";
+    display: block;
+    height: ($fixed-header-y + 10px); /* fixed header height*/
+    margin-top: -($fixed-header-y + 10px); /* negative fixed header height */
+    width: 1px;
+    pointer-events: none;
+}
+
+.pagelayout-embedded :target {
+    padding-top: initial;
+    margin-top: initial;
+}
+
+#nav-drawer.closed {
+    left: -($drawer-width + $drawer-offscreen-gutter);
+}
+
+#nav-drawer[aria-hidden=true] .list-group-item {
+    display: none;
+}
+
+/* Use a variable for the drawer background colors. */
+$drawer-bg: darken($body-bg, 5%) !default;
+
+[data-region="drawer"] {
+    position: fixed;
+    padding: $drawer-padding-x $drawer-padding-y;
+    width: $drawer-width;
+    top: $fixed-header-y;
+    height: calc(100% - #{$navbar-height});
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: $zindex-dropdown - 1;
+    background-color: $drawer-bg;
+    -webkit-transition: right 0.5s ease, left 0.5s ease;
+    -moz-transition: right 0.5s ease, left 0.5s ease;
+    transition: right 0.5s ease, left 0.5s ease;
+}
+#nav-drawer {
+    right: auto;
+    left: 0;
+
+    /* Override the z-indexes defined in bootstrap/_list-group.scss that
+       lead to side effects on the user tours positioning. */
+    .list-group-item-action.active,
+    .list-group-item.active {
+        z-index: inherit;
+    }
+    .list-group-item-action.active + .list-group-item,
+    .list-group-item.active + .list-group-item {
+        border-top: none;
+    }
+
+    .list-group {
+        // Remove default list styling in nav menus.
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        // Add margin to be consistent with `.list-group-item` spacing.
+        li {
+            margin-bottom: -1px;
+        }
+        li:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+#page {
+    margin-top: $fixed-header-y;
+}
+.pagelayout-embedded #page {
+    margin-top: 0;
+}
+body.drawer-ease {
+    -webkit-transition: margin-left 0.5s ease, margin-right 0.5s ease;
+    -moz-transition: margin-left 0.5s ease, margin-right 0.5s ease;
+    transition: margin-left 0.5s ease, margin-right 0.5s ease;
+}
+
+body.drawer-open-left {
+    @include media-breakpoint-up(md) {
+        margin-left: $drawer-width;
+    }
+}
+body.drawer-open-right {
+    @include media-breakpoint-up(md) {
+        margin-right: $drawer-width;
+    }
+}
+
+$right-drawer-width: 320px;
+
+[data-region=right-hand-drawer] {
+    display: flex;
+    flex-direction: column;
+    @include transition(right .2s ease-in-out);
+
+    &.drawer {
+        z-index: $zindex-sticky;
+        position: fixed;
+        top: $navbar-height;
+        right: 0;
+        height: calc(100% - #{$navbar-height});
+        width: $right-drawer-width;
+        box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+        padding: 0;
+        visibility: visible;
+        opacity: 1;
+    }
+
+    &.hidden {
+        display: block;
+        right: $right-drawer-width * -1;
+        // Turn off visibility so that nothing in the drawer can receive focus when
+        // it is hidden.
+        visibility: hidden;
+        opacity: 0;
+        // Delay visibility changes until after the slide right animation has completed.
+        @include transition(right .2s ease-in-out, visibility 0s ease-in-out .2s, opacity 0s ease-in-out .2s);
+    }
+}
+.dir-rtl {
+    [data-region=right-hand-drawer] {
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
+    }
+}

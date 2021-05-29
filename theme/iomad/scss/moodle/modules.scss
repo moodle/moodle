@@ -1,0 +1,1413 @@
+/* modules.less */
+
+// The home for small tweaks to modules that don't require
+// changes drastic enough to pull in the full module css
+// and replace it completely
+// Plus some misc. odds and ends
+
+select {
+    width: auto;
+}
+
+// Choice module
+
+.path-mod-choice {
+    .horizontal .choices .option {
+        display: inline-block;
+    }
+}
+
+.path-mod-feedback .feedback_form .col-form-label {
+    display: block !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// Feedback module
+.path-mod-feedback .itemactions {
+    float: right;
+}
+.path-mod-feedback .itemhandle {
+    position: absolute;
+    right: 1rem;
+}
+
+// Forum module
+
+.path-mod-forum .forumsearch {
+    input,
+    .helptooltip {
+        margin: 0 3px;
+    }
+}
+
+.path-mod-forum .forumheaderlist,
+.path-mod-forum .forumheaderlist td {
+    border: none;
+}
+
+.path-mod-forum {
+    .forumheaderlist {
+        thead .header,
+        tbody .discussion td {
+            white-space: normal;
+            vertical-align: top;
+            padding-left: 0.5em;
+            padding-right: 0.5em;
+        }
+
+        thead .header {
+            white-space: normal;
+            vertical-align: top;
+        }
+
+        thead .header.replies {
+            text-align: center;
+        }
+
+        thead .header.lastpost {
+            text-align: right;
+        }
+
+        thead .header th,
+        tbody .discussion td {
+            &.discussionsubscription {
+                width: 16px;
+                padding-left: 0.5em;
+                padding-right: 0.5em;
+            }
+        }
+
+        .discussion {
+            .replies,
+            .lastpost {
+                white-space: normal;
+            }
+
+            .discussionsubscription,
+            .replies {
+                text-align: center;
+            }
+
+            .topic,
+            .discussionsubscription,
+            .topic.starter,
+            .replies,
+            .lastpost {
+                vertical-align: top;
+            }
+        }
+    }
+
+    .discussion-list {
+        .topic {
+            // Do not use the default bold style for the table headings.
+            font-weight: inherit;
+        }
+    }
+
+    // Style for the forum subscription mode node.
+    .subscriptionmode {
+        color: $body-color;
+    }
+
+    // Style for the currently selected subscription mode.
+    .activesetting {
+        color: $body-color;
+        font-weight: bold;
+    }
+}
+
+.discussion-settings-container {
+    .custom-select {
+        width: 100%;
+    }
+
+    input {
+        max-width: 100%;
+    }
+}
+
+.forumpost {
+    border: $border-width solid $border-color;
+    display: block;
+    padding: 6px;
+
+    .header {
+        margin-bottom: 3px;
+    }
+
+    .picture img {
+        margin: 3px;
+
+        &.userpicture {
+            margin-left: 3px;
+            margin-right: 10px;
+        }
+    }
+
+    .content {
+        .posting.fullpost {
+            margin-top: 8px;
+        }
+    }
+
+    .row {
+        display: block;
+        .topic,
+        .content-mask,
+        .options {
+            margin-left: 48px;
+        }
+
+        &.side {
+            clear: both;
+        }
+    }
+}
+
+.forumpost .row .left {
+    width: 48px;
+}
+
+.forumpost .options .commands {
+    margin-left: 0;
+}
+
+.forumpost .subject {
+    font-weight: bold;
+}
+
+// Override hardcoded forum modules styling
+.forumsearch input[type=text] {
+    margin-bottom: 0;
+}
+
+#page-mod-forum-view {
+    table {
+        .fit-content {
+            width: 1px;
+            white-space: nowrap;
+        }
+
+        .limit-width {
+            max-width: 200px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+
+            .author-info {
+                max-width: calc(100% - 35px - .5rem);
+            }
+        }
+    }
+}
+
+#page-mod-forum-discuss .discussioncontrols {
+    width: auto;
+    margin: 0;
+
+    .form-inline input {
+        margin-top: -1px;
+    }
+}
+
+$author-image-width: 70px;
+$author-image-margin: 24px;
+$author-image-width-sm: 30px;
+$author-image-margin-sm: 8px;
+
+/** Gently highlight the selected post by changing it's background to blue and then fading it out. */
+@keyframes background-highlight {
+    from {
+        background-color: rgba(0, 123, 255, 0.5);
+    }
+    to {
+        background-color: inherit;
+    }
+}
+
+.path-mod-forum .nested-v2-display-mode,
+.path-mod-forum.nested-v2-display-mode {
+    .discussionsubscription {
+        margin-top: 0;
+        text-align: inherit;
+        margin-bottom: 0;
+    }
+
+    .preload-subscribe,
+    .preload-unsubscribe {
+        display: none;
+    }
+
+    .post-message {
+        line-height: 1.6;
+    }
+
+    .indent {
+        margin-left: 0;
+    }
+
+    /** Reset the badge styling back to pill style. */
+    .badge {
+        font-size: inherit;
+        font-weight: inherit;
+        padding-left: .5rem;
+        padding-right: .5rem;
+        border-radius: 10rem;
+    }
+
+    .badge-light {
+        background-color: #f6f6f6;
+        color: #5b5b5b;
+    }
+
+    /** Style the ratings like a badge. */
+    .rating-aggregate-container {
+        background-color: #f6f6f6;
+        color: #5b5b5b;
+        padding: .25em .5em;
+        line-height: 1;
+        margin-right: .5rem;
+        vertical-align: middle;
+        border-radius: 10rem;
+        text-align: center;
+    }
+
+    .ratinginput {
+        padding: .25em 1.75rem 0.25em .75em;
+        line-height: 1;
+        height: auto;
+        border-radius: 10rem;
+
+        @include media-breakpoint-down(sm) {
+            margin-top: .5rem;
+        }
+    }
+
+    .group-image {
+        width: 35px;
+        height: 35px;
+        margin-right: 0;
+        float: none;
+        display: inline-block;
+    }
+
+    /** Don't show the discussion locked alert in this mode because it's already indicated with a badge. */
+    .alert.discussionlocked {
+        @extend .sr-only;
+    }
+
+    /** Fix muted text contrast ratios for accessibility. */
+    .text-muted,
+    .dimmed_text {
+        color: #707070 !important; /* stylelint-disable-line declaration-no-important */
+    }
+
+    .author-header {
+        font-style: italic;
+
+        .author-name {
+            font-style: normal;
+        }
+    }
+
+    /** Make the tag list text screen reader visible only */
+    .tag_list > b {
+        @extend .sr-only;
+    }
+
+    :target > .focus-target {
+        animation-name: background-highlight;
+        animation-duration: 1s;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: 1;
+    }
+
+    .forum-post-container {
+        .replies-container {
+            .forum-post-container {
+                border-top: 1px solid #dee2e6;
+                padding-top: 1.5rem;
+
+                .replies-container .forum-post-container {
+                    border-top: none;
+                    padding-top: 0;
+                }
+            }
+
+            .inline-reply-container .reply-author {
+                display: none;
+            }
+        }
+
+        .post-message p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .author-image-container {
+            width: $author-image-width;
+            margin-right: $author-image-margin;
+            flex-shrink: 0;
+        }
+
+        .inline-reply-container textarea {
+            border: 0;
+            resize: none;
+        }
+
+        .indent {
+            /**
+             * The first post and first set of replies have a larger author image so offset the 2nd
+             * set of replies by the image width + margin to ensure they align.
+             */
+            .indent {
+                padding-left: $author-image-width + $author-image-margin;
+
+                /**
+                 * Reduce the size of the the author image for all second level replies (and below).
+                 */
+                .author-image-container {
+                    width: $author-image-width-sm;
+                    margin-right: $author-image-margin-sm;
+                    padding-top: (36px - $author-image-width-sm) / 2;
+                }
+
+                /**
+                 * Adjust the indentation offset for all 3rd level replies and below for the smaller author image.
+                 */
+                .indent {
+                    padding-left: $author-image-width-sm + $author-image-margin-sm;
+
+                    /**
+                     * Stop indenting the replies after the 5th reply.
+                     */
+                    .indent .indent .indent {
+                        padding-left: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Extra small devices (portrait phones, less than 576px). */
+@include media-breakpoint-down(sm) {
+    #page-mod-forum-discuss.nested-v2-display-mode {
+        .forum-post-container {
+            .author-image-container {
+                width: $author-image-width-sm;
+                margin-right: $author-image-margin-sm;
+            }
+
+            .indent {
+                .indent {
+                    padding-left: $author-image-width-sm + $author-image-margin-sm;
+
+                    .indent .indent {
+                        padding-left: 0;
+                    }
+                }
+            }
+        }
+
+        .group-image {
+            width: 30px;
+            height: 30px;
+        }
+    }
+}
+
+// Make filter popover content scrollable if needed.
+.filter-scrollable {
+    overflow-y: auto;
+    max-height: 25em;
+    margin-bottom: 1em;
+}
+
+// Required to fit a date mform into a filter popover.
+.filter-dates-popover {
+    width: 100%;
+    max-width: 41.5em;
+
+    .mform {
+        margin-left: -3em;
+    }
+}
+
+$grading-drawer-width: 430px !default;
+$grading-animation-duration: .3s !default;
+$grading-icon-button-size: 36px !default;
+$grading-search-button-padding-left: calc(#{map-get($spacers, 2)} + 8px) !default;
+$grading-search-input-padding-left: calc(#{map-get($spacers, 2)} + #{map-get($spacers, 2)} + #{$grading-icon-button-size - ($input-border-width * 2)}) !default; /* stylelint-disable-line max-line-length */
+$grading-search-input-padding-right: calc(#{map-get($spacers, 2)} + #{$grading-icon-button-size}) !default;
+$grading-nav-bar-active-drawer-button-bottom: calc(#{map-get($spacers, 2) * -1} - 1px) !default;
+$grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) * 2} + 45px) !default;
+
+@keyframes expandSearchButton {
+    from {
+        height: $grading-icon-button-size;
+        width: $grading-icon-button-size;
+        border-radius: $grading-icon-button-size / 2;
+        background-color: $gray-200;
+    }
+    to {
+        width: 100%;
+        height: $input-height-lg;
+        border-radius: 0;
+        background-color: $input-bg;
+        border-color: $input-border-color;
+        padding-left: $grading-search-button-padding-left;
+        padding-top: $input-padding-y-lg;
+        padding-bottom: $input-padding-y-lg;
+        @include font-size($input-font-size-lg);
+        line-height: $input-line-height-lg;
+        right: 0;
+    }
+}
+
+@keyframes collapseSearchButton {
+    from {
+        width: 100%;
+        height: $input-height-lg;
+        border-radius: 0;
+        background-color: $input-bg;
+        border-color: $input-border-color;
+        padding-left: $grading-search-button-padding-left;
+        padding-top: $input-padding-y-lg;
+        padding-bottom: $input-padding-y-lg;
+        @include font-size($input-font-size-lg);
+        line-height: $input-line-height-lg;
+        right: 0;
+    }
+    to {
+        height: $grading-icon-button-size;
+        width: $grading-icon-button-size;
+        border-radius: $grading-icon-button-size / 2;
+        background-color: $gray-200;
+    }
+}
+
+.path-mod-forum .unified-grader {
+    .navbar {
+        max-height: none;
+        z-index: 1;
+    }
+
+    .body-container {
+        &.hidden {
+            display: none !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
+
+    .userpicture {
+        height: 60px;
+        width: 60px;
+    }
+
+    .grader-grading-panel {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        z-index: 0;
+        width: $grading-drawer-width;
+
+        &.hidden {
+            right: ($grading-drawer-width * -1);
+        }
+
+        .grading-icon {
+            width: $grading-icon-button-size;
+        }
+
+        .user-picker-container {
+            .user-full-name {
+                max-width: 240px;
+            }
+
+            .page-link {
+                width: $grading-icon-button-size;
+                height: $grading-icon-button-size;
+                display: flex;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        .header-container {
+            height: 65px;
+            position: relative;
+            overflow: hidden;
+
+            .info-container {
+                position: absolute;
+                top: 50%;
+                left: 0;
+                transform: translateY(-50%);
+                width: 100%;
+                height: 100%;
+                padding: map-get($spacers, 2);
+                padding-right: calc(#{$grading-icon-button-size} + #{map-get($spacers, 2)});
+                opacity: 1;
+                visibility: visible;
+                transition: left $grading-animation-duration ease-in-out;
+                z-index: 1;
+            }
+
+            .toggle-search-button {
+                &.expand {
+                    animation-name: expandSearchButton;
+                    animation-duration: $grading-animation-duration;
+                    animation-timing-function: ease-in-out;
+                }
+
+                &.collapse {
+                    display: block;
+                    animation-name: collapseSearchButton;
+                    animation-duration: $grading-animation-duration;
+                }
+            }
+
+            .user-search-container {
+                overflow: hidden;
+                position: absolute;
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%);
+                z-index: 2;
+                width: 100%;
+                height: 100% !important; /* stylelint-disable-line declaration-no-important */
+                padding: map-get($spacers, 2);
+
+                .search-input-container {
+                    position: relative;
+                    overflow: visible;
+                    flex-wrap: nowrap;
+
+                    input {
+                        padding-left: $grading-search-input-padding-left;
+                        padding-right: $grading-search-input-padding-right;
+                        opacity: 1;
+                        visibility: visible;
+                        transition:
+                            opacity 0s linear $grading-animation-duration,
+                            visibility 0s linear;
+                    }
+
+                    .search-icon {
+                        position: absolute;
+                        top: 50%;
+                        left: map-get($spacers, 2);
+                        transform: translateY(-50%);
+                        color: $input-color;
+                        height: $grading-icon-button-size;
+                        width: $grading-icon-button-size - ($input-border-width * 2);
+                        background-color: $input-bg;
+                        opacity: 1;
+                        visibility: visible;
+                        transition:
+                            opacity 0s linear $grading-animation-duration,
+                            visibility 0s linear $grading-animation-duration;
+                    }
+
+                    .toggle-search-button {
+                        position: absolute;
+                        top: 50%;
+                        right: map-get($spacers, 2);
+                        transform: translateY(-50%);
+                        z-index: 1;
+                        color: inherit;
+                        text-align: left;
+                        padding-left: 9px;
+                        transition: right 0s linear $grading-animation-duration;
+
+                        .expanded-icon {
+                            opacity: 1;
+                            visibility: visible;
+                            max-width: 50px;
+                            max-height: 50px;
+                            transition:
+                                opacity 0s linear $grading-animation-duration,
+                                max-height 0s linear $grading-animation-duration,
+                                max-width 0s linear $grading-animation-duration,
+                                visibility 0s linear $grading-animation-duration;
+                        }
+
+                        .collapsed-icon {
+                            opacity: 0;
+                            visibility: hidden;
+                            max-height: 0;
+                            max-width: 0;
+                            overflow: hidden;
+                            transition:
+                                opacity 0s linear $grading-animation-duration,
+                                max-height 0s linear $grading-animation-duration,
+                                max-width 0s linear $grading-animation-duration,
+                                visibility 0s linear $grading-animation-duration;
+                        }
+                    }
+                }
+
+                &.collapsed {
+                    width: calc(#{$grading-icon-button-size} + #{map-get($spacers, 2)} + #{map-get($spacers, 2)});
+                    transition: width $grading-animation-duration ease-in-out;
+
+                    .search-input-container {
+                        flex-wrap: nowrap;
+
+                        input,
+                        .search-icon {
+                            opacity: 0;
+                            visibility: hidden;
+                            transition:
+                                opacity 0s linear,
+                                visibility 0s linear;
+                        }
+
+                        input {
+                            padding-left: 0;
+                            padding-right: 0;
+                        }
+
+                        .toggle-search-button {
+                            .expanded-icon {
+                                opacity: 0;
+                                visibility: hidden;
+                                max-height: 0;
+                                max-width: 0;
+                                overflow: hidden;
+                                transition:
+                                    opacity 0s linear,
+                                    max-height 0s linear,
+                                    max-width 0s linear,
+                                    visibility 0s linear;
+                            }
+
+                            .collapsed-icon {
+                                opacity: 1;
+                                visibility: visible;
+                                max-width: 50px;
+                                max-height: 50px;
+                                transition:
+                                    opacity 0s linear,
+                                    max-height 0s linear,
+                                    max-width 0s linear,
+                                    visibility 0s linear;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .user-search-container:not(.collapsed) + .info-container {
+                opacity: 0;
+                visibility: hidden;
+                left: calc(100% * -1);
+                transition:
+                    left $grading-animation-duration ease-in-out,
+                    opacity 0s linear $grading-animation-duration,
+                    visibility 0s linear $grading-animation-duration,
+                    padding 0s linear $grading-animation-duration;
+            }
+        }
+    }
+
+    .grader-module-content {
+        overflow-y: auto;
+        margin-right: $grading-drawer-width;
+        @include transition(margin-right .2s ease-in-out);
+    }
+
+    .drawer-button {
+        position: relative;
+
+        &.active::after {
+            content: "";
+            position: absolute;
+            bottom: $grading-nav-bar-active-drawer-button-bottom;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: map-get($theme-colors, 'primary');
+        }
+
+        .icon {
+            font-size: 20px;
+            height: 20px;
+            width: 20px;
+        }
+    }
+
+    .grader-module-content-display {
+        .discussion-container {
+            &:last-of-type {
+                > hr {
+                    display: none;
+                }
+            }
+
+            .posts-container {
+                &:last-of-type {
+                    > hr {
+                        display: none;
+                    }
+                }
+
+                .parent-container {
+                    position: relative;
+
+                    .show-content-button {
+                        position: absolute;
+                        height: 100%;
+                        width: 100%;
+                        left: 0;
+                        top: 0;
+                        padding-left: $grading-content-show-content-button-padding-left;
+                        text-align: left;
+                        z-index: 1;
+
+                        &:not(.collapsed) {
+                            display: none;
+                        }
+                    }
+
+                    .content {
+                        display: block;
+                        height: auto !important; /* stylelint-disable-line declaration-no-important */
+
+                        .header {
+                            transition: margin-bottom $grading-animation-duration ease-in-out;
+
+                            div + div {
+                                opacity: 1;
+                                visibility: visible;
+                                max-height: none;
+                                transition:
+                                    opacity $grading-animation-duration linear,
+                                    visibility 0s linear;
+                            }
+                        }
+
+                        .body-content-container {
+                            opacity: 1;
+                            visibility: visible;
+                            max-height: none;
+                            transition:
+                                opacity $grading-animation-duration linear,
+                                visibility 0s linear;
+                        }
+
+                        .forum-post-core {
+                            opacity: 1;
+                            visibility: visible;
+                            max-height: none;
+                            transition:
+                                opacity $grading-animation-duration linear,
+                                visibility 0s linear;
+                        }
+                    }
+
+                    .show-content-button.collapsed + .content {
+                        opacity: .3;
+
+                        .header {
+                            margin-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
+
+                            div + div {
+                                opacity: 0;
+                                visibility: hidden;
+                                max-height: 0;
+                            }
+                        }
+
+                        .body-content-container {
+                            opacity: 0;
+                            visibility: hidden;
+                            max-height: 0;
+                        }
+
+                        .forum-post-core {
+                            opacity: 0;
+                            visibility: hidden;
+                            max-height: 0;
+                        }
+                    }
+
+                    .show-content-button.collapsed:hover + .content,
+                    .show-content-button.collapsed:focus + .content {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+
+        .no-post-container {
+            .icon {
+                height: 250px;
+                width: 250px;
+                margin-right: 0;
+            }
+        }
+
+        .nested-v2-display-mode {
+            .discussion-container {
+                .posts-container {
+                    .parent-container {
+                        .show-content-button {
+                            padding-left: $author-image-width + $author-image-margin;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .no-search-results-container {
+        .icon {
+            height: 250px;
+            width: 250px;
+            margin-right: 0;
+        }
+    }
+
+    .nested-v2-display-mode {
+        .view-context-button {
+            margin-left: $author-image-width + $author-image-margin;
+            border-radius: $border-radius-lg;
+        }
+
+        .parent-container {
+            .author-image-container {
+                position: relative;
+
+                &:after {
+                    position: absolute;
+                    top: calc(#{$author-image-width} + #{map-get($spacers, 2)});
+                    content: "";
+                    background-color: $gray-200;
+                    width: 2px;
+                    height: calc(100% - #{$author-image-width} + #{map-get($spacers, 2)});
+                }
+            }
+        }
+
+        .parent-container + .post-container {
+            .author-image-container {
+                img {
+                    width: $author-image-width-sm !important; /* stylelint-disable-line declaration-no-important */
+                }
+            }
+        }
+    }
+}
+
+.path-mod-forum .unified-grader .nested-v2-display-mode,
+.path-mod-forum .modal .nested-v2-display-mode {
+    .post-subject {
+        display: none;
+    }
+}
+
+@include media-breakpoint-down(xs) {
+    .path-mod-forum .unified-grader {
+        .grader-grading-panel {
+            width: 100%;
+        }
+    }
+}
+
+// End styling for mod_forum.
+
+.maincalendar .calendarmonth td,
+.maincalendar .calendarmonth th {
+    border: 1px dotted $table-border-color;
+}
+
+.path-grade-report-grader h1 {
+    text-align: inherit;
+}
+
+#page-mod-chat-gui_basic input#message {
+    max-width: 100%;
+}
+
+#page-mod-data-view #singleimage {
+    width: auto;
+}
+
+.path-mod-data form {
+    margin-top: 10px;
+}
+
+.template_heading {
+    margin-top: 10px;
+}
+
+.breadcrumb-button {
+    margin-top: 4px;
+}
+
+.breadcrumb-button .singlebutton {
+    float: left;
+    margin-left: 4px;
+}
+
+.ie .row-fluid .desktop-first-column {
+    margin-left: 0;
+}
+
+.langmenu form {
+    margin: 0;
+}
+// contributed by Paul Hibbitts, see http://msdn.microsoft@mixin com/en-us/library/ie/jj583807(v=vs.85).aspx
+canvas {
+    -ms-touch-action: auto;
+}
+
+div#dock {
+    display: none;
+}
+
+// Choice module
+
+// Lesson module
+
+/** General styles (scope: all of lesson) **/
+.path-mod-lesson .invisiblefieldset.fieldsetfix {
+    display: block;
+}
+.path-mod-lesson .answeroption .checkbox label p {
+    display: inline;
+}
+.path-mod-lesson .form-inline label.form-check-label {
+    display: inline-block;
+}
+.path-mod-lesson .slideshow {
+    overflow: auto;
+    padding: 15px;
+}
+#page-mod-lesson-view .branchbuttoncontainer .singlebutton button[type="submit"] {
+    white-space: normal;
+}
+#page-mod-lesson-view {
+    .vertical .singlebutton {
+        display: block;
+        + .singlebutton {
+            margin-left: 0;
+            margin-top: 1rem;
+        }
+    }
+    .fitem .felement .custom-select {
+        align-self: flex-start;
+    }
+}
+.path-mod-lesson .generaltable td {
+    vertical-align: middle;
+    label {
+        margin-bottom: 0;
+    }
+    .highlight {
+        display: inline-block;
+        margin-left: 0.25rem;
+    }
+    input[type="checkbox"] {
+        display: block;
+    }
+}
+
+.path-mod-wiki .wiki_headingtitle,
+.path-mod-wiki .midpad,
+.path-mod-wiki .wiki_headingtime {
+    text-align: inherit;
+}
+
+.path-mod-wiki .wiki_contentbox {
+    width: 100%;
+}
+
+// Survey module
+
+.path-mod-survey {
+    .surveytable {
+        > tbody > tr:nth-of-type(odd) {
+            background-color: $table-bg;
+        }
+
+        > tbody > tr:nth-of-type(even) {
+            background-color: $table-bg-accent;
+        }
+
+        .rblock label {
+            text-align: center;
+        }
+    }
+
+}
+
+.nav .caret {
+    margin-left: 4px;
+}
+
+// Dividers
+.nav {
+    .divider {
+        overflow: hidden;
+        width: 0;
+    }
+}
+
+// Usermenu
+.usermenu {
+    .login {
+        line-height: 2.25rem;
+
+        a {
+            color: $link-color;
+            &:hover,
+            &:focus {
+                color: $link-hover-color;
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.userloggedinas,
+.userswitchedrole,
+.loginfailures {
+    .usermenu {
+        .usertext {
+            float: left;
+            text-align: right;
+            margin-right: $spacer / 2;
+            height: 35px;
+            .meta {
+                display: block;
+                font-size: $font-size-sm;
+            }
+        }
+        .avatar {
+            img {
+                margin: 0;
+            }
+        }
+    }
+}
+
+.userloggedinas .usermenu {
+    .userbutton .avatars {
+        position: relative;
+        display: inline-block;
+        .avatar {
+            &.current {
+                display: inline-block;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                img {
+                    vertical-align: baseline;
+                }
+            }
+            img {
+                width: inherit;
+                height: inherit;
+            }
+        }
+        .realuser {
+            width: 35px;
+            height: 35px;
+            display: inline-block;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .usertext {
+        display: none;
+    }
+}
+
+// Quiz module
+.path-mod-quiz .mod-quiz-edit-content {
+    // Force the quiz edit page to always be large enough to prevent scrolling when accessing the menu.
+    margin-bottom: 10rem;
+}
+
+#page-mod-quiz-mod #id_reviewoptionshdr .col-md-3,
+#page-mod-quiz-mod #id_reviewoptionshdr .col-md-9 {
+    width: auto;
+    max-width: none;
+}
+#page-mod-quiz-mod #id_reviewoptionshdr .form-group {
+    float: left;
+    width: 20rem;
+    display: inline-block;
+    min-height: 12rem;
+}
+
+#page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
+    line-height: 1.5;
+    vertical-align: bottom;
+}
+#page-mod-quiz-mod #id_reviewoptionshdr .form-inline {
+    float: left;
+    clear: left;
+}
+#page-mod-quiz-mod #id_reviewoptionshdr .form-check {
+    width: 90%;
+    height: 22px;
+    justify-content: flex-start;
+}
+
+// Question navigation block.
+.path-mod-quiz #mod_quiz_navblock {
+    .qnbutton {
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: normal;
+        background-color: $card-bg;
+        background-image: none;
+        height: 40px;
+        width: 30px;
+        border-radius: 3px;
+        border: 0;
+        overflow: visible;
+        margin: 0 6px 6px 0;
+    }
+
+    span.qnbutton {
+        cursor: default;
+        background-color: $input-bg-disabled;
+        color: $gray;
+    }
+
+    a.qnbutton:hover,
+    a.qnbutton:active,
+    a.qnbutton:focus {
+        text-decoration: underline;
+    }
+
+    .qnbutton .thispageholder {
+        border: 1px solid;
+        border-radius: 3px;
+        z-index: 1;
+    }
+
+    .qnbutton.thispage .thispageholder {
+        border-width: 3px;
+    }
+
+    .allquestionsononepage .qnbutton.thispage .thispageholder {
+        border-width: 1px;
+    }
+
+    .qnbutton.flagged .thispageholder {
+        background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0 no-repeat;
+    }
+
+    .qnbutton .trafficlight {
+        border: 0;
+        background: $card-bg none center / 10px no-repeat scroll;
+        height: 20px;
+        margin-top: 20px;
+        border-radius: 0 0 3px 3px;
+    }
+
+    .qnbutton.notyetanswered .trafficlight,
+    .qnbutton.invalidanswer .trafficlight {
+        background-color: $card-bg;
+    }
+
+    .qnbutton.invalidanswer .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/warningtriangle]]);
+    }
+
+    .qnbutton.correct .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/checkmark]]);
+        background-color: $state-success-text;
+    }
+
+    .qnbutton.blocked .trafficlight {
+        background-image: url([[pix:core|t/locked]]);
+        background-color: $input-bg-disabled;
+    }
+
+    .qnbutton.notanswered .trafficlight,
+    .qnbutton.incorrect .trafficlight {
+        background-color: $state-danger-text;
+    }
+
+    .qnbutton.partiallycorrect .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/whitecircle]]);
+        background-color: $state-warning-text;
+    }
+
+    .qnbutton.complete .trafficlight,
+    .qnbutton.answersaved .trafficlight,
+    .qnbutton.requiresgrading .trafficlight {
+        background-color: $gray-light;
+    }
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
+    height: 1.4em;
+    vertical-align: middle;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
+    padding: 0;
+    margin: 0 0.4em;
+}
+
+// Assign.
+.path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
+    top: auto;
+}
+
+// This section removes the responsiveness from the form in the grading panel
+$popout-header-font-size: 1.5 * $font-size-base;
+// This can't be calculated from modal-title-padding because we are mixing px and rem units.
+$popout-header-height: 4rem;
+
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.popout .felement {
+    height: calc(100% - #{$popout-header-height});
+}
+
+.path-mod-assign [data-region="grade-panel"] {
+    padding-top: $spacer;
+}
+.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-3,
+.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-9 {
+    width: 100%;
+    padding: 0;
+    max-width: 100%;
+    flex: none;
+}
+.path-mod-assign [data-region="grade-panel"] fieldset,
+.path-mod-assign [data-region="grade-panel"] .fitem.row {
+    margin: 0;
+}
+
+.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement {
+    width: 100%;
+}
+
+.path-mod-assign [data-region="grade-panel"] .mform .fitem .felement {
+    width: auto;
+}
+
+// Now styles for the popout sections.
+
+.path-mod-assign [data-region="grade-panel"] .popout {
+    background-color: $modal-content-bg;
+}
+
+.path-mod-assign [data-region="grade-panel"] .fitem.has-popout {
+    background-color: $card-bg;
+    @include border-radius($card-border-radius);
+    border: $card-border-width solid $card-border-color;
+    padding: $card-spacer-x;
+    margin-bottom: $spacer;
+}
+.path-mod-assign [data-region="grade-panel"] .has-popout .col-md-3 {
+    border-bottom: $hr-border-width solid $hr-border-color;
+    margin-bottom: $spacer;
+}
+
+
+.path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
+    @extend .modal-header;
+    font-size: $popout-header-font-size;
+}
+
+.path-mod-assign [data-region="grade-panel"] .popout [data-region="popout-button"] {
+    margin-top: 0;
+}
+
+// Now style the fixed header elements.
+
+.path-mod-assign [data-region="assignment-info"] {
+    overflow-y: hidden;
+}
+
+.path-mod-assign [data-region="grading-navigation"] {
+    padding: 6px;
+}
+
+.path-mod-assign [data-region="grade-actions"] {
+    padding: 10px;
+}
+
+.path-mod-assign [data-region="user-info"] .img-rounded {
+    margin-top: 0;
+}
+
+.path-mod-assign [data-region="grading-navigation-panel"] {
+    height: 85px;
+}
+
+@media (max-width: 767px) {
+    .path-mod-assign [data-region="grading-navigation-panel"] {
+        height: auto;
+    }
+    .path-mod-assign [data-region="user-info"] {
+        margin-top: 1rem;
+    }
+}
+
+.path-mod-assign [data-region="grading-navigation"] [data-region="input-field"] input {
+    width: auto;
+    display: inline-block;
+}
+
+/**
+ * Assign feedback.
+ */
+.assignfeedback_editpdf_widget * {
+    box-sizing: content-box;
+}
+
+.assignfeedback_editpdf_widget button {
+    box-sizing: border-box;
+}
+
+.assignfeedback_editpdf_widget .commentcolourbutton img {
+    border-width: 0;
+}
+
+.assignfeedback_editpdf_widget .label {
+    @extend .alert;
+    @extend .alert-info;
+}
+
+.assignfeedback_editpdf_menu {
+    padding: 0;
+}
+
+.path-mod-assign [data-region="grade-panel"] .gradingform_guide .remark .commentchooser {
+    float: none;
+}
+.path-mod-assign [data-region="grade-panel"] .gradingform_guide .markingguideremark {
+    width: 100%;
+}
+.path-mod-assign [data-region="grade-panel"] .mform .fitem .felement[data-fieldtype="grading"] {
+    padding-left: $spacer;
+    padding-right: $spacer;
+}
+.path-mod-assign [data-region="grade-panel"] .showmarkerdesc,
+.path-mod-assign [data-region="grade-panel"] .showstudentdesc {
+    background-color: $card-bg;
+}
+
+/**
+ * Mod LTI.
+ */
+.path-admin-mod-lti {
+    .btn .loader img,
+    #tool-list-loader-container .loader img {
+        height: auto;
+    }
+}

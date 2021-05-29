@@ -1,0 +1,26 @@
+/**
+ * Bootstrap overrides for RTL
+ *
+ * This file is only for overriding sass from upstream bootstrap, all general rtl fixes for
+ * moodle scss should be placed immediately after the definition of the ltr rule.
+ */
+
+.breadcrumb-item {
+    + .breadcrumb-item::before {
+        content: "#{$breadcrumb-divider-rtl}";
+        /*rtl:remove*/
+        content: "#{$breadcrumb-divider}"; /* stylelint-disable-line declaration-block-no-duplicate-properties */
+    }
+}
+
+.dir-rtl .custom-select {
+    background-position: 0.75rem center;
+}
+
+/*rtl:raw:
+.dropdown-menu {
+    right: auto;
+    left: 0;
+    text-align: right;
+}
+*/
