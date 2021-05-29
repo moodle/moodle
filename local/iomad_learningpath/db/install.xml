@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/iomad_learningpath/db" VERSION="20190405" COMMENT="XMLDB file for Moodle local/iomad_learningpath"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="iomad_learningpath" COMMENT="List of learning paths">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="company" TYPE="int" LENGTH="6" NOTNULL="true" SEQUENCE="false" COMMENT="Company ID"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="80" NOTNULL="true" SEQUENCE="false" COMMENT="Learning path name"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Learning path description"/>
+        <FIELD NAME="active" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is the learning path available"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timeupdated" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="licenseid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_com" UNIQUE="false" FIELDS="company" COMMENT="Index on company id"/>
+        <INDEX NAME="uix_comnam" UNIQUE="true" FIELDS="company, name" COMMENT="Unique index of company and name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="iomad_learningpathcourse" COMMENT="Courses for each learning path">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Link to id in course table"/>
+        <FIELD NAME="path" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="link to id in iomad_learningpath id"/>
+        <FIELD NAME="sequence" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Order presented to student"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Group membership (if any)"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="group" TYPE="foreign" FIELDS="groupid" REFTABLE="iomad_learningpathgroup" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_pa" UNIQUE="false" FIELDS="path"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="iomad_learningpathgroup" COMMENT="Group together courses in path">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="learningpath" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sequence" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_lp" UNIQUE="false" FIELDS="learningpath"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="iomad_learningpathuser" COMMENT="User's assigned to learning path">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="pathid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Path ID"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="user ID"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_pa" UNIQUE="false" FIELDS="pathid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

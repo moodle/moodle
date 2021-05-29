@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/email/db" VERSION="20191023" COMMENT="XMLDB file for Moodle local/email"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="email_template" COMMENT="Table for company email templates">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="en" SEQUENCE="false"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="body" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="signature" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="email signature"/>
+        <FIELD NAME="disabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="disabledmanager" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="disabledsupervisor" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="emailto" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="user id's included in the to field"/>
+        <FIELD NAME="emailtoother" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="free text for ofther to email addresses"/>
+        <FIELD NAME="emailcc" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="userids for users who should also be ccd into the email"/>
+        <FIELD NAME="emailccother" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="free field for manual cc addresses"/>
+        <FIELD NAME="emailfrom" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="user id of user the email is sent from"/>
+        <FIELD NAME="emailfromother" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="manual email address the email is from"/>
+        <FIELD NAME="emailreplyto" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="reply to user id email address"/>
+        <FIELD NAME="emailreplytoother" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="manual reply to address"/>
+        <FIELD NAME="repeatperiod" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="the repeat period for the emails in days"/>
+        <FIELD NAME="repeatvalue" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="repeatday" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="emailfromothername" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="companyid_fk" TYPE="foreign" FIELDS="companyid" REFTABLE="company" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="email" COMMENT="emails to be processed, send or that have been sent">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="templatename" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="modifiedtime" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sent" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="body" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="varsreplaced" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="invoiceid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="classroomid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="senderid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="User ID of the person who the email is to be sent from"/>
+        <FIELD NAME="headers" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="field to hold serialized custom headers"/>
+        <FIELD NAME="due" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="This is the timestamp when the email is due to be sent."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="email_templateset" COMMENT="list of email template sets">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="templatesetname" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Name for the template set"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="email_templateset_templates" COMMENT="email templates tied to a template set">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="templateset" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="template set foreign key"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="body" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="disabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="disabledmanager" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="disabledsupervisor" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="repeatperiod" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="repeatvalue" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="repeateday" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
