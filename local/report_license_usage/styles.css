@@ -1,0 +1,23 @@
+#page-local-report_license_usage-index .col-md-9 {
+    clear:both;
+}
+
+
+#page-local-report_license_usage-index #iomad_license_selector, #page-local-report_license_usage-index .form-group {
+    float:left;
+}
+
+#page-local-report_license_usage-index #iomad_license_selector select , #page-local-report_license_usage-index .felement, #page-local-report_license_usage-index .form-check {
+    background-color: #ddd;
+}
+
+#page-local-report_license_usage-index #iomad_license_selector, #page-local-report_license_usage-index .femptylabel {
+    padding-bottom: 5px;
+    background-color: #fff;
+}
+
+#page-local-report_license_usage-index .femptylabel .felement{
+    background-color: #fff;
+}
+
+

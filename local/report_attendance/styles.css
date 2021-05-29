@@ -1,0 +1,20 @@
+td.inprogress {
+    background-color: yellow;
+    }
+
+td.notstarted {
+    background-color: #ff3333;
+    }
+
+td.completed {
+    background-color: #33ff33;
+    }
+
+div#piechart {
+    width: 360px;
+    height: 200px;
+    padding: 5px;
+    margin: 0 auto;
+    border: 2px #888 solid;
+    background-color: #fff;
+    }

@@ -1,0 +1,26 @@
+#page-local-report_user_logins-index .col-md-9 {
+    clear:both;
+}
+
+#page-local-report_user_logins-index #iomad_course_selector, #page-local-report_user_logins-index #iomad_license_selector {
+    float:left;
+}
+
+#page-local-report_user_logins-index #iomad_course_selector select, #page-local-report_user_logins-index #iomad_license_selector select {
+    background-color: #ddd;
+}
+
+#page-local-report_user_logins-index #iomad_course_selector, #page-local-report_user_logins-index #iomad_license_selector {
+    padding-top: 7px;
+    padding-bottom: 17px;
+    padding-right: 5px;
+}
+
+#page-local-report_user_logins-index #mform1 {
+    display: flex;
+    padding-top: 5px;
+}
+
+#page-local-report_user_logins-index .mform fieldset {
+    border-bottom: 0px;
+}

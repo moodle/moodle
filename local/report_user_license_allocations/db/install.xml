@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/report_user_license_allocations/db" VERSION="20190220" COMMENT="XMLDB file for Moodle local/report_user_license_allocations"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_report_user_lic_allocs" COMMENT="Default comment for local_report_user_lic_allocs, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="licenseid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="action field: 0 = unallocated 1 = allocated"/>
+        <FIELD NAME="issuedate" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="date the action took place"/>
+        <FIELD NAME="modifiedtime" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userliccoursedate" UNIQUE="true" FIELDS="userid, courseid, licenseid, issuedate"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

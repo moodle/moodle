@@ -1,0 +1,21 @@
+#page-local-report_completion_monthly-index .col-md-9 {
+    clear:both;
+}
+
+#page-local-report_completion_monthly-index #iomad_course_selector, #page-local-report_completion_monthly-index .form-group {
+    float:left;
+}
+
+#page-local-report_completion_monthly-index #iomad_course_selector select , #page-local-report_completion_monthly-index .felement {
+    background-color: #ddd;
+}
+
+#page-local-report_completion_monthly-index #iomad_course_selector, #page-local-report_completion_monthly-index .femptylabel {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #fff;
+}
+
+#page-local-report_completion_monthly-index .femptylabel .felement{
+    background-color: #fff;
+}

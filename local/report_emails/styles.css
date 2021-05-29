@@ -1,0 +1,22 @@
+#page-local-report_emails-index #iomad_course_selector, #page-local-report_emails-index #iomad_template_selector {
+    float:left;
+}
+
+#page-local-report_emails-index #iomad_template_selector select {
+    background-color: #ddd;
+}
+
+#page-local-report_emails-index #iomad_template_selector {
+    padding-top: 7px;
+    padding-bottom: 17px;
+    padding-right: 5px;
+}
+
+#page-local-report_emails-index #mform1 {
+    display: flex;
+    padding-top: 5px;
+}
+
+#page-local-report_emails-index .mform fieldset {
+    border-bottom: 0px;
+}
