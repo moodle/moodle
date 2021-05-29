@@ -1,0 +1,104 @@
+.iomadlink, .iomadlinkreports {
+  font-family: Ubuntu;
+  font-size: 12px;
+  font-weight: normal;
+  text-align: center;
+  line-height: 120%;
+}
+.iomadlink a, .iomadlinkreports a {
+  color: #337ab7;
+  padding: 0 10px;
+}
+.iomad_block_title {
+  color: #d30000;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-family: Ubuntu;
+  font-weight: normal;
+}
+
+#sitelogo {
+    float: left;
+    width:100px;
+    padding-bottom: 10px;
+}
+
+#siteheading {
+    float: left;
+    left: 100px;
+}
+
+#clientlogo {
+    float: right;
+    width: 100px;
+}
+#iomad_company_selector select {
+  display: inline;
+  width: auto;
+  margin-left: 10px;
+}
+.iomadlink_container {
+  background-color: #F7F7F7;
+  border: 1px solid #DDD;
+  margin-bottom: 15px;
+}
+@media (min-width: 992px) {
+  .iomadlink_container {
+    border-top-color: #F7F7F7;
+  }
+}
+.iomadlink_container > a {
+  display: block;
+  float: left;
+  margin: 10px;
+  min-height: 155px;
+}
+.iomadlink_container .iomadlink, .iomadlink_container .iomadlinkreports {
+  text-align: center;
+}
+.iomadlink_container .iomadlink .iomadicon, .iomadlink_container .iomadlink .iomadiconreports {
+  display: block;
+  position: relative;
+  margin: 10px 0;
+}
+.iomadlink_container .iomadlink .iomadicon .fa-topic, .iomadlink_container .iomadlinkreports .iomadicon .fa-topic {
+  font-size: 54px;
+  margin-bottom: 10px;
+  color: #666;
+}
+.iomadlink_container .iomadlink .iomadicon .fa-action, .iomadlink_container .iomadlinkreports .iomadicon .fa-action {
+  border-radius: 15px;
+  color: #FFFFFF;
+  background-color: #93d800;
+  font-size: 20px;
+  height: 30px;
+  line-height: 30px;
+  margin-left: -10px;
+  width: 30px;
+  position: absolute;
+  bottom: 0;
+}
+.iomadlink_container .iomadlink .linkname, .iomadlink_container .iomadlinkreports .linkname {
+  display: block;
+  width: 100%;
+}
+.block_iomad_reports .iomadlink_container {
+  border-top-color: #DDD;
+}
+div.iomadlink, div.iomadlinkreports {
+    min-height: 130px;
+    background-color: #ffec70;
+    background-color: #ddd;
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px #888888;
+}
+.progress {
+    background-color: #666;
+}
+.progress-bar {
+    background-color: green;
+}
+
+#page-blocks-iomad_company_admin-company_groups_create_form #region-main {
+    height: 100%;
+}
