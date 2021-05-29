@@ -1,0 +1,26 @@
+label.iconselect {
+    display: inline-block !important;
+    padding: 0 !important;
+    margin: 5px;
+}
+label.iconselect img {
+    width: 25px;
+    height: 25px;
+    padding: 10px;
+}
+input.iconselect {
+    display: none;
+}
+input[type="radio"].iconselect:checked + label.iconselect {
+    outline: 1px solid #007fec;
+}
+body.ie input.iconselect {
+    display: inline-block;
+}
+body.ie label.iconselect {
+    margin-left: 0;
+    margin-right: 20px;
+}
+body.ie label.iconselect img {
+    padding: 5px;
+}
