@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/iomad_commerce/db" VERSION="20170307" COMMENT="XMLDB file for Moodle blocks/iomad_commerce"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="invoice" COMMENT="invoices and baskets">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="reference" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="user that generated the invoice"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="1" NOTNULL="true" DEFAULT="b" SEQUENCE="false" COMMENT="status of the invoice (b = basket, s = submitted, p = paid)"/>
+        <FIELD NAME="checkout_method" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="phone1" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_payerid" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_payerstatus" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="company" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="address" TYPE="char" LENGTH="70" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="city" TYPE="char" LENGTH="120" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="state" TYPE="char" LENGTH="120" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="country" TYPE="char" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="postcode" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="firstname" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lastname" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_ack" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_transactionid" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_transactiontype" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_paymenttype" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_ordertime" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_currencycode" TYPE="char" LENGTH="3" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_amount" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_feeamt" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_settleamt" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_taxamt" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_exchangerate" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_paymentstatus" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_pendingreason" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pp_reason" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="date" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="uniquereference" UNIQUE="true" FIELDS="reference"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="invoiceitem" COMMENT="line items on invoice">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="invoiceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="invoiceableitemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="invoiceableitemtype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="quantity" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="currency" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="£" SEQUENCE="false"/>
+        <FIELD NAME="price" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="license_allocation" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="license_validlength" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="license_shelflife" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="processed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="course_shopblockprice" COMMENT="license block prices">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="currency" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="£" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="price_bracket_start" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="price" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="validlength" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="shelflife" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="course_shopsettings" COMMENT="course settings for shop">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="short_description" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="long_description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="allow_single_purchase" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="allow_license_blocks" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="single_purchase_currency" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="£" SEQUENCE="false"/>
+        <FIELD NAME="single_purchase_price" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="single_purchase_validlength" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="single_purchase_shelflife" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="shoptag" COMMENT="shoptags">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="tag" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="course_shoptag" COMMENT="links courses to shoptags">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="shoptagid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

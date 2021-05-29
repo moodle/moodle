@@ -1,0 +1,68 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+<div id="iomad_learningpaths">
+    {{^ ispaths }}
+        <div class="alert alert-warning">
+            {{# str }}nopaths, block_iomad_learningpath{{/ str }}
+        </div>
+    {{/ ispaths }}
+    {{# ispaths }}
+       
+        <div class="p-b-2">
+            <button class="lpreturn btn btn-primary" style="display: none">{{# str }}returntopath, block_iomad_learningpath{{/ str }}</button>
+        </div>
+
+        {{# paths }}
+            <div class="pathdescription card">
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                        <div class="card-block p-b-0">
+                            <p class="learningpathtitle m-b-0"><strong>{{ name }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 my-auto">
+                        <div class="card-block">
+                            <img class="img-responsive my-auto" src="{{{ imageurl }}}" />
+                        </div>
+                    </div>
+                    <div class="col-md-8 px-3">
+                        <div class="card-block">
+                            {{{ description }}}
+                            {{# progress }}
+                                <div class="progress m-t-1">
+                                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ progress }}%;"
+                                        aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress }}%</div>
+                                </div>
+                            {{/ progress }}
+                            {{^ progress }}
+                                <div class="alert alert-warning">{{# str }}nopathprogress, block_iomad_learningpath{{/ str }}</div>
+                            {{/ progress }}
+                            <p class="card-text"><button class="lpbutton btn btn-primary" data-id="{{ id }}">{{# str }}open, block_iomad_learningpath{{/ str }}</button></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="path_courses" data-pathid="{{ id }}" style="display:none">
+                <h2>{{ name }}</h2>
+                {{# groups }}
+                    {{> block_iomad_learningpath/groupcard }}
+                {{/ groups }}
+            </div>
+
+        {{/ paths }}
+
+        <div class="p-b-2">
+            <button class="lpreturn btn btn-primary" style="display: none">{{# str }}returntopath, block_iomad_learningpath{{/ str }}</button>
+        </div>
+
+    {{/ ispaths }}
+</div>

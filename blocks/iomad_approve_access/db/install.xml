@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/iomad_approve_access/db" VERSION="20130711" COMMENT="XMLDB file for Moodle blocks/iomad_approve_accessl"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_iomad_approve_access" COMMENT="Default comment for block_iomad_approve_access, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="companyid"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="userid" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="companyid" NEXT="activityid"/>
+        <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="tm_ok"/>
+        <FIELD NAME="tm_ok" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="activityid" NEXT="manager_ok"/>
+        <FIELD NAME="manager_ok" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="tm_ok"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
