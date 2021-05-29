@@ -238,4 +238,19 @@ class qtype_calculated_test extends advanced_testcase {
                         </pre>
                         '));
     }
+
+    public function test_calculate_answer_nan_inf() {
+        $answer = qtype_calculated_calculate_answer('acos(1.1)', [], 0.1, 1, 2, 2);
+        $this->assertIsObject($answer);
+        $this->assertNan($answer->answer);
+
+        $answer = qtype_calculated_calculate_answer('log(0.0)', [], 0.1, 1, 2, 2);
+        $this->assertIsObject($answer);
+        $this->assertInfinite($answer->answer); // Actually -INF.
+
+        // Dividing by zero is hard to test, so get +INF another way.
+        $answer = qtype_calculated_calculate_answer('abs(log(0.0))', [], 0.1, 1, 2, 2);
+        $this->assertIsObject($answer);
+        $this->assertInfinite($answer->answer);
+    }
 }

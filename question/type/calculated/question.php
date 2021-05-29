@@ -335,7 +335,11 @@ class qtype_calculated_variable_substituter {
      * @return string formtted number.
      */
     public function format_float($x, $length = null, $format = null) {
-        if (!is_null($length) && !is_null($format)) {
+        if (is_nan($x)) {
+            $x = 'NAN';
+        } else if (is_infinite($x)) {
+            $x = ($x < 0) ? '-INF' : 'INF';
+        } else if (!is_null($length) && !is_null($format)) {
             if ($format == '1' ) { // Answer is to have $length decimals.
                 // Decimal places.
                 $x = sprintf('%.' . $length . 'F', $x);
