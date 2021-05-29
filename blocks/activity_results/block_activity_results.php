@@ -200,7 +200,12 @@ class block_activity_results extends block_base {
             $this->content->text = get_string('error_unsupportedgradetype', 'block_activity_results');
             return $this->content;
         }
-
+        
+        // IOMAD - Get the user's company details.
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        $company = new company($companyid);
+        //iomad ends
+        
         // Get the grades for this activity.
         $sql = 'SELECT * FROM {grade_grades}
                  WHERE itemid = ? AND finalgrade is not NULL
