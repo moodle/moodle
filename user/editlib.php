@@ -281,6 +281,12 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
 
     // Do not show email field if change confirmation is pending.
     if ($user->id > 0 and !empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
+        
+        // IOMAD - Change to allow a manager to cancel the email request change.
+        $pageurl = $PAGE->url;
+        $pageurl .= "&amp;cancelemailchange=1";
+        //iomad ends
+        
         $notice = get_string('emailchangepending', 'auth', $user);
         $notice .= '<br /><a href="edit.php?cancelemailchange=1&amp;id='.$user->id.'">'
                 . get_string('emailchangecancel', 'auth') . '</a>';
