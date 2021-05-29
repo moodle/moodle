@@ -1,0 +1,235 @@
+// General Post SCSS for use in all presets.
+
+// Generate the column layout css.
+@mixin page_layout($blockswidth) {
+    $mainwidth-oneblock: (100% - $blockswidth);
+    $mainwidth-twoblocks: (100% - $blockswidth * 2);
+    #page-content {
+        display: flex;
+
+        .region-main {
+            flex: 0 0 100%;
+            padding: 0 1rem;
+            max-width: 100%;
+        }
+
+        &.blocks-pre {
+            .columnleft {
+                flex: 0 0 $blockswidth;
+                order: -1;
+                padding: 0 1rem;
+                max-width: $blockswidth;
+            }
+            .region-main {
+                flex: 0 0 $mainwidth-oneblock;
+                max-width: $mainwidth-oneblock;
+                padding: 0 1rem 0 0;
+            }
+        }
+        &.blocks-post {
+            .region-main {
+                flex: 0 0 $mainwidth-oneblock;
+                max-width: $mainwidth-oneblock;
+                padding: 0 0 0 1rem;
+            }
+            .columnright {
+                flex: 0 0 $blockswidth;
+                padding: 0 1rem;
+                max-width: $blockswidth;
+            }
+        }
+        &.blocks-pre.blocks-post {
+            .region-main {
+                flex: 0 0 $mainwidth-twoblocks;
+                max-width: $mainwidth-twoblocks;
+                padding: 0;
+            }
+        }
+
+        [data-region="blocks-column"] {
+            width: 100%;
+        }
+    }
+
+    .empty-region-side-pre {
+        &.used-region-side-post {
+            #page-content {
+                .region-main {
+                    flex: 0 0 $mainwidth-oneblock;
+                    max-width: $mainwidth-oneblock;
+                    padding-left: 1rem;
+                }
+                .columnright {
+                    flex: 0 0 $blockswidth;
+                    padding: 0 1rem;
+                    max-width: $blockswidth;
+                }
+            }
+        }
+    }
+    .empty-region-side-post {
+        &.used-region-side-pre {
+            #page-content {
+                .region-main {
+                    flex: 0 0 $mainwidth-oneblock;
+                    max-width: $mainwidth-oneblock;
+                    padding-right: 1rem;
+                }
+                .columnleft {
+                    flex: 0 0 $blockswidth;
+                    order: -1;
+                    padding: 0 1rem;
+                    max-width: $blockswidth;
+                }
+            }
+        }
+    }
+    .used-region-side-post {
+        &.used-region-side-pre {
+            #page-content {
+                .region-main {
+                    flex: 0 0 $mainwidth-twoblocks;
+                    max-width: $mainwidth-twoblocks;
+                    padding: 0;
+                }
+                .columnleft {
+                    flex: 0 0 $blockswidth;
+                    order: -1;
+                    padding: 0 1rem;
+                    max-width: $blockswidth;
+                }
+                .columnright {
+                    flex: 0 0 $blockswidth;
+                    padding: 0 1rem;
+                    max-width: $blockswidth;
+                }
+            }
+        }
+    }
+}
+
+// The block column needs some padding on small devices.
+@include media-breakpoint-down(sm) {
+    .blockcolumn,
+    .region-main {
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding: 0 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+// When changing this please check the size of the calendar block.
+@include media-breakpoint-up(md) {
+    @include page_layout(32%);
+}
+
+@include media-breakpoint-up(lg) {
+    @include page_layout(25%);
+}
+
+@include media-breakpoint-up(xl) {
+    @include page_layout(20%);
+}
+
+@media print {
+    #page-content .region-main, {
+        max-width: 100% !important; /* stylelint-disable-line declaration-no-important */
+        flex: 0 0 100% !important; /* stylelint-disable-line declaration-no-important */
+        padding: 0 1rem 0 !important; /* stylelint-disable-line declaration-no-important */
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .dashboard-card-deck .dashboard-card {
+        width: calc(50% - #{$card-gutter});
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .dashboard-card-deck .dashboard-card {
+        width: calc(50% - #{$card-gutter});
+    }
+    .blocks-post,
+    .blocks-pre {
+        .dashboard-card-deck .dashboard-card {
+            width: calc(100% - #{$card-gutter});
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .dashboard-card-deck .dashboard-card {
+        width: calc(33.33% - #{$card-gutter});
+    }
+    .blocks-post,
+    .blocks-pre {
+        .dashboard-card-deck .dashboard-card {
+            width: calc(50% - #{$card-gutter});
+        }
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    .dashboard-card-deck .dashboard-card {
+        width: calc(25% - #{$card-gutter});
+    }
+    .blocks-post,
+    .blocks-pre {
+        .dashboard-card-deck .dashboard-card {
+            width: calc(33.33% - #{$card-gutter});
+        }
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .blockcolumn {
+        .dashboard-card-deck {
+            margin-left: 0;
+            margin-right: 0;
+            .dashboard-card {
+                width: calc(100% - #{$card-gutter}) !important; /* stylelint-disable-line declaration-no-important */
+            }
+        }
+    }
+}
+
+// Settings and Navigation blocks don't render well from default boost.
+.block_navigation,
+.block_settings {
+    .block_tree {
+        &.list > li > ul {
+            padding-left: 0;
+        }
+        .tree_item.branch {
+            margin-left: 5px;
+            padding-left: 0.75rem;
+        }
+        p.hasicon {
+            text-indent: 0;
+            padding-left: 0.75rem;
+        }
+        ul {
+            margin-left: 0.25rem;
+            padding-left: 1rem;
+        }
+    }
+}
+
+.block_navigation .block_tree p.hasicon .icon,
+.block_settings .block_tree p.hasicon .icon {
+    margin-right: 5px;
+}
+
+// Remove left indenting from root nodes to allow sub-nodes to indent correctly.
+.root_node,
+.navigation_node {
+    margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+    padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.block.block_settings {
+    #settingsnav {
+        padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
+    }
+}
