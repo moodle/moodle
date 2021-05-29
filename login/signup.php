@@ -33,6 +33,21 @@ if (!$authplugin = signup_is_enabled()) {
     print_error('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
 }
 
+// IOMAD - Deal with any passed company information from parameters or from SESSION.
+if (empty($SESSION->company)) {
+    $wantedcompanyid = optional_param('id', 0, PARAM_INT);
+    if (!empty($wantedcompanyid)) {
+        $wantedcompanyshort = required_param('code', PARAM_CLEAN);
+    } else {
+        $wantedcompanyshort = '';
+    }
+} else {
+    $wantedcompanyid = $SESSION->company->id;
+    $wantedcompanyshort = $SESSION->company->shortname;
+}
+$wanteddepartment = optional_param('dept', '', PARAM_CLEAN);
+//iomad ends
+
 $PAGE->set_url('/login/signup.php');
 $PAGE->set_context(context_system::instance());
 
@@ -46,6 +61,32 @@ if (empty($SESSION->wantsurl)) {
         $SESSION->wantsurl = $CFG->wwwroot . '/';
     }
 }
+
+// Check if the company being passed is valid.
+if (!empty($wantedcompanyid) &&!$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'shortname'=>$wantedcompanyshort))) {
+    print_error(get_string('unknown_company', 'local_iomad_signup'));
+}
+// Check if the company can have more users?.
+if (!empty($wantedcompanyid) && $company->maxusers > 0) {
+    $currentusers = $DB->count_records('company_users', array('companyid' => $wantedcompanyid));
+    if ($currentusers >= $company->maxusers) {
+        print_error(get_string('maxuserswarning', 'local_iomad_signup', $company->maxusers));
+    }
+}
+if (!empty($wantedcompanyid)) {
+    $company->deptid = 0;
+    $SESSION->company->deptid = 0;
+    if (!empty($wanteddepartment)) {
+        if ($department=$DB->get_record('department', array('company' => $company->id, 'shortname' => urldecode($wanteddepartment)))) {
+            $company->deptid = $department->id;
+            $SESSION->company->deptid = $department->id;
+        }
+    }
+    // Set the page theme.
+    $SESSION->theme = $company->theme;
+    $SESSION->currenteditingcompany = $company->id;
+}
+//iomad ends
 
 if (isloggedin() and !isguestuser()) {
     // Prevent signing up when already logged in.
@@ -81,8 +122,36 @@ $mform_signup = $authplugin->signup_form();
 
 if ($mform_signup->is_cancelled()) {
     redirect(get_login_url());
+    //iomad company theme persist
+    if (!empty($SESSION->company)) {
+        $redirect .= "?id=" . $SESSION->company->id . "&code=" . $SESSION->company->shortname;
+    }
+    redirect($redirect);
+    //iomad ends
 
 } else if ($user = $mform_signup->get_data()) {
+    // IOMAD Do we use the email as username?
+    if ((!empty($CFG->local_iomad_signup_company) || !empty($SESSION->company)) && $CFG->local_iomad_signup_useemail) {
+        $user->username = $user->email;
+    }
+
+    // If we don't have a company, do we have a default one set?
+    if (empty($SESSION->company) && !empty($CFG->local_iomad_signup_company)) {
+        if ($defaultcompany = $DB->get_record('company', array('id' => $CFG->local_iomad_signup_company))) {
+            $SESSION->company = $defaultcompany;
+        }
+    }
+
+    // Set up defaults for user from company defaults, if there are any.
+    if (!empty($SESSION->company)) {
+        if (empty($user->city) && !empty($company->city)) {
+            $user->city = $company->city;
+        }
+        if (empty($user->country) && !empty($company->country)) {
+            $user->country = $company->country;
+        }
+    }
+    //iomad ends
     // Add missing required fields.
     $user = signup_setup_new_user($user);
 
