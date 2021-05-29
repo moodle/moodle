@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/iomadmerge/db" VERSION="20131129" COMMENT="XMLDB file for Moodle admin/tool/iomadmerge"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_iomadmerge" COMMENT="List of merged users: data from fromuserid user is merged into touserid user.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="touserid"/>
+        <FIELD NAME="touserid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User that will remain with data of both users." PREVIOUS="id" NEXT="fromuserid"/>
+        <FIELD NAME="fromuserid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Data from this user.id will be merged into the touserid." PREVIOUS="touserid" NEXT="success"/>
+        <FIELD NAME="success" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="Was the action concluded ok?" PREVIOUS="fromuserid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time stamp when the merging action took place." PREVIOUS="success" NEXT="log"/>
+        <FIELD NAME="log" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="List of actions performed if success, or errors on merging failure." PREVIOUS="timemodified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="mdl_toolmerg_tou_ix" UNIQUE="false" FIELDS="touserid" COMMENT="index for touserid field." NEXT="mdl_toolmerg_fru_ix"/>
+        <INDEX NAME="mdl_toolmerg_fru_ix" UNIQUE="false" FIELDS="fromuserid" COMMENT="index for fromuserid field." PREVIOUS="mdl_toolmerg_tou_ix" NEXT="mdl_toolmerg_suc_ix"/>
+        <INDEX NAME="mdl_toolmerg_suc_ix" UNIQUE="false" FIELDS="success" COMMENT="Was the merging action ok?" PREVIOUS="mdl_toolmerg_fru_ix" NEXT="mdl_toolmerg_tfs_ix"/>
+        <INDEX NAME="mdl_toolmerg_tfs_ix" UNIQUE="false" FIELDS="touserid, fromuserid, success" COMMENT="Index enabling fast looking for merging actions for given pair of users." PREVIOUS="mdl_toolmerg_suc_ix"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
