@@ -1930,7 +1930,7 @@ class global_navigation extends navigation_node {
         //iomad ends
         
         $categories = array();
-        foreach ($categoriesrs as $category) {
+        foreach ($categorieiomad as $category) {
             // Preload the context.. we'll need it when adding the category in order
             // to format the category name.
             context_helper::preload_from_record($category);
@@ -3413,6 +3413,17 @@ class global_navigation_for_ajax extends global_navigation {
         if (!empty($CFG->navcourselimit)) {
             $limit = (int)$CFG->navcourselimit;
         }
+        
+        //iomad starts
+        if (iomad::is_company_user()) {
+            $companyid = iomad::get_my_companyid(context_system::instance());
+            $sharedsql = " AND ( cc.id IN (
+                               SELECT category FROM {company}
+                               WHERE id = $companyid)) ";
+        } else {
+            $sharedsql = "";
+        }
+        //iomad ends
 
         $catcontextsql = context_helper::get_preload_record_columns_sql('ctx');
         $sql = "SELECT cc.*, $catcontextsql
