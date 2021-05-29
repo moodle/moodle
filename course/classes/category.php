@@ -2742,6 +2742,12 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 $names[$id] = join($separator, $namechunks);
             }
         }
+        
+        // IOMAD :  Filter the list of categories.
+        if (!is_siteadmin() and !during_initial_install()) {
+            $names = iomad::iomad_filter_categories($names);
+        }
+        //iomad ends
         return $names;
     }
 
