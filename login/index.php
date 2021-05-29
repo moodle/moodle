@@ -34,6 +34,15 @@ $anchor      = optional_param('anchor', '', PARAM_RAW);     // Used to restore h
 
 $resendconfirmemail = optional_param('resendconfirmemail', false, PARAM_BOOL);
 
+// IOMAD - deal with any passed company parameters so we can set the theme and other good stuff.
+$wantedcompanyid = optional_param('id', 0, PARAM_INT);
+if (!empty($wantedcompanyid)) {
+    $wantedcompanyshort = required_param('code', PARAM_CLEAN);
+} else {
+    $wantedcompanyshort = '';
+}
+//iomad ends
+
 // It might be safe to do this for non-Behat sites, or there might
 // be a security risk. For now we only allow it on Behat sites.
 // If you wants to do the analysis, you may be able to remove the
@@ -45,6 +54,21 @@ if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
     }
 }
 
+// Check if the company being passed is valid.
+if (!empty($wantedcompanyid) && !$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'shortname'=>$wantedcompanyshort))) {
+    print_error(get_string('unknown_company', 'local_iomad_signup'));
+} else if (!empty($wantedcompanyid)) {
+    // Set the page theme.
+    $SESSION->currenteditingcompany = $company->id;
+    $SESSION->theme = $company->theme;
+    $SESSION->company = $company;
+    if (empty($SESSION->companysetlang)) {
+        $SESSION->lang = $company->lang;
+        $SESSION->companysetlang = true;
+    }
+}
+//iomad ends
+
 $context = context_system::instance();
 $PAGE->set_url("$CFG->wwwroot/login/index.php");
 $PAGE->set_context($context);
@@ -53,6 +77,21 @@ $PAGE->set_pagelayout('login');
 /// Initialize variables
 $errormsg = '';
 $errorcode = 0;
+
+// IOMAD - Set the theme if the server hostname matches one of ours.
+if ($company = $DB->get_record('company', array('hostname' => $_SERVER["SERVER_NAME"]))) {
+    $hascompanybyurl = true;
+    // set the current editing company to be this.
+    $SESSION->currenteditingcompany = $company->id;
+    // Set the page theme.
+    $SESSION->theme = $company->theme;
+    $SESSION->company = $company;
+    $wantedcompanyid = $company->id;
+    $wantedcompanyshort = $company->shortname;
+} else {
+    $hascompanybyurl = false;
+}
+//iomad ends
 
 // login page requested session test
 if ($testsession) {
@@ -206,7 +245,32 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
             echo $OUTPUT->footer();
             die;
         }
+    
+        // Check if the company in the session is still correct.
+        if (!has_capability('block/iomad_company_admin:company_view_all', context_system::instance()) &&
+            !empty($SESSION->currenteditingcompany)) {
+            $currenteditingcompany = $SESSION->currenteditingcompany;
+            $currentcompany = $SESSION->company;
+            if ($mycompany = company::by_userid($user->id, true)) {
+                if ($currenteditingcompany != $mycompany->id) {
+                    $mycompanyrec = $DB->get_record('company', array('id' => $mycompany->id));
+                    if ($mycompanyrec->hostname != $currentcompany->hostname) {
+                        if (empty($mycompanyrec->hostname)) {
+                            $companyurl = $CFG->wwwrootdefault;
+                        } else {
+                            $companyurl = $_SERVER['REQUEST_SCHEME'] . "://" . $mycompanyrec->hostname;
+                        }
+                    }
+                    $SESSION->currenteditingcompany = $mycompany->id;
+                    $SESSION->company = $mycompanyrec;
+                    $SESSION->theme = $mycompanyrec->theme;
 
+                    redirect ($companyurl . '/login/index.php');
+                }
+            }
+        }
+        //iomad ends
+        
     /// Let's get them all set up.
         complete_user_login($user);
 
@@ -343,6 +407,18 @@ if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 518
 
     $frm->password = "";
 }
+
+// IOMAD - changes to display the instructions.
+if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_instructions)) {
+    if (!empty($CFG->local_iomad_signup_showinstructions)) {
+        $show_instructions = true;
+    } else {
+        $show_instructions = false;
+    }
+} else {
+    $show_instructions = false;
+}
+//iomad ends
 
 if (!empty($SESSION->loginerrormsg)) {
     // We had some errors before redirect, show them now.
