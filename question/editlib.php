@@ -167,7 +167,7 @@ class_alias('core_question\local\bank\checkbox_column', 'question_bank_checkbox_
  * @deprecated since Moodle 2.7 MDL-40457
  * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\question_type_column', 'question_bank_question_type_column', true);
+class_alias('qbank_viewquestiontype\question_type_column', 'question_bank_question_type_column', true);
 
 
 /**
