@@ -324,7 +324,7 @@ class view {
      * @return string Column name for the heading
      */
     protected function heading_column(): string {
-        return 'question_bank_question_name_column';
+        return 'qbank_viewquestionname\viewquestionname_column_helper';
     }
 
     /**
