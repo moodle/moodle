@@ -254,10 +254,10 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_heading('managemediaplayerscommonheading', new lang_string('commonsettings', 'admin'), ''));
     $temp->add(new admin_setting_configtext('media_default_width',
         new lang_string('defaultwidth', 'core_media'), new lang_string('defaultwidthdesc', 'core_media'),
-        400, PARAM_INT, 10));
+        640, PARAM_INT, 10));
     $temp->add(new admin_setting_configtext('media_default_height',
         new lang_string('defaultheight', 'core_media'), new lang_string('defaultheightdesc', 'core_media'),
-        300, PARAM_INT, 10));
+        360, PARAM_INT, 10));
     $ADMIN->add('mediaplayers', $temp);
 
     // Convert plugins.
