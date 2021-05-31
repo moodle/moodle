@@ -1,0 +1,139 @@
+.block_iomad_progress .content {
+    text-align: center;
+}
+
+.block_iomad_progress table {
+    margin: 0 auto;
+    padding: 0;
+}
+
+.block_iomad_progress .iomad_progressBarProgressTable {
+    width: 100%;
+    margin: 0 0 5px 0;
+    height: 25px;
+    overflow: hidden;
+}
+
+.block_iomad_progress .iomad_progressBarProgressTable.noNow {
+    height: 19px;
+}
+
+.block_iomad_progress .iomad_progressBarCell {
+    height: 19px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    background-color: none;
+    cursor: pointer;
+    border-left: solid 1px #e3e3e3;
+}
+
+.block_iomad_progress .iomad_progressBarCell#first {
+    border-radius: 3px 0 0 3px;
+    border-left: none;
+}
+
+.block_iomad_progress .iomad_progressBarCell#last {
+    border-radius: 0 3px 3px 0;
+}
+
+.block_iomad_progress .iomad_progressBarCell img {
+    width: 100%;
+    height: 15px;
+    margin: 1px 0 0 0;
+    padding: 0;
+}
+
+.block_iomad_progress .iomad_progressBarCell .smallicon {
+    width: 85%;
+    height: 85%;
+    max-width: 15px;
+    height: auto;
+    max-height: 15px;
+    vertical-align: text-bottom;
+}
+
+.block_iomad_progress .iomad_progressEventInfo {
+    font-size: x-small;
+    text-align: left;
+    white-space: pre;
+    overflow: hidden;
+    padding: 0;
+    margin: 5px auto;
+}
+
+#page-blocks-iomad_progress-overview .block_iomad_progress .iomad_progressEventInfo {
+    max-width: 200px;
+}
+
+.block_iomad_progress .iomad_progressEventInfo img {
+    vertical-align: middle;
+}
+
+.block_iomad_progress .moduleIcon {
+    float: left;
+    margin-right: 5px;
+    max-width: 24px;
+}
+
+.block_iomad_progress .iomad_progressBarHeader {
+    font-size: 90%;
+    margin: 0;
+    padding: 0;
+}
+
+.block_iomad_progress h3 {
+    margin-bottom: 0;
+}
+
+.block_iomad_progress .expectedBy {
+    margin: 5px auto;
+}
+
+.iomad_progressConfigBox {
+    border-bottom: 1px dashed #cccccc;
+    padding: 5px;
+    margin: 0 0 5px 0 !important;
+}
+
+.iomad_progressConfigModuleTitle {
+    font-weight: bold;
+}
+
+.iomad_progressConfigModuleTitle img {
+    vertical-align: middle;
+}
+
+#page-blocks-iomad_progress-overview .groupselector {
+    text-align: center;
+}
+
+#page-blocks-iomad_progress-overview .iomad_progressoverviewmenus {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+#page-blocks-iomad_progress-overview .iomad_progressoverviewmenus form,
+#page-blocks-iomad_progress-overview .iomad_progressoverviewmenus select,
+#page-blocks-iomad_progress-overview .iomad_progressoverviewmenus div {
+    display: inline;
+}
+
+#page-blocks-iomad_progress-overview .iomad_progressoverviewmenus select {
+    margin-left: 2px;
+}
+
+.block_iomad_progress .overviewButton {
+    margin: 10px;
+}
+
+#page-blocks-iomad_progress-overview .buttons {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#page-blocks-iomad_progress-overview .buttons label {
+    display: inline;
+    margin: 0 5px 0 10px;
+}
