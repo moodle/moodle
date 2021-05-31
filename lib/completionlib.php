@@ -1313,7 +1313,7 @@ class completion_info {
      * @param int $limitnum Result max size (optional)
      * @param context $extracontext If set, includes extra user information fields
      *   as appropriate to display for current user in this context
-     * @return array Array of user objects with standard user fields
+     * @return array Array of user objects with user fields (including all identity fields)
      */
     public function get_tracked_users($where = '', $whereparams = array(), $groupid = 0,
              $sort = '', $limitfrom = '', $limitnum = '', context $extracontext = null) {
@@ -1324,11 +1324,12 @@ class completion_info {
                 context_course::instance($this->course->id),
                 'moodle/course:isincompletionreports', $groupid, true);
 
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $userfieldsapi = \core_user\fields::for_identity($extracontext, false)->with_name();
-        $allusernames = $userfieldsapi->get_sql('u')->selects;
-        $sql = 'SELECT u.id, u.idnumber ' . $allusernames;
+        $userfieldsapi = \core_user\fields::for_identity($extracontext)->with_name()->excluding('id', 'idnumber');
+        $fieldssql = $userfieldsapi->get_sql('u', true);
+        $sql = 'SELECT u.id, u.idnumber ' . $fieldssql->selects;
         $sql .= ' FROM (' . $enrolledsql . ') eu JOIN {user} u ON u.id = eu.id';
+        $sql .= $fieldssql->joins;
+        $params = array_merge($params, $fieldssql->params);
 
         if ($where) {
             $sql .= " AND $where";
