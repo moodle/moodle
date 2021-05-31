@@ -1,0 +1,18 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+{{# items }}
+	<a href="{{ url }}">
+	    <div class="iomadlink mr-2">
+	        <div class="iomadicon {{ style }}">
+	        	<div class="fa fa-topic {{{ icon }}}"></div>
+	            <div class="fa fa-action {{{ iconsmall }}}"></div>
+	        </div>
+	        <div class="actiondescription">{{ action }}</div>
+	    </div>
+	</a>
+{{/ items }}

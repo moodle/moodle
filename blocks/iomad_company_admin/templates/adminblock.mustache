@@ -1,0 +1,45 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+<div class="row">
+    <div class="col-2">
+        <img class="img-responsive" src="{{{ logourl }}}" alt="Iomad logo">
+    </div>
+    <div class="col-10 p-t-2">
+        <h1 id="dashboardheader">{{# str }}iomaddashboard, block_iomad_company_admin{{/ str }}</h1>
+    </div>
+</div>
+
+<div class="row m-t-2 p-2 border border-secondary rounded">
+   {{# companyselect.onecompany }}
+       <div class="alert alert-info">
+           {{#str }}currentcompany, block_iomad_company_admin,{{ companyselect.companyname }}{{/str }}
+       </div>
+   {{/ companyselect.onecompany }}
+   {{^ companyselect.onecompany }}
+       <div class="col-lg-6 col-md-12">
+           {{{ companyselect.selectform }}}
+       </div>
+       <div class="col-lg-6 col-md-12">
+           {{{ companyselect.suspended }}}
+       </div>
+   {{/ companyselect.onecompany }}
+</div>
+
+<div class="m-t-2">
+    {{> block_iomad_company_admin/tabs }}
+    <div class="tab-content" id="iomadDashboardTabContent">
+        {{# panes }}
+            <div class="tab-pane fade {{# selected }}show active{{/ selected }} pt-3 iomadlink_container" id="{{ category }}" role="tabpanel" aria-labelledby="{{ category }}-tab">
+                {{> block_iomad_company_admin/menuitem }}
+                <div class="clearfix"></div>
+            </div>
+        {{/ panes }}
+    </div>
+</div>
+
+

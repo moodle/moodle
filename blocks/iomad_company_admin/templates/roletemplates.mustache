@@ -1,0 +1,30 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+<h3>{{# str }}roletemplates, block_iomad_company_admin{{/ str }}</h3>
+
+{{^ istemplates }}
+    <div class="alert alert-warning">
+        {{# str }}notemplates, block_iomad_company_admin{{/ str }}
+    </div>
+{{/ istemplates }}
+{{# istemplates }}
+    {{# templates }}
+        <div class="row m-t-1 border-bottom">
+            <div class="col-7"><b>{{ name }}</b></div>
+            <div class="col-2">
+                <a class="btn btn-success" href="{{{ editlink }}}">{{# str }}edit{{/ str }}</a>
+                &nbsp;
+                <a class="btn btn-danger template-delete" href="#" data-templateid="{{ id }}" data-name="{{ name }}">{{# str }}delete{{/ str }}</a>
+            </div>
+        </div>
+    {{/ templates }}
+{{/ istemplates }}
+
+<div class="m-t-1">
+    <a href="{{{ linkurl }}}" class="btn btn-success">{{# str }}back{{/ str}}</a>
+</div>

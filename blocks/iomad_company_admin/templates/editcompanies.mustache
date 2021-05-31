@@ -1,0 +1,31 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+{{{ form }}}
+
+{{# companycount }}
+    {{# companycountplural }}
+        <div class="alert alert-primary">
+            {{# str }}companycountplural, block_iomad_company_admin, {{ companycount }}{{/ str }}
+        </div>
+    {{/ companycountplural }}
+    {{^ companycountplural }}
+        <div class="alert alert-primary">
+            {{# str }}companycount, block_iomad_company_admin, {{ companycount }}{{/ str }}
+        </div>
+    {{/ companycountplural }}
+{{/ companycount }}
+{{^ companycount }}
+    <div class="alert alert-warning">
+        {{# str }}nocompaniesfilter, block_iomad_company_admin{{/ str }}
+    </div>
+{{/ companycount }}
+
+{{# table }}
+    {{{ table }}}
+    {{{ pagingbar }}}
+{{/ table }}

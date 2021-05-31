@@ -1,0 +1,30 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+<h3>{{# str }}restrictcapabilitiesfor, block_iomad_company_admin, {{ title }}{{/ str }}</h3>
+<h5>{{# str }}rolename, block_iomad_company_admin, {{ role.name }}{{/ str }}</h5>
+
+<div class="alert alert-warning">{{# str }}iomadcapabilities_boiler, block_iomad_company_admin{{/ str }}</div>
+
+{{# capabilities }}
+    <div class="row m-t-1 border-bottom">
+        <div class="col-6">
+            <a href="{{{ doclink }}}"><b>{{ name }}</b><a><br />
+            <small>{{ capability }}</small>
+        </div>
+        <div class="col-6 checkbox">
+            <label class="checkbox-inline checkbox-bootstrap checkbox-lg">
+                <input class="capabilities-checkbox" type="checkbox" {{# checked }}checked="checked"{{/ checked }} data-capability="{{ capability }}" >
+                <span class="checkbox-placeholder"></span>
+            </label>    
+        </div>
+    </div>
+{{/ capabilities }}
+
+<div class="mt-5">
+    <a class="btn btn-success" href="{{{ linkurl }}}">{{# str }}listroles, block_iomad_company_admin{{/ str }}</a>
+</div>

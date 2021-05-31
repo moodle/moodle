@@ -1,0 +1,30 @@
+{{!
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ }}
+
+<h3>{{# str }}restrictcapabilitiesfor, block_iomad_company_admin, {{ title }}{{/ str }}</h3>
+
+{{# templatesaved }}
+    <div class="alert alert-success">
+        {{# str }}roletemplatesaved, block_iomad_company_admin{{/ str }}
+    </div>
+{{/ templatesaved }}
+
+{{# roles }}
+    <div class="row m-t-1 border-bottom">
+        <div class="col-3"><b>{{ name }}</b></div>
+        <div class="col-7">{{ description }}</div>
+        <div class="col-2"><a href="{{{ link }}}" class="btn btn-primary">{{# str }}edit{{/ str }}</a></div>
+    </div>
+{{/ roles }}
+
+<div class="mt-5">
+    <a class="btn btn-success" href="{{{ saveurl }}}">{{# str }}saveroletemplate, block_iomad_company_admin{{/ str }}</a>
+    <a class="btn btn-secondary" href="{{{ manageurl }}}">{{# str }}managetemplates, block_iomad_company_admin{{/ str }}</a>
+    {{# backurl }}
+        <a class="btn btn-warning" href="{{{ backurl }}}">{{# str }}backtocompanytemplate, block_iomad_company_admin{{/ str }}</a>
+    {{/ backurl }}
+</div>
