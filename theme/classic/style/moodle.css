@@ -13040,9 +13040,6 @@ input[disabled] {
   .pagelayout-embedded .embedded-blocks {
     width: 100%; } }
 
-.navbar {
-  max-height: 50px; }
-
 /* calendar.less */
 .calendar_event_category {
   background-color: #e0cbe0; }
@@ -16581,27 +16578,21 @@ body.path-question-type .mform fieldset.hidden {
   transition: none;
   width: inherit; }
 
-@media (max-width: 991.98px) {
-  .simplesearchform .collapse.show,
-  .simplesearchform .collapsing {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    display: flex;
-    background-color: #fff;
-    z-index: 1060;
-    height: 50px; }
-    .simplesearchform .collapse.show .form-inline,
-    .simplesearchform .collapsing .form-inline {
-      width: auto;
-      margin-left: auto;
-      margin-right: auto; } }
-
-.navbar.navbar-light .simplesearchform .btn-open {
-  color: rgba(0, 0, 0, 0.6); }
-  .navbar.navbar-light .simplesearchform .btn-open:hover {
-    color: rgba(0, 0, 0, 0.9); }
+.simplesearchform .collapse.show,
+.simplesearchform .collapsing {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  display: flex;
+  background-color: #fff;
+  z-index: 1060;
+  height: 50px; }
+  .simplesearchform .collapse.show .form-inline,
+  .simplesearchform .collapsing .form-inline {
+    width: auto;
+    margin-left: auto;
+    margin-right: auto; }
 
 .search-areas-actions {
   margin-bottom: 1rem; }
@@ -19196,7 +19187,7 @@ body {
   right: 0; }
 
 .navbar .popover-region-container {
-  top: 1.96875rem; }
+  top: calc(50px - (1rem / 2)); }
 
 .content-item-container {
   width: 100%;
@@ -19943,6 +19934,39 @@ div.editor_atto_toolbar button .icon {
       content: ""; }
   .toast .close {
     color: inherit; }
+
+.navbar.fixed-top {
+  padding-top: 0;
+  padding-bottom: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  align-items: stretch;
+  height: 50px; }
+  .navbar.fixed-top .navbar-brand .logo {
+    max-height: calc(50px - (0.25rem * 2)); }
+  .navbar.fixed-top .nav-link {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    white-space: nowrap; }
+  .navbar.fixed-top .divider {
+    width: 1px;
+    background-color: #dee2e6; }
+  .navbar.fixed-top #usernavigation .nav-link {
+    padding: 0 0.5rem; }
+  .navbar.fixed-top .usermenu {
+    display: flex; }
+    .navbar.fixed-top .usermenu .action-menu {
+      display: flex;
+      align-items: center; }
+    .navbar.fixed-top .usermenu .dropdown-toggle::after {
+      display: none; }
+  .navbar.fixed-top .moodle-actionmenu .menubar,
+  .navbar.fixed-top .action-menu-trigger .dropdown {
+    height: 100%;
+    display: flex; }
+
+#page {
+  margin-top: 50px; }
 
 body {
   -webkit-font-smoothing: antialiased;

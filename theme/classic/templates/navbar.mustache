@@ -38,38 +38,25 @@
 }}
 <nav class="fixed-top navbar navbar-bootswatch navbar-expand moodle-has-zindex">
 
-        <a href="{{{ config.wwwroot }}}" class="navbar-brand aalink {{# output.should_display_navbar_logo }}has-logo{{/ output.should_display_navbar_logo }}
-            {{^ output.should_display_navbar_logo }}
-                d-none d-sm-inline
-            {{/ output.should_display_navbar_logo }}
-                ">
-            {{# output.should_display_navbar_logo }}
-                <span class="logo d-none d-sm-inline">
-                    <img src="{{output.get_compact_logo_url}}" alt="{{sitename}}">
-                </span>
-            {{/ output.should_display_navbar_logo }}
-            <span class="site-name d-none d-md-inline">{{{ sitename }}}</span>
-        </a>
+    <a href="{{{ config.wwwroot }}}" class="navbar-brand d-flex align-items-center m-1 p-0 aabtn">
+        {{# output.should_display_navbar_logo }}
+            <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+        {{/ output.should_display_navbar_logo }}
+        {{{ sitename }}}
+    </a>
 
-        <ul class="navbar-nav d-none d-md-flex">
-            <!-- custom_menu -->
-            {{{ output.custom_menu }}}
-            <!-- page_heading_menu -->
-            {{{ output.page_heading_menu }}}
-        </ul>
-        <div class="ml-auto">
-            {{{ output.search_box }}}
+    <ul class="navbar-nav d-none d-md-flex">
+        <!-- custom_menu -->
+        {{{ output.custom_menu }}}
+        <!-- page_heading_menu -->
+        {{{ output.page_heading_menu }}}
+    </ul>
+    <div id="usernavigation" class="navbar-nav my-1 ml-auto">
+        <div class="divider border-left h-50 align-self-center mx-1"></div>
+        {{{ output.search_box }}}
+        {{{ output.navbar_plugin_output }}}
+        <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
+            {{{ output.user_menu }}}
         </div>
-        <ul class="nav navbar-nav usernav">
-            <!-- navbar_plugin_output -->
-            <li class="nav-item">
-                {{{ output.navbar_plugin_output }}}
-            </li>
-            <!-- user_menu -->
-            <li class="nav-item align-items-center">
-                {{{ output.user_menu }}}
-            </li>
-        </ul>
-        <!-- search_box -->
+    </div>
 </nav>
-

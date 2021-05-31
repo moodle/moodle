@@ -3330,7 +3330,7 @@ EOD;
             return html_writer::div(
                 html_writer::span(
                     $returnstr,
-                    'login'
+                    'login nav-link'
                 ),
                 $usermenuclasses
             );
@@ -3347,7 +3347,7 @@ EOD;
             return html_writer::div(
                 html_writer::span(
                     $returnstr,
-                    'login'
+                    'login nav-link'
                 ),
                 $usermenuclasses
             );
@@ -3419,7 +3419,8 @@ EOD;
 
         $am = new action_menu();
         $am->set_menu_trigger(
-            $returnstr
+            $returnstr,
+            'nav-link'
         );
         $am->set_action_label(get_string('usermenu'));
         $am->set_alignment(action_menu::TR, action_menu::BR);
