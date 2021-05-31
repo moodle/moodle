@@ -1,0 +1,40 @@
+{
+  "name": "bozhinov/pChart2.0-for-PHP7",
+  "description": "Fork of pChart 2.0 compatible with PHP 7",
+  "Version": "1.3",
+  "keywords": [
+    "php",
+    "charts",
+    "php7",
+    "form",
+    "pie",
+    "bar",
+    "pizza",
+    "server side charts"
+  ],
+  "homepage": "https://github.com/bozhinov/pChart2.0-for-PHP7",
+  "type": "project",
+  "license": "GPL-3.0",
+  "support": {
+    "issues": "https://github.com/bozhinov/pChart2.0-for-PHP7/issues",
+    "source": "https://github.com/bozhinov/pChart2.0-for-PHP7"
+  },
+  "authors": [
+    {
+      "name": "Momchil Bozhinov(bozhinov)",
+      "email": "momchil@bojinov.info"
+    }
+  ],
+
+  "autoload": {
+    "classmap": [
+      "class/"
+    ]
+  },
+
+  "require": {
+    "php": ">=7.0",
+    "ext-gd": "*"
+  }
+
+}
