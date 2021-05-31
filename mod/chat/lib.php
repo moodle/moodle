@@ -1322,13 +1322,6 @@ function chat_extend_settings_navigation(settings_navigation $settings, navigati
     global $DB, $PAGE, $USER;
     $chat = $DB->get_record("chat", array("id" => $PAGE->cm->instance));
 
-    if ($chat->chattime && $chat->schedule) {
-        $nextsessionnode = $chatnode->add(get_string('nextsession', 'chat').
-                                          ': '.userdate($chat->chattime).
-                                          ' ('.usertimezone($USER->timezone).')');
-        $nextsessionnode->add_class('note');
-    }
-
     $currentgroup = groups_get_activity_group($PAGE->cm, true);
     if ($currentgroup) {
         $groupselect = " AND groupid = '$currentgroup'";
