@@ -1,0 +1,375 @@
+/**
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+#region-main {
+    height: 100%;
+}
+
+.iomad_company_admin_table {
+   width: 95%;
+   margin: auto;
+   text-align: center;
+   top: 30px;
+   bottom: 30px;
+   }
+
+div.iomadlink_container {
+    min-height: 160px;
+    padding-left: 8px;
+    position: relative;
+    /* top: -30px; */
+    }
+
+div.block_iomad_company_admin div.iomadlink_container {
+    top: -30px;
+    }
+
+ul.iomadtab {
+    height: 36px;
+    margin-top: 5px;
+    padding-left: 10px;
+    margin-right: 20px;
+    clear: both;
+    border-bottom: 1px solid black;
+}
+
+ul.iomadtab li {
+    height: 25px;
+    list-style: none;
+    float: left;
+    padding: 5px 15px;
+    background-color: #fad163;
+    border: 1px solid black;
+}
+
+ul.iomadtab li.iomadselected {
+    border-bottom: 1px solid transparent;
+    background-color: #fff7d7;
+}
+
+ul.iomadtab a:hover {
+    color:#333 !important;
+    text-decoration: underline;
+}
+
+div.iomadlink a:hover, div.iomadlinkreports a:hover{
+    color:#fad163 !important;
+    text-decoration: none;
+}
+
+div.iomadlink, div.iomadlinkreports {
+    width: 100px;
+    min-height: 100px;
+    text-align: center;
+    float:left;
+    position: relative;
+}
+
+div.block_iomad_company_admin  a:hover {
+    color:#fad163;
+}
+
+#ReportTable  td {
+    vertical-align: middle !important;
+}
+
+#licenseSelector {
+margin:auto;
+color:#000000;
+text-align: center;
+background-color:#fad163;
+padding-top: 10px;
+padding-bottom: 15px;
+width: 50%;
+border-radius: 10px;
+}
+
+.iomad_company_selector .singleselect {
+    float: left;
+}
+
+.companyselect {
+    min-height: 75px;
+}
+
+.companyselect .singlebutton {
+    float: right;
+    position: relative;
+    top: -47px;
+    left: 4px;
+}
+
+.companyselect .col-md-3 {
+    top: 31px;
+    left: 3px;
+}
+
+.fitem .singleselect label {
+    font-weight: normal;
+    float: left;
+    width: 25%;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: right;
+}
+
+.fitem .singleselect select {
+    position: relative;
+    float: left;
+    width: 75%;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    left: 0.6%;
+}
+
+.iomadclear {
+    clear:both;
+}
+
+/* Tree stuff for company select */
+
+[aria-expanded="false"] > [role="group"] {
+    display: none;
+}
+
+[aria-selected="true"] {
+    font-weight: bold;
+}
+
+[aria-selected="false"] {
+    font-weight: normal;
+}
+
+.dep_tree {
+    padding: 20px;
+    background-color: #ddd;
+    border: 1px solid #666;
+    border-radius: 5px;
+}
+
+.dep_tree .tree_item {
+    padding-left: 20px;
+}
+
+.dep_tree .haschildren[aria-expanded="true"] {
+    background-image: url('[[pix:t/expanded]]');
+    background-repeat: no-repeat;
+
+}
+.dep_tree .haschildren[aria-expanded="false"] {
+    background-image: url('[[pix:t/collapsed]]');
+    background-repeat: no-repeat;
+}
+
+.dep_tree .nochildren [aria-expanded="true"] {
+    background-image: none;
+}
+
+.dep_tree .nochildren [aria-expanded="false"] {
+    background-image: none;
+}
+
+.licenseok, .licensewarning {
+    font-weight: bold;
+}
+
+.licensewarning {
+    color: red;
+}
+
+#page-blocks-iomad_company_admin-editusers .generaltable {
+    overflow-x: unset;
+}
+
+#page-blocks-iomad_company_admin-editusers .main, #page-blocks-iomad_company_admin-editusers #region-main, #page-blocks-iomad_company_admin-editusers #region-main > div {
+    height: 100%;
+}
+
+#page-blocks-iomad_company_admin-editusers .no-overflow {
+    min-height: 472px;
+}
+
+#page-blocks-iomad_company_admin-editusers .moodle-actionmenu[data-enhanced].show .menu.align-tl-bl {
+    left: -150px;
+    min-width: 150px;
+}
+
+#page-blocks-iomad_company_admin-uploaduser #fitem_id_userdepartment, #page-blocks-iomad_company_admin-uploaduser #id_category_1 > div > div.dep_tree {
+    display: none;
+} 
+.iomadlink_container {
+  background-color: #F7F7F7;
+  border: 1px solid #DDD;
+  margin-bottom: 15px;
+}
+@media (min-width: 992px) {
+  .iomadlink_container {
+    border-top-color: #F7F7F7;
+  }
+}
+.iomadlink_container > a {
+  display: block;
+  float: left;
+  margin: 10px;
+  min-height: 155px;
+}
+.iomadlink_container .iomadlink, .iomadlink_container .iomadlinkreports {
+  text-align: center;
+}
+.iomadlink_container .iomadlink .iomadicon, .iomadlink_container .iomadlink .iomadiconreports {
+  display: block;
+  position: relative;
+  margin: 10px 0;
+}
+.iomadlink_container .iomadlink .iomadicon .fa-topic, .iomadlink_container .iomadlinkreports .iomadicon .fa-topic {
+  font-size: 54px;
+  margin-bottom: 10px;
+  color: #17859b;
+}
+.iomadlink_container .iomadlink .iomadicon .fa-action, .iomadlink_container .iomadlinkreports .iomadicon .fa-action {
+  border-radius: 15px;
+  color: #FFFFFF;
+  background-color: #83d411;
+  font-size: 20px;
+  height: 30px;
+  line-height: 30px;
+  margin-left: -10px;
+  width: 30px;
+  position: absolute;
+  bottom: 0;
+}
+
+#dashboardheader {
+    color: #d30000;
+}
+
+.companymanagertable p.arrow_button #remove,
+.companycourseuserstable p.arrow_button #remove,
+.companycoursegroupstable p.arrow_button #remove,
+.companycoursetable p.arrow_button #remove,
+.companygroupuserstable p.arrow_button #remove,
+.companylicenseuserstable p.arrow_button #remove,
+.companytemplatetable p.arrow_button #remove,
+.companyframeworktable p.arrow_button #remove,
+.companyuserstable p.arrow_button #remove {
+    margin: 0;
+}
+
+#page-blocks-iomad_company_admin-editusers #mform1 {
+    display: flex;
+    padding-top: 5px;
+}
+
+#page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol {
+    display: flex;
+}
+
+#page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol {
+    float: left;
+}
+
+#page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol .singlebutton {
+    padding-top: 7px;
+    padding-right: 5px;
+}
+
+ #page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol #id_searchbutton {
+    color: #212529;
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    padding-right: 3px;
+}
+
+ #page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol div.col-md-9.form-inline.felement {
+     display: contents
+ }
+ 
+  #page-blocks-iomad_company_admin-iomad_courses_form .reporttablecontrolscontrol  div.col-md-3 {
+      display: none
+  }
+
+  /* Checkbox Bootstrap */
+
+  :root {
+    /* larger checkbox */
+  }
+  :root label.checkbox-bootstrap input[type=checkbox] {
+    /* hide original check box */
+    opacity: 0;
+    position: absolute;
+    /* find the nearest span with checkbox-placeholder class and draw custom checkbox */
+    /* draw checkmark before the span placeholder when original hidden input is checked */
+    /* disabled checkbox style */
+    /* disabled and checked checkbox style */
+    /* when the checkbox is focused with tab key show dots arround */
+  }
+  :root label.checkbox-bootstrap input[type=checkbox] + span.checkbox-placeholder {
+    width: 14px;
+    height: 14px;
+    border: 1px solid;
+    border-radius: 3px;
+    /*checkbox border color*/
+    border-color: #737373;
+    display: inline-block;
+    cursor: pointer;
+    margin: 0 7px 0 -20px;
+    vertical-align: middle;
+    text-align: center;
+  }
+  :root label.checkbox-bootstrap input[type=checkbox]:checked + span.checkbox-placeholder {
+    background: #0ccce4;
+  }
+  :root label.checkbox-bootstrap input[type=checkbox]:checked + span.checkbox-placeholder:before {
+    display: inline-block;
+    position: relative;
+    vertical-align: text-top;
+    width: 5px;
+    height: 9px;
+    /*checkmark arrow color*/
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    /*can be done with post css autoprefixer*/
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+    content: "";
+  }
+  :root label.checkbox-bootstrap input[type=checkbox]:disabled + span.checkbox-placeholder {
+    background: #ececec;
+    border-color: #c3c2c2;
+  }
+  :root label.checkbox-bootstrap input[type=checkbox]:checked:disabled + span.checkbox-placeholder {
+    background: #d6d6d6;
+    border-color: #bdbdbd;
+  }
+  :root label.checkbox-bootstrap input[type=checkbox]:focus:not(:hover) + span.checkbox-placeholder {
+    outline: 1px dotted black;
+  }
+  :root label.checkbox-bootstrap.checkbox-lg input[type=checkbox] + span.checkbox-placeholder {
+    width: 26px;
+    height: 26px;
+    border: 2px solid;
+    border-radius: 5px;
+    /*checkbox border color*/
+    border-color: #737373;
+  }
+  :root label.checkbox-bootstrap.checkbox-lg input[type=checkbox]:checked + span.checkbox-placeholder:before {
+    width: 9px;
+    height: 15px;
+    /*checkmark arrow color*/
+    border: solid white;
+    border-width: 0 3px 3px 0;
+  }
+  
+.tree_dept_name {
+    display: inline-block;
+    width: 100%;
+}
