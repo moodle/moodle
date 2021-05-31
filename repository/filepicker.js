@@ -290,6 +290,12 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 Y.bind(callback, options.callbackcontext)(e, e.node.fileinfo);
                 Y.YUI2.util.Event.stopEvent(e.event)
             });
+            // Simulate click on file not folder.
+            scope.treeview.subscribe('enterKeyPressed', function(node) {
+                if (node.children.length === 0) {
+                    Y.one(node.getContentEl()).one('a').simulate('click');
+                }
+            });
             // TODO MDL-32736 support right click
             /*if (options.rightclickcallback) {
                 scope.treeview.subscribe('dblClickEvent', function(e){
