@@ -273,7 +273,7 @@ class_alias('core_question\local\bank\row_base', 'question_bank_row_base', true)
  * @deprecated since Moodle 2.7 MDL-40457
  * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\question_text_row', 'question_bank_question_text_row', true);
+class_alias('qbank_viewquestiontext\question_text_row', 'question_bank_question_text_row', true);
 
 /**
  * @copyright  2009 Tim Hunt
