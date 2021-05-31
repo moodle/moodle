@@ -812,7 +812,7 @@ function initialise_cfg() {
  * setup.php.
  */
 function initialise_fullme() {
-    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
+    global $CFG, $DB, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
 
     // Detect common config error.
     if (substr($CFG->wwwroot, -1) == '/') {
