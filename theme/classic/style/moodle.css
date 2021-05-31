@@ -10199,10 +10199,12 @@ img.resize {
   width: 1em; }
 
 .action-menu .dropdown-toggle {
-  text-decoration: none; }
+  text-decoration: none;
+  display: inline-block; }
 
 .action-menu {
-  white-space: nowrap; }
+  white-space: nowrap;
+  display: inline; }
 
 .block img.resize {
   height: 0.9em;
@@ -20226,6 +20228,36 @@ div.editor_atto_toolbar button .icon {
     white-space: normal;
     text-overflow: clip;
     word-break: break-all; }
+
+.moremenu {
+  opacity: 0;
+  height: 40px; }
+  .moremenu.observed {
+    opacity: 1; }
+  .moremenu .nav-link {
+    height: 40px;
+    display: flex;
+    align-items: center; }
+  .moremenu .dropdownmoremenu > .dropdown-menu > .dropdown-item {
+    padding: 0; }
+  .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu {
+    position: static;
+    padding: 0;
+    border: 0; }
+    .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu.show {
+      display: block; }
+    .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu .dropdown-item {
+      background-color: #f8f9fa; }
+      .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu .dropdown-item:hover, .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu .dropdown-item:focus {
+        color: #fff;
+        background-color: #0f6fc5; }
+    .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu .dropdown-divider {
+      display: none; }
+
+.navbar.fixed-top .moremenu {
+  height: 50px; }
+  .navbar.fixed-top .moremenu .nav-link {
+    height: 50px; }
 
 body {
   -webkit-font-smoothing: antialiased;

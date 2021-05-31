@@ -1,0 +1,36 @@
+.moremenu {
+    opacity: 0;
+    height: $moremenu-height;
+    &.observed {
+        opacity: 1;
+    }
+    .nav-link {
+        height: $moremenu-height;
+        display: flex;
+        align-items: center;
+    }
+    // Styling for dropdown menus inside the MoreButton.
+    .dropdownmoremenu > .dropdown-menu {
+        & > .dropdown-item {
+            padding: 0;
+        }
+        .dropdown-menu {
+            position: static;
+            padding: 0;
+            border: 0;
+            &.show {
+                display: block;
+            }
+            .dropdown-item {
+                background-color: $gray-100;
+                @include hover-focus() {
+                    color: $dropdown-link-hover-color;
+                    @include gradient-bg($dropdown-link-active-bg);
+                }
+            }
+            .dropdown-divider {
+                display: none;
+            }
+        }
+    }
+}

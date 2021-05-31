@@ -378,10 +378,12 @@ img.resize {
 
 .action-menu .dropdown-toggle {
     text-decoration: none;
+    display: inline-block;
 }
 
 .action-menu {
     white-space: nowrap;
+    display: inline;
 }
 
 .block img.resize {

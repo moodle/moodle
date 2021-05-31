@@ -1352,6 +1352,7 @@ $string['movefilestohere'] = 'Move files to here';
 $string['movefull'] = 'Move {$a} to this location';
 $string['movehere'] = 'Move to here';
 $string['moveleft'] = 'Move left';
+$string['moremenu'] = 'More';
 $string['moveright'] = 'Move right';
 $string['movesection'] = 'Move section {$a}';
 $string['moveselectedcategoriesto'] = 'Move selected categories to';
