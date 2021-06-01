@@ -12072,42 +12072,42 @@ input[disabled] {
     border: 0; }
     #page-header .card .card-body {
       padding: 0; }
-  .nav-tabs,
+  .nav-tabs:not(.more-nav),
   .nav-pills {
     margin: 0;
     border: 0;
     padding: 0.125rem;
     background-color: #e9ecef; }
-    .nav-tabs .nav-item,
+    .nav-tabs:not(.more-nav) .nav-item,
     .nav-pills .nav-item {
       flex: 1 1 auto;
       text-align: center; }
-    .nav-tabs .nav-link,
+    .nav-tabs:not(.more-nav) .nav-link,
     .nav-pills .nav-link {
       background: #fff;
       border: 0;
       margin: 0.125rem; }
-      .nav-tabs .nav-link.active,
+      .nav-tabs:not(.more-nav) .nav-link.active,
       .nav-pills .nav-link.active {
         color: #6e7377;
         border-color: #6e7377;
         border-color: #6e7377; }
-        .nav-tabs .nav-link.active:hover,
+        .nav-tabs:not(.more-nav) .nav-link.active:hover,
         .nav-pills .nav-link.active:hover {
           color: #fff;
           background-color: #6e7377;
           border-color: #6e7377; }
-        .nav-tabs .nav-link.active:focus, .nav-tabs .nav-link.active.focus,
+        .nav-tabs:not(.more-nav) .nav-link.active:focus, .nav-tabs:not(.more-nav) .nav-link.active.focus,
         .nav-pills .nav-link.active:focus,
         .nav-pills .nav-link.active.focus {
           box-shadow: 0 0 0 0.2rem rgba(110, 115, 119, 0.5); }
-        .nav-tabs .nav-link.active.disabled, .nav-tabs .nav-link.active:disabled,
+        .nav-tabs:not(.more-nav) .nav-link.active.disabled, .nav-tabs:not(.more-nav) .nav-link.active:disabled,
         .nav-pills .nav-link.active.disabled,
         .nav-pills .nav-link.active:disabled {
           color: #6e7377;
           background-color: transparent; }
-        .nav-tabs .nav-link.active:not(:disabled):not(.disabled):active, .nav-tabs .nav-link.active:not(:disabled):not(.disabled).active,
-        .show > .nav-tabs .nav-link.active.dropdown-toggle,
+        .nav-tabs:not(.more-nav) .nav-link.active:not(:disabled):not(.disabled):active, .nav-tabs:not(.more-nav) .nav-link.active:not(:disabled):not(.disabled).active,
+        .show > .nav-tabs:not(.more-nav) .nav-link.active.dropdown-toggle,
         .nav-pills .nav-link.active:not(:disabled):not(.disabled):active,
         .nav-pills .nav-link.active:not(:disabled):not(.disabled).active,
         .show >
@@ -12115,8 +12115,8 @@ input[disabled] {
           color: #fff;
           background-color: #6e7377;
           border-color: #6e7377; }
-          .nav-tabs .nav-link.active:not(:disabled):not(.disabled):active:focus, .nav-tabs .nav-link.active:not(:disabled):not(.disabled).active:focus,
-          .show > .nav-tabs .nav-link.active.dropdown-toggle:focus,
+          .nav-tabs:not(.more-nav) .nav-link.active:not(:disabled):not(.disabled):active:focus, .nav-tabs:not(.more-nav) .nav-link.active:not(:disabled):not(.disabled).active:focus,
+          .show > .nav-tabs:not(.more-nav) .nav-link.active.dropdown-toggle:focus,
           .nav-pills .nav-link.active:not(:disabled):not(.disabled):active:focus,
           .nav-pills .nav-link.active:not(:disabled):not(.disabled).active:focus,
           .show >
