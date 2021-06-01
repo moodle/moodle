@@ -389,6 +389,11 @@ class moodle_page {
     protected $_regionmainsettingsinheader = false;
 
     /**
+     * @var bool Should the secondary menu be rendered.
+     */
+    protected $_hassecondarynavigation = true;
+
+    /**
      * Force the settings menu to be displayed on this page. This will only force the
      * settings menu on an activity / resource page that is being displayed on a theme that
      * uses a settings menu.
@@ -2151,5 +2156,23 @@ class moodle_page {
      */
     public function include_region_main_settings_in_header_actions() : bool {
         return $this->_regionmainsettingsinheader;
+    }
+
+    /**
+     * Set the flag to indicate if the secondary navigation should be rendered.
+     *
+     * @param bool $value If the secondary navigation should be rendered.
+     */
+    public function has_secondary_navigation_setter(bool $value) : void {
+        $this->_hassecondarynavigation = $value;
+    }
+
+    /**
+     * Check if the secondary navigation should be rendered.
+     *
+     * @return bool
+     */
+    public function has_secondary_navigation() : bool {
+        return $this->_hassecondarynavigation;
     }
 }

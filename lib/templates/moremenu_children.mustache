@@ -49,8 +49,14 @@
 {{/haschildren}}
 {{^haschildren}}
     <li class="nav-item">
+        {{#tab}}
+            <a class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{tab}}" role="tab" data-toggle="tab" aria-selected="false" tabindex="-1">{{{text}}}
+            </a>
+        {{/tab}}
+        {{^tab}}
         <a class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{{url}}}{{{action}}}" role="menuitem" {{#isactive}}aria-current="true"{{/isactive}}>
             {{{text}}}
         </a>
+        {{/tab}}
     </li>
 {{/haschildren}}

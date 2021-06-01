@@ -43,6 +43,13 @@ $buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_action
 // If the settings menu will be included in the header then don't add it here.
 $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
 
+if (defined('BEHAT_SITE_RUNNING')) {
+    $secondarynavigation = false;
+} else {
+    $buildsecondarynavigation = $PAGE->has_secondary_navigation();
+    $secondarynavigation = $buildsecondarynavigation ? $OUTPUT->more_menu($PAGE->secondarynav, 'nav-tabs') : false;
+}
+
 $primary = new core\navigation\output\primary($PAGE);
 $renderer = $PAGE->get_renderer('core');
 $primarymenu = $primary->export_for_template($renderer);
@@ -57,7 +64,7 @@ $templatecontext = [
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'primarymoremenu' => $OUTPUT->more_menu(array_merge($primarymenu['primary'], $primarymenu['custom']), 'navbar-nav'),
-    'secondarymoremenu' => $OUTPUT->more_menu($PAGE->secondarynav, 'nav-tabs'),
+    'secondarymoremenu' => $secondarynavigation,
 ];
 $nav = $PAGE->flatnav;
 $templatecontext['flatnavigation'] = $nav;
