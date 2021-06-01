@@ -9,6 +9,9 @@
         display: flex;
         align-items: center;
     }
+    .nav-tabs {
+        margin-left: 0;
+    }
     // Styling for dropdown menus inside the MoreButton.
     .dropdownmoremenu > .dropdown-menu {
         & > .dropdown-item {

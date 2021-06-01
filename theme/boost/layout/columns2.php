@@ -57,6 +57,7 @@ $templatecontext = [
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'primarymoremenu' => $OUTPUT->more_menu(array_merge($primarymenu['primary'], $primarymenu['custom']), 'navbar-nav'),
+    'secondarymoremenu' => $OUTPUT->more_menu($PAGE->secondarynav, 'nav-tabs'),
 ];
 $nav = $PAGE->flatnav;
 $templatecontext['flatnavigation'] = $nav;

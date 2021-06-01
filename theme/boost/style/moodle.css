@@ -20047,6 +20047,8 @@ div.editor_atto_toolbar button .icon {
     height: 40px;
     display: flex;
     align-items: center; }
+  .moremenu .nav-tabs {
+    margin-left: 0; }
   .moremenu .dropdownmoremenu > .dropdown-menu > .dropdown-item {
     padding: 0; }
   .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu {
@@ -20067,6 +20069,11 @@ div.editor_atto_toolbar button .icon {
   height: 50px; }
   .navbar.fixed-top .moremenu .nav-link {
     height: 50px; }
+
+.secondarynavigation {
+  z-index: 1; }
+  .secondarynavigation .moremenu {
+    margin-bottom: -1px; }
 
 body {
   -webkit-font-smoothing: antialiased;

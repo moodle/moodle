@@ -46,6 +46,11 @@
 }}
 <nav class="moremenu">
     <ul id="moremenu-{{ uniqid }}" class="nav {{navbarstyle}}">
+        {{#nodecollection}}
+            {{#children}}
+                {{> core/moremenu_children}}
+            {{/children}}
+        {{/nodecollection}}
         {{#nodearray}}
             {{> core/moremenu_children}}
         {{/nodearray}}

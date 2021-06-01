@@ -3816,10 +3816,20 @@ EOD;
      * @return string
      */
     public function more_menu($content, $navbarstyle) {
-        return $this->render_from_template('core/moremenu', (object) [
-            'nodearray' => $content,
-            'navbarstyle' => $navbarstyle
-        ]);
+        if (is_object($content)) {
+            if (!isset($content->children) || count($content->children) == 0) {
+                return false;
+            }
+            return $this->render_from_template('core/moremenu', (object) [
+                'nodecollection' => $content,
+                'navbarstyle' => $navbarstyle
+            ]);
+        } else {
+            return $this->render_from_template('core/moremenu', (object) [
+                'nodearray' => $content,
+                'navbarstyle' => $navbarstyle
+            ]);
+        }
     }
 
     /**

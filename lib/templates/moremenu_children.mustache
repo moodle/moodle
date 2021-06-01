@@ -49,7 +49,7 @@
 {{/haschildren}}
 {{^haschildren}}
     <li class="nav-item">
-        <a class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{{url}}}" role="menuitem" {{#isactive}}aria-current="true"{{/isactive}}>
+        <a class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{{url}}}{{{action}}}" role="menuitem" {{#isactive}}aria-current="true"{{/isactive}}>
             {{{text}}}
         </a>
     </li>
