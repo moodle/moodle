@@ -17,7 +17,7 @@
 /**
  * Library functions used by question/preview.php.
  *
- * @package    moodlecore
+ * @package    core_question
  * @subpackage questionengine
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,9 +34,15 @@ require_once($CFG->libdir . '/formslib.php');
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 4.0
+ * @see qbank_previewquestion\form\preview_options_form
+ * @todo MDL-71679 class renaming
  */
 class preview_options_form extends moodleform {
+
     public function definition() {
+        debugging('Class preview_options_form has been deprecated and moved to qbank_previewquestion plugin,
+         please use qbank_previewquestion\form\preview_options_form instead.', DEBUG_DEVELOPER);
         $mform = $this->_form;
 
         $hiddenofvisible = array(
@@ -99,11 +105,15 @@ class preview_options_form extends moodleform {
 
 
 /**
- * Displays question preview options as default and set the options
+ * Displays question preview options as default and set the options.
+ *
  * Setting default, getting and setting user preferences in question preview options.
  *
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 4.0
+ * @see qbank_previewquestion\output\question_preview_options
+ * @todo MDL-71679 class renaming
  */
 class question_preview_options extends question_display_options {
     /** @var string the behaviour to use for this preview. */
@@ -120,8 +130,11 @@ class question_preview_options extends question_display_options {
 
     /**
      * Constructor.
+     * @param stdClass $question
      */
     public function __construct($question) {
+        debugging('Class question_preview_options has been deprecated and moved to qbank_previewquestion plugin,
+         please use qbank_previewquestion\question_preview_options instead.', DEBUG_DEVELOPER);
         $this->behaviour = 'deferredfeedback';
         $this->maxmark = $question->defaultmark;
         $this->variant = null;
@@ -228,42 +241,18 @@ class question_preview_options extends question_display_options {
  * @param int $slot the relevant slot within the usage.
  * @param array $args the remaining bits of the file path.
  * @param bool $forcedownload whether the user must be forced to download the file.
- * @param array $options additional options affecting the file serving
- * @return bool false if file not found, does not return if found - justsend the file
+ * @param array $fileoptions
+ * @return void false if file not found, does not return if found - justsend the file
+ * @deprecated since Moodle 4.0
+ * @see qbank_previewquestion\helper::question_preview_question_pluginfile()
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_preview_question_pluginfile($course, $context, $component,
         $filearea, $qubaid, $slot, $args, $forcedownload, $fileoptions) {
-    global $USER, $DB, $CFG;
-
-    list($context, $course, $cm) = get_context_info_array($context->id);
-    require_login($course, false, $cm);
-
-    $quba = question_engine::load_questions_usage_by_activity($qubaid);
-
-    if (!question_has_capability_on($quba->get_question($slot, false), 'use')) {
-        send_file_not_found();
-    }
-
-    $options = new question_display_options();
-    $options->feedback = question_display_options::VISIBLE;
-    $options->numpartscorrect = question_display_options::VISIBLE;
-    $options->generalfeedback = question_display_options::VISIBLE;
-    $options->rightanswer = question_display_options::VISIBLE;
-    $options->manualcomment = question_display_options::VISIBLE;
-    $options->history = question_display_options::VISIBLE;
-    if (!$quba->check_file_access($slot, $options, $component,
-            $filearea, $args, $forcedownload)) {
-        send_file_not_found();
-    }
-
-    $fs = get_file_storage();
-    $relativepath = implode('/', $args);
-    $fullpath = "/{$context->id}/{$component}/{$filearea}/{$relativepath}";
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-        send_file_not_found();
-    }
-
-    send_stored_file($file, 0, 0, $forcedownload, $fileoptions);
+    debugging('Function question_preview_question_pluginfile() has been deprecated and moved to qbank_previewquestion plugin,
+     please use qbank_previewquestion\helper::question_preview_question_pluginfile() instead.', DEBUG_DEVELOPER);
+    qbank_previewquestion\helper::question_preview_question_pluginfile($course, $context,
+            $component, $filearea, $qubaid, $slot, $args, $forcedownload, $fileoptions);
 }
 
 /**
@@ -271,20 +260,16 @@ function question_preview_question_pluginfile($course, $context, $component,
  * @param int $questionid the question being previewed.
  * @param int $qubaid the id of the question usage for this preview.
  * @param question_preview_options $options the options in use.
+ * @param context $context
+ * @deprecated since Moodle 4.0
+ * @see qbank_previewquestion\helper::question_preview_action_url()
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_preview_action_url($questionid, $qubaid,
         question_preview_options $options, $context) {
-    $params = array(
-        'id' => $questionid,
-        'previewid' => $qubaid,
-    );
-    if ($context->contextlevel == CONTEXT_MODULE) {
-        $params['cmid'] = $context->instanceid;
-    } else if ($context->contextlevel == CONTEXT_COURSE) {
-        $params['courseid'] = $context->instanceid;
-    }
-    $params = array_merge($params, $options->get_url_params());
-    return new moodle_url('/question/preview.php', $params);
+    debugging('Function question_preview_action_url() has been deprecated and moved to qbank_previewquestion plugin,
+     please use qbank_previewquestion\helper::question_preview_action_url() instead.', DEBUG_DEVELOPER);
+    qbank_previewquestion\helper::question_preview_action_url($questionid, $qubaid, $options, $context);
 }
 
 /**
@@ -292,20 +277,14 @@ function question_preview_action_url($questionid, $qubaid,
  * @param int $questionid the question being previewed.
  * @param context $context the current moodle context.
  * @param int $previewid optional previewid to sign post saved previewed answers.
+ * @deprecated since Moodle 4.0
+ * @see qbank_previewquestion\helper::question_preview_form_url()
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_preview_form_url($questionid, $context, $previewid = null) {
-    $params = array(
-        'id' => $questionid,
-    );
-    if ($context->contextlevel == CONTEXT_MODULE) {
-        $params['cmid'] = $context->instanceid;
-    } else if ($context->contextlevel == CONTEXT_COURSE) {
-        $params['courseid'] = $context->instanceid;
-    }
-    if ($previewid) {
-        $params['previewid'] = $previewid;
-    }
-    return new moodle_url('/question/preview.php', $params);
+    debugging('Function question_preview_form_url() has been deprecated and moved to qbank_previewquestion plugin,
+     please use qbank_previewquestion\helper::question_preview_form_url() instead.', DEBUG_DEVELOPER);
+    qbank_previewquestion\helper::question_preview_form_url($questionid, $context, $previewid);
 }
 
 /**
@@ -314,15 +293,12 @@ function question_preview_form_url($questionid, $context, $previewid = null) {
  * @param int $questionid
  * @param object $displayoptions
  * @param object $context
+ * @deprecated since Moodle 4.0
+ * @see qbank_previewquestion\helper::restart_preview()
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function restart_preview($previewid, $questionid, $displayoptions, $context) {
-    global $DB;
-
-    if ($previewid) {
-        $transaction = $DB->start_delegated_transaction();
-        question_engine::delete_questions_usage_by_activity($previewid);
-        $transaction->allow_commit();
-    }
-    redirect(question_preview_url($questionid, $displayoptions->behaviour,
-            $displayoptions->maxmark, $displayoptions, $displayoptions->variant, $context));
+    debugging('Function restart_preview() has been deprecated and moved to qbank_previewquestion plugin,
+     please use qbank_previewquestion\helper::restart_preview() instead.', DEBUG_DEVELOPER);
+    qbank_previewquestion\helper::restart_preview($previewid, $questionid, $displayoptions, $context);
 }

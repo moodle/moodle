@@ -23,8 +23,11 @@ YUI.add('moodle-question-preview', function (Y, NAME) {
 /**
  * JavaScript required by the question preview pop-up.
  *
+ * @deprecated since Moodle 4.0
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  * @module moodle-question-preview
  */
+
 
 M.question = M.question || {};
 M.question.preview = M.question.preview || {};

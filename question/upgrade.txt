@@ -6,6 +6,11 @@ This files describes API changes for code that uses the question API.
    are divided in two different parts, base classes and feature classes. All the base
    classes are moved classes/local/bank and all the feature classes will be moved to
    the plugin for that feature.
+2) The following methods are deprecated in previewlib and moved to the previewquestion plugin:
+   restart_preview(), question_preview_form_url(), question_preview_action_url(),
+   question_preview_question_pluginfile()
+   The following classes are deprecated in previewlib and moves the previewquestion plugin:
+   question_preview_options, preview_options_form.
 
 === 3.9 ==
 

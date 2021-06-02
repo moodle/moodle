@@ -28,42 +28,35 @@ Feature: Preview a drag-drop into text question
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
     When I choose "Preview" action for "Drag to text" in the question bank
-    And I switch to "questionpreview" window
-    # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
-    # Keep window large else drag will scroll the window to find element.
-    And I change window size to "medium"
-    And I wait "2" seconds
     And I drag "quick" to space "1" in the drag and drop into text question
     And I drag "fox" to space "2" in the drag and drop into text question
     And I drag "assiduous" to space "3" in the drag and drop into text question
     And I press "Submit and finish"
     Then the state of "The" question is shown as "Partially correct"
     And I should see "Mark 0.67 out of 1.00"
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript
   Scenario: Preview a question using the keyboard & submit incomplete.
     When I choose "Preview" action for "Drag to text" in the question bank
-    And I switch to "questionpreview" window
     And I type " " into space "1" in the drag and drop onto image question
     And I type "   " into space "2" in the drag and drop onto image question
     And I type " " into space "3" in the drag and drop onto image question
     And I press "Save"
     Then the state of "The" question is shown as "Incomplete answer"
     And I should see "Please put an answer in each box."
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript
   Scenario: Preview a question using the keyboard.
     When I choose "Preview" action for "Drag to text" in the question bank
-    And I switch to "questionpreview" window
     And I type "  " into space "1" in the drag and drop onto image question
     And I type "  " into space "2" in the drag and drop onto image question
     And I type "  " into space "3" in the drag and drop onto image question
     And I press "Submit and finish"
     Then the state of "The" question is shown as "Incorrect"
     And I should see "Mark 0.00 out of 1.00"
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript
   Scenario: Preview a question that uses strange group numbers using the keyboard.
@@ -72,24 +65,19 @@ Feature: Preview a drag-drop into text question
       | Test questions   | ddwtos | Funny groups | oddgroups |
     And I reload the page
     When I choose "Preview" action for "Funny groups" in the question bank
-    And I switch to "questionpreview" window
     And I type " " into space "1" in the drag and drop onto image question
     And I type " " into space "2" in the drag and drop onto image question
     And I type " " into space "3" in the drag and drop onto image question
     And I press "Submit and finish"
     Then the state of "The" question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript
   Scenario: Preview a infinite question.
     When I choose "Preview" action for "Drag to text infinite" in the question bank
-    And I switch to "questionpreview" window
-    # Increase window size.
-    # Keep window large else drag will scroll the window to find element.
-    And I change window size to "medium"
     And I press "Fill in correct responses"
     Then I should see "Option1" in the home area of drag and drop into text question
     And I should see "Option2" in the home area of drag and drop into text question
     And I should see "Option3" in the home area of drag and drop into text question
-    And I switch to the main window
+    And I press "Close preview"

@@ -69,6 +69,11 @@ information provided here is intended especially for developers.
   rendered. The default icon for "select" types has also changed to a dropdown caret ("t/expanded").
 * The function message_send() in messagelib.php now returns false if there is an error sending the message to the
   message processor (MDL-70046).
+* Following methods are now deprecated in questionlib and moved to the new qbank_previewquestion plugin:
+  - question_preview_url() is moved to qbank_previewquestion\helper::question_preview_url()
+  - question_preview_popup_params() is moved to \qbank_previewquestion\helper::question_preview_popup_params()
+  Calling these functions in the question will point to the plugin, but the deprecation message will be activated in MDL-72004.
+  The deprecated codes are removed from the questionlib for those two methods.
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.
