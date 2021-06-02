@@ -130,6 +130,7 @@ information provided here is intended especially for developers.
   in the returned array without escaped characters.
 * The \core\hub\site_registration_form::add_select_with_email() method has been deprecated in favour of
   \core\hub\site_registration_form::add_checkbox_with_email().
+* A new index has been added on mdl_user_preferences.name. This upgrade step might take some time on big sites.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:

@@ -2657,5 +2657,20 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v3.11.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2021051700.03) {
+
+        // Define index name (not unique) to be added to user_preferences.
+        $table = new xmldb_table('user_preferences');
+        $index = new xmldb_index('name', XMLDB_INDEX_NOTUNIQUE, ['name']);
+
+        // Conditionally launch add index name.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021051700.03);
+    }
+
     return true;
 }
