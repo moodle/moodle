@@ -517,7 +517,6 @@ $string['deletingolddata'] = 'Deleting old data';
 $string['department'] = 'Department';
 $string['desc'] = 'Descending';
 $string['description'] = 'Description';
-$string['descriptiona'] = 'Description: {$a}';
 $string['deselectall'] = 'Deselect all';
 $string['deselectnos'] = 'Deselect all \'No\'';
 $string['details'] = 'Details';
@@ -2324,3 +2323,6 @@ $string['icqnumber'] = 'ICQ number';
 $string['msnid'] = 'MSN ID';
 $string['coursepreferences'] = 'Course preferences';
 $string['registrationno'] = 'No, I do not wish to receive any emails';
+
+// Deprecated since Moodle 4.0.
+$string['descriptiona'] = 'Description: {$a}';
