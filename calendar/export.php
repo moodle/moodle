@@ -138,7 +138,9 @@ $formdata = array(
     // If today it's weekend but tomorrow it isn't, do NOT give the "this week" option.
     'allowthisweek' => !(($weekend & (1 << $now['wday'])) && !($weekend & (1 << (($now['wday'] + 1) % $numberofdaysinweek))))
 );
-$exportform = new core_calendar_export_form(null, $formdata);
+
+// Disable submit protection so that the submit buttons continue working after being pressed.
+$exportform = new core_calendar_export_form(null, $formdata, 'POST', '', ['data-double-submit-protection' => 'off']);
 $calendarurl = '';
 if ($data = $exportform->get_data()) {
     $params = array();
