@@ -4750,10 +4750,13 @@ class restore_create_categories_and_questions extends restore_structure_step {
         // Apply for 'qtype' plugins optional paths at question level
         $this->add_plugin_structure('qtype', $question);
 
+        // Apply for 'qbank' plugins optional paths at question level.
+        $this->add_plugin_structure('qbank', $question);
+
         // Apply for 'local' plugins optional paths at question level
         $this->add_plugin_structure('local', $question);
 
-        return array($category, $question, $hint, $tag);
+        return [$category, $question, $hint, $tag];
     }
 
     protected function process_question_category($data) {

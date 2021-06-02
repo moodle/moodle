@@ -27,7 +27,7 @@ use core\plugininfo\qbank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \qbank_previewquestion\helper
  */
-class helper_test extends \advanced_testcase {
+class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
      * @var bool|\context|\context_course $context
@@ -148,10 +148,13 @@ class helper_test extends \advanced_testcase {
      * @covers ::get_preview_extra_elements
      */
     public function test_get_preview_extra_elements() {
+        global $PAGE;
+        $PAGE->set_url('/');
+
         $question = \question_bank::load_question($this->questiondata->id);
         list($comment, $extraelements) = helper::get_preview_extra_elements($question, $this->context->instanceid);
         if (qbank::is_plugin_enabled('qbank_comment')) {
-            $this->assertEquals("<div class='comment-area'>", $comment);
+            $this->assertStringContainsString("comment-area", $comment);
         } else {
             $this->assertEquals('', $comment);
         }
