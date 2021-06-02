@@ -392,9 +392,13 @@ class course_enrolment_manager {
         ['selects' => $fieldselects, 'joins' => $fieldjoins, 'params' => $params, 'mappings' => $mappings] =
                 (array)$userfields->get_sql('u', true, '', '', false);
 
-        // Searchable fields are only the identity and name ones (not userpic).
-        $searchable = array_fill_keys($userfields->get_required_fields(
-                [fields::PURPOSE_IDENTITY, fields::PURPOSE_NAME]), true);
+        // Searchable fields are only the identity and name ones (not userpic, and without exclusions).
+        $searchablefields = fields::for_identity($this->context)->with_name();
+        $searchable = array_fill_keys($searchablefields->get_required_fields(), true);
+        if (array_key_exists('username', $searchable)) {
+            // Add the username into the mappings list from the other query, because it was excluded.
+            $mappings['username'] = 'u.username';
+        }
 
         // Add some additional sensible conditions
         $tests = array("u.id <> :guestid", 'u.deleted = 0', 'u.confirmed = 1');
