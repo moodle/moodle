@@ -909,6 +909,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid-name" UNIQUE="true" FIELDS="userid, name"/>
+        <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="user_lastaccess" COMMENT="To keep track of course page access times, used in online participants block, and participants list">
