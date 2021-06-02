@@ -59,10 +59,14 @@ if (!$task) {
 }
 
 // Start output.
-$PAGE->set_url(new moodle_url('/admin/tool/task/schedule_task.php'));
+$PAGE->set_url(new moodle_url('/admin/tool/task/schedule_task.php', ['task' => $taskname]));
 $PAGE->set_context($context);
-$PAGE->navbar->add(get_string('scheduledtasks', 'tool_task'), new moodle_url('/admin/tool/task/scheduledtasks.php'));
+$PAGE->set_heading($SITE->fullname);
+$PAGE->set_title($task->get_name());
+
+navigation_node::override_active_url(new moodle_url('/admin/tool/task/scheduledtasks.php'));
 $PAGE->navbar->add(s($task->get_name()));
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading($task->get_name());
 
