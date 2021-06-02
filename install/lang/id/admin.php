@@ -31,13 +31,11 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 't';
 $string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'GALAT, nilai yang salah "{$a->value}" untuk opsi "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Nilai masukan salah, silakan coba lagi';
+$string['cliincorrectvalueerror'] = 'Galat, nilai salah "{$a->value}" untuk opsi "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Nilai input salah, coba lagi';
 $string['clitypevalue'] = 'tipe nilai';
 $string['clitypevaluedefault'] = 'tipe nilai, tekan ENTER untuk menggunakan nilai bawaan ({$a})';
-$string['cliunknowoption'] = 'Opsi tidak dikenali :
- {$a}
-Silakan gunakan opsi --help';
+$string['cliunknowoption'] = 'Opsi tidak dikenali : {$a} Silakan gunakan opsi --help';
 $string['cliyesnoprompt'] = 'ketik y (Ya) atau t (Tidak)';
 $string['environmentrequireinstall'] = 'harus dipasang dan diaktifkan';
-$string['upgradekeyset'] = 'Tingkatkan kunci (biarkan kosong untuk tidak mengaturnya)';
+$string['upgradekeyset'] = 'Kunci peningkatan (biarkan kosong untuk tidak mengaturnya)';
