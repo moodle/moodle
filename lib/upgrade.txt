@@ -114,8 +114,19 @@ completely removed from Moodle core too.
   Refer to upgrade.php to see transitioning from similar plugin criteria to core
   Refer to completion/upgrade.txt for additional information.
 * The method enable_plugin() has been added to the core_plugininfo\base class and it has been implemented by all the plugininfo
-  classes extending it. When possible, the enable_plugin() method will store these changes into the config_log table, to let admins
-  check when and who has enabled/disabled plugins.
+classes extending it. When possible, the enable_plugin() method will store these changes into the config_log table, to let admins
+check when and who has enabled/disabled plugins.
+* New tables are included as a part of https://docs.moodle.org/dev/Question_bank_improvements_for_Moodle_4.0
+ - question_bank_entries -> Each question bank entry. This table has one row for each question that appears in the question bank.
+ - question_versions -> Versions of the question. Store the data that defines how a particular version of the question works.
+ - question_references -> Records where a specific question is used.
+ - question_set_references -> Records where groups of questions are used (e.g.: Random questions).
+ Also, some tables have been updated or removed:
+ - question (fields migrated to the new tables)
+ - quiz_slot (fields removed)
+ - quiz_slot_tags (table removed)
+ During the upgrade, data from the question table will be copied to the new tables. After this process,
+ the data copied will be removed from question table quiz_slot and finally the the quiz_slot_tags table will be removed.
 * Final deprecation: The following functions along with associated tests have been removed:
   - core_grades_external::get_grades
   - core_grades_external::get_grade_item
