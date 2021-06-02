@@ -1,10 +1,3 @@
-                                 .-..-.
-   _____                         | || |
-  /____/-.---_  .---.  .---.  .-.| || | .---.
-  | |  _   _  |/  _  \/  _  \/  _  || |/  __ \
-  * | | | | | || |_| || |_| || |_| || || |___/
-    |_| |_| |_|\_____/\_____/\_____||_|\_____)
-
 # Moodle - the world's open source learning platform
 
 [Moodle](https://moodle.org) is a learning platform designed to provide
@@ -29,8 +22,8 @@ See <https://docs.moodle.org> for details of Moodle's many features.
 - Backend - PHP, SQL Databases.
 
 ## Licence
- **GNU General Public License** 
- [Click to see](<https://docs.moodle.org/dev/License).
+ **GNU General Public License** |
+ [Click to see](https://docs.moodle.org/dev/License).
 
 ## Download
 [Click to Download](https://download.moodle.org)
