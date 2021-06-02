@@ -24,11 +24,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->dirroot . '/course/lib.php');
-require_once($CFG->dirroot . '/course/tests/fixtures/format_theunittest.php');
+class courseformat_test extends advanced_testcase {
 
-class core_course_courseformat_testcase extends advanced_testcase {
+    /**
+     * Setup to ensure that fixtures are loaded.
+     */
+    public static function setupBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+        require_once($CFG->dirroot . '/course/tests/fixtures/format_theunittest.php');
+        require_once($CFG->dirroot . '/course/tests/fixtures/format_theunittest_output_course_format_state.php');
+        require_once($CFG->dirroot . '/course/tests/fixtures/format_theunittest_output_course_format_invalidoutput.php');
+    }
+
     public function test_available_hook() {
         global $DB;
         $this->resetAfterTest();
@@ -199,6 +207,53 @@ class core_course_courseformat_testcase extends advanced_testcase {
         $CFG->linkcoursesections = 1;
         $this->assertNotEmpty($format->get_view_url(1, ['navigation' => 1]));
         $this->assertNotEmpty($format->get_view_url(0, ['navigation' => 1]));
+    }
+
+    /**
+     * Test for get_output_classname method.
+     *
+     * @dataProvider get_output_classname_provider
+     * @param string $find the class to find
+     * @param string $result the expected result classname
+     * @param bool $exception if the method will raise an exception
+     */
+    public function test_get_output_classname($find, $result, $exception) {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['format' => 'theunittest']);
+        $courseformat = course_get_format($course);
+
+        if ($exception) {
+            $this->expectException(coding_exception::class);
+        }
+
+        $courseclass = $courseformat->get_output_classname($find);
+        $this->assertEquals($result, $courseclass);
+    }
+
+    /**
+     * Data provider for test_get_output_classname.
+     *
+     * @return array the testing scenarios
+     */
+    public function get_output_classname_provider(): array {
+        return [
+            'overridden class' => [
+                'find' => 'course_format\\state',
+                'result' => 'format_theunittest\\output\\course_format\\state',
+                'exception' => false,
+            ],
+            'original class' => [
+                'find' => 'section_format\\state',
+                'result' => 'core_course\\output\\section_format\\state',
+                'exception' => false,
+            ],
+            'invalid overridden class' => [
+                'find' => 'course_format\\invalidoutput',
+                'result' => '',
+                'exception' => true,
+            ],
+        ];
     }
 }
 
