@@ -5,9 +5,9 @@
   * | | | | | || |_| || |_| || |_| || || |___/
     |_| |_| |_|\_____/\_____/\_____||_|\_____)
 
-Moodle - the world's open source learning platform
+# Moodle - the world's open source learning platform
 
-Moodle <https://moodle.org> is a learning platform designed to provide
+[Moodle](https://moodle.org) is a learning platform designed to provide
 educators, administrators and learners with a single robust, secure and
 integrated system to create personalised learning environments.
 
@@ -19,10 +19,18 @@ you.
 Moodle is widely used around the world by universities, schools, companies and
 all manner of organisations and individuals.
 
-Moodle is provided freely as open source software, under the GNU General Public
-License <https://docs.moodle.org/dev/License>.
-
-Moodle is written in PHP and JavaScript and uses an SQL database for storing
-the data.
+Moodle is provided freely as open source software, under the **GNU General Public
+License** <https://docs.moodle.org/dev/License>.
 
 See <https://docs.moodle.org> for details of Moodle's many features.
+
+## Tech Stacks
+- Frontend - JavaScript
+- Backend - PHP, SQL Databases.
+
+## Licence
+ **GNU General Public License** 
+ [Click to see](<https://docs.moodle.org/dev/License).
+
+## Download
+[Click to Download](https://download.moodle.org)
