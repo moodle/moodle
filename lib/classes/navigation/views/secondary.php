@@ -32,6 +32,10 @@ use navigation_node;
 class secondary extends view {
     /** @var string $headertitle The header for this particular menu*/
     public $headertitle;
+
+    /** @var int The maximum limit of navigation nodes displayed in the secondary navigation */
+    const MAX_DISPLAYED_NAV_NODES = 6;
+
     /**
      * Defines the default structure for the secondary nav in a course context.
      *
@@ -103,6 +107,33 @@ class secondary extends view {
     }
 
     /**
+     * Define the keys of the course secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_course_more_menu_nodes(): array {
+        return [];
+    }
+
+    /**
+     * Define the keys of the module secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_module_more_menu_nodes(): array {
+        return [];
+    }
+
+    /**
+     * Define the keys of the admin secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_admin_more_menu_nodes(): array {
+        return [];
+    }
+
+    /**
      * Initialise the view based navigation based on the current context.
      *
      * As part of the initial restructure, the secondary nav is only considered for the following pages:
@@ -119,24 +150,29 @@ class secondary extends view {
         $this->id = 'secondary_navigation';
         $context = $this->context;
         $this->headertitle = get_string('menu');
+        $defaultmoremenunodes = [];
 
         switch ($context->contextlevel) {
             case CONTEXT_COURSE:
                 if ($this->page->course->id != $SITE->id) {
                     $this->headertitle = get_string('courseheader');
                     $this->load_course_navigation();
+                    $defaultmoremenunodes = $this->get_default_course_more_menu_nodes();
                 }
                 break;
             case CONTEXT_MODULE:
                 $this->headertitle = get_string('activityheader');
                 $this->load_module_navigation();
+                $defaultmoremenunodes = $this->get_default_module_more_menu_nodes();
                 break;
             case CONTEXT_SYSTEM:
                 $this->headertitle = get_string('homeheader');
                 $this->load_admin_navigation();
+                $defaultmoremenunodes = $this->get_default_admin_more_menu_nodes();
                 break;
         }
 
+        $this->force_nodes_into_more_menu($defaultmoremenunodes);
         // Search and set the active node.
         $this->scan_for_active_node($this);
         $this->initialised = true;
@@ -268,6 +304,32 @@ class secondary extends view {
             if (!in_array($key, $flattenednodes) && $leftovernode = $completenode->get($key)) {
                 $this->add_node($leftovernode);
             }
+        }
+    }
+
+    /**
+     * Force certain secondary navigation nodes to be displayed in the "more" menu.
+     *
+     * @param array $defaultmoremenunodes Array with navigation node keys of the pre-defined nodes that
+     *                                    should be added into the "more" menu by default
+     */
+    protected function force_nodes_into_more_menu(array $defaultmoremenunodes = []) {
+        // Counter of the navigation nodes that are initially displayed in the secondary nav
+        // (excludes the nodes from the "more" menu).
+        $displayednodescount = 0;
+        foreach ($this->children as $child) {
+            // Skip if the navigation node has been already forced into the "more" menu.
+            if ($child->forceintomoremenu) {
+                continue;
+            }
+            // If the navigation node is in the pre-defined list of nodes that should be added by default in the
+            // "more" menu or the maximum limit of displayed navigation nodes has been reached.
+            if (in_array($child->key, $defaultmoremenunodes) || $displayednodescount >= self::MAX_DISPLAYED_NAV_NODES) {
+                // Force the node and its children into the "more" menu.
+                $child->set_force_into_more_menu(true);
+                continue;
+            }
+            $displayednodescount++;
         }
     }
 }
