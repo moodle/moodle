@@ -12135,6 +12135,21 @@ input[disabled] {
 .core_payment_gateways_modal .custom-control-label::after {
   top: 45%; }
 
+.visual-scroll-x {
+  scrollbar-width: thin;
+  scrollbar-color: #0f6fc5 #a8d2f8;
+  -ms-overflow-style: -ms-autohiding-scrollbar; }
+  .visual-scroll-x::-webkit-scrollbar {
+    height: 8px;
+    -webkit-appearance: none;
+    appearance: none; }
+  .visual-scroll-x::-webkit-scrollbar-thumb {
+    background-color: #0f6fc5;
+    border-right: 1px solid #fff; }
+  .visual-scroll-x::-webkit-scrollbar-track {
+    background-color: #a8d2f8;
+    border-right: 1px solid #fff; }
+
 .icon {
   font-size: 16px;
   width: 16px;
