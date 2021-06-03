@@ -96,6 +96,9 @@ class core_question_bank_renderer extends plugin_renderer_base {
      *
      * @param renderable $qbankchooser The chooser.
      * @return string
+     * @deprecated since Moodle 4.0
+     * @see \qbank_editquestion\output\renderer
+     * @todo MDL-72004 deprecate the function and add debugging message.
      */
     public function render_qbank_chooser(renderable $qbankchooser) {
         return $this->render_from_template('core_question/qbank_chooser', $qbankchooser->export_for_template($this));

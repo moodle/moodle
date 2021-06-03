@@ -14,13 +14,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * JavaScript required by the question type chooser pop-up.
+ * JavaScript required by the add question pop-up.
  *
- * @module moodle-question-chooser
+ * @module moodle-qbank_editquestion-chooser
  */
-
-Y.log("The moodle-question-chooser module has been deprecated. " +
-    "Please use moodle-qbank_editquestion-chooser instead.", 'moodle-core-notification', 'warn');
 
 var SELECTORS = {
     CREATENEWQUESTION: 'div.createnewquestion',
@@ -36,7 +33,7 @@ function Chooser() {
 Y.extend(Chooser, M.core.chooserdialogue, {
     initializer: function() {
         Y.all('form').each(function(node) {
-            if (/question\/addquestion\.php/.test(node.getAttribute('action'))) {
+            if (/question\/bank\/editquestion\/addquestion\.php/.test(node.getAttribute('action'))) {
                 node.on('submit', this.displayQuestionChooser, this);
             }
         }, this);

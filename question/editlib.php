@@ -222,7 +222,7 @@ class_alias('core_question\local\bank\action_column_base', 'question_bank_action
  * @deprecated since Moodle 2.7 MDL-40457
  * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\edit_action_column', 'question_bank_edit_action_column', true);
+class_alias('qbank_editquestion\edit_action_column', 'question_bank_edit_action_column', true);
 
 /**
  * Question bank column for the duplicate action icon.
@@ -232,7 +232,7 @@ class_alias('core_question\bank\edit_action_column', 'question_bank_edit_action_
  * @deprecated since Moodle 2.7 MDL-40457
  * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\copy_action_column', 'question_bank_copy_action_column', true);
+class_alias('qbank_editquestion\copy_action_column', 'question_bank_copy_action_column', true);
 
 /**
  * Question bank columns for the preview action icon.
@@ -633,6 +633,9 @@ function require_login_in_context($contextorid = null){
  *      the qtype radio buttons.
  * @param $allowedqtypes optional list of qtypes that are allowed. If given, only
  *      those qtypes will be shown. Example value array('description', 'multichoice').
+ * @deprecated since Moodle 4.0
+ * @see \qbank_editquestion\editquestion_helper::print_choose_qtype_to_add_form()
+ * @todo MDL-72004 deprecate the function and add debugging message.
  */
 function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null, $enablejs = true) {
     global $CFG, $PAGE, $OUTPUT;
@@ -654,8 +657,12 @@ function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = nu
  * @param string $caption the text to display on the button.
  * @param string $tooltip a tooltip to add to the button (optional).
  * @param bool $disabled if true, the button will be disabled.
+ * @deprecated since Moodle 4.0
+ * @see \qbank_editquestion\editquestion_helper::create_new_question_button()
  */
 function create_new_question_button($categoryid, $params, $caption, $tooltip = '', $disabled = false) {
+    debugging('Function create_new_question_button() has been deprecated and moved to bank/editquestion,
+     please use qbank_editquestion\editquestion_helper::create_new_question_button() instead.', DEBUG_DEVELOPER);
     global $CFG, $PAGE, $OUTPUT;
     static $choiceformprinted = false;
     $params['category'] = $categoryid;

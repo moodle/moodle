@@ -17,27 +17,23 @@
 /**
  * The qbank_chooser_item renderable.
  *
- * @package    core_question
+ * @package    qbank_editquestion
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_question\output;
-defined('MOODLE_INTERNAL') || die();
+namespace qbank_editquestion;
 
+use context;
 use lang_string;
 use pix_icon;
-
 
 /**
  * The qbank_chooser_item renderable class.
  *
- * @package    core_question
+ * @package    qbank_editquestion
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated since Moodle 4.0
- * @see \qbank_editquestion\qbank_chooser_item
- * @todo MDL-72004 delete the class and add it to lib/db/renameclasses.php pointing to the plugin
  */
 class qbank_chooser_item extends \core\output\chooser_item {
 
