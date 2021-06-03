@@ -29,13 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clianswerno'] = 't';
-$string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Galat, nilai salah "{$a->value}" untuk opsi "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Nilai input salah, coba lagi';
-$string['clitypevalue'] = 'tipe nilai';
-$string['clitypevaluedefault'] = 'tipe nilai, tekan ENTER untuk menggunakan nilai bawaan ({$a})';
-$string['cliunknowoption'] = 'Opsi tidak dikenali : {$a} Silakan gunakan opsi --help';
-$string['cliyesnoprompt'] = 'ketik y (Ya) atau t (Tidak)';
-$string['environmentrequireinstall'] = 'harus dipasang dan diaktifkan';
-$string['upgradekeyset'] = 'Kunci peningkatan (biarkan kosong untuk tidak mengaturnya)';
+$string['cannotcreatetempdir'] = 'temp directory ကို မတည်ဆောက်နိုင်ပါ၊၊';
+$string['cannotdownloadcomponents'] = 'အစိတ်အပိုင်းများကို ဒေါင်းလုတ်ဆွဲမရပါ။';
+$string['cannotdownloadzipfile'] = 'ZIP ဖိုင်ကိုဒေါင်းလုတ်ဆွဲမရပါ။';
+$string['cannotfindcomponent'] = 'အစိတ်အပိုင်းကို ရှာဖွေမတွေ့ရှိပါ။';
