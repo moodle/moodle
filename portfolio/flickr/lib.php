@@ -51,7 +51,7 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
             // @TODO get max size from flickr people_getUploadStatus
             $filesize = $file->get_filesize();
 
-            if ($file->is_valid_image()) {
+            if ($this->is_valid_image($file)) {
                 $photoid = $this->flickr->upload($file, [
                     'title' => $this->get_export_config('title'),
                     'description' => $this->get_export_config('description'),
@@ -288,5 +288,26 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
      */
     public static function allows_multiple_exports() {
         return false;
+    }
+
+    /**
+     * Verifies the file is a valid optimised image - gif, png and jpeg only.
+     * Currently, Flickr only supports these file types.
+     *
+     * @param stored_file $file
+     * @return bool true if the file is ok
+     */
+    private function is_valid_image(stored_file $file): bool {
+        $mimetype = $file->get_mimetype();
+        if (!file_mimetype_in_typegroup($mimetype, 'optimised_image')) {
+            return false;
+        }
+        if (!$info = $file->get_imageinfo()) {
+            return false;
+        }
+        if ($info['mimetype'] !== $mimetype) {
+            return false;
+        }
+        return true;
     }
 }
