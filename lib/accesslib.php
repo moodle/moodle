@@ -6940,7 +6940,7 @@ class context_course extends context {
                     } else {
                         $name .= format_string(get_course_display_name_for_list($course), true, array('context' => $this));
                     }
-               }
+                }
             }
         }
         return $name;
