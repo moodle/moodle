@@ -256,12 +256,14 @@ echo $quba->render_question($slot, $options, $displaynumber);
 echo html_writer::start_tag('div', array('id' => 'previewcontrols', 'class' => 'controls'));
 echo html_writer::empty_tag('input', $restartdisabled + array('type' => 'submit',
         'name' => 'restart', 'value' => get_string('restart', 'question'), 'class' => 'btn btn-secondary'));
-echo html_writer::empty_tag('input', $finishdisabled  + array('type' => 'submit',
-        'name' => 'save',    'value' => get_string('save', 'question'), 'class' => 'btn btn-secondary'));
+echo html_writer::empty_tag('input', $finishdisabled + array('type' => 'submit',
+        'name' => 'save', 'value' => get_string('save', 'question'), 'class' => 'btn btn-secondary',
+        'id' => 'id_save_question_preview'));
 echo html_writer::empty_tag('input', $filldisabled    + array('type' => 'submit',
         'name' => 'fill',    'value' => get_string('fillincorrect', 'question'), 'class' => 'btn btn-secondary'));
-echo html_writer::empty_tag('input', $finishdisabled  + array('type' => 'submit',
-        'name' => 'finish',  'value' => get_string('submitandfinish', 'question'), 'class' => 'btn btn-secondary'));
+echo html_writer::empty_tag('input', $finishdisabled + array('type' => 'submit',
+        'name' => 'finish', 'value' => get_string('submitandfinish', 'question'), 'class' => 'btn btn-secondary',
+        'id' => 'id_finish_question_preview'));
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('form');
 
@@ -291,5 +293,7 @@ $PAGE->requires->strings_for_js(array(
     'closepreview',
 ), 'question');
 $PAGE->requires->yui_module('moodle-question-preview', 'M.question.preview.init');
+$PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_save_question_preview']);
+$PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_finish_question_preview']);
 echo $OUTPUT->footer();
 
