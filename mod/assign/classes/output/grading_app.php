@@ -91,7 +91,7 @@ class grading_app implements templatable, renderable {
         $export->cmid = $this->assignment->get_course_module()->id;
         $export->contextid = $this->assignment->get_context()->id;
         $export->groupid = $this->groupid;
-        $export->name = $this->assignment->get_context()->get_context_name();
+        $export->name = $this->assignment->get_context()->get_context_name(true, false, false);
         $export->courseid = $this->assignment->get_course()->id;
         $export->participants = array();
         $export->filters = $this->assignment->get_filters();
@@ -137,7 +137,7 @@ class grading_app implements templatable, renderable {
 
         $time = time();
         $export->count = count($export->participants);
-        $export->coursename = $this->assignment->get_course_context()->get_context_name();
+        $export->coursename = $this->assignment->get_course_context()->get_context_name(true, false, false);
         $export->caneditsettings = has_capability('mod/assign:addinstance', $this->assignment->get_context());
         $export->duedate = $this->assignment->get_instance()->duedate;
         $export->duedatestr = userdate($this->assignment->get_instance()->duedate);
