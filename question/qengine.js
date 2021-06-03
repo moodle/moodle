@@ -126,6 +126,9 @@ M.core_question_engine.questionformalreadysubmitted = false;
  * @param button the id of the button in the HTML.
  */
 M.core_question_engine.init_submit_button = function(Y, button) {
+    require(['core_form/submit'], function(submit) {
+        submit.init(button);
+    });
     var totalQuestionsInPage = document.querySelectorAll('div.que').length;
     var buttonel = document.getElementById(button);
     var outeruniqueid = buttonel.closest('.que').id;
