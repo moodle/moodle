@@ -2276,31 +2276,18 @@ function course_overviewfiles_options($course) {
     if (empty($CFG->courseoverviewfileslimit)) {
         return null;
     }
-    $accepted_types = preg_split('/\s*,\s*/', trim($CFG->courseoverviewfilesext), -1, PREG_SPLIT_NO_EMPTY);
-    if (in_array('*', $accepted_types) || empty($accepted_types)) {
-        $accepted_types = '*';
-    } else {
-        // Since config for $CFG->courseoverviewfilesext is a text box, human factor must be considered.
-        // Make sure extensions are prefixed with dot unless they are valid typegroups
-        foreach ($accepted_types as $i => $type) {
-            if (substr($type, 0, 1) !== '.') {
-                require_once($CFG->libdir. '/filelib.php');
-                if (!count(file_get_typegroup('extension', $type))) {
-                    // It does not start with dot and is not a valid typegroup, this is most likely extension.
-                    $accepted_types[$i] = '.'. $type;
-                    $corrected = true;
-                }
-            }
-        }
-        if (!empty($corrected)) {
-            set_config('courseoverviewfilesext', join(',', $accepted_types));
-        }
+
+    // Create accepted file types based on config value, falling back to default all.
+    $acceptedtypes = (new \core_form\filetypes_util)->normalize_file_types($CFG->courseoverviewfilesext);
+    if (in_array('*', $acceptedtypes) || empty($acceptedtypes)) {
+        $acceptedtypes = '*';
     }
+
     $options = array(
         'maxfiles' => $CFG->courseoverviewfileslimit,
         'maxbytes' => $CFG->maxbytes,
         'subdirs' => 0,
-        'accepted_types' => $accepted_types
+        'accepted_types' => $acceptedtypes
     );
     if (!empty($course->id)) {
         $options['context'] = context_course::instance($course->id);
