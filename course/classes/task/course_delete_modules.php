@@ -65,7 +65,8 @@ class course_delete_modules extends \core\task\adhoc_task {
             try {
                 course_delete_module($cm->id);
             } catch (\Exception $e) {
-                throw new \coding_exception("The course module {$cm->id} could not be deleted. {$e->getTraceAsString()}");
+                throw new \coding_exception("The course module {$cm->id} could not be deleted. "
+                    . "{$e->getMessage()}: {$e->getFile()}({$e->getLine()}) {$e->getTraceAsString()}");
             }
         }
     }
