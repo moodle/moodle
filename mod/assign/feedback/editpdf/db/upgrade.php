@@ -80,5 +80,23 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
     // Automatically generated Moodle v3.11.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2021051701) {
+        // Remove submissions from the processing queue that have been processed.
+        $sql = 'DELETE
+                  FROM {assignfeedback_editpdf_queue}
+                 WHERE EXISTS (SELECT 1
+                                 FROM {assign_submission} s,
+                                      {assign_grades} g
+                                WHERE s.id = submissionid
+                                  AND s.assignment = g.assignment
+                                  AND s.userid = g.userid
+                                  AND s.attemptnumber = g.attemptnumber)';
+
+        $DB->execute($sql);
+
+        // Editpdf savepoint reached.
+        upgrade_plugin_savepoint(true, 2021051701, 'assignfeedback', 'editpdf');
+    }
+
     return true;
 }
