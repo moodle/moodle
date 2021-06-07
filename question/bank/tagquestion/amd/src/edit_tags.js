@@ -16,9 +16,7 @@
 /**
  * A javascript module to handle question tags editing.
  *
- * @deprecated since Moodle 4.0
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- * @module     core_question/edit_tags
+ * @module     qbank_tagquestion/edit_tags
  * @copyright  2018 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,8 +28,8 @@ define([
             'core/modal_factory',
             'core/notification',
             'core/custom_interaction_events',
-            'core_question/repository',
-            'core_question/selectors',
+            'qbank_tagquestion/repository',
+            'qbank_tagquestion/selectors',
         ],
         function(
             $,
@@ -206,7 +204,7 @@ define([
                     id: questionId
                 };
 
-                var tagsFragment = Fragment.loadFragment('question', 'tags_form', contextId, args);
+                var tagsFragment = Fragment.loadFragment('qbank_tagquestion', 'tags_form', contextId, args);
                 modal.setBody(tagsFragment);
 
                 tagsFragment.then(function() {
@@ -270,8 +268,6 @@ define([
 
     return {
         init: function(root) {
-            window.console.warn('warn: The core_question/repository has been deprecated.' +
-                'Please use qbank_tagquestion/repository instead.');
             root = $(root);
             registerEventListeners(root);
         }

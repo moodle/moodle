@@ -1,3 +1,4 @@
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,23 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The purpose of this module is to centralize selectors related to question.
+ * Version information for qbank_tagquestion.
  *
- * @deprecated since Moodle 4.0
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- * @module     core_question/question_selectors
- * @copyright  2018 Simey Lameze <lameze@moodle.com>
+ * @package    qbank_tagquestion
+ * @copyright  2021 Catalyst IT Australia Pty Ltd
+ * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define([], function() {
-    window.console.warn('warn: The core_question/selectors has been deprecated. Please use qbank_tagquestion/selectors instead.');
-    return {
-        actions: {
-            save: '[data-action="save"]',
-            edittags: '[data-action="edittags"]',
-        },
-        containers: {
-            loadingIcon: '[data-region="overlay-icon-container"]',
-        },
-    };
-});
+
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->component = 'qbank_tagquestion';
+$plugin->version   = 2021090300;
+$plugin->requires  = 2021052500;
+$plugin->maturity  = MATURITY_STABLE;

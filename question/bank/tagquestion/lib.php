@@ -19,31 +19,26 @@
  *
  * This file was created just because Fragment API expects callbacks to be defined on lib.php.
  *
- * Please, do not add new functions to this file.
- *
- * @package   core_question
+ * @package   qbank_tagquestion
  * @copyright 2018 Simey Lameze <simey@moodle.com>
+ * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
+
+use qbank_tagquestion\form\tags_form;
 
 /**
  * Question tags fragment callback.
  *
  * @param array $args Arguments to the form.
  * @return null|string The rendered form.
- * @deprecated since Moodle 4.0
- * @see /question/bank/qbank_tagquestion/lib.php
- * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
-function core_question_output_fragment_tags_form($args) {
-    debugging('Function core_question_output_fragment_tags_form() is deprecated,
-         please use core_question_output_fragment_tags_form() from qbank_tagquestion instead.', DEBUG_DEVELOPER);
+function qbank_tagquestion_output_fragment_tags_form($args) {
 
     if (!empty($args['id'])) {
         global $CFG, $DB;
-        require_once($CFG->dirroot . '/question/type/tags_form.php');
         require_once($CFG->libdir . '/questionlib.php');
         $id = clean_param($args['id'], PARAM_INT);
         $editingcontext = $args['context'];
@@ -72,25 +67,26 @@ function core_question_output_fragment_tags_form($args) {
             }
         }
         $formoptions = [
-            'editingcontext' => $editingcontext,
-            'questioncontext' => $questioncontext,
-            'contexts' => $contexts->all()
+                'editingcontext' => $editingcontext,
+                'questioncontext' => $questioncontext,
+                'contexts' => $contexts->all()
         ];
         $data = [
-            'id' => $question->id,
-            'questioncategory' => $category->name,
-            'questionname' => $question->name,
-            'categoryid' => $category->id,
-            'contextid' => $category->contextid,
-            'context' => $questioncontext->get_context_name(),
-            'tags' => $sortedtagobjects->tags ?? [],
-            'coursetags' => $sortedtagobjects->coursetags ?? [],
+                'id' => $question->id,
+                'questioncategory' => $category->name,
+                'questionname' => $question->name,
+                'categoryid' => $category->id,
+                'contextid' => $category->contextid,
+                'context' => $questioncontext->get_context_name(),
+                'tags' => $sortedtagobjects->tags ?? [],
+                'coursetags' => $sortedtagobjects->coursetags ?? [],
         ];
 
         $cantag = question_has_capability_on($question, 'tag');
-        $mform = new \core_question\form\tags(null, $formoptions, 'post', '', null, $cantag, $data);
+        $mform = new tags_form(null, $formoptions, 'post', '', null, $cantag, $data);
         $mform->set_data($data);
 
         return $mform->render();
     }
+
 }
