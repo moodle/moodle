@@ -162,7 +162,7 @@ class company_license_table extends table_sql {
         $licensecourses = $DB->get_records('companylicense_courses', array('licenseid' => $row->id));
 
         // Deal with allocation numbers if a program.
-        if (!empty($license->program)) {
+        if (!empty($row->program)) {
             return $row->used / count($licensecourses);
         } else {
             return $row->used;
