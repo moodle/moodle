@@ -2,6 +2,9 @@
 Change log for qtype_ordering
 ========================================
 
+2021-06-09 (02)
+ - in edit form, rename 'get_default_value()' method to 'get_my_default_value()' for compatability with Moodle >= 3.10
+
 2021-06-08 (01)
  - modify declaration of parameters accepted by get_default_value method in the edit form
 
