@@ -62,3 +62,6 @@ $string['invalidresponse'] = 'Invalid server response.';
 $string['noclientconnection'] = 'The OAuth clients could not be connected.';
 $string['pathnotcreated'] = 'Folder path {$a} could not be created in the system account.';
 $string['endpointnotdefined'] = 'Endpoint {$a} not defined.';
+
+// Warnings.
+$string['externalpubliclinkwarning'] = '<b>Warning:</b> This file will become public.';
