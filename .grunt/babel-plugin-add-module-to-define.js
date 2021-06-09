@@ -111,8 +111,22 @@ module.exports = ({template, types}) => {
                             if (!this.seenDefine && path.get('callee').isIdentifier({name: 'define'})) {
                                 // We only want to modify the first instance of define that we find.
                                 this.seenDefine = true;
+
                                 // Get the Moodle component for the file being processed.
                                 var moduleName = getModuleNameFromFileName(this.file.opts.filename);
+
+                                // The function signature of `define()` is:
+                                // define = function (name, deps, callback) {...}
+                                // Ensure that if the moduel supplied its own name that it is replaced.
+                                if (path.node.arguments.length > 0) {
+                                    // Ensure that there is only one name.
+                                    if (path.node.arguments[0].type === 'StringLiteral') {
+                                        // eslint-disable-next-line
+                                        console.log(`Replacing module name '${path.node.arguments[0].extra.rawValue}' with ${moduleName}`);
+                                        path.node.arguments.shift();
+                                    }
+                                }
+
                                 // Add the module name as the first argument to the define function.
                                 path.node.arguments.unshift(types.stringLiteral(moduleName));
                                 // Add a space after the define function in the built file so that previous versions
