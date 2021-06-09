@@ -3852,7 +3852,7 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time this record was created."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who modified this record."/>
         <FIELD NAME="issuerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The oauth issuer."/>
-        <FIELD NAME="externalfield" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The fieldname returned by the userinfo endpoint."/>
+        <FIELD NAME="externalfield" TYPE="char" LENGTH="500" NOTNULL="true" SEQUENCE="false" COMMENT="The fieldname returned by the userinfo endpoint."/>
         <FIELD NAME="internalfield" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the Moodle field this user field maps to."/>
       </FIELDS>
       <KEYS>
