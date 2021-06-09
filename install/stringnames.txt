@@ -18,6 +18,7 @@ cliansweryes,admin
 cliincorrectvalueerror,admin
 cliincorrectvalueretry,admin
 cliinstallheader,install
+clitablesexist,install
 clitypevalue,admin
 clitypevaluedefault,admin
 cliunknowoption,admin
