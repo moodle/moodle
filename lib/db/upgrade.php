@@ -2665,5 +2665,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021060200.00);
     }
 
+    if ($oldversion < 2021060900.00) {
+        // Update the externalfield to be larger.
+        $table = new xmldb_table('oauth2_user_field_mapping');
+        $field = new xmldb_field('externalfield', XMLDB_TYPE_CHAR, '500', null, XMLDB_NOTNULL, false, null, 'issuerid');
+        $dbman->change_field_type($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021060900.00);
+    }
+
     return true;
 }
