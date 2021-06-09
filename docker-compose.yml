@@ -1,0 +1,49 @@
+version: "2"
+services:
+  webserver:
+    image: "moodlehq/moodle-php-apache:7.4"
+    depends_on:
+      - db
+      - mailhog
+    volumes:
+      - ".:/var/www/html"
+      - "./apache2_faildumps.conf:/etc/apache2/conf-enabled/apache2_faildumps.conf"
+      - "./apache2_mailhog.conf:/etc/apache2/conf-enabled/apache2_mailhog.conf"
+    environment:
+      MOODLE_DOCKER_DBTYPE: mysqli
+      MOODLE_DOCKER_DBCOLLATION: utf8mb4_bin
+      MOODLE_DOCKER_DBNAME: moodle
+      MOODLE_DOCKER_DBUSER: moodle
+      MOODLE_DOCKER_DBPASS: "m@0dl3ing"
+      MOODLE_DOCKER_BROWSER: firefox
+      MOODLE_DOCKER_WEB_HOST: "moodle.localhost"
+      VIRTUAL_HOST: moodle.localhost
+      VIRTUAL_PROTO: http
+      VIRTUAL_PORT: 80
+      CERT_NAME: default
+    networks:
+      - nginx-proxy
+  db:
+    image: mysql:5
+    command: >
+            --character-set-server=utf8mb4
+            --collation-server=utf8mb4_bin
+            --innodb_file_format=barracuda
+            --innodb_file_per_table=On
+            --innodb_large_prefix=On
+    environment:
+      MYSQL_ROOT_PASSWORD: "m@0dl3ing"
+      MYSQL_USER: moodle
+      MYSQL_PASSWORD: "m@0dl3ing"
+      MYSQL_DATABASE: moodle
+    networks:
+      - nginx-proxy
+  mailhog:
+    image: mailhog/mailhog
+    networks:
+      - nginx-proxy
+
+networks:
+  nginx-proxy:
+    external:
+      name: dockernginxproxy_nginx-proxy
