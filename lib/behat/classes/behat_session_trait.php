@@ -498,10 +498,11 @@ trait behat_session_trait {
     /**
      * Require that javascript be available in the current Session.
      *
+     * @param null|string $message An additional information message to show when JS is not available
      * @throws DriverException
      */
-    protected function require_javascript() {
-        return self::require_javascript_in_session($this->getSession());
+    protected function require_javascript(?string $message = null) {
+        return self::require_javascript_in_session($this->getSession(), $message);
     }
 
     /**
@@ -518,14 +519,19 @@ trait behat_session_trait {
      * Require that javascript be available for the specified Session.
      *
      * @param Session $session
+     * @param null|string $message An additional information message to show when JS is not available
      * @throws DriverException
      */
-    protected static function require_javascript_in_session(Session $session): void {
+    protected static function require_javascript_in_session(Session $session, ?string $message = null): void {
         if (self::running_javascript_in_session($session)) {
             return;
         }
 
-        throw new DriverException('Javascript is required');
+        $error = "Javascript is required for this step.";
+        if ($message) {
+            $error = "{$error} {$message}";
+        }
+        throw new DriverException($error);
     }
 
     /**
