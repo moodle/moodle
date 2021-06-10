@@ -95,6 +95,8 @@ $string['check_preventexecpath_ok'] = 'Executable paths only settable in config.
 $string['check_preventexecpath_warning'] = 'Executable paths can be set in the Admin GUI.';
 $string['check_preventexecpath_details'] = '<p>Allowing executable paths to be set via the Admin GUI is a vector for privilege escalation. This must be forced in config.php:</p><p><code>$CFG->preventexecpath = true;<code></p>';
 $string['check_publicpaths_name'] = 'Check all public / private paths';
+$string['check_publicpaths_ok'] = 'All internal paths are not publicly accessible';
+$string['check_publicpaths_warning'] = 'Some internal paths are publicly accessible';
 $string['check_publicpaths_generic'] = '{$a} files should not be public';
 $string['check_publicpaths_403'] = ' (Returned a 403, ideally should be 404)';
 $string['check_riskadmin_detailsok'] = '<p>Please verify the following list of system administrators:</p>{$a}';
