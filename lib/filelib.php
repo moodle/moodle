@@ -4649,33 +4649,15 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
 
             $userid = $context->instanceid;
 
-            if ($USER->id == $userid) {
-                // always can access own
+            if (!empty($CFG->forceloginforprofiles)) {
+                require_once("{$CFG->dirroot}/user/lib.php");
 
-            } else if (!empty($CFG->forceloginforprofiles)) {
                 require_login();
 
-                if (isguestuser()) {
+                // Verify the current user is able to view the profile of the supplied user anywhere.
+                $user = core_user::get_user($userid);
+                if (!user_can_view_profile($user, null, $context)) {
                     send_file_not_found();
-                }
-
-                // we allow access to site profile of all course contacts (usually teachers)
-                if (!has_coursecontact_role($userid) && !has_capability('moodle/user:viewdetails', $context)) {
-                    send_file_not_found();
-                }
-
-                $canview = false;
-                if (has_capability('moodle/user:viewdetails', $context)) {
-                    $canview = true;
-                } else {
-                    $courses = enrol_get_my_courses();
-                }
-
-                while (!$canview && count($courses) > 0) {
-                    $course = array_shift($courses);
-                    if (has_capability('moodle/user:viewdetails', context_course::instance($course->id))) {
-                        $canview = true;
-                    }
                 }
             }
 
@@ -4697,23 +4679,14 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             }
 
             if (!empty($CFG->forceloginforprofiles)) {
-                require_login();
-                if (isguestuser()) {
-                    print_error('noguest');
-                }
+                require_once("{$CFG->dirroot}/user/lib.php");
 
-                //TODO: review this logic of user profile access prevention
-                if (!has_coursecontact_role($userid) and !has_capability('moodle/user:viewdetails', $usercontext)) {
-                    print_error('usernotavailable');
-                }
-                if (!has_capability('moodle/user:viewdetails', $context) && !has_capability('moodle/user:viewdetails', $usercontext)) {
-                    print_error('cannotviewprofile');
-                }
-                if (!is_enrolled($context, $userid)) {
-                    print_error('notenrolledprofile');
-                }
-                if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
-                    print_error('groupnotamember');
+                require_login();
+
+                // Verify the current user is able to view the profile of the supplied user in current course.
+                $user = core_user::get_user($userid);
+                if (!user_can_view_profile($user, $course, $usercontext)) {
+                    send_file_not_found();
                 }
             }
 
