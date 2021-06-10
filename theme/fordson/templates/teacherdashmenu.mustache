@@ -1,0 +1,29 @@
+{{#showincourseonly}}
+    {{#hasteacherdash}}
+    <div class="teacherdash nav-item nav-link">
+            <a role="button" data-tooltip="tooltip" data-placement= "bottom" title="{{{togglebutton}}}" data-toggle="modal" href="#teacherdashslider" class="btn btn-secondary fhs-tooltip">  <i class="fa fa-cogs" aria-hidden="true"></i></a>
+    </div>
+    {{/hasteacherdash}}
+
+    {{#haspermission}}
+        {{#dashmenu}}
+            {{#haseasyenrollment}}
+                <div class="enrollcodes nav-item nav-link">
+                    <a href="{{{url}}}" data-tooltip="tooltip" data-placement= "bottom" title="{{{title}}}" class="btn btn-secondary fhs-tooltip"><i class="fa fa-key" aria-hidden="true"></i></a>
+                </div>
+            {{/haseasyenrollment}}
+        {{/dashmenu}}
+    {{/haspermission}}
+
+    {{#hasstudentdash}}
+    <div class="studentdash nav-item nav-link">
+        <a role="button" data-tooltip="tooltip" data-placement= "bottom" title="{{{togglebuttonstudent}}}" data-toggle="modal" href="#studentdashslider" class="btn btn-secondary fhs-tooltip"><i class="fa fa-cogs" aria-hidden="true"></i></a>
+    </div>
+    {{/hasstudentdash}}
+{{/showincourseonly}}
+
+{{#hasadminlink}}
+    <div class="siteadminlink nav-item nav-link">
+        <a href="{{{siteadminurl}}}" data-tooltip="tooltip" data-placement= "bottom" title="{{{siteadmintitle}}}" class="btn btn-secondary fhs-tooltip"><i class="fa fa-sitemap" aria-hidden="true"></i></a>
+    </div>
+{{/hasadminlink}}

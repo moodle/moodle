@@ -1,0 +1,222 @@
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2013 Thomas Park
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
+// --------------------------------------------------
+
+/* stylelint-disable color-hex-length */
+
+/**
+ * Default preset file.
+ *
+ * Use this space to customise variables, create mixins and override SCSS.
+ */
+
+//Styling
+
+.course-content ul li.section.main {
+    border-bottom: 0;
+}
+
+h3.sectionname {
+    border-top: 10px solid $sectionnamehighlight;
+    padding: $spacer;
+    border-bottom: 1px dashed $gray-300;
+    background-color: $gray-200;
+}
+
+li.current h3.sectionname {
+    border-top: 10px solid $dpsaccentcolor;
+    background-color: rgba(216, 246, 255, 0.5);
+}
+
+h3.sectionname.dimmed_text {
+    border-top: 10px solid $gray-100 !important;
+}
+
+li.section.hidden .content {
+    background-color: $gray-100;
+}
+
+li.section.hidden li.activity {
+    background-color: $gray-300 !important;
+}
+
+li.section.hidden h3.sectionname {
+    border-top: 10px solid $gray-300 !important;
+}
+
+.section_action_menu {
+    background-color: $card-bg;
+    padding: .5rem;
+    border-radius: $border-radius;
+}
+
+.editing .course-content ul.topics li.section .left, .editing .course-content ul.topics li.section .right {
+    padding: 4px 6px !important;
+}
+
+li.activity.label {
+    border: initial;
+}
+
+.section li.activity {
+    padding: calc($spacer - 50%);
+    border-bottom: 1px dashed $gray-300;
+    font-size: 16px;
+}
+
+.section li.activity:hover {
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    background-color: $activityhover;
+}
+
+.section li.activity.modtype_label.label:hover {
+    transition: none;
+    background-color: inherit;
+}
+
+.editing .section .activity:hover,
+.editing .section .activity.action-menu-shown {
+    background-color: $activityhover;
+}
+
+span.section-modchooser-link {
+    background-color: $gray-200;
+    padding: .5rem;
+    border: 1px solid $gray-400;
+}
+
+.course-content img.activityicon {
+    height: $activityiconsize;
+    width: $activityiconsize;
+    vertical-align: middle !important;
+}
+
+.path-course-view .actions img.icon {
+    width: $activityiconsize;
+    height: $activityiconsize;
+}
+
+.block {
+    border: 1px solid $gray-400;
+    border-top: 7px solid $spectrum-base;
+}
+
+.progress.fordsonsinglepage {
+    margin-top: 1rem;
+    margin-right: 1rem;
+}
+
+li#section-0.fordsoncourseformat h3.sectionname {
+    border: 0;
+}
+
+// Single Activity fixes
+
+#page-course-view-topics .course-content .section-summary, #page-course-view-weeks .course-content .section-summary {
+    border: 0;
+}
+
+
+@if $spectrumpreset == 1 {
+    .course-content ul.topics li.section, .course-content ul.weeks li.section {
+        padding-bottom: 2rem;
+    }
+
+    .course-content ul.topics li.section .content, .course-content ul.weeks li.section .content {
+        background-color: $gray-100;
+        padding-bottom: 1rem;
+        border: 1px solid $gray-200;
+        box-shadow: 0 1px 2px 0px rgba(0,0,0,.1);
+    }
+
+    .course-content .single-section ul.topics li.section .content, .course-content .single-section ul.weeks li.section .content {
+        background-color: initial;
+        padding-bottom: 1rem;
+        border: 0;
+        box-shadow: none;
+    }
+
+    li#section-0 .content {
+        border-radius: 10px;
+        border-bottom: 7px solid $gray-200;
+    }
+
+    .course-content ul.topics li.section .summary, .course-content ul.weeks li.section .summary {
+        margin: 0 25px;
+    }
+    .course-content .single-section .section-navigation {
+        padding: 0;
+        border: 0;
+    }
+    .course-content .single-section ul.topics li.section .content, .course-content .single-section ul.weeks li.section .content {
+        padding: 1rem;
+    }
+    .course-content .section-summary .section-title {
+        margin: 0;
+    }
+    .course-content .single-section .section-navigation .mdl-left, .course-content .single-section .section-navigation .mdl-right {
+        padding-bottom: 1rem;
+    }
+    .course-content .section-summary .summarytext {
+        margin: 0;
+        padding: 1rem;
+    }
+    .section-go-link.btn.btn-secondary {
+        display: block;
+        margin-top: 2rem;
+    }
+    .section-summary-activities {
+        width: 85%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    //Spectrum Preset with Collapsed Topics Course Format fixes
+    .course-content ul.ctopics li.section .content, .course-content ul.cweeks li.section .content {
+        background-color: transparent;
+        border: 0;
+        box-shadow: initial;
+    }
+    .course-content ul.ctopics li.section .content div.toggle:hover {
+        background-color: transparent;
+    }
+    .course-content ul.ctopics li.section .content .toggle, .course-content ul.ctopics li.section .content.sectionhidden {
+        background-color: transparent!important;
+    }
+
+}
+
+@if $perceptionpreset == 1 {
+    $dpsaccentcolor: #c33e3e;
+    .course-content ul.topics li.section .content, .course-content ul.weeks li.section .content {
+        margin: 0;
+        padding: 0;
+    }
+    li.current h3.sectionname {
+        border-top: 10px solid $dpsaccentcolor;
+        background-color: rgba(216, 246, 255, 0.5);
+    }
+
+}

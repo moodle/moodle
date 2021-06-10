@@ -1,0 +1,26 @@
+{{#hasmarkettiles}}
+<div class="markettiles">
+    <div class="container-fluid">
+    <div class="row">
+
+        {{#markettiles}}
+        {{#hastile}}
+
+        <div class="col-md-4">
+        <div class="market-tile"> 
+            <h3 class="card-title">{{{title}}}</h3>
+            <div class="marketcontent {{{tileimage}}}">
+            <p>{{{content}}}<p>
+            </div>
+            {{{button}}}
+        </div>
+        </div>
+
+        {{/hastile}}
+        {{/markettiles}}
+
+    </div>
+    </div>
+</div>
+<div style="clear:both;"></div>
+{{/hasmarkettiles}}

@@ -1,0 +1,385 @@
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2013 Thomas Park
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+$bootstrap-sass-asset-helper: false !default;
+// Flatly 3.3.7
+// Variables
+// --------------------------------------------------
+
+/* stylelint-disable color-hex-length */
+
+
+/**
+ * Default preset file.
+ *
+ * Use this space to customise variables, create mixins and override SCSS.
+ */
+
+ // Layout Variables
+
+/**
+ * User picture.
+ */
+
+.userpicture {
+    border-radius: $border-radius;
+}
+
+
+/**
+ * For background in content areas.
+ */
+
+[data-block="course_overview"] {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: 0;
+}
+
+
+/**
+ * Navigation.
+ */
+
+.block_navigation,
+.block_settings {
+    .block_tree .tree_item {
+        margin: ($spacer/2) 0;
+    }
+}
+
+.tooltip.tooltip-bottom .tooltip-arrow, .tooltip.bs-tether-element-attached-top .tooltip-arrow {
+    border-bottom-color: $primary;
+}
+
+.tooltip-inner {
+    background-color: $primary;
+}
+.tooltip.tooltip-bottom, .tooltip.bs-tether-element-attached-top {
+    margin-top: 10px;
+}
+
+
+/**
+ * Full-width changes
+ */
+
+#page.container-fluid {
+    padding: 0 !important;
+}
+
+.row {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.p-a-1 {
+    padding: 0 !important;
+}
+
+div#page-content {
+    padding: 0 $gutterwidth;
+}
+
+.headerbkg {
+    margin-top: 0px !important;
+    height: 0;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+
+@if $showheadergradient == 1 {
+    .headerbkg {
+        height: $headerimagepadding;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 0;
+    }
+    // No image with this layout.  Instead use a gradient.
+    .withimage , .default, .customimage {
+        background: linear-gradient(to bottom, $perception-base 0%, rgba(0,0,0,0) 100%)!important;
+    }
+}
+
+.pagelayout-course .headerbkg {
+    position: absolute;
+    left: 0;
+    top: 50px;
+    height: $headerimagepadding;
+}
+
+div#learningcontent {
+    position: relative;
+    margin-top: 0;
+    background-color: $card-bg;
+    border: 1px solid $card-bg;
+}
+#page {
+    background-color: $card-bg;
+    box-shadow: 0px -2px 8px 2px rgba(23, 32, 34, 0.6);
+}
+.pagelayout-course div#learningcontent {
+    margin-top: $headerimagepadding !important;
+}
+
+
+/* Default Page Styling */
+
+#page-wrapper {
+    padding-bottom: 0;
+}
+
+.card {
+    border: 0;
+}
+
+.path-mod-assign [data-region="grading-navigation"] {
+    background-color: #fff;
+}
+
+div#changenumsections {
+    margin-top: 3rem;
+}
+
+/**
+ * Module Styling
+ */
+
+// Forum Styling.
+
+.forumpost {
+    border-radius: 0;
+    box-shadow: 0px 1px 2px 1px rgba(0,0,0,.1);
+    margin-bottom: 2rem;
+}
+
+.forumpost .row .header {
+    border: 0;
+}
+
+.forumpost .header {
+    margin-bottom: 3px;
+    border-bottom: 1px solid $gray-300;
+    background-color: $gray-100;
+}
+
+.forumpost .options .commands {
+    margin-left: 0;
+    background-color: $gray-100;
+    border: 1px solid $gray-300;
+    padding: .25rem .5rem;
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+}
+
+.forumpost .options .link {
+    text-align: initial;
+    background-color: $gray-100;
+    border: 1px solid $gray-300;
+    padding: .25rem .5rem;
+    display: inline-block;
+}
+// Quiz Styling.
+
+.que .formulation {
+    background-color: $card-bg;
+    border: initial;
+    border-color: initial;
+    color: inherit;
+    border-radius: 0;
+    box-shadow: 0 1px 7px 1px rgba(115, 115, 115, 0.5);
+}
+
+.que {
+    margin: 0 auto 4rem auto;
+}
+
+.que .qtext {
+    padding: 1rem 1rem 0 1rem;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.que .ablock {
+    padding: 1rem;
+    margin: 0 0 .5rem 0;
+}
+
+.que .info {
+    background-color: $gray-100;
+    border: 1px solid $gray-300;
+    border-radius: 0;
+}
+
+div.match td {
+    padding: 1rem;
+    border-bottom: 1px solid $gray-300;
+}
+
+div.prompt {
+    font-weight: bold;
+}
+
+// Scrollbars
+
+#nav-drawer::-webkit-scrollbar {
+    width: 7px;
+}
+
+#nav-drawer::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.6);
+    border-radius: 5%;
+}
+
+#nav-drawer::-webkit-scrollbar-thumb {
+    background-color: darken($primary, 15%);
+    outline: 1px solid slategrey;
+}
+
+.course-content .single-section .mdl-bottom {
+    margin: 0!important;
+    padding: 2rem 1rem 1rem 1rem;
+    background-color: $body-bg;
+    border: 1px solid $gray-300;
+}
+
+.course-content .section-summary .section-title {
+    margin: 0 0 10px 0;
+}
+
+@media screen and (min-width: 576px) {
+            /* Breadcrumbs */
+        ul.breadcrumb {
+            display: inline-block;
+            overflow: hidden;
+            margin:0px;
+            padding:0px;
+            background: none;
+        }
+        ul.breadcrumb a {
+            color: $breadcrumb-text-color;
+        }
+        ul.breadcrumb li {
+            text-decoration: none;
+            outline: none;
+            display: block;
+            float: left;
+            font-size: 14px;
+            line-height: 36px;
+            color: $breadcrumb-text-color;
+            padding: 0 15px 0 30px;
+            background-color: $breadcrumb-bg;
+            position: relative;
+        }
+        ul.breadcrumb li:first-child {
+            padding-left: 25px;
+            border-radius: 5px 0 0 5px;
+        }
+        ul.breadcrumb li:first-child:before {
+            left: 14px;
+        }
+        ul.breadcrumb li:last-child {
+            border-radius: 0 5px 5px 0;
+            padding-right: 20px;
+        }
+        /*hover/active styles*/
+        ul.breadcrumb li.active, .breadcrumb li:hover {
+            background-color: $breadcrumb-bg-hover;
+        }
+        ul.breadcrumb li.active:after, .breadcrumb li:hover:after {
+            background-color: $breadcrumb-bg-hover;
+        }
+        ul.breadcrumb li:after {
+            content: '';
+            position: absolute;
+            top: 0; 
+            right: -18px;
+            width: 36px; 
+            height: 36px;
+            transform: scale(0.707) rotate(45deg);
+            z-index: 1;
+            background-color: $breadcrumb-bg;
+            box-shadow:
+            2px -2px 0 2px $breadcrumbdash, 
+            3px -3px 0 2px $breadcrumbdash;
+            border-radius: 0 5px 0 50px;
+        }
+        li.breadcrumb-item.dimmed_text_fhs {
+            background-color: $breadcrumbdimmed;
+        }
+        li.breadcrumb-item.dimmed_text_fhs:hover {
+            background-color: $breadcrumb-bg-hover;
+        }
+        li.breadcrumb-item.dimmed_text_fhs:after {
+            content: '';
+            position: absolute;
+            top: 0; 
+            right: -18px;
+            width: 36px; 
+            height: 36px;
+            transform: scale(0.707) rotate(45deg);
+            z-index: 1;
+            background-color: $breadcrumbdimmed;
+            box-shadow:
+            2px -2px 0 2px $breadcrumbdash, 
+            3px -3px 0 2px $breadcrumbdash;
+            border-radius: 0 5px 0 50px;
+        }
+        li.breadcrumb-item.dimmed_text_fhs:hover:after {
+            background-color: $breadcrumb-bg-hover;
+        }
+        ul.breadcrumb li:last-child:after {
+            content: none;
+        }
+        .breadcrumb-item + .breadcrumb-item::before {
+            display: inline-block;
+            padding: 0;
+            content: "";
+        }
+        .dir-rtl ul.breadcrumb li:after{
+            transform: scale(.707) rotate(315deg);
+            box-shadow: -3px -3px 0 1px $card-bg, -2px -3px 0 2px $card-bg;
+        }
+        .breadcrumb-item+.breadcrumb-item::before {
+            padding: 0 .75rem;
+        }
+    }
+
+    @media screen and (max-width: 576px) {
+        .breadcrumb {
+            background-color:transparent;
+        }
+        li.breadcrumb-item a, li.breadcrumb-item {
+            color: $primary;
+        }
+    }
+

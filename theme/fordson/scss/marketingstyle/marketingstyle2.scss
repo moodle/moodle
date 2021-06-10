@@ -1,0 +1,31 @@
+.markettiles {
+  margin: 1rem 0;
+}
+
+.col-md-4 .market-tile {
+  text-decoration:none;
+  color:#000;
+  background:#ffc;
+  display:block;
+  padding:1rem;
+  margin: 1rem 0;
+  transform: rotate(1deg);
+  box-shadow: 0px 4px 6px #333;
+  border-top: 2rem solid rgba($dark,0.3);
+}
+
+.col-md-4:nth-child(odd) .market-tile {
+  transform: rotate(-2deg);
+}
+
+.marketcontent {
+  padding: 1rem;
+  background-color: $markettextbg;
+  height: 10rem;
+  overflow: auto;
+  margin-bottom: 1rem;
+}
+
+.market-tile .card-title {
+  border-bottom: 1px dotted $dark;
+}

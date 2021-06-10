@@ -1,0 +1,1342 @@
+/**
+* FORDSON CUSTOMIZATIONS FOR NEW ELEMENTS
+**/
+
+/**
+* Layout Header
+**/
+
+.headerlogo img {
+    padding: $spacer 0;
+}
+
+/**
+* Block Width
+**/
+
+@media screen and (min-width: 1200px) {
+    #region-main.has-blocks {
+        width: calc(100% - #{$blockwidthfordson});
+    }
+    #region-main-settings-menu.has-blocks {
+        width: calc(100% - #{$blockwidthfordson});
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    [data-region="blocks-column"] {
+        width: calc(#{$blockwidthfordson} - 30px);
+    }
+}
+
+// Dashboard display items in column on sidebar position - Recently Accessed items and other one-row blocks will display as a column instead of a swipe.
+#page-my-index #block-region-side-pre .dashboard-card-deck.one-row {
+    flex-flow: column;
+    overflow-x: auto;
+}
+#page-my-index #block-region-side-pre .block-recentlyaccesseditems .course-info-container {
+    padding: 0;
+}
+
+// Dashboard fix rounded course image to be consistent with card view
+.block-myoverview .summaryimage.rounded-circle {
+    border-radius: 0%!important;
+}
+
+#page-my-index .btn-outline-secondary, #page-my-index .dropdown-item.active, .dropdown-item:active {
+    color: inherit;
+}
+
+#page-my-index [data-region="course-events-container"] {
+    padding: 1rem;
+}
+
+// Alerts
+
+.moodle-dialogue-bd div[role="alert"] {
+    background-color: $danger;
+    padding: 1rem;
+}
+
+
+// AALinks
+.aalink.focus, #page-footer a:not([class]).focus, .arrow_link.focus, a:not([class]).focus, .activityinstance>a.focus, .aalink:focus, #page-footer a:not([class]):focus, .arrow_link:focus, a:not([class]):focus, .activityinstance>a:focus, :focus {
+    outline: .2rem solid transparent;
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+
+/**
+* login on frontpage 
+**/
+
+body#page-login-index, body#page-login-signup{
+    background-size: cover;
+    background-position: center;
+}
+
+.fpsignup {
+    background-color: $fploginform;
+    padding: $spacer;
+    box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.3);
+    border: 1px solid $card-bg;
+    margin-bottom: 2rem;
+}
+
+.col-md-4.signinform {
+    padding-left: 0;
+    padding-right: 20px;
+    margin-right: 15px;
+    float:left;
+}
+
+.fpsignup label {
+    margin: 0;
+}
+
+.sign-up-btn {
+    margin-top: .5rem;
+}
+.fpsignup .m-t-2 {
+    margin-top: .5rem !important;
+}
+
+.row.signin {
+    position: relative;
+    z-index: 1;
+}
+
+.fpcustomtext {
+    margin: 2rem 0 4rem 0;
+    text-align: center;
+    background-color: #fff;
+}
+
+div#fordsonlogin {
+    background-color: $card-bg;
+}
+
+.fpinstructions {
+    margin-top: 15%;
+    background-color: rgba(255,255,255,0.7);
+}
+
+.loginnavicon {
+    display: inline-block;
+    padding: 1.5rem;
+    margin-bottom: $spacer;
+}
+
+.card.loginicon {
+    text-align: center;
+}
+
+.row.loginicons {
+    padding: 2rem 0;
+    color: $primary;
+}
+
+.featuretext {
+    text-align: initial;
+}
+
+.logintop {
+    text-align: center;
+}
+
+.logintopimage {
+    display: inline-block;
+}
+
+.loginfeaturedimage img {
+    box-shadow: 0 1px 1px 1px rgba(0,0,0,.3);
+    border: 1px solid #fff;
+}
+
+.featuretext h4 {
+    border-top: 4px solid $dark;
+    padding: $spacer;
+    border-bottom: 1px dashed $gray-200;
+    background-color: $gray-100;
+}
+
+#page-login-index #page, #page-login-signup #page {
+    margin-top: 0!important;
+}
+#page-login-signup #fordsonlogin {
+    display: none;
+}
+
+#page-login-index #page-wrapper {
+    padding-bottom: 0;
+}
+#page-login-signup .loginslideshow div#fordsoncarousel {
+    z-index: 0;
+}
+
+#page-my-index {
+    background-color: $body-bg;
+}
+
+/* Editing Block Columns */
+
+.editing aside#block-region-fp-a {
+    border: 2px dashed $gray-200;
+    min-height: 10rem;
+}
+.editing aside#block-region-fp-b {
+    border: 2px dashed $gray-200;
+    min-height: 10rem;
+}
+.editing aside#block-region-fp-c {
+    border: 2px dashed $gray-200;
+    min-height: 10rem;
+}
+.editing aside#block-region-side-pre {
+    border: 2px dashed $gray-200;
+    min-height: 10rem;
+}
+
+/* Teacher Dashboard */
+
+.modal-dialog {
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+.teacherdashboard {
+    padding: 1rem;
+}
+
+.studentdashboard {
+    padding: 1rem;
+}
+
+.studentdashboard .col-md-2 {
+    float: right;
+    width: auto;
+    text-align: center;
+    padding: 0 2rem;
+    font-weight: bold;
+}
+
+.teacherdashbutton {
+    font-size: 16px;
+    float: right;
+    padding: 5px 10px;
+}
+
+.teacherdashboard i.dashicon {
+    float: left;
+    padding: 0px 4px;
+}
+
+.coursestafflisting img.userpicture {
+    margin-right: 0;
+    float: right;
+}
+
+.thiscoursebutton {
+    font-size: 16px;
+    float: right;
+    padding: 5px 10px;
+}
+
+.thiscoursebutton .dropdown-menu {
+    right: -10px;
+    left: initial;
+}
+
+.editcogbutton {
+    float: right;
+    margin-left: .25rem;
+    padding: 0 .25rem;
+}
+
+.enrollcodebutton {
+    font-size: 16px;
+    float: right;
+    padding: 5px 10px;
+}
+
+@media screen and (max-width: 576px) {
+    .enrollcodes.nav-item.nav-link {
+        display: none;
+    }
+    .navbar .container-fluid {
+        padding: 0;
+    }
+}
+
+/* Block Sliding Panel */
+
+div#blockslider {
+    background-color: $gray-200;
+    border: 1px solid $gray-400;
+    padding: 1rem;
+    position: relative;
+}
+.blockpanelbtn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 2;
+}
+.blockpanelbtn .btn:focus, .blockpanelbtn .btn-primary:focus {
+    outline: 0;
+    box-shadow: none !important;
+}
+
+button#blocksliderbuttonclose {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+/* Footer */
+
+ul.footercontact {
+    list-style: none;
+}
+
+#page-footer {
+    position: relative;
+    background-color: $footer-bg;
+}
+
+#page-footer .socials_wrapper .socials a{
+    text-decoration: none !important;
+    color: $primary;
+}
+
+/* Slideshow */
+
+.slide1image,
+.slide2image,
+.slide3image {
+    height: $slideshowheight;
+}
+
+.carousel-caption.d-none.d-sm-block {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.carousel-caption {
+    bottom: 0px;
+}
+
+.carousel-indicators {
+    bottom: 0!important;
+}
+
+.carousel-indicators li {
+    width: 40px;
+    height: 10px;
+    margin: 0;
+    border-radius: 0px;
+}
+
+.carousel-indicators .active {
+    width: 40px;
+    height: 10px;
+    margin: 0;
+    background-color: #fff;
+    border-radius: 0px;
+}
+
+a.left.carousel-control .fa-chevron-left {
+    font-size: 35px;
+    position: absolute;
+    left: 10px;
+    bottom: 40%;
+}
+
+a.right.carousel-control .fa-chevron-right {
+    font-size: 35px;
+    position: absolute;
+    right: 10px;
+    bottom: 40%;
+}
+
+/* Login Page Slideshow */
+.loginslideshow .slide1image,
+.loginslideshow .slide2image,
+.loginslideshow .slide3image {
+    height: 100%;
+}
+
+.loginslideshow div#fordsoncarousel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.loginslideshow .carousel-inner {
+    height: 100%;
+}
+
+.loginslideshow .carousel-item {
+    height: 100%;
+}
+
+ .carousel-control {
+    display: none;
+}
+
+.customloginspacer {
+    height: $slideshowspacer;
+}
+
+/* FIX for carousel fade. */
+.carousel.slide.carousel-fade .carousel-item {
+ opacity: 0;
+ transition-duration: .6s;
+ transition-property: opacity;
+}
+
+.carousel.slide.carousel-fade  .carousel-item.active,
+.carousel.slide.carousel-fade  .carousel-item-next.carousel-item-left,
+.carousel.slide.carousel-fade  .carousel-item-prev.carousel-item-right {
+  opacity: 1;
+}
+
+.carousel.slide.carousel-fade .active.carousel-item-left,
+.carousel.slide.carousel-fade  .active.carousel-item-right {
+ opacity: 0;
+}
+
+.carousel.slide.carousel-fade  .carousel-item-next,
+.carousel.slide.carousel-fade .carousel-item-prev,
+.carousel.slide.carousel-fade .carousel-item.active,
+.carousel.slide.carousel-fade .active.carousel-item-left,
+.carousel.slide.carousel-fade  .active.carousel-item-prev {
+ transform: translateX(0);
+ transform: translate3d(0, 0, 0);
+}
+
+
+
+/* Enhanced Homepage */
+
+.fpwonderbox {
+    margin-bottom: 1rem;
+}
+
+.fpstartwrap {
+    padding:1rem;
+}
+
+.fpstart {
+    text-align: center;
+}
+
+.iconset .btn.btn-secondary {
+    min-width: $fpicon-width;
+    margin-bottom: .5rem;
+}
+
+.iconset .btn.btn-secondary.createacourse {
+    width: $fpiconcreate-width;
+}
+
+div#fpslider {
+    padding: $spacer;
+    border: 1px solid $gray-200;
+}
+
+.alertbox {
+    text-align: center;
+}
+
+.alertmessage {
+    display: inline-block;
+    background-color: $warning;
+    border-radius: $border-radius;
+    padding: 15px;
+    margin: 20px;
+}
+
+.alertmessage p {
+    margin-top: initial;
+    margin-bottom: initial;
+}
+
+.ilearnsecurealert {
+    padding: 1rem;
+    margin: 0;
+}
+
+.ilearnsecurealert p {
+    margin: 0;
+}
+
+.marketcontent::-webkit-scrollbar {
+    width: 7px;
+}
+
+.marketcontent::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3);
+    border-radius: $border-radius;
+}
+
+.marketcontent::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
+
+/**
+* Easy Enrollment Form
+**/
+.easyenrol {
+    text-align: center;
+}
+
+.qr-input-group-addon {
+    padding: .25rem .75rem;
+    font-size: 2rem;
+    line-height: 1.25;
+    text-align: center;
+}
+
+form#enrolform_easy {
+    text-align: center;
+    display: inline-flex;
+}
+
+form#enrolform_easy .input-group-addon.qr-button {
+    font-size: 2rem;
+}
+
+form#enrolform_easy input#enrolform_course_code {
+    font-size: 2rem;
+}
+
+form#enrolform_easy button.btn.btn-primary {
+    font-size: 2rem;
+}
+
+
+/**
+* Available Courses
+**/
+
+.class-box-fp {
+    height: $courseboxheight;
+    background-color: $body-bg;
+    padding: 1rem;
+    border: 1px solid $body-bg;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.class-box-fp-style3 {
+    min-height: $courseboxheight;
+    max-height: inherit;
+    background-color: $body-bg;
+    padding: 1rem;
+    border: 1px solid $body-bg;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.class-box-fp-2col {
+    min-height: $courseboxheight;
+    max-height: inherit;
+    background-color: $body-bg;
+    border: 2px solid $white;
+    box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.6);
+}
+
+.class-box-fp .course-title h4 a:hover {
+    text-decoration: none;
+}
+
+.class-box-fp .course-title, .class-box-fp-style3 .course-title {
+    background-color: $card-bg;
+    padding: $spacer;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    text-align: center;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.class-box-fp-2col .course-title-2col {
+    background-color: $card-bg;
+    padding-top: 1rem;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.course-summary-2col {
+    margin: 0 2rem;
+    padding: $spacer;
+    color: $white;
+    background-color:rgba($black, 0.8);
+    border-radius: 0 0 .25rem .25rem;
+}
+@media screen and (max-width: 576px) {
+    .course-summary-2col{
+        display:none;
+    }
+}
+
+/*.class-box-fp-style3 .course-title:after, .class-box-fp .course-title:after, .class-box-fp-2col .course-title-2col:after {
+    text-decoration: none;
+    display: block;
+    content: '';
+    border-bottom: solid 1rem $primary;
+    transform: scaleX(0);
+    transition: transform 250ms ease-in-out;
+}
+
+.class-box-fp-style3 .course-title:hoover:after, .class-box-fp .course-title:hover:after, .class-box-fp-2col .course-title-2col:hover:after {
+    transform: scaleX(1);
+}*/
+
+.courseimagecontainer {
+    height: calc(45%);
+}
+
+.class-box4 {
+    margin-bottom: 2rem;
+    border: 1px solid $card-bg;
+    box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    height: $courseboxheight;
+    overflow: hidden;
+}
+
+.class-box {
+    border: 1px solid $gray-300;
+    padding: 0;
+    margin-bottom: 2rem;
+    height: $courseboxheight;
+    overflow: hidden;
+}
+
+.class-fullbox {
+    margin-bottom: 2rem;
+    border: 1px solid $card-bg;
+    box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+}
+.class-fullbox7 {
+    margin-bottom: 2rem;
+    border: 1px solid $card-bg;
+    box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.3);
+    padding: 4rem 2rem 0 2rem;
+}
+
+.class-fullbox .course-summary {
+    height: 100%;
+    overflow: auto;
+}
+
+.fullbox {
+    background-color: rgba(255,255,255,0.7);
+    background-blend-mode: overlay;
+}
+
+.fullbox7 {
+    background-color: $card-bg;
+}
+
+.coursedata {
+    padding-top: .5rem;
+}
+
+.course-title-fullboxbkg {
+    background-color: $card-bg;
+    padding: 1rem;
+}
+
+.course-title-fullboxbkg7 {
+    padding: 1rem;
+}
+
+.course-title4 {
+    padding-top: 1rem;
+}
+
+.course-title {
+    padding: .5rem;
+}
+
+.class-list {
+    clear: both;
+}
+
+.coursesmorelink {
+    padding: 1rem;
+}
+
+.course-image-view {
+    height: 100%;
+}
+
+.dash-course-image-view {
+    padding-top: 5rem;
+}
+
+.class-box4 .course-summary4 {
+    height: 4rem;
+    overflow: auto;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+}
+
+.class-box .course-summary {
+    height: 4rem;
+    overflow: auto;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    margin:.5rem;
+}
+
+.class-box .course-summary::-webkit-scrollbar, .class-box4 .course-summary4::-webkit-scrollbar {
+    width: 7px;
+}
+
+.class-box .course-summary::-webkit-scrollbar-track, .class-box4 .course-summary4::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3);
+    border-radius: 5%;
+}
+
+.class-box .course-summary::-webkit-scrollbar-thumb, .class-box4 .course-summary4::-webkit-scrollbar-thumb {
+    background-color: darken($primary, 15%);
+    outline: 1px solid slategrey;
+}
+
+.tooltip-inner {
+    max-width: 350px;
+    font-size: 14px;
+}
+
+.course_category_tree {
+    padding: 1rem;
+}
+
+.cat-icon {
+    margin: 5px;
+}
+
+.category.box-class {
+    padding-bottom: $spacer;
+    text-align: center;
+}
+
+.category.box-class:nth-child(5) {
+    clear: both;
+}
+
+.circle-count {
+    float: right;
+    padding-left: 3px;
+}
+
+.courseimagecontainer:hover .course-overlay {
+    opacity: 1;
+}
+
+.courseimagecontainer:hover .course-image-view {
+    opacity: 0.3;
+}
+
+.course-overlay {
+    -webkit-transition: .5s ease;
+    -o-transition: .5s ease;
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    left: 40%;
+    font-size: 5rem;
+    margin-top: -7rem;
+    color: $gray-800;
+}
+
+.coursestyle2 {
+    width: 100%;
+    height: $courseboxheight;
+    background-color: #000;
+    color: #fff;
+    text-align: left;
+    font-size: 16px;
+    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .15);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .15);
+}
+
+.coursedimmed1 {
+    background-color: rgba($gray-200, 0.9);
+}
+
+.coursedimmed2 {
+    background-color: rgba(150, 150, 150, 0.9);
+    height: 100%;
+}
+
+.coursedimmed3 {
+    background-color: $gray-600;
+    padding: 1rem;
+}
+
+.coursedimmed4 {
+    background-color: rgba(150, 150, 150, 0.9);
+}
+
+.coursedimmed9 {
+    background-color: rgba($secondary, 0.2);
+}
+
+.class-box-courseview {
+    background-color: #dae6e5;
+    border: 1px solid #dae6e5;
+    -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .2);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .2);
+    height: 100%;
+}
+
+.coursestyle2 * {
+    -webkit-transition: all 0.35s;
+    transition: all 0.35s;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.coursestyle2 figcaption {
+    position: absolute;
+    height: 98px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: hidden;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.coursestyle2 h3 {
+    text-transform: uppercase;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 24px;
+    margin: 3px 0;
+}
+
+a.coursestyle2url {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+a.coursestyle3url {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+.coursestyle2:hover figcaption,
+.coursestyle2.hover figcaption {
+    height: calc(100%);
+}
+
+.coursestyle2:hover p.course-summary::-webkit-scrollbar {
+    width: 7px;
+}
+
+.coursestyle2:hover p.course-summary::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.3);
+    border-radius: 5%;
+}
+
+.coursestyle2:hover p.course-summary::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
+
+@media screen and (min-width: 992px) {
+    .coursestyle2:hover p.course-summary,
+    .coursestyle2.hover p.course-summary {
+        overflow-y: auto;
+        height: 5rem;
+    }
+}
+
+.coursestyle2 .course-card {
+    margin-top: 4rem;
+}
+
+.coursestyle2:hover .course-card {
+    margin-top: 0rem;
+}
+
+ul.teacherscourseview {
+    list-style-type: none;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.tilecontainer {
+    position: relative;
+    margin: 3rem 0 2rem 0;
+}
+
+.coursestyle9row {
+    padding: 1rem 0;
+    border-bottom: 1px dashed $gray-300;
+}
+
+.coursestyle9row:hover {
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    background-color: $activityhover;
+}
+.hoverhighlight:hover {
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    background-color: $activityhover;
+}
+
+/** 
+* TIDY UP 
+**/
+
+#page-header .singlebutton {
+    z-index: 1;
+}
+
+.dashtitle {
+    padding-top: .5rem;
+}
+
+.jumpmenu {
+    display: inline-block;
+}
+
+.enrolmenticons {
+    float: right;
+}
+
+.course-content ul.topics li.section .left, .course-content ul.topics li.section .right {
+    width: auto;
+    padding: 0;
+}
+
+.editing .course-content ul.topics li.section .left, .editing .course-content ul.topics li.section .right {
+    width: auto;
+    padding: 0 6px;
+}
+
+#page-my-index .block_myoverview .card-body {
+    border: 0;
+}
+
+.path-course-view .actions img.icon {
+    width: 24px;
+    height: 24px;
+}
+
+#page-badges-mybadges .fpwonderbox {
+    display: none;
+}
+
+#page-badges-mybadges .markettiles {
+    display: none;
+}
+
+#page-user-files .fpwonderbox {
+    display: none;
+}
+
+.socials_wrapper {
+    margin: 0 auto;
+    .socials {
+        margin-bottom: 0;
+    }
+}
+
+.socials a:hover {
+    text-decoration: none;
+}
+
+.coursecontrols .nav-item.nav-link {
+    padding: 0;
+}
+
+.editingbutton {
+    float: left;
+    margin: 0 .25rem;
+}
+
+.region_main_settings_menu_proxy {
+    background-color: transparent;
+}
+
+// Navbar Styling
+.navbar-nav .coursecontrols .nav-item + .nav-item {
+    margin-left: .25rem;
+}
+
+.navbar {
+    background-color: $topnavbarbg;
+}
+li.nav-item {
+    display: inline-flex;
+}
+// FHS Navbar
+.navbar-fhs {
+  .navbar-brand {
+    color: $navbar-fhs-active-color;
+
+    @include hover-focus {
+      color: $navbar-fhs-active-color;
+    }
+  }
+
+  .navbar-nav {
+    .nav-link {
+      color: $navbar-fhs-color;
+
+      @include hover-focus {
+        color: $navbar-fhs-hover-color;
+      }
+
+      &.disabled {
+        color: $navbar-fhs-disabled-color;
+      }
+    }
+
+    .show > .nav-link,
+    .active > .nav-link,
+    .nav-link.show,
+    .nav-link.active {
+      color: $navbar-fhs-active-color;
+    }
+  }
+
+  .navbar-toggler {
+    color: $navbar-fhs-color;
+    border-color: $navbar-fhs-toggler-border-color;
+  }
+
+  .navbar-toggler-icon {
+    background-image: $navbar-fhs-toggler-icon-bg;
+  }
+
+  .navbar-text {
+    color: $navbar-fhs-color;
+    a {
+      color: $navbar-fhs-active-color;
+
+      @include hover-focus {
+        color: $navbar-fhs-active-color;
+      }
+    }
+  }
+}
+span.userbutton {
+    color: $navbar-fhs-color;
+}
+
+
+#nav-drawer.closed {
+    left: -($drawer-width + $drawer-offscreen-gutter);
+}
+
+[data-region="drawer"] {
+    background-color: $drawer-bg;
+}
+
+.studentdash .btn, .teacherdash .btn, .enrollcodes .btn, .siteadminlink .btn {
+    background-color: $primary;
+    border-color: $primary;
+    color: $white;
+}
+
+.studentdash .btn:hover, .teacherdash .btn:hover, .enrollcodes .btn:hover, .siteadminlink .btn:hover {
+    background-color: $card-bg;
+    color: $gray-800;
+}
+
+// Quiz Question fill in blank fix to display inline.
+.path-mod-quiz .que .form-inline {
+    display: inline-block;
+}
+
+// Image fixes.
+[data-region="coursecompetencyactivities"] .list-inline-item img {
+width: $activityiconsize;
+}
+
+#page-course-editdefaultcompletion .modules.mb-1 img {
+    height: $activityiconsize;
+    width: $activityiconsize;
+}
+
+.block_recentlyaccesseditems img.icon {
+    height: $activityiconsize;
+    width: $activityiconsize;
+}
+
+/* H5P regression fix for editor https://moodle.org/mod/forum/discuss.php?d=347602#p1402801 */
+@media (min-width:544px) {
+    .form-inline .form-control-static {
+        display: block!important;
+    }
+}
+/* End H5P */
+
+#back-to-top {
+    position: fixed;
+    bottom: 75px;
+    right: 20px;
+    z-index: 2;
+    cursor: pointer;
+    transition: opacity 0.2s ease-out;
+    opacity: 0;
+}
+
+#back-to-top.show {
+    opacity: 1;
+}
+
+.mycoursecompletion {
+    float: left;
+    padding-right: 1rem;
+}
+
+.mycoursecompletiontile2 {
+    padding-left: .5rem;
+    padding-top: .5rem;
+}
+
+.mycoursecompletiontile4 {
+    padding-left: .5rem;
+    padding-top: .5rem;
+}
+
+.completiontextposition {
+    color: initial;
+}
+
+// MISTAR SIS Grade Export Page
+.export-group {
+    background-color: $gray-100;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border: 1px solid $gray-200;
+    border-top: 7px solid $spectrum-base;
+}
+
+.export-group .col-md-3 label {
+    font-weight: bold;
+}
+
+.export-group .form-group.row.fitem:first-child {
+    border-bottom: 1px solid $gray-300;
+}
+
+//Dashboard no progress icon centered fix
+
+.progress-chart-container .no-progress .icon {
+    top: 50%;
+    left: 40%;
+}
+.progress-bar .fhsprogresstest {
+    width: max-content;
+    margin-left: 1rem;
+}
+
+.progress.fordsonsinglepage {
+    float: right;
+    height: 7px;
+    border: 0;
+    width: 25%;
+}
+
+/**
+* Responsive Fixes
+**/
+
+div#page.container-fluid {
+    padding: 0 $gutterwidth;
+}
+
+@if $gutterwidth == 0rem {
+    .row {
+        margin-right: $gutterwidth; 
+        margin-left: $gutterwidth;
+    }
+    .col-12 {
+        padding-right: $gutterwidth;
+        padding-left: $gutterwidth;
+    }
+    #page-wrapper {
+        padding-bottom: $gutterwidth;
+    }
+    
+}
+
+@media screen and (max-width: 576px) {
+    div#nav-message-popover-container {display: none;}
+    div#nav-notification-popover-container {display: none;}
+    div#page-content {
+        padding: 0;
+    }
+    #page-course-view-topics .course-content ul.topics li.section {
+        padding: 2rem 0;
+    }
+    .card-body {
+        padding: .5rem;
+    }
+    .section li.activity {
+        padding: .5rem;
+    }
+    .course-content ul.section {
+        margin: 0;
+    }
+    div#page.container-fluid {
+        padding: 0!important;
+    }
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .p-a-1 {
+        padding: 0 !important;
+    }
+    .class-fullbox7 {
+        padding: 3rem .25rem 0 .25rem;
+    }
+    .course-summary-2col {
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+    }
+    .blockbtntext {display:none;}
+    .progress {
+    width: 100%;
+    }
+}
+
+.navbar-expand .navbar-nav .dropdown-menu {
+    position: absolute;
+    max-height: 500px;
+    overflow: auto;
+}
+
+/**
+* Collapsed Topic Format Fixes
+**/
+ul.ctopics {
+    width: 100%;
+}
+
+/**
+* Media Plugin Styling
+**/
+
+.path-course-view .video-js.vjs-audio {
+    width: 400px;
+}
+
+.path-course-view .mod-indent-outer .mediaplugin {
+    display: contents;
+}
+
+.path-course-view .mediaplugin_videojs>div {
+    margin: initial;
+}
+
+audio.mediaplugin_html5audio {
+    width: 400px;
+    height: 54px;
+    position: initial;
+}
+
+
+//Moodle 3.6 Fixes
+#page-login-index #page {
+    background-color: transparent;
+}
+
+//Moodle 3.7 Fixes
+#page-message-index #region-main {
+    height: auto;
+}
+
+.custom-select {
+    width: auto;
+}
+
+// Navbar Color switch
+nav.fixed-top.navbar.navbar-teacher.navbar-expand.moodle-has-zindex {
+    background-color: $teachernavbarcolor;
+}
+nav.fixed-top.navbar.navbar-student.navbar-expand.moodle-has-zindex {
+    background-color: $studentnavbarcolor;
+}
+
+// Fordson CourseFormat Enhancements.  Please download and install https://moodle.org/plugins/format_collapsibletopics and turn on the special features for the Fordson Course Format in theme settings.
+body.editing .course-content ul.collapsibletopics a.sectiontoggle {
+    float: unset;
+}
+body.editing .course-content ul.collapsibletopics a.sectiontoggle[aria-expanded="true"] {
+    background-position: left 55%;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+body.editing .course-content ul.collapsibletopics a.sectiontoggle[aria-expanded="false"] {
+    background-position: left 55%;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+.fordsoncourseformat h3.sectionname {
+    background-color: $gray-200;
+    padding: 1rem;
+}
+li#section-0.fordsoncourseformat h3.sectionname {
+    background-color: initial;
+    padding: 0;
+}
+
+.course-content ul li.section.main.fordsoncourseformat {
+    border-bottom: 0;
+}
+
+.course-content ul.collapsibletopics .fordsoncourseformat .content .summarytext {
+    padding: 1rem;
+    margin: 0;
+}
+
+body.editing ul.collapsibletopics .fordsoncourseformat .content .summarytext {
+    margin: 0;
+    padding: 1rem;
+}
+
+.fordsoncourseformat .progress {
+    background-color: $gray-500;
+}
+
+.fordsoncourseformat .fhscoursebutton {
+    display: block;
+}
+
+.course-content ul.collapsibletopics li.section.fordsoncourseformat .content {
+    padding: 0;
+}
+
+.course-content ul.collapsibletopics a.sectiontoggle {
+    font-size: 1.2rem;
+}
+
+.fordsoncourseformat ul.section {
+    margin: 0;
+    padding: 1rem;
+}

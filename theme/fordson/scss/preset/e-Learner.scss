@@ -1,0 +1,248 @@
+
+
+//Fordson eLearning variables
+$elearningcontentbkg: rgba(255,255,255,0.6) !default;
+
+// Bootstrap variables
+
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #868e96 !default;
+$gray-700: #495057 !default;
+$gray-800: #373a3c !default;
+$gray-900: #212529 !default;
+
+$gray-base: #ccc !default;
+
+$black:    #000 !default;
+
+$blue:    #1177d1 !default;
+$indigo:  #6610f2 !default;
+$purple:  #613d7c !default;
+$pink:    #e83e8c !default;
+$red:     #d9534f !default;
+$orange:  #f0ad4e !default;
+$yellow:  #ff7518 !default;
+$green:   #5cb85c !default;
+$teal:    #20c997 !default;
+$cyan:    #5bc0de !default;
+
+$primary:       $blue !default;
+$secondary:     $gray-800 !default;
+$success:       $green !default;
+$info:          $cyan !default;
+$warning:       $yellow !default;
+$danger:        $red !default;
+$light:         $gray-100 !default;
+$dark:          $gray-800 !default;
+
+// Options
+//$enable-rounded: false !default;
+$border-radius: 4px !default;
+
+
+// Body
+$body-color:    $gray-800 !default;
+$body-bg:       #dae6e5 !default;
+$drawer-bg:     $elearningcontentbkg !default;
+
+// Fonts
+$font-size-base: 0.9375rem !default;
+$headings-font-weight:   300 !default;
+
+// Navbar
+$navbar-dark-hover-color:           rgba($white, 1) !default;
+$navbar-light-hover-color:          rgba($black, .9) !default;
+$navbarurl : #fff !default;
+
+// Breadcrumbs
+$breadcrumb-padding-y:              .25rem !default;
+$breadcrumb-padding-x:              0 !default;
+$breadcrumb-item-padding:           .5rem !default;
+$breadcrumb-margin-bottom:          0 !default;
+$breadcrumb-bg:                     $primary !default;
+$breadcrumb-divider: "/" !default;
+$breadcrumb-divider-rtl: "/" !default;
+
+$breadcrumb-bg: $primary !default;
+$breadcrumb-bg-hover: darken($primary, 15%) !default;
+$breadcrumb-text-color: $white !default;
+$breadcrumbdash: $gray-200 !default;
+$breadcrumbdimmed: $gray-600 !default;
+
+// Alerts
+$alert-border-width:                0 !default;
+
+// Dropdowns
+$dropdown-bg:                       $white !default;
+$dropdown-border-color:             rgba($black, .15) !default;
+$dropdown-divider-bg:               $gray-200 !default;
+$dropdown-box-shadow:               0 .5rem 1rem rgba($black, .175) !default;
+
+$dropdown-link-color:               $gray-900 !default;
+$dropdown-link-hover-color:         darken($gray-900, 5%) !default;
+$dropdown-link-hover-bg:            $gray-200 !default;
+
+$dropdown-link-active-color:        $dropdown-link-hover-color !default;
+$dropdown-link-active-bg:           $gray-400 !default;
+
+
+$theme-colors: (
+    primary: $primary,
+    secondary: $gray-200,
+    success: $success,
+    info: $info,
+    warning: $orange,
+    danger: $danger,
+    light: $gray-100,
+    dark: $gray-800
+);
+
+
+// Import FontAwesome.
+@import "../../boost/scss/fontawesome";
+
+// Import All of Bootstrap
+@import "../../boost/scss/bootstrap";
+
+// Import Core moodle CSS
+@import "../../boost/scss/moodle";
+
+
+// Preset CSS
+
+body {
+    -webkit-font-smoothing: antialiased;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
+}
+
+.filemanager-container,
+.filepicker-filelist {
+    @extend .border;
+}
+
+// Rounded user pictures
+.userpicture {
+    border-radius: 5%;
+}
+
+[data-region="drawer"] {
+    background-color: $elearningcontentbkg;
+}
+
+#region-main .card-body {
+    border: 0;
+}
+#region-main {
+    background-color: $card-bg !important;
+}
+.pagelayout-login #region-main {
+    background-color: transparent!important;
+}
+
+.pagelayout-mydashboard #region-main {
+    border: inherit;
+    padding: 1rem;
+    background-color: $card-bg;
+    margin-top: 0;
+}
+
+.course-content .current::before {
+    border-left: 0;
+}
+
+.card-body {
+    border: 1px solid $gray-200;
+}
+
+a#blocksliderbutton {
+    background-color: $primary;
+}
+
+div#learningcontent {
+    background-color: $elearningcontentbkg !important;
+    padding: 2rem !important;
+}
+
+.headerbkg {
+    margin-top: 0px!important;
+    position: fixed!important;
+    left: 0!important;
+    top: 0!important;
+    width: 100%!important;
+    height: 100%!important;
+}
+
+#page-header .card .headerbkg {
+    position:absolute !important;
+}
+
+.pagelayout-course .headerbkg {
+    height: 100% !important;
+}
+
+div#page-content {
+    padding: initial;
+}
+
+.coursecontrols .nav-item.nav-link {
+    margin-right: 1px;
+}
+
+.section-go-link {
+    padding: .25rem;
+    margin: .5rem;
+    background-color: $gray-100;
+    display: inline-block;
+    border: 1px solid $gray-300;
+}
+
+@media screen and (max-width: 576px) {
+    div#learningcontent {
+        padding: .25rem !important;
+    }
+}
+
+div#blockslider {
+    margin-top: 1rem;
+}
+
+// Progress Bars
+
+.progress_bar {
+    background-color: $gray-100;
+    text-align: center;
+}
+
+.progress_bar_completed {
+    background-color: $primary;
+    text-align: right;
+}
+
+
+
+.mt-2.mb-1 {
+    position: relative;
+    background-color: darken($body-bg, 10%);
+    padding: $spacer;
+    border-radius: $border-radius;
+    margin: 0!important;
+    border-top: 7px solid rgba(0,0,0,.2);
+    border-radius: 0;
+}
+
+.activity-navigation {
+    background-color: $card-bg;
+    padding: 1rem 0;
+    margin: 0 $gutterwidth;
+    border: 1px solid $gray-400;
+    border-radius: $border-radius;
+    z-index: 1;
+}

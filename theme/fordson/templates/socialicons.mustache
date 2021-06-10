@@ -1,0 +1,62 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_fordson/socialicons
+
+    fordson Social Icons display.
+
+    Context variables required for this template:
+    * hassocialnetworks
+    * hasfacebook
+    * has twitter
+    * hasgoogleplus
+    * haslinkedin
+    * hasyoutube
+    * hasflickr
+    * hasvk
+    * haspinterest
+    * hasinstagram
+    * hasskype
+    * haswebsite
+    * hasblog
+    * hasvimeo
+    * hastumblr
+    * hassocial1
+    * hassocial1icon
+    * hassocial2
+    * hassocial2icon
+    * hassocial3
+    * hassocial3icon
+}}
+
+{{#hassocialnetworks}}
+    <div class="socials_wrapper">
+        <ul class="socials">
+            {{#socialicons}}
+                {{#haslink}}
+                    <a href = {{{haslink}}} class = "socialicon blog" title = "{{{haslink}}}" alt="{{{haslink}}}" target="_blank">
+                    <span class="fa-stack fa-1x">
+                    <i class="fa fa-square fa-stack-2x"></i>
+                    <i class="fa fa-{{{linkicon}}} fa-inverse fa-stack-1x"></i>
+                    </span>
+                    <span class="sr-only">{{{haslink}}}</span>
+                    </a>
+                {{/haslink}}
+            {{/socialicons}}
+        </ul>
+    </div>
+{{/hassocialnetworks}}

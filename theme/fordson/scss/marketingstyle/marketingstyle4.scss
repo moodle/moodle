@@ -1,0 +1,43 @@
+.markettiles {
+  margin: 1rem 0;
+}
+
+.market-tile {
+  margin: 1rem 0rem;
+  background-color: $gray-100;
+  box-shadow: 0px -1px 12px 1px rgba($gray-700, 0.8);
+}
+
+.market-tile .btn-primary {
+  display: block;
+}
+
+.market-tile .card-title {
+  padding: 1rem;
+}
+
+.marketcontent {
+  height: 10rem;
+  overflow: auto;
+  position: relative;
+}
+
+.marketcontent .text_to_html {
+  padding: .5rem;
+  background-color: rgba($dark,0.6);
+  color: $white;
+  font-weight: bold;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.marketcontent .text_to_html a {
+  text-decoration: underline;
+  color: $white;
+}
+
+.marketcontent .text_to_html a:hover {
+  color: darken($white, 15%);
+}

@@ -1,0 +1,100 @@
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2013 Thomas Park
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
+// --------------------------------------------------
+
+/* stylelint-disable color-hex-length */
+
+/**
+ * Default preset file.
+ *
+ * Use this space to customise variables, create mixins and override SCSS.
+ */
+
+//Styling
+
+h3.sectionname {
+    text-align: center;
+    padding: $spacer;
+    background-color: $gray-300; 
+}
+
+#page-course-view-topics .course-content ul.topics li.section, #page-course-view-weeks .course-content ul.weeks li.section {
+    margin-bottom: 3rem;
+    padding-top: 0;
+}
+
+.course-content img.activityicon {
+    height: $activityiconsize;
+    width: $activityiconsize;
+    vertical-align: middle !important;
+}
+
+.course-content .current::before {
+    border-left: $primary 8px solid;
+}
+
+.course-content .single-section .section-navigation {
+    padding: 1rem;
+    margin: 0!important;
+    border-top: 7px solid rgba(0,0,0,.2);
+    border-radius: 0;
+}
+.course-content .section-summary {
+    border: 0;
+}
+
+.progress.fordsonsinglepage {
+    margin-top: 1rem;
+    margin-right: 1rem;
+    height: 12px!important;
+    border: 1px solid $white !important;
+}
+
+@if $perceptionpreset == 1 {
+    .course-content ul.topics li.section .content, .course-content ul.weeks li.section .content {
+        margin: 0;
+        padding: 0;
+    }
+    h3.sectionname {
+        text-align: left;
+        padding: $spacer;
+        background-color: $perception-base; 
+    }
+    .hidden h3.sectionname {
+        text-align: left;
+        padding: 1rem;
+        background-color: $gray-300;
+    }
+
+    .course-content .current::before {
+        border-left: 0;
+    }
+    .course-content ul.topics li.section.current h3.sectionname, .course-content ul.weeks li.section.current h3.sectionname {
+        background-color: $sectionnamehighlight;
+    }
+    .progress-bar {
+        background-color: $sectionnamehighlight;
+    }
+}

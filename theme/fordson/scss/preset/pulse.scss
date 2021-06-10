@@ -1,0 +1,295 @@
+// Pulse 4.0.0
+// Bootswatch
+
+//
+// Color system
+//
+
+$white:    #fff !default;
+$gray-100: #fafafa !default;
+$gray-200: #F9F8FC !default;
+$gray-300: #EDEDED !default;
+$gray-400: #cbc8d0 !default;
+$gray-500: #adb5bd !default;
+$gray-600: #868e96 !default;
+$gray-700: #444 !default;
+$gray-800: #343a40 !default;
+$gray-900: #17141F !default;
+$black:    #000 !default;
+
+$blue:    #007bff !default;
+$indigo:  #6610f2 !default;
+$purple:  #593196 !default;
+$pink:    #e83e8c !default;
+$red:     #FC3939 !default;
+$orange:  #fd7e14 !default;
+$yellow:  #EFA31D !default;
+$green:   #13B955 !default;
+$teal:    #20c997 !default;
+$cyan:    #009CDC !default;
+
+$primary:       $purple !default;
+$secondary:     #A991D4 !default;
+$success:       $green !default;
+$info:          $cyan !default;
+$warning:       $yellow !default;
+$danger:        $red !default;
+$light:         $gray-200 !default;
+$dark:          $gray-900 !default;
+
+// Options
+
+$enable-rounded: false !default;
+
+// Body
+
+$body-color:                $gray-700 !default;
+
+// Links
+
+$link-hover-color:          $primary !default;
+
+// Fonts
+
+$font-size-base:              0.875rem !default;
+
+// Tables
+
+$table-border-color:          rgba(0, 0, 0, 0.05) !default;
+
+// Forms
+
+$input-focus-border-color:              $primary !default;
+
+// Dropdowns
+
+$dropdown-link-color:               $gray-700;
+$dropdown-link-hover-color:         $primary;
+$dropdown-link-hover-bg:            $gray-300;
+
+// Navs
+
+$nav-tabs-border-color:             $gray-300 !default;
+$nav-tabs-link-hover-border-color:  $primary !default;
+
+// Navbar
+
+$navbar-padding-y:                  1.2rem !default;
+
+$navbar-dark-hover-color:           rgba($white,.9) !default;
+$navbar-dark-active-color:          rgba($white,.9) !default;
+
+$navbar-light-color:                rgba($black,.4) !default;
+$navbar-light-active-color:         rgba($black,.7) !default;
+$navbar-light-disabled-color:       rgba($black,.2) !default;
+
+// Breadcrumbs
+
+$breadcrumb-bg: $primary !default;
+$breadcrumb-bg-hover: darken($primary, 15%) !default;
+$breadcrumb-text-color: #ffffff !default;
+
+// Progress bars
+
+$progress-bg:                       $gray-300 !default;
+$progress-bar-bg:                   $primary !default;
+
+// List group
+
+$list-group-bg:                     $gray-900;
+$list-group-border-color:           transparent;
+
+$list-group-hover-bg:               lighten($list-group-bg, 10%);
+$list-group-active-color:           $white;
+$list-group-active-bg:              $list-group-bg;
+
+$list-group-disabled-color:         lighten($list-group-bg, 30%);
+
+
+// Import FontAwesome.
+@import "../../boost/scss/fontawesome";
+
+// Import All of Bootstrap
+@import "../../boost/scss/bootstrap";
+
+// Import Core moodle CSS
+@import "../../boost/scss/moodle";
+
+
+// Variables ===================================================================
+
+// Buttons =====================================================================
+
+.btn {
+
+  &:focus,
+  &:active,
+  &:active:focus,
+  &.active:focus {
+    outline: none;
+  }
+
+  &-secondary {
+    background-color: $white;
+    border-color: #ccc;
+    color: $gray-900;
+
+    &:hover {
+      background-color: $gray-300;
+      border-color: $gray-500;
+      color: $gray-900;
+    }
+
+    &.disabled {
+      background-color: $white;
+      border-color: lighten(#ccc, 5%);
+      color: lighten($gray-900, 5%);
+    }
+  }
+
+  &-warning {
+    color: $white;
+  }
+
+  &-primary:focus {
+    box-shadow: 0 0 5px lighten($primary, 10%);
+  }
+
+  &-secondary:focus {
+    box-shadow: 0 0 5px $gray-400;
+  }
+
+  &-success:focus {
+    box-shadow: 0 0 5px lighten($success, 10%);
+  }
+
+  &-info:focus {
+    box-shadow: 0 0 5px lighten($info, 10%);
+  }
+
+  &-warning:focus {
+    box-shadow: 0 0 5px lighten($warning, 10%);
+  }
+
+  &-danger:focus {
+    box-shadow: 0 0 5px lighten($danger, 10%);
+  }
+
+  &.disabled:focus {
+    box-shadow: none;
+  }
+
+}
+
+// Typography ==================================================================
+
+// Tables ======================================================================
+
+.table .thead-dark th {
+  background-color: $secondary;
+  border-color: $table-border-color;
+}
+
+// Forms =======================================================================
+
+.form-control:focus {
+  box-shadow: 0 0 5px rgba(100,65,164,.4);
+}
+
+// Navs ========================================================================
+
+.nav-tabs {
+
+  .nav-link,
+  .nav-link.active, {
+    border-width: 0 0 1px 0;
+  }
+
+  .nav-link:hover,
+  .nav-link.active,
+  .nav-link.active:hover,
+  .nav-link.active:focus {
+    border-bottom: 1px solid $primary;
+  }
+
+  .nav-item + .nav-item {
+    margin-left: 0;
+  }
+}
+
+
+// Indicators ==================================================================
+
+.badge {
+  padding-bottom: 0.4em;
+
+  &-secondary,
+  &-warning {
+    color: $white;
+  }
+}
+
+// Progress bars ===============================================================
+
+.progress {
+  height: 18px;
+}
+
+.progress_bar_completed {
+    background-color: $gray-400;
+    text-align: right;
+}
+
+// Containers ==================================================================
+
+.list-group {
+
+  &-item {
+    color: rgba(255, 255, 255, 0.8);
+
+    &.active,
+    &:hover,
+    &:focus {
+      color: #fff;
+    }
+
+    &.active {
+      font-weight: bold;
+
+      &:hover {
+        background-color: $list-group-hover-bg;
+      }
+    }
+
+    &.disabled:hover {
+      color: $list-group-disabled-color;
+    }
+  }
+}
+
+
+// Fordson Styling
+.dropdown-item a {
+    color: initial;
+}
+
+.list-group-item-action:active {
+    color: #444;
+    background-color: initial;
+}
+
+div#blockslider {
+    padding-top: 2rem!important;
+}
+
+.section-go-link {
+    padding: .25rem;
+    margin: .5rem;
+    background-color: $gray-100;
+    display: inline-block;
+    border: 1px solid $gray-300;
+}
+#region-main {
+    border: 0;
+    background-color: transparent;
+}

@@ -1,0 +1,205 @@
+// Bootstrap variables
+
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #868e96 !default;
+$gray-700: #495057 !default;
+$gray-800: #373a3c !default;
+$gray-900: #212529 !default;
+
+$gray-base: #ccc !default;
+
+$black:    #000 !default;
+
+$blue:    #1177d1 !default;
+$indigo:  #6610f2 !default;
+$purple:  #613d7c !default;
+$pink:    #e83e8c !default;
+$red:     #d9534f !default;
+$orange:  #f0ad4e !default;
+$yellow:  #ff7518 !default;
+$green:   #5cb85c !default;
+$teal:    #20c997 !default;
+$cyan:    #5bc0de !default;
+
+$primary:       #447198 !default;
+$secondary:     $gray-800 !default;
+$success:       $teal !default;
+$info:          $cyan !default;
+$warning:       $yellow !default;
+$danger:        $red !default;
+$light:         $gray-100 !default;
+$dark:          $gray-800 !default;
+
+// Options
+$enable-rounded: false !default;
+
+// Body
+$body-color:    $gray-800 !default;
+$body-bg:       #dae6e5 !default;
+$drawer-bg:     rgba(235, 251, 255, 0.8) !default;
+$card-bg:       $white !default;
+$footer-bg:     rgba(14, 62, 70, 0.9) !default;
+
+// Fonts
+$font-size-base: 0.9375rem !default;
+$headings-font-weight:   300 !default;
+
+// Navbar
+$navbar-dark-hover-color:           rgba($white, 1) !default;
+$navbar-light-hover-color:          rgba($black, 1) !default;
+$navbarurl : #fff !default;
+
+// Breadcrumbs
+$breadcrumb-padding-y:              .25rem !default;
+$breadcrumb-padding-x:              0 !default;
+$breadcrumb-item-padding:           .5rem !default;
+$breadcrumb-margin-bottom:          0 !default;
+$breadcrumb-divider: "/" !default;
+$breadcrumb-divider-rtl: "/" !default;
+
+$breadcrumb-bg: $primary !default;
+$breadcrumb-bg-hover: darken($primary, 15%) !default;
+$breadcrumb-text-color: $white !default;
+$breadcrumbdash: $gray-200 !default;
+$breadcrumbdimmed: $gray-600 !default;
+
+// Dropdowns
+$dropdown-bg:                       $white !default;
+$dropdown-border-color:             rgba($black, .15) !default;
+$dropdown-divider-bg:               $gray-200 !default;
+$dropdown-box-shadow:               0 .5rem 1rem rgba($black, .175) !default;
+
+$dropdown-link-color:               $gray-900 !default;
+$dropdown-link-hover-color:         darken($gray-900, 5%) !default;
+$dropdown-link-hover-bg:            $gray-200 !default;
+
+$dropdown-link-active-color:        $white !default;
+$dropdown-link-active-bg:           $gray-400 !default;
+
+// Alerts
+$alert-border-width:                0 !default;
+
+$theme-colors: (
+    primary: $primary,
+    secondary: $gray-200,
+    success: $success,
+    info: $info,
+    warning: $orange,
+    danger: $danger,
+    light: $gray-100,
+    dark: $gray-800
+);
+
+
+// Import FontAwesome.
+@import "../../boost/scss/fontawesome";
+
+// Import All of Bootstrap
+@import "../../boost/scss/bootstrap";
+
+// Import Core moodle CSS
+@import "../../boost/scss/moodle";
+
+// Let theme know we are using Modern Moodle
+$modernmoodlepreset: 1;
+
+
+// Preset CSS
+
+body {
+    -webkit-font-smoothing: antialiased;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
+}
+
+.filemanager-container,
+.filepicker-filelist {
+    @extend .border;
+}
+
+// Rounded user pictures
+.userpicture {
+    border-radius: 50%;
+}
+
+// Navdrawer pull right
+[data-region="drawer"] {
+    padding: 20px 0 20px 20px;
+}
+
+// Content area bkg
+div#learningcontent {
+    position: relative;
+    background-color: $white;
+    border: 0 !important;
+    border-top: 1rem solid $primary !important;
+}
+.course-content .current::before {
+    border-left: 0;
+}
+
+// Remove extra padding at top of page
+#page-header .pb-3 {
+    padding-bottom: 0 !important;
+}
+#page-header .card-body {
+    padding-bottom: 0;
+}
+.course-content li#section-0 .content {
+    margin-top: 0;
+}
+.editing .course-content li#section-0 .content {
+    margin-top: 2rem; 
+}
+
+.fp-blocks {
+    padding-top: 2rem;
+}
+.section-go-link {
+    padding: .25rem;
+    margin: .5rem;
+    background-color: $gray-100;
+    display: inline-block;
+    border: 1px solid $gray-300;
+}
+// Progress Bars
+
+.progress_bar {
+    background-color: $gray-100;
+    text-align: center;
+}
+
+.progress_bar_completed {
+    background-color: $primary;
+    text-align: right;
+}
+#region-main {
+    border: 0;
+    background-color: $card-bg;
+}
+
+.mt-2.mb-1 {
+    position: relative;
+    background-color: darken($body-bg, 10%);
+    padding: $spacer;
+    border-radius: $border-radius;
+    margin: 0!important;
+    border-top: 7px solid rgba(0,0,0,.2);
+    border-radius: 0;
+}
+
+.activity-navigation {
+    background-color: $card-bg;
+    padding: 1rem 0;
+    margin: 0 $gutterwidth;
+    border: 1px solid $gray-400;
+    border-radius: $border-radius;
+    z-index: 1;
+}

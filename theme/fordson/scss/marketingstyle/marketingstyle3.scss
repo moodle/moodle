@@ -1,0 +1,51 @@
+.markettiles {
+  margin: 1rem 0;
+}
+
+.market-tile {
+  margin: 1rem 0rem;
+  padding: 1rem;
+  background-color: $gray-100;
+  border: 1px solid $gray-200;
+}
+
+.marketcontent {
+  height: 14rem;
+  overflow: auto;
+}
+
+.marketcontent .text_to_html {
+  padding: .5rem;
+  background-color: rgba($white,0.8);
+}
+
+.market-tile .btn-primary {
+  display: block;
+}
+
+@if $perceptionpreset == 1 {
+  .market-tile {
+    margin: 1rem 0rem;
+    padding: 0;
+    background-color: $gray-100;
+    border: 1px solid $gray-200;
+    border-top: 7px solid $perception-base;
+  }
+  .market-tile .card-title {
+    padding: 1rem .5rem;
+    background-color: $gray-200;
+    margin-bottom: 0;
+  }
+  .marketcontent {
+    height: 10rem;
+    overflow: auto;
+  }
+  .market-tile .btn-primary {
+    margin-top: .25rem;
+    color: $dark;
+    background-color: $gray-200;
+    border-color: $gray-200;
+    display: inline-block;
+  }
+  
+}

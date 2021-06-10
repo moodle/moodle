@@ -1,0 +1,18 @@
+.markettiles {
+  margin: 1rem 0;
+}
+
+.market-tile {
+  margin: 1rem 0rem;
+  background-color: $body-bg;
+  padding: 1rem;
+  border-top: 10px solid $dark;
+}
+
+.marketcontent {
+  padding: 1rem;
+  background-color: $markettextbg;
+  height: 10rem;
+  overflow: auto;
+  margin-bottom: 1rem;
+}

@@ -1,0 +1,68 @@
+// Default Fordson theme variables
+
+$fpicon-width: 100px !default;
+$fpiconcreate-width: 150px !default;
+$fploginform: rgba(255, 255, 255, 0.9) !default;
+
+$headerimagepadding: 275px !default;
+$showheadergradient: 0 !default;
+
+$courseboxheight: 250px !default;
+
+$marketing1image: #fff !default;
+$marketing2image: #fff !default;
+$marketing3image: #fff !default;
+$marketing4image: #fff !default;
+$marketing5image: #fff !default;
+$marketing6image: #fff !default;
+$markettile-radius: 5px !default;
+$markettextbg: rgba(255, 255, 255, 0.8) !default;
+
+$border-radius: 4px !default;
+
+$learningcontentpadding: 400px !default;
+
+$blockwidthfordson: 280px !default;
+
+$drawer-bg: darken($body-bg, 5%) !default;
+$footer-bg: $gray-800 !default;
+$breadcrumb-bg: $primary !default;
+$breadcrumb-bg-hover: darken($breadcrumb-bg, 15%) !default;
+$breadcrumb-text-color: #ffffff !default;
+$breadcrumbdash: #ffffff !default;
+$breadcrumbdimmed: $gray-600 !default;
+
+$slideshowheight: 250px !default;
+
+$activityiconsize: 36px !default;
+$activityhover: #fff6ae !default;
+
+$gutterwidth: 2rem !default;
+
+$calendartoday: #fbffba !default;
+$custommenu-bg: #fff !default;
+
+$sectionnamehighlight : #43d0f3 !default;
+$dpsaccentcolor: #44d4a6 !default;
+$sectionactivitybkg: #fdfdfd !default;
+$sectionbkg: $sectionactivitybkg !default;
+$layout5imgoverlay: rgba(0,0,0,0.5) !default;
+$spectrum-base: #3fcbda !default;
+$elearningcontentbkg: rgba(255,255,255,0.6) !default;
+
+//Preset Checks for unique styling
+$spectrumpreset: 0 !default;
+$modernmoodlepreset: 0 !default;
+$perceptionpreset: 0 !default;
+
+$topnavbarbg: 						$white !default;
+$teachernavbarcolor: 				#f3e420 !default;
+$studentnavbarcolor: 				$topnavbarbg !default;
+$navbar-fhs-color:                  $black !default;
+$navbar-fhs-active-color:           $black !default;              
+$navbar-fhs-hover-color:            $black !default;
+$navbar-fhs-disabled-color:         $black !default;
+$navbar-fhs-toggler-border-color:	initial !default;
+$navbar-fhs-toggler-icon-bg:		initial !default;
+
+$perceptionfontsize:    			1.25rem !default;

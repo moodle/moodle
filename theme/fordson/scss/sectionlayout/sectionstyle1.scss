@@ -1,0 +1,109 @@
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2013 Thomas Park
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
+// --------------------------------------------------
+
+/* stylelint-disable color-hex-length */
+
+/**
+ * Default preset file.
+ *
+ * Use this space to customise variables, create mixins and override SCSS.
+ */
+
+//Styling
+#page-course-view-topics .course-content .section-summary {
+    border: 0;
+    border-bottom: 1px solid $gray-500;
+}
+
+@if $spectrumpreset == 1 {
+	.course-content ul.topics li.section, .course-content ul.weeks li.section {
+	    margin-bottom: 3rem;
+	}
+	.course-content .section-summary {
+    	border: 0; 
+	}
+	.section-go-link.btn.btn-secondary {
+        display: block;
+        margin-top: 2rem;
+    }
+}
+
+@if $perceptionpreset == 1 {
+	#page-course-view-topics .course-content ul.topics li.section.current, #page-course-view-topics .course-content ul.weeks li.section.current {
+	    border-left: 7px solid $perception-base;
+	    background-color: $gray-100;
+	}
+	#page-course-view-topics .course-content ul.topics li.section.hidden, #page-course-view-topics .course-content ul.weeks li.section.hidden {
+	    border-left: 7px solid $gray-900;
+	    background-color: $gray-100;
+	}
+	li.section.current {
+	    border-left: 7px solid $perception-base;
+	    background-color: lighten($gray-200, 5%);
+	}
+
+	li.section.hidden {
+	    border-left: 7px solid $gray-900;
+	    background-color: lighten($gray-200, 5%);
+	}
+
+	.course-content .section-summary {
+    	border: 0; 
+	}
+	.course-content img.activityicon {
+  		height: $activityiconsize;
+  		width: $activityiconsize;
+  		vertical-align: middle !important;
+  	}
+	.section li.activity {
+	    padding: calc($spacer - 50%);
+	    border-bottom: 1px dashed transparent;
+	}
+
+	.section li.activity:hover {
+	    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+	    background-color: rgba($activityhover, .8);
+	    border-bottom: 1px dashed $gray-300;
+	}
+
+	.section li.activity.modtype_label.label:hover {
+	    transition: none;
+	    background-color: inherit;
+	}
+
+	.editing .section .activity:hover,
+	.editing .section .activity.action-menu-shown {
+	    background-color: $activityhover;
+	}
+	.section li.activity {
+	    padding: .2rem .5rem;
+	    clear: both;
+	}
+	.course-content ul li.section.main {
+		border-bottom: 1px solid $gray-500;
+	}
+	
+}

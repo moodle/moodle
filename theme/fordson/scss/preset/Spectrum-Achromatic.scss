@@ -1,0 +1,468 @@
+// Bootstrap variables
+
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #868e96 !default;
+$gray-700: #495057 !default;
+$gray-800: #373a3c !default;
+$gray-900: #212529 !default;
+
+
+$gray-base: #ccc !default;
+
+$black:    #000 !default;
+
+$blue:    #1177d1 !default;
+$indigo:  #6610f2 !default;
+$purple:  #613d7c !default;
+$pink:    #e83e8c !default;
+$red:     #d9534f !default;
+$orange:  #f0ad4e !default;
+$yellow:  #ff7518 !default;
+$green:   #5cb85c !default;
+$teal:    #20c997 !default;
+$cyan:    #5bc0de !default;
+
+$primary:       #444e58 !default;
+$secondary:     $gray-900 !default;
+$success:       $green !default;
+$info:          $cyan !default;
+$warning:       $yellow !default;
+$danger:        $red !default;
+$light:         $gray-100 !default;
+$dark:          $gray-800 !default;
+
+// Options
+$enable-rounded: false !default;
+
+
+// Body
+$body-color:    $gray-800 !default;
+$body-bg:       #EBF4F8 !default;
+$drawer-bg:     $gray-100 !default;
+$card-bg:       $white !default;
+$footer-bg:     $gray-600 !default;
+$spectrum-base: #3fcbda !default;
+$sectionnamehighlight : $spectrum-base;
+
+// Fonts
+$font-size-base: 0.9375rem !default;
+$headings-font-weight:   300 !default;
+
+// Navbar
+$navbar-dark-hover-color:           rgba($white, 1) !default;
+$navbar-light-hover-color:          rgba($black, 1) !default;
+$navbarurl : #fff !default;
+
+// Breadcrumbs
+$breadcrumb-padding-y:              .25rem !default;
+$breadcrumb-padding-x:              0 !default;
+$breadcrumb-item-padding:           .5rem !default;
+$breadcrumb-margin-bottom:          0 !default;
+$breadcrumb-divider: "/" !default;
+$breadcrumb-divider-rtl: "/" !default;
+
+$breadcrumb-bg: $primary !default;
+$breadcrumb-bg-hover: darken($primary, 15%) !default;
+$breadcrumb-text-color: $white !default;
+$breadcrumbdash: $gray-200 !default;
+$breadcrumbdimmed: $gray-600 !default;
+
+// Progress bars
+$progress-bg:                       $gray-300 !default;
+$progress-bar-bg:                   $spectrum-base !default;
+
+// List group
+$list-group-bg:                     $gray-200;
+$list-group-border-color:           transparent;
+
+$list-group-hover-bg:               $spectrum-base;
+$list-group-active-color:           $dark;
+$list-group-active-bg:              $list-group-hover-bg;
+$list-group-action-color:           $dark;
+
+$list-group-disabled-color:         lighten($list-group-bg, 30%);
+$list-group-disabled-bg:            $list-group-bg !default;
+
+$list-group-action-color:           $list-group-hover-bg !default;
+$list-group-action-hover-color:     $list-group-action-color !default;
+
+$list-group-action-active-color:    $list-group-bg !default;
+$list-group-action-active-bg:       $list-group-hover-bg !default;
+
+// Tabs
+$nav-tabs-border-color:             $gray-300 !default;
+//$nav-tabs-border-width:             $border-width !default;
+//$nav-tabs-border-radius:            $border-radius !default;
+$nav-tabs-link-hover-border-color:  $gray-200 $gray-200 $nav-tabs-border-color !default;
+$nav-tabs-link-active-color:        $gray-700 !default;
+$nav-tabs-link-active-bg:           lighten($spectrum-base, 15%) !default;
+$nav-tabs-link-active-border-color: $gray-300 $gray-300 $nav-tabs-link-active-bg !default;
+
+// Dropdowns
+$dropdown-bg:                       $white !default;
+$dropdown-border-color:             rgba($black, .15) !default;
+$dropdown-divider-bg:               $gray-200 !default;
+$dropdown-box-shadow:               0 .5rem 1rem rgba($black, .175) !default;
+
+$dropdown-link-color:               $gray-900 !default;
+$dropdown-link-hover-color:         darken($gray-900, 5%) !default;
+$dropdown-link-hover-bg:            $gray-200 !default;
+
+$dropdown-link-active-color:        $white !default;
+$dropdown-link-active-bg:           $gray-400 !default;
+
+// Alerts
+$alert-border-width:                0 !default;
+
+$theme-colors: (
+    primary: $primary,
+    secondary: $gray-200,
+    success: $success,
+    info: $info,
+    warning: $orange,
+    danger: $danger,
+    light: $gray-100,
+    dark: $gray-800
+);
+
+
+// Import FontAwesome.
+@import "../../boost/scss/fontawesome";
+
+// Import All of Bootstrap
+@import "../../boost/scss/bootstrap";
+
+// Import Core moodle CSS
+@import "../../boost/scss/moodle";
+
+//
+// Tabs
+//
+
+.nav-tabs {
+  border-bottom: 2px solid $nav-tabs-border-color;
+  background-color: $gray-100;
+
+  .nav-item {
+    border-bottom: $nav-tabs-border-width solid $nav-tabs-border-color;
+    margin-top: $nav-tabs-border-width;
+    border-right: 1px solid $gray-100;
+    background-color: $gray-200;
+  }
+
+  .nav-link {
+    border: $nav-tabs-border-width solid transparent;
+    @include border-top-radius($nav-tabs-border-radius);
+
+    @include hover-focus {
+      border-color: transparent;
+      background-color: $nav-tabs-link-active-bg;
+    }
+
+    &.disabled {
+      color: $nav-link-disabled-color;
+      background-color: transparent;
+      border-color: transparent;
+    }
+  }
+
+  .nav-link.active,
+  .nav-item.show .nav-link {
+    color: $nav-tabs-link-active-color;
+    background-color: $nav-tabs-link-active-bg;
+    border-color: transparent;
+  }
+}
+
+// Let theme know we are using Spectrum
+$spectrumpreset: 1;
+
+// Preset CSS
+
+body {
+    -webkit-font-smoothing: antialiased;
+}
+
+.navbar {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .08);
+}
+
+div#page-navbar {
+    z-index: 1;
+}
+
+.filemanager-container,
+.filepicker-filelist {
+    @extend .border;
+}
+
+// Rounded user pictures
+.userpicture {
+    border-radius: 50%;
+}
+
+// Navdrawer pull right
+[data-region="drawer"] {
+    padding: 20px 0 20px 20px;
+}
+
+.path-course-view .singlebutton.forumaddnew {
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.path-course-view .subscribelink {
+    display: inline-block;
+    float: right;
+    margin-bottom: 1rem;
+}
+
+// Content area bkg and preset uniques
+
+div#learningcontent {
+    background-color: $white!important;
+    position: relative;
+    border: 0 !important;
+}
+#page {
+    background-color: $white;
+}
+#page-login-index #page {
+    background-color: transparent;
+}
+
+#region-main {
+    border: 0 !important;
+    background-color: $card-bg;
+}
+
+.headerbkg {
+    overflow: hidden;
+}
+
+.withimage , .default, .customimage {
+    -webkit-mask-image: linear-gradient(to top, transparent 5%, black 75%);
+    mask-image: linear-gradient(to top, transparent 5%, black 75%);
+}
+
+#page-header .card .card-body {
+	z-index: 1;
+}
+
+#page-header .btn.btn-secondary:hover {
+    color: $white;
+}
+
+aside#block-region-side-pre {
+    padding-top: 2rem;
+}
+
+div#blockslider {
+    border: 0 !important;
+    border-bottom: 2px solid $gray-400 !important;
+    background-color: $gray-200 !important;
+    padding: 1rem;
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
+}
+
+.blockpanelbtn {
+    z-index: 102 !important;
+}
+
+.page-context-header .page-header-headings, .page-context-header .header-button-group {
+    color: $spectrum-base;
+}
+
+.course-content .current::before {
+    border-left: 0;
+}
+
+.course-content ul.topics li.section, .course-content ul.weeks li.section {
+    margin-bottom: 1rem;
+}
+
+.teacherdashboard .list-group-item:hover, .teacherdashboard  .list-group-item:focus {
+    z-index: 1;
+    text-decoration: underline;
+    background-color: $spectrum-base;
+}
+
+div#myoverview_timeline_courses .list-group-item {
+    background-color: $card-bg;
+    border: 1px solid $gray-400;
+}
+
+.card {
+    border: 0;
+}
+
+.forumpost.clearfix.lastpost {
+    border-left: 15px solid $spectrum-base;
+}
+
+.path-mod-assign [data-region="grade-actions-panel"], .path-mod-assign [data-region="grading-navigation-panel"] {
+    background-color: $white;
+}
+.path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
+    height: initial;
+}
+
+// Remove extra padding at top of page
+
+#page-header .pb-3 {
+    padding-bottom: 0 !important;
+}
+#page-header .card-body {
+    padding-bottom: 2rem;
+}
+.course-content li#section-0 .content {
+    margin-top: 0;
+}
+.editing .course-content li#section-0 .content {
+    margin-top: 2rem; 
+}
+.fp-blocks {
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+}
+
+#page-site-index .fp-blocks {
+    padding: 0;
+}
+
+// Progress Bars
+
+.progress {
+    height: 1.5rem;
+    font-weight: bold;
+    border-bottom: 3px solid $gray-400;
+}
+
+.progress-chart-container .progress-doughnut .progress-indicator svg .circle {
+    stroke: $spectrum-base;
+}
+
+// Course Tile Special styling
+
+.class-box {
+    border: 0 !important;
+    border-bottom: 7px solid $spectrum-base!important;
+    background-color: $gray-100;
+}
+
+.coursedimmed1 {
+    filter: opacity(0.8) grayscale(1);
+}
+
+.path-course-view .completionprogress {
+    float: initial;
+}
+
+.form-autocomplete-suggestions li:hover {
+    background-color: $gray-200;
+    color: $dark;
+}
+
+// Grading Enhancements
+
+.path-mod-assign [data-region="review-panel"].collapsed + [data-region="grade-panel"] [data-region="grade"], .path-mod-assign [data-region="grade-panel"].fullwidth [data-region="grade"] {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.gradingform_rubric {
+    max-width: min-content;
+}
+
+#page-grade-grading-pick a.action.pick.template {
+    display: inline-block;
+}
+
+#page-grade-grading-pick a.action.remove {
+    display: inline-block;
+    padding-left: 3rem;
+}
+
+#page-grade-grading-pick .box.template-preview {
+    height: 400px;
+    overflow: scroll;
+}
+
+// Quiz Module Styling Enhancements
+#page-mod-quiz-attempt .que, #page-mod-quiz-review .que {
+    margin-bottom: 4rem;
+}
+#page-mod-quiz-attempt .que .formulation, #page-mod-quiz-review .que .formulation {
+    color: initial;
+    background-color: transparent;
+    border-color: initial;
+}
+#page-mod-quiz-attempt .que .content, #page-mod-quiz-review .que .content {
+    border: 1px solid $gray-300;
+    border-top: 1rem solid $spectrum-base;
+    //background: linear-gradient(to bottom,$white 78%,$gray-200 115%); 
+    background-color: $white;
+}
+#page-mod-quiz-attempt .que .qtext, #page-mod-quiz-review .que .qtext {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $gray-200;
+}
+.que .outcome {margin-bottom: 0;}
+
+// Fix for when a user checks an answer and the question would jump positions
+#page-mod-quiz-attempt :target {
+    padding-top: 0!important;
+    margin-top: 0!important;
+}
+
+#page-mod-quiz-attempt .que .info, #page-mod-quiz-review .que .info {
+        background-color: $gray-200;
+        border: 1px solid $gray-300;
+        margin-bottom: 0;
+}
+@media screen and (min-width: 576px) {
+    #page-mod-quiz-attempt .que, #page-mod-quiz-review .que {
+        background-color: $gray-200;
+        border-right: 7px solid $gray-400;
+    }
+    #page-mod-quiz-attempt .que .info, #page-mod-quiz-review .que .info {
+        width: 8em;
+        float:right;
+        background-color: transparent;
+        border: 0;
+    }
+    #page-mod-quiz-attempt .que .content, #page-mod-quiz-review .que .content {
+        margin: 0 9.5em 0 0;
+    }
+
+}
+
+.mt-2.mb-1 {
+    position: relative;
+    background-color: darken($body-bg, 10%);
+    padding: $spacer;
+    border-radius: $border-radius;
+    margin: 0!important;
+    border-top: 7px solid rgba(0,0,0,.2);
+    border-radius: 0;
+}
+
+.activity-navigation {
+    background-color: $card-bg;
+    padding: 1rem 0;
+    margin: 0 $gutterwidth;
+    border: 1px solid $gray-400;
+    border-radius: $border-radius;
+    z-index: 1;
+}

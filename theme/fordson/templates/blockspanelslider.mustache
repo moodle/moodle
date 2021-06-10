@@ -1,0 +1,40 @@
+{{#hascourseblocks}}
+<div class="collapse" id="blockslider" class="slidingblockpanel">
+    {{#hasfpblockregion}}
+        <div class="fp-blocks">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4">
+                            <section data-region="blocks-fpa" class="hidden-print">
+                                {{{ fpablocks }}}
+                            </section>
+                    </div>
+                    <div class="col-md-4">
+                            <section data-region="blocks-fpb" class="hidden-print">
+                                {{{ fpbblocks }}}
+                            </section>
+                    </div>
+                    <div class="col-md-4">
+                            <section data-region="blocks-fpc" class="hidden-print">
+                                {{{ fpcblocks }}}
+                            </section>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <button id="blocksliderbuttonclose" class="btn btn-primary blockpanelbutton" type="button" data-toggle="collapse" data-target="#blockslider" aria-expanded="true" aria-controls="blockslider">
+            <i class="fa fa-times-circle" aria-hidden="true"> </i> <span class="blockbtntext">{{# str }} courseblockpanelbtnclose, theme_fordson {{/ str }}</span>
+        </button>
+    {{/hasfpblockregion}}
+</div>
+
+{{#hasfpblockregion}}
+<div class="text-right blockpanelbtn">
+<button id="blocksliderbutton" class="btn btn-primary blockpanelbutton" type="button" data-toggle="collapse" data-target="#blockslider" aria-expanded="false" aria-controls="blockslider">
+    <i class="fa fa-arrows-v" aria-hidden="true"> </i> <span class="blockbtntext">{{# str }} courseblockpanelbtn, theme_fordson {{/ str }}</span>
+  </button>
+</div>
+{{/hasfpblockregion}}
+
+{{/hascourseblocks}}

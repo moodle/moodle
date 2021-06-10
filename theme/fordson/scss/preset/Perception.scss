@@ -1,0 +1,693 @@
+// Bootstrap variables
+
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #868e96 !default;
+$gray-700: #495057 !default;
+$gray-800: #373a3c !default;
+$gray-900: #212529 !default;
+$gray-base: #ccc !default;
+$black: #000 !default;
+$white: #ffffff !default;
+
+$blue: #1177d1 !default;
+$indigo: #6610f2 !default;
+$purple: #613d7c !default;
+$pink: #e83e8c !default;
+$red: #d9534f !default;
+$orange: #ff9807 !default;
+$yellow: #f7fb0f !default;
+$green: #7fd80a !default;
+$teal: #60e8b5 !default;
+$cyan: #5bc0de !default;
+
+$primary: #000 !default;
+$secondary: $gray-300 !default;
+$success: $green !default;
+$info: $cyan !default;
+$warning: $orange !default;
+$danger: #c33e3e !default;
+$light: $gray-100 !default;
+$dark: $gray-800 !default;
+
+// Options
+$enable-rounded: false !default;
+$showheadergradient: 0 !default;
+
+// Navbar
+$navbar-dark-hover-color: rgba($white, 1) !default;
+$navbar-light-hover-color: rgba($black, 0.9) !default;
+
+$navbar-fhs-color: $dark !default;
+$navbar-fhs-active-color: $dark !default;
+$navbar-fhs-hover-color: darken($navbar-fhs-color, 10%) !default;
+$navbar-fhs-disabled-color: $dark !default;
+
+$topnavbarbg: rgba($white, 0.95) !default;
+$teachernavbarcolor: #f7e671 !default;
+$studentnavbarcolor: $topnavbarbg !default;
+
+// Body
+$body-color: $gray-800 !default;
+$body-bg: $gray-200 !default;
+$drawer-bg: $gray-200 !default;
+$card-bg: $white !default;
+$footer-bg: $gray-100 !default;
+$footer-link-color: $gray-800;
+
+//$perception-base: #14a9fe !default;
+//$perception-base: #a0bbd4 !default;
+// ***$perception-base: #90a3a9 !default;
+//$perception-base: #9FB3D1 !default;
+$perception-base: #82b8de !default;
+
+
+
+$sectionnamehighlight: $teal;
+$border-radius: 4px !default;
+$activityhover: darken($card-bg, 7%) !default;
+$headerbackgroundcolor: rgba($gray-900, 0.3) !default;
+$dpsaccentcolor: #ff5f3a !default;
+
+// Fonts
+$font-size-base: 1rem !default;
+$headings-font-weight: 300 !default;
+$perceptionfontsize: 1.1rem !default;
+
+// Breadcrumbs
+$breadcrumb-padding-y: 0.25rem !default;
+$breadcrumb-padding-x: 0 !default;
+$breadcrumb-item-padding: 0.5rem !default;
+$breadcrumb-margin-bottom: 0 !default;
+$breadcrumb-divider: "/" !default;
+$breadcrumb-divider-rtl: "/" !default;
+
+$breadcrumb-bg: $white !default;
+$breadcrumb-bg-hover: $gray-200 !default;
+$breadcrumb-text-color: $dark !default;
+$breadcrumbdash: $gray-200 !default;
+$breadcrumbdimmed: $gray-600 !default;
+
+// Progress bars
+$progress-bg: $gray-300 !default;
+$progress-bar-bg: $perception-base !default;
+
+// List group
+$list-group-bg: $white !default;
+$list-group-border-color: $gray-200 !default;
+$list-group-hover-bg: $gray-300 !default;
+
+$list-group-active-color: $black !default;
+$list-group-active-bg: $perception-base !default;
+
+$list-group-action-color: $black !default;
+$list-group-action-hover-color: $list-group-action-color !default;
+
+$list-group-action-active-color: $black !default;
+$list-group-action-active-bg: $list-group-hover-bg !default;
+
+$list-group-disabled-color: lighten($list-group-bg, 30%) !default;
+$list-group-disabled-bg: $list-group-bg !default;
+
+// Tabs
+$nav-tabs-border-color: $gray-300 !default;
+//$nav-tabs-border-width:             $border-width !default;
+//$nav-tabs-border-radius:            $border-radius !default;
+$nav-tabs-link-hover-border-color: $gray-200 $gray-200 $nav-tabs-border-color !default;
+$nav-tabs-link-active-color: $gray-900 !default;
+$nav-tabs-link-active-bg: lighten($perception-base, 5%) !default;
+$nav-tabs-link-active-border-color: $gray-300 $gray-300 $nav-tabs-link-active-bg !default;
+
+// Dropdowns
+$dropdown-bg: $white !default;
+$dropdown-border-color: rgba($black, 0.15) !default;
+$dropdown-divider-bg: $gray-200 !default;
+$dropdown-box-shadow: 0 0.5rem 1rem rgba($black, 0.175) !default;
+
+$dropdown-link-color: $gray-900 !default;
+$dropdown-link-hover-color: darken($gray-900, 5%) !default;
+$dropdown-link-hover-bg: $gray-200 !default;
+
+$dropdown-link-active-color: $white !default;
+$dropdown-link-active-bg: $gray-400 !default;
+
+// Alerts
+$alert-border-width: 0 !default;
+
+$theme-colors: (primary: $primary,
+    secondary: $secondary,
+    success: $success,
+    info: $info,
+    warning: $orange,
+    danger: $danger,
+    light: $gray-100,
+    dark: $gray-800);
+
+// Import FontAwesome.
+@import "../../boost/scss/fontawesome";
+
+// Import All of Bootstrap
+@import "../../boost/scss/bootstrap";
+
+// Import Core moodle CSS
+@import "../../boost/scss/moodle";
+
+// Tabs
+.nav-tabs {
+    border-bottom: 2px solid $nav-tabs-border-color;
+    background-color: $gray-100;
+
+    .nav-item {
+        border-bottom: $nav-tabs-border-width solid $nav-tabs-border-color;
+        margin-top: $nav-tabs-border-width;
+        border-right: 1px solid $gray-100;
+        background-color: $gray-200;
+    }
+
+    .nav-link {
+        border: $nav-tabs-border-width solid transparent;
+        @include border-top-radius($nav-tabs-border-radius);
+
+        @include hover-focus {
+            color: $nav-tabs-link-active-color;
+            border-color: transparent;
+            background-color: $nav-tabs-link-active-bg;
+        }
+
+        &.disabled {
+            color: $nav-link-disabled-color;
+            background-color: transparent;
+            border-color: transparent;
+        }
+    }
+
+    .nav-link.active,
+    .nav-item.show .nav-link {
+        color: $nav-tabs-link-active-color;
+        background-color: $nav-tabs-link-active-bg;
+        border-color: transparent;
+    }
+}
+
+// Let theme know we are using perception
+$perceptionpreset: 1;
+
+// Preset CSS
+body {
+    -webkit-font-smoothing: antialiased;
+}
+
+section#region-main p a {
+    color: $perception-base;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.navbar {
+    box-shadow: 0 4px 8px rgba($black, 0.2);
+}
+
+div#page-navbar {
+    z-index: 1;
+}
+
+.filemanager-container,
+.filepicker-filelist {
+    @extend .border;
+}
+
+// Rounded user pictures
+.userpicture {
+    border-radius: 5%;
+}
+
+// Login text on site home
+li.nav-item .usermenu .login,
+li.nav-item .usermenu .login a {
+    color: $navbar-fhs-color;
+}
+
+// Navdrawer pull right
+[data-region="drawer"] {
+    padding: 0 0 20px 0;
+}
+
+// Content area bkg and preset uniques
+#page {
+    background-color: $body-bg;
+}
+
+section#region-main {
+    border: 0;
+    background-color: $card-bg;
+}
+
+#page-login-index #page {
+    background-color: transparent;
+}
+
+#page-footer .socials_wrapper .socials a {
+    color: $perception-base !important;
+}
+
+#page-footer {
+    border-top: 2px solid $gray-base;
+}
+
+#page-question-preview #page-wrapper #page {
+    margin-top: 0;
+}
+
+section#region-main .card,
+header#page-header .card {
+    border: 0;
+}
+
+.page-header-headings {
+    color: $white;
+}
+.page-header-headings h1 {
+    font-weight: bold;
+}
+
+.studentdash .btn,
+.teacherdash .btn,
+.enrollcodes .btn,
+.siteadminlink .btn {
+    background-color: $gray-200 !important;
+    border-color: $gray-300 !important;
+    border-bottom: 3px solid $perception-base !important;
+    color: $dark !important;
+    margin-right: 2px;
+    border-radius: $border-radius;
+}
+
+.editingbutton {
+    border-color: $gray-300 !important;
+    border-bottom: 3px solid $perception-base !important;
+    border-radius: $border-radius;
+}
+
+.studentdash .btn:hover,
+.teacherdash .btn:hover,
+.enrollcodes .btn:hover,
+.siteadminlink .btn:hover {
+    background-color: $perception-base !important;
+    color: $white !important;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+@media screen and (min-width: 576px) {
+    #region-main-box {
+        padding: 1rem;
+    }
+}
+
+a.section-go-link.btn.btn-secondary {
+    border: 1px solid #ccc;
+}
+
+aside#block-region-side-pre .card-deck .card {
+    border: 0;
+}
+
+aside#block-region-side-pre {
+    padding-top: 1rem;
+}
+
+div#blockslider {
+    border: 0 !important;
+    border-bottom: 4px solid $gray-400 !important;
+    background-color: $body-bg !important;
+    padding: 3rem 0 2rem 0 !important;
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
+}
+
+.blockpanelbtn {
+    z-index: 102 !important;
+}
+
+button#blocksliderbutton {
+    border-radius: 0;
+    border: 0;
+}
+
+button#blocksliderbuttonclose {
+    border-radius: 0;
+    border: 0;
+}
+
+#back-to-top {
+    background-color: $perception-base;
+    border-color: $perception-base;
+    color: $black;
+}
+
+.form-autocomplete-suggestions li:hover {
+    background-color: $gray-200;
+    color: $dark;
+}
+
+@media screen and (max-width: 576px) {
+    .blockpanelbtn {
+        right: 0 !important;
+    }
+
+    div#blockslider {
+        left: 0 !important;
+        right: 0 !important;
+    }
+}
+
+.headerlogo {
+    background-color: $card-bg;
+}
+
+div#myoverview_timeline_courses .list-group-item {
+    background-color: $card-bg;
+    border: 1px solid $gray-400;
+}
+
+.course-content .current::before {
+    border-left: 0;
+}
+
+/*.path-course-view .completionprogress {
+    float: initial;
+    bottom: 20px;
+}*/
+
+.activity-navigation {
+    background-color: $perception-base;
+    padding: 1rem 0;
+}
+
+.mt-5.mb-1.activity-navigation.container-fluid {
+    margin-top: 0!important;
+}
+
+.marketcontent .text_to_html {
+    background-color: initial !important;
+}
+
+#page-course-index-category #coursesearch {
+    margin-top: 1em;
+    text-align: center;
+    display: block;
+}
+
+// List items hover effect.
+.teacherdashboard .list-group-item:hover,
+.teacherdashboard .list-group-item:focus,
+.studentdashboard .list-group-item:hover,
+.studentdashboard .list-group-item:focus {
+    z-index: 1;
+    text-decoration: underline;
+    background-color: rgba($perception-base, 0.5);
+}
+
+.teacherdashboard .list-group-item,
+.studentdashboard .list-group-item {
+    padding: 0.5rem;
+    margin-bottom: -1px;
+    background-color: $gray-100;
+    border: 1px solid $gray-300;
+}
+
+div#myoverview_timeline_courses .list-group-item {
+    background-color: $card-bg;
+    border: 1px solid $gray-400;
+}
+
+//Dashboard Styling
+.block-myoverview .dashboard-card-deck .dashboard-card {
+    border: 1px solid $gray-300 !important;
+}
+
+.block-myoverview .list-group-item {
+    margin-bottom: 1px;
+    background-color: $card-bg;
+    border: 0;
+    border-bottom: 1px solid $gray-300;
+}
+
+.block-myoverview .list-group-item:hover {
+    background-color: $gray-200;
+}
+
+.block-myoverview.block-cards .course-summaryitem.m-b-1.p-2 {
+    margin-bottom: 1px !important;
+    background-color: $card-bg;
+    border: 0;
+    border-bottom: 1px solid $gray-300;
+}
+
+.block-myoverview.block-cards .course-summaryitem.m-b-1.p-2:hover {
+    background-color: $gray-200;
+}
+
+#region-main .block-recentlyaccesseditems a.card.dashboard-card {
+    border: 1px solid $gray-300 !important;
+    background-color: $gray-100;
+}
+
+#region-main .dashboard-card-deck.one-row {
+    padding-bottom: 1rem;
+}
+
+// Custom Login page styling
+.card.loginicon {
+    padding: 0.5rem;
+    background-color: transparent;
+    border: 0;
+}
+
+div#fordsonlogin {
+    height: initial !important;
+    position: relative;
+}
+
+.fpcustomtext {
+    margin: 2rem 0 !important;
+    text-align: center !important;
+    background-color: transparent !important;
+}
+
+// Assignment Styling
+.path-mod-assign [data-region="grade-actions-panel"],
+.path-mod-assign [data-region="grading-navigation-panel"] {
+    background-color: $card-bg;
+}
+
+.path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
+    height: initial;
+}
+
+// Progress Bars
+.progress {
+    height: 2rem;
+    font-weight: bold;
+    border-bottom: 3px solid $gray-400;
+}
+
+.progress-bar {
+    color: initial;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.progress-bar .small {
+    width: max-content;
+    margin-left: 1rem;
+}
+
+.progress-chart-container .progress-doughnut .progress-indicator svg .circle {
+    stroke: $perception-base;
+}
+
+// Scrollbars
+#nav-drawer::-webkit-scrollbar {
+    width: 10px;
+    background-color: darken($drawer-bg, 10%);
+}
+
+#nav-drawer::-webkit-scrollbar-track {
+    // border-left: 2px solid $gray-600;
+}
+
+#nav-drawer::-webkit-scrollbar-thumb {
+    background-color: darken($body-bg, 40%);
+}
+
+.dashboard-card-deck.one-row::-webkit-scrollbar {
+    height: 7px;
+    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-card-deck.one-row::-webkit-scrollbar-track {}
+
+.dashboard-card-deck.one-row::-webkit-scrollbar-thumb {
+    background-color: $gray-600;
+}
+
+// Quiz Module Styling Enhancements
+#page-mod-quiz-attempt .que,
+#page-mod-quiz-review .que {
+    margin-bottom: 4rem;
+}
+
+#page-mod-quiz-attempt .que .formulation,
+#page-mod-quiz-review .que .formulation {
+    color: initial;
+    background-color: transparent;
+    border-color: initial;
+}
+
+#page-mod-quiz-attempt .que .content,
+#page-mod-quiz-review .que .content {
+    border: 1px solid $gray-300;
+    border-top: 7px solid $perception-base;
+    //background: linear-gradient(to bottom,$white 78%,$gray-200 115%);
+    background-color: $white;
+}
+
+#page-mod-quiz-attempt .que .qtext,
+#page-mod-quiz-review .que .qtext {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $gray-200;
+}
+
+.que .outcome {
+    margin-bottom: 0;
+}
+
+// Fix for when a user checks an answer and the question would jump positions
+#page-mod-quiz-attempt :target {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+#page-mod-quiz-attempt .que .info,
+#page-mod-quiz-review .que .info {
+    background-color: $gray-200;
+    border: 1px solid $gray-300;
+    margin-bottom: 0;
+}
+
+@media screen and (min-width: 576px) {
+
+    #page-mod-quiz-attempt .que,
+    #page-mod-quiz-review .que {
+        background-color: $gray-200;
+        border-right: 7px solid $gray-400;
+    }
+
+    #page-mod-quiz-attempt .que .info,
+    #page-mod-quiz-review .que .info {
+        width: 8em;
+        float: right;
+        background-color: transparent;
+        border: 0;
+    }
+
+    #page-mod-quiz-attempt .que .content,
+    #page-mod-quiz-review .que .content {
+        margin: 0 9.5em 0 0;
+    }
+}
+
+// Forum Styling
+.forumpost.firstpost.starter {
+    border-width: 7px 1px 1px 1px;
+    border-style: solid;
+    border-color: $perception-base $gray-300 $gray-300 $gray-300;
+    margin-top: 1rem;
+}
+
+.forumpost {
+    border-width: 1px 1px 7px 1px;
+    border-style: solid;
+    border-color: $gray-300;
+    background-color: lighten($gray-100, 1%);
+    padding: 1.25rem;
+}
+
+[data-content="inpage-reply-form"] {
+    background-color: lighten($gray-200, 4%);
+    padding: 1rem;
+}
+
+// Icon Navigation Styling
+.iconset .btn.btn-secondary {
+    //background-color: $dpsaccentcolor;
+    border-bottom: 7px solid $perception-base;
+    border-radius: $border-radius;
+}
+
+.iconset .btn.btn-secondary:hover {
+    border-bottom: 7px solid $dpsaccentcolor;
+}
+
+// Style changes for REMUI Course Formats to fit with Perception Style
+#page-course-view-remuiformat .general-single-card.py-10 {
+    box-shadow: none;
+}
+
+#page-course-view-remuiformat.pagelayout-course .container-fluid #region-main {
+    background: transparent;
+}
+
+.page-context-header .header-button-group {
+    display: block;
+    float: none;
+}
+
+// Course Archive Display Enhancements
+.class-fullbox .col-md-2 {
+    padding: 0;
+}
+
+.class-fullbox .col-md-4,
+.class-fullbox .col-md-6 {
+    padding: 0.5rem;
+}
+
+.class-fullbox {
+    margin-bottom: 1.5rem !important;
+    border: 1px solid $gray-300 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+// Remove Page Footer on Modules
+.path-mod #page-footer {
+    display: none;
+}
+
+// Create new course hide everything.  Let user fine tune after creating course.
+#page-course-edit.format-site fieldset#id_courseformathdr, #page-course-edit.format-site fieldset#id_appearancehdr, #page-course-edit.format-site fieldset#id_filehdr, #page-course-edit.format-site fieldset#id_completionhdr, #page-course-edit.format-site fieldset#id_groups, #page-course-edit.format-site fieldset#id_tagshdr, #page-course-edit.format-site fieldset#id_rolerenaming {display: none;}
+
+// Remove boxshadow
+.aabtn.focus, .btn-link.focus, .nav-link.focus, .atto_link_button.focus, [role="button"].focus, .list-group-item-action.focus, input[type="checkbox"].focus, input[type="radio"].focus, input[type="file"].focus, input[type="image"].focus, .sr-only-focusable.focus, a.dropdown-item.focus, a.dropdown-toggle.focus, .modal-dialog[tabindex="0"].focus, .moodle-dialogue-base .closebutton.focus, button.close.focus, .aabtn:focus, .btn-link:focus, .nav-link:focus, .atto_link_button:focus, [role="button"]:focus, .list-group-item-action:focus, input[type="checkbox"]:focus, input[type="radio"]:focus, input[type="file"]:focus, input[type="image"]:focus, .sr-only-focusable:focus, a.dropdown-item:focus, a.dropdown-toggle:focus, .modal-dialog[tabindex="0"]:focus, .moodle-dialogue-base .closebutton:focus, button.close:focus {
+    outline: 0; 
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+// Jitsi Web Conferencing
+i.fa.fa-video-camera.jitsivideoicon {
+    font-size: 36px;
+    vertical-align: middle;
+}
+span.jistibuttontext {
+    vertical-align: middle;
+    font-size: 22px;
+}

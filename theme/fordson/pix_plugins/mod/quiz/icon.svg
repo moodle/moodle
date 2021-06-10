@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   fill="#000000"
+   height="24"
+   viewBox="0 0 24 24"
+   width="24"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="icon.svg"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
+  <metadata
+     id="metadata12">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1352"
+     inkscape:window-height="841"
+     id="namedview8"
+     showgrid="false"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="12"
+     inkscape:cy="11.186441"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg6" />
+  <path
+     d="M0 0h24v24H0z"
+     fill="none"
+     id="path2" />
+  <path
+     d="M 20.344633,2.7457627 H 15.361695 C 14.861017,1.4383051 13.549718,0.49152542 12,0.49152542 c -1.549718,0 -2.8610173,0.94677968 -3.361695,2.25423728 H 3.6553672 C 2.3440678,2.7457627 1.2711864,3.7601695 1.2711864,5 v 15.779661 c 0,1.239831 1.0728814,2.254237 2.3841808,2.254237 H 20.344633 c 1.311299,0 2.384181,-1.014406 2.384181,-2.254237 V 5 c 0,-1.2398305 -1.072882,-2.2542373 -2.384181,-2.2542373 z m -8.344633,0 c 0.65565,0 1.19209,0.5072034 1.19209,1.1271186 C 13.19209,4.4927966 12.65565,5 12,5 11.34435,5 10.80791,4.4927966 10.80791,3.8728813 10.80791,3.2529661 11.34435,2.7457627 12,2.7457627 Z M 14.384181,18.525424 H 6.039548 v -2.254237 h 8.344633 z m 3.576271,-4.508475 H 6.039548 v -2.254237 h 11.920904 z m 0,-4.5084744 H 6.039548 V 7.2542373 h 11.920904 z"
+     id="path4"
+     style="fill:#9ade00;stroke-width:1.15914941"
+     inkscape:connector-curvature="0" />
+</svg>
