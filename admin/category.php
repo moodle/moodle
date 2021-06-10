@@ -158,4 +158,9 @@ echo $outputhtml;
 echo html_writer::end_tag('fieldset');
 echo html_writer::end_tag('form');
 
+$PAGE->requires->yui_module('moodle-core-formchangechecker', 'M.core_formchangechecker.init', [[
+    'formid' => 'adminsettings'
+]]);
+$PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
+
 echo $OUTPUT->footer();
