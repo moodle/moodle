@@ -12744,8 +12744,8 @@ input[disabled] {
 .block_navigation .block_tree [aria-expanded="false"] {
   background-image: none; }
 
-.block_settings .block_tree [aria-expanded="true"]:before,
-.block_navigation .block_tree [aria-expanded="true"]:before {
+.block_settings .block_tree [aria-expanded="true"] > p:before,
+.block_navigation .block_tree [aria-expanded="true"] > p:before {
   content: "";
   margin-right: 0;
   display: inline-block;
@@ -12757,8 +12757,8 @@ input[disabled] {
   font-size: 16px;
   width: 16px; }
 
-.block_settings .block_tree [aria-expanded="false"]:before,
-.block_navigation .block_tree [aria-expanded="false"]:before {
+.block_settings .block_tree [aria-expanded="false"] > p:before,
+.block_navigation .block_tree [aria-expanded="false"] > p:before {
   content: "";
   margin-right: 0;
   display: inline-block;
@@ -12770,8 +12770,8 @@ input[disabled] {
   font-size: 16px;
   width: 16px; }
 
-.dir-rtl .block_settings .block_tree [aria-expanded="false"]:before,
-.dir-rtl .block_navigation .block_tree [aria-expanded="false"]:before {
+.dir-rtl .block_settings .block_tree [aria-expanded="false"] > p:before,
+.dir-rtl .block_navigation .block_tree [aria-expanded="false"] > p:before {
   content: ""; }
 
 .block_navigation .block_tree p.hasicon,
