@@ -850,7 +850,7 @@ class navigation_node implements renderable {
     public function set_force_into_more_menu(bool $forceintomoremenu = false) {
         $this->forceintomoremenu = $forceintomoremenu;
         foreach ($this->children as $child) {
-            $child->forceintomoremenu = $forceintomoremenu;
+            $child->set_force_into_more_menu($forceintomoremenu);
         }
     }
 
