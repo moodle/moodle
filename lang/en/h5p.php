@@ -76,6 +76,7 @@ $string['description'] = 'Description';
 $string['disablefullscreen'] = 'Disable fullscreen';
 $string['download'] = 'Download';
 $string['downloadtitle'] = 'Download this content as a H5P file.';
+$string['editcontent'] = 'Edit H5P content';
 $string['editor'] = 'Editor';
 $string['embed'] = 'Embed';
 $string['embedtitle'] = 'View the embed code for this content.';

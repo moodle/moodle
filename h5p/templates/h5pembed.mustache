@@ -24,6 +24,7 @@
 
     Variables required for this template:
     * embedurl - The URL with the H5P file to embed
+    * editurl - The URL for the edit button; if it's empty, the edit button won't be displayed.
 
     Example context (json):
     {
@@ -35,3 +36,7 @@
    allowfullscreen="allowfullscreen" class="h5p-player w-100 border-0"
    style="height: 0px;" id="{{uniqid}}-h5player">
 </iframe>
+
+{{#editurl}}
+    <a href="{{editurl}}">{{#str}}editcontent, core_h5p{{/str}}</a>
+{{/editurl}}

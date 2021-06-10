@@ -98,6 +98,6 @@ if (!$manager->is_tracking_enabled()) {
     echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
 }
 
-echo player::display($fileurl, $config, true, 'mod_h5pactivity');
+echo player::display($fileurl, $config, true, 'mod_h5pactivity', true);
 
 echo $OUTPUT->footer();
