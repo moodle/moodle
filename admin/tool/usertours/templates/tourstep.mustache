@@ -42,6 +42,14 @@
 
     Example context (json):
     {
+      "name" : "tour_activity_completion",
+      "onesteptour" : true,
+      "steps": [
+        {
+          "stepid": 10,
+          "title": "Activity information"
+        }
+      ]
     }
 
 }}
@@ -60,7 +68,12 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-role="previous">{{# str }} previousstep, tool_usertours {{/ str }}</button>
       <button type="button" class="btn btn-primary" data-role="next">{{# str }} nextstep, tool_usertours {{/ str }}</button>
-      <button class="btn btn-secondary" data-role="end"> {{# str }} endtour, tool_usertours {{/ str }} </button>
+      {{#onesteptour}}
+          <button class="btn btn-secondary" data-role="end"> {{# str }} endonesteptour, tool_usertours {{/ str }} </button>
+      {{/onesteptour}}
+      {{^onesteptour}}
+          <button class="btn btn-secondary" data-role="end"> {{# str }} endtour, tool_usertours {{/ str }} </button>
+      {{/onesteptour}}
     </div>
   </div>
 </div>

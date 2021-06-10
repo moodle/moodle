@@ -101,9 +101,10 @@ class tour extends external_api {
      */
     public static function fetch_and_start_tour_returns() {
         return new external_single_structure([
-            'tourconfig'    => new external_single_structure([
-                'name'      => new external_value(PARAM_RAW, 'Tour Name'),
-                'steps'     => new external_multiple_structure(self::step_structure_returns()),
+            'tourconfig'        => new external_single_structure([
+                'name'          => new external_value(PARAM_RAW, 'Tour Name'),
+                'steps'         => new external_multiple_structure(self::step_structure_returns()),
+                'onesteptour'   => new external_value(PARAM_BOOL, 'Is a one step tour', VALUE_DEFAULT, false),
             ], 'Tour config', VALUE_OPTIONAL)
         ]);
     }

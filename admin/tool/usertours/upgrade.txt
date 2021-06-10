@@ -1,5 +1,10 @@
 This files describes API changes in the tool_usertours code.
 
+=== 4.0 ===
+* The `tourconfig` property returned by the `tool_usertours_fetch_and_start_tour`
+  external method has also a `onsteptour` property to differentiate between
+  one step tours and multiple step tours.
+
 === 3.9 ===
 * The `tourconfig` property returned by the `tool_usertours_fetch_and_start_tour`
   external method is now optional, and will be omitted if the tour shouldn't be

@@ -79,36 +79,31 @@ function(ajax, BootstrapTour, $, templates, str, log, notification) {
          * @method  fetchTour
          * @param   {Number}    tourId      The ID of the tour to start.
          */
-        fetchTour: function(tourId) {
+        fetchTour: async function(tourId) {
             M.util.js_pending('admin_usertour_fetchTour' + tourId);
-            $.when(
-                ajax.call([
+
+            try {
+                const response = await ajax.call([
                     {
                         methodname: 'tool_usertours_fetch_and_start_tour',
                         args: {
-                            tourid:     tourId,
-                            context:    M.cfg.contextid,
-                            pageurl:    window.location.href,
+                            tourid: tourId,
+                            context: M.cfg.contextid,
+                            pageurl: window.location.href,
                         }
                     }
-                ])[0],
-                templates.render('tool_usertours/tourstep', {})
-            )
-            .then(function(response, template) {
-                // If we don't have any tour config (because it doesn't need showing for the current user), return early.
-                if (!response.hasOwnProperty('tourconfig')) {
-                    return;
+                ])[0];
+                if (response.hasOwnProperty('tourconfig')) {
+                    const template = await templates.renderForPromise('tool_usertours/tourstep', response.tourconfig);
+
+                    usertours.startBootstrapTour(tourId, template.html, response.tourconfig);
                 }
-
-                return usertours.startBootstrapTour(tourId, template[0], response.tourconfig);
-            })
-            .always(function() {
-                M.util.js_complete('admin_usertour_fetchTour' + tourId);
-
-                return;
-            })
-            .fail(notification.exception);
+            } catch (error) {
+                notification.exception(error);
+            }
+            M.util.js_complete('admin_usertour_fetchTour' + tourId);
         },
+
 
         /**
          * Add a reset link to the page.
