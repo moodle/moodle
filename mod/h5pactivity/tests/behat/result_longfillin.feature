@@ -33,6 +33,7 @@ Feature: View essay attempt report
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Awesome H5P package"
+    And I change window size to "large"
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I set the field with xpath "//textarea" to "This is a smurfing smurf"
