@@ -19,7 +19,6 @@ Feature: Section 0 default/custom title
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
 
-  @javascript
   Scenario: Default section 0 title is General
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage with editing mode on
