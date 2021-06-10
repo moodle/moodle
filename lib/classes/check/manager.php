@@ -69,6 +69,7 @@ class manager {
             new performance\debugging(),
             new performance\backups(),
             new performance\stats(),
+            new performance\dbschema(),
         ];
 
         // Any plugin can add status checks to this report by implementing a callback
