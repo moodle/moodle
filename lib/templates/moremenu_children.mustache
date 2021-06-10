@@ -31,7 +31,7 @@
     }
 }}
 {{#haschildren}}
-    <li class="dropdown nav-item">
+    <li class="dropdown nav-item" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
         <a class="dropdown-toggle nav-link" id="drop-down-{{uniqid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" {{#title}}title="{{{title}}}"{{/title}} aria-controls="drop-down-menu-{{uniqid}}">
             {{{text}}}
         </a>
@@ -48,7 +48,7 @@
     </li>
 {{/haschildren}}
 {{^haschildren}}
-    <li class="nav-item">
+    <li class="nav-item" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
         {{#tab}}
             <a class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{tab}}" role="tab" data-toggle="tab" aria-selected="false" tabindex="-1">{{{text}}}
             </a>
