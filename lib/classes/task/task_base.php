@@ -208,4 +208,13 @@ abstract class task_base {
     public function get_pid() {
         return $this->pid;
     }
+
+    /**
+     * Informs whether the task's component is enabled.
+     * @return bool true when enabled. false otherwise.
+     */
+    public function is_component_enabled(): bool {
+        $plugininfo = \core_plugin_manager::instance()->get_plugin_info($this->get_component());
+        return $plugininfo && $plugininfo->is_enabled();
+    }
 }

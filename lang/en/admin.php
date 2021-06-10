@@ -1300,6 +1300,8 @@ $string['task_type:scheduled'] = 'Scheduled';
 $string['task_result:failed'] = 'Fail';
 $string['task_stats:dbreads'] = '{$a} reads';
 $string['task_stats:dbwrites'] = '{$a} writes';
+$string['task_status'] = 'Task status';
+$string['task_status_desc'] = 'The task <q>{$a->name}</q> is <strong>{$a->status}</strong>.<br />See its <a href="{$a->gotourl}">details</a>.<br />Class: {$a->class}{$a->extradescription}';
 $string['task_starttime'] = 'Start time';
 $string['task_duration'] = 'Duration';
 $string['task_dbstats'] = 'Database';

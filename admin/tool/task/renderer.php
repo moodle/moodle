@@ -76,7 +76,7 @@ class tool_task_renderer extends plugin_renderer_base {
         $data = [];
         $yes = get_string('yes');
         $no = get_string('no');
-        $canruntasks = \core\task\manager::is_runnable();
+        $canruntasks = \core\task\manager::is_runnable() && get_config('tool_task', 'enablerunnow');
         foreach ($tasks as $task) {
             $classname = get_class($task);
             $defaulttask = \core\task\manager::get_default_scheduled_task($classname, false);
@@ -108,14 +108,11 @@ class tool_task_renderer extends plugin_renderer_base {
             }
             $namecell = new html_table_cell($namecellcontent);
             $namecell->header = true;
-
-            $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
-            $plugindisabled = $plugininfo && $plugininfo->is_enabled() === false &&
-                    !$task->get_run_if_component_disabled();
-            $disabled = $plugindisabled || $task->get_disabled();
+            $namecell->id = scheduled_task::get_html_id($classname);
 
             $runnow = '';
-            if (!$plugindisabled && get_config('tool_task', 'enablerunnow') && $canruntasks ) {
+            $canrunthistask = $canruntasks && $task->can_run();
+            if ($canrunthistask) {
                 $runnow = html_writer::div(html_writer::link(
                         new moodle_url('/admin/tool/task/schedule_task.php',
                             ['task' => $classname]),
@@ -147,7 +144,7 @@ class tool_task_renderer extends plugin_renderer_base {
                         new html_table_cell($customised)]);
 
             $classes = [];
-            if ($disabled) {
+            if (!$task->is_enabled()) {
                 $classes[] = 'disabled';
             }
             if (get_class($task) == $lastchanged) {
