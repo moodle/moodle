@@ -49,7 +49,7 @@ class filter_displayh5p extends moodle_text_filter {
      * @return string
      */
     public function filter($text, array $options = array()) {
-        global $CFG;
+        global $CFG, $USER;
 
         if (!is_string($text) or empty($text)) {
             // Non string data can not be filtered anyway.
@@ -83,7 +83,10 @@ class filter_displayh5p extends moodle_text_filter {
             // It is needed to add "/embed" at the end of URLs like https:://*.h5p.com/content/12345 (H5P.com).
             $params['urlmodifier'] = '';
 
-            if (($source == $localsource)) {
+            // Local files may display a button below the content to modify it when editing mode is on. This button will appear
+            // only if the user has the proper capabilities.
+            $params['canbeedited'] = (!empty($USER->editing)) && ($source == $localsource);
+            if ($source == $localsource) {
                 $params['tagbegin'] = '<iframe src="'.$CFG->wwwroot.'/h5p/embed.php?url=';
                 $escapechars = $source;
                 $ultimatepattern = $source;
@@ -103,7 +106,7 @@ class filter_displayh5p extends moodle_text_filter {
             }
 
             $h5pcontenturl = new filterobject($source, null, null, false,
-                false, null, [$this, 'filterobject_prepare_replacement_callback'], $params);
+                false, null, [$this, 'filterobject_prepare_replacement_callback'], $params + ['ish5plink' => false]);
 
             $h5pcontenturl->workregexp = '#'.$ultimatepattern.'#';
             $h5pcontents[] = $h5pcontenturl;
@@ -112,7 +115,7 @@ class filter_displayh5p extends moodle_text_filter {
             $linkregexp = '~<a [^>]*href=["\']('.$escapechars.'[^"\']*)["\'][^>]*>([^<]*)</a>~is';
 
             $h5plinkurl = new filterobject($linkregexp, null, null, false,
-                false, null, [$this, 'filterobject_prepare_replacement_callback'], $params);
+                false, null, [$this, 'filterobject_prepare_replacement_callback'], $params + ['ish5plink' => true]);
             $h5plinkurl->workregexp = $linkregexp;
             $h5plinks[] = $h5plinkurl;
         }
@@ -135,7 +138,52 @@ class filter_displayh5p extends moodle_text_filter {
                         return $matches[0];
                     }
                 }, $text);
+        }
 
+        // The "Edit" button below each H5P content will be displayed only for users with permissions to edit the content (to
+        // avoid confusion). So the original H5P file behind this URL will be obtained and checked using the methods in the API.
+        // As the H5P URL is required in order to get this information, this action can be done only here(the
+        // prepare_replacement_callback method has only the placeholders).
+        foreach ($h5pcontents as $h5pcontent) {
+            $text = preg_replace_callback($h5pcontent->workregexp,
+                function ($matches) use ($h5pcontent) {
+                    global $USER, $CFG;
+
+                    // The Edit button placeholder has been added only if the file can be edited.
+                    if ($h5pcontent->replacementcallbackdata['canbeedited']) {
+                        // If the content was originally a link, ignore it (it won't have the placeholder).
+                        $matchurl = new \moodle_url($matches[0]);
+                        if (strpos($matchurl->get_path(), 'h5p/embed.php') !== false) {
+                            return $matches[0];
+                        }
+
+                        $contenturl = $matches[0];
+                        list($file, $h5p) = \core_h5p\api::get_original_content_from_pluginfile_url($contenturl, true, true);
+                        if ($file) {
+                            filter_prepare_phrase_for_replacement($h5pcontent);
+
+                            // Check if the user can edit this content.
+                            if (\core_h5p\api::can_edit_content($file)) {
+                                // If the user can modify the content, replace the placeholder with a link to the editor.
+                                $title = get_string('editcontent', 'core_h5p');
+                                $editorurl = $CFG->wwwroot . '/h5p/edit.php?url=' . $contenturl;
+                                $htmlcode = html_writer::start_tag(
+                                    'a',
+                                    ['class' => 'autolink', 'title' => $title, 'href' => $editorurl]
+                                );
+                                $htmlcode .= $title . html_writer::end_tag('a');
+                                $content = str_replace('$2', $htmlcode, $h5pcontent->workreplacementphrase);
+                            } else {
+                                // If the user can't edit the content, remove the placeholder.
+                                $content = str_replace('$2', '', $h5pcontent->workreplacementphrase);
+                            }
+
+                            return str_replace('$1', $contenturl, $content);
+                        }
+                    }
+
+                    return $matches[0];
+                }, $text);
         }
 
         $result = filter_phrases($text, $h5pcontents, null, null, false, true);
@@ -166,9 +214,12 @@ class filter_displayh5p extends moodle_text_filter {
      * @param string $tagbegin HTML to insert before any match
      * @param string $tagend HTML to insert after any match
      * @param string $urlmodifier string to add to the match URL
+     * @param bool $canbeedited Whether the content can be modified or not (to display a link to edit it or not).
+     * @param bool $ish5plink Whether the original content comes from an H5P link or not.
      * @return array [$hreftagbegin, $hreftagend, $replacementphrase] for filterobject.
      */
-    public function filterobject_prepare_replacement_callback($tagbegin, $tagend, $urlmodifier) {
+    public function filterobject_prepare_replacement_callback($tagbegin, $tagend, $urlmodifier, $canbeedited, $ish5plink) {
+
         $sourceurl = "$1";
         if ($urlmodifier !== "") {
             $sourceurl .= $urlmodifier;
@@ -182,6 +233,11 @@ class filter_displayh5p extends moodle_text_filter {
             $resizerurl = autoloader::get_h5p_core_library_url('js/h5p-resizer.js');
             $tagend .= '<script src="' . $resizerurl->out() . '"></script>';
             self::$loadresizerjs = false;
+        }
+
+        if ($canbeedited && !$ish5plink) {
+            // Placeholder to be replaced by the edit content button (depending on the user permissions).
+            $tagend .= "$2";
         }
 
         return [$tagbegin, $tagend, $h5piframesrc];
