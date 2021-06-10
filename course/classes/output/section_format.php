@@ -162,8 +162,7 @@ class section_format implements renderable, templatable {
             $data->completioninfo = $completioninfo->display_help_icon();
 
             $header = new $this->headerclass($format, $thissection);
-            if (empty($this->hidetitle) && !is_null($thissection->name)
-                && !($thissection->name === '')) {
+            if (empty($this->hidetitle)) {
                 $data->header = $header->export_for_template($output);
             }
             return $data;
