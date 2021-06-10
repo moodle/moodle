@@ -218,6 +218,101 @@ class api {
     }
 
     /**
+     * Get the original file and H5P DB instance for a given H5P pluginfile URL. If it doesn't exist, it's not created.
+     * If the file has been added as a reference, this method will return the original linked file.
+     *
+     * @param string $url H5P pluginfile URL.
+     * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions.
+     * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
+     *     might be controlled before calling this method.
+     *
+     * @return array of [\stored_file|false, \stdClass|false, \stored_file|false]:
+     *             - \stored_file: original local file for the given url (if it has been added as a reference, this method
+     *                            will return the linked file) or false if there isn't any H5P file with this URL.
+     *             - \stdClass: an H5P object or false if there isn't any H5P with this URL.
+     *             - \stored_file: file associated to the given url (if it's different from original) or false when both files
+     *                            (original and file) are the same.
+     * @since Moodle 4.0
+     */
+    public static function get_original_content_from_pluginfile_url(string $url, bool $preventredirect = true,
+        bool $skipcapcheck = false): array {
+
+        $file = false;
+        list($originalfile, $h5p) = self::get_content_from_pluginfile_url($url, $preventredirect, $skipcapcheck);
+        if ($originalfile) {
+            if ($reference = $originalfile->get_reference()) {
+                $file = $originalfile;
+                // If the file has been added as a reference to any other file, get it.
+                $fs = new \file_storage();
+                $referenced = \file_storage::unpack_reference($reference);
+                $originalfile = $fs->get_file(
+                    $referenced['contextid'],
+                    $referenced['component'],
+                    $referenced['filearea'],
+                    $referenced['itemid'],
+                    $referenced['filepath'],
+                    $referenced['filename']
+                );
+                $h5p = self::get_content_from_pathnamehash($originalfile->get_pathnamehash());
+                if (empty($h5p)) {
+                    $h5p = false;
+                }
+            }
+        }
+
+        return [$originalfile, $h5p, $file];
+    }
+
+    /**
+     * Check if the user can edit an H5P file. It will return true in the following situations:
+     * - The user is the author of the file.
+     * - The component is different from user (i.e. private files).
+     * - If the component is contentbank, the user can edit this file (calling the ContentBank API).
+     * - If the component is mod_h5pactivity, the user has the addinstance capability.
+     *
+     * @param \stored_file $file The H5P file to check.
+     *
+     * @return boolean Whether the user can edit or not the given file.
+     * @since Moodle 4.0
+     */
+    public static function can_edit_content(\stored_file $file): bool {
+        global $USER;
+
+        // Private files.
+        $currentuserisauthor = $file->get_userid() == $USER->id;
+        $isuserfile = $file->get_component() === 'user';
+        if ($currentuserisauthor && $isuserfile) {
+            // The user can edit the content because it's a private user file and she is the owner.
+            return true;
+        }
+
+        // For mod_h5pactivity, check whether the user can add/edit them.
+        if ($file->get_component() === 'mod_h5pactivity') {
+            $context = \context::instance_by_id($file->get_contextid());
+            if (has_capability("mod/h5pactivity:addinstance", $context)) {
+                // The user can edit the content because she has the capability for creating H5P activities where the file belongs.
+                return true;
+            }
+        }
+
+        // For contentbank files, use the API to check if the user has access.
+        if ($file->get_component() == 'contentbank') {
+            $cb = new \core_contentbank\contentbank();
+            $content = $cb->get_content_from_id($file->get_itemid());
+            $contenttype = $content->get_content_type_instance();
+            if ($contenttype instanceof \contenttype_h5p\contenttype) {
+                // Only H5P contenttypes should be considered here.
+                if ($contenttype->can_edit($content)) {
+                    // The user has permissions to edit the H5P in the content bank.
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Create, if it doesn't exist, the H5P DB instance id for a H5P pluginfile URL. If it exists:
      * - If the content is not the same, remove the existing content and re-deploy the H5P content again.
      * - If the content is the same, returns the H5P identifier.

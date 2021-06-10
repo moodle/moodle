@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+* Added new methods to api: get_original_content_from_pluginfile_url and can_edit_content.
+
 === 3.11 ===
 * Added $skipcapcheck parameter to H5P constructor, api::create_content_from_pluginfile_url() and
 api::get_content_from_pluginfile_url() to let skip capabilities check to get the pluginfile URL.
