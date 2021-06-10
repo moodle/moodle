@@ -4,14 +4,16 @@ Feature: Basic use of the Grades report
   As a teacher
   I need to use the Grades report
 
-  @javascript
-  Scenario: Using the Grades report
-    Given the following "users" exist:
-      | username | firstname | lastname | email                | idnumber |
-      | teacher1 | T1        | Teacher1 | teacher1@example.com | T1000    |
-      | student1 | S1        | Student1 | student1@example.com | S1000    |
-      | student2 | S2        | Student2 | student2@example.com | S2000    |
-      | student3 | S3        | Student3 | student3@example.com | S3000    |
+  Background:
+    Given the following "custom profile fields" exist:
+      | datatype | shortname | name  |
+      | text     | fruit     | Fruit |
+    And the following "users" exist:
+      | username | firstname | lastname | email                | idnumber | profile_field_fruit |
+      | teacher1 | T1        | Teacher1 | teacher1@example.com | T1000    |                     |
+      | student1 | S1        | Student1 | student1@example.com | S1000    | Apple               |
+      | student2 | S2        | Student2 | student2@example.com | S2000    | Banana              |
+      | student3 | S3        | Student3 | student3@example.com | S3000    | Pear                |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
@@ -44,6 +46,8 @@ Feature: Basic use of the Grades report
       |   1  | True     |
       |   2  | True     |
 
+  @javascript
+  Scenario: Using the Grades report
     # Basic check of the Grades report
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -77,3 +81,14 @@ Feature: Basic use of the Grades report
     And I should see "25.00" in the "S1 Student1" "table_row"
     # Check student2's grade
     And I should see "100.00" in the "S2 Student2" "table_row"
+
+  @javascript
+  Scenario: View custom user profile fields in the grades report
+    Given the following config values are set as admin:
+      | showuseridentity | email,profile_field_fruit |
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Quiz 1"
+    And I navigate to "Results > Grades" in current page administration
+    Then I should see "Apple" in the "S1 Student1" "table_row"
+    And I should see "Banana" in the "S2 Student2" "table_row"

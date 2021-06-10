@@ -203,8 +203,7 @@ abstract class quiz_attempts_report extends quiz_default_report {
             $headers[] = get_string('firstname');
         }
 
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = \core_user\fields::get_identity_fields($this->context, false);
+        $extrafields = \core_user\fields::get_identity_fields($this->context);
         foreach ($extrafields as $field) {
             $columns[] = $field;
             $headers[] = \core_user\fields::get_display_name($field);
@@ -218,8 +217,8 @@ abstract class quiz_attempts_report extends quiz_default_report {
     protected function configure_user_columns($table) {
         $table->column_suppress('picture');
         $table->column_suppress('fullname');
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = \core_user\fields::get_identity_fields($this->context, false);
+
+        $extrafields = \core_user\fields::get_identity_fields($this->context);
         foreach ($extrafields as $field) {
             $table->column_suppress($field);
         }
