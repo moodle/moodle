@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 4.0 ===
 * Added new methods to api: get_original_content_from_pluginfile_url and can_edit_content.
+* Added edit.php and editcontent_form class, for modifying H5P content given an H5P identifier (from the h5p table).
 
 === 3.11 ===
 * Added $skipcapcheck parameter to H5P constructor, api::create_content_from_pluginfile_url() and
