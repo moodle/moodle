@@ -38,4 +38,5 @@ $string['clitypevaluedefault'] = 'tipe nilai, tekan ENTER untuk menggunakan nila
 $string['cliunknowoption'] = 'Opsi tidak dikenali : {$a} Silakan gunakan opsi --help';
 $string['cliyesnoprompt'] = 'ketik y (Ya) atau t (Tidak)';
 $string['environmentrequireinstall'] = 'harus dipasang dan diaktifkan';
+$string['environmentrequireversion'] = 'versi {$a->needed} diperlukan dan Anda menjalankan {$a->current}';
 $string['upgradekeyset'] = 'Kunci peningkatan (biarkan kosong untuk tidak mengaturnya)';
