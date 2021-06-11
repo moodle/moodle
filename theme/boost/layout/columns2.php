@@ -65,6 +65,7 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'primarymoremenu' => $OUTPUT->more_menu(array_merge($primarymenu['primary'], $primarymenu['custom']), 'navbar-nav'),
     'secondarymoremenu' => $secondarynavigation,
+    'usermenu' => $primarymenu['user'],
 ];
 $nav = $PAGE->flatnav;
 $templatecontext['flatnavigation'] = $nav;

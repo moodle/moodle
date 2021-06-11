@@ -65,7 +65,9 @@
         {{{ output.search_box }}}
         {{{ output.navbar_plugin_output }}}
         <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
-            {{{ output.user_menu }}}
+            {{#usermenu}}
+                {{> core/user_menu }}
+            {{/usermenu}}
         </div>
     </div>
 </nav>
