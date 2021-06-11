@@ -26,6 +26,11 @@
           * url - The href for the link.
           * pixicon - (Optional) The Moodle icon to use
           * imgsrc - (Optional) If provided, uses this as source for an image tag. Note: pixicon is preferred.
+        * submenulink - If a submenu link is provided render it.
+          * submenuid - The id of the targeted submenu.
+          * title - The text to be shown for the link.
+          * pixicon - (Optional) The Moodle icon to use.
+          * imgsrc - (Optional) If provided, uses this as source for an image tag. Note: pixicon is preferred.
         * divider - Whether a divider is to be displayed or not
 
     Example context (json):
@@ -40,6 +45,15 @@
                 },
                 "divider": 1
             },
+            {
+                "submenulink": {
+                    "title": "Title",
+                    "submenuid": "86cebd87",
+                    "pixicon": "t/dashboard",
+                    "imgsrc": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"
+                },
+                "divider": 1
+            }
         ]
     }
 }}
@@ -55,5 +69,16 @@
             {{title}}
         </a>
     {{/link}}
+    {{#submenulink}}
+        <a href="#" class="carousel-navigation-link dropdown-item" role="menuitem" data-carousel-target-id="carousel-item-{{submenuid}}">
+            {{#pixicon}}
+                {{#pix}}{{pixicon}}{{/pix}}
+            {{/pixicon}}
+            {{^pixicon}}
+                {{#imgsrc}}<img aria-hidden="true" src="{{imgsrc}}" alt="{{title}}"/>{{/imgsrc}}
+            {{/pixicon}}
+            {{title}}
+        </a>
+    {{/submenulink}}
     {{#divider}}<div class="dropdown-divider" role="presentation"></div>{{/divider}}
 {{/items}}

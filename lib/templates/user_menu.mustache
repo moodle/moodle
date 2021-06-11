@@ -28,6 +28,10 @@
     * avatardata - Array of avatars to be displayed. Usually only the current user's avatar. If viewing as another user,
         includes that user's avatar.
     * userfullname - The name of the logged in user
+    * submenus - Array of submenus within the user menu.
+      * id - The id of the submenu.
+      * title - The title of the submenu.
+      * items - Array of the submenu items used in core/user_action_menu_submenu_items.
 
     Example context (json):
     {
@@ -38,12 +42,19 @@
         "items": [],
         "metadata": [],
         "avatardata": [],
-        "userfullname": "Admin User"
+        "userfullname": "Admin User",
+        "submenus": [
+            {
+                "id": "86cebd87",
+                "title": "Submenu title",
+                "items": []
+            }
+        ]
     }
 }}
 <div class="usermenu">
     {{#unauthenticateduser}}
-        <span class="login">
+        <span class="login pl-2">
             {{content}}
             {{#url}}
                 (<a href="{{url}}">{{#str}} login, core {{/str}}</a>)
@@ -60,8 +71,36 @@
                 <b class="caret"></b>
             </a>
             <div role="menu" aria-labelledby="user-menu-toggle" id="user-action-menu" class="dropdown-menu dropdown-menu-right">
-                {{> core/user_action_menu_items }}
+                <div id="usermenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
+                    <div class="carousel-inner">
+                        <div id="carousel-item-main" class="carousel-item active" tabindex="-1" aria-label="{{#str}}usermenu{{/str}}">
+                            {{> core/user_action_menu_items }}
+                        </div>
+                        {{#submenus}}
+                            <div id="carousel-item-{{id}}" class="carousel-item submenu" tabindex="-1" aria-label="{{title}}">
+                                <div class="d-flex flex-column h-100">
+                                    <div class="header">
+                                        <a href="#" class="carousel-navigation-link text-decoration-none text-body" data-carousel-target-id="carousel-item-main" aria-label="{{#str}}usermenugoback{{/str}}">
+                                            <span class="dir-rtl-hide">{{#pix}}i/arrow-left{{/pix}}</span>
+                                            <span class="dir-ltr-hide">{{#pix}}i/arrow-right{{/pix}}</span>
+                                        </a>
+                                        <span class="pl-2">{{title}}</span>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="items h-100 overflow-auto" role="menu">
+                                        {{> core/user_action_menu_submenu_items }}
+                                    </div>
+                                </div>
+                            </div>
+                        {{/submenus}}
+                    </div>
+                </div>
             </div>
         </div>
     {{/unauthenticateduser}}
 </div>
+{{#js}}
+    require(['core/usermenu'], function(UserMenu) {
+        UserMenu.init();
+    });
+{{/js}}
