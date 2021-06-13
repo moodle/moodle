@@ -403,12 +403,41 @@ class qtype_ordering_edit_form extends question_edit_form {
                             'gradingtype', 'showgrading', 'numberingstyle');
             foreach ($fields as $field) {
                 if (array_key_exists($field, $data)) {
-                    $this->set_default_value($field, $data[$field]);
+                    $this->set_my_default_value($field, $data[$field]);
                 }
             }
         }
 
         return $errors;
+    }
+
+    /**
+     * Given a preference item name, returns the full
+     * preference name of that item for this plugin
+     *
+     * @param string $name Item name
+     * @return string full preference name
+     */
+    protected function get_my_preference_name($name) {
+        return $this->plugin_name()."_$name";
+    }
+
+    /**
+     * Saves default value for item
+     *
+     * @param string $name Item name
+     * @param string|mixed|null $value
+     * @return boolean (usually TRUE, unless there is an error) 
+     */
+    protected function set_my_default_value($name, $value) {
+        if (method_exists($this, 'set_default_value')) {
+            // This method doesn't exist yet, but it might one day ;-)
+            return $this->set_default_value($name, $value);
+        } else {
+            // Until at least Moodle <= 4.0, we expect to come this way
+            $name = $this->get_my_preference_name($name);
+            return set_user_preferences(array($name => $value));
+        }
     }
 
     /**
@@ -424,7 +453,8 @@ class qtype_ordering_edit_form extends question_edit_form {
             return $this->get_default_value($name, $default);
         } else {
             // Moodle <= 3.9
-            return get_user_preferences($this->plugin_name().'_'.$name, $default);
+            $name = $this->get_my_preference_name($name);
+            return get_user_preferences($name, $default);
         }
     }
 

@@ -2,6 +2,9 @@
 Change log for qtype_ordering
 ========================================
 
+2021-06-13 (03)
+ - fix Issue #63. Restore missing method 'set_default_value()'
+
 2021-06-09 (02)
  - add message to CHANGES.txt
 
