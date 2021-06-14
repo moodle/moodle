@@ -472,7 +472,7 @@ class core_question_renderer extends plugin_renderer_base {
             $restrictedqa = new question_attempt_with_restricted_history($qa, $i, null);
 
             $row = [$stepno,
-                    userdate($step->get_timecreated(), get_string('strftimedatetimeshort')),
+                    userdate($step->get_timecreated(), get_string('strftimedatetimeshortaccurate', 'core_langconfig')),
                     s($qa->summarise_action($step)) . $this->action_author($step, $options),
                     $restrictedqa->get_state_string($options->correctness)];
 
