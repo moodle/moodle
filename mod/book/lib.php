@@ -43,9 +43,12 @@ function book_get_numbering_types() {
 
 /**
  * Returns list of available navigation link types.
+ *
+ * @deprecated since Moodle 4.0. MDL-72376.
  * @return array
  */
 function book_get_nav_types() {
+    debugging("book_get_nav_types() is deprecated. There is no replacement. Navigation is now only next and previous.");
     require_once(__DIR__.'/locallib.php');
 
     return array (
@@ -330,25 +333,6 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         $firstkey = $booknode->children->get_key_list()[0];
     } else {
         $firstkey = null;
-    }
-
-    $params = $PAGE->url->params();
-
-    if ($PAGE->cm->modname === 'book' and !empty($params['id']) and !empty($params['chapterid'])
-            and has_capability('mod/book:edit', $PAGE->cm->context)) {
-        if (!empty($USER->editing)) {
-            $string = get_string("turneditingoff");
-            $edit = '0';
-        } else {
-            $string = get_string("turneditingon");
-            $edit = '1';
-        }
-        $url = new moodle_url('/mod/book/view.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid'], 'edit'=>$edit, 'sesskey'=>sesskey()));
-        $editnode = navigation_node::create($string, $url, navigation_node::TYPE_SETTING);
-        $booknode->add_node($editnode, $firstkey);
-        if (!$PAGE->theme->haseditswitch) {
-            $PAGE->set_button($OUTPUT->single_button($url, $string));
-        }
     }
 
     $plugins = core_component::get_plugin_list('booktool');
