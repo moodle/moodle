@@ -52,6 +52,7 @@ require_capability('mod/lesson:edit', $context);
 
 $PAGE->set_url('/mod/lesson/editpage.php', array('pageid'=>$pageid, 'id'=>$id, 'qtype'=>$qtype));
 $PAGE->set_pagelayout('admin');
+$PAGE->set_secondary_active_tab('modulepage');
 
 if ($edit) {
     $editpage = lesson_page::load($pageid, $lesson);

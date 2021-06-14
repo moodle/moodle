@@ -43,7 +43,7 @@ Feature: In a lesson activity, students can see their progress viewing a progres
       | id_answer_editor_1 | Next page |
       | id_jumpto_1 | Next page |
     And I press "Save page"
-    And I click on "Expanded" "link" in the "region-main" "region"
+    And I select "Expanded" from the "jump" singleselect
     And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][3]" "xpath_element"
     And I set the field "Select a question type" to "Numerical"
     And I press "Add a question page"
