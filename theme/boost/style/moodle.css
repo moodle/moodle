@@ -10731,8 +10731,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   font-size: 1.5rem;
   line-height: 1.5; }
 
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
-  font-size: 1.5rem; }
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h5 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-bottom: 0;
+  line-height: 1.5; }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
   /*rtl:raw:
