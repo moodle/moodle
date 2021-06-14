@@ -1,3 +1,4 @@
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -13,17 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace format_theunittest\output\course_format;
+
+use renderable;
+use templatable;
+use stdClass;
+
 /**
- * Contain the events the course component can trigger.
+ * Fixture for an invalid output for testing get_output_classname.
  *
- * @module     core_course/events
  * @package    core_course
- * @copyright  2018 Simey Lameze <simey@moodle.com>
+ * @copyright  2021 Ferran Recio (ferran@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-export default {
-    favourited: 'core_course:favourited',
-    unfavorited: 'core_course:unfavorited',
-    manualCompletionToggled: 'core_course:manualcompletiontoggled',
-    stateChanged: 'core_course:stateChanged',
-};
+class invalidoutput implements renderable, templatable {
+
+    /**
+     * Export some data.
+     *
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return stdClass data context for a mustache template
+     */
+    public function export_for_template(\renderer_base $output): stdClass {
+        return (object)[
+            'something' => 'invalid',
+        ];
+    }
+}

@@ -33,6 +33,7 @@ use section_info;
 use context_course;
 use editsection_form;
 use moodle_exception;
+use coding_exception;
 use moodle_url;
 use lang_string;
 use completion_info;
@@ -1074,16 +1075,24 @@ abstract class course_format {
     /**
      * Returns instance of output compornent used by this plugin
      *
+     * @throws coding_exception if the format class does not extends the original core one.
      * @param string $outputname the element to render (section, activity...)
      * @return string the output component classname
      */
-    public function get_output_classname(?string $outputname): string {
+    public function get_output_classname(string $outputname): string {
+        // The core output class.
+        $baseclass = "core_course\\output\\$outputname";
+        // Check if there is a specific format class.
         $component = 'format_'. $this->get_format();
         $outputclass = "$component\\output\\$outputname";
         if (class_exists($outputclass)) {
+            // Check that the outputclass is a subclass of the base class.
+            if (!is_subclass_of($outputclass, $baseclass)) {
+                throw new coding_exception("The \"$outputclass\" must extend \"$baseclass\"");
+            }
             return $outputclass;
         }
-        return "core_course\\output\\$outputname";
+        return $baseclass;
     }
 
     /**
