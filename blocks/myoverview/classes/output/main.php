@@ -203,11 +203,7 @@ class main implements renderable, templatable {
         $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_CARD;
 
         // Check and remember the given page size.
-        if ($paging == BLOCK_MYOVERVIEW_PAGING_ALL) {
-            $this->paging = BLOCK_MYOVERVIEW_PAGING_ALL;
-        } else {
-            $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_PAGING_12;
-        }
+        $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_PAGING_ALL;
 
         // Check and remember if the course categories should be shown or not.
         if (!$config->displaycategories) {
@@ -218,7 +214,7 @@ class main implements renderable, templatable {
 
         // Get and remember the available layouts.
         $this->set_available_layouts();
-        $this->view = $view ? $view : reset($this->layouts);
+        $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_LIST;
 
         // Check and remember if the particular grouping options should be shown or not.
         $this->displaygroupingallincludinghidden = $config->displaygroupingallincludinghidden;
