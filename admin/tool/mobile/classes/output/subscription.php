@@ -184,6 +184,13 @@ class subscription implements \renderable, \templatable {
                                     'type' => 'danger', 'message' => get_string('subscriptionfeaturenotapplied', 'tool_mobile')];
                             }
                             break;
+                        // Check QR automatic login.
+                        case 'qrautomaticlogin':
+                            if ($ms->qrcodetype == \tool_mobile\api::QR_CODE_LOGIN) {
+                                $feature['message'] = [
+                                    'type' => 'danger', 'message' => get_string('subscriptionfeaturenotapplied', 'tool_mobile')];
+                            }
+                            break;
                     }
                 }
             }

@@ -94,6 +94,11 @@ class api {
     const MESSAGE_CONVERSATION_DISABLED = 0;
 
     /**
+     * The max message length.
+     */
+    const MESSAGE_MAX_LENGTH = 4096;
+
+    /**
      * Handles searching for messages in the message area.
      *
      * @param int $userid The user id doing the searching
@@ -1312,7 +1317,7 @@ class api {
             // The last known message time is earlier than the one being requested so we can
             // just return an empty result set rather than having to query the DB.
             if ($lastcreated && $lastcreated < $timefrom) {
-                return [];
+                return helper::format_conversation_messages($userid, $convid, []);
             }
         }
 
@@ -1979,6 +1984,10 @@ class api {
         $eventdata->customdata = $customdata;
 
         $messageid = message_send($eventdata);
+
+        if (!$messageid) {
+            throw new \moodle_exception('messageundeliveredbynotificationsettings', 'moodle');
+        }
 
         $messagerecord = $DB->get_record('messages', ['id' => $messageid], 'id, useridfrom, fullmessage,
                 timecreated, fullmessagetrust');

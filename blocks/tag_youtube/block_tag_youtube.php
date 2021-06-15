@@ -51,9 +51,6 @@ class block_tag_youtube extends block_base {
 
     function specialization() {
         $this->title = !empty($this->config->title) ? $this->config->title : get_string('pluginname', 'block_tag_youtube');
-        // Convert numeric categories (old YouTube API) to
-        // textual ones (new Google Data API)
-        $this->config->category = !empty($this->config->category) ? $this->category_map_old2new($this->config->category) : '0';
     }
 
     function instance_allow_multiple() {
@@ -341,62 +338,71 @@ class block_tag_youtube extends block_base {
         return $text;
     }
 
-    function get_categories() {
-        // TODO: Right now using sticky categories from
-        // http://gdata.youtube.com/schemas/2007/categories.cat
-        // This should be performed from time to time by the block insead
-        // and cached somewhere, avoiding deprecated ones and observing regions
-        return array (
-            '0' => get_string('anycategory', 'block_tag_youtube'),
-            'Film'  => get_string('filmsanimation', 'block_tag_youtube'),
-            'Autos' => get_string('autosvehicles', 'block_tag_youtube'),
-            'Music' => get_string('music', 'block_tag_youtube'),
-            'Animals'=> get_string('petsanimals', 'block_tag_youtube'),
-            'Sports' => get_string('sports', 'block_tag_youtube'),
-            'Travel' => get_string('travel', 'block_tag_youtube'),
-            'Games'  => get_string('gadgetsgames', 'block_tag_youtube'),
-            'Comedy' => get_string('comedy', 'block_tag_youtube'),
-            'People' => get_string('peopleblogs', 'block_tag_youtube'),
-            'News'   => get_string('newspolitics', 'block_tag_youtube'),
-            'Entertainment' => get_string('entertainment', 'block_tag_youtube'),
-            'Education' => get_string('education', 'block_tag_youtube'),
-            'Howto'  => get_string('howtodiy', 'block_tag_youtube'),
-            'Tech'   => get_string('scienceandtech', 'block_tag_youtube')
-        );
+    /**
+     * Method that returns an array containing all relevant video categories obtained through an API call, where the
+     * array index represents the category ID and the array value represents the category name.
+     *
+     * @return array The array containing the relevant video categories
+     * @throws moodle_exception If the API key is not set
+     * @throws Google_Service_Exception If an error occurs while obtaining the categories through the API call
+     */
+    public function get_categories() {
+        // Get the default categories and it's translations.
+        $categorytranslations = $this->category_map_translation();
+
+        if ($service = $this->get_service()) {
+            // Call the API to fetch the youtube video categories.
+            // This API call requires the regionCode parameter which instructs the API to return the list of video
+            // categories available in the specified country. Currently 'us' is hardcoded as the returned categories
+            // for this region correspond to the previously used (legacy) hardcoded list of categories.
+            // TODO: We should improve this in the future and avoid hardcoding this value.
+            $response = $service->videoCategories->listVideoCategories('snippet', ['regionCode' => 'us']);
+            $categoryitems = $response['modelData']['items'];
+
+            // Return an array with the relevant categories.
+            return array_reduce($categoryitems, function($categories, $category) use ($categorytranslations) {
+                $categoryid = $category['id'];
+                $categoryname = $category['snippet']['title'];
+                // Videos can be associated with this category.
+                if ($category['snippet']['assignable']) {
+                    // If the category name can be mapped with a translation, add it to the categories array.
+                    if (array_key_exists($categoryname, $categorytranslations)) {
+                        $categories[$categoryid] = $categorytranslations[$categoryname];
+                    } else { // Otherwise, display the untranslated category name and show a debugging message.
+                        $categories[$categoryid] = $categoryname;
+                        debugging("The category '{$categoryname}' does not have a translatable language string.");
+                    }
+                }
+                return $categories;
+            }, []);
+        } else {
+            throw new \moodle_exception('apierror', 'block_tag_youtube');
+        }
     }
 
     /**
-     * Provide conversion from old numeric categories available in youtube API
-     * to the new ones available in the Google API
+     * Method that provides mapping between the video category names and their translations.
      *
-     * @param int $oldcat old category code
-     * @return mixed new category code or 0 (if no match found)
-     *
-     * TODO: Someday this should be applied on upgrade for all the existing
-     * block instances so we won't need the mapping any more. That would imply
-     * to implement restore handling to perform the conversion of old blocks.
+     * @return array The array that maps the video category names with their translations
      */
-    function category_map_old2new($oldcat) {
-        $oldoptions = array (
-            0  => '0',
-            1  => 'Film',
-            2  => 'Autos',
-            23 => 'Comedy',
-            24 => 'Entertainment',
-            10 => 'Music',
-            25 => 'News',
-            22 => 'People',
-            15 => 'Animals',
-            26 => 'Howto',
-            17 => 'Sports',
-            19 => 'Travel',
-            20 => 'Games'
-        );
-        if (array_key_exists($oldcat, $oldoptions)) {
-            return $oldoptions[$oldcat];
-        } else {
-            return $oldcat;
-        }
+    private function category_map_translation() {
+        return [
+            'Film & Animation' => get_string('filmsanimation', 'block_tag_youtube'),
+            'Autos & Vehicles' => get_string('autosvehicles', 'block_tag_youtube'),
+            'Music' => get_string('music', 'block_tag_youtube'),
+            'Pets & Animals' => get_string('petsanimals', 'block_tag_youtube'),
+            'Sports' => get_string('sports', 'block_tag_youtube'),
+            'Travel & Events' => get_string('travel', 'block_tag_youtube'),
+            'Gaming' => get_string('gadgetsgames', 'block_tag_youtube'),
+            'People & Blogs' => get_string('peopleblogs', 'block_tag_youtube'),
+            'Comedy' => get_string('comedy', 'block_tag_youtube'),
+            'Entertainment' => get_string('entertainment', 'block_tag_youtube'),
+            'News & Politics' => get_string('newspolitics', 'block_tag_youtube'),
+            'Howto & Style'  => get_string('howtodiy', 'block_tag_youtube'),
+            'Education' => get_string('education', 'block_tag_youtube'),
+            'Science & Technology' => get_string('scienceandtech', 'block_tag_youtube'),
+            'Nonprofits & Activism' => get_string('nonprofitactivism', 'block_tag_youtube'),
+        ];
     }
 
     /**

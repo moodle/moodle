@@ -199,7 +199,39 @@ class core_external_testcase extends externallib_advanced_testcase {
         $tag = $this->getDataGenerator()->create_tag();
         $res = core_external::update_inplace_editable('core_tag', 'tagname', $tag->id, 'new tag name');
         $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
+
         $this->assertEquals('new tag name', $res['value']);
+    }
+
+    /**
+     * Test update_inplace_editable with mathjax.
+     */
+    public function test_update_inplace_editable_with_mathjax() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Enable MathJax filter in content and headings.
+        $this->configure_filters([
+            ['name' => 'mathjaxloader', 'state' => TEXTFILTER_ON, 'move' => -1, 'applytostrings' => true],
+        ]);
+
+        // Create a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = self::getDataGenerator()->create_module('forum', array('course' => $course->id, 'name' => 'forum name'));
+
+        // Change the forum name.
+        $newname = 'New forum name $$(a+b)=2$$';
+        $res = core_external::update_inplace_editable('core_course', 'activityname', $forum->cmid, $newname);
+        $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
+
+        // Format original data.
+        $context = context_module::instance($forum->cmid);
+        $newname = external_format_string($newname, $context->id);
+        $editlabel = get_string('newactivityname', '', $newname);
+
+        // Check editlabel is the same and has mathjax.
+        $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $res['editlabel']);
+        $this->assertEquals($editlabel, $res['editlabel']);
     }
 
     public function test_get_user_dates() {

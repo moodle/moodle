@@ -319,17 +319,9 @@ class mustache_template_source_loader {
                         break;
                     case Mustache_Tokenizer::T_SECTION:
                         if ($name == 'str') {
-                            // The token that containts the string identifiers (key and component) should
-                            // immediately follow the #str token.
-                            $identifiertoken = isset($tokens[$index + 1]) ? $tokens[$index + 1] : null;
+                            list($id, $component) = $this->get_string_identifiers($tokens, $index);
 
-                            if ($identifiertoken) {
-                                // The string identifier is the key and component comma separated.
-                                $identifierstring = $identifiertoken['value'];
-                                $parts = explode(',', $identifierstring);
-                                $id = $parts[0];
-                                // Default to 'core' for the component, if not specified.
-                                $component = isset($parts[1]) ? $parts[1] : 'core';
+                            if ($id) {
                                 $strings = $addtodependencies($strings, $component, $id);
                             }
                         }
@@ -342,5 +334,51 @@ class mustache_template_source_loader {
             'templates' => $templates,
             'strings' => $strings
         ];
+    }
+
+    /**
+     * Gets the identifier and component of the string.
+     *
+     * The string could be defined on one, or multiple lines.
+     *
+     * @param array $tokens The templates token.
+     * @param int $start The index of the start of the string token.
+     * @return array A list of the string identifier and component.
+     */
+    protected function get_string_identifiers(array $tokens, int $start): array {
+        $current = $start + 1;
+        $parts = [];
+
+        // Get the contents of the string tag.
+        while ($tokens[$current]['type'] !== Mustache_Tokenizer::T_END_SECTION) {
+            if (!isset($tokens[$current]['value']) || empty(trim($tokens[$current]['value']))) {
+                // An empty line, so we should ignore it.
+                $current++;
+                continue;
+            }
+
+            // We need to remove any spaces before and after the string.
+            $nospaces = trim($tokens[$current]['value']);
+
+            // We need to remove any trailing commas so that the explode will not add an
+            // empty entry where two paramters are on multiple lines.
+            $clean = rtrim($nospaces, ',');
+
+            // We separate the parts of a string with commas.
+            $subparts = explode(',', $clean);
+
+            // Store the parts.
+            $parts = array_merge($parts, $subparts);
+
+            $current++;
+        }
+
+        // The first text should be the first part of a str tag.
+        $id = isset($parts[0]) ? trim($parts[0]) : null;
+
+        // Default to 'core' for the component, if not specified.
+        $component = isset($parts[1]) ? trim($parts[1]) : 'core';
+
+        return [$id, $component];
     }
 }

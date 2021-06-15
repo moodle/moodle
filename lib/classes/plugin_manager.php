@@ -752,7 +752,7 @@ class core_plugin_manager {
     public function all_plugins_ok($moodleversion, &$failedplugins = array(), $branch = null) {
         global $CFG;
         if (empty($branch)) {
-            $branch = $CFG->branch;
+            $branch = $CFG->branch ?? '';
             if (empty($branch)) {
                 // During initial install there is no branch set.
                 require($CFG->dirroot . '/version.php');

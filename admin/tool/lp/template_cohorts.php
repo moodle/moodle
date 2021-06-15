@@ -54,7 +54,19 @@ if ($canmanagetemplate && ($removecohort = optional_param('removecohort', false,
 }
 
 // Capture the form submission.
-$form = new \tool_lp\form\template_cohorts($url->out(false), array('pagecontextid' => $pagecontextid));
+$existingcohortsql =
+    'SELECT c.id
+       FROM {' . \core_competency\template_cohort::TABLE . '} tc
+       JOIN {cohort} c ON c.id = tc.cohortid
+      WHERE tc.templateid = :templateid';
+
+$existingcohorts = $DB->get_records_sql_menu($existingcohortsql, ['templateid' => $template->get('id')]);
+
+$form = new \tool_lp\form\template_cohorts($url->out(false), [
+    'pagecontextid' => $pagecontextid,
+    'excludecohorts' => array_keys($existingcohorts),
+]);
+
 if ($canmanagetemplate && ($data = $form->get_data()) && !empty($data->cohorts)) {
     $maxtocreate = 50;
     $maxreached = false;

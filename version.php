@@ -12,7 +12,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
+// You should have received a copy of the GNU General Public Licensáe
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
@@ -29,9 +29,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$version  = 2020061501.05;              // 20200615      = branching date YYYYMMDD - do not modify!
+$version  = 2020061507.02;              // 20200615      = branching date YYYYMMDD - do not modify!
                                         //         RR    = release increments - 00 in DEV branches.
                                         //           .XX = incremental changes.
-$release  = '3.9.1+ (Build: 20200730)'; // Human-friendly version name
+$release  = '3.9.7+ (Build: 20210520)'; // Human-friendly version name
 $branch   = '39';                       // This version's branch.
 $maturity = MATURITY_STABLE;             // This version's maturity level.

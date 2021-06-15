@@ -35,65 +35,65 @@
             {{#next6months}} {{#str}}next6months, block_timeline {{/str}} {{/next6months}}
         </span>
     </button>
-    <div id="menudayfilter" role="menu" class="dropdown-menu" data-show-active-item>
+    <div id="menudayfilter" role="menu" class="dropdown-menu" data-show-active-item data-skip-active-class="true">
         <a
-            class="dropdown-item {{#all}} active {{/all}}"
+            class="dropdown-item"
             href="#"
             data-from="-14"
             data-filtername="all"
+            {{#all}}aria-current="true"{{/all}}
             aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} all, core {{/str}}{{/str}}"
             role="menuitem"
-            {{#all}}aria-current="true"{{/all}}
         >
             {{#str}} all, core {{/str}}
         </a>
         <a
-            class="dropdown-item {{#overdue}} active {{/overdue}}"
+            class="dropdown-item"
             href="#"
             data-from="-14"
             data-to="0"
             data-filtername="overdue"
+            {{#overdue}}aria-current="true"{{/overdue}}
             aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} overdue, block_timeline {{/str}}{{/str}}"
             role="menuitem"
-            {{#overdue}}aria-current="true"{{/overdue}}
         >
             {{#str}} overdue, block_timeline {{/str}}
         </a>
         <div class="dropdown-divider" role="separator"></div>
         <h6 class="dropdown-header">{{#str}} duedate, block_timeline {{/str}}</h6>
         <a
-            class="dropdown-item {{#next7days}} active {{/next7days}}"
+            class="dropdown-item"
             href="#"
             data-from="0"
             data-to="7"
             data-filtername="next7days"
+            {{#next7days}}aria-current="true"{{/next7days}}
             aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next7days, block_timeline {{/str}}{{/str}}"
             role="menuitem"
-            {{#next7days}}aria-current="true"{{/next7days}}
         >
             {{#str}} next7days, block_timeline {{/str}}
         </a>
         <a
-            class="dropdown-item {{#next30days}} active {{/next30days}}"
+            class="dropdown-item"
             href="#"
             data-from="0"
             data-to="30"
             data-filtername="next30days"
+            {{#next30days}}aria-current="true"{{/next30days}}
             aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next30days, block_timeline {{/str}}{{/str}}"
             role="menuitem"
-            {{#next30days}}aria-current="true"{{/next30days}}
         >
             {{#str}} next30days, block_timeline {{/str}}
         </a>
         <a
-            class="dropdown-item {{#next3months}} active {{/next3months}}"
+            class="dropdown-item"
             href="#"
             data-from="0"
             data-to="90"
             data-filtername="next3months"
+            {{#next3months}}aria-current="true"{{/next3months}}
             aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next3months, block_timeline {{/str}}{{/str}}"
             role="menuitem"
-            {{#next3months}}aria-current="true"{{/next3months}}
         >
             {{#str}} next3months, block_timeline {{/str}}
         </a>
@@ -103,9 +103,9 @@
             data-from="0"
             data-to="180"
             data-filtername="next6months"
+            {{#next6months}}aria-current="true"{{/next6months}}
             aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next6months, block_timeline {{/str}}{{/str}}"
             role="menuitem"
-            {{#next6months}}aria-current="true"{{/next6months}}
         >
             {{#str}} next6months, block_timeline {{/str}}
         </a>

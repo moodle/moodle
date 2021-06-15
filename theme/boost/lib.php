@@ -150,9 +150,5 @@ function theme_boost_get_pre_scss($theme) {
         $scss .= $theme->settings->scsspre;
     }
 
-    if (!empty($theme->settings->fontsize)) {
-        $scss .= '$font-size-base: ' . (1 / 100 * $theme->settings->fontsize) . "rem !default;\n";
-    }
-
     return $scss;
 }

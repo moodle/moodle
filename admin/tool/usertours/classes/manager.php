@@ -139,12 +139,27 @@ class manager {
     const CONFIG_SHIPPED_VERSION = 'shipped_version';
 
     /**
+     * Helper method to initialize admin page, setting appropriate extra URL parameters
+     *
+     * @param string $action
+     */
+    protected function setup_admin_externalpage(string $action): void {
+        admin_externalpage_setup('tool_usertours/tours', '', array_filter([
+            'action' => $action,
+            'id' => optional_param('id', 0, PARAM_INT),
+            'tourid' => optional_param('tourid', 0, PARAM_INT),
+            'direction' => optional_param('direction', 0, PARAM_INT),
+        ]));
+    }
+
+    /**
      * This is the entry point for this controller class.
      *
      * @param   string  $action     The action to perform.
      */
     public function execute($action) {
-        admin_externalpage_setup('tool_usertours/tours');
+        $this->setup_admin_externalpage($action);
+
         // Add the main content.
         switch($action) {
             case self::ACTION_NEWTOUR:
@@ -423,17 +438,7 @@ class manager {
         $filename = 'tour_export_' . $tour->get_id() . '_' . time() . '.json';
 
         // Force download.
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');
-        header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
-        header('Expires: ' . gmdate('D, d M Y H:i:s', 0) . 'GMT');
-        header('Pragma: no-cache');
-        header('Accept-Ranges: none');
-        header('Content-disposition: attachment; filename=' . $filename);
-        header('Content-length: ' . strlen($exportstring));
-        header('Content-type: text/calendar; charset=utf-8');
-
-        echo $exportstring;
-        die;
+        send_file($exportstring, $filename, 0, 0, true, true);
     }
 
     /**

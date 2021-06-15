@@ -1458,9 +1458,11 @@ abstract class lesson_add_page_form_base extends moodleform {
      * @param string $label, null means default
      * @param bool $required
      * @param string $format
+     * @param array $help Add help text via the addHelpButton. Must be an array which contains the string identifier and
+     *                      component as it's elements
      * @return void
      */
-    protected final function add_answer($count, $label = null, $required = false, $format= '') {
+    protected final function add_answer($count, $label = null, $required = false, $format= '', array $help = []) {
         if ($label === null) {
             $label = get_string('answer', 'lesson');
         }
@@ -1473,12 +1475,16 @@ abstract class lesson_add_page_form_base extends moodleform {
             $this->_form->setDefault('answer_editor['.$count.']', array('text' => '', 'format' => FORMAT_HTML));
         } else {
             $this->_form->addElement('text', 'answer_editor['.$count.']', $label,
-                    array('size' => '50', 'maxlength' => '200'));
+                array('size' => '50', 'maxlength' => '200'));
             $this->_form->setType('answer_editor['.$count.']', PARAM_TEXT);
         }
 
         if ($required) {
             $this->_form->addRule('answer_editor['.$count.']', get_string('required'), 'required', null, 'client');
+        }
+
+        if ($help) {
+            $this->_form->addHelpButton("answer_editor[$count]", $help['identifier'], $help['component']);
         }
     }
     /**
@@ -4530,6 +4536,7 @@ abstract class lesson_page extends lesson_base {
                     $this->answers[$i]->lessonid = $this->lesson->id;
                     $this->answers[$i]->pageid = $this->id;
                     $this->answers[$i]->timecreated = $this->timecreated;
+                    $this->answers[$i]->answer = null;
                 }
 
                 if (isset($properties->answer_editor[$i])) {
@@ -4542,6 +4549,9 @@ abstract class lesson_page extends lesson_base {
                         $this->answers[$i]->answer = $properties->answer_editor[$i];
                         $this->answers[$i]->answerformat = FORMAT_MOODLE;
                     }
+                } else {
+                    // If there is no data posted which means we want to reset the stored values.
+                    $this->answers[$i]->answer = null;
                 }
 
                 if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {

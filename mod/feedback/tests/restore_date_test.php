@@ -61,4 +61,37 @@ class mod_feedback_restore_date_testcase extends restore_date_testcase {
         $this->assertFieldsRolledForward($feedback, $newfeedback, $props);
         $this->assertEquals($response->timemodified, $newresponse->timemodified);
     }
+
+    /**
+     * Test that dependency for items is restored correctly.
+     */
+    public function test_restore_item_dependency() {
+        global $DB;
+        // Create a course and a feedback activity.
+        $course = $this->getDataGenerator()->create_course();
+        $feedback = $this->getDataGenerator()->create_module('feedback', array('course' => $course));
+        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+
+        // Create a couple of items which depend on each other.
+        $item1 = $feedbackgenerator->create_item_numeric($feedback);
+        $item2 = $feedbackgenerator->create_item_numeric($feedback, array('dependitem' => $item1->id));
+        $DB->set_field('feedback_item', 'dependitem', $item2->id, ['id' => $item1->id]);
+
+        // Create one more item with fake/broken dependitem.
+        $item3 = $feedbackgenerator->create_item_numeric($feedback, array('dependitem' => 123456));
+
+        // Backup and restore the course.
+        $restoredcourseid = $this->backup_and_restore($course);
+        $restoredfeedback = $DB->get_record('feedback', ['course' => $restoredcourseid]);
+
+        // Restored item1 and item2 are expected to be dependent the same way as the original ones.
+        $restoreditem1 = $DB->get_record('feedback_item', ['feedback' => $restoredfeedback->id, 'name' => $item1->name]);
+        $restoreditem2 = $DB->get_record('feedback_item', ['feedback' => $restoredfeedback->id, 'name' => $item2->name]);
+        $this->assertEquals($restoreditem2->id, $restoreditem1->dependitem);
+        $this->assertEquals($restoreditem1->id, $restoreditem2->dependitem);
+
+        // Restored item3 is expected to have an empty dependitem.
+        $restoreditem3 = $DB->get_record('feedback_item', ['feedback' => $restoredfeedback->id, 'name' => $item3->name]);
+        $this->assertEquals(0, $restoreditem3->dependitem);
+    }
 }

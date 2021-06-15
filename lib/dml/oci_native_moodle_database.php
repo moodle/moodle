@@ -345,14 +345,16 @@ class oci_native_moodle_database extends moodle_database {
 
     /**
      * Prepare the statement for execution
-     * @throws dml_connection_exception
+     *
      * @param string $sql
      * @return resource
+     *
+     * @throws dml_exception
      */
     protected function parse_query($sql) {
         $stmt = oci_parse($this->oci, $sql);
         if ($stmt == false) {
-            throw new dml_connection_exception('Can not parse sql query'); //TODO: maybe add better info
+            throw new dml_exception('dmlparseexception', null, $this->get_last_error());
         }
         return $stmt;
     }
@@ -1282,7 +1284,7 @@ class oci_native_moodle_database extends moodle_database {
      * If the return ID isn't required, then this just reports success as true/false.
      * $data is an object containing needed data
      * @param string $table The database table to be inserted into
-     * @param object $data A data object with values for one or more fields in the record
+     * @param object|array $dataobject A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @return bool|int true or new id
      * @throws dml_exception A DML specific exception is thrown for any errors.

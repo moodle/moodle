@@ -808,12 +808,12 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
 function forum_update_grades($forum, $userid = 0): void {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
-    $cm = get_coursemodule_from_instance('forum', $forum->id);
-    $forum->cmidnumber = $cm->idnumber;
 
     $ratings = null;
     if ($forum->assessed) {
         require_once($CFG->dirroot.'/rating/lib.php');
+
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
 
         $rm = new rating_manager();
         $ratings = $rm->get_user_grades((object) [
@@ -954,7 +954,7 @@ function forum_scale_used_anywhere(int $scaleid): bool {
         return false;
     }
 
-    return $DB->record_exists('forum', ['scale' => $scaleid * -1]);
+    return $DB->record_exists_select('forum', "scale = ? and assessed > 0", [$scaleid * -1]);
 }
 
 // SQL FUNCTIONS ///////////////////////////////////////////////////////////

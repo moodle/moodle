@@ -62,7 +62,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
   Scenario: Self-enrolment disabled
     Given I log in as "student1"
     When I am on "Course 1" course homepage
-    Then I should see "You can not enrol yourself in this course"
+    Then I should see "You cannot enrol yourself in this course"
 
   Scenario: Self-enrolment enabled requiring a group enrolment key
     Given I log in as "teacher1"
@@ -98,6 +98,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I press "Enrol me"
+    And I should see "You are enrolled in the course"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -118,6 +119,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I press "Enrol me"
+    And I should see "You are enrolled in the course"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage

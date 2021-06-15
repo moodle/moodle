@@ -164,8 +164,9 @@ if (empty($result->posts)) {
         // Edit navbar.
         if (isset($courseid) && $courseid != SITEID) {
             // Create as much of the navbar automatically.
-            $newusernode = $PAGE->navigation->find('user' . $user->id, null);
-            $newusernode->make_active();
+            if ($newusernode = $PAGE->navigation->find('user' . $user->id, null)) {
+                $newusernode->make_active();
+            }
             // Check to see if this is a discussion or a post.
             if ($mode == 'posts') {
                 $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
@@ -182,8 +183,9 @@ if (empty($result->posts)) {
         // Edit navbar.
         if (isset($courseid) && $courseid != SITEID) {
             // Create as much of the navbar automatically.
-            $usernode = $PAGE->navigation->find('user' . $user->id, null);
-            $usernode->make_active();
+            if ($usernode = $PAGE->navigation->find('user' . $user->id, null)) {
+                $usernode->make_active();
+            }
             // Check to see if this is a discussion or a post.
             if ($mode == 'posts') {
                 $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
@@ -295,8 +297,10 @@ $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for
 
 // Edit navbar.
 if (isset($courseid) && $courseid != SITEID) {
-    $usernode = $PAGE->navigation->find('user' . $user->id , null);
-    $usernode->make_active();
+    if ($usernode = $PAGE->navigation->find('user' . $user->id , null)) {
+        $usernode->make_active();
+    }
+
     // Check to see if this is a discussion or a post.
     if ($mode == 'posts') {
         $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',

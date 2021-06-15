@@ -447,7 +447,7 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
                         $serviceurl = lti_ensure_url_is_https($serviceurl);
                     }
                     $basicoutcome->lis_outcome_service_url = $serviceurl;
-                    $message->{'https://purl.imsglobal.org/spec/lti-bos/claim/basicoutcomesservice'} = $basicoutcome;
+                    $message->{'https://purl.imsglobal.org/spec/lti-bo/claim/basicoutcome'} = $basicoutcome;
                 }
                 $member->message = [$message];
             }
@@ -466,7 +466,7 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
             if (!is_null($lti)) {
                 $nextpage .= "&rlid={$lti->id}";
             }
-            $response->add_additional_header("Link: {$nextpage};rel=next");
+            $response->add_additional_header("Link: <{$nextpage}>; rel=\"next\"");
         }
 
         $response->set_content_type('application/vnd.ims.lti-nrps.v2.membershipcontainer+json');

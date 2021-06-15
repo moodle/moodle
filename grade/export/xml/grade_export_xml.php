@@ -24,6 +24,16 @@ class grade_export_xml extends grade_export {
     public $updatedgradesonly = false; // default to export ALL grades
 
     /**
+     * Ensure we produce correctly formed XML content by encoding idnumbers appropriately
+     *
+     * @param string $idnumber
+     * @return string
+     */
+    private static function xml_export_idnumber(string $idnumber): string {
+        return htmlspecialchars($idnumber, ENT_QUOTES | ENT_XML1);
+    }
+
+    /**
      * To be implemented by child classes
      * @param boolean $feedback
      * @param boolean $publish Whether to output directly, or send as a file
@@ -84,9 +94,11 @@ class grade_export_xml extends grade_export {
                 }
 
                 // only need id number
-                fwrite($handle,  "\t\t<assignment>{$grade_item->idnumber}</assignment>\n");
+                $gradeitemidnumber = self::xml_export_idnumber($grade_item->idnumber);
+                fwrite($handle, "\t\t<assignment>{$gradeitemidnumber}</assignment>\n");
                 // this column should be customizable to use either student id, idnumber, uesrname or email.
-                fwrite($handle,  "\t\t<student>{$user->idnumber}</student>\n");
+                $useridnumber = self::xml_export_idnumber($user->idnumber);
+                fwrite($handle, "\t\t<student>{$useridnumber}</student>\n");
                 // Format and display the grade in the selected display type (real, letter, percentage).
                 if (is_array($this->displaytype)) {
                     // Grades display type came from the return of export_bulk_export_data() on grade publishing.

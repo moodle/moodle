@@ -447,4 +447,15 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
                 array_column($events, 'name'),
                 '', 0.0, 10, true);
     }
+
+    /**
+     * Test retrieval strategy with empty filters.
+     * This covers a edge case not covered elsewhere to ensure its SQL is cross
+     * db compatible. The test is ensuring we don't get a DML Exception with
+     * the filters setup this way.
+     */
+    public function test_get_raw_events_with_empty_user_and_category_lists() {
+        $retrievalstrategy = new raw_event_retrieval_strategy;
+        $retrievalstrategy->get_raw_events([], null, null, []);
+    }
 }

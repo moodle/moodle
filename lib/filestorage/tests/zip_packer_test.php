@@ -255,6 +255,79 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
     }
 
     /**
+     * Test functionality of {@see zip_packer} for entries with folders ending with dots.
+     *
+     * @link https://bugs.php.net/bug.php?id=77214
+     */
+    public function test_zip_entry_path_having_folder_ending_with_dot() {
+        global $CFG;
+
+        $this->resetAfterTest(false);
+
+        $packer = get_file_packer('application/zip');
+        $tmp = make_request_directory();
+        $now = time();
+
+        // Create a test archive containing a folder ending with dot.
+        $zippath = $tmp . '/test_archive.zip';
+        $zipcontents = [
+            'HOW.TO' => ['Just run tests.'],
+            'README.' => ['This is a test ZIP file'],
+            './Current time' => [$now],
+            'Data/sub1./sub2/1221' => ['1221'],
+            'Data/sub1./sub2./Příliš žluťoučký kůň úpěl Ďábelské Ódy.txt' => [''],
+        ];
+
+        if ($CFG->ostype === 'WINDOWS') {
+            // File names cannot end with dots on Windows and trailing dots are replaced with underscore.
+            $filenamemap = [
+                'HOW.TO' => 'HOW.TO',
+                'README.' => 'README_',
+                './Current time' => 'Current time',
+                'Data/sub1./sub2/1221' => 'Data/sub1_/sub2/1221',
+                'Data/sub1./sub2./Příliš žluťoučký kůň úpěl Ďábelské Ódy.txt' =>
+                    'Data/sub1_/sub2_/Příliš žluťoučký kůň úpěl Ďábelské Ódy.txt',
+            ];
+
+        } else {
+            $filenamemap = [
+                'HOW.TO' => 'HOW.TO',
+                'README.' => 'README.',
+                './Current time' => 'Current time',
+                'Data/sub1./sub2/1221' => 'Data/sub1./sub2/1221',
+                'Data/sub1./sub2./Příliš žluťoučký kůň úpěl Ďábelské Ódy.txt' =>
+                    'Data/sub1./sub2./Příliš žluťoučký kůň úpěl Ďábelské Ódy.txt',
+            ];
+        }
+
+        // Check that the archive can be created.
+        $result = $packer->archive_to_pathname($zipcontents, $zippath, false);
+        $this->assertTrue($result);
+
+        // Check list of files.
+        $listfiles = $packer->list_files($zippath);
+        $this->assertEquals(count($zipcontents), count($listfiles));
+
+        foreach ($listfiles as $fileinfo) {
+            $this->assertSame($fileinfo->pathname, $fileinfo->original_pathname);
+            $this->assertArrayHasKey($fileinfo->pathname, $zipcontents);
+        }
+
+        // Check actual extracting.
+        $targetpath = $tmp . '/target';
+        check_dir_exists($targetpath);
+        $result = $packer->extract_to_pathname($zippath, $targetpath, null, null, true);
+
+        $this->assertTrue($result);
+
+        foreach ($zipcontents as $filename => $filecontents) {
+            $filecontents = reset($filecontents);
+            $this->assertTrue(is_readable($targetpath . '/' . $filenamemap[$filename]));
+            $this->assertEquals($filecontents, file_get_contents($targetpath . '/' . $filenamemap[$filename]));
+        }
+    }
+
+    /**
      * @depends test_archive_to_storage
      */
     public function test_extract_to_pathname_onlyfiles() {
@@ -523,6 +596,24 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         $zip_archive->close();
 
         unlink($archive);
+    }
+
+    /**
+     * Test opening an encrypted archive
+     */
+    public function test_open_encrypted_archive() {
+        $this->resetAfterTest();
+
+        // The archive contains a single encrypted "hello.txt" file.
+        $archive = __DIR__ . '/fixtures/passwordis1.zip';
+
+        /** @var zip_packer $packer */
+        $packer = get_file_packer('application/zip');
+        $result = $packer->extract_to_pathname($archive, make_temp_directory('zip'));
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('hello.txt', $result);
+        $this->assertEquals('Can not read file from zip archive', $result['hello.txt']);
     }
 
     /**

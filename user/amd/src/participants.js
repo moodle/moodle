@@ -125,7 +125,7 @@ export const init = ({
                 .then(tableRoot => {
                     // Always update the toggle state.
                     // This ensures that the bulk actions are disabled after changing the page size.
-                    CheckboxToggleAll.setGroupState(tableRoot, 'participants-table', checkCountButtonClicked);
+                    CheckboxToggleAll.setGroupState(root, 'participants-table', checkCountButtonClicked);
 
                     return tableRoot;
                 })
@@ -144,7 +144,7 @@ export const init = ({
             const currentPageSize = parseInt(tableRoot.dataset.tablePageSize, 10);
             const totalRowCount = parseInt(tableRoot.dataset.tableTotalRows, 10);
 
-            CheckboxToggleAll.updateSlavesFromMasterState(tableRoot, 'participants-table');
+            CheckboxToggleAll.updateSlavesFromMasterState(root, 'participants-table');
 
             const pageCountStrings = [
                 {

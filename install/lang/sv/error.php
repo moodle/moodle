@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -33,20 +32,20 @@ defined('MOODLE_INTERNAL') || die();
 $string['cannotcreatedboninstall'] = '<p>Kan inte skapa databasen.</p>
 <p>Den specificerade databasen existerar inte och den givna användaren har inte rättighet att skapa databasen.</p>
 <p>Administratören för webbplatsen bör verifiera databaskonfigurationen.</p>';
-$string['cannotcreatelangdir'] = 'Det går inte att skapa en lang-katalog';
-$string['cannotcreatetempdir'] = 'Det går inte att skapa en temp-katalog';
-$string['cannotdownloadcomponents'] = 'Det går inte att ladda ner komponenter';
-$string['cannotdownloadzipfile'] = 'Det går inte att ladda ner ZIP-fil.';
-$string['cannotfindcomponent'] = 'Det går inte att hitta komponent';
-$string['cannotsavemd5file'] = 'Det går inte att spara md5-fil';
-$string['cannotsavezipfile'] = 'Det går inte att spara ZIP-fil';
-$string['cannotunzipfile'] = 'Det går inte att packa upp fil';
-$string['componentisuptodate'] = 'Komponenten är av en aktuell version';
+$string['cannotcreatelangdir'] = 'Det går inte att skapa lang-katalogen';
+$string['cannotcreatetempdir'] = 'Det går inte att skapa temp-katalogen';
+$string['cannotdownloadcomponents'] = 'Kan inte ladda ned komponenter';
+$string['cannotdownloadzipfile'] = 'Kan inte ladda ned ZIP-fil';
+$string['cannotfindcomponent'] = 'Hittar inte komponenten';
+$string['cannotsavemd5file'] = 'Kan inte spara md5-fil';
+$string['cannotsavezipfile'] = 'Kan inte spara ZIP-fil';
+$string['cannotunzipfile'] = 'Det går inte att packa upp filen';
+$string['componentisuptodate'] = 'Komponenten är aktuell';
 $string['dmlexceptiononinstall'] = '<p>Ett databasfel har inträffat [{$a->errorcode}].<br />{$a->debuginfo}</p>';
-$string['downloadedfilecheckfailed'] = 'Det gick inte att kontrollera den nedladdade filen';
+$string['downloadedfilecheckfailed'] = 'Kontrollen av den nedladdade filen misslyckades';
 $string['invalidmd5'] = 'Kontrollvariabeln var felaktig - försök igen';
 $string['missingrequiredfield'] = 'Det saknas några obligatoriska fält';
-$string['remotedownloaderror'] = 'Nedladdningen av en komponent till din server misslyckades, var snäll och verifiera inställningar för proxy. <br /><br />Du måste ladda ner <a href="{$a->url}">{$a->url}</a> filen manuellt, kopiera den till "{$a->dest}" på din server och packa upp den där.';
-$string['wrongdestpath'] = 'Fel sökväg';
-$string['wrongsourcebase'] = 'Fel bas-URL till källan';
-$string['wrongzipfilename'] = 'Fel namn på ZIP-filen';
+$string['remotedownloaderror'] = 'Nedladdningen av en komponent till din server misslyckades. Vänligen verifiera inställningar för proxy. <br /><br />Du måste ladda ner <a href="{$a->url}">{$a->url}</a> filen manuellt, kopiera den till "{$a->dest}" på din server och packa upp den där.';
+$string['wrongdestpath'] = 'Fel målsökväg';
+$string['wrongsourcebase'] = 'Felaktig käll- URL rot';
+$string['wrongzipfilename'] = 'Felaktigt namn på ZIP-fil';

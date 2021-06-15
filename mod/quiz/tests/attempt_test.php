@@ -81,9 +81,6 @@ class mod_quiz_attempt_testcase extends advanced_testcase {
         return quiz_attempt::create($attempt->id);
     }
 
-    /**
-     * Test the functions quiz_update_open_attempts() and get_list_of_overdue_attempts()
-     */
     public function test_attempt_url() {
         $attempt = $this->create_quiz_and_attempt_with_layout('1,2,0,3,4,0,5,6,0');
 

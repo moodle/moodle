@@ -509,7 +509,7 @@ EOD;
         require_once($CFG->dirroot . '/group/lib.php');
 
         $this->groupcount++;
-        $i = $this->groupcount;
+        $i = str_pad($this->groupcount, 4, '0', STR_PAD_LEFT);
 
         $record = (array)$record;
 

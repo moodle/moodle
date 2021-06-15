@@ -115,9 +115,13 @@ class block_news_items extends block_base {
 
                 $discussion->subject = format_string($discussion->subject, true, $forum->course);
 
+                $posttime = $discussion->modified;
+                if (!empty($CFG->forum_enabletimedposts) && ($discussion->timestart > $posttime)) {
+                    $posttime = $discussion->timestart;
+                }
                 $text .= '<li class="post">'.
                          '<div class="head clearfix">'.
-                         '<div class="date">'.userdate($discussion->modified, $strftimerecent).'</div>'.
+                         '<div class="date">'.userdate($posttime, $strftimerecent).'</div>'.
                          '<div class="name">'.fullname($discussion).'</div></div>'.
                          '<div class="info"><a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->discussion.'">'.$discussion->subject.'</a></div>'.
                          "</li>\n";

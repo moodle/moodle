@@ -2,10 +2,9 @@
 # process (which uses our internal CI system) this file is here for the benefit
 # of community developers git clones - see MDL-51458.
 
-# We currently disable Travis notifications entirely until https://github.com/travis-ci/travis-ci/issues/4976
-# is fixed.
 notifications:
-  email: false
+  email:
+    if: env(MOODLE_EMAIL) != no
 
 language: php
 
@@ -17,30 +16,14 @@ services:
     - mysql
     - docker
 
-php:
-    # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
-    - 7.4
-    - 7.2
-
 addons:
   postgresql: "9.6"
 
-env:
-    # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
-    # start first so that the total run time is not too high.
-    #
-    # We only run MySQL on PHP 7.2, so run that first.
-    # CI Tests should be second-highest in priority as these only take <= 60 seconds to run under normal circumstances.
-    # Postgres is significantly is pretty reasonable in its run-time.
-
-    # Run CI Tests without running PHPUnit.
-    - DB=none     TASK=CITEST
-
-    # Run unit tests on Postgres
-    - DB=pgsql    TASK=PHPUNIT
-
-    # Perform an upgrade test too.
-    - DB=pgsql    TASK=UPGRADE
+branches:
+  except:
+    - master
+    - /MOODLE_[0-9]+_STABLE/
+    - /^v[0-9]+\.[0-9]+\.[0-9]+.*/
 
 jobs:
     # Enable fast finish.
@@ -49,12 +32,35 @@ jobs:
     fast_finish: true
 
     include:
-          # Run mysql only on highest - it's just too slow
-        - php: 7.4
+        # First all the lowest php ones (7.2)
+        - php: 7.2
+          env: DB=none     TASK=CITEST
+        - php: 7.2
+          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+
+        - if: env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present
+          php: 7.2
+          env: DB=pgsql    TASK=PHPUNIT
+
+        - if: env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all"
+          php: 7.2
           env: DB=mysqli   TASK=PHPUNIT
-          # Run grunt/npm install on highest version too ('node' is an alias for the latest node.js version.)
-        - php: 7.4
-          env: DB=none     TASK=GRUNT   NVM_VERSION='lts/carbon'
+
+        # Then, conditionally, all the highest php ones (7.4)
+        - if: env(MOODLE_PHP) = "all"
+          php: 7.4
+          env: DB=none     TASK=CITEST
+        - if: env(MOODLE_PHP) = "all"
+          php: 7.4
+          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+
+        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
+          php: 7.4
+          env: DB=pgsql    TASK=PHPUNIT
+
+        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all")
+          php: 7.4
+          env: DB=mysqli   TASK=PHPUNIT
 
 cache:
     directories:
@@ -114,7 +120,7 @@ install:
 before_script:
     - phpenv config-rm xdebug.ini
     - >
-      if [ "$TASK" = 'PHPUNIT' -o "$TASK" = 'UPGRADE' ];
+      if [ "$TASK" = 'PHPUNIT' ];
       then
         # Copy generic configuration in place.
         cp config-dist.php config.php ;
@@ -174,7 +180,9 @@ before_script:
         # Enable test external resources
         sed -i \
           -e "/require_once/i \\define('TEST_EXTERNAL_FILES_HTTP_URL', 'http://127.0.0.1:8080');" \
+          -e "/require_once/i \\define('TEST_EXTERNAL_FILES_HTTPS_URL', 'http://127.0.0.1:8080');" \
           config.php ;
+
         # Redis cache store tests
         sed -i \
           -e "/require_once/i \\define('TEST_CACHESTORE_REDIS_TESTSERVERS', '127.0.0.1');" \
@@ -223,39 +231,11 @@ before_script:
         export phpcmd=`which php`;
       fi
 
-    ########################################################################
-    # Upgrade test
-    ########################################################################
-    - >
-      if [ "$TASK" = 'UPGRADE' ];
-      then
-        # We need the official upstream.
-        git remote add upstream https://github.com/moodle/moodle.git;
-
-        # Checkout 30 STABLE branch (the first version compatible with PHP 7.x)
-        git fetch upstream MOODLE_30_STABLE;
-        git checkout MOODLE_30_STABLE;
-
-        # Perform the upgrade
-        php admin/cli/install_database.php --agree-license --adminpass=Password --adminemail=admin@example.com --fullname="Upgrade test" --shortname=Upgrade;
-
-        # Return to the previous commit
-        git checkout -;
-
-        # Perform the upgrade
-        php admin/cli/upgrade.php --non-interactive --allow-unstable ;
-
-        # The local_ci repository can be used to check upgrade savepoints.
-        git clone https://github.com/moodlehq/moodle-local_ci.git local/ci ;
-      fi
-
 script:
     - >
       if [ "$TASK" = 'PHPUNIT' ];
       then
         vendor/bin/phpunit --fail-on-risky --disallow-test-output --verbose;
-        EXTTESTS_HITS=$(docker logs exttests 2>&1 | grep -Fv -e 'AH00558' -e '[pid 1]' | wc -l)
-        echo -e "\nTest local resources number of hits: ${EXTTESTS_HITS}.\n"
       fi
 
     - >
@@ -276,19 +256,10 @@ script:
         git diff --cached --exit-code ;
       fi
 
-    ########################################################################
-    # Upgrade test
-    ########################################################################
+after_script:
     - >
-      if [ "$TASK" = 'UPGRADE' ];
+      if [ "$TASK" = 'PHPUNIT' ];
       then
-        cp local/ci/check_upgrade_savepoints/check_upgrade_savepoints.php ./check_upgrade_savepoints.php
-        result=`php check_upgrade_savepoints.php`;
-        # Check if there are problems
-        count=`echo "$result" | grep -P "ERROR|WARN" | wc -l` ;
-        if (($count > 0));
-        then
-          echo "$result"
-          exit 1 ;
-        fi
+        EXTTESTS_HITS=$(docker logs exttests 2>&1 | grep -Fv -e 'AH00558' -e '[pid 1]' | wc -l)
+        echo -e "\nTest local resources number of hits: ${EXTTESTS_HITS}.\n"
       fi

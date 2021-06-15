@@ -229,6 +229,7 @@ class manager {
         $record = self::record_from_scheduled_task($task);
         $record->id = $original->id;
         $record->nextruntime = $task->get_next_scheduled_time();
+        unset($record->lastruntime);
         $result = $DB->update_record('task_scheduled', $record);
 
         return $result;

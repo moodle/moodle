@@ -182,6 +182,9 @@ class editor_testcase extends advanced_testcase {
     public function test_add_editor_to_form() {
         global $PAGE, $CFG;
 
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
         // Get form data.
         $form = $this->get_test_form();
         $mform = $form->getform();

@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -40,13 +39,13 @@ $string['cliinstallheader'] = 'Програма за инсталирање на
 $string['databasehost'] = 'Домаќин на базата на податоци';
 $string['databasename'] = 'Име на базата на податоци';
 $string['databasetypehead'] = 'Одбери го двигателот на базата за податоци';
-$string['dataroot'] = 'Директориум';
+$string['dataroot'] = 'Директориум за податоци';
 $string['datarootpermission'] = 'Дозвола за директориумот за податоци';
 $string['dbprefix'] = 'Префикс на табели';
 $string['dirroot'] = 'Moodle директориум';
 $string['environmenthead'] = 'Ја проверувам околината...';
 $string['installation'] = 'Инсталација';
-$string['langdownloaderror'] = 'За жал, јазикот "{$a}" не беше инсталиран. Инсталацискиот процес ќе продолжи на англиски.';
+$string['langdownloaderror'] = 'За жал, јазикот "{$a}" не е преземен. Инсталацискиот процес ќе продолжи на англиски.';
 $string['memorylimithelp'] = '<p>Прагот на меморијата кај PHP за Вашиот компјутер моментално е подесена на {$a}. </p>
 
 <p>Ова може да предизвика проблеми со меморијата подоцна,
@@ -65,6 +64,12 @@ $string['memorylimithelp'] = '<p>Прагот на меморијата кај P
     <p><blockquote>php_value memory_limit 40M</blockquote></p>
     <p>Како и да е, на некои компјутери, ова може да ги спречи <b>сите </b> PHP страници да работат (ќе забележите грешки на страниците) па ќе треба да ја преместите датотеката .htaccess.</p></li>
 </ol>';
+$string['paths'] = 'Патеки';
+$string['pathshead'] = 'Потврди патеки';
+$string['pathsroparentdataroot'] = 'Неможе да се запишува во предходниот директориум ({$a->parent}). Процесот на инсталација неможе да го создаде директориумот ({$a->dataroot}).';
+$string['pathssubdataroot'] = '<p>Директориум каде што Moodle ќе ја зачува целата содржина на датотеки прикачена од корисниците.</p> <p>Овој директориум треба да биде има дозвола за читање и запишување од веб-серверот (најлесто \'www-data\', \'nobody\', или \'apache\').</p> <p>Не смее да биде директно достапен преку Интернет.</p> <p>Ако директориумот во моментов не постои, процесот на инсталација ќе се обиде да го создаде.</p>';
+$string['pathssubdirroot'] = '<p>Целосна патека до директориумот каде што е кодот на Moodle.</p>';
+$string['pathssubwwwroot'] = '<p>Целосната адреса каде што ќе се пристапува до Moodle, т.е. адресата што корисниците треба да ја внесат во лентата за адреси на нивниот прелистувач за пристап до Moodle.</p> <p>Не е можно да се пристапи до Moodle со користење на повеќе адреси. Ако вашата страница е достапна преку повеќе адреси, тогаш изберете ја најлесната и поставете трајно пренасочување за секоја од другите адреси.</p> <p>Ако вашата страница е достапна и од Интернет, и од внатрешна мрежа (понекогаш наречена Интранет), тогаш користете ја јавната адреса тука.</p> <p>Ако тековната адреса не е точна, променете ја URL-адресата во лентата за адреси на прелистувачот и повторно стартувајте ја инсталацијата.</p>';
 $string['pathswrongadmindir'] = 'Администраторскиот директориум не постои';
 $string['phpversion'] = 'Верзија на PHP';
 $string['phpversionhelp'] = '<p>На Moodle му е потребна верзија на PHP, и тоа најмалку 4.1.0. </p>

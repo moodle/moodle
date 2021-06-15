@@ -80,6 +80,7 @@ $string['showadvanced'] = 'Show advanced';
 $string['showless'] = 'Show less...';
 $string['showmore'] = 'Show more...';
 $string['somefieldsrequired'] = 'There are required fields in this form marked {$a}.';
+$string['suggestions'] = 'Suggestions';
 $string['time'] = 'Time';
 $string['timeunit'] = 'Time unit';
 $string['timing'] = 'Timing';

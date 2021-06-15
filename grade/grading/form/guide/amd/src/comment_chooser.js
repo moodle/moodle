@@ -77,7 +77,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core/yui'], function($
                         var remarkText = remarkTextArea.val();
 
                         // Add line break if the current value of the remark text is not empty.
-                        if ($.trim(remarkText) !== '') {
+                        if (remarkText.trim() !== '') {
                             remarkText += '\n';
                         }
                         remarkText += comment.description;

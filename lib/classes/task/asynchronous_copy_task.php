@@ -72,14 +72,16 @@ class asynchronous_copy_task extends adhoc_task {
         $keepuserdata = (bool)$copyinfo->userdata;
         $keptroles = $copyinfo->keptroles;
 
-        $backupplan->get_setting('users')->set_value('1');
         $bc->set_kept_roles($keptroles);
 
         // If we are not keeping user data don't include users or data in the backup.
         // In this case we'll add the user enrolments at the end.
         // Also if we have no roles to keep don't backup users.
         if (empty($keptroles) || !$keepuserdata) {
+            $backupplan->get_setting('users')->set_status(\backup_setting::NOT_LOCKED);
             $backupplan->get_setting('users')->set_value('0');
+        } else {
+            $backupplan->get_setting('users')->set_value('1');
         }
 
         // Do some preflight checks on the backup.

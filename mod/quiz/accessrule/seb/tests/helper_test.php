@@ -187,7 +187,7 @@ class quizaccess_seb_helper_testhelpertrait extends advanced_testcase {
             . "<true/><key>URLFilterEnable</key><false/><key>URLFilterEnableContentFilter</key><false/>"
             . "<key>URLFilterRules</key><array/><key>startURL</key><string>$url</string>"
             . "<key>sendBrowserExamKey</key><true/><key>examSessionClearCookiesOnStart</key><false/>"
-            . "</dict></plist>\n", $config);
+            . "<key>allowPreferencesWindow</key><false/></dict></plist>\n", $config);
     }
 
 }

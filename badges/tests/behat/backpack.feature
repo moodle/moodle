@@ -107,7 +107,8 @@ Feature: Backpack badges
     And I set the field "backpackweburl" to "http://backpackweburl.cat"
     And I press "Save changes"
     Then I should see "http://backpackweburl.cat"
-    And "Delete" "button" should exist
+    And "Delete" "icon" should exist in the "http://backpackweburl.cat" "table_row"
+    And "Edit settings" "icon" should exist in the "http://backpackweburl.cat" "table_row"
 
   @javascript
   Scenario: Remove a site backpack
@@ -119,4 +120,4 @@ Feature: Backpack badges
     And I click on "Delete" "button" in the "Delete site backpack" "dialogue"
     Then I should see "The site backpack has been deleted."
     And I should not see "https://dc.imsglobal.org"
-    And "Delete" "button" should not exist
+    And "Delete" "button" should not be visible

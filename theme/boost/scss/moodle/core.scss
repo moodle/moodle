@@ -164,11 +164,11 @@ input[type="radio"],
 input[type="file"],
 input[type="image"],
 .sr-only-focusable,
-a.dropdown-item,
 a.dropdown-toggle,
 .modal-dialog[tabindex="0"],
 .moodle-dialogue-base .closebutton,
-button.close {
+button.close,
+.form-autocomplete-selection {
     &.focus,
     &:focus {
         outline: 0;
@@ -179,6 +179,12 @@ button.close {
     }
 }
 
+// Accessible focus styling for autocomplete elements.
+.form-autocomplete-suggestions li[aria-selected=true] {
+    outline: 0;
+    box-shadow: $input-btn-focus-box-shadow;
+}
+
 // Safari does not allow custom styling of checkboxes.
 .safari {
     input[type="checkbox"],
@@ -187,19 +193,6 @@ button.close {
         &:focus {
             outline: auto;
         }
-    }
-}
-
-.usermenu,
-div.dropdown-item {
-    a,
-    a[role="button"] {
-        outline: 0;
-        box-shadow: none;
-    }
-    &:focus-within {
-        outline: 0;
-        box-shadow: $input-btn-focus-box-shadow;
     }
 }
 
@@ -1251,12 +1244,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     overflow: auto;
 }
 
-.moodle-dialogue-base .moodle-dialogue-fullscreen .closebutton {
-    width: 28px;
-    height: 16px;
-    background-size: 100%;
-}
-
 .moodle-dialogue-base .moodle-dialogue-wrap {
     background-color: #fff;
     border: 1px solid #ccc;
@@ -1879,10 +1866,13 @@ ul.badges {
 }
 
 .badges li .expireimage {
+    background-image: url([[pix:i/expired]]);
+    background-repeat: no-repeat;
+    background-size: 100px 100px;
     width: 100px;
     height: 100px;
     left: 25px;
-    top: 0;
+    top: 15px;
     position: absolute;
     z-index: 10;
     opacity: 0.85;
@@ -1900,6 +1890,9 @@ ul.badges {
     margin-bottom: 20px;
 
     .expireimage {
+        background-image: url([[pix:i/expired]]);
+        background-repeat: no-repeat;
+        background-size: 100px 100px;
         width: 100px;
         height: 100px;
         left: 0;
@@ -2201,6 +2194,7 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 // Reset for ul.
 ul {
     padding-left: 1rem;
+    -webkit-margin-start: 0.2rem;  /* stylelint-disable-line */
 }
 
 /* YUI 2 Tree View */
@@ -2326,13 +2320,34 @@ $footer-link-color: $bg-inverse-link-color !default;
 }
 
 // Make links in a menu clickable anywhere in the row.
-.dropdown-item a {
-    display: block;
-    width: 100%;
-    color: $body-color;
-}
-.dropdown-item:active a {
-    color: $dropdown-link-active-color;
+.dropdown-item {
+    a {
+        display: block;
+        width: 100%;
+        color: $body-color;
+    }
+    &:active,
+    &:hover,
+    &:focus,
+    &:focus-within {
+        outline: 0;
+        background-color: $dropdown-link-hover-bg;
+        a {
+            color: $dropdown-link-active-color;
+        }
+    }
+    &[aria-current="true"] {
+        position: relative;
+        display: flex;
+        align-items: center;
+        &:before {
+            @include fa-icon();
+            content: $fa-var-circle;
+            position: absolute;
+            left: 0.4rem;
+            font-size: 0.7rem;
+        }
+    }
 }
 
 .competency-tree {
@@ -2384,12 +2399,6 @@ $footer-link-color: $bg-inverse-link-color !default;
     }
 }
 
-.open.atto_menu > .dropdown-menu {
-    display: block;
-}
-div.editor_atto_toolbar button .icon {
-    color: $gray-700;
-}
 .w-auto {
     width: auto;
 }
@@ -2462,6 +2471,10 @@ body.h5p-embed {
 
 .text-break {
     overflow-wrap: break-word !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.word-break {
+    word-break: break-word !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .z-index-0 {

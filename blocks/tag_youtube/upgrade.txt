@@ -1,5 +1,11 @@
 This files describes API changes in the block tag_youtube code.
 
+=== 3.9.4 ===
+
+* The config category now stores the category ID, instead of a string representation of the category name.
+  In YouTube Data API v3, the API call to fetch the videos related to a certain category expects the category ID to be
+  passed to the videoCategoryId parameter, instead of the category name.
+
 === 3.0 ===
 
 * Due to the final YouTube API v2.0 deprecation we needed to adapt the current

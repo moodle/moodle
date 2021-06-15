@@ -237,7 +237,9 @@ if ($mform->is_cancelled()) {
 
     $grade_item->outcomeid = null;
 
+    // This means we want to rescale overridden grades as well.
     if (!empty($data->grade_item_rescalegrades) && $data->grade_item_rescalegrades == 'yes') {
+        $grade_item->markasoverriddenwhengraded = false;
         $grade_item->rescale_grades_keep_percentage($grade_item_copy->grademin, $grade_item_copy->grademax, $grade_item->grademin,
                 $grade_item->grademax, 'gradebook');
     }

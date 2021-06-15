@@ -102,7 +102,7 @@ Feature: Manage preferences
     And I open messaging
     And I select "Student 2" user in messaging
     And I set the field with xpath "//textarea[@data-region='send-message-txt']" to "Hi!"
-    And I press key "13" in "//textarea[@data-region='send-message-txt']" "xpath_element"
+    And I press the enter key
     Then I should see "Hi!" in the "//*[@data-region='message-drawer']//div[@data-region='content-message-container']" "xpath_element"
 
   Scenario: Sending a message after 'Use enter to send' is disabled
@@ -113,7 +113,7 @@ Feature: Manage preferences
     And I go back in "view-settings" message drawer
     Then I select "Student 2" user in messaging
     And I set the field with xpath "//textarea[@data-region='send-message-txt']" to "Hi!"
-    And I press key "13" in "//textarea[@data-region='send-message-txt']" "xpath_element"
+    And I press the enter key
     And I should not see "Hi!" in the "//*[@data-region='message-drawer']//div[@data-region='content-message-container']" "xpath_element"
     And I press "Send message"
     And I should see "Hi!" in the "//*[@data-region='message-drawer']//div[@data-region='content-message-container']" "xpath_element"

@@ -57,7 +57,7 @@ $string['auth_ldap_ldap_encoding'] = 'Encoding used by the LDAP server, most lik
 $string['auth_ldap_ldap_encoding_key'] = 'LDAP encoding';
 $string['auth_ldap_login_settings'] = 'Login settings';
 $string['auth_ldap_memberattribute'] = 'Optional: Overrides user member attribute, when users belongs to a group. Usually \'member\'';
-$string['auth_ldap_memberattribute_isdn'] = 'Optional: Overrides handling of member attribute values, either 0 or 1';
+$string['auth_ldap_memberattribute_isdn'] = 'Overrides handling of member attribute values';
 $string['auth_ldap_memberattribute_isdn_key'] = 'Member attribute uses dn';
 $string['auth_ldap_memberattribute_key'] = 'Member attribute';
 $string['auth_ldap_noconnect'] = 'LDAP-module cannot connect to server: {$a}';
@@ -75,7 +75,7 @@ $string['auth_ldap_passwdexpire_settings'] = 'LDAP password expiry settings';
 $string['auth_ldap_preventpassindb'] = 'Select yes to prevent passwords from being stored in Moodle\'s DB.';
 $string['auth_ldap_preventpassindb_key'] = 'Prevent password caching';
 $string['auth_ldap_rolecontext'] = '{$a->localname} context';
-$string['auth_ldap_rolecontext_help'] = 'LDAP context used to select for <i>{$a->localname}</i> mapping. Separate multiple groups with \';\'. Usually something like "cn={$a->shortname},ou=staff,o=myorg".';
+$string['auth_ldap_rolecontext_help'] = 'LDAP context used to select for <i>{$a->localname}</i> mapping. Separate multiple groups with \';\'. Usually something like "cn={$a->shortname},ou=first-ou-with-role-groups,o=myorg; cn={$a->shortname},ou=second-ou-with-role-groups,o=myorg".';
 $string['auth_ldap_search_sub'] = 'Search users from subcontexts.';
 $string['auth_ldap_search_sub_key'] = 'Search subcontexts';
 $string['auth_ldap_server_settings'] = 'LDAP server settings';

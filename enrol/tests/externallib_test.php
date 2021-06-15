@@ -522,6 +522,136 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test that get_users_courses respects the capability to view participants when viewing courses of other user
+     */
+    public function test_get_users_courses_can_view_participants(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $this->setUser($user1);
+
+        $courses = core_enrol_external::clean_returnvalue(
+            core_enrol_external::get_users_courses_returns(),
+            core_enrol_external::get_users_courses($user2->id, false)
+        );
+
+        $this->assertCount(1, $courses);
+        $this->assertEquals($course->id, reset($courses)['id']);
+
+        // Prohibit the capability for viewing course participants.
+        $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        assign_capability('moodle/course:viewparticipants', CAP_PROHIBIT, $studentrole, $context->id);
+
+        $courses = core_enrol_external::clean_returnvalue(
+            core_enrol_external::get_users_courses_returns(),
+            core_enrol_external::get_users_courses($user2->id, false)
+        );
+        $this->assertEmpty($courses);
+    }
+
+    /*
+     * Test that get_users_courses respects the capability to view a users profile when viewing courses of other user
+     */
+    public function test_get_users_courses_can_view_profile(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course([
+            'groupmode' => VISIBLEGROUPS,
+        ]);
+
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create separate groups for each of our students.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        groups_add_member($group1, $user1);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        groups_add_member($group2, $user2);
+
+        $this->setUser($user1);
+
+        $courses = core_enrol_external::clean_returnvalue(
+            core_enrol_external::get_users_courses_returns(),
+            core_enrol_external::get_users_courses($user2->id, false)
+        );
+
+        $this->assertCount(1, $courses);
+        $this->assertEquals($course->id, reset($courses)['id']);
+
+        // Change to separate groups mode, so students can't view information about each other in different groups.
+        $course->groupmode = SEPARATEGROUPS;
+        update_course($course);
+
+        $courses = core_enrol_external::clean_returnvalue(
+            core_enrol_external::get_users_courses_returns(),
+            core_enrol_external::get_users_courses($user2->id, false)
+        );
+        $this->assertEmpty($courses);
+    }
+
+    /**
+     * Test get_users_courses with mathjax in the name.
+     */
+    public function test_get_users_courses_with_mathjax() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Enable MathJax filter in content and headings.
+        $this->configure_filters([
+            ['name' => 'mathjaxloader', 'state' => TEXTFILTER_ON, 'move' => -1, 'applytostrings' => true],
+        ]);
+
+        // Create a course with MathJax in the name and summary.
+        $coursedata = [
+            'fullname'         => 'Course 1 $$(a+b)=2$$',
+            'shortname'         => 'Course 1 $$(a+b)=2$$',
+            'summary'          => 'Lightwork Course 1 description $$(a+b)=2$$',
+            'summaryformat'    => FORMAT_HTML,
+        ];
+
+        $course = self::getDataGenerator()->create_course($coursedata);
+        $context = context_course::instance($course->id);
+
+        // Enrol a student in the course.
+        $student = $this->getDataGenerator()->create_user();
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentroleid);
+
+        $this->setUser($student);
+
+        // Call the external function.
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+
+        // Check that the amount of courses is the right one.
+        $this->assertCount(1, $enrolledincourses);
+
+        // Filter the values to compare them with the returned ones.
+        $course->fullname = external_format_string($course->fullname, $context->id);
+        $course->shortname = external_format_string($course->shortname, $context->id);
+        list($course->summary, $course->summaryformat) =
+             external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', 0);
+
+        // Compare the values.
+        $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $enrolledincourses[0]['fullname']);
+        $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $enrolledincourses[0]['shortname']);
+        $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $enrolledincourses[0]['summary']);
+        $this->assertEquals($course->fullname, $enrolledincourses[0]['fullname']);
+        $this->assertEquals($course->shortname, $enrolledincourses[0]['shortname']);
+        $this->assertEquals($course->summary, $enrolledincourses[0]['summary']);
+    }
+
+    /**
      * Test get_course_enrolment_methods
      */
     public function test_get_course_enrolment_methods() {

@@ -46,8 +46,7 @@ Feature: The description of a group can be viewed by students and teachers
     And I should see "Description for Group A"
     And ".groupinfobox" "css_element" should exist
     And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Group B" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Group B"
     And I click on "Apply filters" "button"
     And I click on "Student 2" "link" in the "participants" "table"
     And I click on "Group B" "link"
@@ -96,8 +95,7 @@ Feature: The description of a group can be viewed by students and teachers
     And I should see "Description for Group A"
     And ".groupinfobox" "css_element" should exist
     And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Group B" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Group B"
     And I click on "Apply filters" "button"
     And I click on "Student 2" "link" in the "participants" "table"
     And I click on "Group B" "link"

@@ -33,24 +33,24 @@
     </button>
     <div id="menusortby" role="menu" class="dropdown-menu dropdown-menu-right list-group hidden" data-show-active-item data-skip-active-class="true">
         <a
-            class="dropdown-item {{#sorttimelinedates}}active{{/sorttimelinedates}}"
+            class="dropdown-item"
             href="#view_dates_{{uniqid}}"
             data-toggle="tab"
             data-filtername="sortbydates"
+            {{#sorttimelinedates}}aria-current="true"{{/sorttimelinedates}}
             aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbydates, block_timeline {{/str}}{{/str}}"
             role="menuitem"
-            {{#sorttimelinedates}}aria-current="true"{{/sorttimelinedates}}
         >
             {{#str}} sortbydates, block_timeline {{/str}}
         </a>
         <a
-            class="dropdown-item {{#sorttimelinecourses}}active{{/sorttimelinecourses}}"
+            class="dropdown-item"
             href="#view_courses_{{uniqid}}"
             data-toggle="tab"
             data-filtername="sortbycourses"
+            {{#sorttimelinecourses}}aria-current="true"{{/sorttimelinecourses}}
             aria-label="{{#str}} ariaviewselectoroption, block_timeline, {{#str}} sortbycourses, block_timeline {{/str}}{{/str}}"
             role="menuitem"
-            {{#sorttimelinecourses}}aria-current="true"{{/sorttimelinecourses}}
         >
             {{#str}} sortbycourses, block_timeline {{/str}}
         </a>

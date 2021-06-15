@@ -72,6 +72,7 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
 
         $mform->addElement('filemanager', 'packagefile', get_string('package', 'mod_h5pactivity'), null, $options);
         $mform->addHelpButton('packagefile', 'package', 'mod_h5pactivity');
+        $mform->addRule('packagefile', null, 'required');
 
         // Add a link to the Content Bank if the user can access.
         $course = $this->get_course();
@@ -117,7 +118,7 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
         $options = manager::get_review_modes();
         $mform->addElement('select', 'reviewmode', get_string('review_mode', 'mod_h5pactivity'), $options);
         $mform->setType('reviewmode', PARAM_INT);
-        $mform->hideIf('reviewmode', 'enabletracking', 'notchecked');
+        $mform->hideIf('reviewmode', 'enabletracking', 'neq', 1);
 
         // Add standard elements.
         $this->standard_coursemodule_elements();

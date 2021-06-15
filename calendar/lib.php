@@ -968,6 +968,22 @@ class calendar_event {
     }
 
     /**
+     * Format the event name using the external API.
+     *
+     * This function should we used when text formatting is required in external functions.
+     *
+     * @return string Formatted name.
+     */
+    public function format_external_name() {
+        if ($this->editorcontext === null) {
+            // Switch on the event type to decide upon the appropriate context to use for this event.
+            $this->editorcontext = $this->get_context();
+        }
+
+        return external_format_string($this->properties->name, $this->editorcontext->id);
+    }
+
+    /**
      * Format the text using the external API.
      *
      * This function should we used when text formatting is required in external functions.
@@ -1280,6 +1296,12 @@ class calendar_information {
      * @param string|null $view preference view options (eg: day, month, upcoming)
      */
     public function add_sidecalendar_blocks(core_calendar_renderer $renderer, $showfilters=false, $view=null) {
+        global $PAGE;
+
+        if (!has_capability('moodle/block:view', $PAGE->context) ) {
+            return;
+        }
+
         if ($showfilters) {
             $filters = new block_contents();
             $filters->content = $renderer->event_filter();
@@ -2374,9 +2396,7 @@ function calendar_get_default_courses($courseid = null, $fields = '*', $canmanag
         $prefixedfields = array_map(function($value) {
             return 'c.' . trim(strtolower($value));
         }, $fieldlist);
-        if (!in_array('c.visible', $prefixedfields) && !in_array('c.*', $prefixedfields)) {
-            $prefixedfields[] = 'c.visible';
-        }
+
         $courses = get_courses('all', 'c.shortname', implode(',', $prefixedfields));
     } else {
         $courses = enrol_get_users_courses($userid, true, $fields);

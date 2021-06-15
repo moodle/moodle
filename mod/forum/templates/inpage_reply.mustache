@@ -38,7 +38,7 @@
         <form data-post-id="{{postid}}" id="inpage-reply-{{postid}}" data-content="inpage-reply-form" action="{{{reply_url}}}">
             <div class="row pb-1">
                 <span>
-                    <textarea rows="5" name="post" title="post" class="form-control" placeholder="{{#str}} replyplaceholder, forum {{/str}}"></textarea>
+                    <textarea rows="5" name="post" title="{{#str}} message, mod_forum {{/str}}" class="form-control" placeholder="{{#str}} replyplaceholder, forum {{/str}}"></textarea>
                     <input type="hidden" name="postformat" value="{{postformat}}"/>
                 </span>
                 <input type="hidden" name="subject" value="{{parentsubject}}"/>
@@ -46,11 +46,11 @@
                 <input type="hidden" name="sesskey" value="{{sesskey}}"/>
             </div>
             <div class="row">
-                <button class="btn btn-primary" title="{{#str}} submit, core {{/str}}" data-action="forum-inpage-submit">
-                    <span data-region="submit-text">{{#str}} submit, core {{/str}}</span>
+                <button class="btn btn-primary" data-action="forum-inpage-submit">
+                    <span data-region="submit-text">{{#str}} posttoforum, mod_forum {{/str}}</span>
                     <span data-region="loading-icon-container" class="hidden">{{> core/loading }}</span>
                 </button>
-                <button class="btn btn-secondary" title="{{#str}} cancel, core {{/str}}" data-action="collapsible-link">
+                <button class="btn btn-secondary" data-action="collapsible-link">
                     {{#str}} cancel, core {{/str}}
                 </button>
                 {{#canreplyprivately}}
@@ -59,7 +59,7 @@
                     <label class="form-check-label" for="private-reply-checkbox-{{uniqid}}">{{#str}} privatereply, forum {{/str}}</label>
                 </div>
                 {{/canreplyprivately}}
-                <button title="{{#str}} advanced, core {{/str}}" data-action="forum-advanced-reply" class="btn btn-link float-right" type="submit">
+                <button data-action="forum-advanced-reply" class="btn btn-link float-right" type="submit">
                     {{#str}} advanced, core {{/str}}
                 </button>
             </div>

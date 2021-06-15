@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -34,9 +33,9 @@ $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = 'ผิดพลาด, ค่าต่อไปนี้ไม่ถูกต้อง "{$a->value}" สำหรับ "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'ค่าไม่ถูกต้องกรุณาลองใหม่อีกครั้ง';
-$string['clitypevalue'] = 'ประเภทของค่า';
+$string['clitypevalue'] = 'พิมพ์ค่า';
 $string['clitypevaluedefault'] = 'ประเภทของค่า กด Enter หากต้องการใช้ค่าที่ตั้งไว้ ({$a})';
-$string['cliunknowoption'] = 'ตัวเลือกที่ไม่สามารถระบุได้ : {$a}';
+$string['cliunknowoption'] = 'ตัวเลือกที่ไม่สามารถระบุได้ : {$a}  กรุณาเลือก การช่วยเหลือ';
 $string['cliyesnoprompt'] = 'พิมพ์ y (สำหรับ ใช่) หรือ n (สำหรับ ไม่)';
 $string['environmentrequireinstall'] = 'ต้องการเพื่อทำการติดตั้ง/เปิดใช้งาน';
 $string['environmentrequireversion'] = 'ต้องการเวอร์ชัน {$a->needed} ขณะนี้ท่านกำลังใช้งานเวอร์ชัน {$a->current}';

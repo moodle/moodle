@@ -110,7 +110,12 @@ class content_item_service {
             throw new \coding_exception('The guest user does not exist in the database.');
         }
 
-        $favourites = $this->get_content_favourites(self::RECOMMENDATION_PREFIX, \context_user::instance($CFG->siteguest));
+        // Make sure the guest user context exists.
+        if (!$guestusercontext = \context_user::instance($CFG->siteguest, false)) {
+            throw new \coding_exception('The guest user context does not exist.');
+        }
+
+        $favourites = $this->get_content_favourites(self::RECOMMENDATION_PREFIX, $guestusercontext);
 
         $recommendationcache->set($CFG->siteguest, $favourites);
         return $favourites;
@@ -138,8 +143,12 @@ class content_item_service {
             // Add any subplugins to the list of item types.
             $subplugins = $pluginmanager->get_subplugins_of_plugin('mod_' . $plugin->name);
             foreach ($subplugins as $subpluginname => $subplugininfo) {
-                if (component_callback_exists($subpluginname, 'get_course_content_items')) {
-                    $itemtypes[] = $prefix . $subpluginname;
+                try {
+                    if (component_callback_exists($subpluginname, 'get_course_content_items')) {
+                        $itemtypes[] = $prefix . $subpluginname;
+                    }
+                } catch (\moodle_exception $e) {
+                    debugging('Cannot get_course_content_items: ' . $e->getMessage(), DEBUG_DEVELOPER);
                 }
             }
         }

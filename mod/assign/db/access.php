@@ -198,5 +198,13 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+
+    'mod/assign:viewownsubmissionsummary' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW
+        )
+    ),
 );
 

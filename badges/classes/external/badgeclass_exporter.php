@@ -45,6 +45,12 @@ class badgeclass_exporter extends exporter {
      * @param array $related - An optional list of pre-loaded objects related to this object.
      */
     public function __construct($data, $related = array()) {
+        // Having mixed $data is causing some issues. As this class is treating $data as an object everywhere, it can be converted
+        // to object at this point, to avoid errors and get the expected behaviour always.
+        // $data is an array when this class is a request exporter in backpack_api_mapping, but it is an object when this is
+        // used as a response exporter.
+        $data = (object) $data;
+
         $pick = $this->pick_related();
         foreach ($pick as $one) {
             $isarray = false;
@@ -54,28 +60,28 @@ class badgeclass_exporter extends exporter {
                 $isarray = true;
             }
             $prefixed = 'related_' . $one;
-            if (array_key_exists($one, $data) && !array_key_exists($one, $related)) {
+            if (property_exists($data, $one) && !array_key_exists($one, $related)) {
                 if ($isarray) {
                     $newrelated = [];
-                    foreach ($data[$one] as $item) {
+                    foreach ($data->$one as $item) {
                         $newrelated[] = (object) $item;
                     }
                     $related[$one] = $newrelated;
                 } else {
-                    $related[$one] = (object) $data[$one];
+                    $related[$one] = (object) $data->$one;
                 }
-                unset($data[$one]);
-            } else if (array_key_exists($prefixed, $data) && !array_key_exists($one, $related)) {
+                unset($data->$one);
+            } else if (property_exists($data, $prefixed) && !array_key_exists($one, $related)) {
                 if ($isarray) {
                     $newrelated = [];
-                    foreach ($data[$prefixed] as $item) {
+                    foreach ($data->$prefixed as $item) {
                         $newrelated[] = (object) $item;
                     }
                     $related[$one] = $newrelated;
                 } else {
-                    $related[$one] = (object) $data[$prefixed];
+                    $related[$one] = (object) $data->$prefixed;
                 }
-                unset($data[$prefixed]);
+                unset($data->$prefixed);
             } else if (!array_key_exists($one, $related)) {
                 $related[$one] = null;
             }

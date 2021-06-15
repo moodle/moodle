@@ -152,25 +152,28 @@ class copy_form extends \moodleform {
             $mform->addHelpButton('relativedatesmodegroup', 'relativedatesmode');
         }
 
-        // Course id number.
+        // Course ID number (default to the current course ID number; blank for users who can't change ID numbers).
         $mform->addElement('text', 'idnumber', get_string('idnumbercourse'), 'maxlength="100"  size="10"');
+        $mform->setDefault('idnumber', $course->idnumber);
         $mform->addHelpButton('idnumber', 'idnumbercourse');
         $mform->setType('idnumber', PARAM_RAW);
-        if (!empty($course->id) and !has_capability('moodle/course:changeidnumber', $coursecontext)) {
+        if (!has_capability('moodle/course:changeidnumber', $coursecontext)) {
             $mform->hardFreeze('idnumber');
-            $mform->setConstants('idnumber', $course->idnumber);
+            $mform->setConstant('idnumber', '');
         }
 
         // Keep source course user data.
+        $mform->addElement('select', 'userdata', get_string('userdata', 'backup'),
+            [0 => get_string('no'), 1 => get_string('yes')]);
+        $mform->setDefault('userdata', 0);
+        $mform->addHelpButton('userdata', 'userdata', 'backup');
+
         $requiredcapabilities = array(
             'moodle/restore:createuser', 'moodle/backup:userinfo', 'moodle/restore:userinfo'
         );
-        if (has_all_capabilities($requiredcapabilities, $coursecontext)) {
-            $dataarray = array();
-            $dataarray[] = $mform->createElement('advcheckbox', 'userdata',
-                get_string('enable'), '', array('group' => 1), array(0, 1));
-            $mform->addGroup($dataarray, 'dataarray', get_string('userdata', 'backup'), ' ', false);
-            $mform->addHelpButton('dataarray', 'userdata', 'backup');
+        if (!has_all_capabilities($requiredcapabilities, $coursecontext)) {
+            $mform->hardFreeze('userdata');
+            $mform->setConstant('userdata', 0);
         }
 
         // Keep manual enrolments.

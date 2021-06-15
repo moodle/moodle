@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -45,3 +44,9 @@ $string['componentisuptodate'] = 'కాంపొనెంటు తాజాగ
 $string['dmlexceptiononinstall'] = '<p>A డేటాబేస్ లోపం ఏర్పడింది [{$ a-> errorcode}]. <br /> {$a->debuginfo} </p>';
 $string['downloadedfilecheckfailed'] = 'డౌన్లోడ్ చేసిన ఫైల్ తనిఖీ విఫలమైంది';
 $string['invalidmd5'] = 'చెక్ వేరియబుల్ తప్పు. - మళ్ళీ ప్రయత్నించండి';
+$string['missingrequiredfield'] = 'కొన్ని అవసరమైన ఫీల్డ్ లేదు';
+$string['remotedownloaderror'] = '<p> మీ సర్వర్ కు భాగం యొక్క డౌన్లోడ్ విఫలమైంది. దయచేసి ప్రాక్సీ సెట్టింగ్లను ధృవీకరించండి; PHP కర్ల్ పొడిగింపు సిఫారసు చేయబడుతుంది.</p>
+<p> మీరు <a href="{$a->url} "> {$a->url} </a> ను మానవీయంగా డౌన్ లోడ్ చేసుకోవాలి, దీన్ని మీ సర్వర్లో" {$a->dest} "కు కాపీ చెయ్యండి అక్కడ దాన్ని అన్జిప్ చేయండి.</p>';
+$string['wrongdestpath'] = 'తప్పు గమ్యం మార్గం';
+$string['wrongsourcebase'] = 'తప్పు మూలం URL బేస్';
+$string['wrongzipfilename'] = 'తప్పు జిప్ ఫైల్ పేరు';

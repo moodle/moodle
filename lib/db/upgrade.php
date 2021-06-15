@@ -2194,8 +2194,11 @@ function xmldb_main_upgrade($oldversion) {
             $DB->delete_records('competency_userevidencecomp', ['userevidenceid' => $userevidence->id]);
             $DB->delete_records('competency_userevidence', ['id' => $userevidence->id]);
 
-            $context = context_user::instance($userevidence->userid);
-            $fs->delete_area_files($context->id, 'core_competency', 'userevidence', $userevidence->id);
+            if ($record = $DB->get_record('context', ['contextlevel' => CONTEXT_USER, 'instanceid' => $userevidence->userid],
+                    '*', IGNORE_MISSING)) {
+                // Delete all orphaned user evidences files.
+                $fs->delete_area_files($record->id, 'core_competency', 'userevidence', $userevidence->userid);
+            }
         }
 
         $sql = "SELECT cp.id
@@ -2525,6 +2528,210 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2020061501.04);
+    }
+
+    if ($oldversion < 2020061501.09) {
+        // Delete all user evidence files from users that have been deleted.
+        $sql = "SELECT DISTINCT f.*
+                  FROM {files} f
+             LEFT JOIN {context} c ON f.contextid = c.id
+                 WHERE f.component = :component
+                   AND f.filearea = :filearea
+                   AND c.id IS NULL";
+        $stalefiles = $DB->get_records_sql($sql, ['component' => 'core_competency', 'filearea' => 'userevidence']);
+
+        $fs = get_file_storage();
+        foreach ($stalefiles as $stalefile) {
+            $fs->get_file_instance($stalefile)->delete();
+        }
+
+        upgrade_main_savepoint(true, 2020061501.09);
+    }
+
+    if ($oldversion < 2020061501.11) {
+
+        // Define field metadatasettings to be added to h5p_libraries.
+        $table = new xmldb_table('h5p_libraries');
+        $field = new xmldb_field('metadatasettings', XMLDB_TYPE_TEXT, null, null, null, null, null, 'coreminor');
+
+        // Conditionally launch add field metadatasettings.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Get installed library files that have no metadata settings value.
+        $params = [
+            'component' => 'core_h5p',
+            'filearea' => 'libraries',
+            'filename' => 'library.json',
+        ];
+        $sql = "SELECT l.id, f.id as fileid
+                  FROM {files} f
+             LEFT JOIN {h5p_libraries} l ON f.itemid = l.id
+                 WHERE f.component = :component
+                       AND f.filearea = :filearea
+                       AND f.filename = :filename";
+        $libraries = $DB->get_records_sql($sql, $params);
+
+        // Update metadatasettings field when the attribute is present in the library.json file.
+        $fs = get_file_storage();
+        foreach ($libraries as $library) {
+            $jsonfile = $fs->get_file_by_id($library->fileid);
+            $jsoncontent = json_decode($jsonfile->get_content());
+            if (isset($jsoncontent->metadataSettings)) {
+                unset($library->fileid);
+                $library->metadatasettings = json_encode($jsoncontent->metadataSettings);
+                $DB->update_record('h5p_libraries', $library);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020061501.11);
+    }
+
+    if ($oldversion < 2020061502.09) {
+        // Delete orphaned course_modules_completion rows; these were not deleted properly
+        // by remove_course_contents function.
+        $DB->delete_records_select('course_modules_completion', "
+                NOT EXISTS (
+                        SELECT 1
+                          FROM {course_modules} cm
+                         WHERE cm.id = {course_modules_completion}.coursemoduleid
+                )");
+        upgrade_main_savepoint(true, 2020061502.09);
+    }
+
+    if ($oldversion < 2020061502.10) {
+        // Script to fix incorrect records of "hidden" field in existing grade items.
+        $sql = "SELECT cm.instance, cm.course
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module
+                 WHERE m.name = :module AND cm.visible = :visible";
+        $hidequizlist = $DB->get_recordset_sql($sql, ['module' => 'quiz', 'visible' => 0]);
+
+        foreach ($hidequizlist as $hidequiz) {
+            $params = [
+                'itemmodule'    => 'quiz',
+                'courseid'      => $hidequiz->course,
+                'iteminstance'  => $hidequiz->instance,
+            ];
+
+            $DB->set_field('grade_items', 'hidden', 1, $params);
+        }
+        $hidequizlist->close();
+
+        upgrade_main_savepoint(true, 2020061502.10);
+    }
+
+    if ($oldversion < 2020061502.12) {
+        // Get the current guest user which is also set as 'deleted'.
+        $guestuser = $DB->get_record('user', ['id' => $CFG->siteguest, 'deleted' => 1]);
+        // If there is a deleted guest user, reset the user to not be deleted and make sure the related
+        // user context exists.
+        if ($guestuser) {
+            $guestuser->deleted = 0;
+            $DB->update_record('user', $guestuser);
+
+            // Get the guest user context.
+            $guestusercontext = $DB->get_record('context',
+                ['contextlevel' => CONTEXT_USER, 'instanceid' => $guestuser->id]);
+
+            // If the guest user context does not exist, create it.
+            if (!$guestusercontext) {
+                $record = new stdClass();
+                $record->contextlevel = CONTEXT_USER;
+                $record->instanceid = $guestuser->id;
+                $record->depth = 0;
+                // The path is not known before insert.
+                $record->path = null;
+                $record->locked = 0;
+
+                $record->id = $DB->insert_record('context', $record);
+
+                // Update the path.
+                $record->path = '/' . SYSCONTEXTID . '/' . $record->id;
+                $record->depth = substr_count($record->path, '/');
+                $DB->update_record('context', $record);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020061502.12);
+    }
+
+    if ($oldversion < 2020061502.13) {
+        // Reset analytics model output dir if it's the default value.
+        $modeloutputdir = get_config('analytics', 'modeloutputdir');
+        if (strcasecmp($modeloutputdir, $CFG->dataroot . DIRECTORY_SEPARATOR . 'models') == 0) {
+            set_config('modeloutputdir', '', 'analytics');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020061502.13);
+    }
+
+    if ($oldversion < 2020061502.14) {
+        // Remove all the files with component='core_h5p' and filearea='editor' because they won't be used anymore.
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+        $fs->delete_area_files($syscontext->id, 'core_h5p', 'editor');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020061502.14);
+    }
+
+    if ($oldversion < 2020061503.01) {
+        // Get all lessons that are set with a completion criteria of 'requires grade' but with no grade type set.
+        $sql = "SELECT cm.id
+                  FROM {course_modules} cm
+                  JOIN {lesson} l ON l.id = cm.instance
+                  JOIN {modules} m ON m.id = cm.module
+                 WHERE m.name = :name AND cm.completiongradeitemnumber IS NOT NULL AND l.grade = :grade";
+
+        do {
+            if ($invalidconfigrations = $DB->get_records_sql($sql, ['name' => 'lesson', 'grade' => 0], 0, 1000)) {
+                list($insql, $inparams) = $DB->get_in_or_equal(array_keys($invalidconfigrations), SQL_PARAMS_NAMED);
+                $DB->set_field_select('course_modules', 'completiongradeitemnumber', null, "id $insql", $inparams);
+            }
+        } while ($invalidconfigrations);
+
+        upgrade_main_savepoint(true, 2020061503.01);
+    }
+
+    if ($oldversion < 2020061504.07) {
+        // Get all the external backpacks and update the sortorder column, to avoid repeated/wrong values. As sortorder was not
+        // used since now, the id column will be the criteria to follow for re-ordering them with a valid value.
+        $i = 1;
+        $records = $DB->get_records('badge_external_backpack', null, 'id ASC');
+        foreach ($records as $record) {
+            $record->sortorder = $i++;
+            $DB->update_record('badge_external_backpack', $record);
+        }
+
+        upgrade_main_savepoint(true, 2020061504.07);
+    }
+
+    if ($oldversion < 2020061506.05) {
+        require_once($CFG->libdir . '/db/upgradelib.php');
+
+        // Check if this site has executed the problematic upgrade steps.
+        $needsfixing = upgrade_calendar_site_status(false);
+
+        // Only queue the task if this site has been affected by the problematic upgrade step.
+        if ($needsfixing) {
+
+            // Create adhoc task to search and recover orphaned calendar events.
+            $record = new \stdClass();
+            $record->classname = '\core\task\calendar_fix_orphaned_events';
+
+            // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+            $nextruntime = time() - 1;
+            $record->nextruntime = $nextruntime;
+            $DB->insert_record('task_adhoc', $record);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020061506.05);
     }
 
     return true;

@@ -114,7 +114,7 @@ $string['qrcodeformobileapploginabout'] = 'Scan the QR code with your mobile app
 $string['qrcodeformobileappurlabout'] = 'Scan the QR code with your mobile app to fill in the site URL in your app.';
 $string['qrsiteadminsnotallowed'] = 'For security reasons login via QR code is not allowed for site administrators or if you are logged in as another user.';
 $string['qrcodetype'] = 'QR code access';
-$string['qrcodetype_desc'] = 'A QR code can be provided for mobile app users to scan and either have the site URL filled in or be automatically logged in without having to enter their credentials.';
+$string['qrcodetype_desc'] = 'A QR code can be provided for mobile app users to scan. This can be used to fill in the site URL, or where the site is secured using HTTPS, to automatically log the user in without having to enter their username and password.';
 $string['qrcodetypeurl'] = 'QR code with site URL';
 $string['qrcodetypelogin'] = 'QR code with automatic login';
 $string['readingthisemailgettheapp'] = 'Reading this in an email? <a href="{$a}">Download the mobile app and receive notifications on your mobile device</a>.';

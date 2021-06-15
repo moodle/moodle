@@ -27,6 +27,8 @@ namespace core_contentbank;
 
 use stdClass;
 use context_system;
+use context_user;
+use Exception;
 use contenttype_testable\contenttype as contenttype;
 /**
  * Test for content bank contenttype class.
@@ -184,6 +186,111 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
     }
 
     /**
+     * Tests for behaviour of upload_content() with a file and a record.
+     *
+     * @dataProvider upload_content_provider
+     * @param bool $userecord if a predefined record has to be used.
+     *
+     * @covers ::upload_content
+     */
+    public function test_upload_content(bool $userecord): void {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $dummy = [
+            'contextid' => context_user::instance($USER->id)->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => 1,
+            'filepath' => '/',
+            'filename' => 'file.h5p',
+            'userid' => $USER->id,
+        ];
+        $fs = get_file_storage();
+        $dummyfile = $fs->create_file_from_string($dummy, 'Dummy content');
+
+        // Create content.
+        if ($userecord) {
+            $record = new stdClass();
+            $record->name = 'Test content';
+            $record->configdata = '';
+            $record->contenttype = '';
+            $checkname = $record->name;
+        } else {
+            $record = null;
+            $checkname = $dummyfile->get_filename();
+        }
+
+        $contenttype = new contenttype(context_system::instance());
+        $content = $contenttype->upload_content($dummyfile, $record);
+
+        $this->assertEquals('contenttype_testable', $content->get_content_type());
+        $this->assertEquals($checkname, $content->get_name());
+        $this->assertInstanceOf('\\contenttype_testable\\content', $content);
+
+        $file = $content->get_file();
+        $this->assertEquals($dummyfile->get_filename(), $file->get_filename());
+        $this->assertEquals($dummyfile->get_userid(), $file->get_userid());
+        $this->assertEquals($dummyfile->get_mimetype(), $file->get_mimetype());
+        $this->assertEquals($dummyfile->get_contenthash(), $file->get_contenthash());
+        $this->assertEquals('contentbank', $file->get_component());
+        $this->assertEquals('public', $file->get_filearea());
+        $this->assertEquals('/', $file->get_filepath());
+    }
+
+    /**
+     * Data provider for test_rename_content.
+     *
+     * @return  array
+     */
+    public function upload_content_provider() {
+        return [
+            'With record' => [true],
+            'Without record' => [false],
+        ];
+    }
+
+    /**
+     * Tests for behaviour of upload_content() with a file wrong file.
+     *
+     * @covers ::upload_content
+     */
+    public function test_upload_content_exception(): void {
+        global $USER, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // The testing contenttype thows exception if filename is "error.*".
+        $dummy = [
+            'contextid' => context_user::instance($USER->id)->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => 1,
+            'filepath' => '/',
+            'filename' => 'error.txt',
+            'userid' => $USER->id,
+        ];
+        $fs = get_file_storage();
+        $dummyfile = $fs->create_file_from_string($dummy, 'Dummy content');
+
+        $contenttype = new contenttype(context_system::instance());
+        $cbcontents = $DB->count_records('contentbank_content');
+
+        // We need to capture the exception to check no content is created.
+        try {
+            $content = $contenttype->upload_content($dummyfile);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue(true);
+        }
+        $this->assertEquals($cbcontents, $DB->count_records('contentbank_content'));
+        $this->assertEquals(1, $DB->count_records('files', ['contenthash' => $dummyfile->get_contenthash()]));
+    }
+
+    /**
      * Test the behaviour of can_delete().
      */
     public function test_can_delete() {
@@ -268,12 +375,15 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
      */
     public function rename_content_provider() {
         return [
-            'Standard name' => ['New name', 'New name'],
-            'Name with digits' => ['Today is 17/04/2017', 'Today is 17/04/2017'],
-            'Name with symbols' => ['Follow us: @moodle', 'Follow us: @moodle'],
-            'Name with tags' => ['This is <b>bold</b>', 'This is bold'],
-            'Long name' => [str_repeat('a', 100), str_repeat('a', 100)],
-            'Too long name' => [str_repeat('a', 300), str_repeat('a', 255)]
+            'Standard name' => ['New name', 'New name', true],
+            'Name with digits' => ['Today is 17/04/2017', 'Today is 17/04/2017', true],
+            'Name with symbols' => ['Follow us: @moodle', 'Follow us: @moodle', true],
+            'Name with tags' => ['This is <b>bold</b>', 'This is bold', true],
+            'Long name' => [str_repeat('a', 100), str_repeat('a', 100), true],
+            'Too long name' => [str_repeat('a', 300), str_repeat('a', 255), true],
+            'Empty name' => ['', 'Test content ', false],
+            'Blanks only' => ['  ', 'Test content ', false],
+            'Zero name' => ['0', '0', true],
         ];
     }
 
@@ -283,10 +393,11 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
      * @dataProvider    rename_content_provider
      * @param   string  $newname    The name to set
      * @param   string   $expected   The name result
+     * @param   bool   $result   The bolean result expected when renaming
      *
      * @covers ::rename_content
      */
-    public function test_rename_content(string $newname, string $expected) {
+    public function test_rename_content(string $newname, string $expected, bool $result) {
         global $DB;
 
         $this->resetAfterTest();
@@ -307,9 +418,8 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
 
         // Check the content is renamed as expected by a user with permission.
         $renamed = $contenttype->rename_content($content, $newname);
-        $this->assertTrue($renamed);
+        $this->assertEquals($result, $renamed);
         $record = $DB->get_record('contentbank_content', ['id' => $content->get_id()]);
-        $this->assertNotEquals($oldname, $record->name);
         $this->assertEquals($expected, $record->name);
     }
 

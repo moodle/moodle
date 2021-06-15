@@ -55,10 +55,7 @@ Feature: Manage analytics models
     And I choose "Create model" in the open action menu
     And I set the field "Enabled" to "Enable"
     And I select "__core_course__analytics__target__course_completion" from the "target" singleselect
-    And I open the autocomplete suggestions list
-    And I click on "Read actions amount" item in the autocomplete list
-    And I open the autocomplete suggestions list
-    And I click on "Any write action in the course" item in the autocomplete list
+    And I set the field "Indicators" to "Read actions amount, Any write action in the course"
     And I select "__core__analytics__time_splitting__single_range" from the "timesplitting" singleselect
     And I press "Save changes"
     Then I should see "No predictions available yet" in the "Students at risk of not meeting the course completion conditions" "table_row"

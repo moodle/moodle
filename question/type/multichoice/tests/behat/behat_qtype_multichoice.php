@@ -15,28 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Date time form field class.
+ * Behat qtype_multichoice-related steps definitions.
  *
- * @package    core_form
+ * @package    qtype_multichoice
  * @category   test
- * @copyright  2013 David Monllaó
+ * @copyright  2020 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-// NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
-
-require_once(__DIR__  . '/behat_form_date_selector.php');
 
 /**
- * Date time form field.
+ * Behat custom step definitions and partial named selectors for qtype_multichoice.
  *
- * This class will be refactored in case we are interested in
- * creating more complex formats to fill date-time fields.
- *
- * @package    core_form
+ * @package    qtype_multichoice
  * @category   test
- * @copyright  2013 David Monllaó
+ * @copyright  2020 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_date_time_selector extends behat_form_date_selector {
+class behat_qtype_multichoice extends behat_base {
+
+    /**
+     * Return the list of partial named selectors for this plugin.
+     *
+     * @return behat_component_named_selector[]
+     */
+    public static function get_partial_named_selectors(): array {
+        return [
+            new behat_component_named_selector(
+                'Answer', [
+                    <<<XPATH
+    .//div[@data-region='answer-label']//*[contains(text(), %locator%)]
+XPATH
+                ]
+            ),
+        ];
+    }
 }

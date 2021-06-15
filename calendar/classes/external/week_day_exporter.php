@@ -86,6 +86,9 @@ class week_day_exporter extends day_exporter {
                 'type' => PARAM_RAW,
                 'default' => '',
             ],
+            'daytitle' => [
+                'type' => PARAM_RAW,
+            ]
         ]);
 
         return $return;
@@ -103,6 +106,8 @@ class week_day_exporter extends day_exporter {
         if ($popovertitle = $this->get_popover_title()) {
             $return['popovertitle'] = $popovertitle;
         }
+
+        $return['daytitle'] = $this->get_day_title();
 
         return $return;
     }
@@ -137,6 +142,26 @@ class week_day_exporter extends day_exporter {
 
         if ($this->data['istoday']) {
             $title = get_string('todayplustitle', 'calendar', $userdate);
+        }
+
+        return $title;
+    }
+
+    /**
+     * Get the title for this day.
+     *
+     * @return string
+     */
+    protected function get_day_title(): string {
+        $userdate = userdate($this->data[0], get_string('strftimedayshort'));
+
+        $numevents = count($this->related['events']);
+        if ($numevents == 1) {
+            $title = get_string('dayeventsone', 'calendar', $userdate);
+        } else if ($numevents) {
+            $title = get_string('dayeventsmany', 'calendar', ['num' => $numevents, 'day' => $userdate]);
+        } else {
+            $title = get_string('dayeventsnone', 'calendar', $userdate);
         }
 
         return $title;

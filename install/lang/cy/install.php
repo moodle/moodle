@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -31,7 +30,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Cyfeiriadur y gweinyddwr';
-$string['availablelangs'] = 'Y pecynnau iaith sydd ar gael';
+$string['availablelangs'] = 'Rhestr o\'r ieithoedd sydd ar gael';
 $string['chooselanguagehead'] = 'Dewis iaith';
 $string['chooselanguagesub'] = 'Dewiswch iaith ar gyfer y broses osod. Bydd yr iaith hon yn cael ei defnyddio fel yr iaith ddiofyn ar gyfer y safle, ond gellir ei newid yn nes ymlaen.';
 $string['clialreadyconfigured'] = 'Mae\'r ffeil config.php yn bodoli eisoes, defnyddiwch admin/cli/install_database.php os ydych chi am osod y safle hwn.';
@@ -49,7 +48,7 @@ $string['environmentsub2'] = 'Mae gan bob fersiwn Moodle ofyniad fersiwn PHP syl
 Bydd yr amgylchedd yn cael ei brofi\'n llawn cyn pob proses osod a diweddaru. Cysylltwch â gweinyddwr y gweinydd os nad ydych chi\'n gwybod sut mae gosod fersiwn newydd neu alluogi estyniadau PHP.';
 $string['errorsinenvironment'] = 'Wedi methu profi\'r amgylchedd!';
 $string['installation'] = 'Gosod';
-$string['langdownloaderror'] = 'Yn anffodus, ni osodwyd yr iaith ganlynol: "{$a}". Bydd y broses osod yn cario ymlaen yn Saesneg.';
+$string['langdownloaderror'] = 'Yn anffodus, ni lwyddwyd i lwytho\'r iaith ganlynol: "{$a}". Bydd y broses osod yn parhau yn Gymraeg.';
 $string['memorylimithelp'] = '<p>Mae maint y cof PHP yn eich gweinydd ar hyn o bryd yn {$a}.</p>
 
 <p>Gall hyn arwain at broblemau â\'r cof yn nes ymlaen, yn enwedig
@@ -88,8 +87,8 @@ $string['phpextension'] = 'Estyniad PHP {$a}';
 $string['phpversion'] = 'Fersiwn PHP';
 $string['phpversionhelp'] = '<p>Mae angen o leiaf fersiwn PHP 4.3.0 neu 5.1.0 ar Moodle (mae llawer o broblemau gyda 5.0.x).</p>
 <p>Ar hyn o bryd, rydych yn rhedeg fersiwn {$a}</p>
-<p>Rhaid i chi uwchraddio PHP neu newid i westeiwr â fersiwn diweddarach o PHP!<br/>
-(Os oes gennych 5.0.x gallwch hefyd is-raddio i fersiwn 4.4.x)</p>';
+<p>Rhaid i chi uwchraddio PHP neu newid i westeiwr â fersiwn fwy diweddar o PHP!<br/>
+(Os oes gennych 5.0.x gallech hefyd is-raddio i fersiwn 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Rydych chi\'n gweld y dudalen hon gan eich bod wedi gosod a
     lansio\'r pecyn <strong>{$a->packname} {$a->packversion}</strong> yn llwyddiannus ar eich cyfrifiadur. Llongyfarchiadau!';

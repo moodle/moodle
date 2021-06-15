@@ -454,6 +454,9 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($result['assignments']));
     }
 
+    /**
+     * Test get_submissions with teamsubmission enabled
+     */
     public function test_get_submissions_group_submission() {
         global $DB;
 
@@ -494,6 +497,87 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($sid, $submission['id']);
         $this->assertEquals($group->id, $submission['groupid']);
         $this->assertEquals(0, $submission['userid']);
+    }
+
+    /**
+     * Test get_submissions with teamsubmission enabled
+     * and a group having a higher attemptnumber than another
+     */
+    public function test_get_submissions_group_submission_attemptnumber() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $result = $this->create_assign_with_student_and_teacher([
+            'assignsubmission_onlinetext_enabled' => 1,
+            'attemptreopenmethod' => 'manual',
+            'teamsubmission' => 1,
+        ]);
+        $assignmodule = $result['assign'];
+        $course = $result['course'];
+
+        $teacher = $result['teacher'];
+        $student1 = $result['student'];
+        $student2 = self::getDataGenerator()->create_user();
+
+        // Enrol second user into the course.
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, $studentrole->id);
+
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        groups_add_member($group1, $student1);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        groups_add_member($group2, $student2);
+
+        $this->setUser($student1);
+        mod_assign_external::save_submission(
+            $assignmodule->id,
+            [
+                'onlinetext_editor' => [
+                    'text' => 'Group 1, Submission 1',
+                    'format' => FORMAT_PLAIN,
+                    'itemid' => file_get_unused_draft_itemid(),
+                ]
+            ]
+        );
+        $this->setUser($student2);
+        mod_assign_external::save_submission(
+            $assignmodule->id,
+            [
+                'onlinetext_editor' => [
+                    'text' => 'Group 2, Submission 1',
+                    'format' => FORMAT_PLAIN,
+                    'itemid' => file_get_unused_draft_itemid(),
+                ]
+            ]
+        );
+        mod_assign_external::submit_for_grading($assignmodule->id, 1);
+        $this->setUser($teacher);
+        mod_assign_external::save_grade($assignmodule->id, $student2->id, 0, -1, 1, "", 1);
+        $this->setUser($student2);
+        mod_assign_external::save_submission(
+            $assignmodule->id,
+            [
+                'onlinetext_editor' => [
+                    'text' => 'Group 2, Submission 2',
+                    'format' => FORMAT_PLAIN,
+                    'itemid' => file_get_unused_draft_itemid(),
+                ]
+            ]
+        );
+
+        $this->setUser($teacher);
+        $result = mod_assign_external::get_submissions([$assignmodule->id]);
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
+
+        $this->assertEquals(1, count($result['assignments']));
+        [$assignment] = $result['assignments'];
+        $this->assertEquals($assignmodule->id, $assignment['assignmentid']);
+
+        $this->assertEquals(2, count($assignment['submissions']));
+        $expectedsubmissions = ['Group 1, Submission 1', 'Group 2, Submission 2'];
+        foreach ($assignment['submissions'] as $submission) {
+            $this->assertContains($submission['plugins'][0]['editorfields'][0]['text'], $expectedsubmissions);
+        }
     }
 
     /**

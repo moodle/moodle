@@ -24,16 +24,18 @@ Feature: Search content in the content bank
     And I expand "Site pages" node
     And I click on "Content bank" "link"
     And I should see "santjordi.h5p"
-    And "Clear search input" "button" should not exist
+    And "Clear search input" "button" should not be visible
     And I should not see "items found"
     When I set the field "Search" to "book"
-    Then "Clear search input" "button" should exist
+    # Waiting for the animation to show the button to finish.
+    And I wait "1" seconds
+    Then "Clear search input" "button" should be visible
     And I should see "3 items found"
     And I should see "SantJordi_book"
     And I should see "mathsbook.h5p"
     And I should see "historybook.h5p"
     And I set the field "Search" to "sant"
-    And "Clear search input" "button" should exist
+    And "Clear search input" "button" should be visible
     And I should see "5 items found"
     And I set the field "Search" to "santjordi"
     And I should see "4 items found"
@@ -42,10 +44,14 @@ Feature: Search content in the content bank
     And I should see "SantJordi_book"
     And I should see "Dragon_santjordi.h5p"
     And I click on "Clear search input" "button"
-    And "Clear search input" "button" should not exist
+    # Waiting for the animation to hide the button to finish.
+    And I wait "1" seconds
+    And "Clear search input" "button" should not be visible
     And I should not see "items found"
     And I set the field "Search" to ".h5p"
-    And "Clear search input" "button" should exist
+    # Waiting for the animation to show the button to finish.
+    And I wait "1" seconds
+    And "Clear search input" "button" should be visible
     And I should see "7 items found"
     And I set the field "Search" to "friend"
     And I should see "0 items found"

@@ -42,6 +42,10 @@ if ($persistedissuer) {
     $returnurl = new moodle_url('/badges/backpack-connect.php',
         ['action' => 'authorization', 'sesskey' => sesskey()]);
 
+    // If scope is not passed as parameter, use the issuer supported scopes.
+    if (empty($scope)) {
+        $scope = $issuer->get('scopessupported');
+    }
     $client = new core_badges\oauth2\client($issuer, $returnurl, $scope, $externalbackpack);
     if ($client) {
         if (!$client->is_logged_in()) {

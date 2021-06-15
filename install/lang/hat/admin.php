@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -32,4 +31,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'w';
+$string['cliincorrectvalueerror'] = 'Erè, valè kòrèk "{$ a-> valè}" pou "{$ a-> opsyon}"';
+$string['cliincorrectvalueretry'] = 'Valè ki pa kòrèk, tanpri eseye ankò';
+$string['clitypevalue'] = 'valè kalite';
+$string['clitypevaluedefault'] = 'tape valè, peze Antre pou itilize valè default ({$ a})';
+$string['cliunknowoption'] = 'Opsyon ki pa rekonèt:
+  {$ a}
+Tanpri itilize opsyon --help.';
 $string['cliyesnoprompt'] = 'Tape w (pou wi) oswa n (pou non)';
+$string['environmentrequireinstall'] = 'dwe enstale ak pèmèt';
+$string['environmentrequireversion'] = 'vèsyon {$ a-> bezwen} obligatwa epi w ap kouri {$ a-> current}';

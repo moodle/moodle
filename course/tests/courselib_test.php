@@ -5465,6 +5465,50 @@ class core_course_courselib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the course_get_recent_courses function.
+     */
+    public function test_course_get_recent_courses_with_guest() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $student = $this->getDataGenerator()->create_user();
+
+        // Course 1 with guest access and no direct enrolment.
+        $course1 = $this->getDataGenerator()->create_course();
+        $context1 = context_course::instance($course1->id);
+        $record = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'guest']);
+        enrol_get_plugin('guest')->update_status($record, ENROL_INSTANCE_ENABLED);
+
+        // Course 2 where student is enrolled with two enrolment methods.
+        $course2 = $this->getDataGenerator()->create_course();
+        $context2 = context_course::instance($course2->id);
+        $record = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'self']);
+        enrol_get_plugin('guest')->update_status($record, ENROL_INSTANCE_ENABLED);
+        $this->getDataGenerator()->enrol_user($student->id, $course2->id, 'student', 'manual', 0, 0, ENROL_USER_ACTIVE);
+        $this->getDataGenerator()->enrol_user($student->id, $course2->id, 'student', 'self', 0, 0, ENROL_USER_ACTIVE);
+
+        // Course 3.
+        $course3 = $this->getDataGenerator()->create_course();
+        $context3 = context_course::instance($course3->id);
+
+        // Student visits first two courses, course_get_recent_courses returns two courses.
+        $this->setUser($student);
+        course_view($context1);
+        course_view($context2);
+
+        $result = course_get_recent_courses($student->id);
+        $this->assertEqualsCanonicalizing([$course2->id, $course1->id], array_column($result, 'id'));
+
+        // Admin visits all three courses. Only the one with guest access is returned.
+        $this->setAdminUser();
+        course_view($context1);
+        course_view($context2);
+        course_view($context3);
+        $result = course_get_recent_courses(get_admin()->id);
+        $this->assertEqualsCanonicalizing([$course1->id], array_column($result, 'id'));
+    }
+
+    /**
      * Test cases for the course_get_course_dates_for_user_ids tests.
      */
     public function get_course_get_course_dates_for_user_ids_test_cases() {

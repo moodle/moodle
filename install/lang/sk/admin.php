@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -39,5 +38,6 @@ $string['clitypevaluedefault'] = 'Vložte hodnotu a stlačte klávesu Enter pre 
 $string['cliunknowoption'] = 'Nerozoznané voľby: {$a}
 Prosím, použite možnosť --help.';
 $string['cliyesnoprompt'] = 'Zvolte A (Áno) alebo N (Nie)';
-$string['environmentrequireinstall'] = 'vyžadovaný komponent';
+$string['environmentrequireinstall'] = 'musí by byť nainštalované a povolené';
 $string['environmentrequireversion'] = 'vyžadovaná je verzia {$a->needed}, teraz používate verziu {$a->current}';
+$string['upgradekeyset'] = 'Kľúč pre aktualizáciu (nechajte prázdne, ak nechcete nastaviť)';

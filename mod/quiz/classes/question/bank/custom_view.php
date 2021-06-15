@@ -24,8 +24,8 @@
  */
 
 namespace mod_quiz\question\bank;
-defined('MOODLE_INTERNAL') || die();
 
+use coding_exception;
 
 /**
  * Subclass to customise the view of the question bank for the quiz editing screen.
@@ -81,7 +81,7 @@ class custom_view extends \core_question\bank\view {
                             $fullname, DEBUG_DEVELOPER);
                     $fullname = 'question_bank_' . $fullname;
                 } else {
-                    throw new coding_exception("No such class exists: $fullname");
+                    throw new coding_exception('Invalid quiz question bank column', $fullname);
                 }
             }
             $this->requiredcolumns[$fullname] = new $fullname($this);

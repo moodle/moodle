@@ -39,7 +39,7 @@ $string['mysitenotfound'] = 'You have never logged into OneDrive before. You mus
 $string['oauth2serviceslink'] = '<a href="{$a}" title="Link to OAuth 2 services configuration">OAuth 2 services configuration</a>';
 $string['owner'] = 'Owned by: {$a}';
 $string['pluginname'] = 'Microsoft OneDrive';
-$string['removetempaccesstask'] = 'Remove temporary write access from controlled links.';
+$string['removetempaccesstask'] = 'Remove temporary write access from controlled links';
 $string['searchfor'] = 'Search for {$a}';
 $string['servicenotenabled'] = 'Access not configured.';
 $string['skydrivefilesexist'] = 'Files found in the Microsoft SkyDrive repository. This repository has been deprecated by Microsoft, however the files may be imported to the Microsoft OneDrive repository.';

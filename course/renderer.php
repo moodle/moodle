@@ -2326,7 +2326,8 @@ class core_course_renderer extends plugin_renderer_base {
             if ($editing && has_capability('moodle/course:update', $context)) {
                 $streditsummary = get_string('editsummary');
                 $editsectionurl = new moodle_url('/course/editsection.php', ['id' => $section->id]);
-                $output .= html_writer::link($editsectionurl, $this->pix_icon('t/edit', $streditsummary)) .
+                $attributes = ['title' => $streditsummary, 'aria-label' => $streditsummary];
+                $output .= html_writer::link($editsectionurl, $this->pix_icon('t/edit', ''), $attributes) .
                     "<br /><br />";
             }
 

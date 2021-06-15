@@ -52,7 +52,7 @@ class external extends external_api {
     public static function verify_webfinger_parameters() {
         return new external_function_parameters(
             array(
-                'profileurl' => new external_value(PARAM_RAW, 'The profile url that the user has given us', VALUE_REQUIRED),
+                'profileurl' => new external_value(PARAM_NOTAGS, 'The profile url that the user has given us', VALUE_REQUIRED),
                 'course' => new external_value(PARAM_INT, 'The course we are adding to', VALUE_REQUIRED),
                 'section' => new external_value(PARAM_INT, 'The section within the course we are adding to', VALUE_REQUIRED),
             )

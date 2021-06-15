@@ -35,7 +35,7 @@
         { "label": "Another item label with <strong>tags</strong>", "value": "4" }
     ]}
 }}
-<ul class="form-autocomplete-suggestions" id="{{suggestionsId}}" role="listbox" aria-hidden="true" tabindex="-1">
+<ul class="form-autocomplete-suggestions" id="{{suggestionsId}}" role="listbox" aria-label="{{#str}}suggestions, form{{/str}}" aria-hidden="true" tabindex="-1">
     {{#options}}
         <li role="option" data-value="{{value}}">{{{label}}}</li>
     {{/options}}

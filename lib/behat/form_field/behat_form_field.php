@@ -25,8 +25,8 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-use Behat\Mink\Session as Session,
-    Behat\Mink\Element\NodeElement as NodeElement;
+use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Session;
 
 /**
  * Representation of a form field.
@@ -38,7 +38,10 @@ use Behat\Mink\Session as Session,
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_field {
+class behat_form_field implements behat_session_interface {
+
+    // All of the functionality of behat_base is shared with form fields via the behat_session_trait trait.
+    use behat_session_trait;
 
     /**
      * @var Session Behat session.
@@ -54,6 +57,16 @@ class behat_form_field {
      * @var string The field's locator.
      */
     protected $fieldlocator = false;
+
+    /**
+     * Returns the Mink session.
+     *
+     * @param   string|null $name name of the session OR active session will be used
+     * @return  \Behat\Mink\Session
+     */
+    public function getSession($name = null) {
+        return $this->session;
+    }
 
 
     /**
@@ -160,17 +173,28 @@ class behat_form_field {
      * @return behat_form_field
      */
     private function guess_type() {
+        return $this->get_field_instance_for_element($this->field);
+    }
+
+    /**
+     * Returns the appropriate form field object for a given node element.
+     *
+     * @param NodeElement $element The node element
+     * @return behat_form_field
+     */
+    protected function get_field_instance_for_element(NodeElement $element): behat_form_field {
         global $CFG;
 
         // We default to the text-based field if nothing was detected.
-        if (!$type = behat_field_manager::guess_field_type($this->field, $this->session)) {
+        if (!$type = behat_field_manager::guess_field_type($element, $this->session)) {
             $type = 'text';
         }
 
         $classname = 'behat_form_' . $type;
         $classpath = $CFG->dirroot . '/lib/behat/form_field/' . $classname . '.php';
         require_once($classpath);
-        return new $classname($this->session, $this->field);
+
+        return new $classname($this->session, $element);
     }
 
     /**
@@ -205,12 +229,15 @@ class behat_form_field {
      * @return int
      */
     protected function get_internal_field_id() {
-
         if (!$this->running_javascript()) {
             throw new coding_exception('You can only get an internal ID using the selenium driver.');
         }
 
-        return $this->session->getDriver()->getWebDriverSession()->element('xpath', $this->field->getXPath())->getID();
+        return $this->getSession()
+            ->getDriver()
+            ->getWebDriver()
+            ->findElement(WebDriverBy::xpath($node->getXpath()))
+            ->getID();
     }
 
     /**

@@ -1,6 +1,12 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 3.9.3 ===
+
+* Changes in external function mod_forum_external::get_discussion_posts_by_userid
+  Now returns the posts of a given user checking the current user capabilities ($USER, the user who is requesting the posts).
+  Previously, it returned the posts checking the capabilities of the user that created the posts.
+
 === 3.8 ===
 
 * The following functions have been finally deprecated and can not be used anymore:

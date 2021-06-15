@@ -25,6 +25,9 @@
 
 namespace contenttype_testable;
 
+use file_exception;
+use stored_file;
+
 /**
  * Testable content plugin class.
  *
@@ -33,4 +36,21 @@ namespace contenttype_testable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class content extends \core_contentbank\content {
+
+    /**
+     * Import a file as a valid content.
+     *
+     * This method will thow an error if the filename is "error.*"
+     *
+     * @param stored_file $file File to store in the content file area.
+     * @return stored_file|null the stored content file or null if the file is discarted.
+     * @throws file_exception if the filename contains the word "error"
+     */
+    public function import_file(stored_file $file): ?stored_file {
+        $filename = $file->get_filename();
+        if (strrpos($filename, 'error') !== false) {
+            throw new file_exception('yourerrorthanks', 'contenttype_test');
+        }
+        return parent::import_file($file);
+    }
 }

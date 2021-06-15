@@ -59,7 +59,7 @@ class core_block_external extends external_api {
                 'visible'       => new external_value(PARAM_BOOL, 'Whether the block is visible.', VALUE_OPTIONAL),
                 'contents'      => new external_single_structure(
                     array(
-                        'title'         => new external_value(PARAM_TEXT, 'Block title.'),
+                        'title'         => new external_value(PARAM_RAW, 'Block title.'),
                         'content'       => new external_value(PARAM_RAW, 'Block contents.'),
                         'contentformat' => new external_format_value('content'),
                         'footer'        => new external_value(PARAM_RAW, 'Block footer.'),
@@ -91,6 +91,9 @@ class core_block_external extends external_api {
      */
     private static function get_all_current_page_blocks($includeinvisible = false, $returncontents = false) {
         global $PAGE, $OUTPUT;
+
+        // Set page URL to a fake URL to avoid errors.
+        $PAGE->set_url(new \moodle_url('/webservice/core_block_external/'));
 
         // Load the block instances for all the regions.
         $PAGE->blocks->load_blocks($includeinvisible);

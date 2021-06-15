@@ -265,9 +265,12 @@ class forum_gradeitem extends component_gradeitem {
 
         $DB->update_record($this->get_table_name(), $grade);
 
-        // Update in the gradebook.
+        // Update in the gradebook (note that 'cmidnumber' is required in order to update grades).
         $mapper = forum_container::get_legacy_data_mapper_factory()->get_forum_data_mapper();
-        forum_update_grades($mapper->to_legacy_object($this->forum), $grade->userid);
+        $forumrecord = $mapper->to_legacy_object($this->forum);
+        $forumrecord->cmidnumber = $this->forum->get_course_module_record()->idnumber;
+
+        forum_update_grades($forumrecord, $grade->userid);
 
         return true;
     }

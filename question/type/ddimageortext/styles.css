@@ -26,6 +26,7 @@ form.mform fieldset#id_previewareaheader div.ddarea {
 .que.ddimageortext div.droparea .dropzones {
     position: absolute;
     top: 0;
+    /*rtl:ignore*/
     left: 0;
 }
 
@@ -102,6 +103,7 @@ form.mform fieldset#id_previewareaheader .dragitems {
 form.mform fieldset#id_previewareaheader .droppreview {
     position: absolute;
     cursor: move;
+    white-space: nowrap;
 }
 
 .que.ddimageortext .dragitems.readonly .drag {

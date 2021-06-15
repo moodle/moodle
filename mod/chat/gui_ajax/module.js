@@ -91,7 +91,7 @@ M.mod_chat_ajax.init = function(Y, cfg) {
                     action : 'init',
                     chat_init : 1,
                     chat_sid : this.cfg.sid,
-                    theme : this.theme
+                    chat_theme : this.cfg.theme
                 }),
                 on : {
                     success : function(tid, outcome) {
@@ -117,15 +117,21 @@ M.mod_chat_ajax.init = function(Y, cfg) {
             // Create and initalise theme changing menu.
             this.thememenu = new Y.YUI2.widget.Menu('basicmenu', {xy:[0,0]});
             this.thememenu.addItems([
-                {text: M.util.get_string('bubble', 'mod_chat'), url: this.cfg.chaturl + '&theme=bubble'},
-                {text: M.util.get_string('compact', 'mod_chat'), url: this.cfg.chaturl + '&theme=compact'},
-                {text: M.util.get_string('coursetheme', 'mod_chat'), url: this.cfg.chaturl + '&theme=course_theme'}
+                {text: M.util.get_string('bubble', 'mod_chat'), url: this.cfg.chaturl + '&chat_theme=bubble'},
+                {text: M.util.get_string('compact', 'mod_chat'), url: this.cfg.chaturl + '&chat_theme=compact'},
+                {text: M.util.get_string('coursetheme', 'mod_chat'), url: this.cfg.chaturl + '&chat_theme=course_theme'}
             ]);
             this.thememenu.render(document.body);
             Y.one('#choosetheme').on('click', function(e) {
                 this.moveTo((e.pageX - 20), (e.pageY - 20));
                 this.show();
             }, this.thememenu);
+
+            // Set the data-placement for the help-icon to display all the content.
+            this.helpicon = Y.one('#button-send + a');
+            this.dataset = this.helpicon.get('dataset');
+            this.dataset.placement = 'top';
+            this.helpicon.set('dataset', this.dataset);
         },
 
         append_message : function(key, message, row) {
@@ -145,7 +151,7 @@ M.mod_chat_ajax.init = function(Y, cfg) {
                 var data = {
                     chat_message : (!beep) ? this.messageinput.get('value') : '',
                     chat_sid : this.cfg.sid,
-                    theme : this.cfg.theme
+                    chat_theme : this.cfg.theme
                 };
                 if (beep) {
                     data.beep = beep
@@ -193,7 +199,7 @@ M.mod_chat_ajax.init = function(Y, cfg) {
                     chat_lastrow : this.cfg.chat_lastrow || false,
                     chat_lasttime : this.cfg.chat_lasttime,
                     chat_sid : this.cfg.sid,
-                    theme : this.cfg.theme
+                    chat_theme : this.cfg.theme
                 }),
                 on : {
                     success : this.update_messages_callback

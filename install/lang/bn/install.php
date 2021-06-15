@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -31,9 +30,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'অ্যাডমিন ডিরেক্টরিটি';
-$string['availablelangs'] = 'যে সমস্ত ভাষা ব্যাবহার করতে পারেন';
+$string['availablelangs'] = 'প্রাপ্তিসাধ্য ভাষার তালিকা';
 $string['chooselanguagehead'] = 'একটি ভাষা নির্বাচন';
 $string['chooselanguagesub'] = 'ইনস্টলেশনের জন্য একটি ভাষা নির্বাচন। এই ভাষাই সাইটের জন্য নির্ধারিত ভাষা হিসাবে ব্যবহৃত হবে এবং এটা পরে যেকোনো সময় পরিবর্তন করা হতে পারে।';
+$string['clialreadyinstalled'] = 'ফাইল config.php ইতিমধ্যে আছে, অনুগ্রহ করে আপনি আপনার সাইটটি আপগ্রেড করতে চাইলে admin/cli/upgrade.php ব্যবহার।';
 $string['cliinstallheader'] = 'মুডল {$a} কমান্ড লাইন ইনস্টলেশন প্রোগ্রাম';
 $string['databasehost'] = 'ডাটাবেস হোস্ট';
 $string['databasename'] = 'ডাটাবেস নাম';

@@ -228,6 +228,219 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertEquals(array($course2->id, $course1->id, $course3->id), array_keys($courses));
     }
 
+    /**
+     * Test enrol_course_delete() without passing a user id. When a value for user id is not present, the method
+     * should delete all enrolment related data in the course.
+     */
+    public function test_enrol_course_delete_without_userid() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+
+        $manual = enrol_get_plugin('manual');
+        $manualinstance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        // Enrol user1 as a student in the course using manual enrolment.
+        $manual->enrol_user($manualinstance, $user1->id, $studentrole->id);
+
+        $self = enrol_get_plugin('self');
+        $selfinstance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'self'], '*', MUST_EXIST);
+        $self->update_status($selfinstance, ENROL_INSTANCE_ENABLED);
+        // Enrol user2 as a student in the course using self enrolment.
+        $self->enrol_user($selfinstance, $user2->id, $studentrole->id);
+
+        // Delete all enrolment related records in the course.
+        enrol_course_delete($course);
+
+        // The course enrolment of user1 should not exists.
+        $user1enrolment = $DB->get_record('user_enrolments',
+            ['enrolid' => $manualinstance->id, 'userid' => $user1->id]);
+        $this->assertFalse($user1enrolment);
+
+        // The role assignment of user1 should not exists.
+        $user1roleassignment = $DB->get_record('role_assignments',
+            ['roleid' => $studentrole->id, 'userid'=> $user1->id, 'contextid' => $coursecontext->id]
+        );
+        $this->assertFalse($user1roleassignment);
+
+        // The course enrolment of user2 should not exists.
+        $user2enrolment = $DB->get_record('user_enrolments',
+            ['enrolid' => $selfinstance->id, 'userid' => $user2->id]);
+        $this->assertFalse($user2enrolment);
+
+        // The role assignment of user2 should not exists.
+        $user2roleassignment = $DB->get_record('role_assignments',
+            ['roleid' => $studentrole->id, 'userid'=> $user2->id, 'contextid' => $coursecontext->id]);
+        $this->assertFalse($user2roleassignment);
+
+        // All existing course enrolment instances should not exists.
+        $enrolmentinstances = enrol_get_instances($course->id, false);
+        $this->assertCount(0, $enrolmentinstances);
+    }
+
+    /**
+     * Test enrol_course_delete() when user id is present.
+     * When a value for user id is present, the method should make sure the user has the proper capability to
+     * un-enrol users before removing the enrolment data. If the capabilities are missing the data should not be removed.
+     *
+     * @dataProvider enrol_course_delete_with_userid_provider
+     * @param array $excludedcapabilities The capabilities that should be excluded from the user's role
+     * @param bool $expected The expected results
+     */
+    public function test_enrol_course_delete_with_userid($excludedcapabilities, $expected) {
+        global $DB;
+
+        $this->resetAfterTest();
+        // Create users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $editingteacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+
+        $manual = enrol_get_plugin('manual');
+        $manualinstance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual'],
+            '*', MUST_EXIST);
+        // Enrol user1 as a student in the course using manual enrolment.
+        $manual->enrol_user($manualinstance, $user1->id, $studentrole->id);
+        // Enrol user3 as an editing teacher in the course using manual enrolment.
+        // By default, the editing teacher role has the capability to un-enroll users which have been enrolled using
+        // the existing enrolment methods.
+        $manual->enrol_user($manualinstance, $user3->id, $editingteacherrole->id);
+
+        $self = enrol_get_plugin('self');
+        $selfinstance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'self'],
+            '*', MUST_EXIST);
+        $self->update_status($selfinstance, ENROL_INSTANCE_ENABLED);
+        // Enrol user2 as a student in the course using self enrolment.
+        $self->enrol_user($selfinstance, $user2->id, $studentrole->id);
+
+        foreach($excludedcapabilities as $capability) {
+            // Un-assign the given capability from the editing teacher role.
+            unassign_capability($capability, $editingteacherrole->id);
+        }
+
+        // Delete only enrolment related records in the course where user3 has the required capability.
+        enrol_course_delete($course, $user3->id);
+
+        // Check the existence of the course enrolment of user1.
+        $user1enrolmentexists = (bool) $DB->count_records('user_enrolments',
+            ['enrolid' => $manualinstance->id, 'userid' => $user1->id]);
+        $this->assertEquals($expected['User 1 course enrolment exists'], $user1enrolmentexists);
+
+        // Check the existence of the role assignment of user1 in the course.
+        $user1roleassignmentexists = (bool) $DB->count_records('role_assignments',
+            ['roleid' => $studentrole->id, 'userid' => $user1->id, 'contextid' => $coursecontext->id]);
+        $this->assertEquals($expected['User 1 role assignment exists'], $user1roleassignmentexists);
+
+        // Check the existence of the course enrolment of user2.
+        $user2enrolmentexists = (bool) $DB->count_records('user_enrolments',
+            ['enrolid' => $selfinstance->id, 'userid' => $user2->id]);
+        $this->assertEquals($expected['User 2 course enrolment exists'], $user2enrolmentexists);
+
+        // Check the existence of the role assignment of user2 in the course.
+        $user2roleassignmentexists = (bool) $DB->count_records('role_assignments',
+            ['roleid' => $studentrole->id, 'userid' => $user2->id, 'contextid' => $coursecontext->id]);
+        $this->assertEquals($expected['User 2 role assignment exists'], $user2roleassignmentexists);
+
+        // Check the existence of the course enrolment of user3.
+        $user3enrolmentexists = (bool) $DB->count_records('user_enrolments',
+            ['enrolid' => $manualinstance->id, 'userid' => $user3->id]);
+        $this->assertEquals($expected['User 3 course enrolment exists'], $user3enrolmentexists);
+
+        // Check the existence of the role assignment of user3 in the course.
+        $user3roleassignmentexists = (bool) $DB->count_records('role_assignments',
+            ['roleid' => $editingteacherrole->id, 'userid' => $user3->id, 'contextid' => $coursecontext->id]);
+        $this->assertEquals($expected['User 3 role assignment exists'], $user3roleassignmentexists);
+
+        // Check the existence of the manual enrolment instance in the course.
+        $manualinstance = (bool) $DB->count_records('enrol', ['enrol' => 'manual', 'courseid' => $course->id]);
+        $this->assertEquals($expected['Manual course enrolment instance exists'], $manualinstance);
+
+        // Check existence of the self enrolment instance in the course.
+        $selfinstance = (bool) $DB->count_records('enrol', ['enrol' => 'self', 'courseid' => $course->id]);
+        $this->assertEquals($expected['Self course enrolment instance exists'], $selfinstance);
+    }
+
+    /**
+     * Data provider for test_enrol_course_delete_with_userid().
+     *
+     * @return array
+     */
+    public function enrol_course_delete_with_userid_provider() {
+        return [
+            'The teacher can un-enrol users in a course' =>
+                [
+                    'excludedcapabilities' => [],
+                    'results' => [
+                        // Whether certain enrolment related data still exists in the course after the deletion.
+                        // When the user has the capabilities to un-enrol users and the enrolment plugins allow manual
+                        // unenerolment than all course enrolment data should be removed.
+                        'Manual course enrolment instance exists' => false,
+                        'Self course enrolment instance exists' => false,
+                        'User 1 course enrolment exists' => false,
+                        'User 1 role assignment exists' => false,
+                        'User 2 course enrolment exists' => false,
+                        'User 2 role assignment exists' => false,
+                        'User 3 course enrolment exists' => false,
+                        'User 3 role assignment exists' => false
+                    ],
+                ],
+            'The teacher cannot un-enrol self enrolled users'  =>
+                [
+                    'excludedcapabilities' => [
+                        // Exclude the following capabilities for the editing teacher.
+                        'enrol/self:unenrol'
+                    ],
+                    'results' => [
+                        // When the user does not have the capabilities to un-enrol self enrolled users, the data
+                        // related to this enrolment method should not be removed. Everything else should be removed.
+                        'Manual course enrolment instance exists' => false,
+                        'Self course enrolment instance exists' => true,
+                        'User 1 course enrolment exists' => false,
+                        'User 1 role assignment exists' => false,
+                        'User 2 course enrolment exists' => true,
+                        'User 2 role assignment exists' => true,
+                        'User 3 course enrolment exists' => false,
+                        'User 3 role assignment exists' => false
+                    ],
+                ],
+            'The teacher cannot un-enrol self and manually enrolled users' =>
+                [
+                    'excludedcapabilities' => [
+                        // Exclude the following capabilities for the editing teacher.
+                        'enrol/manual:unenrol',
+                        'enrol/self:unenrol'
+                    ],
+                    'results' => [
+                        // When the user does not have the capabilities to un-enrol self and manually enrolled users,
+                        // the data related to these enrolment methods should not be removed.
+                        'Manual course enrolment instance exists' => true,
+                        'Self course enrolment instance exists' => true,
+                        'User 1 course enrolment exists' => true,
+                        'User 1 role assignment exists' => true,
+                        'User 2 course enrolment exists' => true,
+                        'User 2 role assignment exists' => true,
+                        'User 3 course enrolment exists' => true,
+                        'User 3 role assignment exists' => true
+                    ],
+                ],
+        ];
+    }
+
+
     public function test_enrol_user_sees_own_courses() {
         global $DB, $CFG;
 
@@ -824,6 +1037,59 @@ class core_enrollib_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_enrol_get_my_courses_by_time}
+     *
+     * @return array
+     */
+    public function enrol_get_my_courses_by_time_provider(): array {
+        return [
+            'No start or end time' =>
+                [null, null, true],
+            'Start time now, no end time' =>
+                [0, null, true],
+            'Start time now, end time in the future' =>
+                [0, MINSECS, true],
+            'Start time in the past, no end time' =>
+                [-MINSECS, null, true],
+            'Start time in the past, end time in the future' =>
+                [-MINSECS, MINSECS, true],
+            'Start time in the past, end time in the past' =>
+                [-DAYSECS, -HOURSECS, false],
+            'Start time in the future' =>
+                [MINSECS, null, false],
+        ];
+    }
+
+    /**
+     * Test that expected course enrolments are returned when they have timestart / timeend specified
+     *
+     * @param int|null $timestartoffset Null for 0, otherwise offset from current time
+     * @param int|null $timeendoffset Null for 0, otherwise offset from current time
+     * @param bool $expectreturn
+     *
+     * @dataProvider enrol_get_my_courses_by_time_provider
+     */
+    public function test_enrol_get_my_courses_by_time(?int $timestartoffset, ?int $timeendoffset, bool $expectreturn): void {
+        $this->resetAfterTest();
+
+        $time = time();
+        $timestart = $timestartoffset === null ? 0 : $time + $timestartoffset;
+        $timeend = $timeendoffset === null ? 0 : $time + $timeendoffset;
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student', null, 'manual', $timestart, $timeend);
+        $this->setUser($user);
+
+        $courses = enrol_get_my_courses();
+        if ($expectreturn) {
+            $this->assertCount(1, $courses);
+            $this->assertEquals($course->id, reset($courses)->id);
+        } else {
+            $this->assertEmpty($courses);
+        }
+    }
+
+    /**
      * test_course_users
      *
      * @return void
@@ -1148,5 +1414,78 @@ class core_enrollib_testcase extends advanced_testcase {
         $duration = enrol_calculate_duration($timestart, $timeend);
         $durationinday = $duration / DAYSECS;
         $this->assertEquals(9, $durationinday);
+    }
+
+    /**
+     * Test get_enrolled_with_capabilities_join cannotmatchanyrows attribute.
+     *
+     * @dataProvider get_enrolled_with_capabilities_join_cannotmatchanyrows_data()
+     * @param string $capability the tested capability
+     * @param bool $useprohibit if the capability must be assigned to prohibit
+     * @param int $expectedmatch expected cannotmatchanyrows value
+     * @param int $expectedcount expceted count value
+     */
+    public function test_get_enrolled_with_capabilities_join_cannotmatchanyrows(
+        string $capability,
+        bool $useprohibit,
+        int $expectedmatch,
+        int $expectedcount
+    ) {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $roleid = $CFG->defaultuserroleid;
+
+        // Override capability if necessary.
+        if ($useprohibit && $capability) {
+            assign_capability($capability, CAP_PROHIBIT, $roleid, $context);
+        }
+
+        // Check if we must enrol or not.
+        $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
+        $join = get_enrolled_with_capabilities_join($context, '', $capability);
+
+        // Execute query.
+        $sql = "SELECT COUNT(DISTINCT u.id)
+                  FROM {user} u {$join->joins}
+                 WHERE {$join->wheres}";
+        $countrecords = $DB->count_records_sql($sql, $join->params);
+
+        // Validate cannotmatchanyrows.
+        $this->assertEquals($expectedmatch, $join->cannotmatchanyrows);
+        $this->assertEquals($expectedcount, $countrecords);
+    }
+
+    /**
+     * Data provider for test_get_enrolled_with_capabilities_join_cannotmatchanyrows
+     *
+     * @return @array of testing scenarios
+     */
+    public function get_enrolled_with_capabilities_join_cannotmatchanyrows_data() {
+        return [
+            'no prohibits, no capability' => [
+                'capability' => '',
+                'useprohibit' => false,
+                'expectedmatch' => 0,
+                'expectedcount' => 1,
+            ],
+            'no prohibits with capability' => [
+                'capability' => 'moodle/course:manageactivities',
+                'useprohibit' => false,
+                'expectedmatch' => 0,
+                'expectedcount' => 1,
+            ],
+            'prohibits with capability' => [
+                'capability' => 'moodle/course:manageactivities',
+                'useprohibit' => true,
+                'expectedmatch' => 1,
+                'expectedcount' => 0,
+            ],
+        ];
     }
 }

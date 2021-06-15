@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -33,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Adminmappe';
 $string['availablelangs'] = 'Tilgjengelige språkpakker';
 $string['chooselanguagehead'] = 'Velg et språk';
-$string['chooselanguagesub'] = 'Velg språk (bare for INSTALLASJONEN). Du vil kunne velge språk for nettsted og bruker på et skjermbilde senere.';
-$string['clialreadyconfigured'] = 'Filen config.php finnes allerede. Vennligst bruk admin/cli/install_database.php hvis du vil installere denne portalen.';
+$string['chooselanguagesub'] = 'Velg et språk for installasjonen. Dette språket vil også bli brukt som standardspråk for nettstedet, men det kan endres senere.';
+$string['clialreadyconfigured'] = 'Konfigurasjonsfilen config.php finnes allerede. Vennligst bruk admin/cli/install_database.php hvis du vil installere Moodle på denne portalen.';
 $string['clialreadyinstalled'] = 'Filen config.php eksisterer allerede. Vennligst bruk admin/cli/install_database.php hvis du vil oppgradere Moodle på denne portalen.';
 $string['cliinstallheader'] = 'Moodle {$a} kommandolinje installasjonsprogram';
 $string['databasehost'] = 'Databasevert';
@@ -48,7 +47,7 @@ $string['environmenthead'] = 'Sjekker "omgivelsene" dine...';
 $string['environmentsub2'] = 'Hver Moodle-utgivelse har minimumskrav til PHP versjon og et sett med obligatoriske PHP-tillegg. En full sjekk av omgivelser gjøres før hver installering og oppgradering. Vær vennlig å kontakte serveradministrator hvis du ikke vet hvordan du skal installere nye versjoner eller slå på PHP-tillegg.';
 $string['errorsinenvironment'] = 'Omgivelseskontroll feilet!';
 $string['installation'] = 'Installasjon';
-$string['langdownloaderror'] = 'Beklageligvis ble ikke språkpakken "{$a}" installert. Installasjonsprosessen vil fortsette på Engelsk.';
+$string['langdownloaderror'] = 'Beklageligvis kunne ikke språkpakken "{$a}" lastes ned. Installasjonsprosessen vil fortsette på Engelsk.';
 $string['memorylimithelp'] = '<p>PHP minnegrensen for serveren din er nå satt til {$a}.</p>
 <p>Dette kan skape minneproblemer for Moodle senere, spesielt hvis du har mange moduler tillatt og/eller mange brukere.</p>
 <p>Vi anbefaler at du konfigurer PHP med en høyere grense enn mulig, for eksepmel 40M. Det er flere måter å gjøre dette på.:</p>
@@ -76,7 +75,7 @@ $string['pathssubwwwroot'] = '<p>Full webadresse til der hvor Moodle skal vises,
 <p>Dersom adressen ikke er korrekt, vennligst endre URL i nettleseren slik at at installasjonen restartes med andre verdier.</p>';
 $string['pathsunsecuredataroot'] = 'Dataroot plassering er ikke sikker';
 $string['pathswrongadmindir'] = 'Adminkatalog finnes ikke';
-$string['phpextension'] = '{$a} PHP etternavn';
+$string['phpextension'] = '{$a} PHP-tillegg';
 $string['phpversion'] = 'PHP versjon';
 $string['phpversionhelp'] = '<p>Moodle trenger en PHP versjon minst 5.6.5 eller 7.1.0 (7.0.x har noen begrensninger).</p>
 <Du kjører nå versjon {$a}</p>

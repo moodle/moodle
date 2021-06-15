@@ -642,7 +642,7 @@ $string['emaildisable'] = 'This email address is disabled';
 $string['emaildisableclick'] = 'Click here to disable all email from being sent to this address';
 $string['emaildisplay'] = 'Email display';
 $string['emaildisplay_help'] = 'Privileged users (such as teachers and managers) will always be able to see your email address.';
-$string['emaildisplaycourse'] = 'Allow only other course members to see my email address';
+$string['emaildisplaycourse'] = 'Allow only other course participants to see my email address';
 $string['emaildisplayno'] = 'Hide my email address from non-privileged users';
 $string['emaildisplayyes'] = 'Allow everyone to see my email address';
 $string['emailenable'] = 'This email address is enabled';
@@ -674,7 +674,7 @@ line at the top of your web browser window.
 If you need help, please contact the site administrator,
 {$a->admin}';
 $string['emailpasswordconfirmationsubject'] = '{$a}: Change password confirmation';
-$string['emailpasswordconfirmmaybesent'] = '<p>If you supplied a correct username or email address then an email should have been sent to you.</p>
+$string['emailpasswordconfirmmaybesent'] = '<p>If you supplied a correct username or unique email address then an email should have been sent to you.</p>
    <p>It contains easy instructions to confirm and complete this password change.
 If you continue to have difficulty, please contact the site administrator.</p>';
 $string['emailpasswordconfirmnoemail'] = '<p>The user account you specified does not have a recorded email address.</p>
@@ -1174,6 +1174,7 @@ $string['loginstepsnone'] = '<p>Hi!</p>
 <p>All you need to do is make up a username and password and use it in the form on this page!</p>
 <p>If someone else has already chosen your username then you\'ll have to try again using a different username.</p>';
 $string['loginto'] = 'Log in to {$a}';
+$string['logoof'] = 'Logo of {$a}';
 $string['logout'] = 'Log out';
 $string['logoutconfirm'] = 'Do you really want to log out?';
 $string['logs'] = 'Logs';
@@ -1463,7 +1464,7 @@ $string['normalfilter'] = 'Normal search';
 $string['nosite'] = 'Could not find site-level course';
 $string['nostudentsfound'] = 'No {$a} found';
 $string['nostudentsingroup'] = 'There are no students in this group yet';
-$string['nostudentsyet'] = 'No students enrolled in this course yet';
+$string['nostudentsyet'] = 'There are no students enrolled in this course.';
 $string['nosuchemail'] = 'No such email address';
 $string['notavailable'] = 'Not available';
 $string['notavailablecourse'] = '{$a} is not available';
@@ -1810,6 +1811,7 @@ $string['searchagain'] = 'Search again';
 $string['searchactivities'] = 'Search for activities by name or description';
 $string['searchbyemail'] = 'Search by email address';
 $string['searchbyusername'] = 'Search by username';
+$string['searchcoursecategories'] = 'Search categories';
 $string['searchcourses'] = 'Search courses';
 $string['searchoptions'] = 'Search options';
 $string['searchresults'] = 'Search results';

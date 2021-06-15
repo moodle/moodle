@@ -121,7 +121,7 @@ class behat_mod_forum extends behat_base {
         // Fill form and post.
         $this->execute('behat_forms::i_set_the_following_fields_to_these_values', $table);
 
-        $this->execute('behat_forms::press_button', get_string('submit', 'core'));
+        $this->execute('behat_forms::press_button', get_string('posttoforum', 'mod_forum'));
     }
 
     /**

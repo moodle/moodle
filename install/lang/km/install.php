@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -33,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'ថតអ្នកគ្រប់គ្រង';
 $string['availablelangs'] = 'កញ្ចប់ភាសាដែលមាន';
 $string['chooselanguagehead'] = 'ជ្រើសភាសា';
-$string['chooselanguagesub'] = 'សូមជ្រើសភាសា សម្រាប់តែការដំឡើងប៉ុណ្ណោះ ។ អ្នកនឹងអាចជ្រើសភាសាសម្រាប់តំបន់បណ្ដាញ និងអ្នកប្រើ នៅផ្នែកក្រោយៗទៀត ។';
+$string['chooselanguagesub'] = 'សូមជ្រើសភាសា សម្រាប់តែការដំឡើងនេះ ។ អ្នកនឹងអាចជ្រើសភាសាសម្រាប់តំបន់បណ្ដាញ និងអ្នកប្រើ នៅផ្នែកក្រោយៗទៀត ។';
 $string['dataroot'] = 'ថតទិន្នន័យ';
 $string['dbprefix'] = 'បុព្វបទតារាង';
 $string['dirroot'] = 'ថត Moodle';

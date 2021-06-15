@@ -67,9 +67,11 @@ class behat_forms extends behat_base {
         // Ensures the button is present, before pressing.
         $buttonnode = $this->find_button($button);
         $buttonnode->press();
+        $this->wait_for_pending_js();
+        $this->look_for_exceptions();
 
         // Switch to main window.
-        $this->getSession()->switchToWindow(behat_general::MAIN_WINDOW_NAME);
+        $this->execute('behat_general::switch_to_the_main_window');
     }
 
     /**
@@ -310,6 +312,19 @@ class behat_forms extends behat_base {
                 $this->getSession()
             );
         }
+    }
+
+    /**
+     * Checks, the field matches the value.
+     *
+     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" matches multiline:$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param PyStringNode $value
+     * @return void
+     */
+    public function the_field_matches_multiline($field, PyStringNode $value) {
+        $this->the_field_matches_value($field, (string)$value);
     }
 
     /**
@@ -693,18 +708,21 @@ class behat_forms extends behat_base {
         $xpathtarget = "//ul[@class='form-autocomplete-suggestions']//*[contains(concat('|', string(.), '|'),'|" . $item . "|')]";
 
         $this->execute('behat_general::i_click_on', [$xpathtarget, 'xpath_element']);
-
-        $this->execute('behat_general::i_press_key_in_element', ['13', 'body', 'xpath_element']);
     }
 
     /**
      * Open the auto-complete suggestions list (Assuming there is only one on the page.).
      *
-     * @Given /^I open the autocomplete suggestions list$/
+     * @Given I open the autocomplete suggestions list
+     * @Given I open the autocomplete suggestions list in the :container :containertype
      */
-    public function i_open_the_autocomplete_suggestions_list() {
+    public function i_open_the_autocomplete_suggestions_list($container = null, $containertype = null) {
         $csstarget = ".form-autocomplete-downarrow";
-        $this->execute('behat_general::i_click_on', [$csstarget, 'css_element']);
+        if ($container && $containertype) {
+            $this->execute('behat_general::i_click_on', [$csstarget, 'css_element', $container, $containertype]);
+        } else {
+            $this->execute('behat_general::i_click_on', [$csstarget, 'css_element']);
+        }
     }
 
     /**

@@ -31,13 +31,18 @@
         }
     }
 }}
-{{< core_form/element-template }}
+{{< core_form/element-group }}
     {{$element}}
-        <span class="fdefaultcustom">
-        {{#element.elements}}
-            {{{separator}}}
-            {{{html}}}
-        {{/element.elements}}
-        </span>
+        <fieldset class="w-100 m-0 p-0 border-0" id="{{element.id}}">
+            <legend class="sr-only">{{label}}</legend>
+            <div class="d-flex flex-wrap align-items-center">
+                <span class="fdefaultcustom">
+                    {{#element.elements}}
+                        {{{separator}}}
+                        {{{html}}}
+                    {{/element.elements}}
+                </span>
+            </div>
+        </fieldset>
     {{/element}}
-{{/ core_form/element-template }}
+{{/ core_form/element-group }}

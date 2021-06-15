@@ -245,6 +245,21 @@ const buildShowInPageReplyFormFunction = (additionalTemplateContext) => {
             } catch (e) {
                 Notification.exception(e);
             }
+
+            // Load formchangechecker module.
+            import('core/yui')
+                .then(Y => {
+                    return new Promise(resolve => {
+                        Y.use('moodle-core-formchangechecker', Y => {
+                            resolve(Y);
+                        });
+                    });
+                })
+                .then(Y => {
+                    M.core_formchangechecker.init({formid: Y.one(postContainer[0].querySelector('form')).generateID()});
+                    return Y;
+                })
+                .catch();
         }
 
         inPageReplyCreateButton.fadeOut(ANIMATION_DURATION, () => {

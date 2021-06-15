@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -39,7 +38,7 @@ $string['clitypevaluedefault'] = 'introduceţi valoarea, apăsaţi Enter pentru 
 $string['cliunknowoption'] = 'Opţiuni necunoscute:
  {$a}
 Vă rugăm folosiţi --opţiunea Ajutor.';
-$string['cliyesnoprompt'] = 'introduceţi d (pentru \'da\') sau \'n\' (pentru \'nu\')';
+$string['cliyesnoprompt'] = 'tastați d (pentru \'da\') sau \'n\' (pentru \'nu\')';
 $string['environmentrequireinstall'] = 'trebuie instalat şi activat';
 $string['environmentrequireversion'] = 'versiuna necesară este {$a->needed} în timp ce dumneavoastră rulaţi versiunea {$a->current}';
 $string['upgradekeyset'] = 'Actualizează cheie  (lăsați gol pentru a nu fi setat)';

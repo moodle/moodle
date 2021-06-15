@@ -13,8 +13,6 @@
 .editor_atto + textarea {
     width: 100%;
     padding: 0;
-    border: 1px solid #bbb;
-    border-top: none;
 }
 
 .editor_atto + textarea {
@@ -27,7 +25,7 @@ div.editor_atto_toolbar {
     display: block;
     background: #f2f2f2;
     min-height: 35px;
-    border: 1px solid #bbb;
+    border: 1px solid $input-border-color;
     width: 100%;
     padding: 0 0 9px 0;
 }
@@ -200,4 +198,23 @@ div.editor_atto_content:hover .atto_control {
 .editor_atto_content_wrap,
 .editor_atto + textarea {
     box-sizing: border-box;
+}
+
+.editor_atto_content.form-control {
+    width: 100%;
+    border-top: 0;
+}
+
+/** Atto fields do not have form-control because that would break the layout of the editor.
+    So they need these extra styles to highlight the editor when there is a validation error. */
+.has-danger .editor_atto_content.form-control,
+.has-danger .editor_atto_content.form-control-danger {
+    @include form-validation-state('invalid', $form-feedback-invalid-color, $form-feedback-icon-invalid);
+}
+
+.open.atto_menu > .dropdown-menu {
+    display: block;
+}
+div.editor_atto_toolbar button .icon {
+    color: $gray-700;
 }

@@ -18,8 +18,9 @@ Feature: Preview a drag-drop into text question
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype  | name         | template |
-      | Test questions   | ddwtos | Drag to text | fox      |
+      | questioncategory | qtype  | name                  | template |
+      | Test questions   | ddwtos | Drag to text          | fox      |
+      | Test questions   | ddwtos | Drag to text infinite | infinite |
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Question bank" in current page administration
@@ -78,4 +79,17 @@ Feature: Preview a drag-drop into text question
     And I press "Submit and finish"
     Then the state of "The" question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"
+    And I switch to the main window
+
+  @javascript
+  Scenario: Preview a infinite question.
+    When I choose "Preview" action for "Drag to text infinite" in the question bank
+    And I switch to "questionpreview" window
+    # Increase window size.
+    # Keep window large else drag will scroll the window to find element.
+    And I change window size to "medium"
+    And I press "Fill in correct responses"
+    Then I should see "Option1" in the home area of drag and drop into text question
+    And I should see "Option2" in the home area of drag and drop into text question
+    And I should see "Option3" in the home area of drag and drop into text question
     And I switch to the main window

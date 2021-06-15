@@ -449,7 +449,8 @@ class cache_factory {
                         $definition = $instance->get_definition_by_id($id);
                         if (!$definition) {
                             throw new coding_exception('The requested cache definition does not exist.'. $id, $id);
-                        } else if (!$this->is_disabled()) {
+                        }
+                        if (!$this->is_disabled()) {
                             debugging('Cache definitions reparsed causing cache reset in order to locate definition.
                                 You should bump the version number to ensure definitions are reprocessed.', DEBUG_DEVELOPER);
                         }

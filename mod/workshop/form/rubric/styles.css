@@ -33,9 +33,26 @@
     display: none;
 }
 
-.path-mod-workshop #id_rubric-grid-wrapper .rubric-grid {
+.path-mod-workshop .mform.frozen #id_rubric-grid-wrapper,
+.path-mod-workshop #id_rubric-grid-wrapper {
     margin-left: auto;
     margin-right: auto;
+    width: 100%;
+}
+
+.path-mod-workshop .mform.frozen #id_rubric-grid-wrapper .checkbox,
+.path-mod-workshop .assessmentform.rubric.grid #id_rubric-grid-wrapper .checkbox {
+    max-width: 100%;
+    flex: 0 0 100%;
+    text-align: left;
+}
+
+@media all and (-ms-high-contrast: none) {  /* IE10 & IE11 hack */
+    .path-mod-workshop .mform.frozen .rubric-grid,
+    .path-mod-workshop .assessmentform .rubric-grid {
+        width: 100%;
+        table-layout: fixed;
+    }
 }
 
 .path-mod-workshop .mform.frozen #id_rubric-grid-wrapper .fitem .felement,

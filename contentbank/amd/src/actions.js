@@ -139,10 +139,26 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                 });
             }).then(function(modal) {
                 modal.setSaveButtonText(saveButtonText);
-                modal.getRoot().on(ModalEvents.save, function() {
+                modal.getRoot().on(ModalEvents.save, function(e) {
                     // The action is now confirmed, sending an action for it.
-                    var newname = $("#newname").val();
-                    return renameContent(contentid, newname);
+                    var newname = $("#newname").val().trim();
+                    if (newname) {
+                        renameContent(contentid, newname);
+                    } else {
+                        var errorStrings = [
+                            {
+                                key: 'error',
+                            },
+                            {
+                                key: 'emptynamenotallowed',
+                                component: 'core_contentbank',
+                            },
+                        ];
+                        Str.get_strings(errorStrings).then(function(langStrings) {
+                            Notification.alert(langStrings[0], langStrings[1]);
+                        }).catch(Notification.exception);
+                        e.preventDefault();
+                    }
                 });
 
                 // Handle hidden event.
@@ -211,11 +227,11 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
         };
         var requestType = 'success';
         Ajax.call([request])[0].then(function(data) {
-            if (data) {
+            if (data.result) {
                 return 'contentrenamed';
             }
             requestType = 'error';
-            return 'contentnotrenamed';
+            return data.warnings[0].message;
 
         }).then(function(message) {
             var params = null;

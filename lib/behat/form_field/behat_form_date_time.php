@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Date form field class.
+ * Date time form field class.
  *
  * @package    core_form
  * @category   test
@@ -25,18 +25,31 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__  . '/behat_form_group.php');
+require_once(__DIR__  . '/behat_form_date.php');
 
 /**
- * Date form field.
+ * Date time form field.
  *
  * This class will be refactored in case we are interested in
- * creating more complex formats to fill date and date-time fields.
+ * creating more complex formats to fill date-time fields.
  *
  * @package    core_form
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_date_selector extends behat_form_group {
+class behat_form_date_time extends behat_form_date {
+
+    /**
+     * Returns the date field identifiers and the values that should be assigned to them.
+     *
+     * @param int $timestamp The UNIX timestamp
+     * @return array
+     */
+    protected function get_mapped_fields(int $timestamp): array {
+        return array_merge(parent::get_mapped_fields($timestamp), [
+            'hour' => date('G', $timestamp),
+            'minute' => (int) date('i', $timestamp)
+        ]);
+    }
 }

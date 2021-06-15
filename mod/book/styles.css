@@ -30,7 +30,7 @@
     flex-direction: column;
 }
 .path-mod-book .book_toc li {
-    flex: 1 1 100%;
+    flex: 1 1 auto;
 }
 .path-mod-book .book_toc_indented > ul {
     margin-left: 0;

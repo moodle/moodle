@@ -24,7 +24,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
       | assignsubmission_file_enabled | 0 |
-      | Attempts reopened | Manually |
+      | Additional attempts | Manually |
       | Hide grader identity from students | Yes |
     And I log out
     And I log in as "student1"
@@ -97,7 +97,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | assignsubmission_onlinetext_enabled | 1 |
       | assignsubmission_file_enabled | 0 |
       | Students submit in groups | Yes |
-      | Attempts reopened | Manually |
+      | Additional attempts | Manually |
       | Maximum attempts | 3 |
       | Group mode | Separate groups |
     And I log out

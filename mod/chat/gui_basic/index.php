@@ -149,7 +149,9 @@ echo $OUTPUT->box_end();
 echo '<div id="send">';
 echo '<form id="editing" method="post" action="index.php">';
 
-echo '<h2><label for="message">'.get_string('sendmessage', 'message').'</label></h2>';
+echo '<h2><label for="message">' . get_string('sendmessage', 'message');
+echo $OUTPUT->help_icon('usingchat', 'chat');
+echo '</label></h2>';
 echo '<div class="mb-1">';
 echo '<input type="text" id="message" class="form-control" name="message" value="'.s($refreshedmessage, true).'" size="60" />';
 echo '</div><div class="mb-1">';

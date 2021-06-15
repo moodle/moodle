@@ -196,8 +196,11 @@ M.core_availability.form = {
         // If the groupmode and grouping id aren't set, disable it.
         var groupmode = Y.one('#id_groupmode');
         var groupingid = Y.one('#id_groupingid');
-        if ((!groupmode || Number(groupmode.get('value')) === 0) &&
-                (!groupingid || Number(groupingid.get('value')) === 0)) {
+        var groupavailability = Number(this.restrictByGroup.getData('groupavailability')) === 1;
+        var groupingavailability = Number(this.restrictByGroup.getData('groupingavailability')) === 1;
+
+        if ((!groupmode || Number(groupmode.get('value')) === 0 || !groupavailability) &&
+                (!groupingid || Number(groupingid.get('value')) === 0 || !groupingavailability)) {
             this.restrictByGroup.set('disabled', true);
             return;
         }
@@ -218,22 +221,28 @@ M.core_availability.form = {
         e.preventDefault();
 
         // Add the condition.
+        var groupmode = Y.one('#id_groupmode');
         var groupingid = Y.one('#id_groupingid');
+        var groupavailability = Number(this.restrictByGroup.getData('groupavailability')) === 1;
+        var groupingavailability = Number(this.restrictByGroup.getData('groupingavailability')) === 1;
+
         var newChild;
-        if (groupingid && Number(groupingid.get('value')) !== 0) {
+        if (groupingid && Number(groupingid.get('value')) !== 0 && groupingavailability) {
             // Add a grouping restriction if one is specified.
             newChild = new M.core_availability.Item(
                     {type: 'grouping', id: Number(groupingid.get('value'))}, true);
-        } else {
+        } else if (groupmode && groupavailability) {
             // Otherwise just add a group restriction.
             newChild = new M.core_availability.Item({type: 'group'}, true);
         }
 
         // Refresh HTML.
-        this.rootList.addChild(newChild);
-        this.update();
-        this.rootList.renumber();
-        this.rootList.updateHtml();
+        if (newChild !== null) {
+            this.rootList.addChild(newChild);
+            this.update();
+            this.rootList.renumber();
+            this.rootList.updateHtml();
+        }
     }
 };
 
@@ -408,7 +417,7 @@ M.core_availability.List = function(json, root, parentRoot) {
         noneNode.appendChild(deleteIcon.span);
 
         // Also if it's not the root, none is actually invalid, so add a label.
-        noneNode.appendChild(Y.Node.create('<span class="mt-1 label label-warning">' +
+        noneNode.appendChild(Y.Node.create('<span class="mt-1 badge badge-warning">' +
                 M.util.get_string('invalid', 'availability') + '</span>'));
     }
 
@@ -922,7 +931,7 @@ M.core_availability.Item = function(json, root) {
 
     // Add the invalid marker (empty).
     this.node.appendChild(document.createTextNode(' '));
-    this.node.appendChild(Y.Node.create('<span class="label label-warning"/>'));
+    this.node.appendChild(Y.Node.create('<span class="badge badge-warning"/>'));
 };
 
 /**
@@ -958,7 +967,7 @@ M.core_availability.Item.prototype.fillErrors = function(errors) {
         errors.push('core_availability:item_unknowntype');
     }
     // If any errors were added, add the marker to this item.
-    var errorLabel = this.node.one('> .label-warning');
+    var errorLabel = this.node.one('> .badge-warning');
     if (errors.length !== before && !errorLabel.get('firstChild')) {
         errorLabel.appendChild(document.createTextNode(M.util.get_string('invalid', 'availability')));
     } else if (errors.length === before && errorLabel.get('firstChild')) {

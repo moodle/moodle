@@ -886,7 +886,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $info->type           = $rawcolumn->data_type;
         $info->meta_type      = $this->mysqltype2moodletype($rawcolumn->data_type);
         if ($this->has_breaking_change_quoted_defaults()) {
-            $info->default_value = trim($rawcolumn->column_default, "'");
+            $info->default_value = is_null($rawcolumn->column_default) ? null : trim($rawcolumn->column_default, "'");
             if ($info->default_value === 'NULL') {
                 $info->default_value = null;
             }
@@ -1374,7 +1374,7 @@ class mysqli_native_moodle_database extends moodle_database {
      * If the return ID isn't required, then this just reports success as true/false.
      * $data is an object containing needed data
      * @param string $table The database table to be inserted into
-     * @param object $data A data object with values for one or more fields in the record
+     * @param object|array $dataobject A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @return bool|int true or new id
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1686,6 +1686,23 @@ class mysqli_native_moodle_database extends moodle_database {
         $this->query_end($result);
 
         return true;
+    }
+
+    /**
+     * Deletes records using a subquery, which is done with a strange DELETE...JOIN syntax in MySQL
+     * because it performs very badly with normal subqueries.
+     *
+     * @param string $table Table to delete from
+     * @param string $field Field in table to match
+     * @param string $alias Name of single column in subquery e.g. 'id'
+     * @param string $subquery Query that will return values of the field to delete
+     * @param array $params Parameters for query
+     * @throws dml_exception If there is any error
+     */
+    public function delete_records_subquery(string $table, string $field, string $alias, string $subquery, array $params = []): void {
+        // Aliases mysql_deltable and mysql_subquery are chosen to be unlikely to conflict.
+        $this->execute("DELETE mysql_deltable FROM {" . $table . "} mysql_deltable JOIN " .
+                "($subquery) mysql_subquery ON mysql_subquery.$alias = mysql_deltable.$field", $params);
     }
 
     public function sql_cast_char2int($fieldname, $text=false) {

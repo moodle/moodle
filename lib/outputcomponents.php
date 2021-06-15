@@ -1853,6 +1853,8 @@ class html_writer {
     /**
      * Generates a simple select form field
      *
+     * Note this function does HTML escaping on the optgroup labels, but not on the choice labels.
+     *
      * @param array $options associative array value=>label ex.:
      *                array(1=>'One, 2=>Two)
      *              it is also possible to specify optgroup as complex label array ex.:
@@ -4683,6 +4685,12 @@ class action_menu_link extends action_link implements renderable {
     public $actionmenu = null;
 
     /**
+     * The number of instances of this action menu link (and its subclasses).
+     * @var int
+     */
+    protected static $instance = 1;
+
+    /**
      * Constructs the object.
      *
      * @param moodle_url $url The URL for the action.
@@ -4705,10 +4713,8 @@ class action_menu_link extends action_link implements renderable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        static $instance = 1;
-
         $data = parent::export_for_template($output);
-        $data->instance = $instance++;
+        $data->instance = self::$instance++;
 
         // Ignore what the parent did with the attributes, except for ID and class.
         $data->attributes = [];

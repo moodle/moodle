@@ -26,7 +26,6 @@ namespace tool_lp\form;
 defined('MOODLE_INTERNAL') || die();
 
 use moodleform;
-use core\form\persistent;
 
 require_once($CFG->libdir . '/formslib.php');
 
@@ -39,17 +38,20 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class template_cohorts extends moodleform {
 
+    /**
+     * Form definition
+     *
+     * @return void
+     */
     public function definition() {
         $mform = $this->_form;
 
         $options = array(
-            'ajax' => 'tool_lp/form-cohort-selector',
             'multiple' => true,
-            'data-contextid' => $this->_customdata['pagecontextid'],
-            'data-includes' => 'parents'
+            'exclude' => implode(',', $this->_customdata['excludecohorts']),
+            'contextid' => $this->_customdata['pagecontextid'],
         );
-        $mform->addElement('autocomplete', 'cohorts', get_string('selectcohortstosync', 'tool_lp'), array(), $options);
+        $mform->addElement('cohort', 'cohorts', get_string('selectcohortstosync', 'tool_lp'), $options);
         $mform->addElement('submit', 'submit', get_string('addcohorts', 'tool_lp'));
     }
-
 }

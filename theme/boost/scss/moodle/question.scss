@@ -154,6 +154,14 @@
         font-weight: normal;
     }
 
+    & > tbody > tr.r1 {
+        background-color: $table-accent-bg;
+    }
+
+    & > tbody > tr.highlight {
+        border: $border-width solid $info;
+    }
+
     .checkbox {
         padding-left: 5px;
     }
@@ -221,7 +229,7 @@
 
 body.path-question-type {
     /* Hacks to display the labels within a form group. */
-    .form-group .sr-only:not(legend) {
+    .form-group .sr-only:not(legend):not([for="id_category"]) {
         position: static;
         width: auto;
         height: auto;
@@ -245,8 +253,8 @@ body.path-question-type {
     width: 7em;
     padding: 0.5em;
     margin-bottom: 1.8em;
-    background-color: $gray-lighter;
-    border: 1px solid darken($gray-lighter, 7%);
+    background-color: $gray-100;
+    border: 1px solid darken($gray-300, 7%);
 
     @include border-radius(2px);
 }
@@ -292,11 +300,15 @@ body.path-question-type {
 }
 .que .outcome,
 .que .comment {
-    @include alert-variant(theme-color-level('warning', $alert-bg-level), theme-color-level('warning', $alert-border-level), theme-color-level('warning', $alert-color-level)); /* stylelint-disable-line max-line-length */
+    @include alert-variant(theme-color-level('warning', $alert-bg-level), theme-color-level('warning', $alert-border-level), theme-color-level('warning', $alert-color-level - 0.9)); /* stylelint-disable-line max-line-length */
+    // Darken link colour inside comments for better colour contrast against regular text.
+    a {
+        color: darken($link-color, 30%);
+    }
 }
 
 .que .formulation {
-    @include alert-variant(theme-color-level('info', $alert-bg-level), theme-color-level('info', $alert-border-level), theme-color-level('info', $alert-color-level)); /* stylelint-disable-line max-line-length */
+    @include alert-variant(theme-color-level('info', $alert-bg-level - 1.30), theme-color-level('info', $alert-border-level), theme-color-level('info', $alert-color-level + 4)); /* stylelint-disable-line max-line-length */
 }
 
 .que.multichoice .answer div.r0 .icon.fa-check,
@@ -350,14 +362,14 @@ body.path-question-type {
 
 .que .correctness {
     &.correct {
-        background-color: $state-success-text;
+        @include badge-variant($success);
     }
     &.partiallycorrect {
-        background-color: $state-warning-text;
+        @include badge-variant($warning);
     }
     &.notanswered,
     &.incorrect {
-        background-color: $state-danger-text;
+        @include badge-variant($danger);
     }
 }
 
@@ -419,6 +431,13 @@ body.jsenabled .questionflag input[type=checkbox] {
     margin: 1em 0;
 }
 
+#page-question-preview .collapsibleregion {
+    .collapsibleregioncaption,
+    .collapsibleregionextracontent {
+        display: inline-block;
+    }
+}
+
 // imported from quiz.css
 
 #page-mod-quiz-edit ul.slots .activityinstance {
@@ -459,14 +478,6 @@ body.jsenabled .questionflag input[type=checkbox] {
 
 #page-mod-quiz-edit div.questionbank .categoryquestionscontainer {
     background: transparent;
-}
-
-#page-mod-quiz-edit #categoryquestions > thead {
-    background: #fff;
-}
-
-#page-mod-quiz-edit #categoryquestions > tbody > tr:nth-of-type(even) {
-    background: #e4e4e4;
 }
 
 #page-mod-quiz-edit .questionbankwindow div.header {

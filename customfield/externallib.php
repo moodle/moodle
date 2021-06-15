@@ -118,7 +118,7 @@ class core_customfield_external extends external_api {
                 'component' => new external_value(PARAM_COMPONENT, 'component'),
                 'area' => new external_value(PARAM_ALPHANUMEXT, 'area'),
                 'itemid' => new external_value(PARAM_INT, 'itemid'),
-                'usescategories' => new external_value(PARAM_INT, 'view has categories'),
+                'usescategories' => new external_value(PARAM_BOOL, 'view has categories'),
                 'categories' => new external_multiple_structure(
                     new external_single_structure(
                         array(

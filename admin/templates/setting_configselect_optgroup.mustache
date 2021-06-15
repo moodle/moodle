@@ -22,6 +22,7 @@
     Context variables required for this template:
     * name - form element name
     * id - element id
+    * readonly - bool
     * options - list of options (not grouped)
     * optgroups - list of options grouped containing the group label and for each option: name, value, selected
 
@@ -29,6 +30,7 @@
     {
         "name": "test",
         "id": "test0",
+        "readonly": false,
         "options": [
             { "name": "Option 1", "value": "V", "selected": false },
             { "name": "Option 2", "value": "V", "selected": false }
@@ -55,7 +57,7 @@
     Setting configselect with optgroup support.
 }}
 <div class="form-select defaultsnext">
-    <select id="{{id}}" name="{{name}}" class="custom-select">
+    <select {{#readonly}}disabled{{/readonly}} id="{{id}}" name="{{name}}" class="custom-select">
         {{#options}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
         {{/options}}

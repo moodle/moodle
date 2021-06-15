@@ -93,7 +93,7 @@ class fetch extends external_api {
      * @since Moodle 3.8
      */
     public static function execute(string $component, int $contextid, string $itemname, int $gradeduserid): array {
-        global $CFG;
+        global $CFG, $USER;
         require_once("{$CFG->libdir}/gradelib.php");
         [
             'component' => $component,
@@ -126,7 +126,12 @@ class fetch extends external_api {
         }
 
         // Fetch the actual data.
-        $gradeduser = \core_user::get_user($gradeduserid);
+        $gradeduser = \core_user::get_user($gradeduserid, '*', MUST_EXIST);
+
+        // One can access its own grades. Others just if they're graders.
+        if ($gradeduserid != $USER->id) {
+            $gradeitem->require_user_can_grade($gradeduser, $USER);
+        }
 
         return self::get_fetch_data($gradeitem, $gradeduser);
     }
@@ -144,6 +149,10 @@ class fetch extends external_api {
         $hasgrade = $gradeitem->user_has_grade($gradeduser);
         $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
         $instance = $gradeitem->get_advanced_grading_instance($USER, $grade);
+        if (!$instance) {
+            throw new moodle_exception('error:gradingunavailable', 'grading');
+        }
+
         $controller = $instance->get_controller();
         $definition = $controller->get_definition();
         $fillings = $instance->get_rubric_filling();

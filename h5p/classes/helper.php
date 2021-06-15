@@ -421,6 +421,8 @@ class helper {
      * @return array The JS array converted to PHP array.
      */
     public static function parse_js_array(string $jscontent): array {
+        // Convert all line-endings to UNIX format first.
+        $jscontent = str_replace(array("\r\n", "\r"), "\n", $jscontent);
         $jsarray = preg_split('/,\n\s+/', substr($jscontent, 0, -1));
         $jsarray = preg_replace('~{?\\n~', '', $jsarray);
 

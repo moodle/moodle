@@ -88,14 +88,11 @@ if (isset($reviewurl)) {
     echo $OUTPUT->render($widget);
 }
 
-if ($manager->is_tracking_enabled()) {
-    $trackcomponent = 'mod_h5pactivity';
-} else {
-    $trackcomponent = '';
+if (!$manager->is_tracking_enabled()) {
     $message = get_string('previewmode', 'mod_h5pactivity');
     echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
 }
 
-echo player::display($fileurl, $config, true, $trackcomponent);
+echo player::display($fileurl, $config, true, 'mod_h5pactivity');
 
 echo $OUTPUT->footer();

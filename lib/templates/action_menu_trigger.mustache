@@ -95,16 +95,9 @@
         <div class="dropdown-menu dropdown-menu-right {{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
             {{#items}}
                 {{#actionmenulink}}
-                    <a href="{{url}}" class="dropdown-item {{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>
-                        {{#icon}}
-                            {{#pix}}{{key}},{{component}},{{title}}{{/pix}}
-                        {{/icon}}
-                        {{#showtext}}
-                        <span class="menu-action-text" id="actionmenuaction-{{instance}}">
-                            {{{text}}}
-                        </span>
-                        {{/showtext}}
-                    </a>
+                    {{< core/action_menu_link}}
+                        {{$actionmenulinkclasses}}dropdown-item {{classes}}{{/actionmenulinkclasses}}
+                    {{/ core/action_menu_link}}
                 {{/actionmenulink}}
                 {{#actionmenufiller}}
                     <div class="dropdown-divider" role="presentation"><span class="filler">&nbsp;</span></div>

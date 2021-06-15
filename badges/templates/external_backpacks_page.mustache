@@ -25,7 +25,7 @@
     Example context (json):
     {
         "backpacks": [
-            {"backpackweburl": "http://localhost/", "sitebackpack": true, "canedit": false, "cantest": true}
+            {"backpackweburl": "http://localhost/", "sitebackpack": true, "cantest": true}
         ]
     }
 }}
@@ -50,9 +50,7 @@
             <td> {{{backpackweburl}}} </td>
             <td> {{#sitebackpack}}Yes{{/sitebackpack}} </td>
             <td>
-            {{#canedit}}
                 <a href="{{baseurl}}?id={{id}}&action=edit">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
-            {{/canedit}}
             {{^iscurrent}}
                 <a href="{{baseurl}}?id={{id}}&action=delete" role="button" data-action="deletebackpack">
                     {{#pix}}t/delete, core,{{#str}}delete{{/str}}{{/pix}}

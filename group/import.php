@@ -49,30 +49,37 @@ $PAGE->set_pagelayout('admin');
 
 $returnurl = new moodle_url('/group/index.php', array('id'=>$id));
 
-$mform_post = new groups_import_form(null, array('id'=>$id));
+$importform = new groups_import_form(null, ['id' => $id]);
 
 // If a file has been uploaded, then process it
-if ($mform_post->is_cancelled()) {
+if ($importform->is_cancelled()) {
     redirect($returnurl);
 
-} else if ($mform_post->get_data()) {
+} else if ($formdata = $importform->get_data()) {
     echo $OUTPUT->header();
 
-    $csv_encode = '/\&\#44/';
-    if (isset($CFG->CSV_DELIMITER)) {
-        $csv_delimiter = $CFG->CSV_DELIMITER;
-
-        if (isset($CFG->CSV_ENCODE)) {
-            $csv_encode = '/\&\#' . $CFG->CSV_ENCODE . '/';
-        }
-    } else {
-        $csv_delimiter = ",";
-    }
-
-    $text = $mform_post->get_file_content('userfile');
-    $text = preg_replace('!\r\n?!',"\n",$text);
+    $text = $importform->get_file_content('userfile');
+    $text = preg_replace('!\r\n?!', "\n", $text);
 
     $rawlines = explode("\n", $text);
+
+    require_once($CFG->libdir . '/csvlib.class.php');
+    $importid = csv_import_reader::get_new_iid('groupimport');
+    $csvimport = new csv_import_reader($importid, 'groupimport');
+    $delimiter = $formdata->delimiter_name;
+    $encoding = $formdata->encoding;
+    $readcount = $csvimport->load_csv_content($text, $encoding, $delimiter);
+
+    if ($readcount === false) {
+        print_error('csvfileerror', 'error', $PAGE->url, $csvimport->get_error());
+    } else if ($readcount == 0) {
+        print_error('csvemptyfile', 'error', $PAGE->url, $csvimport->get_error());
+    } else if ($readcount == 1) {
+        print_error('csvnodata', 'error', $PAGE->url);
+    }
+
+    $csvimport->init();
+
     unset($text);
 
     // make arrays of valid fields for error checking
@@ -88,12 +95,12 @@ if ($mform_post->is_cancelled()) {
         );
 
     // --- get header (field names) ---
-    $header = explode($csv_delimiter, array_shift($rawlines));
+    $header = explode($csvimport::get_delimiter($delimiter), array_shift($rawlines));
     // check for valid field names
     foreach ($header as $i => $h) {
         $h = trim($h); $header[$i] = $h; // remove whitespace
         if (!(isset($required[$h]) or isset($optionalDefaults[$h]) or isset($optional[$h]))) {
-                print_error('invalidfieldname', 'error', 'import.php?id='.$id, $h);
+                print_error('invalidfieldname', 'error', $PAGE->url, $h);
             }
         if (isset($required[$h])) {
             $required[$h] = 2;
@@ -102,32 +109,28 @@ if ($mform_post->is_cancelled()) {
     // check for required fields
     foreach ($required as $key => $value) {
         if ($value < 2) {
-            print_error('fieldrequired', 'error', 'import.php?id='.$id, $key);
+            print_error('fieldrequired', 'error', $PAGE->url, $key);
         }
     }
     $linenum = 2; // since header is line 1
 
-    foreach ($rawlines as $rawline) {
+    while ($line = $csvimport->next()) {
 
         $newgroup = new stdClass();//to make Martin happy
         foreach ($optionalDefaults as $key => $value) {
             $newgroup->$key = current_language(); //defaults to current language
         }
-        //Note: commas within a field should be encoded as &#44 (for comma separated csv files)
-        //Note: semicolon within a field should be encoded as &#59 (for semicolon separated csv files)
-        $line = explode($csv_delimiter, $rawline);
         foreach ($line as $key => $value) {
-            //decode encoded commas
-            $record[$header[$key]] = preg_replace($csv_encode, $csv_delimiter, trim($value));
+            $record[$header[$key]] = trim($value);
         }
-        if (trim($rawline) !== '') {
+        if (trim(implode($line)) !== '') {
             // add a new group to the database
 
             // add fields to object $user
             foreach ($record as $name => $value) {
                 // check for required values
                 if (isset($required[$name]) and !$value) {
-                    print_error('missingfield', 'error', 'import.php?id='.$id, $name);
+                    print_error('missingfield', 'error', $PAGE->url, $name);
                 } else if ($name == "groupname") {
                     $newgroup->name = $value;
                 } else {
@@ -232,6 +235,7 @@ if ($mform_post->is_cancelled()) {
         }
     }
 
+    $csvimport->close();
     echo $OUTPUT->single_button($returnurl, get_string('continue'), 'get');
     echo $OUTPUT->footer();
     die;
@@ -240,5 +244,5 @@ if ($mform_post->is_cancelled()) {
 /// Print the form
 echo $OUTPUT->header();
 echo $OUTPUT->heading_with_help($strimportgroups, 'importgroups', 'core_group');
-$mform_post ->display();
+$importform->display();
 echo $OUTPUT->footer();

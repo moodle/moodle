@@ -30,6 +30,7 @@ define([
         'core/templates',
         'core/notification',
         'core/pending',
+        'core/yui',
         'mod_forum/selectors',
         'mod_forum/inpage_reply',
     ], function(
@@ -37,6 +38,7 @@ define([
         Templates,
         Notification,
         Pending,
+        Y,
         Selectors,
         InPageReply
     ) {
@@ -75,6 +77,13 @@ define([
                     .then(function() {
                         return currentRoot.find(Selectors.post.inpageReplyContent)
                             .slideToggle(300, pending.resolve).find('textarea').focus();
+                    })
+                    .then(function() {
+                        // Load formchangechecker module.
+                        Y.use('moodle-core-formchangechecker', () => {
+                            M.core_formchangechecker.init({formid: `inpage-reply-${context.postid}`});
+                        });
+                        return;
                     })
                     .fail(Notification.exception);
             } else {

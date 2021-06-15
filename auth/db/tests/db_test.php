@@ -119,6 +119,7 @@ class auth_db_testcase extends advanced_testcase {
         $table->add_field('email', XMLDB_TYPE_CHAR, '255', null, null, null);
         $table->add_field('firstname', XMLDB_TYPE_CHAR, '255', null, null, null);
         $table->add_field('lastname', XMLDB_TYPE_CHAR, '255', null, null, null);
+        $table->add_field('animal', XMLDB_TYPE_CHAR, '255', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         if ($dbman->table_exists($table)) {
             $dbman->drop_table($table);
@@ -136,6 +137,15 @@ class auth_db_testcase extends advanced_testcase {
         set_config('field_updatelocal_email', 'oncreate', 'auth_db');
         set_config('field_updateremote_email', '0', 'auth_db');
         set_config('field_lock_email', 'unlocked', 'auth_db');
+
+        // Create a user profile field and add mapping to it.
+        $DB->insert_record('user_info_field', ['shortname' => 'pet', 'name' => 'Pet', 'required' => 0,
+            'visible' => 1, 'locked' => 0, 'categoryid' => 1, 'datatype' => 'text']);
+
+        set_config('field_map_profile_field_pet', 'animal', 'auth_db');
+        set_config('field_updatelocal_profile_field_pet', 'oncreate', 'auth_db');
+        set_config('field_updateremote_profile_field_pet', '0', 'auth_db');
+        set_config('field_lock_profile_field_pet', 'unlocked', 'auth_db');
 
         // Init the rest of settings.
         set_config('passtype', 'plaintext', 'auth_db');
@@ -156,6 +166,7 @@ class auth_db_testcase extends advanced_testcase {
 
     public function test_plugin() {
         global $DB, $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
 
         $this->resetAfterTest(true);
 
@@ -193,7 +204,7 @@ class auth_db_testcase extends advanced_testcase {
 
         // Test bulk user account creation.
 
-        $user2 = (object)array('name'=>'u2', 'pass'=>'heslo', 'email'=>'u2@example.com');
+        $user2 = (object)['name' => 'u2', 'pass' => 'heslo', 'email' => 'u2@example.com', 'animal' => 'cat'];
         $user2->id = $DB->insert_record('auth_db_users', $user2);
 
         $user3 = (object)array('name'=>'admin', 'pass'=>'heslo', 'email'=>'admin@example.com'); // Should be skipped.
@@ -202,13 +213,24 @@ class auth_db_testcase extends advanced_testcase {
         $this->assertCount(2, $DB->get_records('user'));
 
         $trace = new null_progress_trace();
-        $auth->sync_users($trace, false);
 
+        // Sync users and make sure that two events user_created werer triggered.
+        $sink = $this->redirectEvents();
+        $auth->sync_users($trace, false);
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertCount(2, $events);
+        $this->assertTrue($events[0] instanceof  \core\event\user_created);
+        $this->assertTrue($events[1] instanceof  \core\event\user_created);
+
+        // Assert the two users were created.
         $this->assertEquals(4, $DB->count_records('user'));
         $u1 = $DB->get_record('user', array('username'=>$user1->name, 'auth'=>'db'));
         $this->assertSame($user1->email, $u1->email);
+        $this->assertEmpty(profile_user_record($u1->id)->pet);
         $u2 = $DB->get_record('user', array('username'=>$user2->name, 'auth'=>'db'));
         $this->assertSame($user2->email, $u2->email);
+        $this->assertSame($user2->animal, profile_user_record($u2->id)->pet);
         $admin = $DB->get_record('user', array('username'=>'admin', 'auth'=>'manual'));
         $this->assertNotEmpty($admin);
 
@@ -217,12 +239,14 @@ class auth_db_testcase extends advanced_testcase {
 
         $user2b = clone($user2);
         $user2b->email = 'u2b@example.com';
+        $user2b->animal = 'dog';
         $DB->update_record('auth_db_users', $user2b);
 
         $auth->sync_users($trace, false);
         $this->assertEquals(4, $DB->count_records('user'));
         $u2 = $DB->get_record('user', array('username'=>$user2->name));
         $this->assertSame($user2->email, $u2->email);
+        $this->assertSame($user2->animal, profile_user_record($u2->id)->pet);
 
         $auth->sync_users($trace, true);
         $this->assertEquals(4, $DB->count_records('user'));
@@ -231,6 +255,8 @@ class auth_db_testcase extends advanced_testcase {
 
         set_config('field_updatelocal_email', 'onlogin', 'auth_db');
         $auth->config->field_updatelocal_email = 'onlogin';
+        set_config('field_updatelocal_profile_field_pet', 'onlogin', 'auth_db');
+        $auth->config->field_updatelocal_profile_field_pet = 'onlogin';
 
         $auth->sync_users($trace, false);
         $this->assertEquals(4, $DB->count_records('user'));
@@ -241,6 +267,7 @@ class auth_db_testcase extends advanced_testcase {
         $this->assertEquals(4, $DB->count_records('user'));
         $u2 = $DB->get_record('user', array('username'=>$user2->name));
         $this->assertSame($user2b->email, $u2->email);
+        $this->assertSame($user2b->animal, profile_user_record($u2->id)->pet);
 
 
         // Test sync deletes and suspends.

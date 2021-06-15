@@ -2609,6 +2609,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
      * Test get forum posts by user id.
      */
     public function test_mod_forum_get_discussion_posts_by_userid() {
+        global $DB;
         $this->resetAfterTest(true);
 
         $urlfactory = mod_forum\local\container::get_url_factory();
@@ -2660,11 +2661,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $forum1context = context_module::instance($forum1->cmid);
 
         // Add discussions to the forums.
+        $time = time();
         $record = new stdClass();
         $record->course = $course1->id;
         $record->userid = $user1->id;
         $record->forum = $forum1->id;
-        $record->timemodified = 1;
+        $record->timemodified = $time + 100;
         $discussion1 = $forumgenerator->create_discussion($record);
         $discussion1firstpost = $postvault->get_first_post_for_discussion_ids([$discussion1->id]);
         $discussion1firstpost = $discussion1firstpost[$discussion1->firstpost];
@@ -2674,7 +2676,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record->course = $course1->id;
         $record->userid = $user1->id;
         $record->forum = $forum1->id;
-        $record->timemodified = 2;
+        $record->timemodified = $time + 200;
         $discussion2 = $forumgenerator->create_discussion($record);
         $discussion2firstpost = $postvault->get_first_post_for_discussion_ids([$discussion2->id]);
         $discussion2firstpost = $discussion2firstpost[$discussion2->firstpost];
@@ -2720,9 +2722,19 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Following line enrol and assign default role id to the user.
         // So the user automatically gets mod/forum:viewdiscussion on all forums of the course.
-        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'teacher');
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
-
+        // Changed display period for the discussions in past.
+        $discussion = new \stdClass();
+        $discussion->id = $discussion1->id;
+        $discussion->timestart = $time - 200;
+        $discussion->timeend = $time - 100;
+        $DB->update_record('forum_discussions', $discussion);
+        $discussion = new \stdClass();
+        $discussion->id = $discussion2->id;
+        $discussion->timestart = $time - 200;
+        $discussion->timeend = $time - 100;
+        $DB->update_record('forum_discussions', $discussion);
         // Create what we expect to be returned when querying the discussion.
         $expectedposts = array(
             'discussions' => array(),
@@ -2771,34 +2783,36 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                             'view' => true,
                             'edit' => true,
                             'delete' => true,
-                            'split' => false,
+                            'split' => true,
                             'reply' => true,
                             'export' => false,
                             'controlreadstatus' => false,
-                            'canreplyprivately' => false,
+                            'canreplyprivately' => true,
                             'selfenrol' => false
                         ],
                         'urls' => [
                             'view' => $urlfactory->get_view_post_url_from_post_id(
-                                    $discussion1reply1->discussion, $discussion1reply1->id)->out(false),
+                                $discussion1reply1->discussion, $discussion1reply1->id)->out(false),
                             'viewisolated' => $isolatedurluser->out(false),
                             'viewparent' => $urlfactory->get_view_post_url_from_post_id(
-                                    $discussion1reply1->discussion, $discussion1reply1->parent)->out(false),
+                                $discussion1reply1->discussion, $discussion1reply1->parent)->out(false),
                             'edit' => (new moodle_url('/mod/forum/post.php', [
-                                    'edit' => $discussion1reply1->id
+                                'edit' => $discussion1reply1->id
                             ]))->out(false),
                             'delete' => (new moodle_url('/mod/forum/post.php', [
-                                    'delete' => $discussion1reply1->id
+                                'delete' => $discussion1reply1->id
                             ]))->out(false),
-                            'split' => null,
+                            'split' => (new moodle_url('/mod/forum/post.php', [
+                                'prune' => $discussion1reply1->id
+                            ]))->out(false),
                             'reply' => (new moodle_url('/mod/forum/post.php#mformforum', [
-                                    'reply' => $discussion1reply1->id
+                                'reply' => $discussion1reply1->id
                             ]))->out(false),
                             'export' => null,
                             'markasread' => null,
                             'markasunread' => null,
                             'discuss' => $urlfactory->get_discussion_view_url_from_discussion_id(
-                                    $discussion1reply1->discussion)->out(false),
+                                $discussion1reply1->discussion)->out(false),
                         ],
                     ]
                 ],
@@ -2831,13 +2845,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                         'charcount' => null,
                         'capabilities' => [
                             'view' => true,
-                            'edit' => false,
-                            'delete' => false,
+                            'edit' => true,
+                            'delete' => true,
                             'split' => false,
                             'reply' => true,
                             'export' => false,
                             'controlreadstatus' => false,
-                            'canreplyprivately' => false,
+                            'canreplyprivately' => true,
                             'selfenrol' => false
                         ],
                         'urls' => [
@@ -2845,8 +2859,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                                 $discussion1firstpostobject->discussion, $discussion1firstpostobject->id)->out(false),
                             'viewisolated' => $isolatedurlparent->out(false),
                             'viewparent' => null,
-                            'edit' => null,
-                            'delete' => null,
+                            'edit' => (new moodle_url('/mod/forum/post.php', [
+                                'edit' => $discussion1firstpostobject->id
+                            ]))->out(false),
+                            'delete' => (new moodle_url('/mod/forum/post.php', [
+                                'delete' => $discussion1firstpostobject->id
+                            ]))->out(false),
                             'split' => null,
                             'reply' => (new moodle_url('/mod/forum/post.php#mformforum', [
                                 'reply' => $discussion1firstpostobject->id
@@ -2904,11 +2922,11 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                             'view' => true,
                             'edit' => true,
                             'delete' => true,
-                            'split' => false,
+                            'split' => true,
                             'reply' => true,
                             'export' => false,
                             'controlreadstatus' => false,
-                            'canreplyprivately' => false,
+                            'canreplyprivately' => true,
                             'selfenrol' => false
                         ],
                         'urls' => [
@@ -2923,7 +2941,9 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                             'delete' => (new moodle_url('/mod/forum/post.php', [
                                 'delete' => $discussion2reply1->id
                             ]))->out(false),
-                            'split' => null,
+                            'split' => (new moodle_url('/mod/forum/post.php', [
+                                'prune' => $discussion2reply1->id
+                            ]))->out(false),
                             'reply' => (new moodle_url('/mod/forum/post.php#mformforum', [
                                 'reply' => $discussion2reply1->id
                             ]))->out(false),
@@ -2964,13 +2984,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                         'charcount' => null,
                         'capabilities' => [
                             'view' => true,
-                            'edit' => false,
-                            'delete' => false,
+                            'edit' => true,
+                            'delete' => true,
                             'split' => false,
                             'reply' => true,
                             'export' => false,
                             'controlreadstatus' => false,
-                            'canreplyprivately' => false,
+                            'canreplyprivately' => true,
                             'selfenrol' => false
                         ],
                         'urls' => [
@@ -2978,8 +2998,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                                 $discussion2firstpostobject->discussion, $discussion2firstpostobject->id)->out(false),
                             'viewisolated' => $isolatedurlparent->out(false),
                             'viewparent' => null,
-                            'edit' => null,
-                            'delete' => null,
+                            'edit' => (new moodle_url('/mod/forum/post.php', [
+                                'edit' => $discussion2firstpostobject->id
+                            ]))->out(false),
+                            'delete' => (new moodle_url('/mod/forum/post.php', [
+                                'delete' => $discussion2firstpostobject->id
+                            ]))->out(false),
                             'split' => null,
                             'reply' => (new moodle_url('/mod/forum/post.php#mformforum', [
                                 'reply' => $discussion2firstpostobject->id
@@ -3347,5 +3371,106 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         $this->expectExceptionMessage(get_string('cannotupdatepost', 'forum'));
         mod_forum_external::update_discussion_post($newpost->id, $subject, $message, $messageformat);
+    }
+
+    /**
+     * Test that we can update the subject of a post to the string '0'
+     */
+    public function test_update_discussion_post_set_subject_to_zero(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion((object) [
+            'userid' => $USER->id,
+            'course' => $course->id,
+            'forum' => $forum->id,
+            'name' => 'Test discussion subject',
+        ]);
+
+        // Update discussion post subject.
+        $result = external_api::clean_returnvalue(
+            mod_forum_external::update_discussion_post_returns(),
+            mod_forum_external::update_discussion_post($discussion->firstpost, '0')
+        );
+        $this->assertTrue($result['status']);
+
+        // Get updated discussion post subject from DB.
+        $postsubject = $DB->get_field('forum_posts', 'subject', ['id' => $discussion->firstpost]);
+        $this->assertEquals('0', $postsubject);
+    }
+
+    /**
+     * Test that we can update the message of a post to the string '0'
+     */
+    public function test_update_discussion_post_set_message_to_zero(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion((object) [
+            'userid' => $USER->id,
+            'course' => $course->id,
+            'forum' => $forum->id,
+            'message' => 'Test discussion message',
+            'messageformat' => FORMAT_HTML,
+        ]);
+
+        // Update discussion post message.
+        $result = external_api::clean_returnvalue(
+            mod_forum_external::update_discussion_post_returns(),
+            mod_forum_external::update_discussion_post($discussion->firstpost, '', '0', FORMAT_HTML)
+        );
+        $this->assertTrue($result['status']);
+
+        // Get updated discussion post subject from DB.
+        $postmessage = $DB->get_field('forum_posts', 'message', ['id' => $discussion->firstpost]);
+        $this->assertEquals('0', $postmessage);
+    }
+
+    /**
+     * Test that we can update the message format of a post to {@see FORMAT_MOODLE}
+     */
+    public function test_update_discussion_post_set_message_format_moodle(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion((object) [
+            'userid' => $USER->id,
+            'course' => $course->id,
+            'forum' => $forum->id,
+            'message' => 'Test discussion message',
+            'messageformat' => FORMAT_HTML,
+        ]);
+
+        // Update discussion post message & messageformat.
+        $result = external_api::clean_returnvalue(
+            mod_forum_external::update_discussion_post_returns(),
+            mod_forum_external::update_discussion_post($discussion->firstpost, '', 'Update discussion message', FORMAT_MOODLE)
+        );
+        $this->assertTrue($result['status']);
+
+        // Get updated discussion post from DB.
+        $updatedpost = $DB->get_record('forum_posts', ['id' => $discussion->firstpost], 'message,messageformat');
+        $this->assertEquals((object) [
+            'message' => 'Update discussion message',
+            'messageformat' => FORMAT_MOODLE,
+        ], $updatedpost);
     }
 }

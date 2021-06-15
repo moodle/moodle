@@ -30,6 +30,12 @@ $contextid = required_param('contextid', PARAM_INT);
 $pluginname = required_param('plugin', PARAM_PLUGIN);
 $id = optional_param('id', null, PARAM_INT);
 $context = context::instance_by_id($contextid, MUST_EXIST);
+
+$cb = new \core_contentbank\contentbank();
+if (!$cb->is_context_allowed($context)) {
+    print_error('contextnotallowed', 'core_contentbank');
+}
+
 require_capability('moodle/contentbank:access', $context);
 
 $returnurl = new \moodle_url('/contentbank/view.php', ['id' => $id]);

@@ -1531,9 +1531,7 @@ class grade_report_grader extends grade_report {
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
             $sql = "SELECT gi.id, COUNT(DISTINCT u.id) AS count
                       FROM {grade_items} gi
-                      CROSS JOIN {user} u
-                      JOIN ($enrolledsql) je
-                           ON je.id = u.id
+                      CROSS JOIN ($enrolledsql) u
                       JOIN {role_assignments} ra
                            ON ra.userid = u.id
                       LEFT OUTER JOIN {grade_grades} g
@@ -1542,7 +1540,6 @@ class grade_report_grader extends grade_report {
                      WHERE gi.courseid = :courseid
                            AND ra.roleid $gradebookrolessql
                            AND ra.contextid $relatedctxsql
-                           AND u.deleted = 0
                            AND g.id IS NULL
                            $groupwheresql
                   GROUP BY gi.id";

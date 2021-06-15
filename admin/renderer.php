@@ -1110,7 +1110,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 if (!empty($installabortable[$plugin->component])) {
                     $status .= $this->output->single_button(
-                        new moodle_url($this->page->url, array('abortinstall' => $plugin->component)),
+                        new moodle_url($this->page->url, array('abortinstall' => $plugin->component, 'confirmplugincheck' => 0)),
                         get_string('cancelinstallone', 'core_plugin'),
                         'post',
                         array('class' => 'actionbutton cancelinstallone d-block mt-1')
@@ -1209,7 +1209,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
         if ($installabortable) {
             $out .= $this->output->single_button(
-                new moodle_url($this->page->url, array('abortinstallx' => 1)),
+                new moodle_url($this->page->url, array('abortinstallx' => 1, 'confirmplugincheck' => 0)),
                 get_string('cancelinstallall', 'core_plugin', count($installabortable)),
                 'post',
                 array('class' => 'singlebutton cancelinstallall mr-1')

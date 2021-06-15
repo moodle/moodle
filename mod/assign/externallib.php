@@ -593,8 +593,8 @@ class mod_assign_external extends external_api {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'course id'),
-                'fullname' => new external_value(PARAM_TEXT, 'course full name'),
-                'shortname' => new external_value(PARAM_TEXT, 'course short name'),
+                'fullname' => new external_value(PARAM_RAW, 'course full name'),
+                'shortname' => new external_value(PARAM_RAW, 'course short name'),
                 'timemodified' => new external_value(PARAM_INT, 'last time modified'),
                 'assignments' => new external_multiple_structure(self::get_assignments_assignment_structure(), 'assignment info')
               ), 'course information object'
@@ -754,14 +754,15 @@ class mod_assign_external extends external_api {
             $placeholders = array('assignid1' => $assign->get_instance()->id,
                                   'assignid2' => $assign->get_instance()->id);
 
-            $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt
+            $submissionmaxattempt = 'SELECT mxs.userid, mxs.groupid, MAX(mxs.attemptnumber) AS maxattempt
                                      FROM {assign_submission} mxs
-                                     WHERE mxs.assignment = :assignid1 GROUP BY mxs.userid';
+                                     WHERE mxs.assignment = :assignid1 GROUP BY mxs.userid, mxs.groupid';
 
             $sql = "SELECT mas.id, mas.assignment,mas.userid,".
                    "mas.timecreated,mas.timemodified,mas.status,mas.groupid,mas.attemptnumber ".
                    "FROM {assign_submission} mas ".
                    "JOIN ( " . $submissionmaxattempt . " ) smx ON mas.userid = smx.userid ".
+                   "AND mas.groupid = smx.groupid ".
                    "WHERE mas.assignment = :assignid2 AND mas.attemptnumber = smx.maxattempt";
 
             if (!empty($params['status'])) {
@@ -2375,7 +2376,8 @@ class mod_assign_external extends external_api {
         }
 
         // Retrieve the rest of the renderable objects.
-        if (has_capability('mod/assign:submit', $assign->get_context(), $user)) {
+        if (has_capability('mod/assign:viewownsubmissionsummary', $context, $user, false)) {
+            // The user can view the submission summary.
             $lastattempt = $assign->get_assign_submission_status_renderable($user, true);
         }
 
@@ -2431,7 +2433,8 @@ class mod_assign_external extends external_api {
             }
 
             // Can edit its own submission?
-            $lastattempt->caneditowner = $assign->submissions_open($user->id) && $assign->is_any_submission_plugin_enabled();
+            $lastattempt->caneditowner = has_capability('mod/assign:submit', $context, $user, false)
+                && $assign->submissions_open($user->id) && $assign->is_any_submission_plugin_enabled();
 
             $result['lastattempt'] = $lastattempt;
         }

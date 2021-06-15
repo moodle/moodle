@@ -36,6 +36,10 @@ use context;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class contentbank {
+
+    /** @var array All the context levels allowed in the content bank */
+    private const ALLOWED_CONTEXT_LEVELS = [CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE];
+
     /** @var array Enabled content types. */
     private $enabledcontenttypes = null;
 
@@ -224,6 +228,8 @@ class contentbank {
     /**
      * Create content from a file information.
      *
+     * @throws file_exception If file operations fail
+     * @throws dml_exception if the content creation fails
      * @param \context $context Context where to upload the file and content.
      * @param int $userid Id of the user uploading the file.
      * @param stored_file $file The file to get information from
@@ -243,7 +249,7 @@ class contentbank {
         $record->name = $filename;
         $record->usercreated = $userid;
         $contentype = new $classname($context);
-        $content = $contentype->create_content($record);
+        $content = $contentype->upload_content($file, $record);
         $event = \core\event\contentbank_content_uploaded::create_from_record($content->get_content());
         $event->trigger();
         return $content;
@@ -331,5 +337,15 @@ class contentbank {
         }
 
         return $contenttypes;
+    }
+
+    /**
+     * Whether the context is allowed.
+     *
+     * @param context $context Context to check.
+     * @return bool
+     */
+    public function is_context_allowed(context $context): bool {
+        return in_array($context->contextlevel, self::ALLOWED_CONTEXT_LEVELS);
     }
 }

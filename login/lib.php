@@ -387,7 +387,9 @@ function core_login_validate_forgot_password_data($data) {
                 $user = get_complete_user_data('email', $data['email'], null, true);
                 if (empty($user->confirmed)) {
                     send_confirmation_email($user);
-                    $errors['email'] = get_string('confirmednot');
+                    if (empty($CFG->protectusernames)) {
+                        $errors['email'] = get_string('confirmednot');
+                    }
                 }
             } catch (dml_missing_record_exception $missingexception) {
                 // User not found. Show error when $CFG->protectusernames is turned off.
@@ -396,7 +398,9 @@ function core_login_validate_forgot_password_data($data) {
                 }
             } catch (dml_multiple_records_exception $multipleexception) {
                 // Multiple records found. Ask the user to enter a username instead.
-                $errors['email'] = get_string('forgottenduplicate');
+                if (empty($CFG->protectusernames)) {
+                    $errors['email'] = get_string('forgottenduplicate');
+                }
             }
         }
 
@@ -404,7 +408,9 @@ function core_login_validate_forgot_password_data($data) {
         if ($user = get_complete_user_data('username', $data['username'])) {
             if (empty($user->confirmed)) {
                 send_confirmation_email($user);
-                $errors['email'] = get_string('confirmednot');
+                if (empty($CFG->protectusernames)) {
+                    $errors['username'] = get_string('confirmednot');
+                }
             }
         }
         if (!$user and empty($CFG->protectusernames)) {

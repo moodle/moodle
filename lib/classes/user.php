@@ -601,33 +601,35 @@ class core_user {
             // The user has chosen to delete the selected users picture.
             $fs->delete_area_files($context->id, 'user', 'icon'); // Drop all images in area.
             $newpicture = 0;
+        }
 
-        } else {
-            // Save newly uploaded file, this will avoid context mismatch for newly created users.
-            file_save_draft_area_files($usernew->imagefile, $context->id, 'user', 'newicon', 0, $filemanageroptions);
-            if (($iconfiles = $fs->get_area_files($context->id, 'user', 'newicon')) && count($iconfiles) == 2) {
-                // Get file which was uploaded in draft area.
-                foreach ($iconfiles as $file) {
-                    if (!$file->is_directory()) {
-                        break;
-                    }
+        // Save newly uploaded file, this will avoid context mismatch for newly created users.
+        if (!isset($usernew->imagefile)) {
+            $usernew->imagefile = 0;
+        }
+        file_save_draft_area_files($usernew->imagefile, $context->id, 'user', 'newicon', 0, $filemanageroptions);
+        if (($iconfiles = $fs->get_area_files($context->id, 'user', 'newicon')) && count($iconfiles) == 2) {
+            // Get file which was uploaded in draft area.
+            foreach ($iconfiles as $file) {
+                if (!$file->is_directory()) {
+                    break;
                 }
-                // Copy file to temporary location and the send it for processing icon.
-                if ($iconfile = $file->copy_content_to_temp()) {
-                    // There is a new image that has been uploaded.
-                    // Process the new image and set the user to make use of it.
-                    // NOTE: Uploaded images always take over Gravatar.
-                    $newpicture = (int)process_new_icon($context, 'user', 'icon', 0, $iconfile);
-                    // Delete temporary file.
-                    @unlink($iconfile);
-                    // Remove uploaded file.
-                    $fs->delete_area_files($context->id, 'user', 'newicon');
-                } else {
-                    // Something went wrong while creating temp file.
-                    // Remove uploaded file.
-                    $fs->delete_area_files($context->id, 'user', 'newicon');
-                    return false;
-                }
+            }
+            // Copy file to temporary location and the send it for processing icon.
+            if ($iconfile = $file->copy_content_to_temp()) {
+                // There is a new image that has been uploaded.
+                // Process the new image and set the user to make use of it.
+                // NOTE: Uploaded images always take over Gravatar.
+                $newpicture = (int)process_new_icon($context, 'user', 'icon', 0, $iconfile);
+                // Delete temporary file.
+                @unlink($iconfile);
+                // Remove uploaded file.
+                $fs->delete_area_files($context->id, 'user', 'newicon');
+            } else {
+                // Something went wrong while creating temp file.
+                // Remove uploaded file.
+                $fs->delete_area_files($context->id, 'user', 'newicon');
+                return false;
             }
         }
 
@@ -707,7 +709,7 @@ class core_user {
         $fields['lastlogin'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
         $fields['currentlogin'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
         $fields['lastip'] = array('type' => PARAM_NOTAGS, 'null' => NULL_NOT_ALLOWED);
-        $fields['secret'] = array('type' => PARAM_RAW, 'null' => NULL_NOT_ALLOWED);
+        $fields['secret'] = array('type' => PARAM_ALPHANUM, 'null' => NULL_NOT_ALLOWED);
         $fields['picture'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED);
         $fields['url'] = array('type' => PARAM_URL, 'null' => NULL_NOT_ALLOWED);
         $fields['description'] = array('type' => PARAM_RAW, 'null' => NULL_ALLOWED);

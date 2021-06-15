@@ -388,15 +388,15 @@
     }
     .admin_colourpicker .colourdialogue {
         float: left;
-        border: 1px solid $state-info-border;
+        border: 1px solid $input-border-color;
     }
     .admin_colourpicker .previewcolour {
-        border: 1px solid $state-info-border;
+        border: 1px solid $input-border-color;
         margin-left: 301px;
     }
 
     .admin_colourpicker .currentcolour {
-        border: 1px solid $state-info-border;
+        border: 1px solid $input-border-color;
         margin-left: 301px;
         border-top-width: 0;
     }

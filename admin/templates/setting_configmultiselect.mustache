@@ -24,11 +24,13 @@
     * id - element id
     * size - element size
     * options - list of options containing name, value, selected
+    * readonly - bool
 
     Example context (json):
     {
         "name": "test",
         "id": "test0",
+        "readonly": false,
         "size": "3",
         "options": [ { "name": "Option 1", "value": "V", "selected": true },
                      { "name": "Option 2", "value": "V", "selected": true } ]
@@ -39,7 +41,7 @@
 }}
 <div class="form-select">
     <input type="hidden" name="{{name}}[xxxxx]" value="1">
-    <select id="{{id}}" name="{{name}}[]" size="{{size}}" class="form-control" multiple>
+    <select {{#readonly}}disabled{{/readonly}} id="{{id}}" name="{{name}}[]" size="{{size}}" class="form-control" multiple>
         {{#options}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
         {{/options}}

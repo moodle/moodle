@@ -102,7 +102,7 @@ class phpunit_util extends testing_util {
      * @return void
      */
     public static function reset_all_data($detectchanges = false) {
-        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $FULLME;
+        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $FULLME, $FILTERLIB_PRIVATE;
 
         // Stop any message redirection.
         self::stop_message_redirection();
@@ -202,6 +202,7 @@ class phpunit_util extends testing_util {
         $FULLME = null;
         $ME = null;
         $SCRIPT = null;
+        $FILTERLIB_PRIVATE = null;
 
         // Empty sessison and set fresh new not-logged-in user.
         \core\session\manager::init_empty_session();

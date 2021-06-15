@@ -239,9 +239,9 @@ if ($ADMIN->fulltree) {
                 get_string('auth_ldap_memberattribute', 'auth_ldap'), '', PARAM_RAW));
 
         // Member attribute uses dn.
-        $settings->add(new admin_setting_configtext('auth_cas/memberattribute_isdn',
+        $settings->add(new admin_setting_configselect('auth_cas/memberattribute_isdn',
                 get_string('auth_ldap_memberattribute_isdn_key', 'auth_ldap'),
-                get_string('auth_ldap_memberattribute_isdn', 'auth_ldap'), '', PARAM_RAW));
+                get_string('auth_ldap_memberattribute_isdn', 'auth_ldap'), 0, $yesno));
 
         // Object class.
         $settings->add(new admin_setting_configtext('auth_cas/objectclass',

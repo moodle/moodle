@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -76,9 +75,9 @@ $string['pathsunsecuredataroot'] = 'Lokalizacja głównego katalogu danych nie j
 $string['pathswrongadmindir'] = 'Katalog admin nie istnieje';
 $string['phpextension'] = 'rozszerzenie PHP {$a}';
 $string['phpversion'] = 'Wersja PHP';
-$string['phpversionhelp'] = '<p>Moodle wymaga wersji PHP co najmniej 4.3.0 lub 5.1.0 (5.0.x posiada kilka znanych problemów).</p>
-<p>Obecnie jest uruchomiona wersja {$a}</p>
-<p>Musisz uaktualnić wersję PHP lub przenieść na host z nowszą wersją PHP!<br />(W przypadku wersji 5.0.x możesz dokonać downgrade do wersji 4.4.x)</p>';
+$string['phpversionhelp'] = '<p>Moodle wymaga wersji PHP co najmniej 5.6.5 lub 7.1 (7.0.x ma pewne ograniczenia silnika).</p>
+<p>Aktualnie używasz wersji {$a}.</p>
+<p>Musisz zaktualizować PHP lub przenieść na host z nowszą wersją PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Widzisz tę stronę, ponieważ z powodzeniem zainstalowałeś i uruchomiłeś <strong>{$a->packname} {$a->packversion}</strong> na swoim komputerze.';
 $string['welcomep30'] = 'Ten instalator <strong>{$a->installername}</strong> zawiera aplikacje, by stworzyć środowisko, w którym będzie działać <strong>Moodle</strong>, czyli';

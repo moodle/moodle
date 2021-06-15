@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -30,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Adresár pre správu (admin)';
+$string['admindirname'] = 'Adresár so súbormi pre správu servera';
 $string['availablelangs'] = 'Dostupné jazykové balíčky';
 $string['chooselanguagehead'] = 'Vyberte jazyk';
 $string['chooselanguagesub'] = 'Zvoľte si jazyk pre inštaláciu. Tento jazyk bude tiež použitý ako východzí jazyk portálu, ale môže byť neskôr zmenený.';
@@ -65,16 +64,21 @@ $string['pathserrcreatedataroot'] = 'Inštalátor nemôže vytvoriť dátový ad
 $string['pathshead'] = 'Vytvoriť cesty';
 $string['pathsrodataroot'] = 'Kmeňový adresár nie je zapisovateľný';
 $string['pathsroparentdataroot'] = 'Nadriadený adresár ({$a->parent}) nie je zapisovateľný. Inštalátor nemôže vytvoriť dátový adresár ({$a->dataroot}). ';
+$string['pathssubadmindir'] = 'Na niektorých serveroch je URL adresa /admin vyhradená pre špeciálne účely (napr. pre ovládací panel). Na takých serveroch môže dojsť ku kolízii so štandardným umiestnením stránok pre administratívu Moodle. Ak máte tento problém, premenujte adresár <em>admin</em> vo vašej inštalácii Moodle a sem zadajte jeho nový názov - napríklad <em>moodleadmin</em>. Všetky generované odkazy na stránky správy Moodle budú používať tento nový názov.';
 $string['pathssubdataroot'] = '<p>Potrebujete adresár, kam Moodle bude ukladať nahrané súbory.</p>
 <p>Adresár by mal povoliť čítanie a zapisovanie údajov používateľom web serveru (webový server býva väčšinou spustený pod používateľom "www-data" alebo "apache"), ale nesmie byť prístupný priamo cez web rozhranie. Pokiaľ ešte neexistuje, inštalácia sa pokúsi o jeho vytvorenie. </p>';
 $string['pathssubdirroot'] = '<p>Absolútna cesta adresára Moodle inštalácie.</p>';
+$string['pathssubwwwroot'] = '<p>Zadajte úplnú webovú adresu, na ktorej bude Moodle dostupný, t.j. adresa, ktorú zadajú používatelia do adresného riadku svojho prehliadača, aby spustili Moodle.</p>
+<p>Moodle potrebuje jedinečnú adresu, nie je možné ho prevádzkovať na niekoľkých URL súčasne. Ak používate niekoľko verejných domén, musíte si sami nastaviť permanentné presmerovanie na jednu z nich a tú potom použiť.</p>
+<p> Ak je váš server dostupný z vonkajšej a vnútornej siete pod rôznymi IP adresami, použite jeho verejnú adresu a nastavte si váš DNS server tak, že ju môžu používať aj používatelia z vnútornej siete.</p>
+<p>Ak nie je aktuálna adresa správna, zmeňte URL adresu v adresnom riadku prehliadača a spusťte inštaláciu.</p>';
 $string['pathsunsecuredataroot'] = 'Umiestnenie dátového adresára nie je bezpečné';
 $string['pathswrongadmindir'] = 'Administrátorský adresár neexistuje';
 $string['phpextension'] = 'Rozšírenie PHP {$a}';
 $string['phpversion'] = 'Verzia PHP';
 $string['phpversionhelp'] = '<p>Moodle si vyžaduje verziu PHP aspoň  5.6.5 alebo 7.1 (7.0.x má určité obmedzenia jadra).</p>
 <p>Vy máte momentálne nainštalovanú túto verziu {$a}.</p>
-<p>Musíte aktualizovať PHP alebo sa presunúť na hostiteľský počítač s novšou verziou PHP!</p>';
+<p>Musíte aktualizovať PHP alebo sa presunúť na hostiteľský počítač s novšou verziou PHP</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Podarilo so vám úspešne nainštalovať a spustiť balíček <strong>{$a->packname} {$a->packversion}</strong>. Gratulujeme!';
 $string['welcomep30'] = 'Táto verzia <strong>{$a->installername}</strong> obsahuje aplikáciu k vytvoreniu prostredia, v ktorom bude prevádzkovaný váš <strong>Moodle</strong>. Menovite sa jedná o:';

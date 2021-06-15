@@ -299,7 +299,14 @@ class report_log_renderable implements renderable {
      */
     public function get_selected_user_fullname() {
         $user = core_user::get_user($this->userid);
-        return fullname($user);
+        if (empty($this->course)) {
+            // We are in system context.
+            $context = context_system::instance();
+        } else {
+            // We are in course context.
+            $context = context_course::instance($this->course->id);
+        }
+        return fullname($user, has_capability('moodle/site:viewfullnames', $context));
     }
 
     /**

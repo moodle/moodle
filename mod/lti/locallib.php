@@ -126,7 +126,8 @@ function lti_get_jwt_claim_mapping() {
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'accept_copy_advice',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'accept_media_types' => [
             'suffix' => 'dl',
@@ -138,7 +139,8 @@ function lti_get_jwt_claim_mapping() {
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'accept_multiple',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'accept_presentation_document_targets' => [
             'suffix' => 'dl',
@@ -156,19 +158,22 @@ function lti_get_jwt_claim_mapping() {
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'accept_unsigned',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'auto_create' => [
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'auto_create',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'can_confirm' => [
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'can_confirm',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'content_item_return_url' => [
             'suffix' => 'dl',
@@ -389,7 +394,7 @@ function lti_get_jwt_claim_mapping() {
         'tool_consumer_info_product_family_code' => [
             'suffix' => '',
             'group' => 'tool_platform',
-            'claim' => 'family_code',
+            'claim' => 'product_family_code',
             'isarray' => false
         ],
         'tool_consumer_info_version' => [
@@ -483,14 +488,14 @@ function lti_get_jwt_claim_mapping() {
             'isarray' => false
         ],
         'lis_outcome_service_url' => [
-            'suffix' => 'bos',
-            'group' => 'basicoutcomesservice',
+            'suffix' => 'bo',
+            'group' => 'basicoutcome',
             'claim' => 'lis_outcome_service_url',
             'isarray' => false
         ],
         'lis_result_sourcedid' => [
-            'suffix' => 'bos',
-            'group' => 'basicoutcomesservice',
+            'suffix' => 'bo',
+            'group' => 'basicoutcome',
             'claim' => 'lis_result_sourcedid',
             'isarray' => false
         ],
@@ -2279,11 +2284,7 @@ function lti_get_configured_types($courseid, $sectionreturn = 0) {
             $type->help     = clean_param($trimmeddescription, PARAM_NOTAGS);
             $type->helplink = get_string('modulename_shortcut_link', 'lti');
         }
-        if (empty($ltitype->icon)) {
-            $type->icon = $OUTPUT->pix_icon('icon', '', 'lti', array('class' => 'icon'));
-        } else {
-            $type->icon = html_writer::empty_tag('img', array('src' => $ltitype->icon, 'alt' => '', 'class' => 'icon'));
-        }
+        $type->icon = html_writer::empty_tag('img', ['src' => get_tool_type_icon_url($ltitype), 'alt' => '', 'class' => 'icon']);
         $type->link = new moodle_url('/course/modedit.php', array('add' => 'lti', 'return' => 0, 'course' => $courseid,
             'sr' => $sectionreturn, 'typeid' => $ltitype->id));
         $types[] = $type;
@@ -2388,12 +2389,12 @@ function lti_get_shared_secrets_by_key($key) {
     // Look up the shared secret for the specified key in both the types_config table (for configured tools)
     // And in the lti resource table for ad-hoc tools.
     $lti13 = LTI_VERSION_1P3;
-    $query = "SELECT t2.value
+    $query = "SELECT " . $DB->sql_compare_text('t2.value', 256) . " AS value
                 FROM {lti_types_config} t1
                 JOIN {lti_types_config} t2 ON t1.typeid = t2.typeid
                 JOIN {lti_types} type ON t2.typeid = type.id
               WHERE t1.name = 'resourcekey'
-                AND t1.value = :key1
+                AND " . $DB->sql_compare_text('t1.value', 256) . " = :key1
                 AND t2.name = 'password'
                 AND type.state = :configured1
                 AND type.ltiversion <> :ltiversion
@@ -3172,9 +3173,12 @@ function lti_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce 
         $claim = LTI_JWT_CLAIM_PREFIX;
         if (array_key_exists($key, $claimmapping)) {
             $mapping = $claimmapping[$key];
+            $type = $mapping["type"] ?? "string";
             if ($mapping['isarray']) {
                 $value = explode(',', $value);
                 sort($value);
+            } else if ($type == 'boolean') {
+                $value = isset($value) && ($value == 'true');
             }
             if (!empty($mapping['suffix'])) {
                 $claim .= "-{$mapping['suffix']}";

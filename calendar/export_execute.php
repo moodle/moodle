@@ -18,7 +18,7 @@ if (empty($CFG->enablecalendarexport)) {
 $checkuserid = !empty($userid) && $user = $DB->get_record('user', array('id' => $userid), 'id,password');
 //allowing for fallback check of old url - MDL-27542
 $checkusername = !empty($username) && $user = $DB->get_record('user', array('username' => $username), 'id,password');
-if (!$checkuserid && !$checkusername) {
+if ((!$checkuserid && !$checkusername) || !$user) {
     //No such user
     die('Invalid authentication');
 }

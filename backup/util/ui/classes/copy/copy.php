@@ -111,8 +111,8 @@ class copy  {
      *  Take the validated form data and extract the required information for copy operations.
      *
      * @param \stdClass $formdata Data from the validated course copy form.
-     * @throws \moodle_exception
      * @return \stdClass $copydata Data required for course copy operations.
+     * @throws \moodle_exception If one of the required copy fields is missing
      */
     private final function get_copy_data(\stdClass $formdata): \stdClass {
         $copydata = new \stdClass();
@@ -121,7 +121,7 @@ class copy  {
             if (isset($formdata->{$field})) {
                 $copydata->{$field} = $formdata->{$field};
             } else {
-                throw new \moodle_exception('copy_class_field_not_found');
+                throw new \moodle_exception('copyfieldnotfound', 'backup', '', null, $field);
             }
         }
 

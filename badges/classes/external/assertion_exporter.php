@@ -40,6 +40,20 @@ use stdClass;
 class assertion_exporter extends exporter {
 
     /**
+     * Constructor - saves the persistent object, and the related objects.
+     *
+     * @param mixed $data - Either an stdClass or an array of values.
+     * @param array $related - An optional list of pre-loaded objects related to this object.
+     */
+    public function __construct($data, $related = array()) {
+        // Having mixed $data is causing some issues. As this class is treating $data as an object everywhere, it can be converted
+        // to object at this point, to avoid errors and get the expected behaviour always.
+        // $data is an array when this class is a request exporter in backpack_api_mapping, but it is an object when this is
+        // used as a response exporter.
+        parent::__construct((object) $data, $related);
+    }
+
+    /**
      * Map from a request response data to the internal structure.
      *
      * @param stdClass $data The remote data.
@@ -104,16 +118,16 @@ class assertion_exporter extends exporter {
         global $DB;
         $result = [];
 
-        if (array_key_exists('related_badge', $this->data)) {
-            $exporter = new badgeclass_exporter($this->data['related_badge'], $this->related);
+        if (property_exists($this->data, 'related_badge')) {
+            $exporter = new badgeclass_exporter($this->data->related_badge, $this->related);
             $result['badge'] = $exporter->export($output);
         }
-        if (array_key_exists('related_recipient', $this->data)) {
-            $exporter = new recipient_exporter($this->data['related_recipient'], $this->related);
+        if (property_exists($this->data, 'related_recipient')) {
+            $exporter = new recipient_exporter($this->data->related_recipient, $this->related);
             $result['recipient'] = $exporter->export($output);
         }
-        if (array_key_exists('related_verify', $this->data)) {
-            $exporter = new verification_exporter($this->data['related_verify'], $this->related);
+        if (property_exists($this->data, 'related_verify')) {
+            $exporter = new verification_exporter($this->data->related_verify, $this->related);
             $result['verification'] = $exporter->export($output);
         }
         return $result;

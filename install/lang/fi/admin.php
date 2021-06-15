@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -37,6 +36,6 @@ $string['cliincorrectvalueretry'] = 'Epäkelpo arvo, syötä uudelleen';
 $string['clitypevalue'] = 'syötä arvo';
 $string['clitypevaluedefault'] = 'syötä arvo, paina Enteriä käyttääksesi oletusarvoa ({$a})';
 $string['cliunknowoption'] = 'Tunnistamaton valinta: {$a} Ole hyvä ja käytä --help -valintaa.';
-$string['cliyesnoprompt'] = 'syötä y (kyllä) tai n (ei)';
+$string['cliyesnoprompt'] = 'syötä k (kyllä) tai e (ei)';
 $string['environmentrequireinstall'] = 'pitää olla asennettuna ja käytössä';
 $string['environmentrequireversion'] = 'versio {$a->needed} vaaditaan ja käytössä on versio {$a->current}';

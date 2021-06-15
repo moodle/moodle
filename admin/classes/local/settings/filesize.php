@@ -178,6 +178,7 @@ class filesize extends \admin_setting {
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),
             'value' => $data['v'],
+            'readonly' => $this->is_readonly(),
             'options' => array_map(function($unit, $title) use ($data, $defaultunit) {
                 return [
                     'value' => $unit,

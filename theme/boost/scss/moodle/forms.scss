@@ -33,6 +33,7 @@
     br + label {
         justify-content: flex-start;
         width: 100%;
+        margin-right: 0;
     }
 }
 
@@ -54,10 +55,6 @@
     .mform > .form-group {
         margin-left: $spacer * 1.5;
     }
-}
-
-.editor_atto_content.form-control {
-    width: 100%;
 }
 
 #adminsettings .form-control[size] {
@@ -279,7 +276,7 @@ fieldset.coursesearchbox label {
     min-height: 2 * $input-padding-y-sm + 2 * $font-size-base;
 }
 
-.form-autocomplete-selection [role=listitem] {
+.form-autocomplete-selection [role=option] {
     cursor: pointer;
     white-space: inherit;
     word-break: break-word;
@@ -290,33 +287,30 @@ fieldset.coursesearchbox label {
 .form-autocomplete-suggestions {
     position: absolute;
     background-color: white;
-    border: 2px solid $gray-lighter;
-    border-radius: 3px;
+    border: $border-width solid $input-border-color;
     min-width: 206px;
     max-height: 20em;
     overflow: auto;
-    margin: 0;
-    padding: 0;
-    margin-top: 0.4em;
+    margin: $dropdown-spacer 0 0;
+    padding: $dropdown-padding-y 0;
     z-index: 1;
 }
 
 .form-autocomplete-suggestions li {
     list-style-type: none;
-    padding: 0.2em;
+    padding: $dropdown-item-padding-y $dropdown-item-padding-x;
     margin: 0;
     cursor: pointer;
     color: $body-color;
-}
-
-.form-autocomplete-suggestions li:hover {
-    background-color: lighten($dropdown-link-active-bg, 15%);
-    color: $dropdown-link-active-color;
-}
-
-.form-autocomplete-suggestions li[aria-selected=true] {
-    background-color: darken($dropdown-bg, 5%);
-    color: $gray;
+    &:hover,
+    &:focus,
+    &[aria-selected="true"] {
+        background-color: $dropdown-link-active-bg;
+        color: $dropdown-link-active-color;
+    }
+    &::before {
+        content: "\200B";
+    }
 }
 
 .form-autocomplete-downarrow {
@@ -332,9 +326,6 @@ fieldset.coursesearchbox label {
     }
 }
 
-.form-autocomplete-selection:focus {
-    outline: none;
-}
 /** Undo some bootstrap things */
 .form-autocomplete-selection + input.form-control {
     width: auto;
@@ -407,18 +398,6 @@ textarea[data-auto-rows] {
     padding: $card-spacer-x;
     margin-left: $grid-gutter-width / 2;
     max-width: 30rem;
-}
-
-/** Atto fields do not have form-control because that would break the layout of the editor.
-    So they need these extra styles to highlight the editor when there is a validation error. */
-.has-danger .editor_atto_content.form-control,
-.has-danger .editor_atto_content.form-control-danger {
-    @include form-control-validation($brand-danger);
-    background-image: $form-icon-danger;
-    padding-right: ($input-padding-x * 3);
-    background-repeat: no-repeat;
-    background-position: center right 1rem;
-    background-size: 1.5rem;
 }
 
 // Styles for the JS file types browser provided by the "filetypes" element.

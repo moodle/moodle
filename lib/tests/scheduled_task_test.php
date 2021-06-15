@@ -56,20 +56,40 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         $this->setTimezone('Europe/London');
 
+        // Let's specify the hour we are going to use initially for the test.
+        // (note that we pick 01:00 that is tricky for Europe/London, because
+        // it's exactly the Daylight Saving Time Begins hour.
+        $testhour = 1;
+
         // Test job run at 1 am.
         $testclass = new \core\task\scheduled_test_task();
 
         // All fields default to '*'.
-        $testclass->set_hour('1');
+        $testclass->set_hour($testhour);
         $testclass->set_minute('0');
         // Next valid time should be 1am of the next day.
         $nexttime = $testclass->get_next_scheduled_time();
 
         $oneamdate = new DateTime('now', new DateTimeZone('Europe/London'));
-        $oneamdate->setTime(1, 0, 0);
+        $oneamdate->setTime($testhour, 0, 0);
+
+        // Once a year (currently last Sunday of March), when changing to Daylight Saving Time,
+        // Europe/London 01:00 simply doesn't exists because, exactly at 01:00 the clock
+        // is advanced by one hour and becomes 02:00. When that happens, the DateInterval
+        // calculations cannot be to advance by 1 day, but by one less hour. That is exactly when
+        // the next scheduled run will happen (next day 01:00).
+        $isdaylightsaving = false;
+        if ($testhour < (int)$oneamdate->format('H')) {
+            $isdaylightsaving = true;
+        }
+
         // Make it 1 am tomorrow if the time is after 1am.
         if ($oneamdate->getTimestamp() < time()) {
             $oneamdate->add(new DateInterval('P1D'));
+            if ($isdaylightsaving) {
+                // If today is Europe/London Daylight Saving Time Begins, expectation is 1 less hour.
+                $oneamdate->sub(new DateInterval('PT1H'));
+            }
         }
         $oneam = $oneamdate->getTimestamp();
 
@@ -148,73 +168,87 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertContains('2:15 AM', core_text::strtoupper($userdate));
     }
 
-    public function test_reset_scheduled_tasks_for_component() {
-        global $DB;
-
+    public function test_reset_scheduled_tasks_for_component_customised(): void {
         $this->resetAfterTest(true);
-        // Remember the defaults.
-        $defaulttasks = \core\task\manager::load_scheduled_tasks_for_component('moodle');
-        $initcount = count($defaulttasks);
+
+        $tasks = \core\task\manager::load_scheduled_tasks_for_component('moodle');
+
         // Customise a task.
-        $firsttask = reset($defaulttasks);
-        $firsttask->set_minute('1');
-        $firsttask->set_hour('2');
-        $firsttask->set_month('3');
-        $firsttask->set_day_of_week('4');
-        $firsttask->set_day('5');
-        $firsttask->set_customised('1');
-        \core\task\manager::configure_scheduled_task($firsttask);
-        $firsttaskrecord = \core\task\manager::record_from_scheduled_task($firsttask);
-        // We reset this field, because we do not want to compare it.
-        $firsttaskrecord->nextruntime = '0';
+        $task = reset($tasks);
+        $task->set_minute('1');
+        $task->set_hour('2');
+        $task->set_month('3');
+        $task->set_day_of_week('4');
+        $task->set_day('5');
+        $task->set_customised('1');
+        \core\task\manager::configure_scheduled_task($task);
+
+        // Now call reset.
+        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+
+        // Fetch the task again.
+        $taskafterreset = \core\task\manager::get_scheduled_task(get_class($task));
+
+        // The task should still be the same as the customised.
+        $this->assertTaskEquals($task, $taskafterreset);
+    }
+
+    public function test_reset_scheduled_tasks_for_component_deleted(): void {
+        global $DB;
+        $this->resetAfterTest(true);
 
         // Delete a task to simulate the fact that its new.
-        $secondtask = next($defaulttasks);
-        $DB->delete_records('task_scheduled', array('classname' => '\\' . trim(get_class($secondtask), '\\')));
-        $this->assertFalse(\core\task\manager::get_scheduled_task(get_class($secondtask)));
+        $tasklist = \core\task\manager::load_scheduled_tasks_for_component('moodle');
 
-        // Edit a task to simulate a change in its definition (as if it was not customised).
-        $thirdtask = next($defaulttasks);
-        $thirdtask->set_minute('1');
-        $thirdtask->set_hour('2');
-        $thirdtask->set_month('3');
-        $thirdtask->set_day_of_week('4');
-        $thirdtask->set_day('5');
-        $thirdtaskbefore = \core\task\manager::get_scheduled_task(get_class($thirdtask));
-        $thirdtaskbefore->set_next_run_time(null);      // Ignore this value when comparing.
-        \core\task\manager::configure_scheduled_task($thirdtask);
-        $thirdtask = \core\task\manager::get_scheduled_task(get_class($thirdtask));
-        $thirdtask->set_next_run_time(null);            // Ignore this value when comparing.
-        $this->assertNotEquals($thirdtaskbefore, $thirdtask);
+        // Note: This test must use a task which does not use any random values.
+        $task = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+
+        $DB->delete_records('task_scheduled', array('classname' => '\\' . trim(get_class($task), '\\')));
+        $this->assertFalse(\core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class));
 
         // Now call reset on all the tasks.
         \core\task\manager::reset_scheduled_tasks_for_component('moodle');
 
-        // Load the tasks again.
-        $defaulttasks = \core\task\manager::load_scheduled_tasks_for_component('moodle');
-        $finalcount = count($defaulttasks);
-        // Compare the first task.
-        $newfirsttask = reset($defaulttasks);
-        $newfirsttaskrecord = \core\task\manager::record_from_scheduled_task($newfirsttask);
-        // We reset this field, because we do not want to compare it.
-        $newfirsttaskrecord->nextruntime = '0';
-
-        // Assert a customised task was not altered by reset.
-        $this->assertEquals($firsttaskrecord, $newfirsttaskrecord);
-
         // Assert that the second task was added back.
-        $secondtaskafter = \core\task\manager::get_scheduled_task(get_class($secondtask));
-        $secondtaskafter->set_next_run_time(null);   // Do not compare the nextruntime.
-        $secondtask->set_next_run_time(null);
-        $this->assertEquals($secondtask, $secondtaskafter);
+        $taskafterreset = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+        $this->assertNotFalse($taskafterreset);
 
-        // Assert that the third task edits were overridden.
-        $thirdtaskafter = \core\task\manager::get_scheduled_task(get_class($thirdtask));
-        $thirdtaskafter->set_next_run_time(null);
-        $this->assertEquals($thirdtaskbefore, $thirdtaskafter);
+        $this->assertTaskEquals($task, $taskafterreset);
+        $this->assertCount(count($tasklist), \core\task\manager::load_scheduled_tasks_for_component('moodle'));
+    }
 
-        // Assert we have the same number of tasks.
-        $this->assertEquals($initcount, $finalcount);
+    public function test_reset_scheduled_tasks_for_component_changed_in_source(): void {
+        $this->resetAfterTest(true);
+
+        // Delete a task to simulate the fact that its new.
+        // Note: This test must use a task which does not use any random values.
+        $task = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+
+        // Get a copy of the task before maing changes for later comparison.
+        $taskbeforechange = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+
+        // Edit a task to simulate a change in its definition (as if it was not customised).
+        $task->set_minute('1');
+        $task->set_hour('2');
+        $task->set_month('3');
+        $task->set_day_of_week('4');
+        $task->set_day('5');
+        \core\task\manager::configure_scheduled_task($task);
+
+        // Fetch the task out for comparison.
+        $taskafterchange = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+
+        // The task should now be different to the original.
+        $this->assertTaskNotEquals($taskbeforechange, $taskafterchange);
+
+        // Now call reset.
+        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+
+        // Fetch the task again.
+        $taskafterreset = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+
+        // The task should now be the same as the original.
+        $this->assertTaskEquals($taskbeforechange, $taskafterreset);
     }
 
     /**
@@ -501,5 +535,77 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // There should be no delay and it should run within the next minute.
         $this->assertEquals(0, $task->get_fail_delay());
         $this->assertLessThan($before + 70, $task->get_next_run_time());
+    }
+
+    /**
+     * Assert that the specified tasks are equal.
+     *
+     * @param   \core\task\task_base $task
+     * @param   \core\task\task_base $comparisontask
+     */
+    public function assertTaskEquals(\core\task\task_base $task, \core\task\task_base $comparisontask): void {
+        // Convert both to an object.
+        $task = \core\task\manager::record_from_scheduled_task($task);
+        $comparisontask = \core\task\manager::record_from_scheduled_task($comparisontask);
+
+        // Reset the nextruntime field as it is intentionally dynamic.
+        $task->nextruntime = null;
+        $comparisontask->nextruntime = null;
+
+        $args = array_merge(
+            [
+                $task,
+                $comparisontask,
+            ],
+            array_slice(func_get_args(), 2)
+        );
+
+        call_user_func_array([$this, 'assertEquals'], $args);
+    }
+
+    /**
+     * Assert that the specified tasks are not equal.
+     *
+     * @param   \core\task\task_base $task
+     * @param   \core\task\task_base $comparisontask
+     */
+    public function assertTaskNotEquals(\core\task\task_base $task, \core\task\task_base $comparisontask): void {
+        // Convert both to an object.
+        $task = \core\task\manager::record_from_scheduled_task($task);
+        $comparisontask = \core\task\manager::record_from_scheduled_task($comparisontask);
+
+        // Reset the nextruntime field as it is intentionally dynamic.
+        $task->nextruntime = null;
+        $comparisontask->nextruntime = null;
+
+        $args = array_merge(
+            [
+                $task,
+                $comparisontask,
+            ],
+            array_slice(func_get_args(), 2)
+        );
+
+        call_user_func_array([$this, 'assertNotEquals'], $args);
+    }
+
+    /**
+     * Assert that the lastruntime column holds an original value after a scheduled task is reset.
+     */
+    public function test_reset_scheduled_tasks_for_component_keeps_original_lastruntime(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Set lastruntime for the scheduled task.
+        $DB->set_field('task_scheduled', 'lastruntime', 123456789, ['classname' => '\core\task\session_cleanup_task']);
+
+        // Reset the task.
+        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+
+        // Fetch the task again.
+        $taskafterreset = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+
+        // Confirm, that lastruntime is still in place.
+        $this->assertEquals(123456789, $taskafterreset->get_last_run_time());
     }
 }

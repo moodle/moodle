@@ -1,6 +1,31 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.9.7 ===
+* The signature of the get_context_name() function in the abstract class context and all extending classes (such as context_course)
+  has been extended. The new parameter allows the to get the name without escaped characters.
+* The signature of the question_category_options() has been extended. The new parameter allows the to get the categories name
+  in the returned array without escaped characters.
+
+=== 3.9.6 ===
+* The behat transformation 'string time to timestamp' no longer supports datetime format. If provided, the format must
+  be strftime compatible. Example:
+    - I should see "##tomorrow noon##%A, %d %B %Y, %I:%M %p##"
+
+=== 3.9.4 ===
+* New optional parameter $extracontent for print_collapsible_region_start(). This allows developers to add interactive HTML elements
+  (e.g. a help icon) after the collapsible region's toggle link.
+* Behat now supports date selection from the date form element. Examples:
+    - I set the field "<field_string>" to "##15 March 2021##"
+    - I set the field "<field_string>" to "##first day of January last year##"
+* Behat now supports date and time selection from the datetime form element. Examples:
+    - I set the field "<field_string>" to "##15 March 2021 08:15##"
+    - I set the field "<field_string>" to "##first day of January last year noon##"
+
+=== 3.9.3 ===
+* New DML function $DB->delete_records_subquery() to delete records based on a subquery in a way
+  that will work across databases.
+
 === 3.9.2 ===
 * A new web service `core_output_load_fontawesome_icon_system_map` has been created.
   This replaces the existing `core_output_load_fontawesome_icon_map` web service, which will be deprecated in Moodle 3.10.

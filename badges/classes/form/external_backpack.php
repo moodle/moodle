@@ -61,12 +61,12 @@ class external_backpack extends \moodleform {
         $mform->addElement('text', 'backpackapiurl',  get_string('backpackapiurl', 'core_badges'));
         $mform->setType('backpackapiurl', PARAM_URL);
         $mform->addRule('backpackapiurl', null, 'required', null, 'client');
-        $mform->addRule('backpackapiurl', get_string('maximumchars', '', 255), 'maxlength', 50, 'client');
+        $mform->addRule('backpackapiurl', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement('text', 'backpackweburl', get_string('backpackweburl', 'core_badges'));
         $mform->setType('backpackweburl', PARAM_URL);
         $mform->addRule('backpackweburl', null, 'required', null, 'client');
-        $mform->addRule('backpackweburl', get_string('maximumchars', '', 255), 'maxlength', 50, 'client');
+        $mform->addRule('backpackweburl', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $apiversions = badges_get_badge_api_versions();
         $mform->addElement('select', 'apiversion', get_string('apiversion', 'core_badges'), $apiversions);
@@ -80,16 +80,16 @@ class external_backpack extends \moodleform {
         $issuercontact = $CFG->badges_defaultissuercontact;
         $mform->addElement('static', 'issuerinfo', get_string('defaultissuercontact', 'core_badges'), $issuercontact);
 
-        if ($backpack && $backpack->apiversion != OPEN_BADGES_V2P1) {
-            $mform->addElement('passwordunmask', 'password', get_string('defaultissuerpassword', 'core_badges'));
-            $mform->setType('password', PARAM_RAW);
-            $mform->addHelpButton('password', 'defaultissuerpassword', 'badges');
-            $mform->hideIf('password', 'apiversion', 'eq', 1);
-        } else {
-            $oauth2options = badges_get_oauth2_service_options();
-            $mform->addElement('select', 'oauth2_issuerid', get_string('oauth2issuer', 'core_badges'), $oauth2options);
-            $mform->setType('oauth2_issuerid', PARAM_INT);
-        }
+        $mform->addElement('passwordunmask', 'password', get_string('defaultissuerpassword', 'core_badges'));
+        $mform->setType('password', PARAM_RAW);
+        $mform->addHelpButton('password', 'defaultissuerpassword', 'badges');
+        $mform->hideIf('password', 'apiversion', 'neq', 2);
+
+        $oauth2options = badges_get_oauth2_service_options();
+        $mform->addElement('select', 'oauth2_issuerid', get_string('oauth2issuer', 'core_badges'), $oauth2options);
+        $mform->setType('oauth2_issuerid', PARAM_INT);
+        $mform->hideIf('oauth2_issuerid', 'apiversion', 'neq', '2.1');
+
         if ($backpack) {
             $this->set_data($backpack);
         }

@@ -281,7 +281,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
             $unionstartquery = "SELECT modulename, instance, eventtype, priority
                                   FROM {event} ev
                                  WHERE ";
-            $subqueryunion = $unionstartquery . implode(" UNION $unionstartquery ", $subqueryconditions);
+            $subqueryunion = '('.$unionstartquery . implode(" UNION $unionstartquery ", $subqueryconditions).')';
         } else {
             $subqueryunion = '{event}';
         }
@@ -296,7 +296,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
                             ev.instance,
                             ev.eventtype,
                             MIN(ev.priority) as priority
-                       FROM ($subqueryunion) ev
+                       FROM $subqueryunion ev
                    GROUP BY ev.modulename, ev.instance, ev.eventtype";
 
         // Build the main query.

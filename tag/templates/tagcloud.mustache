@@ -47,13 +47,14 @@
         {{#tags}}
             <li>
                 <a href="{{viewurl}}" class="{{#isstandard}}standardtag{{/isstandard}} s{{size}}"
-                    {{#count}}title="{{#str}}numberofentries, blog, {{count}}{{/str}}{{/count}}">
+                    {{#count}}title="{{#str}}numberofentries, blog, {{count}}{{/str}}"{{/count}}>
                         {{#flag}}
-                            <span class="flagged-tag">{{name}}</span></a>
+                            <span class="flagged-tag">{{name}}</span>
                         {{/flag}}
                         {{^flag}}
-                            {{name}}</a>
+                            {{name}}
                         {{/flag}}
+                </a>
             </li>
         {{/tags}}
     </ul>

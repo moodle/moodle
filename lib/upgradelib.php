@@ -2439,6 +2439,7 @@ function check_upgrade_key($upgradekeyhash) {
     if (isset($CFG->config_php_settings['upgradekey'])) {
         if ($upgradekeyhash === null or $upgradekeyhash !== sha1($CFG->config_php_settings['upgradekey'])) {
             if (!$PAGE->headerprinted) {
+                $PAGE->set_title(get_string('upgradekeyreq', 'admin'));
                 $output = $PAGE->get_renderer('core', 'admin');
                 echo $output->upgradekey_form_page(new moodle_url('/admin/index.php', array('cache' => 0)));
                 die();
@@ -2609,5 +2610,29 @@ function check_libcurl_version(environment_results $result) {
         return $result;
     }
 
+    return null;
+}
+
+/**
+ * Environment check for the php setting max_input_vars
+ *
+ * @param environment_results $result
+ * @return environment_results|null
+ */
+function check_max_input_vars(environment_results $result) {
+    $max = (int)ini_get('max_input_vars');
+    if ($max < 5000) {
+        $result->setInfo('max_input_vars');
+        $result->setStatus(false);
+        if (PHP_VERSION_ID >= 80000) {
+            // For PHP8 this check is required.
+            $result->setLevel('required');
+            $result->setFeedbackStr('settingmaxinputvarsrequired');
+        } else {
+            // For PHP7 this check is optional (recommended).
+            $result->setFeedbackStr('settingmaxinputvars');
+        }
+        return $result;
+    }
     return null;
 }

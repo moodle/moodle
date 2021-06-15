@@ -88,6 +88,14 @@ class core_message_external extends external_api {
             'messages' => $messages
         ]);
 
+        // Validate messages content before posting them.
+        foreach ($params['messages'] as $message) {
+            // Check message length.
+            if (strlen($message['text']) > \core_message\api::MESSAGE_MAX_LENGTH) {
+                throw new moodle_exception('errormessagetoolong', 'message');
+            }
+        }
+
         $messages = [];
         foreach ($params['messages'] as $message) {
             $createdmessage = \core_message\api::send_message_to_conversation($USER->id, $params['conversationid'], $message['text'],
@@ -187,6 +195,12 @@ class core_message_external extends external_api {
                 $errormessage = get_string('touserdoesntexist', 'message', $message['touserid']);
             }
 
+            // Check message length.
+            if ($success && strlen($message['text']) > \core_message\api::MESSAGE_MAX_LENGTH) {
+                $success = false;
+                $errormessage = get_string('errormessagetoolong', 'message');
+            }
+
             // TODO MDL-31118 performance improvement - edit the function so we can pass an array instead userid
             // Check if the recipient can be messaged by the sender.
             if ($success && !\core_message\api::can_send_message($tousers[$message['touserid']]->id, $USER->id)) {
@@ -215,6 +229,9 @@ class core_message_external extends external_api {
                 //          We should have thrown exceptions as these errors prevent results to be returned.
                 // See http://docs.moodle.org/dev/Errors_handling_in_web_services#When_to_send_a_warning_on_the_server_side .
                 $resultmsg['msgid'] = -1;
+                if (!isset($errormessage)) { // Nobody has set a message error or thrown an exception, let's set it.
+                    $errormessage = get_string('messageundeliveredbynotificationsettings', 'error');
+                }
                 $resultmsg['errormessage'] = $errormessage;
             }
 
@@ -1255,8 +1272,8 @@ class core_message_external extends external_api {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'The conversation id'),
-                'name' => new external_value(PARAM_TEXT, 'The conversation name, if set', VALUE_DEFAULT, null),
-                'subname' => new external_value(PARAM_TEXT, 'A subtitle for the conversation name, if set', VALUE_DEFAULT, null),
+                'name' => new external_value(PARAM_RAW, 'The conversation name, if set', VALUE_DEFAULT, null),
+                'subname' => new external_value(PARAM_RAW, 'A subtitle for the conversation name, if set', VALUE_DEFAULT, null),
                 'imageurl' => new external_value(PARAM_URL, 'A link to the conversation picture, if set', VALUE_DEFAULT, null),
                 'type' => new external_value(PARAM_INT, 'The type of the conversation (1=individual,2=group,3=self)'),
                 'membercount' => new external_value(PARAM_INT, 'Total number of conversation members'),
@@ -1316,7 +1333,7 @@ class core_message_external extends external_api {
             array(
                 'id' => new external_value(PARAM_INT, 'Conversations id'),
                 'type' => new external_value(PARAM_INT, 'Conversation type: private or public'),
-                'name' => new external_value(PARAM_TEXT, 'Multilang compatible conversation name'. VALUE_OPTIONAL),
+                'name' => new external_value(PARAM_RAW, 'Multilang compatible conversation name'. VALUE_OPTIONAL),
                 'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the conversation'),
             ), 'information about conversation', VALUE_OPTIONAL),
             'Conversations between users', VALUE_OPTIONAL
@@ -4121,11 +4138,6 @@ class core_message_external extends external_api {
      */
     public static function message_processor_config_form($userid, $name, $formvalues) {
         global $USER, $CFG;
-
-        // Check if messaging is enabled.
-        if (empty($CFG->messaging)) {
-            throw new moodle_exception('disabled', 'message');
-        }
 
         $params = self::validate_parameters(
             self::message_processor_config_form_parameters(),

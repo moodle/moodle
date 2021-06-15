@@ -509,7 +509,8 @@ if (!$cache and $version > $CFG->version) {  // upgrade
         // Always verify plugin dependencies!
         $failed = array();
         if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed, $CFG->branch)) {
-            echo $output->unsatisfied_dependencies_page($version, $failed, $PAGE->url);
+            echo $output->unsatisfied_dependencies_page($version, $failed, new moodle_url($PAGE->url,
+                array('confirmplugincheck' => 0)));
             die();
         }
         unset($failed);
@@ -701,7 +702,8 @@ if (!$cache and moodle_needs_upgrading()) {
         $failed = array();
         if (!$pluginman->all_plugins_ok($version, $failed, $CFG->branch)) {
             $output = $PAGE->get_renderer('core', 'admin');
-            echo $output->unsatisfied_dependencies_page($version, $failed, $PAGE->url);
+            echo $output->unsatisfied_dependencies_page($version, $failed, new moodle_url($PAGE->url,
+                array('confirmplugincheck' => 0)));
             die();
         }
         unset($failed);

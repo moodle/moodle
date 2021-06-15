@@ -145,7 +145,7 @@ $filemanagercontext = $editoroptions['context'];
 $filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
                              'subdirs'        => 0,
                              'maxfiles'       => 1,
-                             'accepted_types' => 'web_image');
+                             'accepted_types' => 'optimised_image');
 file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'user', 'newicon', 0, $filemanageroptions);
 $user->imagefile = $draftitemid;
 // Create form.
@@ -204,7 +204,7 @@ if ($userform->is_cancelled()) {
         if (!$authplugin->is_internal() and $authplugin->can_change_password() and !empty($usernew->newpassword)) {
             if (!$authplugin->user_update_password($usernew, $usernew->newpassword)) {
                 // Do not stop here, we need to finish user creation.
-                debugging(get_string('cannotupdatepasswordonextauth', '', '', $usernew->auth), DEBUG_NONE);
+                debugging(get_string('cannotupdatepasswordonextauth', 'error', $usernew->auth), DEBUG_NONE);
             }
         }
         $usercreated = true;

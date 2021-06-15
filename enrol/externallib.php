@@ -307,6 +307,7 @@ class core_enrol_external extends external_api {
         global $CFG, $USER, $DB;
 
         require_once($CFG->dirroot . '/course/lib.php');
+        require_once($CFG->dirroot . '/user/lib.php');
         require_once($CFG->libdir . '/completionlib.php');
 
         // Do basic automatic PARAM checks on incoming data, using params description
@@ -346,8 +347,8 @@ class core_enrol_external extends external_api {
                 continue;
             }
 
-            if (!$sameuser and !course_can_view_participants($context)) {
-                // we need capability to view participants
+            // If viewing details of another user, then we must be able to view participants as well as profile of that user.
+            if (!$sameuser && (!course_can_view_participants($context) || !user_can_view_profile($user, $course))) {
                 continue;
             }
 
@@ -460,7 +461,7 @@ class core_enrol_external extends external_api {
                     'id'        => new external_value(PARAM_INT, 'id of course'),
                     'shortname' => new external_value(PARAM_RAW, 'short name of course'),
                     'fullname'  => new external_value(PARAM_RAW, 'long name of course'),
-                    'displayname' => new external_value(PARAM_TEXT, 'course display name for lists.', VALUE_OPTIONAL),
+                    'displayname' => new external_value(PARAM_RAW, 'course display name for lists.', VALUE_OPTIONAL),
                     'enrolledusercount' => new external_value(PARAM_INT, 'Number of enrolled users in this course',
                             VALUE_OPTIONAL),
                     'idnumber'  => new external_value(PARAM_RAW, 'id number of course'),

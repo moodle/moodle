@@ -397,7 +397,8 @@ class behat_mod_quiz extends behat_question_base {
 
         $this->execute('behat_general::assert_page_contains_text', $this->escape(get_string('edittitleinstructions')));
 
-        $this->execute('behat_forms::i_set_the_field_to', array('maxmark', $this->escape($newmark) . chr(10)));
+        $this->execute('behat_general::i_type', [$newmark]);
+        $this->execute('behat_general::i_press_named_key', ['', 'enter']);
     }
 
     /**
@@ -416,7 +417,8 @@ class behat_mod_quiz extends behat_question_base {
         } else if (preg_match('~Page (\d+)~', $pageorlast, $matches)) {
             $xpath = "//li[@id = 'page-{$matches[1]}']//a[contains(@data-toggle, 'dropdown') and contains(., 'Add')]";
         } else {
-            throw new ExpectationException("The I open the add to quiz menu step must specify either 'Page N' or 'last'.");
+            throw new ExpectationException("The I open the add to quiz menu step must specify either 'Page N' or 'last'.",
+                $this->getSession());
         }
         $this->find('xpath', $xpath)->click();
     }
@@ -653,7 +655,9 @@ class behat_mod_quiz extends behat_question_base {
 
         $this->execute('behat_general::assert_page_contains_text', $this->escape(get_string('edittitleinstructions')));
 
-        $this->execute('behat_forms::i_set_the_field_to', array('section', $this->escape($sectionheading) . chr(10)));
+        $this->execute('behat_general::i_press_named_key', ['', 'backspace']);
+        $this->execute('behat_general::i_type', [$sectionheading]);
+        $this->execute('behat_general::i_press_named_key', ['', 'enter']);
     }
 
     /**

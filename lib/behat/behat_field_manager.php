@@ -48,7 +48,6 @@ class behat_field_manager {
      * @return behat_form_field
      */
     public static function get_form_field_from_label($label, RawMinkContext $context) {
-
         // There are moodle form elements that are not directly related with
         // a basic HTML form field, we should also take care of them.
         // The DOM node.
@@ -102,7 +101,6 @@ class behat_field_manager {
      * @return behat_form_field
      */
     public static function get_field_instance($type, NodeElement $fieldnode, Session $session) {
-
         global $CFG;
 
         // If the field is not part of a moodleform, we should still try to find out
@@ -138,6 +136,11 @@ class behat_field_manager {
      */
     public static function guess_field_type(NodeElement $fieldnode, Session $session) {
 
+        // If the type is explicitly set on the element pointed to by the label - use it.
+        if ($fieldtype = $fieldnode->getAttribute('data-fieldtype')) {
+            return self::normalise_fieldtype($fieldtype);
+        }
+
         // Textareas are considered text based elements.
         $tagname = strtolower($fieldnode->getTagName());
         if ($tagname == 'textarea') {
@@ -172,6 +175,10 @@ class behat_field_manager {
         } else if ($tagname == 'select') {
             // Select tag.
             return 'select';
+        } else if ($tagname == 'span') {
+            if ($fieldnode->hasAttribute('data-inplaceeditable') && $fieldnode->getAttribute('data-inplaceeditable')) {
+                return 'inplaceeditable';
+            }
         }
 
         // We can not provide a closer field type.

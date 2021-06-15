@@ -1054,6 +1054,56 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->assertFalse($participant->grantedextension);
     }
 
+    /**
+     * Tests that if a student with no submission who can no longer submit is not a participant.
+     */
+    public function test_get_participant_with_no_submission_no_capability() {
+        global $DB;
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $assign = $this->create_instance($course);
+        $teacher = self::getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = self::getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Remove the students capability to submit.
+        $role = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        assign_capability('mod/assign:submit', CAP_PROHIBIT, $role, $coursecontext);
+
+        $participant = $assign->get_participant($student->id);
+
+        self::assertNull($participant);
+    }
+
+    /**
+     * Tests that if a student that has submitted but can no longer submit is a participant.
+     */
+    public function test_get_participant_with_submission_no_capability() {
+        global $DB;
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $assign = $this->create_instance($course);
+        $teacher = self::getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = self::getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Simulate a submission.
+        $this->add_submission($student, $assign);
+        $this->submit_for_grading($student, $assign);
+
+        // Remove the students capability to submit.
+        $role = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        assign_capability('mod/assign:submit', CAP_PROHIBIT, $role, $coursecontext);
+
+        $participant = $assign->get_participant($student->id);
+
+        self::assertNotNull($participant);
+        self::assertEquals($student->id, $participant->id);
+        self::assertTrue($participant->submitted);
+        self::assertTrue($participant->requiregrading);
+        self::assertFalse($participant->grantedextension);
+    }
+
     public function test_get_participant_with_graded_submission() {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -2329,6 +2379,25 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->setUser($student);
         $output = $assign->view_student_summary($student, true);
         $this->assertNotRegexp('/Feedback/', $output, 'Do not show feedback if the grade is hidden in the gradebook');
+
+        // Freeze the context.
+        $this->setAdminUser();
+        $context = $assign->get_context();
+        $CFG->contextlocking = true;
+        $context->set_locked(true);
+
+        // No feedback should be available because the grade is hidden.
+        $this->setUser($student);
+        $output = $assign->view_student_summary($student, true);
+        $this->assertNotRegexp('/Feedback/', $output, 'Do not show feedback if the grade is hidden in the gradebook');
+
+        // Show the feedback again - it should still be visible even in a frozen context.
+        $this->setUser($teacher);
+        $gradeitem->set_hidden(0, false);
+
+        $this->setUser($student);
+        $output = $assign->view_student_summary($student, true);
+        $this->assertRegexp('/Feedback/', $output, 'Show feedback if there is a grade');
     }
 
     public function test_show_student_summary_with_feedback() {
@@ -4200,5 +4269,55 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $output3 = '';
         $output3 .= $assign->get_renderer()->render($summary);
         $this->assertContains('Friday, 7 June 2019, 5:37 PM', $output3, '', true);
+    }
+
+    /**
+     * Test that cron task uses task API to get its last run time.
+     */
+    public function test_cron_use_task_api_to_get_lastruntime() {
+        global $DB;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create an assignment which allows submissions from 3 days ago.
+        $assign1 = $this->create_instance($course, [
+            'duedate' => time() + DAYSECS,
+            'alwaysshowdescription' => 0,
+            'allowsubmissionsfromdate' => time() - 3 * DAYSECS,
+            'intro' => 'This one should not be re-created',
+        ]);
+
+        // Create an assignment which allows submissions from 1 day ago.
+        $assign2 = $this->create_instance($course, [
+            'duedate' => time() + DAYSECS,
+            'alwaysshowdescription' => 0,
+            'allowsubmissionsfromdate' => time() - DAYSECS,
+            'intro' => 'This one should be re-created',
+        ]);
+
+        // Set last run time 2 days ago.
+        $DB->set_field('task_scheduled', 'lastruntime', time() - 2 * DAYSECS, ['classname' => '\mod_assign\task\cron_task']);
+
+        // Remove events to make sure cron will update calendar and re-create one of them.
+        $params = array('modulename' => 'assign', 'instance' => $assign1->get_instance()->id);
+        $DB->delete_records('event', $params);
+        $params = array('modulename' => 'assign', 'instance' => $assign2->get_instance()->id);
+        $DB->delete_records('event', $params);
+
+        // Run cron.
+        assign::cron();
+
+        // Assert that calendar hasn't been updated for the first assignment as it's supposed to be
+        // updated as part of previous cron runs (allowsubmissionsfromdate is less than lastruntime).
+        $params = array('modulename' => 'assign', 'instance' => $assign1->get_instance()->id);
+        $event1 = $DB->get_record('event', $params);
+        $this->assertEmpty($event1);
+
+        // Assert that calendar has been updated for the second assignment
+        // because its allowsubmissionsfromdate is greater than lastruntime.
+        $params = array('modulename' => 'assign', 'instance' => $assign2->get_instance()->id);
+        $event2 = $DB->get_record('event', $params);
+        $this->assertNotEmpty($event2);
+        $this->assertSame('This one should be re-created', $event2->description);
     }
 }

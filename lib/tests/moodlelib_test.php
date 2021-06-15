@@ -2132,6 +2132,11 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('lang_string', $yes);
         $this->assertSame($yesexpected, (string)$yes);
 
+        // Test lazy loading (returning lang_string) correctly interpolates 0 being used as args.
+        $numdays = get_string('numdays', 'moodle', 0, true);
+        $this->assertInstanceOf(lang_string::class, $numdays);
+        $this->assertSame('0 days', (string) $numdays);
+
         // Test using a lang_string object as the $a argument for a normal
         // get_string call (returning string).
         $test = new lang_string('yes', null, null, true);
@@ -3745,39 +3750,85 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test function count_words().
+     * Test function {@see count_words()}.
+     *
+     * @dataProvider count_words_testcases
+     * @param int $expectedcount number of words in $string.
+     * @param string $string the test string to count the words of.
      */
-    public function test_count_words() {
-        $count = count_words("one two three'four");
-        $this->assertEquals(3, $count);
-
-        $count = count_words('one+two three’four');
-        $this->assertEquals(3, $count);
-
-        $count = count_words('one"two three-four');
-        $this->assertEquals(2, $count);
-
-        $count = count_words('one@two three_four');
-        $this->assertEquals(4, $count);
-
-        $count = count_words('one\two three/four');
-        $this->assertEquals(4, $count);
-
-        $count = count_words(' one ... two &nbsp; three...four ');
-        $this->assertEquals(4, $count);
-
-        $count = count_words('one.2 3,four');
-        $this->assertEquals(4, $count);
-
-        $count = count_words('1³ £2 €3.45 $6,789');
-        $this->assertEquals(4, $count);
-
-        $count = count_words('one—two ブルース カンベッル');
-        $this->assertEquals(4, $count);
-
-        $count = count_words('one…two ブルース … カンベッル');
-        $this->assertEquals(4, $count);
+    public function test_count_words(int $expectedcount, string $string): void {
+        $this->assertEquals($expectedcount, count_words($string));
     }
+
+    /**
+     * Data provider for {@see test_count_words}.
+     *
+     * @return array of test cases.
+     */
+    public function count_words_testcases(): array {
+        // The counts here should match MS Word and Libre Office.
+        return [
+            [0, ''],
+            [4, 'one two three four'],
+            [1, "a'b"],
+            [1, '1+1=2'],
+            [1, ' one-sided '],
+            [2, 'one&nbsp;two'],
+            [1, 'email@example.com'],
+            [2, 'first\part second/part'],
+            [4, '<p>one two<br></br>three four</p>'],
+            [4, '<p>one two<br>three four</p>'],
+            [4, '<p>one two<br />three four</p>'], // XHTML style.
+            [3, ' one ... three '],
+            [1, 'just...one'],
+            [3, ' one & three '],
+            [1, 'just&one'],
+            [2, 'em—dash'],
+            [2, 'en–dash'],
+            [4, '1³ £2 €3.45 $6,789'],
+            [2, 'ブルース カンベッル'], // MS word counts this as 11, but we don't handle that yet.
+            [4, '<p>one two</p><p>three four</p>'],
+            [4, '<p>one two</p><p><br/></p><p>three four</p>'],
+            [4, '<p>one</p><ul><li>two</li><li>three</li></ul><p>four.</p>'],
+            [1, '<p>em<b>phas</b>is.</p>'],
+            [1, '<p>em<i>phas</i>is.</p>'],
+            [1, '<p>em<strong>phas</strong>is.</p>'],
+            [1, '<p>em<em>phas</em>is.</p>'],
+            [2, "one\ntwo"],
+            [2, "one\rtwo"],
+            [2, "one\ttwo"],
+            [2, "one\vtwo"],
+            [2, "one\ftwo"],
+            [1, "SO<sub>4</sub><sup>2-</sup>"],
+            [6, '4+4=8 i.e. O(1) a,b,c,d I’m black&blue_really'],
+        ];
+    }
+
+    /**
+     * Test function {@see count_letters()}.
+     *
+     * @dataProvider count_letters_testcases
+     * @param int $expectedcount number of characters in $string.
+     * @param string $string the test string to count the letters of.
+     */
+    public function test_count_letters(int $expectedcount, string $string): void {
+        $this->assertEquals($expectedcount, count_letters($string));
+    }
+
+    /**
+     * Data provider for {@see count_letters_testcases}.
+     *
+     * @return array of test cases.
+     */
+    public function count_letters_testcases(): array {
+        return [
+            [0, ''],
+            [1, 'x'],
+            [1, '&amp;'],
+            [4, '<p>frog</p>'],
+        ];
+    }
+
     /**
      * Tests the getremoteaddr() function.
      */
@@ -3785,6 +3836,49 @@ class core_moodlelib_testcase extends advanced_testcase {
         global $CFG;
 
         $this->resetAfterTest();
+
+        $CFG->getremoteaddrconf = null; // Use default value, GETREMOTEADDR_SKIP_DEFAULT.
+        $noip = getremoteaddr('1.1.1.1');
+        $this->assertEquals('1.1.1.1', $noip);
+
+        $remoteaddr = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        $singleip = getremoteaddr();
+        $this->assertEquals('127.0.0.1', $singleip);
+
+        $_SERVER['REMOTE_ADDR'] = $remoteaddr; // Restore server value.
+
+        $CFG->getremoteaddrconf = 0; // Don't skip any source.
+        $noip = getremoteaddr('1.1.1.1');
+        $this->assertEquals('1.1.1.1', $noip);
+
+        // Populate all $_SERVER values to review order.
+        $ipsources = [
+            'HTTP_CLIENT_IP' => '2.2.2.2',
+            'HTTP_X_FORWARDED_FOR' => '3.3.3.3',
+            'REMOTE_ADDR' => '4.4.4.4',
+        ];
+        $originalvalues = [];
+        foreach ($ipsources as $source => $ip) {
+            $originalvalues[$source] = isset($_SERVER[$source]) ? $_SERVER[$source] : null; // Saving data to restore later.
+            $_SERVER[$source] = $ip;
+        }
+
+        foreach ($ipsources as $source => $expectedip) {
+            $ip = getremoteaddr();
+            $this->assertEquals($expectedip, $ip);
+            unset($_SERVER[$source]); // Removing the value so next time we get the following ip.
+        }
+
+        // Restore server values.
+        foreach ($originalvalues as $source => $ip) {
+            $_SERVER[$source] = $ip;
+        }
+
+        // All $_SERVER values have been removed, we should get the default again.
+        $noip = getremoteaddr('1.1.1.1');
+        $this->assertEquals('1.1.1.1', $noip);
+
         $CFG->getremoteaddrconf = GETREMOTEADDR_SKIP_HTTP_CLIENT_IP;
         $xforwardedfor = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : null;
 

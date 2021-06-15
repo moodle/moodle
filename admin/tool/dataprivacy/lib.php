@@ -95,7 +95,7 @@ function tool_dataprivacy_myprofile_navigation(tree $tree, $user, $iscurrentuser
         $showsummary = true;
     }
 
-    if ($showsummary) {
+    if ($showsummary && $iscurrentuser) {
         $summaryurl = new moodle_url('/admin/tool/dataprivacy/summary.php');
         $summarynode = new core_user\output\myprofile\node('privacyandpolicies', 'retentionsummary',
             get_string('dataretentionsummary', 'tool_dataprivacy'), null, $summaryurl);

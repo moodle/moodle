@@ -276,6 +276,17 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that setting a list of tags for "tag" item type throws exception if userid specified
+     */
+    public function test_set_item_tags_with_invalid_userid(): void {
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Related tags can not have tag instance userid');
+        core_tag_tag::set_item_tags('core', 'tag', 1, context_system::instance(), ['all', 'night', 'long'], $user->id);
+    }
+
+    /**
      * Prepares environment for testing tag correlations
      * @return core_tag_tag[] list of used tags
      */

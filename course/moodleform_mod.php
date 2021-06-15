@@ -621,10 +621,23 @@ abstract class moodleform_mod extends moodleform {
         if (!empty($CFG->enableavailability)) {
             // Add special button to end of previous section if groups/groupings
             // are enabled.
-            if ($this->_features->groups || $this->_features->groupings) {
+
+            $availabilityplugins = \core\plugininfo\availability::get_enabled_plugins();
+            $groupavailability = $this->_features->groups && array_key_exists('group', $availabilityplugins);
+            $groupingavailability = $this->_features->groupings && array_key_exists('grouping', $availabilityplugins);
+
+            if ($groupavailability || $groupingavailability) {
+                // When creating the button, we need to set type=button to prevent it behaving as a submit.
                 $mform->addElement('static', 'restrictgroupbutton', '',
-                        html_writer::tag('button', get_string('restrictbygroup', 'availability'),
-                        array('id' => 'restrictbygroup', 'disabled' => 'disabled', 'class' => 'btn btn-secondary')));
+                    html_writer::tag('button', get_string('restrictbygroup', 'availability'), [
+                        'id' => 'restrictbygroup',
+                        'type' => 'button',
+                        'disabled' => 'disabled',
+                        'class' => 'btn btn-secondary',
+                        'data-groupavailability' => $groupavailability,
+                        'data-groupingavailability' => $groupingavailability
+                    ])
+                );
             }
 
             // Availability field. This is just a textarea; the user interface

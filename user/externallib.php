@@ -574,7 +574,7 @@ class core_user_external extends external_api {
         $filemanageroptions = array('maxbytes' => $CFG->maxbytes,
                 'subdirs'        => 0,
                 'maxfiles'       => 1,
-                'accepted_types' => 'web_image');
+                'accepted_types' => 'optimised_image');
 
         $transaction = $DB->start_delegated_transaction();
 
@@ -1707,7 +1707,12 @@ class core_user_external extends external_api {
             throw new moodle_exception('noprofileedit', 'auth');
         }
 
-        $filemanageroptions = array('maxbytes' => $CFG->maxbytes, 'subdirs' => 0, 'maxfiles' => 1, 'accepted_types' => 'web_image');
+        $filemanageroptions = array(
+            'maxbytes' => $CFG->maxbytes,
+            'subdirs' => 0,
+            'maxfiles' => 1,
+            'accepted_types' => 'optimised_image'
+        );
         $user->deletepicture = $params['delete'];
         $user->imagefile = $params['draftitemid'];
         $success = core_user::update_picture($user, $filemanageroptions);

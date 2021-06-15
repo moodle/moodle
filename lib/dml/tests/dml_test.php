@@ -660,9 +660,13 @@ class core_dml_testcase extends database_driver_testcase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, 'lala');
         $table->add_field('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('oneint', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('oneintnodefault', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null);
         $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'test2');
         $table->add_field('onenum', XMLDB_TYPE_NUMBER, '10,2', null, null, null, 200);
-        $table->add_field('onefloat', XMLDB_TYPE_FLOAT, '10,2', null, null, null, 300);
+        $table->add_field('onenumnodefault', XMLDB_TYPE_NUMBER, '10,2', null, null, null);
+        $table->add_field('onefloat', XMLDB_TYPE_FLOAT, '10,2', null, XMLDB_NOTNULL, null, 300);
+        $table->add_field('onefloatnodefault', XMLDB_TYPE_FLOAT, '10,2', null, XMLDB_NOTNULL, null);
         $table->add_field('anotherfloat', XMLDB_TYPE_FLOAT, null, null, null, null, 400);
         $table->add_field('negativedfltint', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '-1');
         $table->add_field('negativedfltnumber', XMLDB_TYPE_NUMBER, '10', null, XMLDB_NOTNULL, null, '-2');
@@ -723,6 +727,20 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertNull($field->default_value);
         $this->assertFalse($field->not_null);
 
+        $field = $columns['oneint'];
+        $this->assertSame('I', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertTrue($field->has_default);
+        $this->assertEquals(0, $field->default_value);
+        $this->assertTrue($field->not_null);
+
+        $field = $columns['oneintnodefault'];
+        $this->assertSame('I', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertFalse($field->has_default);
+        $this->assertNull($field->default_value);
+        $this->assertTrue($field->not_null);
+
         $field = $columns['enumfield'];
         $this->assertSame('C', $field->meta_type);
         $this->assertFalse($field->auto_increment);
@@ -738,12 +756,28 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertEquals(200.0, $field->default_value);
         $this->assertFalse($field->not_null);
 
+        $field = $columns['onenumnodefault'];
+        $this->assertSame('N', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertEquals(10, $field->max_length);
+        $this->assertEquals(2, $field->scale);
+        $this->assertFalse($field->has_default);
+        $this->assertNull($field->default_value);
+        $this->assertFalse($field->not_null);
+
         $field = $columns['onefloat'];
         $this->assertSame('N', $field->meta_type);
         $this->assertFalse($field->auto_increment);
         $this->assertTrue($field->has_default);
         $this->assertEquals(300.0, $field->default_value);
-        $this->assertFalse($field->not_null);
+        $this->assertTrue($field->not_null);
+
+        $field = $columns['onefloatnodefault'];
+        $this->assertSame('N', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertFalse($field->has_default);
+        $this->assertNull($field->default_value);
+        $this->assertTrue($field->not_null);
 
         $field = $columns['anotherfloat'];
         $this->assertSame('N', $field->meta_type);
@@ -3429,6 +3463,29 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertEquals(1, $DB->count_records($tablename));
     }
 
+    public function test_delete_records_subquery() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => 2));
+
+        // This is not a useful scenario for using a subquery, but it will be sufficient for testing.
+        // Use the 'frog' alias just to make it clearer when we are testing the alias parameter.
+        $DB->delete_records_subquery($tablename, 'id', 'frog',
+                'SELECT id AS frog FROM {' . $tablename . '} WHERE course = ?', [2]);
+        $this->assertEquals(1, $DB->count_records($tablename));
+    }
+
     public function test_delete_records_list() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
@@ -4020,6 +4077,47 @@ class core_dml_testcase extends database_driver_testcase {
         $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', false, false);
         $records = $DB->get_records_sql($sql, array('aui'));
         // $this->assertEquals(3, count($records), 'Accent insensitive LIKE searches may not be supported in all databases, this is not a problem.');
+    }
+
+    /**
+     * Test DML libraries sql_like_escape method
+     */
+    public function test_sql_like_escape(): void {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $dbman->create_table($table);
+
+        $tablename = $table->getName();
+
+        // Two of the records contain LIKE characters (%_), plus square brackets supported only by SQL Server (and '^-' which
+        // should be ignored by SQL Server given they only have meaning inside square brackets).
+        $DB->insert_record($tablename, (object) ['name' => 'lionel']);
+        $DB->insert_record($tablename, (object) ['name' => 'lionel%_^-[0]']);
+        $DB->insert_record($tablename, (object) ['name' => 'rick']);
+        $DB->insert_record($tablename, (object) ['name' => 'rick%_^-[0]']);
+
+        $select = $DB->sql_like('name', ':namelike');
+        $params = ['namelike' => '%' . $DB->sql_like_escape('%_^-[0]')];
+
+        // All drivers should return our two records containing wildcard characters.
+        $this->assertEqualsCanonicalizing([
+            'lionel%_^-[0]',
+            'rick%_^-[0]',
+        ], $DB->get_fieldset_select($tablename, 'name', $select, $params));
+
+        // Test for unbalanced brackets.
+        $select = $DB->sql_like('name', ':namelike');
+        $params = ['namelike' => '%' . $DB->sql_like_escape('[') . '%'];
+
+        $this->assertEqualsCanonicalizing([
+            'lionel%_^-[0]',
+            'rick%_^-[0]',
+        ], $DB->get_fieldset_select($tablename, 'name', $select, $params));
     }
 
     public function test_coalesce() {

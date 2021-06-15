@@ -319,6 +319,7 @@ class core_calendar_external extends external_api {
             $event = (array) $eventobj;
             // Description formatting.
             $calendareventobj = new calendar_event($event);
+            $event['name'] = $calendareventobj->format_external_name();
             list($event['description'], $event['format']) = $calendareventobj->format_external_text();
 
             if ($hassystemcap) {
@@ -365,7 +366,7 @@ class core_calendar_external extends external_api {
                 'events' => new external_multiple_structure( new external_single_structure(
                         array(
                             'id' => new external_value(PARAM_INT, 'event id'),
-                            'name' => new external_value(PARAM_TEXT, 'event name'),
+                            'name' => new external_value(PARAM_RAW, 'event name'),
                             'description' => new external_value(PARAM_RAW, 'Description', VALUE_OPTIONAL, null, NULL_ALLOWED),
                             'format' => new external_format_value('description'),
                             'courseid' => new external_value(PARAM_INT, 'course id'),
@@ -745,7 +746,7 @@ class core_calendar_external extends external_api {
                         'events' => new external_multiple_structure( new external_single_structure(
                                 array(
                                     'id' => new external_value(PARAM_INT, 'event id'),
-                                    'name' => new external_value(PARAM_TEXT, 'event name'),
+                                    'name' => new external_value(PARAM_RAW, 'event name'),
                                     'description' => new external_value(PARAM_RAW, 'Description', VALUE_OPTIONAL),
                                     'format' => new external_format_value('description'),
                                     'courseid' => new external_value(PARAM_INT, 'course id'),

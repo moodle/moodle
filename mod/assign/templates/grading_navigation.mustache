@@ -75,7 +75,6 @@
 {{/duedate}}
 </div>
 
-</span>
 </div>
 
 {{!
@@ -97,7 +96,7 @@
 </div>
 {{#js}}
 require(['mod_assign/grading_navigation', 'core/tooltip'], function(GradingNavigation, ToolTip) {
-    var nav = new GradingNavigation('[data-region="user-selector"]');
-    var tooltip = new ToolTip('[data-region="assignment-tooltip"]');
+    new GradingNavigation('[data-region="user-selector"]');
+    new ToolTip('[data-region="assignment-tooltip"]');
 });
 {{/js}}

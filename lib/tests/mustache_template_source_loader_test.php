@@ -357,12 +357,43 @@ TBC;
         $bar = '{{! a comment }}{{> core/baz }}';
         $baz = '{{! a comment }}{{#str}} hide, core {{/str}}';
         $bop = '{{! a comment }}hello';
+        $multiline1 = <<<TEMPLATE
+{{! a comment }}{{#str}} authorreplyingprivatelytoauthor,
+mod_forum {{/str}}
+TEMPLATE;
+        $multiline2 = <<<TEMPLATE
+{{! a comment }}{{#str}}
+authorreplyingprivatelytoauthor,
+mod_forum {{/str}}
+TEMPLATE;
+        $multiline3 = <<<TEMPLATE
+{{! a comment }}{{#str}}
+authorreplyingprivatelytoauthor,
+mod_forum
+{{/str}}
+TEMPLATE;
+        $multiline4 = <<<TEMPLATE
+{{! a comment }}{{#str}}
+authorreplyingprivatelytoauthor, mod_forum
+{{/str}}
+TEMPLATE;
+        $multiline5 = <<<TEMPLATE
+{{! a comment }}{{#str}}
+hide
+{{/str}}
+TEMPLATE;
+
         $cache = [
             'core' => [
                 'foo' => $foo,
                 'bar' => $bar,
                 'baz' => $baz,
-                'bop' => $bop
+                'bop' => $bop,
+                'multiline1' => $multiline1,
+                'multiline2' => $multiline2,
+                'multiline3' => $multiline3,
+                'multiline4' => $multiline4,
+                'multiline5' => $multiline5,
             ]
         ];
         $loader = $this->build_loader_from_static_cache($cache);
@@ -406,6 +437,56 @@ TBC;
                     ],
                     'strings' => [
                         'core' => ['help']
+                    ]
+                ]
+            ],
+            'string: component on new line' => [
+                'loader' => $loader,
+                'source' => $multiline1,
+                'expected' => [
+                    'templates' => [],
+                    'strings' => [
+                        'mod_forum' => ['authorreplyingprivatelytoauthor']
+                    ]
+                ]
+            ],
+            'string: identifier on own line' => [
+                'loader' => $loader,
+                'source' => $multiline2,
+                'expected' => [
+                    'templates' => [],
+                    'strings' => [
+                        'mod_forum' => ['authorreplyingprivatelytoauthor']
+                    ]
+                ]
+            ],
+            'string: all parts on new lines' => [
+                'loader' => $loader,
+                'source' => $multiline3,
+                'expected' => [
+                    'templates' => [],
+                    'strings' => [
+                        'mod_forum' => ['authorreplyingprivatelytoauthor']
+                    ]
+                ]
+            ],
+            'string: id and component on own line' => [
+                'loader' => $loader,
+                'source' => $multiline4,
+                'expected' => [
+                    'templates' => [],
+                    'strings' => [
+                        'mod_forum' => ['authorreplyingprivatelytoauthor']
+                    ]
+                ]
+            ],
+            'string: no component' => [
+                'loader' => $loader,
+                'source' => $multiline5,
+                'expected' => [
+                    'templates' => [],
+                    'strings' => [
+                        'core' => ['hide']
                     ]
                 ]
             ],

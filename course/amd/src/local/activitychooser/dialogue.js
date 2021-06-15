@@ -216,7 +216,6 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
         const firstChooserOption = sectionChooserOptions.querySelector(selectors.regions.chooserOption.container);
 
         toggleFocusableChooserOption(firstChooserOption, true);
-        initTabsKeyboardNavigation(body);
         initChooserOptionsKeyboardNavigation(body, mappedModules, sectionChooserOptions, modal);
 
         return body;
@@ -233,77 +232,6 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite, footerDa
         return footer;
     })
     .catch();
-};
-
-/**
- * Initialise the keyboard navigation controls for the tab list items.
- *
- * @method initTabsKeyboardNavigation
- * @param {HTMLElement} body Our modal that we are working with
- */
-const initTabsKeyboardNavigation = (body) => {
-    // Set up the tab handlers.
-    const favTabNav = body.querySelector(selectors.regions.favouriteTabNav);
-    const recommendedTabNav = body.querySelector(selectors.regions.recommendedTabNav);
-    const defaultTabNav = body.querySelector(selectors.regions.defaultTabNav);
-    const activityTabNav = body.querySelector(selectors.regions.activityTabNav);
-    const resourceTabNav = body.querySelector(selectors.regions.resourceTabNav);
-    const tabNavArray = [favTabNav, recommendedTabNav, defaultTabNav, activityTabNav, resourceTabNav];
-    tabNavArray.forEach((element) => {
-        return element.addEventListener('keydown', (e) => {
-            // The first visible navigation tab link.
-            const firstLink = e.target.parentElement.querySelector(selectors.elements.visibletabs);
-            // The last navigation tab link. It would always be the default activities tab link.
-            const lastLink = e.target.parentElement.lastElementChild;
-
-            if (e.keyCode === arrowRight) {
-                const nextLink = e.target.nextElementSibling;
-                if (nextLink === null) {
-                    e.target.tabIndex = -1;
-                    firstLink.tabIndex = 0;
-                    firstLink.focus();
-                } else if (nextLink.classList.contains('d-none')) {
-                    e.target.tabIndex = -1;
-                    lastLink.tabIndex = 0;
-                    lastLink.focus();
-                } else {
-                    e.target.tabIndex = -1;
-                    nextLink.tabIndex = 0;
-                    nextLink.focus();
-                }
-            }
-            if (e.keyCode === arrowLeft) {
-                const previousLink = e.target.previousElementSibling;
-                if (previousLink === null) {
-                    e.target.tabIndex = -1;
-                    lastLink.tabIndex = 0;
-                    lastLink.focus();
-                } else if (previousLink.classList.contains('d-none')) {
-                    e.target.tabIndex = -1;
-                    firstLink.tabIndex = 0;
-                    firstLink.focus();
-                } else {
-                    e.target.tabIndex = -1;
-                    previousLink.tabIndex = 0;
-                    previousLink.focus();
-                }
-            }
-            if (e.keyCode === home) {
-                e.target.tabIndex = -1;
-                firstLink.tabIndex = 0;
-                firstLink.focus();
-            }
-            if (e.keyCode === end) {
-                e.target.tabIndex = -1;
-                lastLink.tabIndex = 0;
-                lastLink.focus();
-            }
-            if (e.keyCode === space) {
-                e.preventDefault();
-                e.target.click();
-            }
-        });
-    });
 };
 
 /**

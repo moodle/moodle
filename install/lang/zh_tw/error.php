@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -42,7 +41,7 @@ $string['cannotsavemd5file'] = '無法儲存 md5 檔案';
 $string['cannotsavezipfile'] = '無法儲存 ZIP 檔案';
 $string['cannotunzipfile'] = '無法將檔案解壓縮';
 $string['componentisuptodate'] = '元件已經是最新的了';
-$string['dmlexceptiononinstall'] = '<p>資料庫有誤 [{$a->錯誤碼}].<br />{$a->排除故障資訊}</p>';
+$string['dmlexceptiononinstall'] = '<p>發生一個資料庫錯誤 [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = '下載的檔案檢查結果有錯誤';
 $string['invalidmd5'] = '這檢查變項是錯的，再試一次';
 $string['missingrequiredfield'] = '缺少部份必填欄位';

@@ -322,7 +322,15 @@ class core_badges_renderer extends plugin_renderer_base {
         $badgeclass = $ibadge->badgeclass;
         $badge = new badge($ibadge->badgeid);
         $now = time();
-        $expiration = isset($issued['expires']) ? $issued['expires'] : $now + 86400;
+        if (isset($issued['expires'])) {
+            if (!is_numeric($issued['expires'])) {
+                $issued['expires'] = strtotime($issued['expires']);
+            }
+            $expiration = $issued['expires'];
+        } else {
+            $expiration = $now + 86400;
+        }
+
         $badgeimage = is_array($badgeclass['image']) ? $badgeclass['image']['id'] : $badgeclass['image'];
         $languages = get_string_manager()->get_list_of_languages();
 
@@ -431,9 +439,6 @@ class core_badges_renderer extends plugin_renderer_base {
         }
         $dl[get_string('dateawarded', 'badges')] = userdate($issued['issuedOn']);
         if (isset($issued['expires'])) {
-            if (!is_numeric($issued['expires'])) {
-                $issued['expires'] = strtotime($issued['expires']);
-            }
             if ($issued['expires'] < $now) {
                 $dl[get_string('expirydate', 'badges')] = userdate($issued['expires']) . get_string('warnexpired', 'badges');
 
@@ -808,7 +813,7 @@ class core_badges_renderer extends plugin_renderer_base {
                 );
 
         if (has_capability('moodle/badges:configuredetails', $context)) {
-            $row[] = new tabobject('details',
+            $row[] = new tabobject('badge',
                         new moodle_url('/badges/edit.php', array('id' => $badgeid, 'action' => 'badge')),
                         get_string('bdetails', 'badges')
                     );
@@ -859,7 +864,7 @@ class core_badges_renderer extends plugin_renderer_base {
         if (has_capability('moodle/badges:configuredetails', $context)) {
             $alignments = $DB->count_records_sql("SELECT COUNT(bc.id)
                       FROM {badge_alignment} bc WHERE bc.badgeid = :badgeid", array('badgeid' => $badgeid));
-            $row[] = new tabobject('balignment',
+            $row[] = new tabobject('alignment',
                 new moodle_url('/badges/alignment.php', array('id' => $badgeid)),
                 get_string('balignment', 'badges', $alignments)
             );

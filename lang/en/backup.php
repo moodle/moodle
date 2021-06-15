@@ -169,6 +169,7 @@ $string['copycoursetitle'] = 'Copy course: {$a}';
 $string['copydest'] = 'Destination';
 $string['copyingcourse'] = 'Course copying in progress';
 $string['copyingcourseshortname'] = 'copying';
+$string['copyfieldnotfound'] = 'A required field was not found';
 $string['copyformfail'] = 'AJAX submission of course copy form has failed.';
 $string['copyop'] = 'Current operation';
 $string['copyprogressheading'] = 'Course copies in progress';

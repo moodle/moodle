@@ -50,8 +50,8 @@ Feature: Preview a drag-drop marker question
     # Keep window large else drag will scroll the window to find element.
     And I change window size to "medium"
     And I wait "2" seconds
-    And I type "up" "44" times on marker "Railway station" in the drag and drop markers question
-    And I type "right" "13" times on marker "Railway station" in the drag and drop markers question
+    And I type "up" "88" times on marker "Railway station" in the drag and drop markers question
+    And I type "right" "26" times on marker "Railway station" in the drag and drop markers question
     And I press "Submit and finish"
     Then the state of "Please place the markers on the map of Milton Keynes" question is shown as "Partially correct"
     And I should see "Mark 0.25 out of 1.00"

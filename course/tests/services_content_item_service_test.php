@@ -121,7 +121,8 @@ class services_content_item_service_testcase extends \advanced_testcase {
 
         // The call to get_all_content_items() should return the same items as for the course,
         // given the user in an editing teacher and can add manual lti instances.
-        $this->assertEquals(array_column($allcontentitems, 'name'), array_column($coursecontentitems, 'name'));
+        $this->assertContains('lti', array_column($coursecontentitems, 'name'));
+        $this->assertContains('lti', array_column($allcontentitems, 'name'));
 
         // Now removing the cap 'mod/lti:addinstance'. This will restrict those items returned by the course-specific method.
         $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));

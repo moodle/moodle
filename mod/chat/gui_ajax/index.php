@@ -19,7 +19,7 @@ require_once('../lib.php');
 
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); // Only for teachers.
-$theme   = optional_param('theme', 'course_theme', PARAM_SAFEDIR); // The value course_theme == the current theme.
+$theme   = optional_param('chat_theme', 'course_theme', PARAM_SAFEDIR); // The value course_theme == the current theme.
 
 $url = new moodle_url('/mod/chat/gui_ajax/index.php', array('id' => $id));
 if ($groupid !== 0) {
@@ -97,13 +97,15 @@ echo $OUTPUT->box(html_writer::tag('h2',  get_string('messages', 'chat'), array(
         '<ul id="messages-list"></ul>', '', 'chat-messages');
 $table = new html_table();
 $table->data = array(
-    array('<div class="form-inline"><label class="accesshide" for="input-message">'.get_string('entermessage', 'chat').' </label>'.
+    array('<div class="form-inline"><div class="d-flex"><label class="accesshide" for="input-message">'.
+          get_string('entermessage', 'chat').' </label>'.
           '<span class="form-group"><input type="text" disabled="true" class="form-control" ' .
           'id="input-message" value="Loading..." size="48" /></span>'.
           '<span class="form-group"><input type="button" id="button-send" class="btn btn-secondary mx-1" ' .
-          'value="'.get_string('send', 'chat').'" /></span> <span class="form-group"><a id="choosetheme" href="###">'.
+          'value="'.get_string('send', 'chat').'" />' .$OUTPUT->help_icon('usingchat', 'chat'). '</span></div>' .
+          ' <div class="form-group d-flex ml-auto"><a id="choosetheme" href="###">'.
           get_string('themes').
-          ' &raquo; </a></span></div>'));
+          ' &raquo; </a></div></div>'));
 echo $OUTPUT->box(html_writer::tag('h2',  get_string('composemessage', 'chat'), array('class' => 'accesshide')) .
         html_writer::table($table), '', 'chat-input-area');
 echo $OUTPUT->box('', '', 'chat-notify');

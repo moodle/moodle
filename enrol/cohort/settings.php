@@ -36,7 +36,7 @@ if ($ADMIN->fulltree) {
         $student = get_archetype_roles('student');
         $student = reset($student);
         $settings->add(new admin_setting_configselect('enrol_cohort/roleid',
-            get_string('defaultrole', 'role'), '', $student->id, $options));
+            get_string('defaultrole', 'role'), '', $student->id ?? null, $options));
 
         $options = array(
             ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),

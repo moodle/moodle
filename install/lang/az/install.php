@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -34,6 +33,7 @@ $string['admindirname'] = 'Administrator kataloqu';
 $string['availablelangs'] = 'Mümkün dillərin siyahısı';
 $string['chooselanguagehead'] = 'Dili seçin';
 $string['chooselanguagesub'] = 'İndi ancaq proqramın qurulması üçün dili seçin. İstifadəçi interfeysi üçün dili sonradan, qurulma prosesində seçmək olar.';
+$string['clialreadyinstalled'] = ' config.php faylı artıq mövcuddur. Əgər saytı yeniləmək istəyirsinizsə, xahiş edirik, admin/cli/upgrade.php skriptindən istifadə edin.';
 $string['cliinstallheader'] = 'Moodlun {$a} əmr sətri rejimində qurulma proqramı';
 $string['databasehost'] = 'Verilənlər bazasının serveri';
 $string['databasename'] = 'Verilənlər bazasının adı';
