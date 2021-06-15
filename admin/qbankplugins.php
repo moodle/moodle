@@ -27,6 +27,8 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+use qbank_columnsortorder\column_manager;
+
 $action = required_param('action', PARAM_ALPHANUMEXT);
 $name   = required_param('name', PARAM_PLUGIN);
 
@@ -46,15 +48,21 @@ if (!isset($plugins[$name])) {
     throw new moodle_exception('qbanknotfound', 'question', $return, $name);
 }
 
+$plugintypename = $plugins[$name]->type . '_' . $plugins[$name]->name;
+$columnsortordermanager = new column_manager();
+
 switch ($action) {
     case 'disable':
         if ($plugins[$name]->is_enabled()) {
+            $columnsortordermanager->disable_columns($plugintypename);
             $class = \core_plugin_manager::resolve_plugininfo_class('qbank');
             $class::enable_plugin($name, false);
+            set_config('disabled', 1, 'qbank_'. $name);
         }
         break;
     case 'enable':
         if (!$plugins[$name]->is_enabled()) {
+            $columnsortordermanager->enable_columns($plugintypename);
             $class = \core_plugin_manager::resolve_plugininfo_class('qbank');
             $class::enable_plugin($name, true);
         }
