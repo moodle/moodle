@@ -274,6 +274,12 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     function course_section_add_cm_control($course, $section, $sectionreturn = null, $displayoptions = array()) {
+        // Check to see if user can add menus.
+        if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))
+                || !$this->page->user_is_editing()) {
+            return '';
+        }
+
         $straddeither = get_string('addresourceoractivity');
 
         $ajaxcontrol = html_writer::start_tag('div', array('class' => 'mdl-right'));
