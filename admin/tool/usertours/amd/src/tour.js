@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manage user tours in Moodle.
+ * A user tour.
  *
  * @module tool_usertours/tour
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
@@ -24,13 +24,18 @@
 import $ from 'jquery';
 import * as Aria from 'core/aria';
 import Popper from 'core/popper';
+import {dispatchEvent} from 'core/event_dispatcher';
+import {eventTypes} from './events';
 
 /**
- * A Tour.
+ * A user tour.
  *
- * @class
+ * @class tool_usertours/tour
+ * @property {boolean} tourRunning Whether the tour is currently running.
  */
-export default class Tour {
+const Tour = class {
+    tourRunning = false;
+
     /**
      * @param   {object}    config  The configuration object.
      */
@@ -215,7 +220,7 @@ export default class Tour {
      * Retrieve the current step number.
      *
      * @method  getCurrentStepNumber
-     * @return  {Integer}                   The current step number
+     * @return  {Number}                   The current step number
      */
     getCurrentStepNumber() {
         return parseInt(this.currentStepNumber, 10);
@@ -225,7 +230,7 @@ export default class Tour {
      * Store the current step number.
      *
      * @method  setCurrentStepNumber
-     * @param   {Integer}   stepNumber      The current step number
+     * @param   {Number}   stepNumber      The current step number
      * @chainable
      */
     setCurrentStepNumber(stepNumber) {
@@ -245,8 +250,8 @@ export default class Tour {
      * Get the next step number after the currently displayed step.
      *
      * @method  getNextStepNumber
-     * @param   {Integer}   stepNumber      The current step number
-     * @return  {Integer}    The next step number to display
+     * @param   {Number}   stepNumber      The current step number
+     * @return  {Number}    The next step number to display
      */
     getNextStepNumber(stepNumber) {
         if (typeof stepNumber === 'undefined') {
@@ -269,8 +274,8 @@ export default class Tour {
      * Get the previous step number before the currently displayed step.
      *
      * @method  getPreviousStepNumber
-     * @param   {Integer}   stepNumber      The current step number
-     * @return  {Integer}    The previous step number to display
+     * @param   {Number}   stepNumber      The current step number
+     * @return  {Number}    The previous step number to display
      */
     getPreviousStepNumber(stepNumber) {
         if (typeof stepNumber === 'undefined') {
@@ -293,7 +298,7 @@ export default class Tour {
      * Is the step the final step number?
      *
      * @method  isLastStep
-     * @param   {Integer}   stepNumber  Step number to test
+     * @param   {Number}   stepNumber  Step number to test
      * @return  {Boolean}               Whether the step is the final step
      */
     isLastStep(stepNumber) {
@@ -306,7 +311,7 @@ export default class Tour {
      * Is the step the first step number?
      *
      * @method  isFirstStep
-     * @param   {Integer}   stepNumber  Step number to test
+     * @param   {Number}   stepNumber  Step number to test
      * @return  {Boolean}               Whether the step is the first step
      */
     isFirstStep(stepNumber) {
@@ -395,10 +400,14 @@ export default class Tour {
      * Go to the specified step in the tour.
      *
      * @method  gotoStep
-     * @param   {Integer}   stepNumber     The step number to display
-     * @param   {Integer}   direction      Next or previous step
+     * @param   {Number}   stepNumber     The step number to display
+     * @param   {Number}   direction      Next or previous step
      * @chainable
      * @return {Object} this.
+     * @fires tool_usertours/stepRender
+     * @fires tool_usertours/stepRendered
+     * @fires tool_usertours/stepHide
+     * @fires tool_usertours/stepHidden
      */
     gotoStep(stepNumber, direction) {
         if (stepNumber < 0) {
@@ -430,9 +439,11 @@ export default class Tour {
 
         this.hide();
 
-        this.fireEventHandlers('beforeRender', stepConfig);
-        this.renderStep(stepConfig);
-        this.fireEventHandlers('afterRender', stepConfig);
+        const stepRenderEvent = this.dispatchEvent(eventTypes.stepRender, {stepConfig}, true);
+        if (!stepRenderEvent.defaultPrevented) {
+            this.renderStep(stepConfig);
+            this.dispatchEvent(eventTypes.stepRendered, {stepConfig});
+        }
 
         return this;
     }
@@ -441,7 +452,7 @@ export default class Tour {
      * Fetch the normalised step configuration for the specified step number.
      *
      * @method  getStepConfig
-     * @param   {Integer}   stepNumber      The step number to fetch configuration for
+     * @param   {Number}   stepNumber      The step number to fetch configuration for
      * @return  {Object}                    The step configuration
      */
     getStepConfig(stepNumber) {
@@ -513,21 +524,23 @@ export default class Tour {
     /**
      * Fire any event handlers for the specified event.
      *
-     * @param   {String}    eventName       The name of the event to handle
-     * @param   {Object}    data            Any data to pass to the event
-     * @chainable
-     * @return {Object} this.
+     * @param {String} eventName The name of the event
+     * @param {Object} [detail={}] Any additional details to pass into the eveent
+     * @param {Boolean} [cancelable=false] Whether preventDefault() can be called
+     * @returns {CustomEvent}
      */
-    fireEventHandlers(eventName, data) {
-        if (typeof this.eventHandlers[eventName] === 'undefined') {
-            return this;
-        }
-
-        this.eventHandlers[eventName].forEach(function(thisEvent) {
-            thisEvent.call(this, data);
-        }, this);
-
-        return this;
+    dispatchEvent(
+        eventName,
+        detail = {},
+        cancelable = false
+    ) {
+        return dispatchEvent(eventName, {
+            // Add the tour to the detail.
+            tour: this,
+            ...detail,
+        }, document, {
+            cancelable,
+        });
     }
 
     /**
@@ -968,9 +981,11 @@ export default class Tour {
      * Start the current tour.
      *
      * @method  startTour
-     * @param   {Integer}   startAt     Which step number to start at. If not specified, starts at the last point.
+     * @param   {Number} startAt Which step number to start at. If not specified, starts at the last point.
      * @chainable
      * @return {Object} this.
+     * @fires tool_usertours/tourStart
+     * @fires tool_usertours/tourStarted
      */
     startTour(startAt) {
         if (this.storage && typeof startAt === 'undefined') {
@@ -987,9 +1002,12 @@ export default class Tour {
             startAt = this.getCurrentStepNumber();
         }
 
-        this.fireEventHandlers('beforeStart', startAt);
-        this.gotoStep(startAt);
-        this.fireEventHandlers('afterStart', startAt);
+        const tourStartEvent = this.dispatchEvent(eventTypes.tourStart, {startAt}, true);
+        if (!tourStartEvent.defaultPrevented) {
+            this.gotoStep(startAt);
+            this.tourRunning = true;
+            this.dispatchEvent(eventTypes.tourStarted, {startAt});
+        }
 
         return this;
     }
@@ -1011,9 +1029,14 @@ export default class Tour {
      * @method  endTour
      * @chainable
      * @return {Object} this.
+     * @fires tool_usertours/tourEnd
+     * @fires tool_usertours/tourEnded
      */
     endTour() {
-        this.fireEventHandlers('beforeEnd');
+        const tourEndEvent = this.dispatchEvent(eventTypes.tourEnd, {}, true);
+        if (tourEndEvent.defaultPrevented) {
+            return this;
+        }
 
         if (this.currentStepConfig) {
             let previousTarget = this.getStepTarget(this.currentStepConfig);
@@ -1027,7 +1050,8 @@ export default class Tour {
 
         this.hide(true);
 
-        this.fireEventHandlers('afterEnd');
+        this.tourRunning = false;
+        this.dispatchEvent(eventTypes.tourEnded);
 
         return this;
     }
@@ -1039,9 +1063,14 @@ export default class Tour {
      * @param {Bool} transition Animate the visibility change
      * @chainable
      * @return {Object} this.
+     * @fires tool_usertours/stepHide
+     * @fires tool_usertours/stepHidden
      */
     hide(transition) {
-        this.fireEventHandlers('beforeHide');
+        const stepHideEvent = this.dispatchEvent(eventTypes.stepHide, {}, true);
+        if (stepHideEvent.defaultPrevented) {
+            return this;
+        }
 
         if (this.currentStepNode && this.currentStepNode.length) {
             this.currentStepNode.hide();
@@ -1098,7 +1127,7 @@ export default class Tour {
 
         this.accessibilityHide();
 
-        this.fireEventHandlers('afterHide');
+        this.dispatchEvent(eventTypes.stepHidden);
 
         this.currentStepNode = null;
         this.currentStepPopper = null;
@@ -1533,4 +1562,6 @@ export default class Tour {
             showFunction($(node));
         });
     }
-}
+};
+
+export default Tour;

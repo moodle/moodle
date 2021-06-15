@@ -10,6 +10,7 @@ import log from 'core/log';
 import notification from 'core/notification';
 import * as tourRepository from './repository';
 import Pending from 'core/pending';
+import {eventTypes} from './events';
 
 let currentTour = null;
 let tourId = null;
@@ -151,17 +152,14 @@ const addResetLink = () => {
  * @return  {Object}
  */
 const startBootstrapTour = (tourId, template, tourConfig) => {
-    if (currentTour) {
-        // End the current tour, but disable end tour handler.
-        tourConfig.onEnd = null;
+    if (currentTour && currentTour.tourRunning) {
+        // End the current tour.
         currentTour.endTour();
         currentTour = null;
     }
 
-    tourConfig.eventHandlers = {
-        afterEnd: [markTourComplete],
-        afterRender: [markStepShown],
-    };
+    document.addEventListener(eventTypes.tourEnded, markTourComplete);
+    document.addEventListener(eventTypes.stepRenderer, markStepShown);
 
     // Sort out the tour name.
     tourConfig.tourName = tourConfig.name;
@@ -206,7 +204,7 @@ const markStepShown = e => {
     tourRepository.markStepShown(
         stepConfig.stepid,
         tourId,
-        stepConfig.getCurrentStepNumber()
+        tour.getCurrentStepNumber()
     ).catch(log.error);
 };
 
@@ -218,12 +216,15 @@ const markStepShown = e => {
  * @listens tool_usertours/stepRendered
  */
 const markTourComplete = e => {
+    document.removeEventListener(eventTypes.tourEnded, markTourComplete);
+    document.removeEventListener(eventTypes.stepRenderer, markStepShown);
+
     const tour = e.detail.tour;
     const stepConfig = tour.getStepConfig(tour.getCurrentStepNumber());
     tourRepository.markTourComplete(
         stepConfig.stepid,
         tourId,
-        stepConfig.getCurrentStepNumber()
+        tour.getCurrentStepNumber()
     ).catch(log.error);
 };
 
