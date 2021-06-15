@@ -14,17 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_glossary\output;
+
+use plugin_renderer_base;
+
 /**
- * Glossary module version information
+ * Class actionbar - Display the action bar
  *
- * @package mod_glossary
- * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_glossary
+ * @copyright 2021 Peter Dias
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class renderer extends plugin_renderer_base {
+    /**
+     * Render the glossary tertiary nav
+     *
+     * @param standard_action_bar $actionmenu
+     * @return bool|string
+     * @throws \moodle_exception
+     */
+    public function main_action_bar(standard_action_bar $actionmenu) {
+        $context = $actionmenu->export_for_template($this);
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2021052503;       // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2021052500;    // Requires this Moodle version.
-$plugin->component = 'mod_glossary';   // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+        return $this->render_from_template('mod_glossary/standard_action_menu', $context);
+    }
+}

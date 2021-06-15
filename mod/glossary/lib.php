@@ -3142,22 +3142,32 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
     $hook = optional_param('hook', 'ALL', PARAM_CLEAN);
 
     if (has_capability('mod/glossary:import', $PAGE->cm->context)) {
-        $glossarynode->add(get_string('importentries', 'glossary'), new moodle_url('/mod/glossary/import.php', array('id'=>$PAGE->cm->id)));
+        $node = $glossarynode->add(get_string('importentries', 'glossary'),
+            new moodle_url('/mod/glossary/import.php', ['id' => $PAGE->cm->id]));
+        $node->set_show_in_secondary_navigation(false);
     }
 
     if (has_capability('mod/glossary:export', $PAGE->cm->context)) {
-        $glossarynode->add(get_string('exportentries', 'glossary'), new moodle_url('/mod/glossary/export.php', array('id'=>$PAGE->cm->id, 'mode'=>$mode, 'hook'=>$hook)));
-    }
-
-    if (has_capability('mod/glossary:approve', $PAGE->cm->context) && ($hiddenentries = $DB->count_records('glossary_entries', array('glossaryid'=>$PAGE->cm->instance, 'approved'=>0)))) {
-        $glossarynode->add(get_string('waitingapproval', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id'=>$PAGE->cm->id, 'mode'=>'approval')));
-    }
-
-    if (has_capability('mod/glossary:write', $PAGE->cm->context)) {
-        $glossarynode->add(get_string('addentry', 'glossary'), new moodle_url('/mod/glossary/edit.php', array('cmid'=>$PAGE->cm->id)));
+        $node = $glossarynode->add(get_string('exportentries', 'glossary'),
+            new moodle_url('/mod/glossary/export.php', ['id' => $PAGE->cm->id, 'mode' => $mode, 'hook' => $hook]));
+        $node->set_show_in_secondary_navigation(false);
     }
 
     $glossary = $DB->get_record('glossary', array("id" => $PAGE->cm->instance));
+    $hiddenentries = $DB->count_records('glossary_entries', ['glossaryid' => $PAGE->cm->instance, 'approved' => 0]);
+
+    // Safe guard check - Ideally, there shouldn't be any hidden entries if the glossary has 'defaultapproval'.
+    if (has_capability('mod/glossary:approve', $PAGE->cm->context) && (!$glossary->defaultapproval || $hiddenentries)) {
+        $glossarynode->add(get_string('pendingapproval', 'glossary'),
+            new moodle_url('/mod/glossary/view.php', ['id' => $PAGE->cm->id, 'mode' => 'approval']),
+            navigation_node::TYPE_CUSTOM, null, 'pendingapproval');
+    }
+
+    if (has_capability('mod/glossary:write', $PAGE->cm->context)) {
+        $node = $glossarynode->add(get_string('addentry', 'glossary'),
+            new moodle_url('/mod/glossary/edit.php', ['cmid' => $PAGE->cm->id]));
+        $node->set_show_in_secondary_navigation(false);
+    }
 
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds) && $glossary->rsstype && $glossary->rssarticles && has_capability('mod/glossary:view', $PAGE->cm->context)) {
         require_once("$CFG->libdir/rsslib.php");
@@ -3165,7 +3175,8 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
         $string = get_string('rsstype', 'glossary');
 
         $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $USER->id, 'mod_glossary', $glossary->id));
-        $glossarynode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
+        $node = $glossarynode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
+        $node->set_show_in_secondary_navigation(false);
     }
 }
 
