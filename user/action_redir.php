@@ -93,6 +93,12 @@ if ($formaction == 'bulkchange.php') {
                         'lastname' => get_string('lastname'),
                     );
 
+                    // Get the list of fields we have to hide.
+                    $hiddenfields = [];
+                    if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
+                        $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+                    }
+
                     // TODO Does not support custom user profile fields (MDL-70456).
                     $identityfields = \core_user\fields::get_identity_fields($context, false);
                     $identityfieldsselect = '';
@@ -102,15 +108,30 @@ if ($formaction == 'bulkchange.php') {
                         $identityfieldsselect .= ', u.' . $field . ' ';
                     }
 
-                    if (!empty($userids)) {
-                        list($insql, $inparams) = $DB->get_in_or_equal($userids);
+                    [$useridsql, $useridparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid');
+                    [$userordersql, $userorderparams] = users_order_by_sql('u', null, $context);
+
+                    $params = array_merge($useridparams, $userorderparams);
+
+                    // Add column for groups if the user can view them.
+                    if (!isset($hiddenfields['groups'])) {
+                        $columnnames['groupnames'] = get_string('groups');
+                        $identityfieldsselect .= ', gcn.groupnames';
+
+                        [$groupconcatnamesql, $groupconcatnameparams] = groups_get_names_concat_sql($course->id);
+                        $groupconcatjoin = "LEFT JOIN ({$groupconcatnamesql}) gcn ON gcn.userid = u.id";
+                        $params = array_merge($params, $groupconcatnameparams);
+                    } else {
+                        $groupconcatjoin = '';
                     }
 
                     $sql = "SELECT u.firstname, u.lastname" . $identityfieldsselect . "
                               FROM {user} u
-                             WHERE u.id $insql";
+                                   {$groupconcatjoin}
+                             WHERE u.id {$useridsql}
+                          ORDER BY {$userordersql}";
 
-                    $rs = $DB->get_recordset_sql($sql, $inparams);
+                    $rs = $DB->get_recordset_sql($sql, $params);
                     \core\dataformat::download_data('courseid_' . $course->id . '_participants', $dataformat, $columnnames, $rs);
                     $rs->close();
                 }

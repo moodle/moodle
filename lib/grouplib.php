@@ -1020,6 +1020,38 @@ function groups_get_members_ids_sql($groupids, context $context = null, $groupsj
 }
 
 /**
+ * Returns array with SQL and parameters returning userids and concatenated group names for given course
+ *
+ * This function uses 'gn[0-9]+_' prefix for table names and parameters
+ *
+ * @param int $courseid
+ * @param string $separator
+ * @return array [$sql, $params]
+ */
+function groups_get_names_concat_sql(int $courseid, string $separator = ', '): array {
+    global $DB;
+
+    // Use unique prefix just in case somebody makes some SQL magic with the result.
+    static $i = 0;
+    $i++;
+    $prefix = "gn{$i}_";
+
+    $groupalias = $prefix . 'g';
+    $groupmemberalias = $prefix . 'gm';
+    $groupcourseparam = $prefix . 'courseid';
+
+    $sqlgroupconcat = $DB->sql_group_concat("{$groupalias}.name", $separator, "{$groupalias}.name");
+
+    $sql = "SELECT {$groupmemberalias}.userid, {$sqlgroupconcat} AS groupnames
+              FROM {groups} {$groupalias}
+              JOIN {groups_members} {$groupmemberalias} ON {$groupmemberalias}.groupid = {$groupalias}.id
+             WHERE {$groupalias}.courseid = :{$groupcourseparam}
+          GROUP BY {$groupmemberalias}.userid";
+
+    return [$sql, [$groupcourseparam => $courseid]];
+};
+
+/**
  * Get sql join to return users in a group
  *
  * @param int|array $groupids The groupids, 0 or [] means all groups and USERSWITHOUTGROUP no group
