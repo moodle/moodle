@@ -93,7 +93,7 @@ Feature: View activity completion in the SCORM activity
     And the "Receive a score of 3 or more" completion condition of "Music history" is displayed as "failed"
     And the "Do all parts of this activity" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
-    And the "Complete and pass the activity" completion condition of "Music history" is displayed as "failed"
+    And the "Complete and pass the activity" completion condition of "Music history" is displayed as "done"
 
   @javascript
   Scenario: Use manual completion

@@ -105,10 +105,16 @@ class custom_completion_test extends advanced_testcase {
                 'completionstatusrequired', 4, [$completioncompleted], 1, COMPLETION_COMPLETE, null
             ],
             'Completion status Passed and Completed required, user has only completed, can make another attempt' => [
-                'completionstatusrequired', 6, [$completioncompleted], 0, COMPLETION_INCOMPLETE, null
+                'completionstatusrequired', 6, [$completioncompleted], 0, COMPLETION_COMPLETE, null
             ],
             'Completion status Passed and Completed required, user has completed and passed' => [
                 'completionstatusrequired', 6, [$completionpassed, $completioncompleted], 0, COMPLETION_COMPLETE, null
+            ],
+            'Completion status Passed and Completed required, user has not passed or completed, but has another attempt' => [
+                'completionstatusrequired', 6, [$completionincomplete], 2, COMPLETION_INCOMPLETE, null
+            ],
+            'Completion status Passed and Completed required, user has used all attempts, but not passed or completed' => [
+                'completionstatusrequired', 6, [$completionincomplete], 1, COMPLETION_COMPLETE_FAIL, null
             ],
             'Completion status Passed required, user has used all attempts and completed, but not passed' => [
                 'completionstatusrequired', 2, [$completioncompleted], 1, COMPLETION_COMPLETE_FAIL, null
@@ -117,7 +123,7 @@ class custom_completion_test extends advanced_testcase {
                 'completionstatusrequired', 4, [$completionincomplete], 1, COMPLETION_COMPLETE_FAIL, null
             ],
             'Completion status Passed and Completed required, user has used all attempts, but not passed' => [
-                'completionstatusrequired', 6, [$completionincomplete, $completioncompleted], 2, COMPLETION_COMPLETE_FAIL, null
+                'completionstatusrequired', 6, [$completionincomplete, $completioncompleted], 2, COMPLETION_COMPLETE, null
             ],
             'Completion score required, user has no score' => [
                 'completionscorerequired', 80, [], 0, COMPLETION_INCOMPLETE, null
