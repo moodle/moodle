@@ -49,11 +49,9 @@ if (!$feedbackstructure->can_view_analysis()) {
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($feedback->name));
-
-/// print the tabs
-require('tabs.php');
-
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading(format_string($feedback->name));
+}
 
 //get the groupid
 $mygroupid = groups_get_activity_group($cm, true);

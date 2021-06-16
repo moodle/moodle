@@ -35,17 +35,24 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_feedback_templates_table extends flexible_table {
+    /** @var string|null Indicate whether we are managing template or not. */
+    private $mode;
 
     /**
      * Constructor
      * @param int $uniqueid all tables have to have a unique id, this is used
      *      as a key when storing table properties like sort order in the session.
      * @param moodle_url $baseurl
+     * @param string $mode Indicate whether we are managing templates
      */
-    public function __construct($uniqueid, $baseurl) {
+    public function __construct($uniqueid, $baseurl, ?string $mode = null) {
         parent::__construct($uniqueid);
+        $this->mode = $mode;
+        $tablecolumns = array('template');
+        if ($this->mode) {
+            $tablecolumns[] = 'actions';
+        }
 
-        $tablecolumns = array('template', 'action');
         $tableheaders = array(get_string('template', 'feedback'), '');
 
         $this->set_attribute('class', 'templateslist');
@@ -54,8 +61,7 @@ class mod_feedback_templates_table extends flexible_table {
         $this->define_headers($tableheaders);
         $this->define_baseurl($baseurl);
         $this->column_class('template', 'template');
-        $this->column_class('action', 'action');
-
+        $this->column_class('actions', 'text-right');
         $this->sortable(false);
     }
 
@@ -75,12 +81,26 @@ class mod_feedback_templates_table extends flexible_table {
         $strdeletefeedback = get_string('delete_template', 'feedback');
 
         foreach ($templates as $template) {
-            $data = array();
-            $data[] = format_string($template->name);
-            $url = new moodle_url($this->baseurl, array('deletetempl' => $template->id, 'sesskey' => sesskey()));
+            $data = [];
+            $url = new moodle_url($this->baseurl, array('templateid' => $template->id, 'sesskey' => sesskey()));
+            $data[] = $OUTPUT->action_link($url, format_string($template->name));
 
-            $deleteaction = new confirm_action(get_string('confirmdeletetemplate', 'feedback'));
-            $data[] = $OUTPUT->action_icon($url, new pix_icon('t/delete', $strdeletefeedback), $deleteaction);
+            // Only show the actions if we are managing templates.
+            if ($this->mode && has_capability('mod/feedback:deletetemplate', $this->get_context())) {
+                $deleteurl = new moodle_url('/mod/feedback/manage_templates.php',
+                    $url->params() + ['deletetemplate' => $template->id]);
+                $deleteaction = new confirm_action(get_string('confirmdeletetemplate', 'feedback'));
+                $deleteicon = $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete', $strdeletefeedback), $deleteaction);
+                if ($template->ispublic) {
+                    $systemcontext = context_system::instance();
+                    if (!(has_capability('mod/feedback:createpublictemplate', $systemcontext) &&
+                        has_capability('mod/feedback:deletetemplate', $systemcontext))) {
+                        $deleteicon = false;
+                    }
+                }
+                $data[] = $deleteicon;
+            }
+
             $this->add_data($data);
         }
         $this->finish_output();

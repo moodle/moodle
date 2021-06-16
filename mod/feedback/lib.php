@@ -2801,17 +2801,17 @@ function feedback_extend_settings_navigation(settings_navigation $settings,
 
     global $PAGE;
 
+    $hassecondary = $PAGE->has_secondary_navigation();
     if (!$context = context_module::instance($PAGE->cm->id, IGNORE_MISSING)) {
         print_error('badcontext');
     }
 
     if (has_capability('mod/feedback:edititems', $context)) {
-        $questionnode = $feedbacknode->add(get_string('questions', 'feedback'));
-
+        $questionnode = $feedbacknode->add(get_string('questions', 'feedback'), null,
+            navigation_node::TYPE_CUSTOM, null, 'questionnode');
         $questionnode->add(get_string('edit_items', 'feedback'),
                     new moodle_url('/mod/feedback/edit.php',
-                                    array('id' => $PAGE->cm->id,
-                                          'do_show' => 'edit')));
+                                    ['id' => $PAGE->cm->id]));
 
         $questionnode->add(get_string('export_questions', 'feedback'),
                     new moodle_url('/mod/feedback/export.php',
@@ -2822,38 +2822,43 @@ function feedback_extend_settings_navigation(settings_navigation $settings,
                     new moodle_url('/mod/feedback/import.php',
                                     array('id' => $PAGE->cm->id)));
 
-        $questionnode->add(get_string('templates', 'feedback'),
-                    new moodle_url('/mod/feedback/edit.php',
-                                    array('id' => $PAGE->cm->id,
-                                          'do_show' => 'templates')));
+        $feedbacknode->add(get_string('templates', 'feedback'),
+                    new moodle_url('/mod/feedback/manage_templates.php', ['id' => $PAGE->cm->id, 'mode' => 'manage']),
+                    navigation_node::TYPE_CUSTOM, null, 'templatenode');
     }
 
     if (has_capability('mod/feedback:mapcourse', $context) && $PAGE->course->id == SITEID) {
         $feedbacknode->add(get_string('mappedcourses', 'feedback'),
-                    new moodle_url('/mod/feedback/mapcourse.php',
-                                    array('id' => $PAGE->cm->id)));
+                    new moodle_url('/mod/feedback/mapcourse.php', ['id' => $PAGE->cm->id]),
+                    navigation_node::TYPE_CUSTOM, null, 'mapcourse');
+    }
+
+    $feedback = $PAGE->activityrecord;
+    if ($feedback->course == SITEID) {
+        $analysisnode = navigation_node::create(get_string('analysis', 'feedback'),
+            new moodle_url('/mod/feedback/analysis_course.php', ['id' => $PAGE->cm->id]),
+            navigation_node::TYPE_CUSTOM, null, 'feedbackanalysis');
+    } else {
+        $analysisnode = navigation_node::create(get_string('analysis', 'feedback'),
+            new moodle_url('/mod/feedback/analysis.php', ['id' => $PAGE->cm->id]),
+            navigation_node::TYPE_CUSTOM, null, 'feedbackanalysis');
     }
 
     if (has_capability('mod/feedback:viewreports', $context)) {
-        $feedback = $PAGE->activityrecord;
-        if ($feedback->course == SITEID) {
-            $feedbacknode->add(get_string('analysis', 'feedback'),
-                    new moodle_url('/mod/feedback/analysis_course.php',
-                                    array('id' => $PAGE->cm->id)));
-        } else {
-            $feedbacknode->add(get_string('analysis', 'feedback'),
-                    new moodle_url('/mod/feedback/analysis.php',
-                                    array('id' => $PAGE->cm->id)));
-        }
-
-        $feedbacknode->add(get_string('show_entries', 'feedback'),
-                    new moodle_url('/mod/feedback/show_entries.php',
-                                    array('id' => $PAGE->cm->id)));
+        $feedbacknode->add_node($analysisnode);
+        $feedbacknode->add(get_string(($hassecondary ? 'responses' : 'show_entries'), 'feedback'),
+                    new moodle_url('/mod/feedback/show_entries.php', ['id' => $PAGE->cm->id]),
+                        navigation_node::TYPE_CUSTOM, null, 'responses');
 
         if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO AND $feedback->course != SITEID) {
             $feedbacknode->add(get_string('show_nonrespondents', 'feedback'),
-                        new moodle_url('/mod/feedback/show_nonrespondents.php',
-                                        array('id' => $PAGE->cm->id)));
+                    new moodle_url('/mod/feedback/show_nonrespondents.php', ['id' => $PAGE->cm->id]),
+                        navigation_node::TYPE_CUSTOM, null, 'nonrespondents');
+        }
+    } else {
+        $feedbackcompletion = new mod_feedback_completion($feedback, $context, $PAGE->course->id);
+        if ($feedbackcompletion->can_view_analysis()) {
+            $feedbacknode->add_node($analysisnode);
         }
     }
 }

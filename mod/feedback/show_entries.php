@@ -43,13 +43,14 @@ list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 $baseurl = new moodle_url('/mod/feedback/show_entries.php', array('id' => $cm->id));
 $PAGE->set_url(new moodle_url($baseurl, array('userid' => $userid, 'showcompleted' => $showcompleted,
         'delete' => $deleteid)));
-
 $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
 $feedback = $PAGE->activityrecord;
 
 require_capability('mod/feedback:viewreports', $context);
+
+$actionbar = new \mod_feedback\output\responses_action_bar($cm->id, $baseurl);
 
 if ($deleteid) {
     // This is a request to delete a reponse.
@@ -86,10 +87,12 @@ navigation_node::override_active_url($baseurl);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($feedback->name));
+
+/** @var \mod_feedback\output\renderer $renderer */
+$renderer = $PAGE->get_renderer('mod_feedback');
+echo $renderer->main_action_bar($actionbar);
 
 $current_tab = 'showentries';
-require('tabs.php');
 
 /// Print the main part of the page
 ///////////////////////////////////////////////////////////////////////////
