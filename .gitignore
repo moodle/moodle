@@ -4,7 +4,6 @@
 # except our plugins':
 
 !mod/kalvidassign/**/*
-!mod/kalvidpres/**/*
 !mod/kalvidres/**/*
 
 !filter/kaltura/**/*

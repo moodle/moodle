@@ -395,11 +395,6 @@ function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $edit
         $requestparams['assignment'] = $ltirequest['submission'];
     }
 
-    // Specific settings for video presentation requests.
-    if (isset($ltirequest['custom_disable_add_new'])) {
-        $requestparams['custom_disable_add_new'] = $ltirequest['custom_disable_add_new'];
-    }
-
     if (isset($ltirequest['custom_filter_type'])) {
         $requestparams['custom_filter_type'] = $ltirequest['custom_filter_type'];
     }

@@ -1257,37 +1257,5 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
         $result = local_kaltura_convert_kaltura_base_entry_object($base);
         $this->assertEquals($expected, $result);
-
-        // Test converting a video presentation entry.
-        $base = new KalturaDataEntry();
-        $base->id = 'phpunit';
-        $base->name = 'phpunit title';
-        $base->description = 'phpunit description';
-        $base->creatorId = 'phpunit creator';
-        $base->tags = 'phpunit tags';
-        $base->createdAt = $time;
-        $base->thumbnailUrl = 'http://phpunittest.com/thumb';
-
-        $expected = new stdClass();
-        $expected->url = '';
-        $expected->dataurl = '';
-        $expected->width = 0;
-        $expected->height = 0;
-        $expected->entryid = 'phpunit';
-        $expected->title = 'phpunit title';
-        $expected->thumbnailurl = 'http://phpunittest.com/thumb';
-        $expected->duration = 0;
-        $expected->description = 'phpunit description';
-        $expected->createdat = $time;
-        $expected->owner = 'phpunit creator';
-        $expected->tags = 'phpunit tags';
-        $expected->showtitle = 'on';
-        $expected->showdescription = 'on';
-        $expected->showowner = 'on';
-        $expected->player = '';
-        $expected->size = '';
-
-        $result = local_kaltura_convert_kaltura_base_entry_object($base);
-        $this->assertEquals($expected, $result);
     }
 }
