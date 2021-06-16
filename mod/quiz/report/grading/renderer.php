@@ -99,17 +99,18 @@ class quiz_grading_renderer extends plugin_renderer_base {
      *
      * @param stdClass $counts
      * @param string $type Type of grade.
-     * @param string $gradestring Lang string.
+     * @param string $string Lang string.
+     * @param string $component Lang string component.
      * @param moodle_url $gradequestionurl Url to grade question.
      * @return string The HTML for the question grade link.
      * @throws coding_exception
      */
-    public function render_grade_link($counts, $type, $gradestring, $gradequestionurl) {
+    public function render_grade_link($counts, $type, $string, $component, $gradequestionurl) {
         $output = '';
         if ($counts->$type > 0) {
             $output .= ' ' . html_writer::link(
                             $gradequestionurl,
-                            get_string($gradestring, 'quiz_grading'),
+                            get_string($string, $component),
                             ['class' => 'gradetheselink']);
         }
         return $output;

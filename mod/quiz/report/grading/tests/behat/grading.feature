@@ -201,7 +201,7 @@ Feature: Basic use of the Manual grading report
     And "Essay Q1" row "To grade" column of "questionstograde" table should contain "3"
     And "Essay Q1" row "Already graded" column of "questionstograde" table should contain "0"
     # Go to the grading page.
-    And I click on "grade" "link" in the "Essay Q1" "table_row"
+    And I click on "Grade" "link" in the "Essay Q1" "table_row"
     And I should see "Grading attempts 1 to 3 of 3"
     And I set the following fields to these values:
       | Questions per page | 1         |
