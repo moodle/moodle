@@ -130,6 +130,7 @@ $string['tourlist_explanation'] = 'You can create as many tours as you like and 
 $string['tours'] = 'Tours';
 $string['pausetour'] = 'Pause';
 $string['resumetour'] = 'Resume';
+$string['endonesteptour'] = 'Got it!';
 $string['endtour'] = 'End tour';
 $string['orphan'] = 'Show if target not found';
 $string['orphan_help'] = 'Show the step if the target could not be found on the page.';

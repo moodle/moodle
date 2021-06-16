@@ -37,7 +37,7 @@ Feature: Apply tour filters to a tour
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I should see "Welcome to your course tour."
-    And I click on "End tour" "button"
+    And I click on "Got it!" "button"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
