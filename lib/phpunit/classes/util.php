@@ -467,6 +467,10 @@ class phpunit_util extends testing_util {
         // Disable all logging for performance and sanity reasons.
         set_config('enabled_stores', '', 'tool_log');
 
+        // Remove any default blocked hosts and port restrictions, to avoid blocking tests (eg those using local files).
+        set_config('curlsecurityblockedhosts', '');
+        set_config('curlsecurityallowedport', '');
+
         // We need to keep the installed dataroot filedir files.
         // So each time we reset the dataroot before running a test, the default files are still installed.
         self::save_original_data_files();

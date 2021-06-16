@@ -125,6 +125,10 @@ class behat_util extends testing_util {
         // Set noreplyaddress to an example domain, as it should be valid email address and test site can be a localhost.
         set_config('noreplyaddress', 'noreply@example.com');
 
+        // Remove any default blocked hosts and port restrictions, to avoid blocking tests (eg those using local files).
+        set_config('curlsecurityblockedhosts', '');
+        set_config('curlsecurityallowedport', '');
+
         // Keeps the current version of database and dataroot.
         self::store_versions_hash();
 
