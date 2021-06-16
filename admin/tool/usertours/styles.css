@@ -66,3 +66,16 @@ span[data-flexitour="container"].orphan div[data-role="arrow"] {
     display: block;
     padding: 1em;
 }
+
+@media (max-width: 575.98px) {
+    span[data-flexitour="container"] {
+        margin-left: 10px;
+    }
+    span[data-flexitour="container"] .modal-content {
+        overflow-y: initial;
+    }
+    span[data-flexitour="container"].orphan {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+}
