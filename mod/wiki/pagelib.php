@@ -1943,16 +1943,10 @@ class page_wiki_deletecomment extends page_wiki {
 
     /**
      * Prints the comment deletion confirmation form
-     *
-     * @param page $page The page whose version will be restored
-     * @param int  $versionid The version to be restored
-     * @param bool $confirm If false, shows a yes/no confirmation page.
-     *     If true, restores the old version and redirects the user to the 'view' tab.
      */
     private function printconfirmdelete() {
         global $OUTPUT;
 
-        $strdeletecheck = get_string('deletecommentcheck', 'wiki');
         $strdeletecheckfull = get_string('deletecommentcheckfull', 'wiki');
 
         //ask confirmation
@@ -1960,18 +1954,7 @@ class page_wiki_deletecomment extends page_wiki {
         $deleteurl = new moodle_url('/mod/wiki/instancecomments.php', $optionsyes);
         $return = new moodle_url('/mod/wiki/comments.php', array('pageid'=>$this->page->id));
 
-        echo $OUTPUT->container_start();
-        echo html_writer::tag('p', $strdeletecheckfull);
-        echo $OUTPUT->container_start(false, 'wiki_deletecommentform');
-        echo '<form class="wiki_deletecomment_yes" action="' . $deleteurl . '" method="post" id="deletecomment">';
-        echo '<div><input type="submit" class="btn btn-secondary" name="confirmdeletecomment" value="'
-            . get_string('yes') . '" /></div>';
-        echo '</form>';
-        echo '<form class="wiki_deletecomment_no" action="' . $return . '" method="post">';
-        echo '<div><input type="submit" class="btn btn-secondary" name="norestore" value="' . get_string('no') . '" /></div>';
-        echo '</form>';
-        echo $OUTPUT->container_end();
-        echo $OUTPUT->container_end();
+        echo $OUTPUT->confirm($strdeletecheckfull, $deleteurl, $return);
     }
 }
 
