@@ -906,7 +906,7 @@ class core_course_category_testcase extends advanced_testcase {
 
         // Reset default settings.
         $CFG->courseoverviewfileslimit = 1;
-        $CFG->courseoverviewfilesext = '.jpg,.gif,.png';
+        $CFG->courseoverviewfilesext = 'web_image';
 
         $courses = $cat1->get_courses();
         $this->assertTrue($courses[$c1->id]->has_course_overviewfiles());
