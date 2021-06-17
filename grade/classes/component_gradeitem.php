@@ -390,6 +390,48 @@ abstract class component_gradeitem {
     abstract public function get_grade_for_user(stdClass $gradeduser, stdClass $grader): ?stdClass;
 
     /**
+     * Returns the grade that should be displayed to the user.
+     *
+     * The grade does not necessarily return a float value, this method takes grade settings into considering so
+     * the correct value be shown, eg. a float vs a letter.
+     *
+     * @param stdClass $gradeduser
+     * @param stdClass $grader
+     * @return stdClass|null
+     */
+    public function get_formatted_grade_for_user(stdClass $gradeduser, stdClass $grader): ?stdClass {
+        global $DB;
+
+        if ($grade = $this->get_grade_for_user($gradeduser, $grader)) {
+            $gradeitem = $this->get_grade_item();
+            if (!$this->is_using_scale()) {
+                $grade->usergrade = grade_format_gradevalue($grade->grade, $gradeitem);
+                $grade->maxgrade = format_float($gradeitem->grademax, $gradeitem->get_decimals());
+                // If displaying the raw grade, also display the total value.
+                if ($gradeitem->get_displaytype() == GRADE_DISPLAY_TYPE_REAL) {
+                    $grade->usergrade .= ' / ' . $grade->maxgrade;
+                }
+            } else {
+                $grade->usergrade = '-';
+                if ($scale = $DB->get_record('scale', ['id' => $gradeitem->scaleid])) {
+                    $options = make_menu_from_list($scale->scale);
+
+                    $gradeint = (int) $grade->grade;
+                    if (isset($options[$gradeint])) {
+                        $grade->usergrade = $options[$gradeint];
+                    }
+                }
+
+                $grade->maxgrade = format_float($gradeitem->grademax, $gradeitem->get_decimals());
+            }
+
+            return $grade;
+        }
+
+        return null;
+    }
+
+    /**
      * Get the grade status for the specified user.
      * If the user has a grade as defined by the implementor return true else return false.
      *
