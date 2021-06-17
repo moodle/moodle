@@ -377,9 +377,7 @@ abstract class component_gradeitem {
     public function get_grade(int $gradeid): stdClass {
         global $DB;
 
-        $grade = $DB->get_record($this->get_table_name(), ['id' => $gradeid]);
-
-        return $grade ?: null;
+        return $DB->get_record($this->get_table_name(), ['id' => $gradeid]);
     }
 
     /**
