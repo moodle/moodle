@@ -8,12 +8,15 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
+    And the following "custom profile fields" exist:
+      | datatype | shortname  | name           |
+      | text     | frog       | Favourite frog |
     And the following "users" exist:
-      | username | firstname | lastname | email | idnumber |
-      | teacher1 | Teacher | 1 | teacher1@example.com | t1 |
-      | student1 | Student | 1 | student1@example.com | s1 |
-      | student2 | Student | 2 | student2@example.com | s2 |
-      | student3 | Student | 3 | student3@example.com | s3 |
+      | username | firstname | lastname | email                | idnumber | profile_field_frog |
+      | teacher1 | Teacher   | 1        | teacher1@example.com | t1       |                    |
+      | student1 | Student   | 1        | student1@example.com | s1       | litle yellow frog  |
+      | student2 | Student   | 2        | student2@example.com | s2       | prince frog        |
+      | student3 | Student   | 3        | student3@example.com | s3       |                    |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -251,3 +254,13 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I click on "The grade entered for Item VU for Student 2 is more than the maximum allowed" "text"
     And I should not see "The grade entered for Item VU for Student 2 is more than the maximum allowed"
     And the grade for "Student 2" in grade item "Item VU" should match "66.00"
+
+  @javascript
+  Scenario: Teacher can see user custom filed columns as additional user identity
+    Given the following config values are set as admin:
+      | showuseridentity | email,profile_field_frog |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    When I navigate to "View > Grader report" in the course gradebook
+    Then I should see "litle yellow frog" in the "student1" "table_row"
+    And I should see "prince frog" in the "student2" "table_row"
