@@ -423,10 +423,10 @@ abstract class quiz_attempts_report_table extends table_sql {
             $fields .= "\n(CASE WHEN $this->qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
         }
 
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $userfields = \core_user\fields::for_identity($this->context, false)->with_name()
+        $userfieldsapi = \core_user\fields::for_identity($this->context)->with_name()
                 ->excluding('id', 'idnumber', 'picture', 'imagealt', 'institution', 'department', 'email');
-        $extrafields = $userfields->get_sql('u')->selects;
+        $userfields = $userfieldsapi->get_sql('u', true, '', '', false);
+
         $fields .= '
                 quiza.uniqueid AS usageid,
                 quiza.id AS attempt,
@@ -436,7 +436,7 @@ abstract class quiz_attempts_report_table extends table_sql {
                 u.imagealt,
                 u.institution,
                 u.department,
-                u.email' . $extrafields . ',
+                u.email,' . $userfields->selects . ',
                 quiza.state,
                 quiza.sumgrades,
                 quiza.timefinish,
@@ -450,9 +450,10 @@ abstract class quiz_attempts_report_table extends table_sql {
 
         // This part is the same for all cases. Join the users and quiz_attempts tables.
         $from = " {user} u";
+        $from .= "\n{$userfields->joins}";
         $from .= "\nLEFT JOIN {quiz_attempts} quiza ON
                                     quiza.userid = u.id AND quiza.quiz = :quizid";
-        $params = array('quizid' => $this->quiz->id);
+        $params = array_merge($userfields->params, ['quizid' => $this->quiz->id]);
 
         if ($this->qmsubselect && $this->options->onlygraded) {
             $from .= " AND (quiza.state <> :finishedstate OR $this->qmsubselect)";
