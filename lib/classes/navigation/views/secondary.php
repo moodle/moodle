@@ -217,7 +217,12 @@ class secondary extends view {
         $nodes = $this->get_default_module_mapping();
 
         if ($mainnode) {
-            $this->add(get_string('module', 'course'), $this->page->url, null, null, 'modulepage');
+            $url = new \moodle_url('/mod/' . $this->page->activityname . '/view.php', ['id' => $this->page->cm->id]);
+            $setactive = $url->compare($this->page->url, URL_MATCH_BASE);
+            $node = $this->add(get_string('module', 'course'), $url, null, null, 'modulepage');
+            if ($setactive) {
+                $node->make_active();
+            }
             // Add the initial nodes.
             $nodesordered = $this->get_leaf_nodes($mainnode, $nodes);
             $this->add_ordered_nodes($nodesordered);
