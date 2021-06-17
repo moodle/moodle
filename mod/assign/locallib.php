@@ -8239,12 +8239,20 @@ class assign {
                 if (!$gradingdisabled && $this->update_user_flags($flags)) {
                     // Update Gradebook.
                     $grade = $this->get_user_grade($userid, true);
+                    // Fetch any feedback for this student.
+                    $gradebookplugin = $this->get_admin_config()->feedback_plugin_for_gradebook;
+                    $gradebookplugin = str_replace('assignfeedback_', '', $gradebookplugin);
+                    $plugin = $this->get_feedback_plugin_by_type($gradebookplugin);
+                    if ($plugin && $plugin->is_enabled() && $plugin->is_visible()) {
+                        $grade->feedbacktext = $plugin->text_for_gradebook($grade);
+                        $grade->feedbackformat = $plugin->format_for_gradebook($grade);
+                        $grade->feedbackfiles = $plugin->files_for_gradebook($grade);
+                    }
                     $this->update_grade($grade);
                     $assign = clone $this->get_instance();
                     $assign->cmidnumber = $this->get_course_module()->idnumber;
                     // Set assign gradebook feedback plugin status.
                     $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
-                    assign_update_grades($assign, $userid);
 
                     $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
                     \mod_assign\event\workflow_state_updated::create_from_user($this, $user, $state)->trigger();
