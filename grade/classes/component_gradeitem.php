@@ -86,7 +86,7 @@ abstract class component_gradeitem {
 
         $classname = "{$component}\\grades\\{$itemname}_gradeitem";
         if (!class_exists($classname)) {
-            throw new coding_exception("Unknown gradeitem {$itemname} for component {$classname}");
+            throw new \coding_exception("Unknown gradeitem {$itemname} for component {$classname}");
         }
 
         return $classname::load_from_context($context);
@@ -145,7 +145,7 @@ abstract class component_gradeitem {
      *
      * @param stdClass $gradeduser The user being graded
      * @param stdClass $grader The user who is grading
-     * @throws required_capability_exception
+     * @throws \required_capability_exception
      */
     abstract public function require_user_can_grade(stdClass $gradeduser, stdClass $grader): void;
 
