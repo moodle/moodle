@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Valige Moodle’i keel. Valitud keelt kasutataks
 $string['clialreadyconfigured'] = 'Fail „config.php“ on juba olemas. Kasutage sellele saidile Moodle’i installimiseks faili „admin/cli/install_database.php“.';
 $string['clialreadyinstalled'] = 'Konfiguratsioonifail config.php on juba olemas. Palun kasutage Moodle’i selles õpikeskkonnas uuendamiseks faili admin/cli/install_database.php.';
 $string['cliinstallheader'] = 'Moodle’i {$a} käsureapõhine installiprogramm';
+$string['clitablesexist'] = 'Andmebaasitabelid on juba olemas, käsureapõhist installimist ei saa jätkata.';
 $string['databasehost'] = 'Andmebaasi host';
 $string['databasename'] = 'Andmebaasi nimi';
 $string['databasetypehead'] = 'Valige andmebaasi draiver';

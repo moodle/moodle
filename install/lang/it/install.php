@@ -38,6 +38,7 @@ Utilizzare admin/cli/install_database.php per installare Moodle.';
 $string['clialreadyinstalled'] = 'Il file config.php è già presente.
 Utilizzare admin/cli/install_database.php per aggiornare Moodle.';
 $string['cliinstallheader'] = 'Programma di installazione Moodle {$a} via linea di comando';
+$string['clitablesexist'] = 'Le tabelle del database sono già presenti, l\'installazione via linea di comando non può proseguire.';
 $string['databasehost'] = 'Host database';
 $string['databasename'] = 'Nome database';
 $string['databasetypehead'] = 'Scegli un database driver';

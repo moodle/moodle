@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Παρακαλούμε, επιλέξτε γλώ�
 $string['clialreadyconfigured'] = 'Το αρχείο ρυθμίσεων config.php υπάρχει ήδη. Χρησιμοποιήστε το admin/cli/install_database.php για να εγκαταστήσετε το Moodle για αυτόν τον ιστότοπο.';
 $string['clialreadyinstalled'] = 'Το αρχείο ρυθμίσεων config.php υπάρχει ήδη. Χρησιμοποιήστε το admin/cli/install_database.php για να αναβαθμίσετε το Moodle για αυτόν τον ιστότοπο.';
 $string['cliinstallheader'] = 'Moodle {$a} πρόγραμμα εγκατάστασης γραμμής εντολών';
+$string['clitablesexist'] = 'Οι πίνακες βάσεων δεδομένων υπάρχουν ήδη. Η εγκατάσταση από γραμμή εντολών δεν μπορεί να συνεχιστεί.';
 $string['databasehost'] = 'Κεντρικός H/Y που φιλοξενεί την Βάση Δεδομένων';
 $string['databasename'] = 'Όνομα Βάσης Δεδομένων';
 $string['databasetypehead'] = 'Επιλογή οδηγού βάσης δεδομένων';

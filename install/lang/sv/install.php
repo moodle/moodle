@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Vänligen välj ett språk för installationen. 
 $string['clialreadyconfigured'] = 'Filen <em>config.php</em> finns redan. Använd <code>admin/cli/install_database.php</code> för att installera Moodle på denna server.';
 $string['clialreadyinstalled'] = 'Filen config.php finns redan. Vänligen använd admin/cli/upgrade.php om Du vill uppgradera Din webbplats.';
 $string['cliinstallheader'] = 'Kommandoradsbaserat installationsprogram för Moodle {$a}';
+$string['clitablesexist'] = 'Databastabellerna finns redan. CLI-installationen kan inte fortsätta.';
 $string['databasehost'] = 'Databasserver';
 $string['databasename'] = 'Namn på databas';
 $string['databasetypehead'] = 'Välj drivrutin för databasen';
