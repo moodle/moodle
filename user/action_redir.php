@@ -110,7 +110,23 @@ if ($formaction == 'bulkchange.php') {
                              WHERE u.id $insql";
 
                     $rs = $DB->get_recordset_sql($sql, $inparams);
-                    \core\dataformat::download_data('courseid_' . $course->id . '_participants', $dataformat, $columnnames, $rs);
+
+                    // Provide callback to pre-process all records ensuring user identity fields are escaped if HTML supported.
+                    \core\dataformat::download_data(
+                        'courseid_' . $course->id . '_participants',
+                        $dataformat,
+                        $columnnames,
+                        $rs,
+                        function(stdClass $record, bool $supportshtml) use ($identityfields): stdClass {
+                            if ($supportshtml) {
+                                foreach ($identityfields as $identityfield) {
+                                    $record->{$identityfield} = s($record->{$identityfield});
+                                }
+                            }
+
+                            return $record;
+                        }
+                    );
                     $rs->close();
                 }
             }
