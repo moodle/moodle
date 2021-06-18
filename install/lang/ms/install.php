@@ -35,6 +35,7 @@ $string['chooselanguagehead'] = 'Pilih bahasa';
 $string['chooselanguagesub'] = 'Sila pilih bahasa untuk pemasangan. Bahasa dipilih akan digunakan sebagai bahasa lalai untuk laman, walau bagaimanapun ia boleh diubah kemudian.';
 $string['clialreadyinstalled'] = 'config.php fail sudah wujud, sila gunakan admin/cli/upgrade.php jika anda mahu menaik taraf laman web anda.';
 $string['cliinstallheader'] = 'Baris arahan pemasangan program Moodle {$a}';
+$string['clitablesexist'] = 'Jadual pangkalan data yang telah wujud, pemasangan cli tidak boleh diteruskan.';
 $string['databasehost'] = 'Hos pangkalan data';
 $string['databasename'] = 'Nama pangkalan data';
 $string['databasetypehead'] = 'Pilih pemacu pangkalan data';

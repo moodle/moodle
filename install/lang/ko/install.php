@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = '설치 과정에서 사용할 언어를 선택�
 $string['clialreadyconfigured'] = '만일 이 사이트를 설치하고 싶은데 이미 config.php파일이 있다면, admin/cli/install_database.php 를 이용하시기 바랍니다.';
 $string['clialreadyinstalled'] = '이미 config.php 파일이 존재함. 사이트를 업그레이드하려면 admin/cli/upgrade.php를 사용하시기 바랍니다.';
 $string['cliinstallheader'] = '무들 {$a} 명령 입력 설치 프로그램';
+$string['clitablesexist'] = '데이터베이스가 이미 존재하므로 클라이언트의 설치를 계속할 수 없음';
 $string['databasehost'] = '데이터베이스 호스트';
 $string['databasename'] = '데이터베이스 명칭';
 $string['databasetypehead'] = '데이터베이스 드라이버 선택';

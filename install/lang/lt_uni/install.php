@@ -34,6 +34,7 @@ $string['chooselanguagesub'] = 'Pasirinkite diegimo kalbą. Ši kalba bus naudoj
 $string['clialreadyconfigured'] = 'Failas config.php jau yra, prašau naudoti admin/cli/install_database.php jei norite įrašyti šią svetainę.';
 $string['clialreadyinstalled'] = 'Failas config.php jau yra. Jei norite atnaujinti svetainę, naudokite admin/cli/upgrade.php.';
 $string['cliinstallheader'] = '„Moodle“ {$a} komandų eilutės diegimo programa';
+$string['clitablesexist'] = 'Duomenų bazės lentelės jau yra, „cli“ diegimo tęsti negalima.';
 $string['databasehost'] = 'Duomenų bazės pagrindinis kompiuteris';
 $string['dataroot'] = 'Duomenų katalogas';
 $string['datarootpermission'] = 'Duomenų katalogo leidimai';

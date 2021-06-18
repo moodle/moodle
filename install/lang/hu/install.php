@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Válasszon nyelvet a telepítéshez! Ez lesz a p
 $string['clialreadyconfigured'] = 'A config.php már létezik, a portál telepítéséhez használja az admin/cli/install_database.php állományt.';
 $string['clialreadyinstalled'] = 'A config.php már létezik, a portál frissítéséhez használja az admin/cli/upgrade.php állományt.';
 $string['cliinstallheader'] = 'A Moodle {$a} parancssori telepítő programja';
+$string['clitablesexist'] = 'Azt adatbázistáblák már léteznek, a CLI telepítése leáll.';
 $string['databasehost'] = 'Az adatbázis gazdagépe';
 $string['databasename'] = 'Az adatbázis neve';
 $string['databasetypehead'] = 'Adatbázismotor kiválasztása';

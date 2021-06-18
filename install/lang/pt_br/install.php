@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Por favor, escolha o idioma para a instalação.
 $string['clialreadyconfigured'] = 'Arquivo config.php já existe. Por favor, use admin/cli/install_database.php para instalar o Moodle neste site.';
 $string['clialreadyinstalled'] = 'Arquivo config.php já existe. Por favor use admin/cli/install_database.php para atualizar o Moodle neste site.';
 $string['cliinstallheader'] = 'Programa de instalação por linha de comando do Moodle {$a}';
+$string['clitablesexist'] = 'O banco de dados possui tabelas, a instalação por CLI não pode continuar.';
 $string['databasehost'] = 'Host do banco de dados';
 $string['databasename'] = 'Nome do banco de dados';
 $string['databasetypehead'] = 'Escolha o driver do banco de dados';

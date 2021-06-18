@@ -33,6 +33,7 @@ $string['admindirname'] = 'Dorsièr d\'administracion';
 $string['availablelangs'] = 'Paquetatges de lenga disponibles';
 $string['chooselanguagehead'] = 'Causissètz una lenga';
 $string['cliinstallheader'] = 'Programa d\'installacion de Moodle {$a} en linha de comanda';
+$string['clitablesexist'] = 'Las taulas de la basa de donadas son ja presentas. L\'installacion en linha de comanda pòt pas contunhar.';
 $string['databasehost'] = 'Servidor de basa de donadas';
 $string['databasename'] = 'Nom de la basa de donadas';
 $string['databasetypehead'] = 'Seleccionar un pilòt de basa de donadas';
