@@ -60,7 +60,8 @@ class dataformat {
      * @param string $dataformat
      * @param array $columns
      * @param Iterable $iterator
-     * @param callable|null $callback
+     * @param callable|null $callback Optional callback method to apply to each record prior to writing, which accepts two
+     *      parameters as such: function($record, bool $supportshtml) returning formatted record
      * @throws coding_exception
      */
     public static function download_data(string $filename, string $dataformat, array $columns, Iterable $iterator,
@@ -90,7 +91,7 @@ class dataformat {
         $rownum = 0;
         foreach ($iterator as $row) {
             if (is_callable($callback)) {
-                $row = $callback($row);
+                $row = $callback($row, $format->supports_html());
             }
             if ($row === null) {
                 continue;
@@ -132,7 +133,7 @@ class dataformat {
         $rownum = 0;
         foreach ($iterator as $row) {
             if (is_callable($callback)) {
-                $row = $callback($row);
+                $row = $callback($row, $format->supports_html());
             }
             if ($row === null) {
                 continue;
