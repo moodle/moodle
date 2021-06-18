@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Vă rugăm selectaţi limba pentru interfaţa de
 $string['clialreadyconfigured'] = 'Fișierul de configurare';
 $string['clialreadyinstalled'] = 'Fișierul de configurare config.php există deja. Vă rugăm să folosiți dmin/cli/install_database.php to pentru a upgrada Moodle pentru acest site.';
 $string['cliinstallheader'] = 'Program  command line installation Moodle {$a}';
+$string['clitablesexist'] = 'Tabelele bazei de date există deja, instalarea cli nu poate continua.';
 $string['databasehost'] = 'Gazdă baza de date';
 $string['databasename'] = 'Nume baza de date';
 $string['databasetypehead'] = 'Alegere driver baza de date';

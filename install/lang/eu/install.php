@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Mesedez, aukeratu instalaziorako hizkuntza bat. 
 $string['clialreadyconfigured'] = 'Dagoeneko badago config.php konfigurazio-fitxategia. Mesedez erabili admin/cli/install_database.php Moodle gune honetan instalatu nahi baduzu.';
 $string['clialreadyinstalled'] = 'Dagoeneko badago config.php konfigurazio-fitxategia. Mesedez erabili admin/cli/upgrade.php zure Moodle gunea eguneratu nahi baduzu.';
 $string['cliinstallheader'] = 'Moodle {$a} komando-lerro bidezko instalaziorako programa';
+$string['clitablesexist'] = 'Datu-base taulak dagoeneko existitzen dira. CLI instalazioak ezin du jarraitu.';
 $string['databasehost'] = 'Datu-basearen ostalaria';
 $string['databasename'] = 'Datu-basearen izena';
 $string['databasetypehead'] = 'Aukeratu datu-base kontrolatzailea';

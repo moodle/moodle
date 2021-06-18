@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Сейчас необходимо выбрать
 $string['clialreadyconfigured'] = 'Файл config.php уже существует. Если Вы хотите установить Moodle на этот сайт, используйте admin/cli/install_database.php.';
 $string['clialreadyinstalled'] = 'Файл config.php уже существует. Если Вы хотите обновить сайт Moodle, то используйте скрипт admin/cli/upgrade.php.';
 $string['cliinstallheader'] = 'Программа установки Moodle {$a} в режиме командной строки';
+$string['clitablesexist'] = 'Таблицы базы данных уже существуют, невозможно продолжить установку в режиме командной строки.';
 $string['databasehost'] = 'Сервер баз данных';
 $string['databasename'] = 'Название базы данных';
 $string['databasetypehead'] = 'Выберите драйвер базы данных';

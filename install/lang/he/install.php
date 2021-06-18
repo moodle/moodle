@@ -39,6 +39,7 @@ admin/cli/install_database.php
 $string['clialreadyinstalled'] = 'קובץ ה-config.php קיים כבר, אנא השתמש ב- admin/cli/upgrade.php
 אם ברצונך לשדרג את האתר שלך.';
 $string['cliinstallheader'] = 'תוכנית התקנת Moodle {$a} בשורת הפקודה';
+$string['clitablesexist'] = 'טבלאות מסד הנתונים נוחכות כבר, התקנת CLI לא יכולה להימשך.';
 $string['databasehost'] = 'מסד הנתונים המארח (host)';
 $string['databasename'] = 'שם מסד הנתונים';
 $string['databasetypehead'] = 'בחירת התקן מסד הנתונים';

@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Kies een taal voor de installatie. Deze taal zal
 $string['clialreadyconfigured'] = 'Het configuratiebestand config.php bestaat al. Maak aub gebruik van admin/cli/install_database.php als je Moodle voor deze site wenst te installeren.';
 $string['clialreadyinstalled'] = 'Het configuratiebestand config.php bestaat al. Maak aub gebruik van admin/cli/install_database.php als je Moodle voor deze site wenst te upgraden.';
 $string['cliinstallheader'] = 'Moodle {$a} command line installatieprogramma';
+$string['clitablesexist'] = 'Databanktabellen bestaan al, cli-installatie kan niet verder gaan.';
 $string['databasehost'] = 'Databank host:';
 $string['databasename'] = 'Databanknaam:';
 $string['databasetypehead'] = 'Kies databankdriver';

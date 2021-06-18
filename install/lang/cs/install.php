@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Zvolte si jazyk tohoto průvodce instalací. Vyb
 $string['clialreadyconfigured'] = 'Konfigurační soubor config.php již existuje. Spusťte admin/cli/install_database.php, pokud chcete provést instalaci databáze.';
 $string['clialreadyinstalled'] = 'Konfigurační soubor config.php již existuje. Spusťte admin/cli/upgrade.php, pokud chcete provést upgrade vašich stránek.';
 $string['cliinstallheader'] = 'Moodle {$a} - průvodce instalací z příkazové řádky';
+$string['clitablesexist'] = 'Databázové tabulky již existují; CLI instalace nemůže pokračovat.';
 $string['databasehost'] = 'Databázový server';
 $string['databasename'] = 'Název databáze';
 $string['databasetypehead'] = 'Vyberte databázový ovladač';
