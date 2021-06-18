@@ -68,6 +68,7 @@ function atto_equation_params_for_js($elementid, $options, $fpoptions) {
             'group1' => array(
                 'groupname' => 'librarygroup1',
                 'elements' => get_config('atto_equation', 'librarygroup1'),
+                'active' => true,
             ),
             'group2' => array(
                 'groupname' => 'librarygroup2',
