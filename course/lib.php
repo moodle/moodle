@@ -3200,7 +3200,7 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
     // All the new editor elements will be loaded after the course is presented and
     // the initial course state will be generated using core_courseformat_get_state webservice.
     if ($SITE->id !== $course->id) {
-        $PAGE->requires->js_call_amd('core_courseformat/courseeditor', 'init', [$course->id]);
+        $PAGE->requires->js_call_amd('core_courseformat/courseeditor', 'getCourseEditor', [$course->id]);
     }
     // TODO: as part of MDL-70907, add a way to indicate the plugin needs the legacy libraries (and get a deprecation message).
 

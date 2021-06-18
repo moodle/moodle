@@ -25,6 +25,9 @@ import DefaultMutations from 'core_courseformat/local/courseeditor/mutations';
 import CourseEditor from 'core_courseformat/local/courseeditor/courseeditor';
 import events from 'core_course/events';
 
+// A map with all the course editor instances.
+const courseEditorMap = new Map();
+
 /**
  * Trigger a state changed event.
  *
@@ -46,22 +49,34 @@ function dispatchStateChangedEvent(detail, target) {
 }
 
 /**
- * This is the courseditor instance all components will register in.
+ * Get a specific course editor reactive instance.
+ *
+ * @param {number} courseId the course id
+ * @returns {CourseEditor}
  */
-export const courseEditor = new CourseEditor({
-    name: 'CourseEditor',
-    eventName: events.stateChanged,
-    eventDispatch: dispatchStateChangedEvent,
-    // Mutations can be overridden by the format plugin using setMutations
-    // but we need the default one at least.
-    mutations: new DefaultMutations(),
-});
+export const getCourseEditor = (courseId) => {
+    courseId = parseInt(courseId);
+
+    if (!courseEditorMap.has(courseId)) {
+        courseEditorMap.set(
+            courseId,
+            new CourseEditor({
+                name: `CourseEditor${courseId}`,
+                eventName: events.stateChanged,
+                eventDispatch: dispatchStateChangedEvent,
+                // Mutations can be overridden by the format plugin using setMutations
+                // but we need the default one at least.
+                mutations: new DefaultMutations(),
+            })
+        );
+        courseEditorMap.get(courseId).loadCourse(courseId);
+    }
+    return courseEditorMap.get(courseId);
+};
 
 /**
- * This method is called only once to load the initial state when the page is ready.
+ * Get the current course reactive instance.
  *
- * @param {int} courseId the current course id
+ * @returns {CourseEditor}
  */
-export const init = (courseId) => {
-    courseEditor.loadCourse(courseId);
-};
+export const getCurrentCourseEditor = () => getCourseEditor(M.cfg.courseId);
