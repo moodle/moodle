@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
+ * Backup controller and related exception classes.
+ *
+ * @package core_backup
  * @subpackage backup-controller
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,38 +38,98 @@
  *
  * In other words, a mammoth class, but don't worry, practically everything is delegated/
  * aggregated!)
- *
- * TODO: Finish phpdocs
  */
 class backup_controller extends base_controller {
+    /** @var string Unique identifier for this backup */
+    protected $backupid;
 
-    protected $backupid; // Unique identificator for this backup
+    /**
+     * Type of item that is being stored in the backup.
+     *
+     * Should be selected from one of the backup::TYPE_ constants
+     * for example backup::TYPE_1ACTIVITY
+     *
+     * @var string
+     */
+    protected $type;
 
-    protected $type;   // Type of backup (activity, section, course)
-    protected $id;     // Course/section/course_module id to backup
-    protected $courseid; // courseid where the id belongs to
-    protected $format; // Format of backup (moodle, imscc)
-    protected $interactive; // yes/no
-    protected $mode;   // Purpose of the backup (default settings)
-    protected $userid; // user id executing the backup
-    protected $operation; // Type of operation (backup/restore)
+    /** @var int Course/section/course_module id to backup */
+    protected $id;
 
-    protected $status; // Current status of the controller (created, planned, configured...)
+    /** @var false|int The id of the course the backup belongs to, or false if no course. */
+    protected $courseid;
 
-    /** @var backup_plan */
-    protected $plan;   // Backup execution plan
-    protected $includefiles; // Whether this backup includes files or not.
+    /**
+     * Format of backup (moodle, imscc).
+     *
+     * Should be one of the backup::FORMAT_ constants.
+     * for example backup::FORMAT_MOODLE
+     *
+     * @var string
+     */
+    protected $format;
+
+    /**
+     * Whether this backup will require user interaction.
+     *
+     * Should be one of backup::INTERACTIVE_YES or INTERACTIVE_NO
+     *
+     * @var bool
+     */
+    protected $interactive;
+
+    /**
+     * Purpose of the backup (default settings)
+     *
+     * Should be one of the the backup::MODE_ constants,
+     * for example backup::MODE_GENERAL
+     *
+     * @var int
+     */
+    protected $mode;
+
+    /** @var int The id of the user executing the backup. */
+    protected $userid;
+
+    /**
+     * Type of operation (backup/restore)
+     *
+     * Should be selected from: backup::OPERATION_BACKUP or OPERATION_RESTORE
+     *
+     * @var string
+     */
+    protected $operation;
+
+    /**
+     * Current status of the controller (created, planned, configured...)
+     *
+     * It should be one of the backup::STATUS_ constants,
+     * for example backup::STATUS_AWAITING.
+     *
+     * @var int
+     */
+    protected $status;
+
+    /** @var backup_plan Backup execution plan. */
+    protected $plan;
+
+    /** @var int Whether this backup includes files (1) or not (0). */
+    protected $includefiles;
 
     /**
      * Immediate/delayed execution type.
-     * @var integer
+     * @var int
      */
     protected $execution;
-    protected $executiontime; // epoch time when we want the backup to be executed (requires cron to run)
 
-    protected $destination; // Destination chain object (fs_moodle, fs_os, db, email...)
+    /** @var int Epoch time when we want the backup to be executed (requires cron to run). */
+    protected $executiontime;
 
-    protected $checksum; // Cache @checksumable results for lighter @is_checksum_correct() uses
+    /** @var null Destination chain object (fs_moodle, fs_os, db, email...). */
+    protected $destination;
+
+    /** @var string Cache {@see \checksumable} results for lighter {@see \backup_controller::is_checksum_correct()} uses. */
+    protected $checksum;
 
     /**
      * The role ids to keep in a copy operation.
@@ -79,9 +140,9 @@ class backup_controller extends base_controller {
     /**
      * Constructor for the backup controller class.
      *
-     * @param int $type Type of the backup; One of backup::TYPE_1COURSE, TYPE_1SECTION, TYPE_1ACTIVITY
+     * @param string $type Type of the backup; One of backup::TYPE_1COURSE, TYPE_1SECTION, TYPE_1ACTIVITY
      * @param int $id The ID of the item to backup; e.g the course id
-     * @param int $format The backup format to use; Most likely backup::FORMAT_MOODLE
+     * @param string $format The backup format to use; Most likely backup::FORMAT_MOODLE
      * @param bool $interactive Whether this backup will require user interaction; backup::INTERACTIVE_YES or INTERACTIVE_NO
      * @param int $mode One of backup::MODE_GENERAL, MODE_IMPORT, MODE_SAMESITE, MODE_HUB, MODE_AUTOMATED
      * @param int $userid The id of the user making the backup
@@ -181,6 +242,11 @@ class backup_controller extends base_controller {
         $this->logger->destroy();
     }
 
+    /**
+     * Declare that all user interaction with the backup controller is complete.
+     *
+     * After this the backup controller is waiting for processing.
+     */
     public function finish_ui() {
         if ($this->status != backup::STATUS_SETTING_UI) {
             throw new backup_controller_exception('cannot_finish_ui_if_not_setting_ui');
@@ -188,12 +254,22 @@ class backup_controller extends base_controller {
         $this->set_status(backup::STATUS_AWAITING);
     }
 
+    /**
+     * Validates the backup is valid after any user changes.
+     *
+     * A backup_controller_exception will be thrown if there is an issue.
+     */
     public function process_ui_event() {
 
         // Perform security checks throwing exceptions (2nd param) if something is wrong
         backup_check::check_security($this, false);
     }
 
+    /**
+     * Sets the new status of the backup.
+     *
+     * @param int $status
+     */
     public function set_status($status) {
         // Note: never save_controller() with the object info after STATUS_EXECUTING or the whole controller,
         // containing all the steps will be sent to DB. 100% (monster) useless.
@@ -219,6 +295,12 @@ class backup_controller extends base_controller {
         }
     }
 
+    /**
+     * Sets if the backup will be processed immediately, or later.
+     *
+     * @param int $execution Use backup::EXECUTION_INMEDIATE or backup::EXECUTION_DELAYED
+     * @param int $executiontime The timestamp in the future when the task should be executed, or 0 for immediately.
+     */
     public function set_execution($execution, $executiontime = 0) {
         $this->log('setting controller execution', backup::LOG_DEBUG);
         // TODO: Check valid execution mode.
@@ -261,10 +343,22 @@ class backup_controller extends base_controller {
         return $this->checksum === $checksum;
     }
 
+    /**
+     * Gets the unique identifier for this backup controller.
+     *
+     * @return string
+     */
     public function get_backupid() {
         return $this->backupid;
     }
 
+    /**
+     * Gets the type of backup to be performed.
+     *
+     * Use {@see \backup_controller::get_id()} to find the instance being backed up.
+     *
+     * @return string
+     */
     public function get_type() {
         return $this->type;
     }
@@ -311,47 +405,101 @@ class backup_controller extends base_controller {
         return $includefiles;
     }
 
+    /**
+     * Gets if this is a backup or restore.
+     *
+     * @return string
+     */
     public function get_operation() {
         return $this->operation;
     }
 
+    /**
+     * Gets the instance id of the item being backed up.
+     *
+     * It's meaning is related to the type of backup {@see \backup_controller::get_type()}.
+     *
+     * @return int
+     */
     public function get_id() {
         return $this->id;
     }
 
+    /**
+     * Gets the course that the item being backed up is in.
+     *
+     * @return false|int
+     */
     public function get_courseid() {
         return $this->courseid;
     }
 
+    /**
+     * Gets the format the backup is stored in.
+     *
+     * @return string
+     */
     public function get_format() {
         return $this->format;
     }
 
+    /**
+     * Gets if user interaction is expected during the backup.
+     *
+     * @return bool
+     */
     public function get_interactive() {
         return $this->interactive;
     }
 
+    /**
+     * Gets the mode that the backup will be performed in.
+     *
+     * @return int
+     */
     public function get_mode() {
         return $this->mode;
     }
 
+    /**
+     * Get the id of the user who started the backup.
+     *
+     * @return int
+     */
     public function get_userid() {
         return $this->userid;
     }
 
+    /**
+     * Get the current status of the backup.
+     *
+     * @return int
+     */
     public function get_status() {
         return $this->status;
     }
 
+    /**
+     * Get if the backup will be executed immediately, or later.
+     *
+     * @return int
+     */
     public function get_execution() {
         return $this->execution;
     }
 
+    /**
+     * Get when the backup will be executed.
+     *
+     * @return int 0 means now, otherwise a Unix timestamp
+     */
     public function get_executiontime() {
         return $this->executiontime;
     }
 
     /**
+     * Gets the plan that will be run during the backup.
+     *
      * @return backup_plan
      */
     public function get_plan() {
@@ -410,6 +558,11 @@ class backup_controller extends base_controller {
         return $this->plan->execute();
     }
 
+    /**
+     * Gets the results of the plan execution for this backup.
+     *
+     * @return array
+     */
     public function get_results() {
         return $this->plan->get_results();
     }
@@ -430,6 +583,12 @@ class backup_controller extends base_controller {
         backup_controller_dbops::save_controller($this, $this->checksum, $includeobj, $cleanobj);
     }
 
+    /**
+     * Loads a backup controller from the database.
+     *
+     * @param string $backupid The id of the backup controller.
+     * @return \backup_controller
+     */
     public static function load_controller($backupid) {
         // Load controller from persistent storage
         // TODO: flag the controller as available. Operations on it can continue
@@ -440,6 +599,9 @@ class backup_controller extends base_controller {
 
 // Protected API starts here
 
+    /**
+     * Creates a unique id for this backup.
+     */
     protected function calculate_backupid() {
         // Current epoch time + type + id + format + interactive + mode + userid + operation
         // should be unique enough. Add one random part at the end
@@ -448,6 +610,9 @@ class backup_controller extends base_controller {
                               $this->operation . '-' . random_string(20));
     }
 
+    /**
+     * Builds the plan for this backup job so that it may be executed.
+     */
     protected function load_plan() {
         $this->log('loading controller plan', backup::LOG_DEBUG);
         $this->plan = new backup_plan($this);
@@ -455,6 +620,9 @@ class backup_controller extends base_controller {
         $this->set_status(backup::STATUS_PLANNED);
     }
 
+    /**
+     * Sets default values for the backup controller.
+     */
     protected function apply_defaults() {
         $this->log('applying plan defaults', backup::LOG_DEBUG);
         backup_controller_dbops::apply_config_defaults($this);
@@ -474,7 +642,7 @@ class backup_controller extends base_controller {
     }
 }
 
-/*
+/**
  * Exception class used by all the @backup_controller stuff
  */
 class backup_controller_exception extends backup_exception {
