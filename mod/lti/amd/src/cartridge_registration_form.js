@@ -20,8 +20,6 @@
  * See template: mod_lti/cartridge_registration_form
  *
  * @module     mod_lti/cartridge_registration_form
- * @class      cartridge_registration_form
- * @package    mod_lti
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1

@@ -17,8 +17,6 @@
  * Search user selector module.
  *
  * @module core_search/form-search-user-selector
- * @class form-search-user-selector
- * @package core_search
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

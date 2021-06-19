@@ -17,7 +17,6 @@
  * Handle opening a dialogue to configure scale data.
  *
  * @module     tool_lp/scaleconfig
- * @package    tool_lp
  * @copyright  2015 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

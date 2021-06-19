@@ -18,7 +18,6 @@
  * Based on the open ajax example: http://oaa-accessibility.org/example/26/
  *
  * @module     tool_lp/menubar
- * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

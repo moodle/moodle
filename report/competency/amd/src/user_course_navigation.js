@@ -16,7 +16,7 @@
 /**
  * Module to navigation between users in a course.
  *
- * @package    report_competency
+ * @module report_competency/user_course_navigation
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,6 +26,7 @@ define(['jquery'], function($) {
     /**
      * UserCourseNavigation
      *
+     * @class report_competency/user_course_navigation
      * @param {String} userSelector The selector of the user element.
      * @param {String} moduleSelector The selector of the module element.
      * @param {String} baseUrl The base url for the page (no params).
@@ -71,15 +72,14 @@ define(['jquery'], function($) {
         document.location = this._baseUrl + queryStr;
     };
 
-    /** @type {Number} The id of the user. */
+    /** @property {Number} The id of the user. */
     UserCourseNavigation.prototype._userId = null;
-    /** @type {Number} The id of the module. */
+    /** @property {Number} The id of the module. */
     UserCourseNavigation.prototype._moduleId = null;
-    /** @type {Number} The id of the course. */
+    /** @property {Number} The id of the course. */
     UserCourseNavigation.prototype._courseId = null;
-    /** @type {String} Plugin base url. */
+    /** @property {String} Plugin base url. */
     UserCourseNavigation.prototype._baseUrl = null;
 
-    return /** @alias module:report_competency/user_course_navigation */ UserCourseNavigation;
-
+    return UserCourseNavigation;
 });

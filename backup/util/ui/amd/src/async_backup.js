@@ -17,8 +17,7 @@
  * This module updates the UI during an asynchronous
  * backup or restore process.
  *
- * @module     backup/util/async_backup
- * @package    core
+ * @module     core_backup/async_backup
  * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.7

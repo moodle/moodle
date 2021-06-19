@@ -17,8 +17,6 @@
  * Retrieves notifications from the server.
  *
  * @module     message_popup/notification_repository
- * @class      notification_repository
- * @package    message_popup
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

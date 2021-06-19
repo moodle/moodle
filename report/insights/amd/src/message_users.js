@@ -17,7 +17,6 @@
  * Message users.
  *
  * @module     report_insights/message_users
- * @package    report_insights
  * @copyright  2019 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

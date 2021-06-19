@@ -17,7 +17,6 @@
  * Handle actions on learning plan templates via ajax.
  *
  * @module     tool_lp/templateactions
- * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

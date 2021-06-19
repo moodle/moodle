@@ -17,7 +17,6 @@
  * Adds support for confirmation via JS modal for some management actions at the Manage policies page.
  *
  * @module      tool_policy/managedocsactions
- * @package     tool_policy
  * @copyright   2018 David Mudrák <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
