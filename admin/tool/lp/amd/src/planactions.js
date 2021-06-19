@@ -17,7 +17,6 @@
  * Plan actions via ajax.
  *
  * @module     tool_lp/planactions
- * @package    tool_lp
  * @copyright  2015 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -59,15 +58,15 @@ define(['jquery',
         }
     };
 
-    /** @type {String} Ajax method to fetch the page data from. */
+    /** @property {String} Ajax method to fetch the page data from. */
     PlanActions.prototype._contextMethod = null;
-    /** @type {String} Selector to find the node describing the plan. */
+    /** @property {String} Selector to find the node describing the plan. */
     PlanActions.prototype._planNode = null;
-    /** @type {String} Selector mapping to the region to update. Usually similar to wrapper. */
+    /** @property {String} Selector mapping to the region to update. Usually similar to wrapper. */
     PlanActions.prototype._region = null;
-    /** @type {String} Name of the template used to render the region. */
+    /** @property {String} Name of the template used to render the region. */
     PlanActions.prototype._template = null;
-    /** @type {String} Type of page/region we're in. */
+    /** @property {String} Type of page/region we're in. */
     PlanActions.prototype._type = null;
 
     /**

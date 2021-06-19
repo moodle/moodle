@@ -17,8 +17,7 @@
  * This module provides the course copy modal from the course and
  * category management screen.
  *
- * @module     course
- * @package    core
+ * @module     core_course/copy_modal
  * @copyright  2020 onward The Moodle Users Association <https://moodleassociation.org/>
  * @author     Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -152,6 +151,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
     /**
      * Initialise the class.
      *
+     * @method
      * @param {Object} context
      * @public
      */

@@ -17,7 +17,6 @@
  * Country filter
  *
  * @module      core_user/local/participantsfilter/filtertypes/country
- * @package     core_user
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

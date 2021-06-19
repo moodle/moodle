@@ -50,3 +50,4 @@ atlassian-ide-plugin.xml
 moodle-plugin-ci.phar
 .eslintignore
 .stylelintignore
+/jsdoc

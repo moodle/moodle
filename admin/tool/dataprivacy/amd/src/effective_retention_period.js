@@ -17,7 +17,6 @@
  * Module to update the displayed retention period.
  *
  * @module     tool_dataprivacy/effective_retention_period
- * @package    tool_dataprivacy
  * @copyright  2018 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

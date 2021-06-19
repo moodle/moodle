@@ -21,7 +21,7 @@
  * This will receive a object with either a single 'competencyId', or an array in 'competencyIds'
  * depending on the value of multiSelect.
  *
- * @package    tool_lp
+ * @module     tool_lp/competencypicker_user_plans
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,6 +39,7 @@ define(['jquery',
     /**
      * Competency picker in plan class.
      *
+     * @class tool_lp/competencypicker_user_plans
      * @param {Number} userId
      * @param {Number|false} singlePlan The ID of the plan when limited to one.
      * @param {Boolean} multiSelect Support multi-select in the tree.
@@ -55,13 +56,13 @@ define(['jquery',
     };
     Picker.prototype = Object.create(PickerBase.prototype);
 
-    /** @type {Array} The list of plans fetched. */
+    /** @property {Array} The list of plans fetched. */
     Picker.prototype._plans = null;
-    /** @type {Number} The current plan ID. */
+    /** @property {Number} The current plan ID. */
     Picker.prototype._planId = null;
-    /** @type {Boolean} Whether we can browse plans or not. */
+    /** @property {Boolean} Whether we can browse plans or not. */
     Picker.prototype._singlePlan = false;
-    /** @type {Number} The user the plans belongs to. */
+    /** @property {Number} The user the plans belongs to. */
     Picker.prototype._userId = null;
 
     /**
@@ -237,6 +238,5 @@ define(['jquery',
         });
     };
 
-    return /** @alias module:tool_lp/competencypicker_user_plans */ Picker;
-
+    return Picker;
 });

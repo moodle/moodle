@@ -17,8 +17,6 @@
  * Javascript controller for the "User summary" panel at the top of the page.
  *
  * @module     mod_assign/grading_navigation_user_info
- * @package    mod_assign
- * @class      UserInfo
  * @copyright  2016 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
@@ -28,7 +26,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
     /**
      * UserInfo class.
      *
-     * @class UserInfo
+     * @class mod_assign/grading_navigation_user_info
      * @param {String} selector The selector for the page region containing the user navigation.
      */
     var UserInfo = function(selector) {
@@ -39,16 +37,16 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates'], function(
         $(document).on('user-changed', this._refreshUserInfo.bind(this));
     };
 
-    /** @type {String} Selector for the page region containing the user navigation. */
+    /** @property {String} Selector for the page region containing the user navigation. */
     UserInfo.prototype._regionSelector = null;
 
-    /** @type {Array} Cache of user info contexts. */
+    /** @property {Array} Cache of user info contexts. */
     UserInfo.prototype._userCache = null;
 
-    /** @type {JQuery} JQuery node for the page region containing the user navigation. */
+    /** @property {JQuery} JQuery node for the page region containing the user navigation. */
     UserInfo.prototype._region = null;
 
-    /** @type {Integer} Remember the last user id to prevent unnecessary reloads. */
+    /** @property {Integer} Remember the last user id to prevent unnecessary reloads. */
     UserInfo.prototype._lastUserId = 0;
 
     /**

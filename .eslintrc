@@ -204,7 +204,7 @@
       }
     },
     {
-      files: ["**/amd/src/*.js", "**/amd/src/**/*.js", "Gruntfile.js", ".grunt/*.js", ".grunt/tasks/*.js"],
+      files: ["**/amd/src/*.js", "**/amd/src/**/*.js", "Gruntfile.js", ".grunt/*.js", ".grunt/tasks/*.js", "jsdoc.conf.js"],
       // We support es6 now. Woot!
       env: {
         es6: true

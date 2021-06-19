@@ -22,7 +22,6 @@
  * selected. (Or a single node if multiselect is disabled).
  *
  * @module     tool_lp/tree
- * @package    core
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

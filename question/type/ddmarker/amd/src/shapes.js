@@ -21,8 +21,7 @@
  * These classes can represent shapes, let you alter them, can go to and from a string
  * representation, and can give you an SVG representation.
  *
- * @package    qtype_ddmarker
- * @subpackage shapes
+ * @module qtype_ddmarker/shapes
  * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -218,7 +217,7 @@ define(function() {
     /**
      * Get the handles that should be offered to edit this shape, or null if not appropriate.
      *
-     * @return {[Object]} with properties moveHandle {Point} and editHandles {Point[]}
+     * @return {Object[]} with properties moveHandle {Point} and editHandles {Point[]}
      */
     Shape.prototype.getHandlePositions = function() {
         return null;

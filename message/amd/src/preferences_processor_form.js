@@ -17,8 +17,6 @@
  * Manages the processor form on the message preferences page.
  *
  * @module     core_message/preferences_processor_form
- * @class      preferences_processor_form
- * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,6 +25,7 @@ define(['jquery', 'core/ajax', 'core/notification'],
     /**
      * Constructor for the ProcessorForm.
      *
+     * @class
      * @param {object} element jQuery object root element of the preference
      */
     var ProcessorForm = function(element) {

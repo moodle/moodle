@@ -24,7 +24,6 @@
  * Till then this will have to do.
  *
  * @module     tool_moodlenet/instance_form
- * @package    tool_moodlenet
  * @copyright  2020 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

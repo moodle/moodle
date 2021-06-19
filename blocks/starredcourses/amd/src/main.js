@@ -16,6 +16,7 @@
 /**
  * Javascript to initialise the starred courses block.
  *
+ * @module block_starredcourses/main
  * @copyright   2018 Simey Lameze <simey@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

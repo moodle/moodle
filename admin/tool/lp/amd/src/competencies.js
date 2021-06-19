@@ -17,7 +17,6 @@
  * Handle add/remove competency links.
  *
  * @module     tool_lp/competencies
- * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,6 +33,7 @@ define(['jquery',
     /**
      * Constructor
      *
+     * @class tool_lp/competencies
      * @param {Number} itemid
      * @param {String} itemtype
      * @param {Number} pagectxid

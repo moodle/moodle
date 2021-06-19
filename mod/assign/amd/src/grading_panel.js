@@ -17,8 +17,6 @@
  * Javascript controller for the "Grading" panel at the right of the page.
  *
  * @module     mod_assign/grading_panel
- * @package    mod_assign
- * @class      GradingPanel
  * @copyright  2016 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
@@ -31,7 +29,7 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
     /**
      * GradingPanel class.
      *
-     * @class GradingPanel
+     * @class mod_assign/grading_panel
      * @param {String} selector The selector for the page region containing the user navigation.
      */
     var GradingPanel = function(selector) {
@@ -42,22 +40,22 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
         this.registerEventListeners();
     };
 
-    /** @type {String} Selector for the page region containing the user navigation. */
+    /** @property {String} Selector for the page region containing the user navigation. */
     GradingPanel.prototype._regionSelector = null;
 
-    /** @type {Integer} Remember the last user id to prevent unnessecary reloads. */
+    /** @property {Integer} Remember the last user id to prevent unnessecary reloads. */
     GradingPanel.prototype._lastUserId = 0;
 
-    /** @type {Integer} Remember the last attempt number to prevent unnessecary reloads. */
+    /** @property {Integer} Remember the last attempt number to prevent unnessecary reloads. */
     GradingPanel.prototype._lastAttemptNumber = -1;
 
-    /** @type {JQuery} JQuery node for the page region containing the user navigation. */
+    /** @property {JQuery} JQuery node for the page region containing the user navigation. */
     GradingPanel.prototype._region = null;
 
-     /** @type {Integer} The id of the next user in the grading list */
+     /** @property {Integer} The id of the next user in the grading list */
     GradingPanel.prototype.nextUserId = null;
 
-     /** @type {Boolean} Next user exists in the grading list */
+     /** @property {Boolean} Next user exists in the grading list */
     GradingPanel.prototype.nextUser = false;
 
     /**

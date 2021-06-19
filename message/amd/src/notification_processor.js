@@ -17,8 +17,6 @@
  * Represents the notification processor (e.g. email, popup, jabber)
  *
  * @module     core_message/notification_processor
- * @class      notification_processor
- * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,6 +31,7 @@ define(['jquery'], function($) {
     /**
      * Constructor for the notification processor.
      *
+     * @class
      * @param {object} element jQuery object root element of the processor
      */
     var NotificationProcessor = function(element) {

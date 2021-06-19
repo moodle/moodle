@@ -17,7 +17,6 @@
  * Grading panel for simple direct grading.
  *
  * @module     core_grades/grades/grader/gradingpanel/scale
- * @package    core_grades
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

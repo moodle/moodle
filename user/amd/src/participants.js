@@ -18,7 +18,6 @@
  * This is also used by the report/participants/index.php because it has the same functionality.
  *
  * @module     core_user/participants
- * @package    core_user
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

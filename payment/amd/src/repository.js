@@ -17,7 +17,6 @@
  * Repository for payment subsystem.
  *
  * @module     core_payment/repository
- * @package    core_payment
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,12 +24,20 @@
 import Ajax from 'core/ajax';
 
 /**
+ * @typedef {Object} PaymentGateway A Payment Gateway
+ * @property {string} shortname
+ * @property {string} name
+ * @property {string} description
+ */
+
+/**
  * Returns the list of gateways that can process payments in the given currency.
  *
+ * @method getAvailableGateways
  * @param {string} component
  * @param {string} paymentArea
  * @param {number} itemId
- * @returns {Promise<{shortname: string, name: string, description: String}[]>}
+ * @returns {Promise<PaymentGateway[]>}
  */
 export const getAvailableGateways = (component, paymentArea, itemId) => {
     const request = {
