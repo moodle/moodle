@@ -17,8 +17,6 @@
  * CSS selector client side filter.
  *
  * @module     tool_usertours/filter_cssselector
- * @class      filter_cssselector
- * @package    tool_usertours
  * @copyright 2020 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

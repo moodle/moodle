@@ -17,7 +17,6 @@
  * JavaScript to allow dragging options to slots (using mouse down or touch) or tab through slots using keyboard.
  *
  * @module     qtype_ddimageortext/question
- * @package    qtype_ddimageortext
  * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -966,6 +965,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         /**
          * Initialise one question.
          *
+         * @method
          * @param {String} containerId the id of the div.que that contains this question.
          * @param {boolean} readOnly whether the question is read-only.
          * @param {Array} places data.
@@ -1129,13 +1129,6 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      * @alias module:qtype_ddimageortext/question
      */
     return {
-        /**
-         * Initialise one drag-drop onto image question.
-         *
-         * @param {String} containerId id of the outer div for this question.
-         * @param {boolean} readOnly whether the question is being displayed read-only.
-         * @param {Array} Information about the drop places.
-         */
         init: questionManager.init
     };
 });

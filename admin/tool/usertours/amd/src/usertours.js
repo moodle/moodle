@@ -2,8 +2,6 @@
  * User tour control library.
  *
  * @module     tool_usertours/usertours
- * @class      usertours
- * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  */
 define(

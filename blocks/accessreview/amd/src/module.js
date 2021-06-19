@@ -14,8 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Manager for the accessreview block.
  *
- * @package     block_accessreview
+ * @module block_accessreview/module
  * @author      Max Larkin <max@brickfieldlabs.ie>
  * @copyright   2020 Brickfield Education Labs <max@brickfieldlabs.ie>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -16,14 +16,14 @@
 /**
  * Module to get the scale values.
  *
- * @package    tool_lp
+ * @module     tool_lp/scalevalues
  * @copyright  2016 Serge Gauthier
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/ajax'], function($, ajax) {
     var localCache = [];
 
-    return /** @alias module:tool_lp/scalevalues */ {
+    return {
 
         /**
          * Return a promise object that will be resolved into a string eventually (maybe immediately).

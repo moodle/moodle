@@ -19,6 +19,14 @@
  * @copyright  2021 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      4.0
+ *
+ * @example <caption>Example of listening to a block event.</caption>
+ * import {eventTypes as blockEventTypes} from 'core_block/events';
+ *
+ * document.addEventListener(blockEventTypes.blockContentUpdated, e => {
+ *     window.console.log(e.target); // The HTMLElement relating to the block whose content was updated.
+ *     window.console.log(e.detail.instanceId); // The instanceId of the block that was updated.
+ * });
  */
 
 import {dispatchEvent} from 'core/event_dispatcher';
@@ -36,7 +44,8 @@ export const eventTypes = {
      * @event blockContentUpdated
      * @type {CustomEvent}
      * @property {HTMLElement} target The block element that was updated
-     * @property {Number} instanceId The block instance id
+     * @property {object} detail
+     * @property {number} detail.instanceId The block instance id
      */
     blockContentUpdated: 'core_block/contentUpdated',
 };

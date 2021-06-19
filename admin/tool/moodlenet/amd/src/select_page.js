@@ -17,7 +17,6 @@
  * When returning to Moodle let the user select which course to add the resource to.
  *
  * @module     tool_moodlenet/select_page
- * @package    tool_moodlenet
  * @copyright  2020 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

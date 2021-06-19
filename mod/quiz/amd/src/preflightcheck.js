@@ -20,8 +20,6 @@
  * This is also responsible for opening the pop-up window, if the quiz requires to be in one.
  *
  * @module    mod_quiz/preflightcheck
- * @class     preflightcheck
- * @package   mod_quiz
  * @copyright 2016 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     3.1

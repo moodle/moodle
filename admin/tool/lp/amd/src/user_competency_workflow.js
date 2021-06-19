@@ -17,7 +17,6 @@
  * User competency workflow.
  *
  * @module     tool_lp/user_competency_workflow
- * @package    tool_lp
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,7 +39,7 @@ define(['jquery',
     };
     UserCompetencyWorkflow.prototype = Object.create(EventBase.prototype);
 
-    /** @type {String} The selector to find the user competency data. */
+    /** @property {String} The selector to find the user competency data. */
     UserCompetencyWorkflow.prototype._nodeSelector = '[data-node="user-competency"]';
 
     /**

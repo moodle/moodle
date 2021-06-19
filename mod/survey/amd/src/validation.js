@@ -17,7 +17,6 @@
  * Javascript to handle survey validation.
  *
  * @module     mod_survey/validation
- * @package    mod_survey
  * @copyright  2017 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.3

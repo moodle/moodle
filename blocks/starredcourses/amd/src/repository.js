@@ -16,7 +16,7 @@
 /**
  * A javascript module to retrieve user's starred courses.
  *
- * @package    block_starredcourses
+ * @module block_starredcourses/repository
  * @copyright  2018 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
