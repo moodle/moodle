@@ -395,10 +395,6 @@ function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $edit
         $requestparams['assignment'] = $ltirequest['submission'];
     }
 
-    if (isset($ltirequest['custom_filter_type'])) {
-        $requestparams['custom_filter_type'] = $ltirequest['custom_filter_type'];
-    }
-
     $params = lti_sign_parameters($requestparams, $endpoint, 'POST', $lti->resourcekey, $lti->password);
 
     local_kaltura_strip_querystring($endpoint, $params);
