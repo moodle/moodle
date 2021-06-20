@@ -90,9 +90,6 @@ if ($data = $form->get_data()) {
         $metadataentries = local_kaltura_move_metadata_entries_to_kaf_category_tree($data->kafcategory, 1);
         $redirectmessage = get_string('migration_has_stopped', 'local_kaltura');
 
-        // Migrate video presentation entries.
-        local_kaltura_migrate_video_presentation_entries($data->kafcategory, $cachedcategories);
-
         // Update the Kaltura activities.
         local_kaltura_update_activities();
         local_kaltura_set_activities_entries_to_categories();
