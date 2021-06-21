@@ -95,6 +95,12 @@ M.course_dndupload = {
         if (options.showstatus) {
             this.add_status_div();
         }
+
+        // Any change to the course must be applied also to the course state via the courseeditor module.
+        var self = this;
+        require(['core_courseformat/courseeditor'], function(editor) {
+            self.courseeditor = editor.getCurrentCourseEditor();
+        });
     },
 
     /**
@@ -781,6 +787,8 @@ M.course_dndupload = {
                                 resel.li.outerHTML = unescape(resel.li.outerHTML);
                             }
                             self.add_editing(result.elementid);
+                            // Once done, send any new course module id to the courseeditor to update de course state.
+                            self.courseeditor.dispatch('cmState', [result.cmid]);
                             // Fire the content updated event.
                             require(['core/event', 'jquery'], function(event, $) {
                                 event.notifyFilterContentUpdated($(result.fullcontent));
@@ -1047,6 +1055,8 @@ M.course_dndupload = {
                                 resel.li.outerHTML = unescape(resel.li.outerHTML);
                             }
                             self.add_editing(result.elementid);
+                            // Once done, send any new course module id to the courseeditor to update de course state.
+                            self.courseeditor.dispatch('cmState', [result.cmid]);
                         } else {
                             // Error - remove the dummy element
                             resel.parent.removeChild(resel.li);

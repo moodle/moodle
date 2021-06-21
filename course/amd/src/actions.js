@@ -22,8 +22,11 @@
  * @since      3.3
  */
 define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str', 'core/url', 'core/yui',
-        'core/modal_factory', 'core/modal_events', 'core/key_codes', 'core/log'],
-    function($, ajax, templates, notification, str, url, Y, ModalFactory, ModalEvents, KeyCodes, log) {
+        'core/modal_factory', 'core/modal_events', 'core/key_codes', 'core/log', 'core_courseformat/courseeditor'],
+    function($, ajax, templates, notification, str, url, Y, ModalFactory, ModalEvents, KeyCodes, log, editor) {
+
+        const courseeditor = editor.getCurrentCourseEditor();
+
         var CSS = {
             EDITINPROGRESS: 'editinprogress',
             SECTIONDRAGGABLE: 'sectiondraggable',
@@ -234,6 +237,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 .done(function(data) {
                     var elementToFocus = findNextFocusable(moduleElement);
                     moduleElement.replaceWith(data);
+                    let affectedids = [];
                     // Initialise action menu for activity(ies) added as a result of this.
                     $('<div>' + data + '</div>').find(SELECTOR.ACTIVITYLI).each(function(index) {
                         initActionMenu($(this).attr('id'));
@@ -241,6 +245,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                             focusActionItem($(this).attr('id'), action);
                             elementToFocus = null;
                         }
+                        // Save any activity id in cmids.
+                        affectedids.push(getModuleId($(this)));
                     });
                     // In case of activity deletion focus the next focusable element.
                     if (elementToFocus) {
@@ -251,6 +257,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                     removeLightbox(lightbox, 400);
                     // Trigger event that can be observed by course formats.
                     moduleElement.trigger($.Event('coursemoduleedited', {ajaxreturn: data, action: action}));
+
+                    // Modify cm state.
+                    courseeditor.dispatch('legacyActivityAction', action, cmid, affectedids);
+
                 }).fail(function(ex) {
                     // Remove spinner and lightbox.
                     removeSpinner(moduleElement, spinner);
@@ -377,8 +387,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @param {JQuery} actionItem
          * @param {Object} data
          * @param {String} courseformat
+         * @param {Number} sectionid
          */
-        var defaultEditSectionHandler = function(sectionElement, actionItem, data, courseformat) {
+        var defaultEditSectionHandler = function(sectionElement, actionItem, data, courseformat, sectionid) {
             var action = actionItem.attr('data-action');
             if (action === 'hide' || action === 'show') {
                 if (action === 'hide') {
@@ -400,6 +411,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 if (data.section_availability !== undefined) {
                     sectionElement.find('.section_availability').first().replaceWith(data.section_availability);
                 }
+                // Modify course state.
+                const section = courseeditor.state.section.get(sectionid);
+                if (section !== undefined) {
+                    courseeditor.dispatch('sectionState', [sectionid]);
+                }
             } else if (action === 'setmarker') {
                 var oldmarker = $(SELECTOR.SECTIONLI + '.current'),
                     oldActionItem = oldmarker.find(SELECTOR.SECTIONACTIONMENU + ' ' + 'a[data-action=removemarker]');
@@ -409,10 +425,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 sectionElement.addClass('current');
                 replaceActionItem(actionItem, 'i/marked',
                     'highlightoff', 'core', 'removemarker');
+                courseeditor.dispatch('legacySectionAction', action, sectionid);
             } else if (action === 'removemarker') {
                 sectionElement.removeClass('current');
                 replaceActionItem(actionItem, 'i/marker',
                     'highlight', 'core', 'setmarker');
+                courseeditor.dispatch('legacySectionAction', action, sectionid);
             }
         };
 
@@ -460,7 +478,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                     var e = $.Event('coursesectionedited', {ajaxreturn: data, action: action});
                     sectionElement.trigger(e);
                     if (!e.isDefaultPrevented()) {
-                        defaultEditSectionHandler(sectionElement, target, data, courseformat);
+                        defaultEditSectionHandler(sectionElement, target, data, courseformat, sectionid);
                     }
                 }).fail(function(ex) {
                     // Remove spinner and lightbox.
@@ -487,8 +505,119 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                         var sectionreturn = mainelement.find('.' + CSS.EDITINGMOVE).attr('data-sectionreturn');
                         refreshModule(mainelement, cmid, sectionreturn);
                     }
-                }
+                },
+                /**
+                 * Update the course state when some cm is moved via YUI.
+                 * @param {*} params
+                 */
+                updateMovedCmState: (params) => {
+                    const state = courseeditor.state;
+
+                    // Update old section.
+                    const cm = state.cm.get(params.cmid);
+                    if (cm !== undefined) {
+                        courseeditor.dispatch('sectionState', [cm.sectionid]);
+                    }
+                    // Update cm state.
+                    courseeditor.dispatch('cmState', [params.cmid]);
+                },
+                /**
+                 * Update the course state when some section is moved via YUI.
+                 */
+                updateMovedSectionState: () => {
+                    courseeditor.dispatch('courseState');
+                },
             });
+        });
+
+        // From Moodle 4.0 all edit actions are being re-implemented as state mutation.
+        // This means all method from this "actions" module will be deprecated when all the course
+        // interface is migrated to reactive components.
+        // Most legacy actions did not provide enough information to regenarate the course so they
+        // use the mutations courseState, sectionState and cmState to get the updated state from
+        // the server. However, some activity actions where we can prevent an extra webservice
+        // call by implementing an adhoc mutation.
+        courseeditor.addMutations({
+            /**
+             * Compatibility function to update Moodle 4.0 course state using legacy actions.
+             *
+             * This method only updates some actions which does not require to use cmState mutation
+             * to get updated data form the server.
+             *
+             * @param {Object} statemanager the current state in read write mode
+             * @param {String} action the performed action
+             * @param {Number} cmid the affected course module id
+             * @param {Array} affectedids all affected cm ids (for duplicate action)
+             */
+            legacyActivityAction: function(statemanager, action, cmid, affectedids) {
+
+                const state = statemanager.state;
+                const cm = state.cm.get(cmid);
+                if (cm === undefined) {
+                    return;
+                }
+                const section = state.section.get(cm.sectionid);
+                if (section === undefined) {
+                    return;
+                }
+
+                statemanager.setReadOnly(false);
+
+                switch (action) {
+                    case 'delete':
+                        // Remove from section.
+                        section.cmlist = section.cmlist.reduce(
+                            (cmlist, current) => {
+                                if (current != cmid) {
+                                    cmlist.push(current);
+                                }
+                                return cmlist;
+                            },
+                            []
+                        );
+                        // Delete form list.
+                        state.cm.delete(cmid);
+                        break;
+
+                    case 'hide':
+                    case 'show':
+                        cm.visible = (action === 'show') ? true : false;
+                        break;
+
+                    case 'duplicate':
+                        // Duplicate requires to get extra data from the server.
+                        courseeditor.dispatch('cmState', affectedids);
+                        break;
+                }
+                statemanager.setReadOnly(true);
+            },
+            legacySectionAction: function(statemanager, action, sectionid) {
+
+                const state = statemanager.state;
+                const section = state.section.get(sectionid);
+                if (section === undefined) {
+                    return;
+                }
+
+                statemanager.setReadOnly(false);
+
+                switch (action) {
+                    case 'setmarker':
+                        // Remove previous marker.
+                        state.section.forEach((current) => {
+                            if (current.id != sectionid) {
+                                current.current = false;
+                            }
+                        });
+                        section.current = true;
+                        break;
+
+                    case 'removemarker':
+                        section.current = false;
+                        break;
+                }
+                statemanager.setReadOnly(true);
+            },
         });
 
         return /** @alias module:core_course/actions */ {
@@ -559,6 +688,23 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                         });
                     } else {
                         editSection(sectionElement, sectionId, actionItem, courseformat);
+                    }
+                });
+
+                // The section and activity names are edited using inplace editable.
+                // The "update" jQuery event must be captured in order to update the course state.
+                $('body').on('updated', `${SELECTOR.SECTIONLI} [data-inplaceeditable]`, function(e) {
+                    if (e.ajaxreturn && e.ajaxreturn.itemid) {
+                        const state = courseeditor.state;
+                        const section = state.section.get(e.ajaxreturn.itemid);
+                        if (section !== undefined) {
+                            courseeditor.dispatch('sectionState', [e.ajaxreturn.itemid]);
+                        }
+                    }
+                });
+                $('body').on('updated', `${SELECTOR.ACTIVITYLI} [data-inplaceeditable]`, function(e) {
+                    if (e.ajaxreturn && e.ajaxreturn.itemid) {
+                        courseeditor.dispatch('cmState', [e.ajaxreturn.itemid]);
                     }
                 });
 

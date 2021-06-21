@@ -651,6 +651,7 @@ class dndupload_ajax_processor {
         $resp = new stdClass();
         $resp->error = self::ERROR_OK;
         $resp->elementid = 'module-' . $mod->id;
+        $resp->cmid = $mod->id;
 
         $format = course_get_format($this->course);
         $renderer = $format->get_renderer($PAGE);
