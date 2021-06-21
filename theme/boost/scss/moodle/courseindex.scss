@@ -1,0 +1,84 @@
+$courseindex-link-color: $list-group-action-color !default;
+$courseindex-link-hover-color: $list-group-action-hover-color !default;
+$courseindex-item-hover-bg: theme-color-level('info', -11) !default;
+$courseindex-item-hover-border: theme-color-level('info', -9) !default;
+$courseindex-item-active-border: $gray-300 !default;
+$courseindex-item-active-bg: $gray-100 !default;
+$courseindex-item-padding-y: 0.5rem;
+$courseindex-item-padding-x: 1rem;
+$courseindex-item-radius: $border-radius !default;
+$courseindex-item-current: $primary !default;
+
+.courseindex {
+    .courseindex-heading {
+        padding: $courseindex-item-padding-y $courseindex-item-padding-x;
+    }
+    .courseindex-item {
+        padding: $courseindex-item-padding-y $courseindex-item-padding-x;
+        border: $border-width solid transparent;
+        @include border-radius($courseindex-item-radius);
+
+        .courseindex-link {
+            color: $courseindex-link-color;
+            @include hover-focus() {
+                color: $courseindex-link-hover-color;
+                text-decoration: none;
+            }
+        }
+
+        .courseindex-name {
+            font-style: italic;
+        }
+
+        @include hover-focus() {
+            background-color: $courseindex-item-hover-bg;
+            border-color: $courseindex-item-hover-border;
+        }
+
+        &.active {
+            background-color: $courseindex-item-active-bg;
+            border-color: $courseindex-item-active-border;
+            @include hover-focus() {
+                background-color: $courseindex-item-hover-bg;
+                border-color: $courseindex-item-hover-border;
+            }
+        }
+
+        &.dimmed {
+            opacity: .7;
+            font-style: italic;
+        }
+    }
+
+    .courseindex-sectioncontent {
+        .courseindex-item {
+            padding-left: calc(#{$courseindex-item-padding-x} * 2 + 0.5rem);
+        }
+    }
+
+    .courseindex-section.current {
+        border-left: solid 3px $courseindex-item-current;
+    }
+
+    .d-flex-noedit {
+        display: none;
+    }
+
+    &.editing {
+        .d-flex-noedit {
+            display: flex;
+        }
+    }
+
+    .media-list {
+        .rounded-circle {
+            height: 1rem;
+            width: 1rem;
+        }
+
+        .w-100 {
+            height: 1rem;
+            margin: 0.5rem 0;
+        }
+    }
+}

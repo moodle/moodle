@@ -30,14 +30,14 @@ use stdClass;
 class stateupdates_test extends \advanced_testcase {
 
     /**
-     * Test for add_course_update.
+     * Test for add_course_put.
      *
-     * @dataProvider add_course_update_provider
-     * @covers ::add_course_update
+     * @dataProvider add_course_put_provider
+     * @covers ::add_course_put
      *
      * @param string $role the user role in the course
      */
-    public function test_add_course_update(string $role): void {
+    public function test_add_course_put(string $role): void {
         global $PAGE;
 
         $this->resetAfterTest();
@@ -65,23 +65,23 @@ class stateupdates_test extends \advanced_testcase {
         $currentstate = new $stateclass($format);
         $expected = $currentstate->export_for_template($renderer);
 
-        $updates->add_course_update();
+        $updates->add_course_put();
 
         $updatelist = $updates->jsonSerialize();
         $this->assertCount(1, $updatelist);
 
         $update = array_pop($updatelist);
-        $this->assertEquals('update', $update->action);
+        $this->assertEquals('put', $update->action);
         $this->assertEquals('course', $update->name);
         $this->assertEquals($expected, $update->fields);
     }
 
     /**
-     * Data provider for test_add_course_update.
+     * Data provider for test_add_course_put.
      *
      * @return array testing scenarios
      */
-    public function add_course_update_provider() {
+    public function add_course_put_provider() {
         return [
             'Admin role' => [
                 'admin',
@@ -128,7 +128,7 @@ class stateupdates_test extends \advanced_testcase {
      * Add track about a section state update.
      *
      * @dataProvider add_section_provider
-     * @covers ::add_course_update
+     * @covers ::add_course_put
      * @covers ::add_course_create
      * @covers ::add_course_delete
      *
@@ -201,7 +201,7 @@ class stateupdates_test extends \advanced_testcase {
      */
     public function add_section_provider(): array {
         return array_merge(
-            $this->add_section_provider_helper('update'),
+            $this->add_section_provider_helper('put'),
             $this->add_section_provider_helper('create'),
             $this->add_section_provider_helper('delete'),
         );
@@ -345,7 +345,7 @@ class stateupdates_test extends \advanced_testcase {
      */
     public function add_cm_provider(): array {
         return array_merge(
-            $this->add_cm_provider_helper('update'),
+            $this->add_cm_provider_helper('put'),
             $this->add_cm_provider_helper('create'),
             $this->add_cm_provider_helper('delete'),
         );

@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/behat/lib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
 user_preference_allow_ajax_update('drawer-open-nav', PARAM_ALPHA);
 user_preference_allow_ajax_update('drawer-open-index', PARAM_BOOL);
@@ -57,7 +58,7 @@ $hasblocks = strpos($blockshtml, 'data-block=') !== false;
 if (!$hasblocks) {
     $blockdraweropen = false;
 }
-$courseindex = false;
+$courseindex = core_course_drawer();
 if (!$courseindex) {
     $courseindexopen = false;
 }

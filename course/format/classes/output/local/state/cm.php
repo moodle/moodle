@@ -74,7 +74,20 @@ class cm implements renderable {
             'id' => $cm->id,
             'name' => $cm->name,
             'visible' => !empty($cm->visible),
+            'sectionid' => $section->id,
+            'sectionnumber' => $section->section,
+            'uservisible' => $cm->uservisible,
         ];
+
+        // Check the user access type to this cm.
+        $conditionalhidden = $output->is_cm_conditionally_hidden($cm);
+        $data->accessvisible = ($data->visible && !$conditionalhidden);
+
+        // Add url if the activity is compatible.
+        $url = $cm->url;
+        if ($url) {
+            $data->url = $url->out();
+        }
 
         if ($this->exportcontent) {
             $data->content = $output->course_section_updated_cm_item($format, $section, $cm);

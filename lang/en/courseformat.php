@@ -22,4 +22,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['courseindex'] = 'Course index';
 $string['privacy:metadata'] = 'The course format subsystem does not store any personal data.';

@@ -78,14 +78,14 @@ class stateactions {
         foreach (array_keys($cmids) as $cmid) {
 
             // Add this action to updates array.
-            $updates->add_cm_update($cmid);
+            $updates->add_cm_put($cmid);
 
             $cm = $modinfo->get_cm($cmid);
             $sectionids[$cm->section] = true;
         }
 
         foreach (array_keys($sectionids) as $sectionid) {
-            $updates->add_section_update($sectionid);
+            $updates->add_section_put($sectionid);
         }
     }
 
@@ -129,7 +129,7 @@ class stateactions {
 
         foreach (array_keys($sectionids) as $sectionid) {
             $sectioninfo = $modinfo->get_section_info_by_id($sectionid);
-            $updates->add_section_update($sectionid);
+            $updates->add_section_put($sectionid);
             // Add cms.
             if (empty($modinfo->sections[$sectioninfo->section])) {
                 continue;
@@ -145,7 +145,7 @@ class stateactions {
 
         foreach (array_keys($cmids) as $cmid) {
             // Add this action to updates array.
-            $updates->add_cm_update($cmid);
+            $updates->add_cm_put($cmid);
         }
     }
 
@@ -171,7 +171,7 @@ class stateactions {
 
         $modinfo = course_modinfo::instance($course);
 
-        $updates->add_course_update();
+        $updates->add_course_put();
 
         // Add sections updates.
         $sections = $modinfo->get_section_info_all();

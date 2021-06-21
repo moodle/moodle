@@ -55,15 +55,19 @@ class section implements renderable {
      */
     public function export_for_template(\renderer_base $output): stdClass {
         $format = $this->format;
+        $course = $format->get_course();
         $section = $this->section;
         $modinfo = $format->get_modinfo();
 
         $data = (object)[
             'id' => $section->id,
             'section' => $section->section,
+            'number' => $section->section,
             'title' => $format->get_section_name($section),
             'cmlist' => [],
             'visible' => !empty($section->visible),
+            'sectionurl' => course_get_url($course, $section->section)->out(),
+            'current' => $format->is_section_current($section),
         ];
 
         if (empty($modinfo->sections[$section->section])) {
