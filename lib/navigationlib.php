@@ -151,6 +151,8 @@ class navigation_node implements renderable {
     public $showinflatnavigation = false;
     /** @var bool If set to true this node will be forced into a "more" menu whenever possible */
     public $forceintomoremenu = false;
+    /** @var bool If set to true this node will be displayed in the "secondary" navigation when applicable */
+    public $showinsecondarynavigation = true;
 
     /**
      * Constructs a new navigation_node
@@ -851,6 +853,18 @@ class navigation_node implements renderable {
         $this->forceintomoremenu = $forceintomoremenu;
         foreach ($this->children as $child) {
             $child->set_force_into_more_menu($forceintomoremenu);
+        }
+    }
+
+    /**
+     * Sets whether the node and its children should be displayed in the "secondary" navigation when applicable.
+     *
+     * @param bool $show
+     */
+    public function set_show_in_secondary_navigation(bool $show = true) {
+        $this->showinsecondarynavigation = $show;
+        foreach ($this->children as $child) {
+            $child->set_show_in_secondary_navigation($show);
         }
     }
 
