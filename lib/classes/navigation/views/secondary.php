@@ -173,6 +173,7 @@ class secondary extends view {
                 break;
         }
 
+        $this->remove_unwanted_nodes();
         $this->force_nodes_into_more_menu($defaultmoremenunodes);
         // Search and set the active node.
         $this->scan_for_active_node($this);
@@ -336,6 +337,17 @@ class secondary extends view {
                 continue;
             }
             $displayednodescount++;
+        }
+    }
+
+    /**
+     * Remove navigation nodes that should not be displayed in the secondary navigation.
+     */
+    protected function remove_unwanted_nodes() {
+        foreach ($this->children as $child) {
+            if (!$child->showinsecondarynavigation) {
+                $child->remove();
+            }
         }
     }
 }
