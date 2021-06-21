@@ -159,6 +159,10 @@ class format_topics extends core_courseformat\base {
         return $ajaxsupport;
     }
 
+    public function supports_components() {
+        return true;
+    }
+
     /**
      * Loads all of the course sections into the navigation.
      *

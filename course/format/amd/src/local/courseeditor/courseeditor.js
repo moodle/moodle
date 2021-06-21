@@ -47,6 +47,7 @@ export default class extends Reactive {
 
         // Default view format setup.
         this._editing = false;
+        this._supportscomponents = false;
 
         this.courseId = courseId;
 
@@ -68,9 +69,11 @@ export default class extends Reactive {
      *
      * @param {Object} setup format, page and course settings
      * @property {boolean} setup.editing if the page is in edit mode
+     * @property {boolean} setup.supportscomponents if the format supports components for content
      */
     setViewFormat(setup) {
         this._editing = setup.editing ?? false;
+        this._supportscomponents = setup.supportscomponents ?? false;
     }
 
     /**
@@ -114,6 +117,15 @@ export default class extends Reactive {
      */
     getExporter() {
         return new Exporter(this);
+    }
+
+    /**
+     * Return if the current course support components to refresh the content.
+     *
+     * @returns {boolean} if the current content support components
+     */
+    get supportComponents() {
+        return this._supportscomponents ?? false;
     }
 
     /**

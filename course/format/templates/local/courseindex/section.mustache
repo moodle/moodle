@@ -89,6 +89,7 @@
         >
             {{{title}}}
         </a>
+        <span class="dragicon ml-auto">{{#pix}}i/dragdrop{{/pix}}</span>
     </div>
     <div id="courseindexcollapse{{number}}"
         class="courseindex-item-content collapse {{#isactive}}show{{/isactive}}"
@@ -100,3 +101,8 @@
         </ul>
     </div>
 </div>
+{{#js}}
+require(['core_courseformat/local/courseindex/section'], function(component) {
+    component.init('{{uniqid}}-course-index-section-{{id}}');
+});
+{{/js}}
