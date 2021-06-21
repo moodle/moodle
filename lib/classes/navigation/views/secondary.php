@@ -121,7 +121,8 @@ class secondary extends view {
      * @return array
      */
     protected function get_default_module_more_menu_nodes(): array {
-        return [];
+        return ['roleoverride', 'rolecheck', 'logreport', 'roleassign', 'filtermanage', 'backup', 'restore',
+            'competencybreakdown'];
     }
 
     /**
