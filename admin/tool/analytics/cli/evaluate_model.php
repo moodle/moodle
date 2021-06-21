@@ -137,7 +137,7 @@ if (!empty($validdatasets) && !$model->is_enabled() && $options['non-interactive
     }
 
     // Refresh the instance to prevent unexpected issues.
-    $model = new \core_analytics\model($modelobj);
+    $model = new \core_analytics\model($options['modelid']);
 
     // Set the time splitting method file and enable it.
     $model->enable($input);
