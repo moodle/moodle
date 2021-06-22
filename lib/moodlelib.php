@@ -7853,6 +7853,7 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
         'classes',
         'simpletest',
         'tests',
+        'templates',
         'yui',
         $exclude,
     ]));
