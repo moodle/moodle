@@ -34,6 +34,14 @@ export default class Component extends DndCmItem {
     create() {
         // Optional component name for debugging.
         this.name = 'courseindex_cm';
+        // Default query selectors.
+        this.selectors = {
+            CM_NAME: `[data-for='cm_name']`,
+        };
+        // Default classes to toggle on refresh.
+        this.classes = {
+            CMHIDDEN: 'dimmed',
+        };
         // We need our id to watch specific events.
         this.id = this.element.dataset.id;
     }
@@ -67,7 +75,20 @@ export default class Component extends DndCmItem {
     getWatchers() {
         return [
             {watch: `cm[${this.id}]:deleted`, handler: this.remove},
+            {watch: `cm[${this.id}]:updated`, handler: this._refreshCm},
         ];
+    }
+
+    /**
+     * Update a course index cm using the state information.
+     *
+     * @param {Object} details the update details.
+     */
+    _refreshCm({element}) {
+        // Update classes.
+        this.element.classList.toggle(this.classes.CMHIDDEN, !element.visible);
+        this.getElement(this.selectors.CM_NAME).innerHTML = element.name;
+        this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
     }
 
 }

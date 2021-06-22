@@ -97,6 +97,39 @@ export default class {
     }
 
     /**
+     * Mark or unmark course modules as dragging.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of course modules ids
+     * @param {bool} dragValue the new dragging value
+     */
+    cmDrag(stateManager, cmIds, dragValue) {
+        this._setElementsValue(stateManager, 'cm', cmIds, 'dragging', dragValue);
+    }
+
+    /**
+     * Mark or unmark course sections as dragging.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of section ids
+     * @param {bool} dragValue the new dragging value
+     */
+    sectionDrag(stateManager, sectionIds, dragValue) {
+        this._setElementsValue(stateManager, 'section', sectionIds, 'dragging', dragValue);
+    }
+
+    _setElementsValue(stateManager, name, ids, fieldName, newValue) {
+        stateManager.setReadOnly(false);
+        ids.forEach((id) => {
+            const element = stateManager.get(name, id);
+            if (element) {
+                element[fieldName] = newValue;
+            }
+        });
+        stateManager.setReadOnly(true);
+    }
+
+    /**
      * Get updated state data related to some cm ids.
      *
      * @method cmState

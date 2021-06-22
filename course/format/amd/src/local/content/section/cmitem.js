@@ -38,6 +38,8 @@ export default class extends DndCmItem {
         this.selectors = {
             DRAGICON: `.editing_move`,
         };
+        // All classes will be loaded later by DndCmItem.
+        this.classes = {};
         // We need our id to watch specific events.
         this.id = this.element.dataset.id;
     }
@@ -58,6 +60,17 @@ export default class extends DndCmItem {
     getWatchers() {
         return [
             {watch: `cm[${this.id}]:deleted`, handler: this.unregister},
+            {watch: `cm[${this.id}]:updated`, handler: this._refreshCm},
         ];
+    }
+
+    /**
+     * Update a course index cm using the state information.
+     *
+     * @param {Object} details the update details.
+     */
+    _refreshCm({element}) {
+        // Update classes.
+        this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
     }
 }

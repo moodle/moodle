@@ -38,8 +38,17 @@ export default class Component extends DndSection {
         // Default query selectors.
         this.selectors = {
             SECTION_ITEM: `[data-for='section_item']`,
+            SECTION_TITLE: `[data-for='section_title']`,
             CM_LAST: `[data-for="cm"]:last-child`,
         };
+        // Default classes to toggle on refresh.
+        this.classes = {
+            SECTIONHIDDEN: 'dimmed',
+            SECTIONCURRENT: 'current',
+        };
+
+        // We need our id to watch specific events.
+        this.id = this.element.dataset.id;
     }
 
     /**
@@ -76,11 +85,37 @@ export default class Component extends DndSection {
     }
 
     /**
+     * Component watchers.
+     *
+     * @returns {Array} of watchers
+     */
+    getWatchers() {
+        return [
+            {watch: `section[${this.id}]:updated`, handler: this._refreshSection},
+        ];
+    }
+
+    /**
      * Get the last CM element of that section.
      *
      * @returns {element|null}
      */
     getLastCm() {
         return this.getElement(this.selectors.CM_LAST);
+    }
+
+    /**
+     * Update a course index section using the state information.
+     *
+     * @param {Object} details the update details.
+     */
+    _refreshSection({element}) {
+        // Update classes.
+        const sectionitem = this.getElement(this.selectors.SECTION_ITEM);
+        sectionitem.classList.toggle(this.classes.SECTIONHIDDEN, !element.visible);
+        this.element.classList.toggle(this.classes.SECTIONCURRENT, element.current);
+        this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
+        // Update title.
+        this.getElement(this.selectors.SECTION_TITLE).innerHTML = element.title;
     }
 }
