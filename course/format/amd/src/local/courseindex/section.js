@@ -45,6 +45,7 @@ export default class Component extends DndSection {
         this.classes = {
             SECTIONHIDDEN: 'dimmed',
             SECTIONCURRENT: 'current',
+            LOCKED: 'editinprogress',
         };
 
         // We need our id to watch specific events.
@@ -115,6 +116,8 @@ export default class Component extends DndSection {
         sectionitem.classList.toggle(this.classes.SECTIONHIDDEN, !element.visible);
         this.element.classList.toggle(this.classes.SECTIONCURRENT, element.current);
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
+        this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
+        this.locked = element.locked;
         // Update title.
         this.getElement(this.selectors.SECTION_TITLE).innerHTML = element.title;
     }

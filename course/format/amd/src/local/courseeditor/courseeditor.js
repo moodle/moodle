@@ -142,7 +142,10 @@ export default class extends Reactive {
         try {
             await super.dispatch(...args);
         } catch (error) {
+            // Display error modal.
             notification.exception(error);
+            // Force unlock all elements.
+            super.dispatch('unlockAll');
         }
     }
 }

@@ -13652,6 +13652,21 @@ body:not(.editing) .sitetopic ul.section {
                  */
   padding-left: 2rem; }
 
+.editing .editinprogress {
+  opacity: .7;
+  animation: editinprogress-pulse 2s infinite linear; }
+
+@keyframes editinprogress-pulse {
+  0% {
+    background-color: #f8f9fa;
+    filter: grayscale(60%); }
+  50% {
+    background-color: #e9ecef;
+    filter: grayscale(40%); }
+  100% {
+    background-color: #f8f9fa;
+    filter: grayscale(60%); } }
+
 .editing_show + .editing_assign,
 .editing_hide + .editing_assign {
   margin-left: 20px; }

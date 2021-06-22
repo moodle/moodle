@@ -38,8 +38,10 @@ export default class extends DndSection {
             SECTION_ITEM: `[data-for='section_title']`,
             CM: `[data-for="cmitem"]`,
         };
-        // All classes will be loaded later by DndCmItem.
-        this.classes = {};
+        // Most classes will be loaded later by DndCmItem.
+        this.classes = {
+            LOCKED: 'editinprogress',
+        };
 
         // We need our id to watch specific events.
         this.id = this.element.dataset.id;
@@ -101,5 +103,7 @@ export default class extends DndSection {
     _refreshSection({element}) {
         // Update classes.
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
+        this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
+        this.locked = element.locked;
     }
 }
