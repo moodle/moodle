@@ -869,9 +869,6 @@ abstract class format_section_renderer_base extends core_course_renderer {
         echo $startlist;
 
         echo $this->section_header($thissection, $course, true, $displaysection);
-        // Show completion help icon.
-        $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
 
         echo $this->course_section_cm_list($course, $thissection, $displaysection);
         echo $this->course_section_add_cm_control($course, $displaysection, $displaysection);
@@ -942,9 +939,6 @@ abstract class format_section_renderer_base extends core_course_renderer {
         $course = $format->get_course();
 
         $context = context_course::instance($course->id);
-        // Title with completion help icon.
-        $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
         echo $this->output->heading($pagetitle, 2, 'accesshide');
 
         // Copy activity clipboard..

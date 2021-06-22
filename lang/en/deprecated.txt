@@ -153,3 +153,4 @@ msnid,core
 configenableactivitychooser,core_admin
 enableactivitychooser,core_admin
 coursepreferences,core
+yourprogress,core_completion
