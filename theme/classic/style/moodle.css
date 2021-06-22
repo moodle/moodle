@@ -13677,6 +13677,12 @@ body:not(.editing) .sitetopic ul.section {
       border-bottom: 0;
       padding-bottom: 0; }
 
+.course-content .section.dropready.main.drop-down {
+  border-bottom: 2px solid #212529; }
+
+.course-content .section.dropready li.activity.dropready.drop-down {
+  border-bottom: 2px solid #212529; }
+
 .section .activity .activityinstance .groupinglabel {
   padding-left: 30px; }
 
@@ -13774,7 +13780,7 @@ body:not(.editing) .sitetopic ul.section {
   list-style: none; }
   .course-content ul.topics li.section,
   .course-content ul.weeks li.section {
-    margin-top: 1rem;
+    padding-top: 1rem;
     padding-bottom: 1rem; }
     .course-content ul.topics li.section .content,
     .course-content ul.weeks li.section .content {

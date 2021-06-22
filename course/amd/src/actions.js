@@ -57,9 +57,15 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @returns {Integer}
          */
         var getModuleId = function(element) {
-            var id;
+            // Check if we have a data-id first.
+            const item = element.get(0);
+            if (item.dataset.id) {
+                return item.dataset.id;
+            }
+            // Use YUI way if data-id is not present.
+            let id;
             Y.use('moodle-course-util', function(Y) {
-                id = Y.Moodle.core_course.util.cm.getId(Y.Node(element.get(0)));
+                id = Y.Moodle.core_course.util.cm.getId(Y.Node(item));
             });
             return id;
         };
@@ -75,6 +81,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             Y.use('moodle-course-util', function(Y) {
                 name = Y.Moodle.core_course.util.cm.getName(Y.Node(element.get(0)));
             });
+            // Check if we have the name in the course state.
+            const state = courseeditor.state;
+            const cmid = getModuleId(element);
+            if (!name && state && cmid) {
+                name = state.cm.get(cmid)?.name;
+            }
             return name;
         };
 
@@ -282,6 +294,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @param {JQuery|Element} element
          * @param {Number} cmid
          * @param {Number} sectionreturn
+         * @return {Promise} the refresh promise
          */
         var refreshModule = function(element, cmid, sectionreturn) {
             const activityElement = $(element);
@@ -291,13 +304,17 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 args: {id: cmid, sectionreturn: sectionreturn}
             }], true);
 
-            $.when.apply($, promises)
-                .done(function(data) {
-                    removeSpinner(activityElement, spinner, 400);
-                    replaceActivityHtmlWith(data);
-                }).fail(function() {
-                    removeSpinner(activityElement, spinner);
-                });
+            return new Promise((resolve, reject) => {
+                $.when.apply($, promises)
+                    .done(function(data) {
+                        removeSpinner(activityElement, spinner, 400);
+                        replaceActivityHtmlWith(data);
+                        resolve(data);
+                    }).fail(function() {
+                        removeSpinner(activityElement, spinner);
+                        reject();
+                    });
+            });
         };
 
         /**
