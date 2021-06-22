@@ -919,7 +919,7 @@ function textlib_get_instance() {
  */
 function get_generic_section_name() {
     throw new coding_exception('get_generic_section_name() is deprecated. Please use appropriate functionality '
-            .'from class core_course\\course_format');
+            .'from class core_courseformat\\base');
 }
 
 /**

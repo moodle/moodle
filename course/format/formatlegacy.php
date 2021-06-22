@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright  2012 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_legacy extends core_course\course_format {
+class format_legacy extends core_courseformat\base {
 
     /**
      * Returns true if this course format uses sections

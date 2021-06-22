@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-use core_course\course_format;
+use core_courseformat\base as course_format;
 
 /**
  * Returns an instance of format class (extending course_format) for given course

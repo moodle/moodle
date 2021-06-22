@@ -39,7 +39,7 @@ use \core_privacy\local\metadata\types\user_preference;
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_testcase extends advanced_testcase {
+class provider_test extends advanced_testcase {
     /**
      * Returns a list of frankenstyle names of core components (plugins and subsystems).
      *

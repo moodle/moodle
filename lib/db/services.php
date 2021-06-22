@@ -508,14 +508,14 @@ $functions = array(
         'type'        => 'read',
         'ajax'        => true,
     ),
-    'core_course_get_state' => [
-        'classname'     => 'core_course\external\get_state',
+    'core_courseformat_get_state' => [
+        'classname'     => 'core_courseformat\external\get_state',
         'description'   => 'Get the current course state.',
         'type'          => 'read',
         'ajax'          => true,
     ],
-    'core_course_update_course' => [
-        'classname'     => 'core_course\external\update_course',
+    'core_courseformat_update_course' => [
+        'classname'     => 'core_courseformat\external\update_course',
         'methodname'    => 'execute',
         'description'   => 'Update course contents.',
         'type'          => 'write',

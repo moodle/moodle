@@ -2419,7 +2419,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
     // Destroy navigation caches
     navigation_cache::destroy_volatile_caches();
 
-    core_course\course_format::reset_course_cache($courseid);
+    core_courseformat\base::reset_course_cache($courseid);
 
     $cachecoursemodinfo = cache::make('core', 'coursemodinfo');
     if (empty($courseid)) {

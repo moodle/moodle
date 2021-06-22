@@ -42,5 +42,9 @@ $renamedclasses = array(
     'core\\analytics\\target\\course_completion' => 'core_course\\analytics\\target\\course_completion',
     'core\\analytics\\target\\course_gradetopass' => 'core_course\\analytics\\target\\course_gradetopass',
     'core\\analytics\\target\\no_teaching' => 'core_course\\analytics\\target\\no_teaching',
-    'format_base' => 'core_course\\course_format',
+    'format_base' => 'core_courseformat\\base',
+    'format_topics_renderer' => 'format_topics\\output\\renderer',
+    'format_section_renderer_base' => 'core_courseformat\\output\\section_renderer',
+    'format_singleactivity_renderer' => 'format_singleactivity\\output\\renderer',
+    'format_weeks_renderer' => 'format_weeks\\output\\renderer',
 );

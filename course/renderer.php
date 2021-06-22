@@ -835,8 +835,10 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function course_section_cm_list_item($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = []) {
 
-        debugging('course_section_cm_list_item is deprecated. Use course_format::course_section_updated_cm_item instead',
-                DEBUG_DEVELOPER);
+        debugging(
+            'course_section_cm_list_item is deprecated. Use renderer course_section_updated_cm_item instead',
+            DEBUG_DEVELOPER
+        );
 
         $output = '';
         if ($modulehtml = $this->course_section_cm($course, $completioninfo, $mod, $sectionreturn, $displayoptions)) {
@@ -863,7 +865,10 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function course_section_cm($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = []) {
 
-        debugging('course_section_cm is deprecated. Use core_course\output\cm_format output classes instead.', DEBUG_DEVELOPER);
+        debugging(
+            'course_section_cm is deprecated. Use core_courseformat\output\content\cm output classes instead.',
+            DEBUG_DEVELOPER
+        );
 
         if (!$mod->is_visible_on_course_page()) {
             return '';
@@ -877,7 +882,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $section = $modinfo->get_section_info($format->get_section_number());
 
-        $cmclass = $format->get_output_classname('cm_format');
+        $cmclass = $format->get_output_classname('content/cm');
         $cm = new $cmclass($format, $section, $mod, $displayoptions);
         // The course outputs works with format renderers, not with course renderers.
         $renderer = $format->get_renderer($this->page);
@@ -2218,7 +2223,7 @@ class core_course_renderer extends plugin_renderer_base {
         if (($section && (!empty($modinfo->sections[1]) or !empty($section->summary))) or $editing) {
 
             $format = course_get_format($SITE);
-            $frontpageclass = $format->get_output_classname('course_format\\frontpagesection');
+            $frontpageclass = $format->get_output_classname('content\\frontpagesection');
             $frontpagesection = new $frontpageclass($format, $section);
 
             // The course outputs works with format renderers, not with course renderers.

@@ -32,7 +32,7 @@ require_once($CFG->dirroot. '/course/format/lib.php');
  * @copyright  2012 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_singleactivity extends core_course\course_format {
+class format_singleactivity extends core_courseformat\base {
     /** @var cm_info the current activity. Use get_activity() to retrieve it. */
     private $activity = false;
 

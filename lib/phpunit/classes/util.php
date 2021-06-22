@@ -239,7 +239,7 @@ class phpunit_util extends testing_util {
         //TODO MDL-25290: add more resets here and probably refactor them to new core function
 
         // Reset course and module caches.
-        core_course\course_format::reset_course_cache(0);
+        core_courseformat\base::reset_course_cache(0);
         get_fast_modinfo(0, 0, true);
 
         // Reset other singletons.
