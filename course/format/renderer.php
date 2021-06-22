@@ -808,9 +808,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         echo $this->start_section_list();
 
         echo $this->section_header($thissection, $course, true, $displaysection);
-        // Show completion help icon.
-        $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
 
         echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
         echo $this->courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
@@ -845,9 +842,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $course = course_get_format($course)->get_course();
 
         $context = context_course::instance($course->id);
-        // Title with completion help icon.
-        $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
         echo $this->output->heading($this->page_title(), 2, 'accesshide');
 
         // Copy activity clipboard..
