@@ -94,6 +94,7 @@ updatesite,core_hub
 unregisterexplained,core_hub
 configrequestcategoryselection,core_admin
 requestcategoryselection,core_admin
+calendarurl,core_calendar
 global,core_calendar
 globalevent,core_calendar
 globalevents,core_calendar

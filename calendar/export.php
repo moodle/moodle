@@ -151,8 +151,9 @@ if ($data = $exportform->get_data()) {
 
     $link = new moodle_url('/calendar/export_execute.php', $params);
     if (!empty($data->generateurl)) {
-        $urlclasses = array('class' => 'generalbox calendarurl');
-        $calendarurl = html_writer::tag( 'div', get_string('calendarurl', 'calendar', $link->out()), $urlclasses);
+        $exporturlcontext = ['calendarexporturl' => $link->out(false)];
+        $exporturl = $OUTPUT->render_from_template('core_calendar/export_calendar_url', $exporturlcontext);
+        $calendarurl = html_writer::div($exporturl, 'generalbox calendarurl mt-3');
     }
 
     if (!empty($data->export)) {
