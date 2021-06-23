@@ -1,0 +1,7 @@
+2016021501 Report to Privacy API that data is not stored
+
+2016021500 Add a button to print the contents of the editor.
+
+2015090100 Add abiltity to request filtered document using post
+method. This allows the preview to work on texts that are larger than
+the server's maximum url size setting.
