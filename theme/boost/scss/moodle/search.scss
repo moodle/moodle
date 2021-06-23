@@ -51,30 +51,20 @@
     }
 }
 
-@include media-breakpoint-down(md) {
-    .simplesearchform .collapse.show,
-    .simplesearchform .collapsing {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        display: flex;
-        background-color: $white;
-        z-index: $zindex-popover;
-        height: $navbar-height;
-        .form-inline {
-            width: auto;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    }
-}
-.navbar.navbar-light {
-    .simplesearchform .btn-open {
-        color: $navbar-light-color;
-        &:hover {
-            color: $navbar-light-hover-color;
-        }
+.simplesearchform .collapse.show,
+.simplesearchform .collapsing {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: flex;
+    background-color: $white;
+    z-index: $zindex-popover;
+    height: $navbar-height;
+    .form-inline {
+        width: auto;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 

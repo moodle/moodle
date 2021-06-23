@@ -199,7 +199,7 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
     }
 
     .popover-region-container {
-        top: $line-height-base * 1.4 * $font-size-base;
+        top: calc(#{$navbar-height} - (#{$spacer} / 2));
     }
 
 }
