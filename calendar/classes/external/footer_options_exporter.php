@@ -67,26 +67,26 @@ class footer_options_exporter extends exporter {
     }
 
     /**
-     * Get the export calendar button.
+     * Get the export calendar link.
      *
-     * @return \single_button The export calendar button html.
+     * @return string The export calendar hyperlink.
      */
-    protected function get_export_calendar_button() {
+    protected function get_export_calendar_link(): string {
         $exportcalendarurl = new moodle_url('/calendar/export.php', $this->get_link_params());
-        return new \single_button($exportcalendarurl, get_string('exportcalendar', 'calendar'), 'get');
+        return $exportcalendarurl->out(true);
     }
 
     /**
-     * Get manage subscription button.
+     * Get manage subscription link.
      *
-     * @return string The manage subscription button html.
+     * @return string|null The manage subscription hyperlink.
      */
-    protected function get_manage_subscriptions_button() {
+    protected function get_manage_subscriptions_link(): ?string {
         if (calendar_user_can_add_event($this->calendar->course)) {
             $managesubscriptionurl = new moodle_url('/calendar/managesubscriptions.php', $this->get_link_params());
-            return new \single_button($managesubscriptionurl,
-                    get_string('managesubscriptions', 'calendar'), 'get');
+            return $managesubscriptionurl->out(true);
         }
+        return null;
     }
 
     /**
@@ -117,11 +117,9 @@ class footer_options_exporter extends exporter {
         $values = new stdClass();
 
         if (!empty($CFG->enablecalendarexport)) {
-            if ($exportbutton = $this->get_export_calendar_button()) {
-                $values->exportcalendarbutton = $exportbutton->export_for_template($output);
-            }
-            if ($managesubscriptionbutton = $this->get_manage_subscriptions_button()) {
-                $values->managesubscriptionbutton = $managesubscriptionbutton->export_for_template($output);
+            $values->exportcalendarlink = $this->get_export_calendar_link();
+            if ($managesubscriptionlink = $this->get_manage_subscriptions_link()) {
+                $values->managesubscriptionlink = $managesubscriptionlink;
             }
         }
 
@@ -135,12 +133,11 @@ class footer_options_exporter extends exporter {
      */
     public static function define_other_properties() {
         return array(
-            'exportcalendarbutton' => [
-                'type' => PARAM_RAW,
-                'default' => null,
+            'exportcalendarlink' => [
+                'type' => PARAM_URL
             ],
-            'managesubscriptionbutton' => [
-                'type' => PARAM_RAW,
+            'managesubscriptionlink' => [
+                'type' => PARAM_URL,
                 'default' => null,
             ],
         );

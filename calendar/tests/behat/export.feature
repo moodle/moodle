@@ -18,7 +18,7 @@ Feature: Export calendar events
 
   Scenario: Viewing calendar export options
     Given I follow "This month"
-    When I click on "Export calendar" "button"
+    When I click on "Export calendar" "link"
     Then I should see "All events"
     And I should see "Events related to courses"
     And I should see "Events related to groups"
@@ -26,7 +26,7 @@ Feature: Export calendar events
 
   Scenario: Generating calendar URL for all events
     Given I follow "This month"
-    And I click on "Export calendar" "button"
+    And I click on "Export calendar" "link"
     And I set the field "All events" to "1"
     And I set the field "Recent and next 60 days" to "1"
     When I click on "Get calendar URL" "button"
@@ -34,7 +34,7 @@ Feature: Export calendar events
 
   Scenario: Generating calendar URL for course events
     Given I follow "This month"
-    And I click on "Export calendar" "button"
+    And I click on "Export calendar" "link"
     And I set the field "Events related to courses" to "1"
     And I set the field "Recent and next 60 days" to "1"
     When I click on "Get calendar URL" "button"
@@ -42,7 +42,7 @@ Feature: Export calendar events
 
   Scenario: Generating calendar URL for group events
     Given I follow "This month"
-    And I click on "Export calendar" "button"
+    And I click on "Export calendar" "link"
     And I set the field "Events related to groups" to "1"
     And I set the field "Recent and next 60 days" to "1"
     When I click on "Get calendar URL" "button"
@@ -50,7 +50,7 @@ Feature: Export calendar events
 
   Scenario: Generating calendar URL for category events
     Given I follow "This month"
-    And I click on "Export calendar" "button"
+    And I click on "Export calendar" "link"
     And I set the field "Events related to categories" to "1"
     And I set the field "Recent and next 60 days" to "1"
     When I click on "Get calendar URL" "button"
@@ -58,7 +58,7 @@ Feature: Export calendar events
 
   Scenario: Generating calendar URL for user events
     Given I follow "This month"
-    And I click on "Export calendar" "button"
+    And I click on "Export calendar" "link"
     And I set the field "My personal events" to "1"
     And I set the field "Recent and next 60 days" to "1"
     When I click on "Get calendar URL" "button"
