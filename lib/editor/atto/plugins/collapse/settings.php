@@ -31,7 +31,7 @@ if ($ADMIN->fulltree) {
     // Number of groups to show when collapsed.
     $name = new lang_string('showgroups', 'atto_collapse');
     $desc = new lang_string('showgroups_desc', 'atto_collapse');
-    $default = 5;
+    $default = 6;
     $options = array_combine(range(1, 20), range(1, 20));
 
     $setting = new admin_setting_configselect('atto_collapse/showgroups',
