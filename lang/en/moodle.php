@@ -2067,6 +2067,7 @@ $string['targetrole'] = 'Target role';
 $string['teacheronly'] = 'for the {$a} only';
 $string['teacherroles'] = '{$a} roles';
 $string['teachers'] = 'Teachers';
+$string['textcopiedtoclipboard'] = 'Text copied to clipboard';
 $string['textediting'] = 'Text editor';
 $string['textediting_help'] = 'If an HTML editor such as Atto or TinyMCE is selected, text input areas will have a toolbar with buttons for easily adding content.
 
@@ -2146,6 +2147,7 @@ $string['trysearching'] = 'Try searching instead.';
 $string['turneditingoff'] = 'Turn editing off';
 $string['turneditingon'] = 'Turn editing on';
 $string['unauthorisedlogin'] = 'The user account "{$a}" is not available on this site';
+$string['unabletocopytoclipboard'] = 'Unable to copy text to the clipboard';
 $string['undecided'] = 'Undecided';
 $string['unexistingcmid'] = 'Course module id not found';
 $string['unexistingsectionid'] = 'Course section id not found';
