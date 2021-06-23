@@ -819,7 +819,13 @@ class moodle_page {
      */
     protected function magic_get_secondarynav() {
         if ($this->_secondarynav === null) {
-            $this->_secondarynav = new secondary($this);
+            $class = 'core\navigation\views\secondary';
+            // Try and load a custom class first.
+            if (class_exists("mod_{$this->activityname}\\local\\views\\secondary")) {
+                $class = "mod_{$this->activityname}\\local\\views\\secondary";
+            }
+
+            $this->_secondarynav = new $class($this);
             $this->_secondarynav->initialise();
         }
         return $this->_secondarynav;
