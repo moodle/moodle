@@ -174,6 +174,12 @@ class secondary extends view {
         }
 
         $this->remove_unwanted_nodes();
+
+        // Don't need to show anything if only the view node is available. Remove it.
+        if ($this->children->count() == 1) {
+            $this->children->remove('modulepage');
+        }
+
         $this->force_nodes_into_more_menu($defaultmoremenunodes);
         // Search and set the active node.
         $this->scan_for_active_node($this);
