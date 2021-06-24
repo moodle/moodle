@@ -33,6 +33,7 @@ $string['admindirname'] = 'Dossièr d\'administracion';
 $string['availablelangs'] = 'Paquetatges de lenga disponibles';
 $string['chooselanguagehead'] = 'Causitz ua lenga';
 $string['cliinstallheader'] = 'Programa d\'installacion de Moodle {$a} en linha de comanda';
+$string['clitablesexist'] = 'Las taulas de la banca de dadas que son ja presentas. L\'installacion en linha de comanda ne pòt pas contunhar.';
 $string['databasehost'] = 'Servidor de banca de dadas';
 $string['databasename'] = 'Nom de la banca de dadas';
 $string['databasetypehead'] = 'Seleccionar un pilòt de banca de dadas';

@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Lütfen, SADECE kurulum için bir dil seçin. Si
 $string['clialreadyconfigured'] = 'config.php halihazırda mevcut, lütfen eğer bu siteyi yüklemek istiyorsanız şu dizini kullanın: admin/cli/install_database.php';
 $string['clialreadyinstalled'] = 'Config.php zaten var. Sitenizi güncellemek istiyorsanız bu adresi kullanın: admin/cli/install_database.php';
 $string['cliinstallheader'] = 'Moodle {$a} komut satırı kurulum programı';
+$string['clitablesexist'] = 'Veritabanı tabloları zaten var. CLI kurulumu devam edemez.';
 $string['databasehost'] = 'Veritabanı sunucusu';
 $string['databasename'] = 'Veritabanı adı';
 $string['databasetypehead'] = 'Veritabanı sürücüsü seçin';

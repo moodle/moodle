@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Dewiswch iaith ar gyfer y broses osod. Bydd yr i
 $string['clialreadyconfigured'] = 'Mae\'r ffeil config.php yn bodoli eisoes, defnyddiwch admin/cli/install_database.php os ydych chi am osod y safle hwn.';
 $string['clialreadyinstalled'] = 'Mae\'r ffeil config.php yn bodoli eisoes, defnyddiwch admin/cli/upgrade.php os ydych chi am uwchraddio eich safle.';
 $string['cliinstallheader'] = 'Rhaglen gosod llinell gorchymyn Moodle {$a}';
+$string['clitablesexist'] = 'Mae\'r tablau cronfa ddata eisoes yn bresennol, doedd dim modd i\'r gosodiad cli fynd rhagddo.';
 $string['databasehost'] = 'Gwesteiwr y gronfa ddata';
 $string['databasename'] = 'Enw\'r gronfa ddata';
 $string['databasetypehead'] = 'Dewis gyrrwr ar gyfer y gronfa ddata';

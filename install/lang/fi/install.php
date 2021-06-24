@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Valitse kieli asennusohjelmaa varten. Tätä kie
 $string['clialreadyconfigured'] = 'Tiedosto config.php on jo olemassa, käytä admin/cli/install_database.php -tiedostoa jos haluat asentaa tämän sivuston.';
 $string['clialreadyinstalled'] = 'Tiedosto config.php on jo olemassa, ole hyvä ja käytä admin/cli/upgrade.php:ta jos haluat päivittää sivustosi';
 $string['cliinstallheader'] = 'Moodlen {$a} komentoriviasennusohjelma';
+$string['clitablesexist'] = 'Tietokantataulut on jo luotu, cli-asennusta ei voida jatkaa.';
 $string['databasehost'] = 'Tietokannan isäntä';
 $string['databasename'] = 'Tietokannan nimi';
 $string['databasetypehead'] = 'Valitse tietokannan ajuri';

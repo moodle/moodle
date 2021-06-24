@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Sila pilih bahasa untuk instalasi. Bahasa ini ju
 $string['clialreadyconfigured'] = 'Berkas konfigurasi config.php sudah ada. Sila gunakan admin /cli/install_database.php untuk memasang Moodle untuk situs ini.';
 $string['clialreadyinstalled'] = 'Berkas konfigurasi config.php sudah ada. Silakan gunakan admin/cli/install_database.php untuk menginstal Moodle untuk situs ini.';
 $string['cliinstallheader'] = 'Program pemasangan baris perintah Moodle {$a}';
+$string['clitablesexist'] = 'Tabel basis data sudah ada; Instalasi CLI tidak dapat dilanjutkan.';
 $string['databasehost'] = 'Hos basis data';
 $string['databasename'] = 'Nama basis data';
 $string['databasetypehead'] = 'Pilih pengandar basis data';

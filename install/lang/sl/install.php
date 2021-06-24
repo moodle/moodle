@@ -35,6 +35,7 @@ $string['chooselanguagehead'] = 'Izberite jezik';
 $string['chooselanguagesub'] = 'Izberite jezik za namestitev. Pozneje boste lahko izbrali tudi jezike strani in uporabniške jezike.';
 $string['clialreadyinstalled'] = 'Datoteka config.php že obstaja, prosimo uporabite admin/cli/install_database.php, če želite posodobiti vašo stran.';
 $string['cliinstallheader'] = 'Moodle {$a} namestitveni program z ukazno vrstico';
+$string['clitablesexist'] = 'Tabele podatkovne baze so že prisotne, sli namestitev se ne more nadaljevati.';
 $string['databasehost'] = 'Gostitelj podatkovne baze';
 $string['databasename'] = 'Ime podatkovne baze';
 $string['databasetypehead'] = 'Izberite gonilnik podatkovne baze';
