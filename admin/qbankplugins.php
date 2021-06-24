@@ -36,7 +36,7 @@ $PAGE->set_context($syscontext);
 
 require_admin();
 
-$return = new moodle_url('/admin/settings.php', array('section' => 'manageqbanks'));
+$return = new moodle_url('/admin/settings.php', ['section' => 'manageqbanks']);
 
 $plugins = core_plugin_manager::instance()->get_plugins_of_type('qbank');
 $sortorder = array_flip(array_keys($plugins));
@@ -61,4 +61,3 @@ switch ($action) {
 core_plugin_manager::reset_caches();
 
 redirect($return);
-

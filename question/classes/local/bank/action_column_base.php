@@ -23,38 +23,38 @@
  */
 
 namespace core_question\local\bank;
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * A base class for actions that are an icon that lets you manipulate the question in some way.
  *
  * @copyright 2009 Tim Hunt
+ * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class action_column_base extends column_base {
 
-    protected function get_title() {
+    protected function get_title(): string {
         return '&#160;';
     }
 
-    public function get_extra_classes() {
-        return array('iconcol');
+    public function get_extra_classes(): array {
+        return ['iconcol'];
     }
 
-    protected function print_icon($icon, $title, $url) {
+    protected function print_icon($icon, $title, $url): void {
         global $OUTPUT;
-        echo '<a title="' . $title . '" href="' . $url . '">' . $OUTPUT->pix_icon($icon, $title) . '</a>';
+        echo \html_writer::tag('a', $OUTPUT->pix_icon($icon, $title), ['title' => $title, 'href' => $url]);
     }
 
-    public function get_extra_joins() {
-        return array('qc' => 'JOIN {question_categories} qc ON qc.id = q.category');
+    public function get_extra_joins(): array {
+        return ['qc' => 'JOIN {question_categories} qc ON qc.id = q.category'];
     }
 
-    public function get_required_fields() {
+    public function get_required_fields(): array {
         // Createdby is required for permission checks.
         // Qtype so we can easily avoid applying actions to question types that
         // are no longer installed.
         return ['q.id', 'q.qtype', 'q.createdby', 'qc.contextid'];
     }
+
 }

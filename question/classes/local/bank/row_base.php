@@ -23,30 +23,48 @@
  */
 
 namespace core_question\local\bank;
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Base class for 'columns' that are actually displayed as a row following the main question row.
  *
  * @copyright 2009 Tim Hunt
+ * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class row_base extends column_base {
-    public function is_extra_row() {
+
+    /**
+     * Check if the column is an extra row of not.
+     */
+    public function is_extra_row(): bool {
         return true;
     }
 
-    protected function display_start($question, $rowclasses) {
+    /**
+     * Output the opening column tag.  If it is set as heading, it will use <th> tag instead of <td>
+     *
+     * @param \stdClass $question
+     * @param string $rowclasses
+     */
+    protected function display_start($question, $rowclasses): void {
         if ($rowclasses) {
-            echo '<tr class="' . $rowclasses . '">' . "\n";
+            echo \html_writer::start_tag('tr', ['class' => $rowclasses]);
         } else {
-            echo "<tr>\n";
+            echo \html_writer::start_tag('tr');
         }
-        echo '<td colspan="' . $this->qbank->get_column_count() . '" class="' . $this->get_name() . '">';
+        echo \html_writer::start_tag('td',
+                ['colspan' => $this->qbank->get_column_count(), 'class' => $this->get_name()]);
     }
 
-    protected function display_end($question, $rowclasses) {
-        echo "</td></tr>\n";
+    /**
+     * Output the closing column tag
+     *
+     * @param object $question
+     * @param string $rowclasses
+     */
+    protected function display_end($question, $rowclasses): void {
+        echo \html_writer::end_tag('td');
+        echo \html_writer::end_tag('tr');
     }
+
 }

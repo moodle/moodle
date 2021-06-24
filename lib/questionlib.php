@@ -1756,19 +1756,23 @@ function question_edit_url($context) {
 }
 
 /**
- * Adds question bank setting links to the given navigation node if caps are met.
+ * Adds question bank setting links to the given navigation node if caps are met
+ * and loads the navigation from the plugins.
+ * Qbank plugins can extend the navigation_plugin_base and add their own navigation node,
+ * this method will help to autoload those nodes in the question bank navigation.
  *
  * @param navigation_node $navigationnode The navigation node to add the question branch to
  * @param object $context
+ * @param string $baseurl the url of the base where the api is implemented from
  * @return navigation_node Returns the question branch that was added
  */
-function question_extend_settings_navigation(navigation_node $navigationnode, $context) {
+function question_extend_settings_navigation(navigation_node $navigationnode, $context, $baseurl = '/question/edit.php') {
     global $PAGE;
 
     if ($context->contextlevel == CONTEXT_COURSE) {
-        $params = array('courseid'=>$context->instanceid);
+        $params = ['courseid' => $context->instanceid];
     } else if ($context->contextlevel == CONTEXT_MODULE) {
-        $params = array('cmid'=>$context->instanceid);
+        $params = ['cmid' => $context->instanceid];
     } else {
         return;
     }
@@ -1778,24 +1782,84 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
     }
 
     $questionnode = $navigationnode->add(get_string('questionbank', 'question'),
-            new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER, null, 'questionbank');
+            new moodle_url($baseurl, $params), navigation_node::TYPE_CONTAINER, null, 'questionbank');
+
+    $corenavigations = [
+            'questions' => [
+                    'title' => get_string('questions', 'question'),
+                    'url' => new moodle_url($baseurl)
+            ],
+            'categories' => [
+                    'title' => get_string('categories', 'question'),
+                    'url' => new moodle_url('/question/category.php')
+            ],
+            'import' => [
+                    'title' => get_string('import', 'question'),
+                    'url' => new moodle_url('/question/import.php')
+            ],
+            'export' => [
+                    'title' => get_string('export', 'question'),
+                    'url' => new moodle_url('/question/export.php')
+            ]
+    ];
+
+    $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
+    foreach ($plugins as $componentname => $plugin) {
+        $pluginentrypoint = new $plugin();
+        $pluginentrypointobject = $pluginentrypoint->get_navigation_node();
+        // Don't need the plugins without navigation node.
+        if ($pluginentrypointobject === null) {
+            unset($plugins[$componentname]);
+            continue;
+        }
+        foreach ($corenavigations as $key => $corenavigation) {
+            if ($pluginentrypointobject->get_navigation_key() === $key) {
+                unset($plugins[$componentname]);
+                if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
+                    unset($corenavigations[$key]);
+                    break;
+                }
+                $corenavigations[$key] = [
+                    'title' => $pluginentrypointobject->get_navigation_title(),
+                    'url'   => $pluginentrypointobject->get_navigation_url()
+                ];
+            }
+        }
+
+    }
+
+    // Community/additional plugins have navigation node.
+    $pluginnavigations = [];
+    foreach ($plugins as $componentname => $plugin) {
+        $pluginentrypoin = new $plugin();
+        $pluginentrypointobject = $pluginentrypoin->get_navigation_node();
+        if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
+            unset($corenavigations[$key]);
+            continue;
+        }
+        $pluginnavigations[$pluginentrypointobject->get_navigation_key()] = [
+            'title' => $pluginentrypointobject->get_navigation_title(),
+            'url'   => $pluginentrypointobject->get_navigation_url(),
+            'capabilities' => $pluginentrypointobject->get_navigation_capabilities()
+        ];
+    }
 
     $contexts = new question_edit_contexts($context);
-    if ($contexts->have_one_edit_tab_cap('questions')) {
-        $questionnode->add(get_string('questions', 'question'), new moodle_url(
-                '/question/edit.php', $params), navigation_node::TYPE_SETTING, null, 'questions');
+    foreach ($corenavigations as $key => $corenavigation) {
+        if ($contexts->have_one_edit_tab_cap($key)) {
+            $questionnode->add($corenavigation['title'], new moodle_url(
+                    $corenavigation['url'], $params), navigation_node::TYPE_SETTING, null, $key);
+        }
     }
-    if ($contexts->have_one_edit_tab_cap('categories')) {
-        $questionnode->add(get_string('categories', 'question'), new moodle_url(
-                '/question/category.php', $params), navigation_node::TYPE_SETTING, null, 'categories');
-    }
-    if ($contexts->have_one_edit_tab_cap('import')) {
-        $questionnode->add(get_string('import', 'question'), new moodle_url(
-                '/question/import.php', $params), navigation_node::TYPE_SETTING, null, 'import');
-    }
-    if ($contexts->have_one_edit_tab_cap('export')) {
-        $questionnode->add(get_string('export', 'question'), new moodle_url(
-                '/question/export.php', $params), navigation_node::TYPE_SETTING, null, 'export');
+
+    foreach ($pluginnavigations as $key => $pluginnavigation) {
+        if (is_array($pluginnavigation['capabilities'])) {
+            if (!$contexts->have_one_cap($pluginnavigation['capabilities'])) {
+                continue;
+            }
+        }
+        $questionnode->add($pluginnavigation['title'], new moodle_url(
+                $pluginnavigation['url'], $params), navigation_node::TYPE_SETTING, null, $key);
     }
 
     return $questionnode;

@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_question\bank;
+namespace mod_quiz\question\bank;
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @todo MDL-72004 delete the class and add it to lib/db/renameclasses.php pointing to the plugin
  */
-class question_name_column extends column_base {
+class question_name_column extends \core_question\bank\column_base {
     protected $checkboxespresent = null;
 
     public function get_name() {
@@ -46,7 +46,7 @@ class question_name_column extends column_base {
 
     protected function label_for($question) {
         if (is_null($this->checkboxespresent)) {
-            $this->checkboxespresent = $this->qbank->has_column('core_question\local\bank\checkbox_column');
+            $this->checkboxespresent = $this->qbank->has_column('core_question\bank\checkbox_column');
         }
         if ($this->checkboxespresent) {
             return 'checkq' . $question->id;

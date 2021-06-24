@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_name_text_column extends \core_question\bank\question_name_column {
+class question_name_text_column extends question_name_column {
     public function get_name() {
         return 'questionnametext';
     }

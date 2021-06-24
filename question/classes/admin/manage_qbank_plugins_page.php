@@ -25,8 +25,6 @@
 
 namespace core_question\admin;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class manage_qbank_plugins_page.
  *
@@ -81,14 +79,14 @@ class manage_qbank_plugins_page extends \admin_setting {
         if (empty($types)) {
             return get_string('noquestionbanks', 'question');
         }
-        $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'default'));
+        $txt = get_strings(['settings', 'name', 'enable', 'disable', 'default']);
         $txt->uninstall = get_string('uninstallplugin', 'core_admin');
 
         $table = new \html_table();
-        $table->head  = array($txt->name, $txt->enable, $txt->settings, $txt->uninstall);
-        $table->align = array('left', 'center', 'center', 'center', 'center');
+        $table->head  = [$txt->name, $txt->enable, $txt->settings, $txt->uninstall];
+        $table->align = ['left', 'center', 'center', 'center', 'center'];
         $table->attributes['class'] = 'manageqbanktable generaltable admintable';
-        $table->data  = array();
+        $table->data  = [];
 
         $totalenabled = 0;
         $count = 0;
@@ -99,8 +97,7 @@ class manage_qbank_plugins_page extends \admin_setting {
         }
 
         foreach ($types as $type) {
-            $url = new \moodle_url('/admin/qbankplugins.php',
-                    array('sesskey' => sesskey(), 'name' => $type->name));
+            $url = new \moodle_url('/admin/qbankplugins.php', ['sesskey' => sesskey(), 'name' => $type->name]);
 
             $class = '';
             if ($pluginmanager->get_plugin_info('qbank_'.$type->name)->get_status() ===
@@ -111,12 +108,12 @@ class manage_qbank_plugins_page extends \admin_setting {
             }
 
             if ($type->is_enabled()) {
-                $hideshow = \html_writer::link($url->out(false, array('action' => 'disable')),
-                        $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', array('class' => 'iconsmall')));
+                $hideshow = \html_writer::link($url->out(false, ['action' => 'disable']),
+                        $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', ['class' => 'iconsmall']));
             } else {
                 $class = 'dimmed_text';
-                $hideshow = \html_writer::link($url->out(false, array('action' => 'enable')),
-                        $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', array('class' => 'iconsmall')));
+                $hideshow = \html_writer::link($url->out(false, ['action' => 'enable']),
+                        $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', ['class' => 'iconsmall']));
             }
 
             $settings = '';
@@ -130,7 +127,7 @@ class manage_qbank_plugins_page extends \admin_setting {
                 $uninstall = \html_writer::link($uninstallurl, $txt->uninstall);
             }
 
-            $row = new \html_table_row(array($strtypename, $hideshow, $settings, $uninstall));
+            $row = new \html_table_row([$strtypename, $hideshow, $settings, $uninstall]);
             if ($class) {
                 $row->attributes['class'] = $class;
             }

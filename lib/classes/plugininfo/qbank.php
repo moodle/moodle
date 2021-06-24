@@ -42,7 +42,7 @@ class qbank extends base {
     }
 
     public static function get_manage_url(): \moodle_url {
-        return new \moodle_url('/admin/settings.php', array('section' => 'manageqbanks'));
+        return new \moodle_url('/admin/settings.php', ['section' => 'manageqbanks']);
     }
 
     public static function get_plugins($type, $typerootdir, $typeclass, $pluginman): array {
@@ -50,30 +50,26 @@ class qbank extends base {
 
         $qbank = parent::get_plugins($type, $typerootdir, $typeclass, $pluginman);
         $order = array_keys($qbank);
-        $sortedqbanks = array();
+        $sortedqbanks = [];
         foreach ($order as $qbankname) {
             $sortedqbanks[$qbankname] = $qbank[$qbankname];
         }
         return $sortedqbanks;
     }
 
-    /**
-     * Finds all enabled plugins, the result may include missing plugins.
-     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
-     */
     public static function get_enabled_plugins(): ?array {
         global $CFG;
         $pluginmanager = \core_plugin_manager::instance();
         $plugins = $pluginmanager->get_installed_plugins('qbank');
 
         if (!$plugins) {
-            return array();
+            return [];
         }
 
         $plugins = array_keys($plugins);
 
         // Filter to return only enabled plugins.
-        $enabled = array();
+        $enabled = [];
         foreach ($plugins as $plugin) {
             $qbankinfo = $pluginmanager->get_plugin_info('qbank_'.$plugin);
             $qbankavailable = $qbankinfo->get_status();
@@ -95,7 +91,7 @@ class qbank extends base {
      * @param string $fullpluginname the name of the plugin
      * @return bool
      */
-    public static function is_ready($fullpluginname): bool {
+    public static function is_plugin_enabled($fullpluginname): bool {
         $pluginmanager = \core_plugin_manager::instance();
         $qbankinfo = $pluginmanager->get_plugin_info($fullpluginname);
         if (empty($qbankinfo)) {
@@ -109,16 +105,6 @@ class qbank extends base {
         return true;
     }
 
-    /**
-     * Loads plugin settings to the settings tree
-     *
-     * This function usually includes settings.php file in plugins folder.
-     * Alternatively it can create a link to some settings page (instance of admin_externalpage)
-     *
-     * @param \part_of_admin_tree $adminroot
-     * @param string $parentnodename
-     * @param bool $hassiteconfig whether the current user has moodle/site:config capability
-     */
     public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig): void {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         $ADMIN = $adminroot; // May be used in settings.php.

@@ -23,18 +23,17 @@
  */
 
 namespace core_question\local\bank;
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * A question bank column which gathers together all the actions into a menu.
  *
  * This question bank column, if added to the question bank, will
  * replace all of the other columns which implement the
- * {@link menuable_action} interface and replace them with a single
+ * {@see menuable_action} interface and replace them with a single
  * column containing an Edit menu.
  *
  * @copyright 2019 The Open University
+ * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class edit_menu_column extends column_base {
@@ -52,11 +51,12 @@ class edit_menu_column extends column_base {
      *
      * @param column_base[] $allcolumns a set of columns.
      * @return column_base[] the non-action columns from the set.
+     * @todo MDL-72004 changes for class renaming.
      */
-    public function claim_menuable_columns($allcolumns) {
+    public function claim_menuable_columns($allcolumns): array {
         $remainingcolumns = [];
         foreach ($allcolumns as $key => $column) {
-            if ($column instanceof menuable_action) {
+            if ($column instanceof menuable_action || $column instanceof \core_question\bank\menuable_action) {
                 $this->actions[$key] = $column;
             } else {
                 $remainingcolumns[$key] = $column;
@@ -69,11 +69,11 @@ class edit_menu_column extends column_base {
         return get_string('actions');
     }
 
-    public function get_name() {
+    public function get_name(): string {
         return 'editmenu';
     }
 
-    protected function display_content($question, $rowclasses) {
+    protected function display_content($question, $rowclasses): void {
         global $OUTPUT;
 
         $menu = new \action_menu();
@@ -95,7 +95,8 @@ class edit_menu_column extends column_base {
         echo $OUTPUT->render($menu);
     }
 
-    public function get_required_fields() {
+    public function get_required_fields():array {
         return ['q.qtype'];
     }
+
 }

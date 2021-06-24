@@ -46,8 +46,7 @@ class core_question_generator_testcase extends advanced_testcase {
                                   // creates a Top category as well.
         $this->assertEquals($count, $DB->count_records('question_categories'));
 
-        $cat = $generator->create_question_category(array(
-                'name' => 'My category', 'sortorder' => 1));
+        $cat = $generator->create_question_category(['name' => 'My category', 'sortorder' => 1]);
         $this->assertSame('My category', $cat->name);
         $this->assertSame(1, $cat->sortorder);
     }
@@ -61,8 +60,8 @@ class core_question_generator_testcase extends advanced_testcase {
         $this->assertNull($questions[0]->idnumber);
         $this->assertNull($questions[1]->idnumber);
         // Check created idnumbers.
-        $qcat1 = $generator->create_question_category(array(
-                'name' => 'My category', 'sortorder' => 1, 'idnumber' => 'myqcat'));
+        $qcat1 = $generator->create_question_category([
+                'name' => 'My category', 'sortorder' => 1, 'idnumber' => 'myqcat']);
         $this->assertSame('myqcat', $qcat1->idnumber);
         $quest1 = $generator->update_question($questions[0], null, ['idnumber' => 'myquest']);
         $this->assertSame('myquest', $quest1->idnumber);

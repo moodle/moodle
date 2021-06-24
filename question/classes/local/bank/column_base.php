@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for representing a column in a {@see question_bank_view}.
+ * Base class for representing a column.
  *
  * @package   core_question
  * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
@@ -23,15 +23,13 @@
  */
 
 namespace core_question\local\bank;
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
- * Base class for representing a column in a {@see question_bank_view}.
+ * Base class for representing a column.
  *
  * @copyright 2009 Tim Hunt
+ * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @todo MDL-71516 delete the class and add it to lib/db/renameclasses.php pointing to core_question/local/bank
  */
 abstract class column_base {
 
@@ -44,10 +42,10 @@ abstract class column_base {
     protected $isheading = false;
 
     /**
-     * Constructor for the question bank view we are helping to render.
-     * @param view $qbank
+     * Constructor.
+     * @param view $qbank the question bank view we are helping to render.
      */
-    public function __construct($qbank) {
+    public function __construct(view $qbank) {
         $this->qbank = $qbank;
         $this->init();
     }
@@ -56,17 +54,20 @@ abstract class column_base {
      * A chance for subclasses to initialise themselves, for example to load lang strings,
      * without having to override the constructor.
      */
-    protected function init() {
+    protected function init(): void {
     }
 
     /**
      * Set the column as heading
      */
-    public function set_as_heading() {
+    public function set_as_heading(): void {
         $this->isheading = true;
     }
 
-    public function is_extra_row() {
+    /**
+     * Check if the column is an extra row of not.
+     */
+    public function is_extra_row(): bool {
         return false;
     }
 
@@ -94,44 +95,51 @@ abstract class column_base {
     /**
      * Output the column header cell.
      */
-    public function display_header() {
-        echo '<th class="header ' . $this->get_classes() . '" scope="col">';
+    public function display_header(): void {
+        global $PAGE;
+
+        $data = [];
+        $data['sortable'] = true;
+        $data['extraclasses'] = $this->get_classes();
         $sortable = $this->is_sortable();
         $name = get_class($this);
         $title = $this->get_title();
         $tip = $this->get_title_tip();
+        $links = [];
         if (is_array($sortable)) {
             if ($title) {
-                echo '<div class="title">' . $title . '</div>';
+                $data['title'] = $title;
             }
-            $links = array();
             foreach ($sortable as $subsort => $details) {
                 $links[] = $this->make_sort_link($name . '-' . $subsort,
                         $details['title'], isset($details['tip']) ? $details['tip'] : '', !empty($details['reverse']));
             }
-            echo '<div class="sorters">' . implode(' / ', $links) . '</div>';
+            $data['sortlinks'] = implode(' / ', $links);
         } else if ($sortable) {
-            echo $this->make_sort_link($name, $title, $tip);
+            $data['sortlinks'] = $this->make_sort_link($name, $title, $tip);
         } else {
+            $data['sortable'] = false;
+            $data['tiptitle'] = $title;
             if ($tip) {
-                echo '<span title="' . $tip . '">';
-            }
-            echo $title;
-            if ($tip) {
-                echo '</span>';
+                $data['sorttip'] = true;
+                $data['tip'] = $tip;
             }
         }
-        echo "</th>\n";
+
+        $renderer = $PAGE->get_renderer('core_question', 'bank');
+        echo $renderer->render_column_header($data);
     }
 
     /**
      * Title for this column. Not used if is_sortable returns an array.
      */
-    protected abstract function get_title();
+    abstract protected function get_title();
 
     /**
-     * @return string a fuller version of the name. Use this when get_title() returns
+     * Use this when get_title() returns
      * something very short, and you want a longer version as a tool tip.
+     *
+     * @return string a fuller version of the name.
      */
     protected function get_title_tip() {
         return '';
@@ -143,9 +151,11 @@ abstract class column_base {
      * @param string $title the link text.
      * @param string $tip the link tool-tip text. If empty, defaults to title.
      * @param bool $defaultreverse whether the default sort order for this column is descending, rather than ascending.
-     * @return string HTML fragment.
+     * @return string
      */
-    protected function make_sort_link($sort, $title, $tip, $defaultreverse = false) {
+    protected function make_sort_link($sort, $title, $tip, $defaultreverse = false): string {
+        global $PAGE;
+        $sortdata = [];
         $currentsort = $this->qbank->get_primary_sort_order($sort);
         $newsortreverse = $defaultreverse;
         if ($currentsort) {
@@ -159,13 +169,18 @@ abstract class column_base {
         } else {
             $tip = get_string('sortbyx', '', $tip);
         }
-        $link = '<a href="' . $this->qbank->new_sort_url($sort, $newsortreverse) . '" title="' . $tip . '">';
-        $link .= $title;
+
+        $link = $title;
         if ($currentsort) {
             $link .= $this->get_sort_icon($currentsort < 0);
         }
-        $link .= '</a>';
-        return $link;
+
+        $sortdata['sorturl'] = $this->qbank->new_sort_url($sort, $newsortreverse);
+        $sortdata['sortcontent'] = $link;
+        $sortdata['sorttip'] = $tip;
+        $renderer = $PAGE->get_renderer('core_question', 'bank');
+        return $renderer->render_column_sort($sortdata);
+
     }
 
     /**
@@ -173,12 +188,12 @@ abstract class column_base {
      * @param bool $reverse sort is descending, not ascending.
      * @return string HTML image tag.
      */
-    protected function get_sort_icon($reverse) {
+    protected function get_sort_icon($reverse): string {
         global $OUTPUT;
         if ($reverse) {
-            return $OUTPUT->pix_icon('t/sort_desc', get_string('desc'), '', array('class' => 'iconsort'));
+            return $OUTPUT->pix_icon('t/sort_desc', get_string('desc'), '', ['class' => 'iconsort']);
         } else {
-            return $OUTPUT->pix_icon('t/sort_asc', get_string('asc'), '', array('class' => 'iconsort'));
+            return $OUTPUT->pix_icon('t/sort_asc', get_string('asc'), '', ['class' => 'iconsort']);
         }
     }
 
@@ -187,7 +202,7 @@ abstract class column_base {
      * @param object $question the row from the $question table, augmented with extra information.
      * @param string $rowclasses CSS class names that should be applied to this row of output.
      */
-    public function display($question, $rowclasses) {
+    public function display($question, $rowclasses): void {
         $this->display_start($question, $rowclasses);
         $this->display_content($question, $rowclasses);
         $this->display_end($question, $rowclasses);
@@ -199,9 +214,9 @@ abstract class column_base {
      * @param \stdClass $question
      * @param string $rowclasses
      */
-    protected function display_start($question, $rowclasses) {
+    protected function display_start($question, $rowclasses): void {
         $tag = 'td';
-        $attr = array('class' => $this->get_classes());
+        $attr = ['class' => $this->get_classes()];
         if ($this->isheading) {
             $tag = 'th';
             $attr['scope'] = 'row';
@@ -210,9 +225,11 @@ abstract class column_base {
     }
 
     /**
-     * @return string the CSS classes to apply to every cell in this column.
+     * The CSS classes to apply to every cell in this column.
+     *
+     * @return string
      */
-    protected function get_classes() {
+    protected function get_classes(): string {
         $classes = $this->get_extra_classes();
         $classes[] = $this->get_name();
         return implode(' ', $classes);
@@ -224,13 +241,15 @@ abstract class column_base {
      *
      * @return string column name.
      */
-    public abstract function get_name();
+    abstract public function get_name();
 
     /**
-     * @return array any extra class names you would like applied to every cell in this column.
+     * Any extra class names you would like applied to every cell in this column.
+     *
+     * @return array
      */
-    public function get_extra_classes() {
-        return array();
+    public function get_extra_classes(): array {
+        return [];
     }
 
     /**
@@ -238,7 +257,7 @@ abstract class column_base {
      * @param object $question the row from the $question table, augmented with extra information.
      * @param string $rowclasses CSS class names that should be applied to this row of output.
      */
-    protected abstract function display_content($question, $rowclasses);
+    abstract protected function display_content($question, $rowclasses);
 
     /**
      * Output the closing column tag
@@ -246,7 +265,7 @@ abstract class column_base {
      * @param object $question
      * @param string $rowclasses
      */
-    protected function display_end($question, $rowclasses) {
+    protected function display_end($question, $rowclasses): void {
         $tag = 'td';
         if ($this->isheading) {
             $tag = 'th';
@@ -268,16 +287,18 @@ abstract class column_base {
      *
      * @return array 'table_alias' => 'JOIN clause'
      */
-    public function get_extra_joins() {
-        return array();
+    public function get_extra_joins(): array {
+        return [];
     }
 
     /**
-     * @return array fields required. use table alias 'q' for the question table, or one of the
+     * Use table alias 'q' for the question table, or one of the
      * ones from get_extra_joins. Every field requested must specify a table prefix.
+     *
+     * @return array fields required.
      */
-    public function get_required_fields() {
-        return array();
+    public function get_required_fields(): array {
+        return [];
     }
 
     /**
@@ -299,7 +320,7 @@ abstract class column_base {
      *
      * @param array $questions
      */
-    public function load_question_tags(array $questions) {
+    public function load_question_tags(array $questions): void {
         $firstquestion = reset($questions);
         if (isset($firstquestion->tags)) {
             // Looks like tags are already loaded, so don't do it again.
@@ -321,10 +342,10 @@ abstract class column_base {
      *  + false for no (the default),
      *  + a field name, if sorting this column corresponds to sorting on that datbase field.
      *  + an array of subnames to sort on as follows
-     *  return array(
-     *      'firstname' => array('field' => 'uc.firstname', 'title' => get_string('firstname')),
-     *      'lastname' => array('field' => 'uc.lastname', 'title' => get_string('lastname')),
-     *  );
+     *  return [
+     *      'firstname' => ['field' => 'uc.firstname', 'title' => get_string('firstname')],
+     *      'lastname' => ['field' => 'uc.lastname', 'title' => get_string('lastname')],
+     *  ];
      * As well as field, and field, you can also add 'revers' => 1 if you want the default sort
      * order to be DESC.
      * @return mixed as above.
@@ -338,7 +359,7 @@ abstract class column_base {
      * @param bool $reverse whether the normal direction should be reversed.
      * @return string 'ASC' or 'DESC'
      */
-    protected function sortorder($reverse) {
+    protected function sortorder($reverse): string {
         if ($reverse) {
             return ' DESC';
         } else {
@@ -347,12 +368,14 @@ abstract class column_base {
     }
 
     /**
+     * Sorts the expressions.
+     *
      * @param bool $reverse Whether to sort in the reverse of the default sort order.
      * @param string $subsort if is_sortable returns an array of subnames, then this will be
      *      one of those. Otherwise will be empty.
      * @return string some SQL to go in the order by clause.
      */
-    public function sort_expression($reverse, $subsort) {
+    public function sort_expression($reverse, $subsort): string {
         $sortable = $this->is_sortable();
         if (is_array($sortable)) {
             if (array_key_exists($subsort, $sortable)) {
@@ -366,4 +389,5 @@ abstract class column_base {
             throw new \coding_exception('sort_expression called on a non-sortable column.');
         }
     }
+
 }

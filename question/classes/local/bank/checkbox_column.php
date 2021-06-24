@@ -21,21 +21,21 @@
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace core_question\local\bank;
-defined('MOODLE_INTERNAL') || die();
 
 use core\output\checkbox_toggleall;
-
 
 /**
  * A column with a checkbox for each question with name q{questionid}.
  *
  * @copyright 2009 Tim Hunt
+ * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class checkbox_column extends column_base {
 
-    public function get_name() {
+    public function get_name(): string {
         return 'checkbox';
     }
 
@@ -57,7 +57,7 @@ class checkbox_column extends column_base {
         return get_string('selectquestionsforbulk', 'question');
     }
 
-    protected function display_content($question, $rowclasses) {
+    protected function display_content($question, $rowclasses): void {
         global $OUTPUT;
 
         $checkbox = new checkbox_toggleall('qbank', false, [
@@ -71,7 +71,8 @@ class checkbox_column extends column_base {
         echo $OUTPUT->render($checkbox);
     }
 
-    public function get_required_fields() {
-        return array('q.id');
+    public function get_required_fields(): array {
+        return ['q.id'];
     }
+
 }

@@ -1938,9 +1938,9 @@ class core_plugin_manager {
                 'checkbox', 'datetime', 'menu', 'social', 'text', 'textarea'
             ),
 
-            'qbank' => array(
+            'qbank' => [
                 ''
-            ),
+            ],
 
             'qbehaviour' => array(
                 'adaptive', 'adaptivenopenalty', 'deferredcbm',

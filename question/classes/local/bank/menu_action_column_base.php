@@ -23,8 +23,6 @@
  */
 
 namespace core_question\local\bank;
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Base class to make it easier to implement actions that are menuable_actions.
@@ -35,6 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * interface yourself.
  *
  * @copyright 2019 Tim Hunt
+ * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class menu_action_column_base extends action_column_base implements menuable_action {
@@ -51,9 +50,9 @@ abstract class menu_action_column_base extends action_column_base implements men
      *      $icon - the icon for this action. E.g. 't/delete'.
      *      $label - text label to display in the UI (either in the menu, or as a tool-tip on the icon)
      */
-    abstract protected function get_url_icon_and_label(\stdClass $question): array;
+    abstract protected function get_url_icon_and_label(\stdClass $question);
 
-    protected function display_content($question, $rowclasses) {
+    protected function display_content($question, $rowclasses): void {
         [$url, $icon, $label] = $this->get_url_icon_and_label($question);
         if ($url) {
             $this->print_icon($icon, $label, $url);

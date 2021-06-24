@@ -285,7 +285,7 @@ class core_question_external extends external_api {
         // The user must be able to view all questions in the category that they are requesting.
         $editcontexts->require_cap('moodle/question:viewall');
 
-        $loader = new \core_question\bank\random_question_loader(new qubaid_list([]));
+        $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
         // Only load the properties we require from the DB.
         $properties = \core_question\external\question_summary_exporter::get_mandatory_properties();
         $questions = $loader->get_questions($categoryid, $includesubcategories, $tagids, $limit, $offset, $properties);
