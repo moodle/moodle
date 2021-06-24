@@ -2033,6 +2033,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $DB->delete_records('event', array('categoryid' => $this->id));
 
         // Finally delete the category and it's context.
+        $categoryrecord = $this->get_db_record();
         $DB->delete_records('course_categories', array('id' => $this->id));
 
         $coursecatcontext = context_coursecat::instance($this->id);
@@ -2047,6 +2048,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             'context' => $coursecatcontext,
             'other' => array('name' => $this->name)
         ));
+        $event->add_record_snapshot($event->objecttable, $categoryrecord);
         $event->set_coursecat($this);
         $event->trigger();
 
@@ -2222,6 +2224,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         }
 
         // Finally delete the category and it's context.
+        $categoryrecord = $this->get_db_record();
         $DB->delete_records('course_categories', array('id' => $this->id));
         $context->delete();
 
@@ -2232,6 +2235,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             'context' => $context,
             'other' => array('name' => $this->name, 'contentmovedcategoryid' => $newparentid)
         ));
+        $event->add_record_snapshot($event->objecttable, $categoryrecord);
         $event->set_coursecat($this);
         $event->trigger();
 
