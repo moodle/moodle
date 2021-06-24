@@ -73,7 +73,11 @@ class cm_completion_details {
         $this->returndetails = $returndetails;
         $cmcompletionclass = activity_custom_completion::get_cm_completion_class($this->cminfo->modname);
         if ($cmcompletionclass) {
-            $this->cmcompletion = new $cmcompletionclass($this->cminfo, $this->userid);
+            $this->cmcompletion = new $cmcompletionclass(
+                $this->cminfo,
+                $this->userid,
+                $completioninfo->get_core_completion_state($cminfo, $userid)
+            );
         }
     }
 
@@ -128,6 +132,13 @@ class cm_completion_details {
                 'status' => $status,
                 'description' => get_string('detail_desc:receivegrade', 'completion'),
             ];
+
+            if (!is_null($this->cminfo->completionpassgrade) && $this->cminfo->completionpassgrade) {
+                $details['completionpassgrade'] = (object)[
+                    'status' => $completiondata->passgrade ?? COMPLETION_INCOMPLETE,
+                    'description' => get_string('detail_desc:receivepassgrade', 'completion'),
+                ];
+            }
         }
 
         if ($this->cmcompletion) {

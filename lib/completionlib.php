@@ -697,14 +697,6 @@ class completion_info {
         }
 
         $newstate = COMPLETION_COMPLETE;
-        $completionstate = [];
-        if ($cm->completionview == COMPLETION_VIEW_REQUIRED) {
-            $newstate = ($current->viewed == COMPLETION_VIEWED ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE);
-            $completionstate = [
-                'viewed' => $newstate
-            ];
-        }
-
         if ($cm instanceof stdClass) {
             // Modname hopefully is provided in $cm but just in case it isn't, let's grab it.
             if (!isset($cm->modname)) {
@@ -717,35 +709,14 @@ class completion_info {
         }
         // Make sure we're using a cm_info object.
         $cminfo = cm_info::create($cm, $userid);
-
-        // Check grade
-        if (!is_null($cminfo->completiongradeitemnumber)) {
-            $newstate = $this->get_grade_completion($cminfo, $userid);
-            $completionstate['usegrade'] = $newstate;
-            if ($cm->completionpassgrade) {
-                // If we are asking to use pass grade completion but haven't set it properly,
-                // then default to COMPLETION_COMPLETE_PASS.
-                if ($newstate == COMPLETION_COMPLETE) {
-                    $newstate = COMPLETION_COMPLETE_PASS;
-                }
-
-                // The criteria is to mark an activity as complete if a passing grade has been achieved.
-                // COMPLETION_COMPLETE_FAIL still marks the activity as completed which is incorrect.
-                // Rectify this.
-                if ($newstate == COMPLETION_COMPLETE_FAIL) {
-                    $newstate = COMPLETION_INCOMPLETE;
-                }
-
-                $completionstate['passgrade'] = $newstate;
-            }
-        }
+        $completionstate = $this->get_core_completion_state($cminfo, $userid);
 
         if (plugin_supports('mod', $cminfo->modname, FEATURE_COMPLETION_HAS_RULES)) {
             $response = true;
             $cmcompletionclass = activity_custom_completion::get_cm_completion_class($cminfo->modname);
             if ($cmcompletionclass) {
                 /** @var activity_custom_completion $cmcompletion */
-                $cmcompletion = new $cmcompletionclass($cminfo, $userid);
+                $cmcompletion = new $cmcompletionclass($cminfo, $userid, $completionstate);
                 $response = $cmcompletion->get_overall_completion_state() != COMPLETION_INCOMPLETE;
             } else {
                 // Fallback to the get_completion_state callback.
@@ -1168,6 +1139,51 @@ class completion_info {
     }
 
     /**
+     * Get the latest completion state for each criteria used in the module
+     *
+     * @param cm_info $cm The corresponding module's information
+     * @param int $userid The id for the user we are calculating core completion state
+     * @return array $data The individualised core completion state used in the module.
+     *                      Consists of the following keys completiongrade, passgrade, viewed
+     */
+    public function get_core_completion_state(cm_info $cm, int $userid): array {
+        global $DB;
+        $data = [];
+        // Include in the completion info the grade completion, if necessary.
+        if (!is_null($cm->completiongradeitemnumber)) {
+            $newstate = $this->get_grade_completion($cm, $userid);
+            $data['completiongrade'] = $newstate;
+
+            if ($cm->completionpassgrade) {
+                // If we are asking to use pass grade completion but haven't set it properly,
+                // then default to COMPLETION_COMPLETE_PASS.
+                if ($newstate == COMPLETION_COMPLETE) {
+                    $newstate = COMPLETION_COMPLETE_PASS;
+                }
+
+                // The activity is using 'passing grade' criteria therefore fail indication should be on this criteria.
+                // The user has received a (failing) grade so 'completiongrade' should properly indicate this.
+                if ($newstate == COMPLETION_COMPLETE_FAIL) {
+                    $data['completiongrade'] = COMPLETION_COMPLETE;
+                }
+
+                $data['passgrade'] = $newstate;
+            }
+        }
+
+        // If view is required, try and fetch from the db. In some cases, cache can be invalid.
+        if ($cm->completionview == COMPLETION_VIEW_REQUIRED) {
+            $data['viewed'] = COMPLETION_INCOMPLETE;
+            $record = $DB->get_record('course_modules_completion', array('coursemoduleid' => $cm->id, 'userid' => $userid));
+            if ($record) {
+                $data['viewed'] = ($record->viewed == COMPLETION_VIEWED ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Adds the user's custom completion data on the given course module.
      *
      * @param cm_info $cm The course module information.
@@ -1175,12 +1191,7 @@ class completion_info {
      * @return array The additional completion data.
      */
     protected function get_other_cm_completion_data(cm_info $cm, int $userid): array {
-        $data = [];
-
-        // Include in the completion info the grade completion, if necessary.
-        if (!is_null($cm->completiongradeitemnumber)) {
-            $data['completiongrade'] = $this->get_grade_completion($cm, $userid);
-        }
+        $data = $this->get_core_completion_state($cm, $userid);
 
         // Custom activity module completion data.
 
@@ -1200,7 +1211,7 @@ class completion_info {
         }
 
         /** @var activity_custom_completion $customcmcompletion */
-        $customcmcompletion = new $cmcompletionclass($cm, $userid);
+        $customcmcompletion = new $cmcompletionclass($cm, $userid, $data);
         foreach ($customdata['customcompletionrules'] as $rule => $enabled) {
             if (!$enabled) {
                 // Skip inactive completion rules.

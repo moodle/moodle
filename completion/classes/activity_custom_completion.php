@@ -40,15 +40,20 @@ abstract class activity_custom_completion {
     /** @var int The user's ID. */
     protected $userid;
 
+    /** @var array The current state of core completion */
+    protected $completionstate;
+
     /**
      * activity_custom_completion constructor.
      *
      * @param cm_info $cm
      * @param int $userid
+     * @param array|null $completionstate The current state of the core completion criteria
      */
-    public function __construct(cm_info $cm, int $userid) {
+    public function __construct(cm_info $cm, int $userid, ?array $completionstate = null) {
         $this->cm = $cm;
         $this->userid = $userid;
+        $this->completionstate = $completionstate;
     }
 
     /**

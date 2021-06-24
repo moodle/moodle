@@ -48,23 +48,14 @@ class custom_completion extends activity_custom_completion {
 
         $completionpassorattempts = $this->cm->customdata['customcompletionrules']['completionpassorattemptsexhausted'];
 
-        if (empty($completionpassorattempts['completionpass'])) {
+        if (empty($completionpassorattempts['completionpassgrade'])) {
             return true;
         }
 
-        // Check for passing grade.
-        $item = grade_item::fetch([
-            'courseid' => $this->cm->get_course()->id,
-            'itemtype' => 'mod',
-            'itemmodule' => 'quiz',
-            'iteminstance' => $this->cm->instance,
-            'outcomeid' => null
-        ]);
-        if ($item) {
-            $grades = grade_grade::fetch_users_grades($item, [$this->userid], false);
-            if (!empty($grades[$this->userid]) && $grades[$this->userid]->is_passed($item)) {
-                return true;
-            }
+        if ($this->completionstate &&
+                isset($this->completionstate['passgrade']) &&
+                $this->completionstate['passgrade'] == COMPLETION_COMPLETE_PASS) {
+            return true;
         }
 
         // If a passing grade is required and exhausting all available attempts is not accepted for completion,
@@ -146,18 +137,15 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_custom_rule_descriptions(): array {
         $minattempts = $this->cm->customdata['customcompletionrules']['completionminattempts'] ?? 0;
+        $description['completionminattempts'] = get_string('completiondetail:minattempts', 'mod_quiz', $minattempts);
 
+        // Completion pass grade is now part of core. Only show the following if it's combined with min attempts.
         $completionpassorattempts = $this->cm->customdata['customcompletionrules']['completionpassorattemptsexhausted'] ?? [];
         if (!empty($completionpassorattempts['completionattemptsexhausted'])) {
-            $passorallattemptslabel = get_string('completiondetail:passorexhaust', 'mod_quiz');
-        } else {
-            $passorallattemptslabel = get_string('completiondetail:passgrade', 'mod_quiz');
+            $description['completionpassorattemptsexhausted'] = get_string('completiondetail:passorexhaust', 'mod_quiz');
         }
 
-        return [
-            'completionpassorattemptsexhausted' => $passorallattemptslabel,
-            'completionminattempts' => get_string('completiondetail:minattempts', 'mod_quiz', $minattempts),
-        ];
+        return $description;
     }
 
     /**
@@ -170,6 +158,7 @@ class custom_completion extends activity_custom_completion {
             'completionview',
             'completionminattempts',
             'completionusegrade',
+            'completionpassgrade',
             'completionpassorattemptsexhausted',
         ];
     }

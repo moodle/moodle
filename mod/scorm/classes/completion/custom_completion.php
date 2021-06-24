@@ -210,6 +210,7 @@ class custom_completion extends activity_custom_completion {
             'completionstatusallscos',
             'completionstatusrequired',
             'completionusegrade',
+            'completionpassgrade',
             'completionscorerequired',
         ];
     }
