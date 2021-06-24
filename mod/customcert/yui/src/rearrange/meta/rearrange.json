@@ -1,0 +1,8 @@
+{
+    "moodle-mod_customcert-rearrange": {
+        "requires": [
+            "dd-delegate",
+            "dd-drag"
+        ]
+    }
+}
