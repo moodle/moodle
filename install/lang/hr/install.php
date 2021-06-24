@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Molimo odaberite jezik instalacije. Ovaj jezik �
 $string['clialreadyconfigured'] = 'Datoteka config.php već postoji. Upotrijebite naredbu admin/cli/install_database.php ako želite nastaviti instalaciju.';
 $string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Upotrijebite naredbu admin/cli/install_database.php ako želite nadograditi ovaj sustav.';
 $string['cliinstallheader'] = 'Moodle {$a} program za instalaciju iz naredbenog retka';
+$string['clitablesexist'] = 'Baza podataka već postoji. Nije moguće nastaviti instalaciju iz naredbenog retka.';
 $string['databasehost'] = 'Poslužitelj baze podataka (HOST)';
 $string['databasename'] = 'Naziv baze podataka';
 $string['databasetypehead'] = 'Odaberite vrstu baze podataka';

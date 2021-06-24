@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Trieu un idioma per a la instal·lació. S\'util
 $string['clialreadyconfigured'] = 'El fitxer config.php ja existeix; feu servir admin/cli/install_database.php si voleu instal·lar Moodle en aquest lloc web.';
 $string['clialreadyinstalled'] = 'El fitxer de configuració config.php ja existeix. Feu servir admin/cli/upgrade.php si voleu actualitzar Moodle per a aquest lloc web.';
 $string['cliinstallheader'] = 'Programa d\'instal·lació de línia d\'ordres de Moodle {$a}';
+$string['clitablesexist'] = 'Les taules de la base de dades ja existeixen. La instal·lació per línia d\'ordres no pot continuar.';
 $string['databasehost'] = 'Servidor de base de dades:';
 $string['databasename'] = 'Nom de la base de dades:';
 $string['databasetypehead'] = 'Trieu el controlador de la base de dades';

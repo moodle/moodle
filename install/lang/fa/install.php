@@ -40,6 +40,8 @@ $string['clialreadyinstalled'] = '.ﺩﺭﺍﺩ ﺩﻮﺟﻭ config.php ﯼﺪ�
 ﺯﺍ ﺖﯾﺎﺳ ﻦﯾﺍ ﺭﺩ ﻝﺩﻮﻣ ﯼﺎﻘﺗﺭﺍ ﯼﺍﺮﺑ ﺎﻔﻄﻟ
 .ﺪﯿﻨﮐ ﻩﺩﺎﻔﺘﺳﺍ admin/cli/database_install.php';
 $string['cliinstallheader'] = 'ﻥﺎﻣﺮﻓ ﻂﺧ ﻖﯾﺮﻃ ﺯﺍ {$a} ﻝﺩﻮﻣ ﺐﺼﻧ ﻪﻣﺎﻧﺮﺑ';
+$string['clitablesexist'] = '.ﺪﻨﺘﺷﺍﺩ ﺩﻮﺟﻭ ﻞﺒﻗ ﺯﺍ ﻩﺩﺍﺩ ﻩﺎﮕﯾﺎﭘ ﯼﺎﻫ‌ﻝﻭﺪﺟ
+.ﺪﺑﺎﯾ ﻪﻣﺍﺩﺍ ﺪﻧﺍﻮﺗ‌ﯽﻤﻧ cli ﺐﺼﻧ';
 $string['databasehost'] = 'میزبان پایگاه داده';
 $string['databasename'] = 'نام پایگاه داده';
 $string['databasetypehead'] = 'راه‌انداز پایگاه داده را انتخاب کنید';

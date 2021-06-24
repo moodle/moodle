@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = '請選擇在安裝過程中所用的語言。這
 $string['clialreadyconfigured'] = '檔案 config.php  已經存在，若你要這一網站上安裝Moodle，請使用admin/cli/install_database.php';
 $string['clialreadyinstalled'] = '檔案 config.php  已經存在，若你要在這一網站為Moodle升級，請使用admin/cli/install_database.php';
 $string['cliinstallheader'] = 'Moodle {$a} 命令列安裝程式';
+$string['clitablesexist'] = '資料庫的資料表已經呈現出來。命令列介面安裝不能繼續。';
 $string['databasehost'] = '資料庫主機';
 $string['databasename'] = '資料庫名稱';
 $string['databasetypehead'] = '選擇資料庫裝置';
