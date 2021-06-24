@@ -11352,7 +11352,8 @@ nav.navbar .logo img {
     position: relative; }
   .page-context-header .page-header-image {
     margin-right: 1em;
-    margin-bottom: 1em; }
+    margin-bottom: 0.5em;
+    margin-top: 0.7em; }
     .page-context-header .page-header-image > a {
       display: inline-block; }
   .page-context-header .page-header-headings,

@@ -4302,10 +4302,14 @@ EOD;
         // Image data.
         if (isset($contextheader->imagedata)) {
             // Header specific image.
-            $html .= html_writer::div($contextheader->imagedata, 'page-header-image');
+            $html .= html_writer::div($contextheader->imagedata, 'page-header-image icon-size-7');
         }
 
         // Headings.
+        if (isset($contextheader->prefix)) {
+            $prefix = html_writer::div($contextheader->prefix, 'text-muted');
+            $heading = $prefix . $heading;
+        }
         $html .= html_writer::tag('div', $heading, array('class' => 'page-header-headings'));
 
         // Buttons.
