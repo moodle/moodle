@@ -120,6 +120,11 @@ class tour {
     protected $steps = [];
 
     /**
+     * @var bool $displaystepnumbers Display the step numbers in this tour.
+     */
+    protected $displaystepnumbers = true;
+
+    /**
      * Create an instance of the specified tour.
      *
      * @param   int         $id         The ID of the tour to load.
@@ -196,6 +201,7 @@ class tour {
         $this->config       = json_decode($record->configdata);
         $this->dirty        = false;
         $this->steps        = [];
+        $this->displaystepnumbers = !empty($record->displaystepnumbers);
 
         return $this;
     }
@@ -427,6 +433,7 @@ class tour {
             'sortorder'     => $this->sortorder,
             'endtourlabel'  => $this->endtourlabel,
             'configdata'    => json_encode($this->config),
+            'displaystepnumbers' => $this->displaystepnumbers,
         );
     }
 
@@ -842,5 +849,27 @@ class tour {
         }
 
         return $results;
+    }
+
+    /**
+     * Set the value for the display step numbers setting.
+     *
+     * @param bool $value True for enable.
+     * @return $this
+     */
+    public function set_display_step_numbers(bool $value): tour {
+        $this->displaystepnumbers = $value;
+        $this->dirty = true;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of the display step numbers setting.
+     *
+     * @return bool
+     */
+    public function get_display_step_numbers(): bool {
+        return $this->displaystepnumbers;
     }
 }

@@ -371,6 +371,7 @@ class manager {
             $tour->set_pathmatch($data->pathmatch);
             $tour->set_enabled(!empty($data->enabled));
             $tour->set_endtourlabel($data->endtourlabel);
+            $tour->set_display_step_numbers(!empty($data->displaystepnumbers));
 
             foreach (configuration::get_defaultable_keys() as $key) {
                 $tour->set_config($key, $data->$key);

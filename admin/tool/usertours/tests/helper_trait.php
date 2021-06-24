@@ -47,6 +47,7 @@ trait tool_usertours_helper_trait {
             'name' => '',
             'description' => '',
             'configdata' => '',
+            'displaystepnumbers' => true
         ];
 
         if ($tourconfig === null) {

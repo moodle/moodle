@@ -83,6 +83,9 @@ class edittour extends \moodleform {
         $mform->setType('endtourlabel', PARAM_TEXT);
         $mform->addHelpButton('endtourlabel', 'endtourlabel', 'tool_usertours');
 
+        $mform->addElement('checkbox', 'displaystepnumbers', get_string('displaystepnumbers', 'tool_usertours'));
+        $mform->addHelpButton('displaystepnumbers', 'displaystepnumbers', 'tool_usertours');
+
         // Configuration.
         $this->tour->add_config_to_form($mform);
 
