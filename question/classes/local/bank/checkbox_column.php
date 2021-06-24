@@ -21,7 +21,7 @@
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_question\bank;
+namespace core_question\local\bank;
 defined('MOODLE_INTERNAL') || die();
 
 use core\output\checkbox_toggleall;
@@ -32,7 +32,6 @@ use core\output\checkbox_toggleall;
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @todo MDL-72004 delete the class and add it to lib/db/renameclasses.php pointing to core_question/local/bank
  */
 class checkbox_column extends column_base {
 

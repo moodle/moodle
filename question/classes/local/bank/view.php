@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_question\bank;
+namespace core_question\local\local\bank;
 defined('MOODLE_INTERNAL') || die();
 
 use core_question\bank\search\condition;
@@ -48,7 +48,6 @@ use core_question\bank\search\condition;
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @todo MDL-72004 delete the class and add it to lib/db/renameclasses.php pointing to core_question/local/bank
  */
 class view {
     const MAX_SORTS = 3;
