@@ -303,33 +303,14 @@ table.quizattemptsummary .noreviewmessage {
 .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup {
     width: 600px;
 }
-
 .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-wrap {
     overflow: hidden;
 }
 
 .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd {
-    padding: 0;
+    padding: 1rem;
 }
 
-.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd #mod_quiz_preflight_form legend {
-    padding: 0 10px;
-    margin: 0;
-    border: 0 none;
-}
-
-.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd #mod_quiz_preflight_form .fitem {
-    margin-left: 10px;
-}
-
-.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd #mod_quiz_preflight_form #fgroup_id_buttonar {
-    padding: 10px 0 0;
-    margin: 0;
-}
-
-.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-content .moodle-dialogue-ft {
-    margin: 0;
-}
 /* Standard Moodle rule that needs to be more specific here. */
 .moodle-dialogue-bd #mod_quiz_preflight_form fieldset.hidden {
     display: inherit;
