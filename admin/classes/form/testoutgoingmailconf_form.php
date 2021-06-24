@@ -48,6 +48,17 @@ class testoutgoingmailconf_form extends \moodleform {
         $mform->setType('recipient', PARAM_EMAIL);
         $mform->addRule('recipient', get_string('required'), 'required');
 
+        // From user.
+        $options = ['maxlength' => '100', 'size' => '25'];
+        $mform->addElement('text', 'from', get_string('testoutgoingmailconf_fromemail', 'admin'), $options);
+        $mform->setType('from', PARAM_TEXT);
+        $mform->addHelpButton('from', 'testoutgoingmailconf_fromemail', 'admin');
+
+        // Additional subject text.
+        $options = ['size' => '25'];
+        $mform->addElement('text', 'additionalsubject', get_string('testoutgoingmailconf_subjectadditional', 'admin'), $options);
+        $mform->setType('additionalsubject', PARAM_TEXT);
+
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'send', get_string('testoutgoingmailconf_sendtest', 'admin'));
         $buttonarray[] = $mform->createElement('cancel');
@@ -55,5 +66,27 @@ class testoutgoingmailconf_form extends \moodleform {
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
 
+    }
+
+    /**
+     * Validate Form field, should be a valid email format or a username that matches with a Moodle user.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     * @throws \dml_exception|\coding_exception
+     */
+    public function validation($data, $files): array {
+        $errors = parent::validation($data, $files);
+
+        if (isset($data['from']) && $data['from']) {
+            $userfrom = \core_user::get_user_by_username($data['from']);
+
+            if (!$userfrom && !validate_email($data['from'])) {
+                $errors['from'] = get_string('testoutgoingmailconf_fromemail_invalid', 'admin');
+            }
+        }
+
+        return $errors;
     }
 }

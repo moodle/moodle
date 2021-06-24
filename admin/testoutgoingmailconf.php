@@ -46,9 +46,36 @@ if ($data) {
     $emailuser->email = $data->recipient;
     $emailuser->id = -99;
 
-    $subject = get_string('testoutgoingmailconf_subject', 'admin',
-        format_string($SITE->fullname, true, ['context' => context_system::instance()]));
-    $messagetext = get_string('testoutgoingmailconf_message', 'admin');
+    // Get the user who will send this email (From:).
+    $emailuserfrom = $USER;
+    if ($data->from) {
+        if (!$userfrom = \core_user::get_user_by_email($data->from)) {
+            $userfrom = \core_user::get_user_by_username($data->from);
+        }
+        if (!$userfrom && validate_email($data->from)) {
+            $dummyuser = \core_user::get_user(\core_user::NOREPLY_USER);
+            $dummyuser->id = -1;
+            $dummyuser->email = $data->from;
+            $dummyuser->firstname = $data->from;
+            $emailuserfrom = $dummyuser;
+        } else if ($userfrom) {
+            $emailuserfrom = $userfrom;
+        }
+    }
+
+    // Get the date the email will be sent.
+    $timestamp = userdate(time(), get_string('strftimedatetimeaccurate', 'core_langconfig'));
+
+    // Build the email subject.
+    $subjectparams = new stdClass();
+    $subjectparams->site = format_string($SITE->fullname, true, ['context' => context_system::instance()]);
+    if (isset($data->additionalsubject)) {
+        $subjectparams->additional = format_string($data->additionalsubject);
+    }
+    $subjectparams->time = $timestamp;
+
+    $subject = get_string('testoutgoingmailconf_subject', 'admin', $subjectparams);
+    $messagetext = get_string('testoutgoingmailconf_message', 'admin', $timestamp);
 
     // Manage Moodle debugging options.
     $debuglevel = $CFG->debug;
@@ -60,7 +87,7 @@ if ($data) {
 
     // Send test email.
     ob_start();
-    $success = email_to_user($emailuser, $USER, $subject, $messagetext);
+    $success = email_to_user($emailuser, $emailuserfrom, $subject, $messagetext);
     $smtplog = ob_get_contents();
     ob_end_clean();
 
@@ -76,7 +103,7 @@ if ($data) {
 
     if ($success) {
         $msgparams = new stdClass();
-        $msgparams->fromemail = $USER->email;
+        $msgparams->fromemail = $emailuserfrom->email;
         $msgparams->toemail = $emailuser->email;
         $msg = get_string('testoutgoingmailconf_sentmail', 'admin', $msgparams);
         $notificationtype = 'notifysuccess';
