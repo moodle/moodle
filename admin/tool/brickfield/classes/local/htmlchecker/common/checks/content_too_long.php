@@ -40,14 +40,15 @@ class content_too_long extends brickfield_accessibility_test {
 
         $contentlengthlimit = 500;
         $pagetext = '';
-        foreach ($this->get_all_elements(null, 'text') as $element) {
-            $text = $element->nodeValue;
+        // There will be only one, but array is returned anyway.
+        foreach ($this->get_all_elements('body') as $element) {
+            $text = $element->textContent;
             if ($text != null) {
                 $pagetext = $pagetext . $text;
             }
         }
 
-        $wordcount = str_word_count($pagetext);
+        $wordcount = count_words($pagetext);
         if ($wordcount > $contentlengthlimit) {
             $this->add_report(null, "<p id='wc'>Word Count: " . $wordcount . "</p>", false);
         }
