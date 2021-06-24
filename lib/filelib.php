@@ -2529,6 +2529,12 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
         $filename = rawurlencode($filename);
     }
 
+    // We need to force download and force filter the file content for the SVG file.
+    if (file_is_svg_image_from_mimetype($mimetype)) {
+        $forcedownload = true;
+        $filter = 1;
+    }
+
     if ($forcedownload) {
         header('Content-Disposition: attachment; filename="'.$filename.'"');
 
@@ -2589,7 +2595,7 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
 
     } else {
         // Try to put the file through filters
-        if ($mimetype == 'text/html' || $mimetype == 'application/xhtml+xml') {
+        if ($mimetype == 'text/html' || $mimetype == 'application/xhtml+xml' || file_is_svg_image_from_mimetype($mimetype)) {
             $options = new stdClass();
             $options->noclean = true;
             $options->nocache = true; // temporary workaround for MDL-5136
@@ -3016,6 +3022,16 @@ function file_merge_draft_area_into_draft_area($getfromdraftid, $mergeintodrafti
 
         $fs->create_file_from_storedfile($newfilerecord, $newfile);
     }
+}
+
+/**
+ * Attempt to determine whether the specified mime-type is an SVG image or not.
+ *
+ * @param string $mimetype Mime-type
+ * @return bool True if it is an SVG file
+ */
+function file_is_svg_image_from_mimetype(string $mimetype): bool {
+    return preg_match('|^image/svg|', $mimetype);
 }
 
 /**
