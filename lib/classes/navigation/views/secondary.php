@@ -34,7 +34,7 @@ class secondary extends view {
     public $headertitle;
 
     /** @var int The maximum limit of navigation nodes displayed in the secondary navigation */
-    const MAX_DISPLAYED_NAV_NODES = 6;
+    const MAX_DISPLAYED_NAV_NODES = 5;
 
     /**
      * Defines the default structure for the secondary nav in a course context.

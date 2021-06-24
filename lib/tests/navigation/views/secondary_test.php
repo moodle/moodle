@@ -106,7 +106,7 @@ class secondary_test extends \advanced_testcase {
                 $assign = $this->getDataGenerator()->create_module('assign', ['course' => $pagecourse->id]);
                 $cm = get_coursemodule_from_id('assign', $assign->cmid);
                 $contextrecord = \context_module::instance($cm->id);
-                $pageurl = new \moodle_url('/mod/assign/view.php', ['id' => $cm->instance]);
+                $pageurl = new \moodle_url('/mod/assign/view.php', ['id' => $cm->id]);
                 $PAGE->set_cm($cm);
                 break;
             case 'system':
@@ -180,7 +180,7 @@ class secondary_test extends \advanced_testcase {
      */
     public function test_force_nodes_into_more_menu_provider(): array {
         return [
-            'The total number of navigation nodes exceeds the max display limit (6); ' .
+            'The total number of navigation nodes exceeds the max display limit (5); ' .
             'navnode2 and navnode4 are forced into "more" menu by default.' =>
                 [
                     [
@@ -201,10 +201,11 @@ class secondary_test extends \advanced_testcase {
                     [
                         'navnode2',
                         'navnode4',
+                        'navnode8',
                         'navnode9',
                     ],
                 ],
-            'The total number of navigation nodes does not exceed the max display limit (6); ' .
+            'The total number of navigation nodes does not exceed the max display limit (5); ' .
             'navnode2 and navnode4 are forced into "more" menu by default.' =>
                 [
                     [
@@ -223,7 +224,7 @@ class secondary_test extends \advanced_testcase {
                         'navnode4',
                     ],
                 ],
-            'The total number of navigation nodes exceeds the max display limit (6); ' .
+            'The total number of navigation nodes exceeds the max display limit (5); ' .
             'no forced navigation nodes into "more" menu by default.' =>
                 [
                     [
@@ -238,11 +239,12 @@ class secondary_test extends \advanced_testcase {
                     ],
                     [],
                     [
+                        'navnode6',
                         'navnode7',
                         'navnode8',
                     ],
                 ],
-            'The total number of navigation nodes does not exceed the max display limit (6); ' .
+            'The total number of navigation nodes does not exceed the max display limit (5); ' .
             'no forced navigation nodes into "more" menu by default.' =>
                 [
                     [
@@ -254,7 +256,9 @@ class secondary_test extends \advanced_testcase {
                         [ 'text' => 'Navigation node 6', 'key'  => 'navnode6'],
                     ],
                     [],
-                    [],
+                    [
+                        'navnode6',
+                    ],
                 ],
         ];
     }
