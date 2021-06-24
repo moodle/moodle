@@ -403,6 +403,20 @@ if ($hassiteconfig) {
     }
 }
 
+// Question bank settings.
+if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
+    $ADMIN->add('modules', new admin_category('qbanksettings',
+            new lang_string('questionbanks', 'question')));
+    $temp = new admin_settingpage('manageqbanks', new lang_string('manageqbanks', 'admin'));
+    $temp->add(new \core_question\admin\manage_qbank_plugins_page());
+    $ADMIN->add('qbanksettings', $temp);
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('qbank');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\qbank $plugin */
+        $plugin->load_settings($ADMIN, 'qbanksettings', $hassiteconfig);
+    }
+}
+
 // Question type settings
 if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
 
