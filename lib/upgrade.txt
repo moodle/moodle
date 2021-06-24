@@ -25,6 +25,7 @@ information provided here is intended especially for developers.
 * The completion_info function display_help_icon() which returned the 'Your progress' help icon has been deprecated and
   should no longer be used.
 * The completion_info function print_help_icon() which has been deprecated since Moodle 2.0 should no longer be used.
+* @babel/polyfill has been removed in favour of corejs@3
 
 === 3.11 ===
 * PHPUnit has been upgraded to 9.5 (see MDL-71036 for details).

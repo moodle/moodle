@@ -1614,14 +1614,6 @@ EOF;
         // First the skip links.
         $output = $renderer->render_skip_links($this->skiplinks);
 
-        // The polyfill needs to load before the other JavaScript in order to make sure
-        // that we have access to the functions it provides.
-        if (empty($CFG->cachejs)) {
-            $output .= html_writer::script('', $this->js_fix_url('/lib/babel-polyfill/polyfill.js'));
-        } else {
-            $output .= html_writer::script('', $this->js_fix_url('/lib/babel-polyfill/polyfill.min.js'));
-        }
-
         // Include the Polyfills.
         $output .= html_writer::script('', $this->js_fix_url('/lib/polyfills/polyfill.js'));
 
