@@ -16911,12 +16911,22 @@ textarea[data-auto-rows] {
   margin-right: 0; }
   .mform.full-width-labels .fitem.row > .col-md-3,
   .mform.full-width-labels .fitem.row > .col-md-9 {
-    float: none;
+    flex: 0 0 100%;
+    max-width: 100%;
     width: inherit;
     padding-right: 0;
     padding-left: 0; }
   .mform.full-width-labels .fitem.row.femptylabel > .col-md-3 {
     display: none; }
+  .mform.full-width-labels .fitem.row .form-control {
+    width: 100%; }
+
+.mform .col-form-label .form-label-addon {
+  margin-left: 0.25rem; }
+
+@media (min-width: 576px) {
+  .mform:not(.full-width-labels) .col-form-label .form-label-addon {
+    margin-left: auto; } }
 
 /** Allow wrapping an mform in a div with the form-inline class to have an inline, responsive form. */
 @media (min-width: 768px) {
