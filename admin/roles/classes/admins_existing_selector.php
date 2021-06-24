@@ -57,7 +57,10 @@ class core_role_admins_existing_selector extends user_selector_base {
 
         list($sort, $sortparams) = users_order_by_sql('', $search, $this->accesscontext);
         $params = array_merge($params, $sortparams);
-        $order = ' ORDER BY ' . $sort;
+
+        // Sort first by email domain and then by normal name order.
+        $order = " ORDER BY " . $DB->sql_substr('email', $DB->sql_position("'@'", 'email'),
+            $DB->sql_length('email') ) .  ", $sort";
 
         $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
 
@@ -80,10 +83,15 @@ class core_role_admins_existing_selector extends user_selector_base {
         if ($availableusers) {
             if ($search) {
                 $groupname = get_string('extusersmatching', 'core_role', $search);
+                $result[$groupname] = $availableusers;
             } else {
-                $groupname = get_string('extusers', 'core_role');
+                $groupnameprefix = get_string('extusers', 'core_role');
+                foreach ($availableusers as $user) {
+                    $domain = substr($user->email, strpos($user->email, '@'));
+                    $groupname = "$groupnameprefix $domain";
+                    $result[$groupname][] = $user;
+                }
             }
-            $result[$groupname] = $availableusers;
         }
 
         return $result;
