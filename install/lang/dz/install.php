@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'གཞི་བཙུགས་ཀྱི་དོ
 $string['clialreadyconfigured'] = 'ཡིག་སྣོད་config.php་འདི་ཧེ་མ་ལས་འདུག།ཁྱོད་ཨ་ནཱི་ས་ཁོངས་གཞི་བཙུགས་འབད་བ་ཅིན་admin/cli/install_database.php་དེ་ལག་ལོན་འཐབ་གནང།';
 $string['clialreadyinstalled'] = 'ཡིག་སྣོད་config.php་འདི་ཧེ་མ་ལས་འདུག།ཁྱོད་ཨ་ནཱི་ས་ཁོངས་ཡར་བསྐྱེད་འབད་བ་ཅིན་admin/cli/upgrade.php་དེ་ལག་ལོན་འཐབ་གནང།';
 $string['cliinstallheader'] = 'Moodle {$a}བཀོད་རྒྱ་བཙུགས་སྒྲིག་ལས་རི';
+$string['clitablesexist'] = 'གནས་སྡུད་གཞི་མཛོད་ཧེ་མ་ལས་ཡོདཔ་ལས་ cli བཙུགས་སྒྲིག་འཕྲོ་མཐུད་མི་ཚུགས་པས།';
 $string['databasehost'] = 'གནས་སྡུད་གཞི་རྟེན་གནསཔ་';
 $string['databasename'] = 'གནས་སྡུད་གཞི་རྟེན་ མིང་།';
 $string['databasetypehead'] = 'གནས་སྡུད་གཞི་མཛོད་ཀྱི་ལྷག་འཛིན་འབད་མིའི་འཇམ་ཆས་གདམ་ཁ་འབད།';

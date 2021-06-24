@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Molimo izaberite jezik koji će se koristiti tok
 $string['clialreadyconfigured'] = 'Datoteka config.php već postoji. Molimo, koristite admin/cli/install_database.php ako želite da instalirate ovu stranicu.';
 $string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Upotrebite komandu admin/cli/upgrade.php ako želite da nadogradite ovu stranicu.';
 $string['cliinstallheader'] = 'Moodle {$a} program za instaliranje iz komandne linije';
+$string['clitablesexist'] = 'Baza podataka već postoji. Nije moguće nastaviti instaliranje iz komandne linije.';
 $string['databasehost'] = 'Server baze podataka';
 $string['databasename'] = 'Ime baze podataka';
 $string['databasetypehead'] = 'Izaberite driver baze podataka';

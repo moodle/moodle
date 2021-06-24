@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['clialreadyconfigured'] = 'El fitxer config.php ja existeix, feu servir admin/cli/install_database.php si voleu instal·lar el Moodle en este lloc web.';
 $string['clialreadyinstalled'] = 'El fitxer de configuració config.php ja existeix. Feu servir admin/cli/upgrade.php si voleu actualitzar Moodle per a este lloc web.';
 $string['cliinstallheader'] = 'Programa d\'instal·lació de línia d\'ordes de Moodle {$a}';
+$string['clitablesexist'] = 'Les taules de la base de dades ja existeixen. La instal·lació per línia d\'ordes no pot continuar.';
 $string['langdownloaderror'] = 'Dissortadament l\'idioma "{$a}" no es pot baixar. La instal·lació prosseguirà en anglés.';
 $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servidor actualment està definit en {$a}.</p>
 
