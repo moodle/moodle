@@ -142,6 +142,7 @@ class exported_posts {
         $authorsbyid = $this->get_authors_for_posts($posts);
         $authorcontextids = $this->get_author_context_ids(array_keys($authorsbyid));
         $attachmentsbypostid = $this->get_attachments_for_posts($groupedposts);
+        $inlineattachments = $this->get_inline_attachments_for_posts($groupedposts);
         $groupsbycourseandauthorid = $this->get_author_groups_from_posts($groupedposts);
         $tagsbypostid = $this->get_tags_from_posts($posts);
         $ratingbypostid = $this->get_ratings_from_posts($user, $groupedposts);
@@ -177,7 +178,8 @@ class exported_posts {
                 $readreceiptcollectionbyforumid[$forumid] ?? null,
                 $tagsbypostid,
                 $ratingbypostid,
-                true
+                true,
+                $inlineattachments
             );
             ['posts' => $exportedgroupedposts] = (array) $postsexporter->export($this->renderer);
             $exportedposts = array_merge($exportedposts, $exportedgroupedposts);
@@ -268,6 +270,44 @@ class exported_posts {
     private function get_author_context_ids(array $authorids) : array {
         $authorvault = $this->vaultfactory->get_author_vault();
         return $authorvault->get_context_ids_for_author_ids($authorids);
+    }
+
+    /**
+     * Load the list of all inline attachments for the posts. The list of attachments will be
+     * indexed by the post id.
+     *
+     * @param array $groupedposts List of posts grouped by discussions.
+     * @return stored_file[]
+     */
+    private function get_inline_attachments_for_posts(array $groupedposts) : array {
+        $inlineattachmentsbypostid = [];
+        $postattachmentvault = $this->vaultfactory->get_post_attachment_vault();
+        $postsbyforum = array_reduce($groupedposts, function($carry, $grouping) {
+            ['forum' => $forum, 'posts' => $posts] = $grouping;
+
+            $forumid = $forum->get_id();
+            if (!isset($carry[$forumid])) {
+                $carry[$forumid] = [
+                    'forum' => $forum,
+                    'posts' => []
+                ];
+            }
+
+            $carry[$forumid]['posts'] = array_merge($carry[$forumid]['posts'], $posts);
+            return $carry;
+        }, []);
+
+        foreach ($postsbyforum as $grouping) {
+            ['forum' => $forum, 'posts' => $posts] = $grouping;
+            $inlineattachments = $postattachmentvault->get_inline_attachments_for_posts($forum->get_context(), $posts);
+
+            // Have to loop in order to maintain the correct indexes since they are numeric.
+            foreach ($inlineattachments as $postid => $attachment) {
+                $inlineattachmentsbypostid[$postid] = $attachment;
+            }
+        }
+
+        return $inlineattachmentsbypostid;
     }
 
     /**
