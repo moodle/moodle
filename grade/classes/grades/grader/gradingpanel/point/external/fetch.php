@@ -136,14 +136,13 @@ class fetch extends external_api {
         }
 
         $hasgrade = $gradeitem->user_has_grade($gradeduser);
-        $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
+        $grade = $gradeitem->get_formatted_grade_for_user($gradeduser, $USER);
 
         // Set up some items we need to return on other interfaces.
         $gradegrade = \grade_grade::fetch(['itemid' => $gradeitem->get_grade_item()->id, 'userid' => $gradeduser->id]);
         $gradername = $gradegrade ? fullname(\core_user::get_user($gradegrade->usermodified)) : null;
-        $maxgrade = (int) $gradeitem->get_grade_item()->grademax;
 
-        return self::get_fetch_data($grade, $hasgrade, $maxgrade, $gradername);
+        return self::get_fetch_data($grade, $hasgrade, (int) $grade->maxgrade, $gradername);
     }
 
     /**
@@ -161,7 +160,7 @@ class fetch extends external_api {
             'hasgrade' => $hasgrade,
             'grade' => [
                 'grade' => $grade->grade,
-                'usergrade' => $grade->grade,
+                'usergrade' => $grade->usergrade,
                 'maxgrade' => $maxgrade,
                 'gradedby' => $gradername,
                 'timecreated' => $grade->timecreated,
