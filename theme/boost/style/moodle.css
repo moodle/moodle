@@ -9786,6 +9786,8 @@ a:not([class]):focus:hover,
 .nav-link:focus,
 .editor_atto_toolbar button.focus,
 .editor_atto_toolbar button:focus,
+.editor_atto_toolbar .atto_toolbar_row.focus,
+.editor_atto_toolbar .atto_toolbar_row:focus,
 [role="button"].focus,
 [role="button"]:focus,
 .list-group-item-action.focus,
@@ -9817,6 +9819,7 @@ button.close:focus,
 .btn-link:focus:hover,
 .nav-link:focus:hover,
 .editor_atto_toolbar button:focus:hover,
+.editor_atto_toolbar .atto_toolbar_row:focus:hover,
 [role="button"]:focus:hover,
 .list-group-item-action:focus:hover,
 input[type="checkbox"]:focus:hover,
@@ -19686,6 +19689,12 @@ div.editor_atto_toolbar div.atto_group {
   border-radius: 4px;
   margin: 9px 0 0 9px;
   background: #fff; }
+
+div.editor_atto_toolbar .atto_toolbar_row {
+  margin: 6px 0 -3px 5px;
+  display: table; }
+  div.editor_atto_toolbar .atto_toolbar_row div.atto_group {
+    margin: 3px 5px 3px 4px; }
 
 .editor_atto_content img {
   resize: both;
