@@ -1520,6 +1520,7 @@ class block_manager {
             $deleteurlparams = $this->page->url->params();
             $deletepage->set_url($deleteurlbase, $deleteurlparams);
             $deletepage->set_block_actions_done();
+            $deletepage->set_secondarynav($this->get_secondarynav($block));
             // At this point we are either going to redirect, or display the form, so
             // overwrite global $PAGE ready for this. (Formslib refers to it.)
             $PAGE = $deletepage;
@@ -1609,6 +1610,23 @@ class block_manager {
     }
 
     /**
+     * Convenience function to check whether a block is implementing a secondary nav class and return it
+     * initialised to the calling function
+     *
+     * @param block_base $block
+     * @return \core\navigation\views\secondary
+     */
+    protected function get_secondarynav(block_base $block): \core\navigation\views\secondary {
+        $class = "core_block\\local\\views\\secondary";
+        if (class_exists("block_{$block->name()}\\local\\views\\secondary")) {
+            $class = "block_{$block->name()}\\local\\views\\secondary";
+        }
+        $secondarynav = new $class($this->page);
+        $secondarynav->initialise();
+        return $secondarynav;
+    }
+
+    /**
      * Handle showing/processing the submission from the block editing form.
      * @return boolean true if the form was submitted and the new config saved. Does not
      *      return if the editing form was displayed. False otherwise.
@@ -1635,6 +1653,8 @@ class block_manager {
         $editpage->set_course($this->page->course);
         //$editpage->set_context($block->context);
         $editpage->set_context($this->page->context);
+        $editpage->set_secondarynav($this->get_secondarynav($block));
+
         if ($this->page->cm) {
             $editpage->set_cm($this->page->cm);
         }

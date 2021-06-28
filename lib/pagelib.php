@@ -1271,6 +1271,14 @@ class moodle_page {
     }
 
     /**
+     * Force set secondary_nav. Useful in cases where we dealing with non course modules. e.g. blocks, tools.
+     * @param secondary $nav
+     */
+    public function set_secondarynav(secondary $nav) {
+        $this->_secondarynav = $nav;
+    }
+
+    /**
      * Adds a CSS class to the body tag of the page.
      *
      * @param string $class add this class name ot the class attribute on the body tag.

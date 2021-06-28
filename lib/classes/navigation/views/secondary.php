@@ -202,8 +202,8 @@ class secondary extends view {
         $this->add(get_string('coursepage', 'admin'), $url, self::TYPE_COURSE, null, 'coursehome');
 
         $nodes = $this->get_default_course_mapping();
-        $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings']);
-        $nodesordered += $this->get_leaf_nodes($navigation, $nodes['navigation']);
+        $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings'] ?? []);
+        $nodesordered += $this->get_leaf_nodes($navigation, $nodes['navigation'] ?? []);
         $this->add_ordered_nodes($nodesordered);
 
         // All additional nodes will be available under the 'Course admin' page.
