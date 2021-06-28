@@ -204,7 +204,7 @@ abstract class scanner {
         // Check for empty file, or file not uploaded.
         if (!empty($file) && filesize($file) !== false) {
             $content->filesize = display_size(filesize($file));
-            $content->contenthash = \file_storage::hash_from_string(file_get_contents($file));
+            $content->contenthash = \file_storage::hash_from_path($file);
             $content->contenttype = mime_content_type($file);
         } else {
             $content->filesize = $unknown;
