@@ -873,6 +873,7 @@ class core_renderer extends renderer_base {
                 $this->page->debug_summary()) . '</div>';
         }
         if (debugging(null, DEBUG_DEVELOPER) and has_capability('moodle/site:config', context_system::instance())) {  // Only in developer mode
+
             // Add link to profiling report if necessary
             if (function_exists('profiling_is_running') && profiling_is_running()) {
                 $txt = get_string('profiledscript', 'admin');
@@ -885,6 +886,9 @@ class core_renderer extends renderer_base {
                 'sesskey' => sesskey(), 'returnurl' => $this->page->url->out_as_local_url(false)));
             $output .= '<div class="purgecaches">' .
                     html_writer::link($purgeurl, get_string('purgecaches', 'admin')) . '</div>';
+
+            // Reactive module debug panel.
+            $output .= $this->render_from_template('core/local/reactive/debugpanel', []);
         }
         if (!empty($CFG->debugvalidators)) {
             // NOTE: this is not a nice hack, $this->page->url is not always accurate and
