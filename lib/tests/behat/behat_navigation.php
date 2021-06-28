@@ -936,6 +936,17 @@ class behat_navigation extends behat_base {
                     $xpath .= '//div[@id = ' . $tabid . ']';
                 }
                 array_shift($parentnodes);
+            } else {
+                $linkname = behat_context_helper::escape(get_string('moremenu'));
+                $menuxpath = '//ul[@role=\'tablist\']/li/a[contains(normalize-space(.), ' . $linkname . ')]';
+                $morebutton = $this->getSession()->getPage()->find('xpath', $menuxpath);
+                if ($morebutton) {
+                    $this->execute('behat_general::i_click_on', [$morebutton, 'NodeElement']);
+                    $moreitemxpath = '//ul[@data-region=\'moredropdown\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
+                    if ($morenode = $this->getSession()->getPage()->find('xpath', $moreitemxpath)) {
+                        $this->execute('behat_general::i_click_on', [$morenode, 'NodeElement']);
+                    }
+                }
             }
         }
 

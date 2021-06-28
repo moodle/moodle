@@ -68,6 +68,17 @@ $buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_action
 // If the settings menu will be included in the header then don't add it here.
 $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
 
+if (defined('BEHAT_SITE_RUNNING')) {
+    $secondarynavigation = false;
+} else {
+    $buildsecondarynavigation = $PAGE->has_secondary_navigation();
+    $secondarynavigation = $buildsecondarynavigation ? $OUTPUT->more_menu($PAGE->secondarynav, 'nav-tabs') : false;
+}
+
+$primary = new core\navigation\output\primary($PAGE);
+$renderer = $PAGE->get_renderer('core');
+$primarymenu = $primary->export_for_template($renderer);
+
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
@@ -79,7 +90,11 @@ $templatecontext = [
     'blockdraweropen' => $blockdraweropen,
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
     'courseindex' => $courseindex,
-    'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu)
+    'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
+    'primarymoremenu' => $OUTPUT->more_menu(array_merge($primarymenu['primary'], $primarymenu['custom']), 'navbar-nav'),
+    'secondarymoremenu' => $secondarynavigation,
+    'usermenu' => $primarymenu['user'],
+    'langmenu' => $primarymenu['lang'],
 ];
 
 $nav = $PAGE->flatnav;

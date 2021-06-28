@@ -3816,18 +3816,21 @@ EOD;
      * @return string
      */
     public function more_menu($content, $navbarstyle) {
+        $tabs = ($navbarstyle == 'nav-tabs');
         if (is_object($content)) {
             if (!isset($content->children) || count($content->children) == 0) {
                 return false;
             }
             return $this->render_from_template('core/moremenu', (object) [
                 'nodecollection' => $content,
-                'navbarstyle' => $navbarstyle
+                'navbarstyle' => $navbarstyle,
+                'tabs' => $tabs
             ]);
         } else {
             return $this->render_from_template('core/moremenu', (object) [
                 'nodearray' => $content,
-                'navbarstyle' => $navbarstyle
+                'navbarstyle' => $navbarstyle,
+                'tabs' => $tabs
             ]);
         }
     }
