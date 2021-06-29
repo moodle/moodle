@@ -74,6 +74,17 @@
             }
         }
     }
+    .langmenu {
+        .dropdown-menu {
+            .dropdown-item {
+                &[aria-current="true"]::before {
+                    content: "\f00c";
+                    font-size: 0.75rem;
+                    padding-left: .25rem;
+                }
+            }
+        }
+    }
     .moodle-actionmenu .menubar,
     .action-menu-trigger .dropdown {
         height: 100%;

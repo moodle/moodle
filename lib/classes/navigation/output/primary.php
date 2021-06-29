@@ -124,6 +124,7 @@ class primary implements renderable, templatable {
         $currentlang = current_language();
         $langs = get_string_manager()->get_list_of_translations();
         $nodes = [];
+        $activelanguage = '';
 
         // Add the lang picker if needed.
         foreach ($langs as $langtype => $langname) {
@@ -137,9 +138,16 @@ class primary implements renderable, templatable {
             ];
 
             $nodes[] = $node;
+
+            if ($isactive) {
+                $activelanguage = $langname;
+            }
         }
 
-        return $nodes;
+        return [
+            'title' => $activelanguage,
+            'items' => $nodes,
+        ];
     }
 
     /**

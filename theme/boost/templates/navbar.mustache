@@ -61,6 +61,9 @@
     </ul>
 
     <div id="usernavigation" class="navbar-nav my-1 ml-auto">
+        {{#langmenu}}
+            {{> theme_boost/language_menu }}
+        {{/langmenu}}
         <div class="divider border-left h-50 align-self-center mx-1"></div>
         {{{ output.search_box }}}
         {{{ output.navbar_plugin_output }}}

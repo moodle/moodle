@@ -20023,6 +20023,10 @@ div.editor_atto_toolbar button .icon {
         content: "";
         font-size: 0.75rem;
         padding-left: .25rem; }
+  .navbar.fixed-top .langmenu .dropdown-menu .dropdown-item[aria-current="true"]::before {
+    content: "\f00c";
+    font-size: 0.75rem;
+    padding-left: .25rem; }
   .navbar.fixed-top .moodle-actionmenu .menubar,
   .navbar.fixed-top .action-menu-trigger .dropdown {
     height: 100%;
