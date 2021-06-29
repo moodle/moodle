@@ -15,14 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Legacy course format renderer file.
+ * Site topics renderer.
  *
- * This file exists only for legacy reasons. Most third party format
- * plugins include this file to extend the course format renderer. Now all
- * format renderers are located in core_courseformat\output and uses autoload.
+ * Site course is not a real course format, but it requires a format renderer to use the output
+ * components.
  *
- * @package core_courseformat
- * @copyright 2012 Dan Poltawski
+ * @copyright 2021 Ferran Recio <ferran@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.3
  */
+
+namespace core_courseformat\output;
+
+class site_renderer extends section_renderer {
+}

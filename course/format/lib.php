@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 use core_courseformat\base as course_format;
+use core_courseformat\output\site_renderer;
 
 /**
  * Returns an instance of format class (extending course_format) for given course
@@ -122,11 +123,7 @@ class format_site extends course_format {
      * @return renderer_base
      */
     public function get_renderer(moodle_page $page) {
-        global $CFG;
-        if (!class_exists('format_site_renderer')) {
-            require_once($CFG->dirroot.'/course/format/renderer.php');
-        }
-        return new format_site_renderer($page, null);
+        return new site_renderer($page, null);
     }
 
     /**

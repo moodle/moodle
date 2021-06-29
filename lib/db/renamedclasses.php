@@ -46,5 +46,6 @@ $renamedclasses = array(
     'format_topics_renderer' => 'format_topics\\output\\renderer',
     'format_section_renderer_base' => 'core_courseformat\\output\\section_renderer',
     'format_singleactivity_renderer' => 'format_singleactivity\\output\\renderer',
+    'format_site_renderer' => 'core_courseformat\\output\\site_renderer',
     'format_weeks_renderer' => 'format_weeks\\output\\renderer',
 );
