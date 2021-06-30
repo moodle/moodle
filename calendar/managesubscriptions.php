@@ -37,7 +37,7 @@ $groupcourseid  = optional_param('groupcourseid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_INT);
 
 $url = new moodle_url('/calendar/managesubscriptions.php');
-if ($courseid != SITEID) {
+if ($courseid != SITEID && !empty($courseid)) {
     $url->param('course', $courseid);
 }
 if ($categoryid) {
@@ -77,7 +77,7 @@ $customdata = [
     'courseid' => $course->id,
     'groups' => $groups,
 ];
-$form = new \core_calendar\local\event\forms\managesubscriptions(null, $customdata);
+$form = new \core_calendar\local\event\forms\managesubscriptions($url, $customdata);
 $form->set_data(array(
     'course' => $course->id
 ));
