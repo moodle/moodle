@@ -213,7 +213,7 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'repaginate',
             'id'    => 'repaginatecommand',
             'value' => get_string('repaginatecommand', 'quiz'),
-            'class' => 'btn btn-secondary',
+            'class' => 'btn btn-secondary mr-1',
             'data-header' => $header,
             'data-form'   => $form,
         );
