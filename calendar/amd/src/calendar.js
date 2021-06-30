@@ -183,7 +183,7 @@ define([
                     'core_calendar/calendar_day').then(function() {
                 e.preventDefault();
                 var url = '?view=day&time=' + dayLink.data('timestamp');
-                return window.history.pushState({}, '', url);
+                CalendarViewManager.updateUrl(url);
             }).fail(Notification.exception);
         });
 

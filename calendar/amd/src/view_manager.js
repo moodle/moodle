@@ -114,17 +114,17 @@ const registerEventListeners = (root) => {
             if (view == 'month') {
                 refreshMonthContent(root, year, month, courseId, categoryId, root, 'core_calendar/calendar_month', day)
                     .then(() => {
-                        return window.history.pushState({}, '', '?view=month');
+                        updateUrl('?view=month');
                     }).fail(Notification.exception);
             } else if (view == 'day') {
                 refreshDayContent(root, year, month, day, courseId, categoryId, root, 'core_calendar/calendar_day')
                     .then(() => {
-                        return window.history.pushState({}, '', '?view=day');
+                        updateUrl('?view=day');
                     }).fail(Notification.exception);
             } else if (view == 'upcoming') {
                 reloadCurrentUpcoming(root, courseId, categoryId, root, 'core_calendar/calendar_upcoming')
                     .then(() => {
-                        return window.history.pushState({}, '', '?view=upcoming');
+                        updateUrl('?view=upcoming');
                     }).fail(Notification.exception);
             }
         }
@@ -188,7 +188,7 @@ export const changeMonth = (root, url, year, month, courseId, categoryId, day = 
     return refreshMonthContent(root, year, month, courseId, categoryId, null, '', day)
         .then((...args) => {
             if (url.length && url !== '#') {
-                window.history.pushState({}, '', url);
+                updateUrl(url);
             }
             return args;
         })
@@ -295,7 +295,7 @@ export const changeDay = (root, url, year, month, day, courseId, categoryId) => 
     return refreshDayContent(root, year, month, day, courseId, categoryId)
         .then((...args) => {
             if (url.length && url !== '#') {
-                window.history.pushState({}, '', url);
+                updateUrl(url);
             }
             return args;
         })
@@ -303,6 +303,20 @@ export const changeDay = (root, url, year, month, day, courseId, categoryId) => 
             $('body').trigger(CalendarEvents.dayChanged, [year, month, courseId, categoryId]);
             return args;
         });
+};
+
+/**
+ * Update calendar URL.
+ *
+ * @param {String} url The calendar url to be updated.
+ */
+export const updateUrl = (url) => {
+    const viewingFullCalendar = document.getElementById(CalendarSelectors.fullCalendarView);
+
+    // We want to update the url only if the user is viewing the full calendar.
+    if (viewingFullCalendar) {
+        window.history.pushState({}, '', url);
+    }
 };
 
 /**

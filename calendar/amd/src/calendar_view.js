@@ -73,9 +73,7 @@ define([
                         return root.find(CalendarSelectors.courseSelector).val(courseId);
                     })
                     .then(function() {
-                        window.history.pushState({}, '', '?view=upcoming&course=' + courseId);
-
-                        return;
+                        CalendarViewManager.updateUrl('?view=upcoming&course=' + courseId);
                     })
                     .fail(Notification.exception);
             });
