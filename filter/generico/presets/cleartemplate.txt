@@ -1,0 +1,1 @@
+{"name":"cleartemplate","key":"cleartemplate","version":"","instructions":"","showatto":"0","showplayers":"0","requirecss":"","requirejs":"","shim":"","defaults":"","amd":"1","body":"","bodyend":"","script":"","style":"","dataset":"","datasetvars":"","alternate":"","alternateend":""}

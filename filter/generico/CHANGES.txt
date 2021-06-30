@@ -1,0 +1,127 @@
+Change List
+=========
+Version 1.4.11(Build 2021010400)
+- optimized preset loading
+- Fixed cloudpoodlltoken to be callable from template JS
+- Added super interactive transcript widgets
+
+Version 1.4.10(Build 2019071300)
+-Fixed cloud poodll token fetch [again]
+
+Version 1.4.09(Build 2019061400)
+-Fixed cloud poodll token fetch (had been requiring Poodll)
+-Added cloud poodll refresh
+-Clarified template version format
+
+Version 1.4.08 (Build 2019022600)
+-Added a capabilities check feature to Generico, viewcapability="" and hidecapability=""
+
+Version 1.4.07 (Build 2019012000)
+-Added better cron calling
+-Added Poodll loader.html for cloudpoodll
+
+Version 1.4.06(Build 2018120500)
+-Fixed bug when presets dir contained a directory.
+
+Version 1.4.05(Build 2018102500)
+- fixed popup recorder template
+- security fix
+
+Version 1.4.04(Build 2018090300)
+-added Cloud Poodll support
+-added Poodll Popup Recorder template
+
+Version 1.4.03(Build 2018070900)
+-added clear template preset (for clearing templates)
+
+Version 1.4.02(Build 2018062300)
+-Added a number of new templates and fixed older ones
+-removed annoying extra brace on settings page
+
+Version 1.4.01(Build 2018041001)
+-Improved templates listing
+-Added template version update ability
+
+Version 1.4.0(Build 2018041000)
+-Implemented new Moodle Privacy API
+
+Version 1.3.14(Build 2017081100)
+-repaired toggle template which broke on Boost Theme
+-removed edit column from template table. Edit template by clicking on name
+
+Version 1.3.13(Build 2017032406)
+-Beefed up protection against any XSS attempt via the Generico filter string inputs
+
+https://github.com/justinhunt/moodle-filter_generico/issues/7
+-Added support for pulling Generico presets from theme directory
+
+Version  2017032405
+-added better display of templates in navigation so that Boost doesn't completely mess it up
+-added revision flag for automating cache refresh courtesy of agrowe
+-added version field for each template
+-added name field to each template
+
+Version 2016122101
+-fixed a bug where non AMD scripts were not loading properly. 
+
+Version 2016120901
+-fixed a bug where alt content was not processed properly with $COURSE variables
+
+Version 2016112801
+-fixed a bug where html from template processed but not sent to page, and js looking for it
+
+Version 2016111901
+-fixed a bug on webservice detection for mobile/alternate content
+-added a better youtube lightbox
+
+Version 2016110902
+Added "alternate content"  end fields
+
+Version 2016110901
+Added "alternate content" field for falling back to on mobile app
+Added code to distinguish numbers from strings when passing variables into the dataset (contribution from romasita)
+
+Version 2016082005
+Fixed a problem with imagegallery preset. The shim was not set for Galleria
+Added VideoGallery preset
+
+Version 2016082004
+Fixed a type killing shim for uploaded js files
+
+Version 2016082003
+Fixed another problem on new install where adding default template
+
+Version 2016082002
+Fixed problem on new install where adding default template
+
+Version 2016082001
+Added shimming and loading of presets from bundles in the presets folder of the generico directory. Also removed the ability to declare a jquery dependency. YOu should use shimming instead.
+Also added the @@URLPARAM:xx@@ system variable for fetching parameters from the page url.
+
+Version 2016061200
+Made a better parse implementation so that evil inivisible html that gets into the filter strings is stripped out
+Added a new variable WWWROOT that fetches the url of the moodle site. This is already available in js as M.cfg.wwwroot but this variable helps you get it into the template body without messing around with js.
+Improved detection of variabls used in the template when processing. Sometimes they would be missed if they were not defaults or in the body previously.
+
+Version 2016021500
+Added a MOODLEPAGEID variable just for getting the ?id=XX value
+Could do a bit better by doing flexible url parsing ..next time
+
+Version 2016011800
+Added support for DATASET variable
+
+Version 2016011100
+Added a new field for instructions for each template in the Generico Filter. If not blank, this will be displayed in the popup dialog for each template when using the Generico Atto plugin.
+
+Version 2015121803
+fixed a bug in the handle system
+
+Version 2015121802
+Added drag and drop/ click to export "bundles" for sharing templates
+
+Version 2015121801
+Fixed bug that broke AMD generico templates
+
+Version 2015121401
+Support for passing AMD params by HTML
+

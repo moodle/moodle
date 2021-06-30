@@ -19,6 +19,7 @@
 # Temporary files including undo
 *~
 #
+/moodledata/
 /config.php
 /lib/editor/tinymce/extra/tools/temp/
 /tags

@@ -1,0 +1,1 @@
+{"name":"Accordian Item","key":"accordianitem","version":"1.0.0","instructions":"","showatto":"1","showplayers":"0","requirecss":"","requirejs":"","defaults":"","amd":"1","body":"<h3>@@titletext@@</h3>\n<div>","bodyend":"</div>","script":"","style":"","dataset":"","datasetvars":""}

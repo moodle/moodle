@@ -1,0 +1,103 @@
+<div id='{{AUTOID}}_container' class='poodll_onceplayer'>
+    <button type='button'  id='{{AUTOID}}}' class='poodll_onceplayer_button'><audio id='{{AUTOID}}_player' class="onceplayerjs nomediaplugin" src="{{VIDEOURL}}"></audio><i class="fa fa-play fa-2x" aria-hidden="true"></i></button>
+    <!-- div id='@@AUTOID@@_slider' class='poodll_onceplayer_slider' -->
+    <div id='{{AUTOID}}_time' class='poodll_onceplayer_time'></div>
+    <div id='{{AUTOID}}_state' class='poodll_onceplayer_state'></div>
+</div>
+
+<style>
+    .poodll_onceplayer{
+        border: 3px solid blue;
+        /* Safari 3-4, iOS 1-3.2, Android 1.6- */
+        -webkit-border-radius: 12px;
+        /* Firefox 1-3.6 */
+        -moz-border-radius: 12px;
+        /* Opera 10.5, IE 9, Safari 5, Chrome, Firefox 4, iOS 4, Android 2.1+ */
+        border-radius: 12px;
+        background-color: white;
+        width: 200px;
+        height: 110px;
+        text-align: center;
+    }
+    .poodll_onceplayer_time{
+        padding: 3px;
+    }
+    .poodll_onceplayer_button{
+        border: 1px solid;
+        width: 50px;
+        height: 42px;
+        margin-top: 5px;
+        margin-top: 5px;
+    }
+</style>
+
+{{#js}}
+ require(['jquery'], function($) {
+
+    //time display function
+    function poodll_op_sec2time(seconds){
+       var date = new Date(null);
+       date.setSeconds(seconds);
+       return date.toISOString().substr(11, 8);
+    }
+    function poodll_op_fetchtime(theplayer){
+      var a_currenttime= isNaN(theplayer[0].currentTime) ? 0 : theplayer[0].currentTime;
+      var a_duration= isNaN(theplayer[0].duration) ? 0 : theplayer[0].duration;
+      var currenttime = poodll_op_sec2time(Math.floor(a_currenttime));
+      var totaltime = poodll_op_sec2time(Math.floor(a_duration));
+      var displaytime = currenttime + ' / ' +  totaltime;
+      return displaytime;
+    }
+
+    //get our player
+    var aplayer = $('#{{AUTOID}}').children().first();
+    var fa = $('#{{AUTOID}} .fa');
+    var thestate =$('#{{AUTOID}}_state');
+    var thetime = $('#{{AUTOID}}_time');
+
+    //The timer display
+    aplayer.on('timeupdate',function(e){
+      var displaytime = poodll_op_fetchtime(aplayer)
+      thetime.text(displaytime);
+    });
+
+    //show current time
+    thetime.text(poodll_op_fetchtime(aplayer));
+
+    //set status
+    thestate.text('- ready -');
+
+    //set player ended event
+    aplayer[0].addEventListener('ended', function(){
+      aplayer[0].pause();
+      $(fa).removeClass('{{playing}}');
+      $(fa).removeClass('fa-spin');
+      $(fa).removeClass('{{play}}');
+      $(fa).addClass('{{over}}');
+      thestate.text('- finished -');
+    });
+
+    //player clicked event
+    $('#{{AUTOID}}').click(function(){
+      if(aplayer[0].ended){
+        return;
+      }
+      if(!aplayer[0].paused && {{canpause}} != '0'){
+        aplayer[0].pause();
+        thestate.text('- paused -');
+        $(fa).removeClass('{{playing}}');
+        $(fa).removeClass('fa-spin');
+        $(fa).addClass('{{play}}');
+      }else if(aplayer[0].paused || !aplayer[0].playing){
+        aplayer[0].play();
+        thestate.text('- playing -');
+        $(fa).removeClass('{{play}}');
+        $(fa).addClass('{{playing}}');
+        $(fa).addClass('fa-spin');
+      }
+    });
+
+    aplayer.bind('durationchange',function(){thetime.text(poodll_op_fetchtime(aplayer));});
+
+ });
+{{/js}}
