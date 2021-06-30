@@ -331,6 +331,7 @@ class page_requirements_manager {
                 'admin'                 => $CFG->admin,
                 'svgicons'              => $page->theme->use_svg_icons(),
                 'usertimezone'          => usertimezone(),
+                'courseId'              => (int) $page->course->id,
                 'contextid'             => $contextid,
                 'langrev'               => get_string_manager()->get_revision(),
                 'templaterev'           => $this->get_templaterev()

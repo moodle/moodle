@@ -592,7 +592,7 @@ function course_set_marker($courseid, $marker) {
     if ($COURSE && $COURSE->id == $courseid) {
         $COURSE->marker = $marker;
     }
-    core_course\course_format::reset_course_cache($courseid);
+    core_courseformat\base::reset_course_cache($courseid);
     course_modinfo::clear_instance_cache($courseid);
 }
 
@@ -2147,7 +2147,7 @@ function move_courses($courseids, $categoryid) {
  * Returns the display name of the given section that the course prefers
  *
  * Implementation of this function is provided by course format
- * @see core_course\course_format::get_section_name()
+ * @see core_courseformat\base::get_section_name()
  *
  * @param int|stdClass $courseorid The course to get the section name for (object or just course id)
  * @param int|stdClass $section Section object from database or just field course_sections.section
@@ -3197,15 +3197,17 @@ function course_ajax_enabled($course) {
 function include_course_ajax($course, $usedmodules = array(), $enabledmodules = null, $config = null) {
     global $CFG, $PAGE, $SITE;
 
+    // All the new editor elements will be loaded after the course is presented and
+    // the initial course state will be generated using core_courseformat_get_state webservice.
+    if ($SITE->id !== $course->id) {
+        $PAGE->requires->js_call_amd('core_courseformat/courseeditor', 'getCourseEditor', [$course->id]);
+    }
+    // TODO: as part of MDL-70907, add a way to indicate the plugin needs the legacy libraries (and get a deprecation message).
+
     // Ensure that ajax should be included
     if (!course_ajax_enabled($course)) {
         return false;
     }
-
-    // All the new editor elements will be loaded after the course is presented and
-    // the initial course state will be generated using core_course_get_state webservice.
-    $PAGE->requires->js_call_amd('core_course/courseeditor', 'init', [$course->id]);
-    // TODO: as part of MDL-70907, add a way to indicate the plugin needs the legacy libraries (and get a deprecation message).
 
     if (!$config) {
         $config = new stdClass();

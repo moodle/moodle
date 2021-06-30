@@ -34,7 +34,7 @@ require_once($CFG->dirroot. '/course/lib.php');
  * @copyright  2012 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_weeks extends core_course\course_format {
+class format_weeks extends core_courseformat\base {
 
     /**
      * Returns true if this course format uses sections
@@ -518,7 +518,7 @@ class format_weeks extends core_course\course_format {
             $modinfo = $this->get_modinfo();
             $section = $modinfo->get_section_info($section->section);
         }
-        $elementclass = $this->get_output_classname('section_format\\availability');
+        $elementclass = $this->get_output_classname('content\\section\\availability');
         $availability = new $elementclass($this, $section);
 
         $rv['section_availability'] = $renderer->render($availability);

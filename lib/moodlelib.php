@@ -5016,7 +5016,7 @@ function delete_course($courseorid, $showfeedback = true) {
     $DB->delete_records("course_format_options", array("courseid" => $courseid));
 
     // Reset all course related caches here.
-    core_course\course_format::reset_course_cache($courseid);
+    core_courseformat\base::reset_course_cache($courseid);
 
     // Tell search that we have deleted the course so it can delete course data from the index.
     \core_search\manager::course_deleting_finish($courseid);
@@ -7853,6 +7853,7 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
         'classes',
         'simpletest',
         'tests',
+        'templates',
         'yui',
         $exclude,
     ]));
