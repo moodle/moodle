@@ -149,7 +149,7 @@ if ($csv) {
     $shortname = format_string($course->shortname, true, array('context' => $context));
     $shortname = preg_replace('/[^a-z0-9-]/', '_',core_text::strtolower(strip_tags($shortname)));
 
-    $export = new csv_export_writer();
+    $export = new csv_export_writer('comma', '"', 'application/download', $excel);
     $export->set_filename('completion-'.$shortname);
 
 } else {
