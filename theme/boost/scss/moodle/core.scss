@@ -7,6 +7,11 @@ $bg-inverse-link-color: #fff !default;
 
 $dropzone-border: $gray-900 !default;
 
+$collapse-list-item-padding-y: 0.5rem !default;
+$collapse-list-item-padding-x: 1rem !default;
+$collapse-list-item-hover-bg: theme-color-level('info', -11) !default;
+$collapse-list-item-hover-border: theme-color-level('info', -9) !default;
+
 $font-size-xs: ($font-size-base * .75) !default;
 
 #region-main {
@@ -2828,4 +2833,36 @@ body.dragging {
 .draggable:hover .dragicon {
     visibility: visible;
     cursor: move;
+}
+
+// Generic classes reactive components can use.
+
+.waitstate {
+    display: none;
+}
+
+.stateready {
+    .waitstate {
+        display: inherit;
+    }
+    .whilenostate {
+        display: none;
+    }
+}
+
+// Collapsible list.
+
+.collapse-list {
+    .collapse-list-item {
+        padding: $collapse-list-item-padding-y $collapse-list-item-padding-x;
+        @include hover-focus() {
+            background-color: $collapse-list-item-hover-bg;
+            border-color: $collapse-list-item-hover-border;
+        }
+    }
+    .collapse-list-item-content {
+        .collapse-list-item {
+            padding-left: calc(#{$collapse-list-item-padding-x} * 3);
+        }
+    }
 }

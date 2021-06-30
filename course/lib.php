@@ -1820,6 +1820,23 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
         );
     }
 
+    // Move (only for component compatible formats).
+    if ($courseformat->supports_components()) {
+        $actions['move'] = new action_menu_link_secondary(
+            new moodle_url($baseurl, [
+                'sesskey' => sesskey(),
+                'copy' => $mod->id,
+            ]),
+            new pix_icon('i/dragdrop', '', 'moodle', ['class' => 'iconsmall']),
+            $str->move,
+            [
+                'class' => 'editing_movecm',
+                'data-action' => 'moveCm',
+                'data-id' => $mod->id,
+            ]
+        );
+    }
+
     // Indent.
     if ($hasmanageactivities && $indent >= 0) {
         $indentlimits = new stdClass();
@@ -3217,17 +3234,17 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             $config = new stdClass();
         }
 
-        // The URL to use for resource changes
+        // The URL to use for resource changes.
         if (!isset($config->resourceurl)) {
             $config->resourceurl = '/course/rest.php';
         }
 
-        // The URL to use for section changes
+        // The URL to use for section changes.
         if (!isset($config->sectionurl)) {
             $config->sectionurl = '/course/rest.php';
         }
 
-        // Any additional parameters which need to be included on page submission
+        // Any additional parameters which need to be included on page submission.
         if (!isset($config->pageparams)) {
             $config->pageparams = array();
         }

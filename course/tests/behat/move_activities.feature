@@ -23,9 +23,6 @@ Feature: Activities can be moved between sections
       | section  | 1                      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "Recent activity" block
-    And I follow "Delete Recent activity block"
-    And I press "Yes"
 
   Scenario: Move activities in a single page course with Javascript disabled
     When I move "Test forum name" activity to section "2"
@@ -56,3 +53,8 @@ Feature: Activities can be moved between sections
     And I follow "Topic 1"
     When I move "Second forum name" activity to section "1"
     Then "Second forum name" "link" should appear before "Test forum name" "link"
+
+  @javascript
+  Scenario: Move activity with javascript
+    When I move "Test forum name" activity to section "3"
+    Then I should see "Test forum name" in the "Topic 3" "section"

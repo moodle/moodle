@@ -85,11 +85,11 @@ class controlmenu implements renderable, templatable {
             $url = empty($value['url']) ? '' : $value['url'];
             $icon = empty($value['icon']) ? '' : $value['icon'];
             $name = empty($value['name']) ? '' : $value['name'];
-            $attr = empty($value['attr']) ? array() : $value['attr'];
+            $attr = empty($value['attr']) ? [] : $value['attr'];
             $class = empty($value['pixattr']['class']) ? '' : $value['pixattr']['class'];
             $al = new action_menu_link_secondary(
                 new moodle_url($url),
-                new pix_icon($icon, '', null, array('class' => "smallicon " . $class)),
+                new pix_icon($icon, '', null, ['class' => "smallicon " . $class]),
                 $name,
                 $attr
             );
@@ -124,6 +124,7 @@ class controlmenu implements renderable, templatable {
         $sectionreturn = $format->get_section_number();
         $user = $USER;
 
+        $usecomponents = $format->supports_components();
         $coursecontext = context_course::instance($course->id);
         $numsections = $format->get_last_section_number();
         $isstealth = $section->section > $numsections;
@@ -141,12 +142,13 @@ class controlmenu implements renderable, templatable {
                 $streditsection = get_string('editsection');
             }
 
-            $controls['edit'] = array(
-                'url'   => new moodle_url('/course/editsection.php', array('id' => $section->id, 'sr' => $sectionreturn)),
+            $controls['edit'] = [
+                'url'   => new moodle_url('/course/editsection.php', ['id' => $section->id, 'sr' => $sectionreturn]),
                 'icon' => 'i/settings',
                 'name' => $streditsection,
-                'pixattr' => array('class' => ''),
-                'attr' => array('class' => 'icon edit'));
+                'pixattr' => ['class' => ''],
+                'attr' => ['class' => 'icon edit'],
+            ];
         }
 
         if ($section->section) {
@@ -156,53 +158,79 @@ class controlmenu implements renderable, templatable {
                     if ($section->visible) { // Show the hide/show eye.
                         $strhidefromothers = get_string('hidefromothers', 'format_'.$course->format);
                         $url->param('hide', $section->section);
-                        $controls['visiblity'] = array(
+                        $controls['visiblity'] = [
                             'url' => $url,
                             'icon' => 'i/hide',
                             'name' => $strhidefromothers,
-                            'pixattr' => array('class' => ''),
-                            'attr' => array('class' => 'icon editing_showhide',
-                                'data-sectionreturn' => $sectionreturn, 'data-action' => 'hide'));
+                            'pixattr' => ['class' => ''],
+                            'attr' => [
+                                'class' => 'icon editing_showhide',
+                                'data-sectionreturn' => $sectionreturn,
+                                'data-action' => 'hide',
+                            ],
+                        ];
                     } else {
                         $strshowfromothers = get_string('showfromothers', 'format_'.$course->format);
                         $url->param('show',  $section->section);
-                        $controls['visiblity'] = array(
+                        $controls['visiblity'] = [
                             'url' => $url,
                             'icon' => 'i/show',
                             'name' => $strshowfromothers,
-                            'pixattr' => array('class' => ''),
-                            'attr' => array('class' => 'icon editing_showhide',
-                                'data-sectionreturn' => $sectionreturn, 'data-action' => 'show'));
+                            'pixattr' => ['class' => ''],
+                            'attr' => [
+                                'class' => 'icon editing_showhide',
+                                'data-sectionreturn' => $sectionreturn,
+                                'data-action' => 'show',
+                            ],
+                        ];
                     }
                 }
 
-                if (!$sectionreturn) {
-                    if (has_capability('moodle/course:movesections', $coursecontext, $user)) {
-                        $url = clone($baseurl);
-                        if ($section->section > 1) { // Add a arrow to move section up.
-                            $url->param('section', $section->section);
-                            $url->param('move', -1);
-                            $strmoveup = get_string('moveup');
-                            $controls['moveup'] = array(
-                                'url' => $url,
-                                'icon' => 'i/up',
-                                'name' => $strmoveup,
-                                'pixattr' => array('class' => ''),
-                                'attr' => array('class' => 'icon moveup'));
-                        }
+                if (!$sectionreturn && has_capability('moodle/course:movesections', $coursecontext, $user)) {
+                    if ($usecomponents) {
+                        // This tool will appear only when the state is ready.
+                        $url = clone ($baseurl);
+                        $url->param('movesection', $section->section);
+                        $url->param('section', $section->section);
+                        $controls['movesection'] = [
+                            'url' => $url,
+                            'icon' => 'i/dragdrop',
+                            'name' => get_string('move', 'moodle'),
+                            'pixattr' => ['class' => ''],
+                            'attr' => [
+                                'class' => 'icon move waitstate',
+                                'data-action' => 'moveSection',
+                                'data-id' => $section->id,
+                            ],
+                        ];
+                    }
+                    // Legacy move up and down links for non component-based formats.
+                    $url = clone($baseurl);
+                    if ($section->section > 1) { // Add a arrow to move section up.
+                        $url->param('section', $section->section);
+                        $url->param('move', -1);
+                        $strmoveup = get_string('moveup');
+                        $controls['moveup'] = [
+                            'url' => $url,
+                            'icon' => 'i/up',
+                            'name' => $strmoveup,
+                            'pixattr' => ['class' => ''],
+                            'attr' => ['class' => 'icon moveup whilenostate'],
+                        ];
+                    }
 
-                        $url = clone($baseurl);
-                        if ($section->section < $numsections) { // Add a arrow to move section down.
-                            $url->param('section', $section->section);
-                            $url->param('move', 1);
-                            $strmovedown = get_string('movedown');
-                            $controls['movedown'] = array(
-                                'url' => $url,
-                                'icon' => 'i/down',
-                                'name' => $strmovedown,
-                                'pixattr' => array('class' => ''),
-                                'attr' => array('class' => 'icon movedown'));
-                        }
+                    $url = clone($baseurl);
+                    if ($section->section < $numsections) { // Add a arrow to move section down.
+                        $url->param('section', $section->section);
+                        $url->param('move', 1);
+                        $strmovedown = get_string('movedown');
+                        $controls['movedown'] = [
+                            'url' => $url,
+                            'icon' => 'i/down',
+                            'name' => $strmovedown,
+                            'pixattr' => ['class' => ''],
+                            'attr' => ['class' => 'icon movedown whilenostate'],
+                        ];
                     }
                 }
             }
@@ -213,17 +241,22 @@ class controlmenu implements renderable, templatable {
                 } else {
                     $strdelete = get_string('deletesection');
                 }
-                $url = new moodle_url('/course/editsection.php', array(
-                    'id' => $section->id,
-                    'sr' => $sectionreturn,
-                    'delete' => 1,
-                    'sesskey' => sesskey()));
-                $controls['delete'] = array(
+                $url = new moodle_url(
+                    '/course/editsection.php',
+                    [
+                        'id' => $section->id,
+                        'sr' => $sectionreturn,
+                        'delete' => 1,
+                        'sesskey' => sesskey(),
+                    ]
+                );
+                $controls['delete'] = [
                     'url' => $url,
                     'icon' => 'i/delete',
                     'name' => $strdelete,
-                    'pixattr' => array('class' => ''),
-                    'attr' => array('class' => 'icon editing_delete'));
+                    'pixattr' => ['class' => ''],
+                    'attr' => ['class' => 'icon editing_delete'],
+                ];
             }
         }
 
