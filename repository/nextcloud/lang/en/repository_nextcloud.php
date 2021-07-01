@@ -64,4 +64,4 @@ $string['pathnotcreated'] = 'Folder path {$a} could not be created in the system
 $string['endpointnotdefined'] = 'Endpoint {$a} not defined.';
 
 // Warnings.
-$string['externalpubliclinkwarning'] = '<b>Warning:</b> This file will become public.';
+$string['externalpubliclinkwarning'] = 'Warning: This file will become public.';
