@@ -151,6 +151,23 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
     }
 
     /**
+     * Test if a user can be graded in a course.
+     */
+    public function test_is_user_gradable_in_course() {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $generator->enrol_user($user2->id, $course->id, 'editingteacher');
+
+        $this->assertTrue(gradebookservices::is_user_gradable_in_course($course->id, $user1->id));
+        $this->assertFalse(gradebookservices::is_user_gradable_in_course($course->id, $user2->id));
+    }
+
+    /**
      * Asserts a matching gradebookservices record exist with the matching tag and resourceid.
      *
      * @param object $course current course
