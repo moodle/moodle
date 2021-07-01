@@ -13113,8 +13113,13 @@ input[disabled] {
   vertical-align: top;
   padding: 0; }
   .path-calendar .maincalendar .bottom {
-    text-align: center;
-    padding: 5px 0 0 0; }
+    text-align: left;
+    padding: 20px 0 0 20px; }
+    .path-calendar .maincalendar .bottom span.export-link:after {
+      content: "\2022";
+      color: #0f6fc5; }
+    .path-calendar .maincalendar .bottom span.export-link:last-child:after {
+      content: none; }
   .path-calendar .maincalendar .heightcontainer {
     height: 100%;
     position: relative; }

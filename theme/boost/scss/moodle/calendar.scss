@@ -119,8 +119,17 @@ $calendarEventColor: #0d5ca1 !default;
         padding: 0;
 
         .bottom {
-            text-align: center;
-            padding: 5px 0 0 0;
+            text-align: left;
+            padding: 20px 0 0 20px;
+
+            span.export-link:after {
+                content: "\2022";
+                color: $blue;
+            }
+
+            span.export-link:last-child:after {
+                content: none;
+            }
         }
 
         .heightcontainer {

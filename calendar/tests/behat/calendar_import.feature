@@ -18,7 +18,7 @@ Feature: Import and edit calendar events
   Scenario: Import then edit a calendar event.
     Given I log in as "teacher1"
     And I view the calendar for "1" "2016"
-    And I press "Manage subscriptions"
+    And I click on "Manage subscriptions" "link"
     And I set the following fields to these values:
       | Calendar name  | Test Import |
       | Import from    | Calendar file (.ics) |
@@ -42,7 +42,7 @@ Feature: Import and edit calendar events
     Then I should see "Event on 2-20-2017"
     And I should see "Event on 2-25-2017"
     And I should not see "Event on 2-15-2017"
-    And I press "Manage subscriptions"
+    And I click on "Manage subscriptions" "link"
     And I press "Remove"
     And I view the calendar for "2" "2017"
     And I should not see "Event on 2-25-2017"
@@ -51,7 +51,7 @@ Feature: Import and edit calendar events
   Scenario: Import events using different event types.
     Given I log in as "admin"
     And I view the calendar for "1" "2016"
-    And I press "Manage subscriptions"
+    And I click on "Manage subscriptions" "link"
     And I set the following fields to these values:
       | Calendar name  | Test Import |
       | Import from    | Calendar file (.ics) |
