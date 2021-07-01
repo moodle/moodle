@@ -160,10 +160,11 @@ define(['jquery',
             type: NotificationProcessorSettings.TYPE,
         });
 
-        this.root.on(CustomEvents.events.activate, SELECTORS.PROCESSOR_SETTING, function(e) {
+        this.root.on(CustomEvents.events.activate, SELECTORS.PROCESSOR_SETTING, function(e, data) {
             var element = $(e.target).closest(SELECTORS.PROCESSOR_SETTING);
 
-            e.preventDefault();
+            data.originalEvent.preventDefault();
+
             eventFormPromise.then(function(modal) {
                 // Configure modal with element settings.
                 modal.setUserId($(element).attr('data-user-id'));
