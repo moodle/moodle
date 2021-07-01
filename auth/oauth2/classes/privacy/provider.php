@@ -64,6 +64,20 @@ class provider implements
         ];
 
         $collection->add_database_table('auth_oauth2_linked_login', $authfields, 'privacy:metadata:auth_oauth2:tableexplanation');
+
+        // Regarding this block, we are unable to export or purge this data, as
+        // it would damage the oauth2 data across the whole site.
+        foreach ([
+            'oauth2_endpoint',
+            'oauth2_user_field_mapping',
+            'oauth2_access_token',
+            'oauth2_system_account',
+        ] as $tablename) {
+            $collection->add_database_table($tablename, [
+                'usermodified' => 'privacy:metadata:auth_oauth2:usermodified',
+            ], 'privacy:metadata:auth_oauth2:tableexplanation');
+        }
+
         $collection->link_subsystem('core_auth', 'privacy:metadata:auth_oauth2:authsubsystem');
 
         return $collection;
