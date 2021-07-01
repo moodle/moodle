@@ -74,7 +74,7 @@ use core\navigation\output\primary as primaryoutput;
  *      course table. (Also available as $COURSE global.) If we are not inside
  *      an actual course, this will be the site course.
  * @property-read string $devicetypeinuse The name of the device type in use
- * @property-read string $docspath The path to the Moodle docs for this page.
+ * @property-read string $docspath The path to the Help and documentation.
  * @property-read string $focuscontrol The id of the HTML element to be focused when the page has loaded.
  * @property-read bool $headerprinted True if the page header has already been printed.
  * @property-read string $heading The main heading that should be displayed at the top of the <body>.
@@ -205,7 +205,7 @@ class moodle_page {
     protected $_subpage = '';
 
     /**
-     * @var string Set a different path to use for the 'Moodle docs for this page' link.
+     * @var string Set a different path to use for the 'Help and documentation' link.
      * By default, it uses the path of the file for instance mod/quiz/attempt.
      */
     protected $_docspath = null;
@@ -629,7 +629,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->docspath syntax. {@link moodle_page::__get()}.
-     * @return string the path to the Moodle docs for this page.
+     * @return string the path to the Help and documentation.
      */
     protected function magic_get_docspath() {
         if (is_string($this->_docspath)) {
@@ -1371,7 +1371,7 @@ class moodle_page {
     }
 
     /**
-     * Set a different path to use for the 'Moodle docs for this page' link.
+     * Set a different path to use for the 'Help and documentation' link.
      *
      * By default, it uses the pagetype, which is normally the same as the
      * script name. So, for example, for mod/quiz/attempt.php, pagetype is

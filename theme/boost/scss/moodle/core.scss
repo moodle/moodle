@@ -2322,14 +2322,52 @@ ul {
 // but really in bootstrap we want the colour of links on .bg-inverse to be changed
 // rather than being specific to the footer. This is kept for backwards compatibility.
 $footer-link-color: $bg-inverse-link-color !default;
-#page-footer a {
-    color: $footer-link-color;
-    text-decoration: underline;
-    .icon {
+
+.footer-dark {
+    a {
         color: $footer-link-color;
+        text-decoration: underline;
+
+        .icon {
+            color: $footer-link-color;
+        }
+
+        &:focus .icon {
+            color: $body-color;
+        }
     }
-    &:focus .icon {
-        color: $body-color;
+}
+
+.btn-footer-popover {
+    display: none;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    @include box-shadow($popover-box-shadow);
+}
+
+.popover.footer {
+    .popover-body {
+        padding: 0;
+        .footer-section {
+            a {
+                color: $body-color;
+                text-decoration: underline;
+                &:focus {
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .jsenabled #page-footer .footer-content-popover {
+        display: none;
+    }
+    .jsenabled .btn-footer-popover {
+        display: block;
+        z-index: $zindex-dropdown;
     }
 }
 

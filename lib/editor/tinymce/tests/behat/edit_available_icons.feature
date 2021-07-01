@@ -13,7 +13,7 @@ Feature: Add or remove items from the TinyMCE editor toolbar
     And I follow "Editor preferences"
     And I set the field "Text editor" to "TinyMCE HTML editor"
     And I press "Save changes"
-    And I follow "Home"
+    And I am on homepage
 
   Scenario: Remove icons
     When the following config values are set as admin:
