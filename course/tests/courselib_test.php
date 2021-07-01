@@ -1995,7 +1995,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Create a category.
         $category = $this->getDataGenerator()->create_category();
 
-        // Save the context before it is deleted.
+        // Save the original record/context before it is deleted.
+        $categoryrecord = $category->get_db_record();
         $categorycontext = context_coursecat::instance($category->id);
 
         // Catch the update event.
@@ -2014,6 +2015,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals('course_categories', $event->objecttable);
         $this->assertEquals($category->id, $event->objectid);
         $this->assertEquals($categorycontext->id, $event->contextid);
+        $this->assertEquals([
+            'name' => $category->name,
+        ], $event->other);
+        $this->assertEquals($categoryrecord, $event->get_record_snapshot($event->objecttable, $event->objectid));
         $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
         $this->assertEquals(null, $event->get_url());
         $this->assertEventLegacyData($category, $event);
@@ -2024,7 +2029,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         $category = $this->getDataGenerator()->create_category();
         $category2 = $this->getDataGenerator()->create_category();
 
-        // Save the context before it is moved and then deleted.
+        // Save the original record/context before it is moved and then deleted.
+        $category2record = $category2->get_db_record();
         $category2context = context_coursecat::instance($category2->id);
 
         // Catch the update event.
@@ -2043,6 +2049,11 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals('course_categories', $event->objecttable);
         $this->assertEquals($category2->id, $event->objectid);
         $this->assertEquals($category2context->id, $event->contextid);
+        $this->assertEquals([
+            'name' => $category2->name,
+            'contentmovedcategoryid' => $category->id,
+        ], $event->other);
+        $this->assertEquals($category2record, $event->get_record_snapshot($event->objecttable, $event->objectid));
         $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
         $this->assertEventLegacyData($category2, $event);
         $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category2->name . '(ID ' . $category2->id . ')');
