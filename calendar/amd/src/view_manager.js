@@ -155,6 +155,7 @@ export const refreshMonthContent = (root, year, month, courseId, categoryId, tar
     return CalendarRepository.getCalendarMonthData(year, month, courseId, categoryId, includenavigation, mini, day)
         .then(context => {
             context.viewingmonth = true;
+            context.showviewselector = !mini;
             return Templates.render(template, context);
         })
         .then((html, js) => {
@@ -241,6 +242,7 @@ export const refreshDayContent = (root, year, month, day, courseId, categoryId, 
     return CalendarRepository.getCalendarDayData(year, month, day, courseId, categoryId, includenavigation)
         .then((context) => {
             context.viewingday = true;
+            context.showviewselector = true;
             return Templates.render(template, context);
         })
         .then((html, js) => {
@@ -348,6 +350,7 @@ export const reloadCurrentUpcoming = (root, courseId = 0, categoryId = 0, target
     return CalendarRepository.getCalendarUpcomingData(courseId, categoryId)
         .then((context) => {
             context.viewingupcoming = true;
+            context.showviewselector = true;
             return Templates.render(template, context);
         })
         .then((html, js) => {

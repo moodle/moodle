@@ -3493,17 +3493,19 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
     ];
 
     $data = [];
-    if ($view == "month" || $view == "mini" || $view == "minithree") {
+    if ($view == "month" || $view == "monthblock" || $view == "mini" || $view == "minithree" ) {
         $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
         $month->set_includenavigation($includenavigation);
         $month->set_initialeventsloaded(!$skipevents);
-        $month->set_showcoursefilter($view == "month");
+        $month->set_showcoursefilter(($view == "month" || $view == "monthblock"));
         $data = $month->export($renderer);
         $data->viewingmonth = true;
+        $data->showviewselector = ($view == "month");
     } else if ($view == "day") {
         $day = new \core_calendar\external\calendar_day_exporter($calendar, $related);
         $data = $day->export($renderer);
         $data->viewingday = true;
+        $data->showviewselector = true;
         $template = 'core_calendar/calendar_day';
     } else if ($view == "upcoming" || $view == "upcoming_mini") {
         $upcoming = new \core_calendar\external\calendar_upcoming_exporter($calendar, $related);
@@ -3512,6 +3514,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         if ($view == "upcoming") {
             $template = 'core_calendar/calendar_upcoming';
             $data->viewingupcoming = true;
+            $data->showviewselector = true;
         } else if ($view == "upcoming_mini") {
             $template = 'core_calendar/calendar_upcoming_mini';
         }
