@@ -891,11 +891,16 @@ class assign_files implements renderable {
      * @param int $sid
      * @param string $filearea
      * @param string $component
+     * @param stdClass $course
+     * @param stdClass $cm
      */
-    public function __construct(context $context, $sid, $filearea, $component) {
+    public function __construct(context $context, $sid, $filearea, $component, $course = null, $cm = null) {
         global $CFG;
+        if (empty($course) || empty($cm)) {
+            list($context, $course, $cm) = get_context_info_array($context->id);
+        }
+
         $this->context = $context;
-        list($context, $course, $cm) = get_context_info_array($context->id);
         $this->cm = $cm;
         $this->course = $course;
         $fs = get_file_storage();
