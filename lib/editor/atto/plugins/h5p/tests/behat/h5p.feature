@@ -211,16 +211,14 @@ Feature: Add h5ps to Atto
     And I follow "PageName1"
     And I navigate to "Edit settings" in current page administration
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
-    And I set the field with xpath "//input[@data-region='h5pfile']" to "https://moodle.h5p.com/content/1290752078589054689"
+    And I set the field with xpath "//input[@data-region='h5pfile']" to "https://moodle.h5p.com/content/1291366510035871129"
     And I click on "H5P options" "link"
     And I click on "Embed button" "checkbox"
     And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
-    And I wait until the page is ready
     When I click on "Save and display" "button"
     Then ".h5p-placeholder" "css_element" should exist
-    And I wait until the page is ready
     And I switch to "h5pcontent" iframe
-    And I should see "History of strawberries"
+    And I should see "Far far away"
     And I should not see "Embed"
     And I switch to the main frame
     And I navigate to "Edit settings" in current page administration
