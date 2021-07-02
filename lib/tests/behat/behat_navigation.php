@@ -1081,4 +1081,79 @@ class behat_navigation extends behat_base {
             $this->execute("behat_general::click_link", $pagename);
         }
     }
+
+    /**
+     * Checks whether an item exists in the user menu.
+     *
+     * @Given :itemtext :selectortype should exist in the user menu
+     * @Given :itemtext :selectortype should :not exist in the user menu
+     *
+     * @throws ElementNotFoundException
+     * @param string $itemtext The menu item to find
+     * @param string $selectortype The selector type
+     * @param string|null $not Instructs to checks whether the element does not exist in the user menu, if defined
+     * @return void
+     */
+    public function should_exist_in_user_menu($itemtext, $selectortype, $not = null) {
+        $callfunction = is_null($not) ? 'should_exist_in_the' : 'should_not_exist_in_the';
+        $this->execute("behat_general::{$callfunction}",
+            [$itemtext, $selectortype, $this->get_user_menu_xpath(), 'xpath_element']);
+    }
+
+    /**
+     * Checks whether an item exists in a given user submenu.
+     *
+     * @Given :itemtext :selectortype should exist in the :submenuname user submenu
+     * @Given :itemtext :selectortype should :not exist in the :submenuname user submenu
+     *
+     * @throws ElementNotFoundException
+     * @param string $itemtext The submenu item to find
+     * @param string $selectortype The selector type
+     * @param string $submenuname The name of the submenu
+     * @param string|null $not Instructs to checks whether the element does not exist in the user menu, if defined
+     * @return void
+     */
+    public function should_exist_in_user_submenu($itemtext, $selectortype, $submenuname, $not = null) {
+        $callfunction = is_null($not) ? 'should_exist_in_the' : 'should_not_exist_in_the';
+        $this->execute("behat_general::{$callfunction}",
+            [$itemtext, $selectortype, $this->get_user_submenu_xpath($submenuname), 'xpath_element']);
+    }
+
+    /**
+     * Checks whether a given user submenu is visible.
+     *
+     * @Then /^I should see "(?P<submenu_string>[^"]*)" user submenu$/
+     *
+     * @throws ElementNotFoundException
+     * @throws ExpectationException
+     * @param string $submenuname The name of the submenu
+     * @return void
+     */
+    public function i_should_see_user_submenu($submenuname) {
+        $this->execute('behat_general::should_be_visible',
+            array($this->get_user_submenu_xpath($submenuname), 'xpath_element'));
+    }
+
+    /**
+     * Return the xpath for the user menu element.
+     *
+     * @return string The xpath
+     */
+    protected function get_user_menu_xpath() {
+        return "//div[contains(concat(' ', @class, ' '),  ' usermenu ')]" .
+            "//div[contains(concat(' ', @class, ' '), ' dropdown-menu ')]" .
+            "//div[@id='carousel-item-main']";
+    }
+
+    /**
+     * Return the xpath for a given user submenu element.
+     *
+     * @param string $submenuname The name of the submenu
+     * @return string The xpath
+     */
+    protected function get_user_submenu_xpath($submenuname) {
+        return "//div[contains(concat(' ', @class, ' '),  ' usermenu ')]" .
+            "//div[contains(concat(' ', @class, ' '), ' dropdown-menu ')]" .
+            "//div[contains(concat(' ', @class, ' '), ' submenu ')][@aria-label='" . $submenuname . "']";
+    }
 }
