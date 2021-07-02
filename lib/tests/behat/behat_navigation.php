@@ -945,6 +945,8 @@ class behat_navigation extends behat_base {
                     $moreitemxpath = '//ul[@data-region=\'moredropdown\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
                     if ($morenode = $this->getSession()->getPage()->find('xpath', $moreitemxpath)) {
                         $this->execute('behat_general::i_click_on', [$morenode, 'NodeElement']);
+                        $xpath .= '//div[contains(@class,\'active\')]';
+                        array_shift($parentnodes);
                     }
                 }
             }
