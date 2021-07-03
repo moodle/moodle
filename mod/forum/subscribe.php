@@ -141,13 +141,15 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
                 );
             break;
         case FORUM_INITIALSUBSCRIBE : // 2
+            \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_INITIALSUBSCRIBE);
             if ($forum->forcesubscribe <> FORUM_INITIALSUBSCRIBE) {
+                // Reload the forum again to get the updated forcesubscribe field.
+                $forum = $DB->get_record('forum', array('id' => $id), '*', MUST_EXIST);
                 $users = \mod_forum\subscriptions::get_potential_subscribers($context, 0, 'u.id, u.email', '');
                 foreach ($users as $user) {
                     \mod_forum\subscriptions::subscribe_user($user->id, $forum, $context);
                 }
             }
-            \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_INITIALSUBSCRIBE);
             redirect(
                     $returnto,
                     get_string('everyoneisnowsubscribed', 'forum'),
