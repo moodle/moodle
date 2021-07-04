@@ -99,16 +99,16 @@ Feature: Basic use of the Manual grading report
     When I set the following fields to these values:
       | Questions per page | 0 |
     And I press "Change options"
-    Then I should see "You must enter a number that greater than 0 here"
+    Then I should see "You must enter a number that is greater than 0."
     And I set the following fields to these values:
       | Questions per page | -1 |
     And I press "Change options"
-    And I should see "You must enter a number that greater than 0 here"
+    And I should see "You must enter a number that is greater than 0."
     And I set the following fields to these values:
       | Questions per page | abc |
     And I press "Change options"
-    And I should see "You must enter a number that greater than 0 here"
+    And I should see "You must enter a number that is greater than 0."
     And I set the following fields to these values:
       | Questions per page | 1 |
     And I press "Change options"
-    And I should not see "You must enter a number that greater than 0 here"
+    And I should not see "You must enter a number that is greater than 0."
