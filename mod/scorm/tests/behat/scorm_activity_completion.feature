@@ -50,7 +50,7 @@ Feature: View activity completion in the SCORM activity
     And "Music history" should have the "Receive a score of 3 or more" completion condition
     And "Music history" should have the "Do all parts of this activity" completion condition
     And "Music history" should have the "Receive a grade" completion condition
-    And "Music history" should have the "Complete and pass the activity" completion condition
+    And "Music history" should have the "Complete or pass the activity" completion condition
 
   @javascript
   Scenario: View automatic completion items as a student
@@ -61,7 +61,7 @@ Feature: View activity completion in the SCORM activity
     And the "Receive a score of 3 or more" completion condition of "Music history" is displayed as "todo"
     And the "Do all parts of this activity" completion condition of "Music history" is displayed as "todo"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
-    And the "Complete and pass the activity" completion condition of "Music history" is displayed as "todo"
+    And the "Complete or pass the activity" completion condition of "Music history" is displayed as "todo"
     And I press "Enter"
     And I switch to the main frame
     And I click on "Par?" "list_item"
@@ -93,7 +93,7 @@ Feature: View activity completion in the SCORM activity
     And the "Receive a score of 3 or more" completion condition of "Music history" is displayed as "failed"
     And the "Do all parts of this activity" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
-    And the "Complete and pass the activity" completion condition of "Music history" is displayed as "failed"
+    And the "Complete or pass the activity" completion condition of "Music history" is displayed as "done"
 
   @javascript
   Scenario: Use manual completion
