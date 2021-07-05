@@ -186,10 +186,18 @@ class manager {
             $localisedeventdata->fullmessage = $eventdata->fullmessage;
             $localisedeventdata->fullmessagehtml = $eventdata->fullmessagehtml;
             if (!empty($localisedeventdata->fullmessage)) {
+                // Prevent unclosed HTML elements.
+                $localisedeventdata->fullmessage =
+                    \core_message\helper::prevent_unclosed_html_tags($localisedeventdata->fullmessage, true);
+
                 $localisedeventdata->fullmessage .= "\n\n---------------------------------------------------------------------\n"
                     . $emailtagline;
             }
             if (!empty($localisedeventdata->fullmessagehtml)) {
+                // Prevent unclosed HTML elements.
+                $localisedeventdata->fullmessagehtml =
+                    \core_message\helper::prevent_unclosed_html_tags($localisedeventdata->fullmessagehtml, true);
+
                 $localisedeventdata->fullmessagehtml .=
                     "<br><br>---------------------------------------------------------------------<br>" . $emailtagline;
             }

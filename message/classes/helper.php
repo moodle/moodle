@@ -23,6 +23,7 @@
  */
 
 namespace core_message;
+use DOMDocument;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -676,5 +677,31 @@ class helper {
             }
         }
         return [];
+    }
+
+    /**
+     * Prevent unclosed HTML elements in a message.
+     *
+     * @param string $message The html message.
+     * @param bool $removebody True if we want to remove tag body.
+     * @return string The html properly structured.
+     */
+    public static function prevent_unclosed_html_tags(
+        string $message,
+        bool $removebody = false
+    ) : string
+        {
+            $html = '';
+            if (!empty($message)) {
+                $doc = new DOMDocument();
+                @$doc->loadHTML($message);
+                $html = $doc->getElementsByTagName('body')->item(0)->C14N(false, true);
+                if ($removebody) {
+                    // Remove <body> element added in C14N function.
+                    $html = preg_replace('~<(/?(?:body))[^>]*>\s*~i', '', $html);
+                }
+            }
+
+        return $html;
     }
 }
