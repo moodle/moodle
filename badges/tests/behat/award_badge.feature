@@ -193,7 +193,7 @@ Feature: Award badges
     And I click on "Course 1" "link" in the "region-main" "region"
     And I should see "Course Badge"
     And I click on "Course Badge" "link"
-    And "Course 1" "text" should appear after "Badge details" "text"
+    And "Course 1" "text" should appear after "Course" "text"
     And "Kurs 1" "text" should not exist
 
   @javascript
