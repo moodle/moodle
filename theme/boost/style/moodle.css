@@ -19649,7 +19649,11 @@ div.editor_atto_toolbar button {
   border-radius: 0;
   cursor: pointer; }
 
-div.editor_atto_toolbar button + button {
+div.editor_atto_toolbar .menuplaceholder {
+  display: inline-block; }
+
+div.editor_atto_toolbar button + button,
+div.editor_atto_toolbar .menuplaceholder + button {
   border-left: 1px solid #ccc; }
 
 div.editor_atto_toolbar button[disabled] {
