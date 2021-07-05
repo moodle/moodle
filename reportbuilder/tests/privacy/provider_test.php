@@ -23,8 +23,12 @@ use core_privacy\local\metadata\collection;
 use core_privacy\local\metadata\types\database_table;
 use core_privacy\local\metadata\types\user_preference;
 use core_privacy\local\request\writer;
+use core_privacy\tests\provider_testcase;
 use core_reportbuilder\manager;
 use core_reportbuilder\local\helpers\user_filter_manager;
+use core_reportbuilder\local\models\column;
+use core_reportbuilder\local\models\filter;
+use core_reportbuilder\local\models\report;
 
 /**
  * Unit tests for privacy provider
@@ -34,7 +38,7 @@ use core_reportbuilder\local\helpers\user_filter_manager;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_testcase extends \core_privacy\tests\provider_testcase {
+class provider_test extends provider_testcase {
 
     /**
      * Test provider metadata
@@ -43,12 +47,18 @@ class provider_testcase extends \core_privacy\tests\provider_testcase {
         $collection = new collection('core_reportbuilder');
         $metadata = provider::get_metadata($collection)->get_collection();
 
-        $this->assertCount(2, $metadata);
+        $this->assertCount(4, $metadata);
 
         $this->assertInstanceOf(database_table::class, $metadata[0]);
-        $this->assertEquals('reportbuilder_report', $metadata[0]->get_name());
+        $this->assertEquals(report::TABLE, $metadata[0]->get_name());
 
-        $this->assertInstanceOf(user_preference::class, $metadata[1]);
+        $this->assertInstanceOf(database_table::class, $metadata[1]);
+        $this->assertEquals(column::TABLE, $metadata[1]->get_name());
+
+        $this->assertInstanceOf(database_table::class, $metadata[2]);
+        $this->assertEquals(filter::TABLE, $metadata[2]->get_name());
+
+        $this->assertInstanceOf(user_preference::class, $metadata[3]);
     }
 
     /**

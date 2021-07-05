@@ -42,6 +42,11 @@ class report extends persistent {
      */
     protected static function define_properties(): array {
         return [
+            'name' => [
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ],
             'source' => [
                 'type' => PARAM_RAW,
             ],
@@ -51,6 +56,11 @@ class report extends persistent {
                     base::TYPE_CUSTOM_REPORT,
                     base::TYPE_SYSTEM_REPORT,
                 ],
+            ],
+            'conditiondata' => [
+                'type' => PARAM_RAW,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ],
             'contextid' => [
                 'type' => PARAM_INT,
@@ -88,5 +98,14 @@ class report extends persistent {
      */
     public function get_context(): context {
         return context::instance_by_id($this->raw_get('contextid'));
+    }
+
+    /**
+     * Return formatted report name
+     *
+     * @return string
+     */
+    public function get_formatted_name(): string {
+        return format_string($this->raw_get('name'), true, ['context' => $this->get_context(), 'escape' => true]);
     }
 }
