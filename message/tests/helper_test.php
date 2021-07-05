@@ -177,4 +177,43 @@ class core_message_helper_testcase extends advanced_testcase {
         $this->assertNotEmpty(\core_message\helper::search_get_user_details($user6)); // Teacher in same course.
         $this->assertNotEmpty(\core_message\helper::search_get_user_details($user7)); // Teacher (course contact) in another course.
     }
+
+    /**
+     * Test prevent_unclosed_html_tags returns the correct html.
+     *
+     * @dataProvider prevent_unclosed_html_tags_data
+     * @param string $text text to preview unclosed html tags.
+     * @param string $goodhtml html good structured.
+     * @param bool $removebody true if we want to remove tag body.
+     */
+    public function test_prevent_unclosed_html_tags(string $message, string $goodhtml, bool $removebody) {
+        $this->setAdminUser();
+
+        $html = \core_message\helper::prevent_unclosed_html_tags($message, $removebody);
+        $this->assertSame($goodhtml, $html);
+    }
+
+    /**
+     * Data provider for the test_prevent_unclosed_html_tags_data tests.
+     *
+     * @return  array
+     */
+    public function prevent_unclosed_html_tags_data(): array {
+        return [
+            'Prevent unclosed html elements' => [
+                '<h1>Title</h1><p>Paragraph</p><b>Bold', '<h1>Title</h1><p>Paragraph</p><b>Bold</b>', true
+            ],
+            'Prevent unclosed html elements including comments' => [
+                '<h1>Title</h1><p>Paragraph</p><!-- Comments //--><b>Bold', '<h1>Title</h1><p>Paragraph</p><!-- Comments //--><b>Bold</b>', true
+            ],
+            'Prevent unclosed comments' => ['<h1>Title</h1><p>Paragraph</p><!-- Comments', '<h1>Title</h1><p>Paragraph</p>', true
+            ],
+            'Prevent unclosed html elements without removing tag body' => [
+                '<body><h2>Title 2</h2><p>Paragraph</p><b>Bold</body>', '<body><h2>Title 2</h2><p>Paragraph</p><b>Bold</b></body>', false
+            ],
+            'Empty html' => [
+                '', '', false
+            ],
+        ];
+    }
 }
