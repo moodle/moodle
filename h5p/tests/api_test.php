@@ -334,6 +334,330 @@ class api_test extends \advanced_testcase {
     }
 
     /**
+     * Test the behaviour of get_original_content_from_pluginfile_url().
+     *
+     * @covers ::get_original_content_from_pluginfile_url
+     */
+    public function test_get_original_content_from_pluginfile_url(): void {
+        $this->setRunTestInSeparateProcess(true);
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $factory = new factory();
+        $syscontext = \context_system::instance();
+
+        // Create the original file.
+        $filename = 'greeting-card-887.h5p';
+        $path = __DIR__ . '/fixtures/' . $filename;
+        $originalfile = helper::create_fake_stored_file_from_path($path);
+        $originalfilerecord = [
+            'contextid' => $originalfile->get_contextid(),
+            'component' => $originalfile->get_component(),
+            'filearea'  => $originalfile->get_filearea(),
+            'itemid'    => $originalfile->get_itemid(),
+            'filepath'  => $originalfile->get_filepath(),
+            'filename'  => $originalfile->get_filename(),
+        ];
+
+        $config = (object)[
+            'frame' => 1,
+            'export' => 1,
+            'embed' => 0,
+            'copyright' => 0,
+        ];
+
+        $originalurl = \moodle_url::make_pluginfile_url(
+            $originalfile->get_contextid(),
+            $originalfile->get_component(),
+            $originalfile->get_filearea(),
+            $originalfile->get_itemid(),
+            $originalfile->get_filepath(),
+            $originalfile->get_filename()
+        );
+
+        // Create a reference to the original file.
+        $reffilerecord = [
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'phpunit',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => $filename
+        ];
+
+        $fs = get_file_storage();
+        $ref = $fs->pack_reference($originalfilerecord);
+        $repos = \repository::get_instances(['type' => 'user']);
+        $userrepository = reset($repos);
+        $referencedfile = $fs->create_file_from_reference($reffilerecord, $userrepository->id, $ref);
+        $this->assertEquals($referencedfile->get_contenthash(), $originalfile->get_contenthash());
+
+        $referencedurl = \moodle_url::make_pluginfile_url(
+            $syscontext->id,
+            'core',
+            'phpunit',
+            0,
+            '/',
+            $filename
+        );
+
+        // Scenario 1: Original file (without any reference).
+        $originalh5pid = helper::save_h5p($factory, $originalfile, $config);
+        list($source, $h5p, $file) = api::get_original_content_from_pluginfile_url($originalurl->out());
+        $this->assertEquals($originalfile->get_pathnamehash(), $source->get_pathnamehash());
+        $this->assertEquals($originalfile->get_contenthash(), $source->get_contenthash());
+        $this->assertEquals($originalh5pid, $h5p->id);
+        $this->assertFalse($file);
+
+        // Scenario 2: Referenced file (alias to originalfile).
+        list($source, $h5p, $file) = api::get_original_content_from_pluginfile_url($referencedurl->out());
+        $this->assertEquals($originalfile->get_pathnamehash(), $source->get_pathnamehash());
+        $this->assertEquals($originalfile->get_contenthash(), $source->get_contenthash());
+        $this->assertEquals($originalfile->get_contenthash(), $source->get_contenthash());
+        $this->assertEquals($originalh5pid, $h5p->id);
+        $this->assertEquals($referencedfile->get_pathnamehash(), $file->get_pathnamehash());
+        $this->assertEquals($referencedfile->get_contenthash(), $file->get_contenthash());
+        $this->assertEquals($referencedfile->get_contenthash(), $file->get_contenthash());
+
+        // Scenario 3: Unexisting file.
+        $unexistingurl = \moodle_url::make_pluginfile_url(
+            $syscontext->id,
+            'core',
+            'phpunit',
+            0,
+            '/',
+            'unexisting.h5p'
+        );
+        list($source, $h5p, $file) = api::get_original_content_from_pluginfile_url($unexistingurl->out());
+        $this->assertFalse($source);
+        $this->assertFalse($h5p);
+        $this->assertFalse($file);
+    }
+
+    /**
+     * Test the behaviour of can_edit_content().
+     *
+     * @covers ::can_edit_content
+     * @dataProvider can_edit_content_provider
+     *
+     * @param string $currentuser User who will call the method.
+     * @param string $fileauthor Author of the file to check.
+     * @param string $filecomponent Component of the file to check.
+     * @param bool $expected Expected result after calling the can_edit_content method.
+     *
+     * @return void
+     */
+    public function test_can_edit_content(string $currentuser, string $fileauthor, string $filecomponent, bool $expected): void {
+        global $USER;
+
+        $this->setRunTestInSeparateProcess(true);
+        $this->resetAfterTest();
+
+        // Create course.
+        $course = $this->getDataGenerator()->create_course();
+        $context = \context_course::instance($course->id);
+
+        // Create some users.
+        $this->setAdminUser();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $users = [
+            'admin' => $USER,
+            'teacher' => $teacher,
+            'student' => $student,
+        ];
+
+        // Set current user.
+        if ($currentuser !== 'admin') {
+            $this->setUser($users[$currentuser]);
+        }
+
+        // Create the file.
+        $filename = 'greeting-card-887.h5p';
+        $path = __DIR__ . '/fixtures/' . $filename;
+        if ($filecomponent === 'contentbank') {
+            $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+            $contents = $generator->generate_contentbank_data(
+                'contenttype_h5p',
+                1,
+                (int)$users[$fileauthor]->id,
+                $context,
+                true,
+                $path
+            );
+            $content = array_shift($contents);
+            $file = $content->get_file();
+        } else {
+            $filerecord = [
+                'contextid' => $context->id,
+                'component' => $filecomponent,
+                'filearea'  => 'unittest',
+                'itemid'    => rand(),
+                'filepath'  => '/',
+                'filename'  => basename($path),
+                'userid'    => $users[$fileauthor]->id,
+            ];
+            $fs = get_file_storage();
+            $file = $fs->create_file_from_pathname($filerecord, $path);
+        }
+
+        // Check if the currentuser can edit the file.
+        $result = api::can_edit_content($file);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Data provider for test_can_edit_content().
+     *
+     * @return array
+     */
+    public function can_edit_content_provider(): array {
+        return [
+            // Component = user.
+            'user: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'user',
+                'expected' => true,
+            ],
+            'user: Admin user, teacher is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'user',
+                'expected' => false,
+            ],
+            'user: Teacher user, teacher is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'user',
+                'expected' => true,
+            ],
+            'user: Teacher user, admin is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'user',
+                'expected' => false,
+            ],
+            'user: Student user, student is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'student',
+                'filecomponent' => 'user',
+                'expected' => true,
+            ],
+            'user: Student user, teacher is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'user',
+                'expected' => false,
+            ],
+
+            // Component = mod_h5pactivity.
+            'mod_h5pactivity: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => true,
+            ],
+            'mod_h5pactivity: Admin user, teacher is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => true,
+            ],
+            'mod_h5pactivity: Teacher user, teacher is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => true,
+            ],
+            'mod_h5pactivity: Teacher user, admin is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => true,
+            ],
+            'mod_h5pactivity: Student user, student is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'student',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => false,
+            ],
+            'mod_h5pactivity: Student user, teacher is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => false,
+            ],
+
+            // Component = mod_forum.
+            'mod_forum: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_forum',
+                'expected' => false,
+            ],
+            'mod_forum: Admin user, teacher is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_forum',
+                'expected' => false,
+            ],
+
+            // Component = contentbank.
+            'contentbank: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'contentbank',
+                'expected' => true,
+            ],
+            'contentbank: Admin user, teacher is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'contentbank',
+                'expected' => true,
+            ],
+            'contentbank: Teacher user, teacher is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'contentbank',
+                'expected' => true,
+            ],
+            'contentbank: Teacher user, admin is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'contentbank',
+                'expected' => false,
+            ],
+            'contentbank: Student user, student is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'student',
+                'filecomponent' => 'contentbank',
+                'expected' => false,
+            ],
+            'contentbank: Student user, teacher is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'contentbank',
+                'expected' => false,
+            ],
+
+            // Unexisting components.
+            'Unexisting component' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'unexisting_component',
+                'expected' => false,
+            ],
+            'Unexisting module activity' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_unexisting',
+                'expected' => false,
+            ],
+        ];
+    }
+
+    /**
      * Test the behaviour of create_content_from_pluginfile_url().
      */
     public function test_create_content_from_pluginfile_url(): void {

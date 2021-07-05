@@ -153,12 +153,14 @@ class player {
      * @param stdClass $config Configuration for H5P buttons.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
      * @param string $component optional moodle component to sent xAPI tracking
+     * @param bool $displayedit Whether the edit button should be displayed below the H5P content.
      *
      * @return string The embedable code to display a H5P file.
      */
     public static function display(string $url, \stdClass $config, bool $preventredirect = true,
-            string $component = ''): string {
-        global $OUTPUT;
+            string $component = '', bool $displayedit = false): string {
+        global $OUTPUT, $CFG;
+
         $params = [
                 'url' => $url,
                 'preventredirect' => $preventredirect,
@@ -175,6 +177,16 @@ class player {
 
         $template = new \stdClass();
         $template->embedurl = $fileurl->out(false);
+
+        if ($displayedit) {
+            list($originalfile, $h5p) = api::get_original_content_from_pluginfile_url($url, $preventredirect, true);
+            if ($originalfile) {
+                // Check if the user can edit this content.
+                if (api::can_edit_content($originalfile)) {
+                    $template->editurl = $CFG->wwwroot . '/h5p/edit.php?url=' . $url;
+                }
+            }
+        }
 
         $result = $OUTPUT->render_from_template('core_h5p/h5pembed', $template);
         $result .= self::get_resize_code();
