@@ -18,6 +18,8 @@ declare(strict_types=1);
 
 namespace core_reportbuilder;
 
+use core_component;
+use core_plugin_manager;
 use stdClass;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base;
@@ -54,6 +56,19 @@ class manager {
     }
 
     /**
+     * Return an instance of a report class from the given report ID
+     *
+     * @param int $reportid
+     * @param array $parameters
+     * @return base
+     */
+    public static function get_report_from_id(int $reportid, array $parameters = []): base {
+        $report = new report($reportid);
+
+        return self::get_report_from_persistent($report, $parameters);
+    }
+
+    /**
      * Verify that report source exists and extends appropriate base classes
      *
      * @param string $source Full namespaced path to report definition
@@ -83,5 +98,31 @@ class manager {
      */
     public static function create_report_persistent(stdClass $reportdata): report {
         return (new report(0, $reportdata))->create();
+    }
+
+    /**
+     * Return an array of all valid report sources across the site
+     *
+     * @return array[][] Indexed by [component => [class => name]]
+     */
+    public static function get_report_datasources(): array {
+        $sources = array();
+
+        $datasources = core_component::get_component_classes_in_namespace(null, 'reportbuilder\\datasource');
+        foreach ($datasources as $class => $path) {
+            if (self::report_source_exists($class, datasource::class) && self::report_source_available($class)) {
+                [$component] = explode('\\', $class);
+
+                if ($plugininfo = core_plugin_manager::instance()->get_plugin_info($component)) {
+                    $componentname = $plugininfo->displayname;
+                } else {
+                    $componentname = get_string('site');
+                }
+
+                $sources[$componentname][$class] = call_user_func([$class, 'get_name']);
+            }
+        }
+
+        return $sources;
     }
 }

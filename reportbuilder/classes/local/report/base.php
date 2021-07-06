@@ -120,13 +120,6 @@ abstract class base {
     abstract protected function initialise(): void;
 
     /**
-     * Output the report
-     *
-     * @return string
-     */
-    abstract public function output(): string;
-
-    /**
      * Get the report availability. Sub-classes should override this method to declare themselves unavailable, for example if
      * they require classes that aren't present due to missing plugin
      *
@@ -259,6 +252,21 @@ abstract class base {
     }
 
     /**
+     * Returns the entity added to the report from the given entity name
+     *
+     * @param string $name
+     * @return entity_base
+     * @throws coding_exception
+     */
+    final protected function get_entity(string $name): entity_base {
+        if (!array_key_exists($name, $this->entities)) {
+            throw new coding_exception('Invalid entity name', $name);
+        }
+
+        return $this->entities[$name];
+    }
+
+    /**
      * Define a new entity for the report
      *
      * @param string $name
@@ -298,6 +306,20 @@ abstract class base {
         $this->columns[$uniqueidentifier] = $column;
 
         return $column;
+    }
+
+    /**
+     * Add given column to the report from an entity
+     *
+     * The entity must have already been added to the report before calling this method
+     *
+     * @param string $uniqueidentifier
+     * @return column
+     */
+    final protected function add_column_from_entity(string $uniqueidentifier): column {
+        [$entityname, $columnname] = explode(':', $uniqueidentifier, 2);
+
+        return $this->add_column($this->get_entity($entityname)->get_column($columnname));
     }
 
     /**

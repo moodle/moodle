@@ -21,6 +21,9 @@ namespace core_reportbuilder\local\models;
 use context;
 use context_system;
 use core\persistent;
+use core_reportbuilder\event\report_created;
+use core_reportbuilder\event\report_deleted;
+use core_reportbuilder\event\report_updated;
 use core_reportbuilder\local\report\base;
 
 /**
@@ -89,6 +92,56 @@ class report extends persistent {
                 },
             ],
         ];
+    }
+
+    /**
+     * Trigger report created event when persistent is created
+     */
+    protected function after_create(): void {
+        if ($this->get('type') === base::TYPE_CUSTOM_REPORT) {
+            report_created::create_from_object($this)->trigger();
+        }
+    }
+
+    /**
+     * Cascade report deletion, first deleting any linked persistents
+     */
+    protected function before_delete(): void {
+        $reportparams = ['reportid' => $this->get('id')];
+
+        // Columns.
+        foreach (column::get_records($reportparams) as $column) {
+            $column->delete();
+        }
+
+        // Filters.
+        foreach (filter::get_records($reportparams) as $filter) {
+            $filter->delete();
+        }
+    }
+
+    /**
+     * Throw report deleted event when persistent is deleted
+     *
+     * @param bool $result
+     */
+    protected function after_delete($result): void {
+        if (!$result || $this->get('type') === base::TYPE_SYSTEM_REPORT) {
+            return;
+        }
+        report_deleted::create_from_object($this)->trigger();
+    }
+
+    /**
+     * Throw report updated event when persistent is updated
+     *
+     * @param bool $result
+     */
+    protected function after_update($result): void {
+        if (!$result || $this->get('type') === base::TYPE_SYSTEM_REPORT) {
+            return;
+        }
+        report_updated::create_from_object($this)->trigger();
     }
 
     /**

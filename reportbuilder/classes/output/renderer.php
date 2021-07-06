@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\output;
 
+use html_writer;
 use plugin_renderer_base;
 use core_reportbuilder\table\system_report_table;
 
@@ -55,5 +56,17 @@ class renderer extends plugin_renderer_base {
         ob_end_clean();
 
         return $output;
+    }
+
+    /**
+     * Renders the New report button
+     *
+     * @return string
+     */
+    public function render_new_report_button(): string {
+        return html_writer::tag('button', get_string('newreport', 'core_reportbuilder'), [
+            'class' => 'btn btn-primary my-auto',
+            'data-action' => 'report-create',
+        ]);
     }
 }

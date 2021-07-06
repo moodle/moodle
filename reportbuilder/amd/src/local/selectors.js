@@ -37,7 +37,10 @@ const SELECTORS = {
     },
     actions: {
         reportActionPopup: '[data-action="report-action-popup"]',
-    }
+        reportCreate: '[data-action="report-create"]',
+        reportEdit: '[data-action="report-edit"]',
+        reportDelete: '[data-action="report-delete"]',
+    },
 };
 
 /**

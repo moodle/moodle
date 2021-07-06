@@ -42,3 +42,23 @@ function core_reportbuilder_output_fragment_filters_form(array $params): string 
 
     return $filtersform->render();
 }
+
+/**
+ * Plugin inplace editable implementation
+ *
+ * @param string $itemtype
+ * @param int $itemid
+ * @param string $newvalue
+ * @return \core\output\inplace_editable|bool
+ */
+function core_reportbuilder_inplace_editable($itemtype, $itemid, $newvalue) {
+    $itemid = (int) $itemid;
+
+    switch ($itemtype) {
+        case 'reportname':
+            return \core_reportbuilder\output\report_name_editable::update($itemid, $newvalue);
+
+        default:
+            return false;
+    }
+}

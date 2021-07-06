@@ -2798,6 +2798,12 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_reportbuilder_reports_delete' => [
+        'classname'   => 'core_reportbuilder\external\reports\delete',
+        'description' => 'Delete report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
 );
 
 $services = array(
