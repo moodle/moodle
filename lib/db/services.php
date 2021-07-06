@@ -2779,6 +2779,13 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_change_editmode' => [
+        'classname'   => 'core\external\editmode',
+        'methodname'   => 'change_editmode',
+        'description' => 'Change the editing mode',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
 );
 
 $services = array(
