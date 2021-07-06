@@ -226,4 +226,38 @@ class behat_theme_classic_behat_navigation extends behat_navigation {
 
         return $menuxpath;
     }
+
+    /**
+     * Turns editing mode off.
+     */
+    public function i_turn_editing_mode_off(): void {
+        $buttonnames = [get_string('turneditingoff'), get_string('updatemymoodleoff'), get_string('blockseditoff')];
+        foreach ($buttonnames as $buttonname) {
+            if ($editbutton = $this->getSession()->getPage()->findButton($buttonname)) {
+                $this->execute('behat_general::i_click_on', [$editbutton, 'NodeElement']);
+                return;
+            }
+        }
+        // Click the turneditingoff link in the Site Administration block.
+        if ($this->is_editing_on()) {
+            $this->execute('behat_general::i_click_on', [get_string('turneditingoff'), "link"]);
+        }
+    }
+
+    /**
+     * Turns editing mode on.
+     */
+    public function i_turn_editing_mode_on(): void {
+        $buttonnames = [get_string('turneditingon'), get_string('updatemymoodleon'), get_string('blocksediton')];
+        foreach ($buttonnames as $buttonname) {
+            if ($editbutton = $this->getSession()->getPage()->findButton($buttonname)) {
+                $this->execute('behat_general::i_click_on', [$editbutton, 'NodeElement']);
+                return;
+            }
+        }
+
+        if (!$this->is_editing_on()) {
+            $this->execute('behat_general::i_click_on', [get_string('turneditingon'), "link"]);
+        }
+    }
 }

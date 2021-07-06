@@ -83,32 +83,6 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Turns editing mode on.
-     * @Given /^I turn editing mode on$/
-     */
-    public function i_turn_editing_mode_on() {
-
-        try {
-            $this->execute("behat_forms::press_button", get_string('turneditingon'));
-        } catch (Exception $e) {
-            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", [get_string('turneditingon')]);
-        }
-    }
-
-    /**
-     * Turns editing mode off.
-     * @Given /^I turn editing mode off$/
-     */
-    public function i_turn_editing_mode_off() {
-
-        try {
-            $this->execute("behat_forms::press_button", get_string('turneditingoff'));
-        } catch (Exception $e) {
-            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", [get_string('turneditingoff')]);
-        }
-    }
-
-    /**
      * Creates a new course with the provided table data matching course settings names with the desired values.
      *
      * @Given /^I create a course with:$/
@@ -733,9 +707,7 @@ class behat_course extends behat_base {
      * @throws ExpectationException
      */
     public function activity_should_be_hidden($activityname) {
-
         if ($this->is_course_editor()) {
-
             // The activity should exist.
             $activitynode = $this->get_activity_node($activityname);
 
@@ -758,7 +730,6 @@ class behat_course extends behat_base {
             }
 
         } else {
-
             // It should not exist at all.
             try {
                 $this->get_activity_node($activityname);
@@ -1310,15 +1281,13 @@ class behat_course extends behat_base {
      *
      * @return bool
      */
-    protected function is_course_editor() {
-
-        // We don't need to behat_base::spin() here as all is already loaded.
-        if (!$this->getSession()->getPage()->findButton(get_string('turneditingoff')) &&
-                !$this->getSession()->getPage()->findButton(get_string('turneditingon'))) {
+    protected function is_course_editor(): bool {
+        try {
+            $this->find('field', get_string('editmode'), false, false, 0);
+            return true;
+        } catch (ElementNotFoundException $e) {
             return false;
         }
-
-        return true;
     }
 
     /**
@@ -1327,7 +1296,8 @@ class behat_course extends behat_base {
      * @return bool
      */
     protected function is_editing_on() {
-        return $this->getSession()->getPage()->findButton(get_string('turneditingoff')) ? true : false;
+        $body = $this->find('xpath', "//body", false, false, 0);
+        return $body->hasClass('editing');
     }
 
     /**

@@ -134,7 +134,7 @@ trait behat_session_trait {
         }
 
         // How much we will be waiting for the element to appear.
-        if (!$timeout) {
+        if ($timeout === false) {
             $timeout = self::get_timeout();
             $microsleep = false;
         } else {
@@ -339,7 +339,7 @@ trait behat_session_trait {
     protected function spin($lambda, $args = false, $timeout = false, $exception = false, $microsleep = false) {
 
         // Using default timeout which is pretty high.
-        if (!$timeout) {
+        if ($timeout === false) {
             $timeout = self::get_timeout();
         }
 

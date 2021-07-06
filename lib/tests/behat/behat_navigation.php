@@ -833,33 +833,38 @@ class behat_navigation extends behat_base {
     /**
      * Open the course homepage with editing mode enabled.
      *
-     * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage with editing mode on$/
-     * @throws coding_exception
      * @param string $coursefullname The course full name of the course.
-     * @return void
      */
     public function i_am_on_course_homepage_with_editing_mode_on($coursefullname) {
+        $this->i_am_on_course_homepage_with_editing_mode_set_to($coursefullname, 'on');
+    }
+
+    /**
+     * Open the course homepage with editing mode set to either on, or off.
+     *
+     * @Given I am on :coursefullname course homepage with editing mode :onoroff
+     * @throws coding_exception
+     * @param string $coursefullname The course full name of the course.
+     * @param string $onoroff Whehter to switch editing on, or off.
+     */
+    public function i_am_on_course_homepage_with_editing_mode_set_to(string $coursefullname, string $onoroff): void {
         global $DB;
 
         $course = $DB->get_record("course", array("fullname" => $coursefullname), 'id', MUST_EXIST);
         $url = new moodle_url('/course/view.php', ['id' => $course->id]);
 
-        if ($this->running_javascript() && $sesskey = $this->get_sesskey()) {
-            // Javascript is running so it is possible to grab the session ket and jump straight to editing mode.
-            $url->param('edit', 1);
-            $url->param('sesskey', $sesskey);
-            $this->execute('behat_general::i_visit', [$url]);
-
-            return;
-        }
-
         // Visit the course page.
         $this->execute('behat_general::i_visit', [$url]);
 
-        try {
-            $this->execute("behat_forms::press_button", get_string('turneditingon'));
-        } catch (Exception $e) {
-            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", [get_string('turneditingon')]);
+        switch ($onoroff) {
+            case 'on':
+                $this->execute('behat_navigation::i_turn_editing_mode_on');
+                break;
+            case 'off':
+                $this->execute('behat_navigation::i_turn_editing_mode_off');
+                break;
+            default:
+                throw new \coding_exception("Unknown editing mode '{$onoroff}'. Accepted values are 'on' and 'off'");
         }
     }
 
@@ -1103,7 +1108,6 @@ class behat_navigation extends behat_base {
         $this->execute('behat_general::i_visit', [$url]);
     }
 
-
     /**
      * First checks to see if we are on this page via the breadcrumb. If not we then attempt to follow the link name given.
      *
@@ -1192,5 +1196,55 @@ class behat_navigation extends behat_base {
         return "//div[contains(concat(' ', @class, ' '),  ' usermenu ')]" .
             "//div[contains(concat(' ', @class, ' '), ' dropdown-menu ')]" .
             "//div[contains(concat(' ', @class, ' '), ' submenu ')][@aria-label='" . $submenuname . "']";
+    }
+
+    /**
+     * Returns whether the user can edit the current page.
+     *
+     * @return bool
+     */
+    protected function is_editing_on() {
+        $body = $this->find('xpath', "//body", false, false, 0);
+        return $body->hasClass('editing');
+    }
+
+    /**
+     * Turns editing mode on.
+     * @Given I switch editing mode on
+     * @Given I turn editing mode on
+     */
+    public function i_turn_editing_mode_on() {
+        $this->execute('behat_forms::i_set_the_field_to', [get_string('editmode'), 1]);
+
+        if (!$this->running_javascript()) {
+            $this->execute('behat_general::i_click_on', [
+                get_string('setmode', 'core'),
+                'button',
+            ]);
+        }
+
+        if (!$this->is_editing_on()) {
+            throw new ExpectationException('The edit mode could not be turned on', $this->getSession());
+        }
+    }
+
+    /**
+     * Turns editing mode off.
+     * @Given I switch editing mode off
+     * @Given I turn editing mode off
+     */
+    public function i_turn_editing_mode_off() {
+        $this->execute('behat_forms::i_set_the_field_to', [get_string('editmode'), 0]);
+
+        if (!$this->running_javascript()) {
+            $this->execute('behat_general::i_click_on', [
+                get_string('setmode', 'core'),
+                'button',
+            ]);
+        }
+
+        if ($this->is_editing_on()) {
+            throw new ExpectationException('The edit mode could not be turned off', $this->getSession());
+        }
     }
 }
