@@ -1,6 +1,11 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+* The forum_count_replies() function has been removed from core.
+* The mod_forum_get_forum_discussion_posts web service has been removed from core.
+
 === 3.11 ===
 
 * The get_forum_discussions_paginated web service has been deprecated in favour of get_forum_discussions.

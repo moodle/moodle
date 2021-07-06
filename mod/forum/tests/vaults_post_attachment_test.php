@@ -104,4 +104,72 @@ class mod_forum_vaults_post_attachment_testcase extends advanced_testcase {
         $this->assertEquals($attachment2->get_filename(), $results[$post2->get_id()][0]->get_filename());
         $this->assertEquals([], $results[$post3->get_id()]);
     }
+
+    /**
+     * Test get_inline_attachments_for_posts.
+     */
+    public function test_get_inline_attachments_for_posts() {
+        $this->resetAfterTest();
+
+        $filestorage = get_file_storage();
+        $entityfactory = \mod_forum\local\container::get_entity_factory();
+        $vaultfactory = \mod_forum\local\container::get_vault_factory();
+        $vault = $vaultfactory->get_post_attachment_vault();
+        $datagenerator = $this->getDataGenerator();
+        $user = $datagenerator->create_user();
+        $course = $datagenerator->create_course();
+        $forum = $datagenerator->create_module('forum', ['course' => $course->id]);
+        $coursemodule = get_coursemodule_from_instance('forum', $forum->id);
+        $context = context_module::instance($coursemodule->id);
+        [$discussion, $post1] = $this->helper_post_to_forum($forum, $user);
+        $post2 = $this->helper_reply_to_post($post1, $user);
+        $post3 = $this->helper_reply_to_post($post1, $user);
+        $attachment1 = $filestorage->create_file_from_string(
+            [
+                'contextid' => $context->id,
+                'component' => 'mod_forum',
+                'filearea'  => 'post',
+                'itemid'    => $post1->id,
+                'filepath'  => '/',
+                'filename'  => 'example1.jpg',
+            ],
+            'image contents'
+        );
+        $attachment2 = $filestorage->create_file_from_string(
+            [
+                'contextid' => $context->id,
+                'component' => 'mod_forum',
+                'filearea'  => 'post',
+                'itemid'    => $post2->id,
+                'filepath'  => '/',
+                'filename'  => 'example2.jpg',
+            ],
+            'image contents'
+        );
+
+        $post1 = $entityfactory->get_post_from_stdclass($post1);
+        $post2 = $entityfactory->get_post_from_stdclass($post2);
+        $post3 = $entityfactory->get_post_from_stdclass($post3);
+
+        $results = $vault->get_inline_attachments_for_posts(context_system::instance(), [$post1, $post2, $post3]);
+        $this->assertCount(3, $results);
+        $this->assertEquals([], $results[$post1->get_id()]);
+        $this->assertEquals([], $results[$post2->get_id()]);
+        $this->assertEquals([], $results[$post3->get_id()]);
+
+        $results = $vault->get_inline_attachments_for_posts($context, [$post1]);
+        $this->assertCount(1, $results);
+        $this->assertEquals($attachment1->get_filename(), $results[$post1->get_id()][0]->get_filename());
+
+        $results = $vault->get_inline_attachments_for_posts($context, [$post1, $post2]);
+        $this->assertCount(2, $results);
+        $this->assertEquals($attachment1->get_filename(), $results[$post1->get_id()][0]->get_filename());
+        $this->assertEquals($attachment2->get_filename(), $results[$post2->get_id()][0]->get_filename());
+
+        $results = $vault->get_inline_attachments_for_posts($context, [$post1, $post2, $post3]);
+        $this->assertCount(3, $results);
+        $this->assertEquals($attachment1->get_filename(), $results[$post1->get_id()][0]->get_filename());
+        $this->assertEquals($attachment2->get_filename(), $results[$post2->get_id()][0]->get_filename());
+        $this->assertEquals([], $results[$post3->get_id()]);
+    }
 }
