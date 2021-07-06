@@ -412,6 +412,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/online' => 'fa-circle',
             'core:t/passwordunmask-edit' => 'fa-pencil',
             'core:t/passwordunmask-reveal' => 'fa-eye',
+            'core:t/play' => 'fa-play',
             'core:t/portfolioadd' => 'fa-plus',
             'core:t/preferences' => 'fa-wrench',
             'core:t/preview' => 'fa-search-plus',

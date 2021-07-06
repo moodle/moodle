@@ -5395,9 +5395,10 @@ class core_renderer_maintenance extends core_renderer {
      * @param string $message The question to ask the user
      * @param single_button|moodle_url|string $continue The single_button component representing the Continue answer.
      * @param single_button|moodle_url|string $cancel The single_button component representing the Cancel answer.
+     * @param array $displayoptions optional extra display options
      * @return string HTML fragment
      */
-    public function confirm($message, $continue, $cancel) {
+    public function confirm($message, $continue, $cancel, array $displayoptions = []) {
         // We need plain styling of confirm boxes on upgrade because we don't know which stylesheet we have (it could be
         // from any previous version of Moodle).
         if ($continue instanceof single_button) {
