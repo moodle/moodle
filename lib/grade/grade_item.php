@@ -2484,7 +2484,7 @@ class grade_item extends grade_object {
         global $USER;
 
         // Determine which display type to use for this average
-        if (isset($USER->gradeediting) && array_key_exists($this->courseid, $USER->gradeediting) && $USER->gradeediting[$this->courseid]) {
+        if (isset($USER->editing) && $USER->editing) {
             $displaytype = GRADE_DISPLAY_TYPE_REAL;
 
         } else if ($rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // no ==0 here, please resave report and user prefs
