@@ -83,7 +83,7 @@ Feature: Award badges
     And I should see "Add a new badge"
     # Teacher 1 should NOT have access to manage/create site badges in the Site badges section.
     When I am on homepage
-    And I press "Customise this page"
+    And I turn editing mode on
    # TODO MDL-57120 site "Badges" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"

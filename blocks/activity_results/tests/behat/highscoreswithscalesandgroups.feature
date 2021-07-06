@@ -63,7 +63,6 @@ Feature: The activity results block displays student in group high scores as sca
     And I press "Save and return to course"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I give the grade "Excellent!" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "Very good" to the user "Student 2" for the grade item "Test assignment"
     And I give the grade "Very good" to the user "Student 3" for the grade item "Test assignment"

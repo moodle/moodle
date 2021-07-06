@@ -20,7 +20,7 @@ Feature: Reset my profile page to default
     And I follow "View profile"
 
   Scenario: Add blocks to page and reset
-    When I press "Customise this page"
+    When I turn editing mode on
     And I add the "Latest announcements" block
     And I press "Reset page to default"
     Then I should not see "Latest announcements"

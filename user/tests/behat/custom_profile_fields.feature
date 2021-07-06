@@ -260,7 +260,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
       | moodle/user:editprofile     | Allow      | parent | User         | userwithinformation |
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Mentees" block
     And I log out
     And I log in as "parent"

@@ -85,7 +85,6 @@ Feature: We can set the grade to pass value
       | Grade to pass | 3 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I click on "Edit  assign Test Assignment 1" "link"
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "3"
@@ -124,7 +123,6 @@ Feature: We can set the grade to pass value
       | Assessment grade to pass | 10 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I click on "Edit  workshop Test Workshop 1 (submission)" "link"
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "40"
@@ -168,7 +166,6 @@ Feature: We can set the grade to pass value
       | Grade to pass | 9.5 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I click on "Edit  quiz Test Quiz 1" "link"
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "9.5"
@@ -190,7 +187,6 @@ Feature: We can set the grade to pass value
       | Grade to pass | 90            |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I click on "Edit  lesson Test Lesson 1" "link"
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
@@ -215,7 +211,6 @@ Feature: We can set the grade to pass value
       | Ratings > Grade to pass  | 90                 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I click on "Edit  data Test Database 1" "link"
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
@@ -256,7 +251,6 @@ Feature: We can set the grade to pass value
       | Ratings > Grade to pass  | 90                 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I click on "Edit  forum Test Forum 1 rating" "link"
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
@@ -280,7 +274,6 @@ Feature: We can set the grade to pass value
       | Ratings > Grade to pass  | 90                 |
     And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I click on "Edit  glossary Test Glossary 1" "link"
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"

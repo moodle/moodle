@@ -30,7 +30,7 @@ Feature: Add and configure blocks throughout the site
   Scenario: Add and configure a block throughtout the site
     Given I log in as "manager1"
     And I am on site homepage
-    And I follow "Turn editing on"
+    And I turn editing mode on
     And I add the "Comments" block
     And I configure the "Comments" block
     And I set the following fields to these values:
@@ -50,7 +50,7 @@ Feature: Add and configure blocks throughout the site
 
   Scenario: Blocks on the dashboard page can have roles assigned to them
     Given I log in as "manager1"
-    When I press "Customise this page"
+    When I turn editing mode on
     Then I should see "Assign roles in Private files block"
 
   Scenario: Blocks on courses can have roles assigned to them
@@ -63,7 +63,7 @@ Feature: Add and configure blocks throughout the site
   Scenario: Blocks can safely be customised
     Given I log in as "admin"
     And I am on homepage
-    And I press "Customise this page"
+    And I turn editing mode on
     And I add the "Text" block
     And I configure the "(new text block)" block
     And I set the following fields to these values:

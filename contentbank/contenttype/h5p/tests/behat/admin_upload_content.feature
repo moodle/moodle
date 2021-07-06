@@ -9,7 +9,7 @@ Feature: H5P file upload to content bank for admins
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
-    And I press "Customise this page"
+    And I turn editing mode on
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     And I click on "Content bank" "link"

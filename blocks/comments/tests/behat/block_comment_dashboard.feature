@@ -14,7 +14,7 @@ Feature: Enable Block comments on the dashboard and view comments
 
   Scenario: Add the comments block on the dashboard and add comments with Javascript disabled
     When I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     And I add the "Comments" block
     And I follow "Show comments"
     And I add "I'm a comment from the teacher" comment to comments block
@@ -23,7 +23,7 @@ Feature: Enable Block comments on the dashboard and view comments
   @javascript
   Scenario: Add the comments block on the dashboard and add comments with Javascript enabled
     When I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     And I add the "Comments" block
     And I add "I'm a comment from the teacher" comment to comments block
     Then I should see "I'm a comment from the teacher"

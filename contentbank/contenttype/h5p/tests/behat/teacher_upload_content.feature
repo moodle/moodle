@@ -25,7 +25,7 @@ Feature: H5P file upload to content bank for non admins
     And I click on "Save changes" "button"
 
   Scenario: Teachers can not access system level content bank
-    Given I press "Customise this page"
+    Given I turn editing mode on
     And I add the "Navigation" block if not present
     When I expand "Site pages" node
     Then I should not see "Content bank"

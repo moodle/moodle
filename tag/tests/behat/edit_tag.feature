@@ -31,7 +31,7 @@ Feature: Users can edit tags to add description or rename
       | moodle/user:viewdetails      | Allow      |
     And I log out
     When I log in as "editor1"
-    And I press "Customise this page"
+    And I turn editing mode on
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -56,7 +56,7 @@ Feature: Users can edit tags to add description or rename
   @javascript
   Scenario: Manager can change tag description, related tags and rename the tag from tag view page
     When I log in as "manager1"
-    And I press "Customise this page"
+    And I turn editing mode on
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -89,7 +89,7 @@ Feature: Users can edit tags to add description or rename
 
   Scenario: Renaming the tag from tag view page
     When I log in as "manager1"
-    And I press "Customise this page"
+    And I turn editing mode on
       # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Tags" "link" in the "Navigation" "block"

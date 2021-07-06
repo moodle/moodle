@@ -9,7 +9,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                | country   |
       | teacher1 | Teacher   | One      | teacher1@example.com | AU        |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -28,7 +28,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                | city  |
       | teacher1 | Teacher   | One      | teacher1@example.com | Perth |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -47,7 +47,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | One      | teacher1@example.com |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -66,7 +66,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                | phone1   |
       | teacher1 | Teacher   | One      | teacher1@example.com | 555-5555 |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -85,7 +85,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                | phone2   |
       | teacher1 | Teacher   | One      | teacher1@example.com | 555-5555 |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -104,7 +104,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                | institution   |
       | teacher1 | Teacher   | One      | teacher1@example.com | myinstitution |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -123,7 +123,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                | address   |
       | teacher1 | Teacher   | One      | teacher1@example.com | myaddress |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -142,7 +142,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | One      | teacher1@example.com |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -161,7 +161,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | One      | teacher1@example.com |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -180,7 +180,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | One      | teacher1@example.com |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -199,7 +199,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | One      | teacher1@example.com |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
