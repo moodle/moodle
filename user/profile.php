@@ -184,7 +184,10 @@ if ($PAGE->user_allowed_editing()) {
     }
 
     $url = new moodle_url("$CFG->wwwroot/user/profile.php", $params);
-    $button = $OUTPUT->single_button($url, $editstring);
+    $button = '';
+    if (!$PAGE->theme->haseditswitch) {
+        $button = $OUTPUT->single_button($url, $editstring);
+    }
     $PAGE->set_button($resetbutton . $button);
 
 } else {
