@@ -1073,6 +1073,14 @@ class participants_search_test extends advanced_testcase {
                             'tony.rogers',
                         ],
                     ],
+                    'ANY: Filter on fullname only' => (object) [
+                        'keywords' => ['Barbara Bennett'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'barbara.bennett',
+                        ],
+                    ],
                     'ANY: Filter on middlename only' => (object) [
                         'keywords' => ['Jeff'],
                         'jointype' => filter::JOINTYPE_ANY,

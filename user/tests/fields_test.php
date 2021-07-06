@@ -521,4 +521,77 @@ class fields_test extends \advanced_testcase {
         $selects = $fields->get_sql()->selects;
         $this->assertEquals(', id, city', $selects);
     }
+
+    /**
+     * Data provider for {@see test_get_sql_fullname}
+     *
+     * @return array
+     */
+    public function get_sql_fullname_provider(): array {
+        return [
+            ['firstname lastname', 'FN LN'],
+            ['lastname, firstname', 'LN, FN'],
+            ['alternatename \'middlename\' lastname!', 'AN \'MN\' LN!'],
+            ['[firstname lastname alternatename]', '[FN LN AN]'],
+            ['firstnamephonetic lastnamephonetic', 'FNP LNP'],
+            ['firstname alternatename lastname', 'FN AN LN'],
+        ];
+    }
+
+    /**
+     * Test sql_fullname_display method with various fullname formats
+     *
+     * @param string $fullnamedisplay
+     * @param string $expectedfullname
+     *
+     * @dataProvider get_sql_fullname_provider
+     */
+    public function test_get_sql_fullname(string $fullnamedisplay, string $expectedfullname): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        set_config('fullnamedisplay', $fullnamedisplay);
+        $user = $this->getDataGenerator()->create_user([
+            'firstname' => 'FN',
+            'lastname' => 'LN',
+            'firstnamephonetic' => 'FNP',
+            'lastnamephonetic' => 'LNP',
+            'middlename' => 'MN',
+            'alternatename' => 'AN',
+        ]);
+
+        [$sqlfullname, $params] = fields::get_sql_fullname('u');
+        $fullname = $DB->get_field_sql("SELECT {$sqlfullname} FROM {user} u WHERE u.id = :id", $params + [
+            'id' => $user->id,
+        ]);
+
+        $this->assertEquals($expectedfullname, $fullname);
+    }
+
+    /**
+     * Test sql_fullname_display when one of the configured name fields is null
+     */
+    public function test_get_sql_fullname_null_field(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        set_config('fullnamedisplay', 'firstname lastname alternatename');
+        $user = $this->getDataGenerator()->create_user([
+            'firstname' => 'FN',
+            'lastname' => 'LN',
+        ]);
+
+        // Set alternatename field to null, ensure we still get result in later assertion.
+        $user->alternatename = null;
+        user_update_user($user, false);
+
+        [$sqlfullname, $params] = fields::get_sql_fullname('u');
+        $fullname = $DB->get_field_sql("SELECT {$sqlfullname} FROM {user} u WHERE u.id = :id", $params + [
+            'id' => $user->id,
+        ]);
+
+        $this->assertEquals('FN LN ', $fullname);
+    }
 }

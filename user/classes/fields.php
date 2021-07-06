@@ -16,6 +16,8 @@
 
 namespace core_user;
 
+use core_text;
+
 /**
  * Class for retrieving information about user fields that are needed for displaying user identity.
  *
@@ -569,6 +571,65 @@ class fields {
 
         return (object)['selects' => $selects, 'joins' => $joins, 'params' => $params,
                 'mappings' => $mappings];
+    }
+
+    /**
+     * Similar to {@see \moodle_database::sql_fullname} except it returns all user name fields as defined by site config, in a
+     * single select statement suitable for inclusion in a query/filter for a users fullname, e.g.
+     *
+     * [$select, $params] = fields::get_sql_fullname('u');
+     * $users = $DB->get_records_sql_menu("SELECT u.id, {$select} FROM {user} u", $params);
+     *
+     * @param string|null $tablealias User table alias, if set elsewhere in the query, null if not required
+     * @param bool $override If true then the alternativefullnameformat format rather than fullnamedisplay format will be used
+     * @return array SQL select snippet and parameters
+     */
+    public static function get_sql_fullname(?string $tablealias = 'u', bool $override = false): array {
+        global $DB;
+
+        $unique = self::$uniqueidentifier++;
+
+        $namefields = self::get_name_fields();
+
+        // Create a dummy user object containing all name fields.
+        $dummyuser = (object) array_combine($namefields, $namefields);
+        $dummyfullname = fullname($dummyuser, $override);
+
+        // Extract any name fields from the fullname format in the order that they appear.
+        $matchednames = array_values(order_in_string($namefields, $dummyfullname));
+        $namelookup = $namepattern = $elements = $params = [];
+
+        foreach ($namefields as $index => $namefield) {
+            $namefieldwithalias = $tablealias ? "{$tablealias}.{$namefield}" : $namefield;
+
+            // Coalesce the name fields to ensure we don't return null.
+            $emptyparam = "uf{$unique}ep_{$index}";
+            $namelookup[$namefield] = "COALESCE({$namefieldwithalias}, :{$emptyparam})";
+            $params[$emptyparam] = '';
+
+            $namepattern[] = '\b' . preg_quote($namefield) . '\b';
+        }
+
+        // Grab any content between the name fields, inserting them after each name field.
+        $chunks = preg_split('/(' . implode('|', $namepattern) . ')/', $dummyfullname);
+        foreach ($chunks as $index => $chunk) {
+            if ($index > 0) {
+                $elements[] = $namelookup[$matchednames[$index - 1]];
+            }
+
+            if (core_text::strlen($chunk) > 0) {
+                // If content is just whitespace, add to elements directly (also Oracle doesn't support passing ' ' as param).
+                if (preg_match('/^\s+$/', $chunk)) {
+                    $elements[] = "'$chunk'";
+                } else {
+                    $elementparam = "uf{$unique}fp_{$index}";
+                    $elements[] = ":{$elementparam}";
+                    $params[$elementparam] = $chunk;
+                }
+            }
+        }
+
+        return [$DB->sql_concat(...$elements), $params];
     }
 
     /**
