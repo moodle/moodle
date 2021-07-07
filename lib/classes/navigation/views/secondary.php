@@ -89,13 +89,13 @@ class secondary extends view {
         return [
             self::TYPE_SETTING => [
                 'modedit' => 1,
-                'roleoverride' => 3,
-                'rolecheck' => 3.1,
-                'logreport' => 4,
-                "mod_{$this->page->activityname}_useroverrides" => 5, // Overrides are module specific.
-                "mod_{$this->page->activityname}_groupoverrides" => 6,
-                'roleassign' => 7,
-                'filtermanage' => 8,
+                "mod_{$this->page->activityname}_useroverrides" => 3, // Overrides are module specific.
+                "mod_{$this->page->activityname}_groupoverrides" => 4,
+                'roleassign' => 5,
+                'filtermanage' => 6,
+                'roleoverride' => 7,
+                'rolecheck' => 7.1,
+                'logreport' => 8,
                 'backup' => 9,
                 'restore' => 10,
                 'competencybreakdown' => 11,
