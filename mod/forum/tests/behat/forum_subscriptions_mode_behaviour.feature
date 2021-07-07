@@ -26,10 +26,9 @@ Feature: Changes to the subscription mode of a forum can change subcribers of a 
     And I log in as "teacher"
     And I am on "Course 1" course homepage
 
-  @javascript
   Scenario: A change from Forced subscription to Auto subcription causes all participants to be subscribed
     Given I follow "Test forum name"
-    And I navigate to "Auto subscription" in current page administration
+    And I navigate to "Subscription mode > Auto subscription" in current page administration
     When I navigate to "Show/edit current subscribers" in current page administration
     Then I should not see "There are no subscribers yet for this forum"
     And I should see "Student 1"
