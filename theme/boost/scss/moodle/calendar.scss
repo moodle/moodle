@@ -300,6 +300,16 @@ $calendarEventColor: #0d5ca1 !default;
         }
 
     }
+
+    table#subscription_details_table {
+        td {
+            vertical-align: middle;
+
+            > .btn-group button {
+                padding-left: 0;
+            }
+        }
+    }
 }
 
 // Calendar export.

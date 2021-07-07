@@ -22,6 +22,8 @@
  * @package calendar
  */
 
+use core\notification;
+
 require_once('../config.php');
 require_once($CFG->libdir.'/bennu/bennu.inc.php');
 require_once($CFG->dirroot.'/course/lib.php');
@@ -69,6 +71,7 @@ if (!empty($subscriptionid)) {
     if (calendar_can_edit_subscription($subscriptionid)) {
         try {
             $importresults = calendar_process_subscription_row($subscriptionid, $pollinterval, $action);
+            notification::add($importresults, \core\output\notification::NOTIFY_INFO);
         } catch (moodle_exception $e) {
             // If exception caught, then user should be redirected to page where he/she came from.
             print_error($e->errorcode, $e->module, $PAGE->url);
@@ -153,6 +156,7 @@ $PAGE->set_heading($course->fullname);
 $renderer = $PAGE->get_renderer('core_calendar');
 
 echo $OUTPUT->header();
+echo $renderer->render_subscriptions_header();
 
 // Filter subscriptions which user can't edit.
 foreach($subscriptions as $subscription) {
@@ -162,5 +166,9 @@ foreach($subscriptions as $subscription) {
 }
 
 // Display a table of subscriptions.
-echo $renderer->subscription_details($courseid, $subscriptions, $importresults);
+if (empty($subscription)) {
+    echo $renderer->render_no_calendar_subscriptions();
+} else {
+    echo $renderer->subscription_details($courseid, $subscriptions);
+}
 echo $OUTPUT->footer();

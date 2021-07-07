@@ -3101,6 +3101,7 @@ function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid
         }
     }
 
+    $return .= html_writer::start_tag('ul');
     $existing = $DB->get_field('event_subscriptions', 'lastupdated', ['id' => $subscriptionid]);
     if (!empty($existing)) {
         $eventsuuids = $DB->get_records_menu('event', ['subscriptionid' => $subscriptionid], '', 'id, uuid');
@@ -3115,14 +3116,15 @@ function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid
             }
             if (!empty($tobedeleted)) {
                 $DB->delete_records_list('event', 'id', $tobedeleted);
-                $return .= "<p> " . get_string('eventsdeleted', 'calendar') . ": " . count($tobedeleted) . "</p> ";
+                $return .= html_writer::tag('li', get_string('eventsdeleted', 'calendar', count($tobedeleted)));
             }
         }
     }
 
-    $return .= "<p>" . get_string('eventsimported', 'calendar', $eventcount) . "</p> ";
-    $return .= "<p>" . get_string('eventsskipped', 'calendar', $skippedcount) . "</p> ";
-    $return .= "<p>" . get_string('eventsupdated', 'calendar', $updatecount) . "</p>";
+    $return .= html_writer::tag('li', get_string('eventsimported', 'calendar', $eventcount));
+    $return .= html_writer::tag('li', get_string('eventsskipped', 'calendar', $skippedcount));
+    $return .= html_writer::tag('li', get_string('eventsupdated', 'calendar', $updatecount));
+    $return .= html_writer::end_tag('ul');
     return $return;
 }
 
@@ -3930,4 +3932,23 @@ function calendar_get_export_token(stdClass $user): string {
     global $CFG, $DB;
 
     return sha1($user->id . $DB->get_field('user', 'password', ['id' => $user->id]) . $CFG->calendar_exportsalt);
+}
+
+/**
+ * Get the list of URL parameters for calendar expport and import links.
+ *
+ * @return array
+ */
+function calendar_get_export_import_link_params(): array {
+    global $PAGE;
+
+    $params = [];
+    if ($courseid = $PAGE->url->get_param('course')) {
+        $params['course'] = $courseid;
+    }
+    if ($categoryid = $PAGE->url->get_param('category')) {
+        $params['category'] = $categoryid;
+    }
+
+    return $params;
 }

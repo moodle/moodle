@@ -242,9 +242,9 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $sub = calendar_get_subscription($id);
         $output = calendar_import_icalendar_events($ical, null, $sub->id);
         $this->assertStringNotContainsString('Events deleted: 17', $output);
-        $this->assertStringContainsString('Events imported: 1', $output);
-        $this->assertStringContainsString('Events skipped: 0', $output);
-        $this->assertStringContainsString('Events updated: 0', $output);
+        $this->assertStringContainsString('1 events were imported', $output);
+        $this->assertStringContainsString('0 events were skipped', $output);
+        $this->assertStringContainsString('0 events were updated', $output);
     }
 
     /**

@@ -19,13 +19,14 @@ Feature: Import and edit calendar events
     Given I log in as "teacher1"
     And I view the calendar for "1" "2016"
     And I click on "Manage subscriptions" "link"
+    And I press "Import calendar"
     And I set the following fields to these values:
       | Calendar name  | Test Import |
       | Import from    | Calendar file (.ics) |
       | Type of event  | User |
     And I upload "calendar/tests/fixtures/import.ics" file to "Calendar file (.ics)" filemanager
-    And I press "Add"
-    And I should see "Events imported: 2"
+    And I press "Import calendar"
+    And I should see "2 events were imported"
     And I view the calendar for "2" "2017"
     And I should see "February 2017"
     And I should see "Event on 2-15-2017"
@@ -52,25 +53,28 @@ Feature: Import and edit calendar events
     Given I log in as "admin"
     And I view the calendar for "1" "2016"
     And I click on "Manage subscriptions" "link"
+    And I press "Import calendar"
     And I set the following fields to these values:
       | Calendar name  | Test Import |
       | Import from    | Calendar file (.ics) |
       | Type of event  | User |
     And I upload "calendar/tests/fixtures/import.ics" file to "Calendar file (.ics)" filemanager
-    And I press "Add"
+    And I press "Import calendar"
     And I should see "User events"
+    And I press "Import calendar"
     And I set the following fields to these values:
       | Calendar name  | Test Import |
       | Import from    | Calendar file (.ics) |
       | Type of event  | Category             |
       | Category       | Miscellaneous   |
     And I upload "calendar/tests/fixtures/import.ics" file to "Calendar file (.ics)" filemanager
-    And I press "Add"
+    And I press "Import calendar"
     And I should see "Category events"
+    And I press "Import calendar"
     And I set the following fields to these values:
       | Calendar name  | Test Import |
       | Import from    | Calendar file (.ics) |
       | Type of event  | Site             |
     And I upload "calendar/tests/fixtures/import.ics" file to "Calendar file (.ics)" filemanager
-    And I press "Add"
+    And I press "Import calendar"
     And I should see "Site events"
