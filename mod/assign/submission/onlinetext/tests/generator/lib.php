@@ -14,10 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once(__DIR__ . '/../../../../tests/generator/assignsubmission_subplugin_generator.php');
+require_once("{$CFG->dirroot}/mod/assign/tests/generator/assignsubmission_subplugin_generator.php");
 
 /**
  * Online Text assignment submission subplugin data generator.
@@ -35,7 +32,7 @@ class assignsubmission_onlinetext_generator extends assignsubmission_subplugin_g
      * Data should be added to the $submission object passed into the function.
      *
      * @param stdClass $submission The submission record to be modified
-     * @param assign $assign The assingment being submitted to
+     * @param assign $assign The assignment being submitted to
      * @param array $data The data received
      */
     public function add_submission_data(stdClass $submission, assign $assign, array $data): void {
