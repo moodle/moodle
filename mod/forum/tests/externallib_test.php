@@ -593,7 +593,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         );
 
         // Test a discussion with two additional posts (total 3 posts).
-        $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'DESC');
+        $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'DESC', true);
         $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
         $this->assertEquals(3, count($posts['posts']));
 
@@ -731,6 +731,81 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 $this->assertNotEquals($deletedmessage, $post['message']);
             }
         }
+    }
+
+    /**
+     * Test get forum posts returns inline attachments.
+     */
+    public function test_mod_forum_get_discussion_posts_inline_attachments() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create a course and enrol some users in it.
+        $course = self::getDataGenerator()->create_course();
+
+        // Create users.
+        $user = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+
+        // Set the first created user to the test user.
+        self::setUser($user);
+
+        // Create test data.
+        $forum = self::getDataGenerator()->create_module('forum', (object) [
+            'course' => $course->id,
+        ]);
+
+        // Create a file in a draft area for inline attachments.
+        $draftidinlineattach = file_get_unused_draft_itemid();
+        $draftidattach = file_get_unused_draft_itemid();
+        self::setUser($user);
+        $usercontext = context_user::instance($user->id);
+        $filepath = '/';
+        $filearea = 'draft';
+        $component = 'user';
+        $filenameimg = 'fakeimage.png';
+        $filerecordinline = [
+            'contextid' => $usercontext->id,
+            'component' => $component,
+            'filearea'  => $filearea,
+            'itemid'    => $draftidinlineattach,
+            'filepath'  => $filepath,
+            'filename'  => $filenameimg,
+        ];
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
+        // Create discussion.
+        $dummytext = 'Here is an inline image: <img src="' . $CFG->wwwroot .
+            "/draftfile.php/{$usercontext->id}/user/draft/{$draftidinlineattach}/{$filenameimg}" .
+            '" alt="inlineimage">.';
+        $options = [
+            [
+                'name' => 'inlineattachmentsid',
+                'value' => $draftidinlineattach
+            ],
+            [
+                'name' => 'attachmentsid',
+                'value' => $draftidattach
+            ]
+        ];
+        $discussion = mod_forum_external::add_discussion($forum->id, 'the inline attachment subject', $dummytext,
+            -1, $options);
+
+        $posts = mod_forum_external::get_discussion_posts($discussion['discussionid'], 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $post = $posts['posts'][0];
+        $this->assertCount(0, $post['messageinlinefiles']);
+        $this->assertEmpty($post['messageinlinefiles']);
+
+        $posts = mod_forum_external::get_discussion_posts($discussion['discussionid'], 'modified', 'DESC',
+            true);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $post = $posts['posts'][0];
+        $this->assertCount(1, $post['messageinlinefiles']);
+        $this->assertEquals('fakeimage.png', $post['messageinlinefiles'][0]['filename']);
     }
 
     /**
@@ -2574,9 +2649,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                         'wordcount' => null,
                         'author' => $exporteduser2,
                         'attachments' => [],
-                        'messageinlinefiles' => [
-                            0 => $this->get_expected_attachment($file1),
-                        ],
+                        'messageinlinefiles' => [],
                         'tags' => [],
                         'html' => [
                             'rating' => null,
@@ -2719,9 +2792,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                         'wordcount' => null,
                         'author' => $exporteduser2,
                         'attachments' => [],
-                        'messageinlinefiles' => [
-                            0 => $this->get_expected_attachment($file2),
-                        ],
+                        'messageinlinefiles' => [],
                         'tags' => [],
                         'html' => [
                             'rating' => null,
@@ -3139,7 +3210,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse(\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussion->id, $cm));
 
         // Get the post from WS.
-        $result = mod_forum_external::get_discussion_posts($discussion->id, 'modified', 'DESC');
+        $result = mod_forum_external::get_discussion_posts($discussion->id, 'modified', 'DESC', true);
         $result = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $result);
         $found = false;
         foreach ($result['posts'] as $post) {
