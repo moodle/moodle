@@ -17,7 +17,6 @@
  * Interface to the Lunr search engines.
  *
  * @module     tool_componentlibrary/search
- * @package    tool_componentlibrary
  * @copyright  2021 Bas Brands <bas@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,8 +33,10 @@ let pagesIndex = null;
 /**
  * Get the jsonFile that is generated when the component library is build.
  *
+ * @method
+ * @private
  * @param {String} jsonFile the URL to the json file.
- * @retrun {Object}
+ * @return {Object}
  */
 const fetchJson = async(jsonFile) => {
     const response = await fetch(jsonFile);
@@ -50,6 +51,8 @@ const fetchJson = async(jsonFile) => {
 /**
  * Initiate lunr on the data in the jsonFile and add the jsondata to the pagesIndex
  *
+ * @method
+ * @private
  * @param {String} jsonFile the URL to the json file.
  */
 const initLunr = jsonFile => {
@@ -71,6 +74,9 @@ const initLunr = jsonFile => {
 
 /**
  * Setup the eventlistener to listen on user input on the search field.
+ *
+ * @method
+ * @private
  */
 const initUI = () => {
     const searchInput = document.querySelector(selectors.searchinput);
@@ -95,6 +101,8 @@ const initUI = () => {
 /**
  * Trigger a search in lunr and transform the result.
  *
+ * @method
+ * @private
  * @param  {String} query
  * @return {Array} results
  */
@@ -115,6 +123,8 @@ const searchIndex = query => {
 /**
  * Display the 10 first results
  *
+ * @method
+ * @private
  * @param {Array} results to display
  */
 const renderResults = results => {
@@ -146,6 +156,7 @@ const renderResults = results => {
 /**
  * Initialize module.
  *
+ * @method
  * @param {String} jsonFile Full path to the search DB json file.
  */
 export const search = jsonFile => {

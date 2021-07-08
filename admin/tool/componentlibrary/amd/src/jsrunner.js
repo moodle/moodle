@@ -14,10 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This is called from to run any js code
+ * Run the JS required for example code to work in the library.
  *
  * @module     tool_componentlibrary/jsrunner
- * @package    tool_componentlibrary
  * @copyright  2021 Bas Brands <bas@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,6 +28,8 @@ import selectors from 'tool_componentlibrary/selectors';
  * the Moodle mustache {{js}} code... {{/js}} syntax into a div with
  * attribute data-action='runjs'. See hugo/site/layouts/shortcodes/example.html.
  * This code fetches and runs the JavaScript content.
+ *
+ * @method
  */
 export const jsRunner = () => {
     const compLib = document.querySelector(selectors.componentlibrary);

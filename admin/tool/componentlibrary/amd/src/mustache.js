@@ -14,10 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This is called from to render mustache templates
+ * Render mustache template examples within the component library.
  *
  * @module     tool_componentlibrary/mustache
- * @package    tool_componentlibrary
  * @copyright  2021 Bas Brands <bas@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,6 +31,8 @@ import Notification from 'core/notification';
 /**
  * Handle a template loaded response.
  *
+ * @method
+ * @private
  * @param {String} container The template container
  * @param {String} templateName The template name
  * @param {String} context Data for the template.
@@ -55,6 +56,8 @@ const renderTemplate = async(container, templateName, context) => {
 /**
  * Load the a template source from Moodle.
  *
+ * @method
+ * @private
  * @param {String} container The template container
  */
 const loadTemplate = container => {
@@ -96,8 +99,9 @@ const loadTemplate = container => {
 };
 
 /**
- * Initialize module
+ * Initialize the module.
  *
+ * @method
  */
 export const mustache = () => {
     document.querySelectorAll(selectors.mustachecode).forEach((container) => {
