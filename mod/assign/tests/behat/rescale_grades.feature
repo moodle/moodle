@@ -21,12 +21,13 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And the following "groups" exist:
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-    And I follow "Test assignment name"
+    And the following "activity" exists:
+      | activity         | assign                      |
+      | course           | C1                          |
+      | name             | Test assignment name        |
+      | submissiondrafts | 0                           |
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "40"

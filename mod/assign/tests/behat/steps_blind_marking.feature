@@ -17,32 +17,23 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    # Add the assignment.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | Online text | 1 |
-      | File submissions | 0 |
-      | Use marking workflow | Yes |
-      | Anonymous submissions | Yes |
-    And I log out
-    # Add a submission.
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test assignment name"
-    Then I should not see "Feedback"
-    And I should see "Not marked" in the "Grading status" "table_row"
-    And I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm the student's first submission |
-    And I press "Save changes"
-    And I log out
+    And the following "activity" exists:
+      | activity                            | assign                      |
+      | course                              | C1                          |
+      | name                                | Test assignment name        |
+      | submissiondrafts                    | 0                           |
+      | assignsubmission_onlinetext_enabled | 1                           |
+      | assignsubmission_file_enabled       | 0                           |
+      | assignfeedback_comments_enabled     | 1                           |
+      | teamsubmission                      | 1                           |
+      | markingworkflow                     | 1                           |
+      | blindmarking                        | 1                           |
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                          |
+      | Test assignment name  | student1  | I'm the student's first submission  |
+
     # Mark the submission.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I should see "Not marked" in the "I'm the student's first submission" "table_row"
     And I click on "Grade" "link" in the "I'm the student's first submission" "table_row"
@@ -79,8 +70,8 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I set the field "Grading action" to "Reveal student identities"
     And I press "Continue"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+
+    And I am on the "C1" Course page logged in as student1
     And I navigate to "User report" in the course gradebook
     Then I should see "50"
     And I should see "Great job! Lol, not really."
@@ -107,8 +98,8 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I navigate to "View all submissions" in current page administration
     And I should see "Released" in the "Student 1" "table_row"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+
+    And I am on the "C1" Course page logged in as student1
     And I navigate to "User report" in the course gradebook
     Then I should see "50"
     And I should see "Great job! Lol, not really."
