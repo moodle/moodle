@@ -91,7 +91,7 @@ if ($hassiteconfig) {
 if ($showsettingslinks) {
     $node = $PAGE->settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN);
     if ($node) {
-        $secondarynavigation = $OUTPUT->more_menu($PAGE->secondarynav, 'nav-tabs');
+        $secondarynavigation = $OUTPUT->more_menu($PAGE->secondarynav, 'nav-tabs', true);
         echo $OUTPUT->render_from_template('core/settings_link_page',
             ['node' => $node, 'secondarynavigation' => $secondarynavigation]);
     }

@@ -48,13 +48,13 @@
     </li>
 {{/haschildren}}
 {{^haschildren}}
-    <li class="nav-item" role="menuitem" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
+    <li class="nav-item" role="{{#tab}}tab{{/tab}}{{^tab}}menuitem{{/tab}}" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
         {{#tab}}
-            <a class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{tab}}" role="tab" data-toggle="tab" aria-selected="false" tabindex="-1">{{{text}}}
+            <a class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{tab}}" data-toggle="tab" aria-selected="false" tabindex="-1">{{{text}}}
             </a>
         {{/tab}}
         {{^tab}}
-        <a class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{{url}}}{{{action}}}" role="menuitem" {{#isactive}}aria-current="true"{{/isactive}}>
+        <a class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}}>
             {{{text}}}
         </a>
         {{/tab}}

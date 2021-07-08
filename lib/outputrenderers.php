@@ -3813,9 +3813,10 @@ EOD;
      *
      * @param array $content
      * @param string $navbarstyle navbar-nav or nav-tabs
+     * @param boolean $hastabs
      * @return string
      */
-    public function more_menu($content, $navbarstyle) {
+    public function more_menu($content, $navbarstyle, $hastabs = false) {
         $tabs = ($navbarstyle == 'nav-tabs');
         if (is_object($content)) {
             if (!isset($content->children) || count($content->children) == 0) {
@@ -3824,13 +3825,13 @@ EOD;
             return $this->render_from_template('core/moremenu', (object) [
                 'nodecollection' => $content,
                 'navbarstyle' => $navbarstyle,
-                'tabs' => $tabs
+                'tabs' => $hastabs
             ]);
         } else {
             return $this->render_from_template('core/moremenu', (object) [
                 'nodearray' => $content,
                 'navbarstyle' => $navbarstyle,
-                'tabs' => $tabs
+                'tabs' => $hastabs
             ]);
         }
     }
