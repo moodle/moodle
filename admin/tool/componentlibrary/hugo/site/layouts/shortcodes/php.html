@@ -1,0 +1,7 @@
+{{- /*
+  Usage: `php`
+*/ -}}
+
+{{- $input := delimit (slice "<?php" .Inner "?>") " " -}}
+
+{{- highlight (trim $input "\n") "php" "" -}}

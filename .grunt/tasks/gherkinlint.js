@@ -85,5 +85,8 @@ module.exports = grunt => {
         },
     });
 
+    // Add the 'gherkinlint' task as a startup task.
+    grunt.moodleEnv.startupTasks.push('gherkinlint');
+
     return handler;
 };

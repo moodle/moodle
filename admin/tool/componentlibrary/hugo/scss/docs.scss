@@ -1,0 +1,33 @@
+/*!
+ * Bootstrap Docs (https://getbootstrap.com/)
+ * Copyright 2011-2020 The Bootstrap Authors
+ * Copyright 2011-2020 Twitter, Inc.
+ * Licensed under the Creative Commons Attribution 3.0 Unported License.
+ * For details, see https://creativecommons.org/licenses/by/3.0/.
+ */
+
+// Load Bootstrap variables and mixins
+
+@import "theme/boost/scss/bootstrap/functions";
+@import "theme/boost/scss/bootstrap/variables";
+@import "theme/boost/scss/bootstrap/mixins";
+
+// Load docs components
+@import "variables";
+@import "content";
+@import "skippy";
+@import "sidebar";
+@import "toc";
+@import "footer";
+@import "component-examples";
+@import "callouts";
+@import "colors";
+@import "clipboard-js";
+@import "placeholder-img";
+
+// Load docs dependencies
+@import "syntax";
+@import "anchor";
+
+// Accessibility
+@import "componentlibrary";
