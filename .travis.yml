@@ -17,7 +17,7 @@ services:
     - docker
 
 addons:
-  postgresql: "9.6"
+  postgresql: "10"
 
 branches:
   except:

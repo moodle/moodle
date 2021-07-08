@@ -78,7 +78,7 @@ jobs:
         if: ${{ matrix.db == 'pgsql' }}
         uses: m4nu56/postgresql-action@v1
         with:
-          postgresql version: 9.6
+          postgresql version: 10
           postgresql db: test
           postgresql user: test
           postgresql password: test
