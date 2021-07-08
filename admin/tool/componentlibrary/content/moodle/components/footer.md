@@ -34,9 +34,9 @@ The page footer is required to inject the page JavaScript, show the reset user t
 {{< example >}}
 <footer id="page-footer" class="py-3 bg-dark text-light">
     <div class="container">
-		<p class="helplink"><a href="#">Moodle docs for this page</a></p>
-		You are logged in as <a href="#">Test User</a> (<a href="#">logout</a>)
-		<a href="#">Home</a>
+        <p class="helplink"><a href="#">Moodle docs for this page</a></p>
+        You are logged in as <a href="#">Test User</a> (<a href="#">logout</a>)
+        <a href="#">Home</a>
         <div class="tool_usertours-resettourcontainer"></div>
     </div>
 </footer>

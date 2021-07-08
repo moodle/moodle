@@ -26,7 +26,7 @@ Rendered result on this page:
 
 {{< highlight html >}}
 <div class="myclass">
-	This is an example.
+  This is an example.
 </div>
 {{< /highlight >}}
 
@@ -42,7 +42,7 @@ Syntax for markdown (.md) files:
 Rendered result on this page:
 
 {{< php >}}
-	$mform->addElement('passwordunmask', 'password', get_string('label'), $attributes);
+  $mform->addElement('passwordunmask', 'password', get_string('label'), $attributes);
 {{< /php >}}
 
 ## Highlight shortcode

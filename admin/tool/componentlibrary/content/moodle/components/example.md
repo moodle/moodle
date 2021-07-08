@@ -18,17 +18,17 @@ Show what the example looks like in Moodle, if your component includes and JavaS
 {{< example >}}
 
 <div class="example w-25 border border-secondary p-3">
-	<button class="btn btn-primary btn-block" id="clickme">
-		Click me
-		<span id="waiting" class="spinner-grow-sm" role="status" aria-hidden="true"></span>
-	</button>
+    <button class="btn btn-primary btn-block" id="clickme">
+        Click me
+        <span id="waiting" class="spinner-grow-sm" role="status" aria-hidden="true"></span>
+    </button>
 </div>
 
 {{#js}}
 require(['jquery'], function($) {
-	$('#clickme').on('click', function() {
-		$('#waiting').toggleClass('spinner-grow');
-	});
+    $('#clickme').on('click', function() {
+        $('#waiting').toggleClass('spinner-grow');
+    });
 });
 {{/js}}
 {{< /example >}}
