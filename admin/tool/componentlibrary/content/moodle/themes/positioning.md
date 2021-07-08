@@ -6,7 +6,7 @@ date: 2020-02-04T09:40:32+01:00
 draft: false
 weight: 3
 ---
-## 
+##
 ## Position an single item at the right
 
 Use the ```.justify-content-end``` class to position on item in a ```.d-flex``` container to the right

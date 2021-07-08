@@ -42,17 +42,17 @@ The output should be similar to this:
 
 ```
 Running "componentlibrary:docsBuild" task
-Building sites … 
-                   | EN   
+Building sites …
+                   | EN
 +------------------+-----+
-  Pages            | 113  
-  Paginator pages  |   0  
-  Non-page files   |  18  
-  Static files     |  18  
-  Processed images |   0  
-  Aliases          |   7  
-  Sitemaps         |   1  
-  Cleaned          |   0  
+  Pages            | 113
+  Paginator pages  |   0
+  Non-page files   |  18
+  Static files     |  18
+  Processed images |   0
+  Aliases          |   7
+  Sitemaps         |   1
+  Cleaned          |   0
 
 Total in 913 ms
 Running "componentlibrary:cssBuild" task

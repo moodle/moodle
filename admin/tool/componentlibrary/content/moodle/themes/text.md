@@ -52,7 +52,7 @@ tip: you can use heading classes to style a native heading tag differently.
 <p class="font-italic">Italic text.</p>
 
 <p class="text-muted">
-  	Muted text with a <a href="#" class="text-reset">reset link</a>.
+    Muted text with a <a href="#" class="text-reset">reset link</a>.
 </p>
 {{< /example >}}
 
