@@ -14,10 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Interface to using clipboard.js
+ * Wrapper to ensure that all Hugo example snippets have a "Copy to clipboard" button.
  *
  * @module     tool_componentlibrary/clipboardwrapper
- * @package    tool_componentlibrary
  * @copyright  2021 Bas Brands <bas@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,6 +28,8 @@ let idCounter = 0;
 
 /**
  * Initialise the clipboard button on all reusable code.
+ *
+ * @method
  */
 export const clipboardWrapper = async() => {
     document.querySelectorAll(selectors.clipboardcontent).forEach(element => {
