@@ -59,5 +59,4 @@ Feature: Block appearances
       | Visible | No |
     And I press "Save changes"
     And I press "Turn editing off"
-    And I follow "Test book name"
     Then I should not see "Comments"

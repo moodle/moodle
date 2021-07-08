@@ -31,6 +31,19 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_theme_boost_behat_navigation extends behat_navigation {
+    /**
+     * Checks whether a node is active in the navbar.
+     *
+     * @override i should see :name is active in navigation
+     *
+     * @throws ElementNotFoundException
+     * @param string      $element The name of the nav elemnent to look for.
+     * @return void
+     */
+    public function i_should_see_is_active_in_navigation($element) {
+        $this->execute("behat_general::assert_element_contains_text",
+            [$element, '.navbar .nav-link.active', 'css_element']);
+    }
 
     /**
      * Checks whether the language selector menu is present in the navbar.

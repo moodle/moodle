@@ -57,7 +57,6 @@ Feature: Saving, using and deleting feedback templates
     And I press "Use this template"
     And I should see "this is a multiple choice 1"
     And I press "Save changes"
-    And I follow "Edit questions"
     And I should see "this is a multiple choice 1"
     # Make sure this template is not available in another course
     And I am on the "Learning experience course 2" "feedback activity" page
@@ -85,7 +84,6 @@ Feature: Saving, using and deleting feedback templates
     And I press "Use this template"
     And I set the field "Append new items" to "1"
     And I press "Save changes"
-    And I follow "Edit questions"
     Then "What is your favourite subject" "text" should appear before "this is a multiple choice 1" "text"
     # Import template replacing items
     And I follow "Templates"
@@ -110,7 +108,6 @@ Feature: Saving, using and deleting feedback templates
     And I press "Use this template"
     Then I should see "this is a multiple choice 1"
     And I press "Save changes"
-    And I follow "Edit questions"
     And I should see "this is a multiple choice 1"
 
   Scenario: Teacher can delete course templates but can not delete public templates

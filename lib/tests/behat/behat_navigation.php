@@ -42,6 +42,20 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 class behat_navigation extends behat_base {
 
     /**
+     * Checks whether a navigation node is active within the block navigation.
+     *
+     * @Given i should see :name is active in navigation
+     *
+     * @throws ElementNotFoundException
+     * @param string      $element The name of the nav elemnent to look for.
+     * @return void
+     */
+    public function i_should_see_is_active_in_navigation($element) {
+        $this->execute("behat_general::assert_element_contains_text",
+            [$element, '.block_navigation .active_tree_node', 'css_element']);
+    }
+
+    /**
      * Helper function to get a navigation nodes text element given its text from within the navigation block.
      *
      * This function finds the node with the given text from within the navigation block.

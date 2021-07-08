@@ -54,6 +54,7 @@ Feature: View activity completion in the quiz activity
     And user "student1" has attempted "Test quiz name" with responses:
       | slot | response |
       |   1  | False    |
+    And I am on "Course 1" course homepage
     And I follow "Test quiz name"
     And the "View" completion condition of "Test quiz name" is displayed as "done"
     And the "Make attempts: 1" completion condition of "Test quiz name" is displayed as "done"
