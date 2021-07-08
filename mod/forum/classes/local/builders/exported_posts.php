@@ -117,13 +117,15 @@ class exported_posts {
      * @param forum_entity[] $forums A list of all forums that each of the $discussions belong to
      * @param discussion_entity[] $discussions A list of all discussions that each of the $posts belong to
      * @param post_entity[] $posts The list of posts to export.
+     * @param bool $includeinlineattachments Whether inline attachments should be included or not.
      * @return stdClass[] List of exported posts in the same order as the $posts array.
      */
     public function build(
         stdClass $user,
         array $forums,
         array $discussions,
-        array $posts
+        array $posts,
+        bool $includeinlineattachments = false
     ) : array {
         // Format the forums and discussion to make them more easily accessed later.
         $forums = array_reduce($forums, function($carry, $forum) {
@@ -142,7 +144,10 @@ class exported_posts {
         $authorsbyid = $this->get_authors_for_posts($posts);
         $authorcontextids = $this->get_author_context_ids(array_keys($authorsbyid));
         $attachmentsbypostid = $this->get_attachments_for_posts($groupedposts);
-        $inlineattachments = $this->get_inline_attachments_for_posts($groupedposts);
+        $inlineattachments = [];
+        if ($includeinlineattachments) {
+            $inlineattachments = $this->get_inline_attachments_for_posts($groupedposts);
+        }
         $groupsbycourseandauthorid = $this->get_author_groups_from_posts($groupedposts);
         $tagsbypostid = $this->get_tags_from_posts($posts);
         $ratingbypostid = $this->get_ratings_from_posts($user, $groupedposts);

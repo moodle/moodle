@@ -274,6 +274,7 @@ class post extends exporter {
                 'type' => $attachmentdefinition
             ],
             'messageinlinefiles' => [
+                'optional' => true,
                 'multiple' => true,
                 'type' => stored_file_exporter::read_properties_definition(),
             ],

@@ -170,9 +170,10 @@ class mod_forum_external extends external_api {
      * @param   int $discussionid
      * @param   string $sortby
      * @param   string $sortdirection
+     * @param   bool $includeinlineattachments Whether inline attachments should be included or not.
      * @return  array
      */
-    public static function get_discussion_posts(int $discussionid, ?string $sortby, ?string $sortdirection) {
+    public static function get_discussion_posts(int $discussionid, ?string $sortby, ?string $sortdirection, bool $includeinlineattachments = false) {
         global $USER;
         // Validate the parameter.
         $params = self::validate_parameters(self::get_discussion_posts_parameters(), [
@@ -225,7 +226,7 @@ class mod_forum_external extends external_api {
         $legacydatamapper = mod_forum\local\container::get_legacy_data_mapper_factory();
 
         return [
-            'posts' => $postbuilder->build($USER, [$forum], [$discussion], $posts),
+            'posts' => $postbuilder->build($USER, [$forum], [$discussion], $posts, $includeinlineattachments),
             'forumid' => $discussion->get_forum_id(),
             'courseid' => $discussion->get_course_id(),
             'ratinginfo' => \core_rating\external\util::get_rating_info(
@@ -248,7 +249,9 @@ class mod_forum_external extends external_api {
         return new external_function_parameters ([
             'discussionid' => new external_value(PARAM_INT, 'The ID of the discussion from which to fetch posts.', VALUE_REQUIRED),
             'sortby' => new external_value(PARAM_ALPHA, 'Sort by this element: id, created or modified', VALUE_DEFAULT, 'created'),
-            'sortdirection' => new external_value(PARAM_ALPHA, 'Sort direction: ASC or DESC', VALUE_DEFAULT, 'DESC')
+            'sortdirection' => new external_value(PARAM_ALPHA, 'Sort direction: ASC or DESC', VALUE_DEFAULT, 'DESC'),
+            'includeinlineattachments' => new external_value(PARAM_BOOL, 'Whether inline attachments should be included or not', VALUE_DEFAULT,
+                false),
         ]);
     }
 
