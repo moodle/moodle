@@ -9,35 +9,29 @@ Feature: In an assignment, students start a new attempt based on their previous 
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
+    And the following "activity" exists:
+      | activity                            | assign                  |
+      | course                              | C1                      |
+      | name                                | Test assignment name    |
+      | intro                               | Submit your online text |
+      | assignsubmission_onlinetext_enabled | 1                       |
+      | assignsubmission_file_enabled       | 0                       |
+      | attemptreopenmethod                 | manual                  |
+      | hidegrader                          | 1                       |
+      | submissiondrafts                    | 0                       |
     And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
-      | student1 | Student | 1 | student1@example.com |
+      | username  | firstname  | lastname  | email                 |
+      | teacher1  | Teacher    | 1         | teacher1@example.com  |
+      | student1  | Student    | 1         | student1@example.com  |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | assignsubmission_file_enabled | 0 |
-      | Additional attempts | Manually |
-      | Hide grader identity from students | Yes |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    When I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm the student first submission |
-    And I press "Save changes"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+      | user      | course  | role            |
+      | teacher1  | C1      | editingteacher  |
+      | student1  | C1      | student         |
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                       |
+      | Test assignment name  | student1  | I'm the student first submission |
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
@@ -45,16 +39,14 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I press "Save changes"
     And I click on "Edit settings" "link"
     And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I should not see "Teacher 1"
+
+    When I am on the "Test assignment name" Activity page logged in as student1
+    Then I should not see "Teacher 1"
     And I press "Add a new attempt based on previous submission"
     And I press "Save changes"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I should see "I'm the student first submission"
@@ -88,29 +80,24 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | student2 | G1 |
       | student3 | G2 |
       | student4 | G2 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | assignsubmission_file_enabled | 0 |
-      | Students submit in groups | Yes |
-      | Additional attempts | Manually |
-      | Maximum attempts | 3 |
-      | Group mode | Separate groups |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm the student's first submission |
-    And I press "Save changes"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And the following "activity" exists:
+      | activity                             | assign                |
+      | course                               | C1                    |
+      | name                                 | Test assignment name  |
+      | assignsubmission_onlinetext_enabled  | 1                     |
+      | assignsubmission_file_enabled        | 0                     |
+      | attemptreopenmethod                  | manual                |
+      | submissiondrafts                     | 0                     |
+      | groupmode                            | 1                     |
+      | teamsubmission                       | 1                     |
+      | hidegrader                           | 1                     |
+      | maxattempts                          | 3                     |
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                        |
+      | Test assignment name  | student1  | I'm the student first submission  |
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "View all submissions" in current page administration
     Then "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 2" row "Status" column of "generaltable" table should contain "Submitted for grading"
@@ -128,18 +115,15 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I click on "Go" "button" confirming the dialogue
     And I should not see "The grades were not saved because someone has modified one or more records more recently than when you loaded the page."
     And I log out
-    And I log in as "student3"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student3
     And I should see "This is attempt 1 ( 3 attempts allowed )."
     And I press "Add submission"
     And I set the following fields to these values:
       | Online text | I'm the student's 3 group 2 first attempt |
     And I press "Save changes"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And "Student 1" row "Status" column of "generaltable" table should contain "Reopened"
     And "Student 2" row "Status" column of "generaltable" table should contain "Reopened"
@@ -151,18 +135,16 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I press "Save changes"
     And I follow "Assignment: Test assignment name"
     And I log out
-    And I log in as "student4"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as student4
     And I should see "This is attempt 2 ( 3 attempts allowed )."
     And I press "Add a new attempt"
     And I set the following fields to these values:
       | Online text | I'm the student's 4 group 2 second attempt |
     And I press "Save changes"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I select "Group 2" from the "group" singleselect
     And I click on "Grade" "link" in the ".submissionlinks" "css_element"
     And I should see "2" in the "#id_attemptsettings" "css_element"

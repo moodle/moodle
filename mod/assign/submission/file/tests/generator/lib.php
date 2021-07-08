@@ -32,7 +32,7 @@ class assignsubmission_file_generator extends assignsubmission_subplugin_generat
      * Data should be added to the $submission object passed into the function.
      *
      * @param stdClass $submission The submission record to be modified
-     * @param assign $assign The assingment being submitted to
+     * @param assign $assign The assignment being submitted to
      * @param array $data The data received
      */
     public function add_submission_data(stdClass $submission, assign $assign, array $data): void {

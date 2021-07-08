@@ -81,11 +81,11 @@ Feature: Outcome grading
     And the following "groups" exist:
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
+    And the following "group members" exist:
+      | user     | group |
+      | student0 | G1    |
+      | student1 | G1    |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
-    And I add "Student 0 (student0@example.com)" user to "Group 1" group members
-    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |

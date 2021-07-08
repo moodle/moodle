@@ -19,11 +19,9 @@ Feature: Check that any changes to assignment feedback comments are not lost
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     And the following "activities" exist:
-      | activity | name                 | course | idnumber | assignfeedback_comments_enabled |
-      | assign   | Test assignment name | C1     | ASSIGN01 | 1                               |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+      | activity | name                 | course | assignfeedback_comments_enabled |
+      | assign   | Test assignment name | C1     | 1                               |
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     When I set the following fields to these values:
