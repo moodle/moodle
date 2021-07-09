@@ -24,6 +24,7 @@ Feature: Content-Item support
     And I expand all fieldsets
     And I set the field "Supports Deep Linking (Content-Item Message)" to "1"
     And I press "Save changes"
+    And I should see "Teaching Tool 1"
     And I log out
 
   @javascript
@@ -58,6 +59,7 @@ Feature: Content-Item support
     And I set the field "Tool configuration usage" to "Show in activity chooser and as a preconfigured tool"
     And I expand all fieldsets
     And I press "Save changes"
+    And I should see "Teaching Tool 2"
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
