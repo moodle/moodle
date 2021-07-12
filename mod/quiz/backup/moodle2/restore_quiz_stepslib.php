@@ -467,6 +467,12 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $data->timecheckstate = 0;
         }
 
+        if (!isset($data->gradednotificationsenttime)) {
+            // For attempts restored from old Moodle sites before this field
+            // existed, we never want to send emails.
+            $data->gradednotificationsenttime = $data->timefinish;
+        }
+
         // Deals with up-grading pre-2.3 back-ups to 2.3+.
         if (!isset($data->state)) {
             if ($data->timefinish > 0) {

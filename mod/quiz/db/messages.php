@@ -46,4 +46,11 @@ $messageproviders = array(
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
         ),
     ),
+
+    'attempt_grading_complete' => [
+        'capability' => 'mod/quiz:emailnotifyattemptgraded',
+        'defaults' => [
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+        ],
+    ],
 );

@@ -102,6 +102,23 @@ function xmldb_quiz_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2021052503, 'quiz');
     }
+    
+    if ($oldversion < 2021101900) {
+
+        // Define field gradednotificationsenttime to be added to quiz_attempts.
+        $table = new xmldb_table('quiz_attempts');
+        $field = new xmldb_field('gradednotificationsenttime', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'sumgrades');
+
+        // Conditionally launch add field gradednotificationsenttime.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            $DB->execute('UPDATE {quiz_attempts} SET gradednotificationsenttime = timefinish');
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2021101900, 'quiz');
+    }
 
     return true;
 }

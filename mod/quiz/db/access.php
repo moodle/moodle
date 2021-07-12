@@ -192,5 +192,12 @@ $capabilities = [
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => []
     ],
+
+    // Receive a notification message when a quiz attempt manual graded.
+    'mod/quiz:emailnotifyattemptgraded' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => []
+    ],
 ];
 

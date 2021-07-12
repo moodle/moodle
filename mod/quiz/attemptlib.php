@@ -1008,6 +1008,15 @@ class quiz_attempt {
     }
 
     /**
+     * Do any questions in this attempt need to be graded manually?
+     *
+     * @return bool True if we have at least one question still needs manual grading.
+     */
+    public function requires_manual_grading(): bool {
+        return $this->quba->get_total_mark() === null;
+    }
+
+    /**
      * Get extra summary information about this attempt.
      *
      * Some behaviours may be able to provide interesting summary information
@@ -2202,6 +2211,14 @@ class quiz_attempt {
         $this->attempt->sumgrades = $this->quba->get_total_mark();
         $this->attempt->state = self::FINISHED;
         $this->attempt->timecheckstate = null;
+        $this->attempt->gradednotificationsenttime = null;
+
+        if (!$this->requires_manual_grading() ||
+                !has_capability('mod/quiz:emailnotifyattemptgraded', $this->get_quizobj()->get_context(),
+                        $this->get_userid())) {
+            $this->attempt->gradednotificationsenttime = $this->attempt->timefinish;
+        }
+
         $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview()) {
@@ -2652,6 +2669,25 @@ class quiz_attempt {
     }
 
     /**
+     * Trigger the attempt manual grading completed event.
+     */
+    public function fire_attempt_manual_grading_completed_event() {
+        $params = [
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => [
+                'quizid' => $this->get_quizid()
+            ]
+        ];
+
+        $event = \mod_quiz\event\attempt_manual_grading_completed::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
      * Update the timemodifiedoffline attempt field.
      *
      * This function should be used only when web services are being used.
@@ -2668,7 +2704,6 @@ class quiz_attempt {
         }
         return false;
     }
-
 }
 
 
