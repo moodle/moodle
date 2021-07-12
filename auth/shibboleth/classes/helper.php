@@ -93,13 +93,12 @@ class helper {
 
         foreach ($sessions as $session) {
             // Get user session from DB.
-            if (session_decode(base64_decode($session->sessdata))) {
-                if (isset($_SESSION['SESSION']) && isset($_SESSION['SESSION']->shibboleth_session_id)) {
-                    // If there is a match, kill the session.
-                    if ($_SESSION['SESSION']->shibboleth_session_id == trim($spsessionid)) {
-                        // Delete this user's sessions.
-                        \core\session\manager::kill_user_sessions($session->userid);
-                    }
+            $usersession = self::unserializesession(base64_decode($session->sessdata));
+            if (isset($usersession['SESSION']) && isset($usersession['SESSION']->shibboleth_session_id)) {
+                // If there is a match, kill the session.
+                if ($usersession['SESSION']->shibboleth_session_id == trim($spsessionid)) {
+                    // Delete this user's sessions.
+                    \core\session\manager::kill_user_sessions($session->userid);
                 }
             }
         }
