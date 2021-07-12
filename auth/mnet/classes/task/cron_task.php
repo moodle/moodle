@@ -42,11 +42,6 @@ class cron_task extends \core\task\scheduled_task {
         require_once($CFG->dirroot . '/auth/mnet/auth.php');
         $mnetplugin = new \auth_plugin_mnet();
         $mnetplugin->keepalive_client();
-
-        $random100 = rand(0,100);
-        if ($random100 < 10) {
-            $longtime = time() - DAYSECS;
-            $DB->delete_records_select('mnet_session', "expires < ?", [$longtime]);
-        }
+        $DB->delete_records_select('mnet_session', "expires < ?", [time() - DAYSECS]);
     }
 }
