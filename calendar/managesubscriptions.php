@@ -22,8 +22,6 @@
  * @package calendar
  */
 
-use core\notification;
-
 require_once('../config.php');
 require_once($CFG->libdir.'/bennu/bennu.inc.php');
 require_once($CFG->dirroot.'/course/lib.php');
@@ -63,15 +61,13 @@ if (!calendar_user_can_add_event($course)) {
     print_error('errorcannotimport', 'calendar');
 }
 
-$importresults = '';
-
 if (!empty($subscriptionid)) {
     // The user is wanting to perform an action upon an existing subscription.
     require_sesskey(); // Must have sesskey for all actions.
     if (calendar_can_edit_subscription($subscriptionid)) {
         try {
             $importresults = calendar_process_subscription_row($subscriptionid, $pollinterval, $action);
-            notification::add($importresults, \core\output\notification::NOTIFY_INFO);
+            redirect($PAGE->url, $importresults);
         } catch (moodle_exception $e) {
             // If exception caught, then user should be redirected to page where he/she came from.
             print_error($e->errorcode, $e->module, $PAGE->url);
