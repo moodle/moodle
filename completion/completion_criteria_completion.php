@@ -102,6 +102,7 @@ class completion_criteria_completion extends data_object {
      * Mark this criteria complete for the associated user
      *
      * This method creates a course_completion_crit_compl record
+     * @return  int id of completion record.
      */
     public function mark_complete() {
         // Create record
@@ -120,7 +121,8 @@ class completion_criteria_completion extends data_object {
             'userid'    => $this->userid
         );
         $ccompletion = new completion_completion($cc);
-        $ccompletion->mark_inprogress($this->timecompleted);
+        $result = $ccompletion->mark_inprogress($this->timecompleted);
+        return $result;
     }
 
     /**

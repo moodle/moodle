@@ -174,7 +174,8 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
         }
 
         // Only update grades if there are no errors.
-        $gradeitem->update_final_grade($userid, $finalgrade, 'singleview', $feedback, FORMAT_MOODLE);
+        $gradeitem->update_final_grade($userid, $finalgrade, 'singleview', $feedback, FORMAT_MOODLE,
+            null, null, true);
         return '';
     }
 }

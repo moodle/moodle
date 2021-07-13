@@ -58,9 +58,11 @@ require_once($CFG->libdir . '/grade/grade_outcome.php');
  * @param int    $itemnumber Most probably 0. Modules can use other numbers when having more than one grade for each user
  * @param mixed  $grades Grade (object, array) or several grades (arrays of arrays or objects), NULL if updating grade_item definition only
  * @param mixed  $itemdetails Object or array describing the grading item, NULL if no change
+ * @param bool   $isbulkupdate If bulk grade update is happening.
  * @return int Returns GRADE_UPDATE_OK, GRADE_UPDATE_FAILED, GRADE_UPDATE_MULTIPLE or GRADE_UPDATE_ITEM_LOCKED
  */
-function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades=NULL, $itemdetails=NULL) {
+function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades = null,
+        $itemdetails = null, $isbulkupdate = false) {
     global $USER, $CFG, $DB;
 
     // only following grade_item properties can be changed in this function
@@ -76,22 +78,20 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         return GRADE_UPDATE_FAILED;
     }
 
-    if (!$grade_items = grade_item::fetch_all($params)) {
+    if (!$gradeitems = grade_item::fetch_all($params)) {
         // create a new one
-        $grade_item = false;
-
-    } else if (count($grade_items) == 1){
-        $grade_item = reset($grade_items);
-        unset($grade_items); //release memory
-
+        $gradeitem = false;
+    } else if (count($gradeitems) == 1) {
+        $gradeitem = reset($gradeitems);
+        unset($gradeitems); // Release memory.
     } else {
         debugging('Found more than one grade item');
         return GRADE_UPDATE_MULTIPLE;
     }
 
     if (!empty($itemdetails['deleted'])) {
-        if ($grade_item) {
-            if ($grade_item->delete($source)) {
+        if ($gradeitem) {
+            if ($gradeitem->delete($source)) {
                 return GRADE_UPDATE_OK;
             } else {
                 return GRADE_UPDATE_FAILED;
@@ -102,7 +102,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
 /// Create or update the grade_item if needed
 
-    if (!$grade_item) {
+    if (!$gradeitem) {
         if ($itemdetails) {
             $itemdetails = (array)$itemdetails;
 
@@ -126,11 +126,11 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
                 $params[$k] = $v;
             }
         }
-        $grade_item = new grade_item($params);
-        $grade_item->insert();
+        $gradeitem = new grade_item($params);
+        $gradeitem->insert(null, $isbulkupdate);
 
     } else {
-        if ($grade_item->is_locked()) {
+        if ($gradeitem->is_locked()) {
             // no notice() here, test returned value instead!
             return GRADE_UPDATE_ITEM_LOCKED;
         }
@@ -144,33 +144,33 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
                     continue;
                 }
                 if (in_array($k, $floats)) {
-                    if (grade_floats_different($grade_item->{$k}, $v)) {
-                        $grade_item->{$k} = $v;
+                    if (grade_floats_different($gradeitem->{$k}, $v)) {
+                        $gradeitem->{$k} = $v;
                         $update = true;
                     }
 
                 } else {
-                    if ($grade_item->{$k} != $v) {
-                        $grade_item->{$k} = $v;
+                    if ($gradeitem->{$k} != $v) {
+                        $gradeitem->{$k} = $v;
                         $update = true;
                     }
                 }
             }
             if ($update) {
-                $grade_item->update();
+                $gradeitem->update(null, $isbulkupdate);
             }
         }
     }
 
 /// reset grades if requested
     if (!empty($itemdetails['reset'])) {
-        $grade_item->delete_all_grades('reset');
+        $gradeitem->delete_all_grades('reset');
         return GRADE_UPDATE_OK;
     }
 
 /// Some extra checks
     // do we use grading?
-    if ($grade_item->gradetype == GRADE_TYPE_NONE) {
+    if ($gradeitem->gradetype == GRADE_TYPE_NONE) {
         return GRADE_UPDATE_OK;
     }
 
@@ -208,12 +208,12 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
     $count = count($grades);
     if ($count > 0 and $count < 200) {
         list($uids, $params) = $DB->get_in_or_equal(array_keys($grades), SQL_PARAMS_NAMED, $start='uid');
-        $params['gid'] = $grade_item->id;
+        $params['gid'] = $gradeitem->id;
         $sql = "SELECT * FROM {grade_grades} WHERE itemid = :gid AND userid $uids";
 
     } else {
         $sql = "SELECT * FROM {grade_grades} WHERE itemid = :gid";
-        $params = array('gid'=>$grade_item->id);
+        $params = array('gid' => $gradeitem->id);
     }
 
     $rs = $DB->get_recordset_sql($sql, $params);
@@ -221,7 +221,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
     $failed = false;
 
     while (count($grades) > 0) {
-        $grade_grade = null;
+        $gradegrade = null;
         $grade       = null;
 
         foreach ($rs as $gd) {
@@ -233,21 +233,21 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
             }
             // existing grade requested
             $grade       = $grades[$userid];
-            $grade_grade = new grade_grade($gd, false);
+            $gradegrade = new grade_grade($gd, false);
             unset($grades[$userid]);
             break;
         }
 
-        if (is_null($grade_grade)) {
+        if (is_null($gradegrade)) {
             if (count($grades) == 0) {
-                // no more grades to process
+                // No more grades to process.
                 break;
             }
 
             $grade       = reset($grades);
             $userid      = $grade['userid'];
-            $grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$userid), false);
-            $grade_grade->load_optional_fields(); // add feedback and info too
+            $gradegrade = new grade_grade(array('itemid' => $gradeitem->id, 'userid' => $userid), false);
+            $gradegrade->load_optional_fields(); // add feedback and info too
             unset($grades[$userid]);
         }
 
@@ -288,8 +288,8 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         }
 
         // update or insert the grade
-        if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, $feedback, $feedbackformat, $usermodified,
-                $dategraded, $datesubmitted, $grade_grade, $feedbackfiles)) {
+        if (!$gradeitem->update_raw_grade($userid, $rawgrade, $source, $feedback, $feedbackformat, $usermodified,
+                $dategraded, $datesubmitted, $gradegrade, $feedbackfiles, $isbulkupdate)) {
             $failed = true;
         }
     }

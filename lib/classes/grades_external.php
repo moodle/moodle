@@ -555,7 +555,7 @@ class core_grades_external extends external_api {
         }
 
         return grade_update($params['source'], $params['courseid'], $itemtype,
-            $itemmodule, $iteminstance, $itemnumber, $gradestructure, $params['itemdetails']);
+            $itemmodule, $iteminstance, $itemnumber, $gradestructure, $params['itemdetails'], true);
     }
 
     /**
