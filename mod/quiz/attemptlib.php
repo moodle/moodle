@@ -2135,6 +2135,7 @@ class quiz_attempt {
         $this->quba->set_max_mark($newslot, 0);
         $this->quba->set_question_attempt_metadata($newslot, 'originalslot', $slot);
         question_engine::save_questions_usage_by_activity($this->quba);
+        $this->fire_attempt_question_restarted_event($slot, $newquestion->id);
 
         $transaction->allow_commit();
     }
@@ -2152,6 +2153,7 @@ class quiz_attempt {
 
         $this->quba->process_all_autosaves($timestamp);
         question_engine::save_questions_usage_by_activity($this->quba);
+        $this->fire_attempt_autosaved_event();
 
         $transaction->allow_commit();
     }
@@ -2416,14 +2418,12 @@ class quiz_attempt {
             }
         }
 
-        // Don't log - we will end with a redirect to a page that is logged.
-
         if (!$finishattempt) {
             // Just process the responses for this page and go to the next page.
             if (!$toolate) {
                 try {
                     $this->process_submitted_actions($timenow, $becomingoverdue);
-
+                    $this->fire_attempt_updated_event();
                 } catch (question_out_of_sequence_exception $e) {
                     throw new moodle_exception('submissionoutofsequencefriendlymessage', 'question',
                             $this->attempt_url(null, $thispage));
@@ -2531,10 +2531,78 @@ class quiz_attempt {
             'courseid' => $this->get_courseid(),
             'context' => context_module::instance($this->get_cmid()),
             'other' => array(
-                'quizid' => $this->get_quizid()
+                'quizid' => $this->get_quizid(),
+                'page' => $this->get_currentpage()
             )
         );
         $event = \mod_quiz\event\attempt_viewed::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
+     * Trigger the attempt_updated event.
+     *
+     * @return void
+     */
+    public function fire_attempt_updated_event(): void {
+        $params = [
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'page' => $this->get_currentpage()
+            ]
+        ];
+        $event = \mod_quiz\event\attempt_updated::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
+     * Trigger the attempt_autosaved event.
+     *
+     * @return void
+     */
+    public function fire_attempt_autosaved_event(): void {
+        $params = [
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'page' => $this->get_currentpage()
+            ]
+        ];
+        $event = \mod_quiz\event\attempt_autosaved::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
+     * Trigger the attempt_question_restarted event.
+     *
+     * @param int $slot Slot number
+     * @param int $newquestionid New question id.
+     * @return void
+     */
+    public function fire_attempt_question_restarted_event(int $slot, int $newquestionid): void {
+        $params = [
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'page' => $this->get_currentpage(),
+                'slot' => $slot,
+                'newquestionid' => $newquestionid
+            ]
+        ];
+        $event = \mod_quiz\event\attempt_question_restarted::create($params);
         $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
         $event->trigger();
     }

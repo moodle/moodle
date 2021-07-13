@@ -256,6 +256,108 @@ class mod_quiz_events_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the attempt question restarted event.
+     *
+     * There is no external API for replacing a question, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_attempt_question_restarted() {
+        list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
+
+        $params = [
+            'objectid' => 1,
+            'relateduserid' => 2,
+            'courseid' => $quizobj->get_courseid(),
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'page' => 2,
+                'slot' => 3,
+                'newquestionid' => 2
+            ]
+        ];
+        $event = \mod_quiz\event\attempt_question_restarted::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\attempt_question_restarted', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the attempt updated event.
+     *
+     * There is no external API for updating an attempt, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_attempt_updated() {
+        list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
+
+        $params = [
+            'objectid' => 1,
+            'relateduserid' => 2,
+            'courseid' => $quizobj->get_courseid(),
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'page' => 0
+            ]
+        ];
+        $event = \mod_quiz\event\attempt_updated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\attempt_updated', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the attempt auto-saved event.
+     *
+     * There is no external API for auto-saving an attempt, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_attempt_autosaved() {
+        list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
+
+        $params = [
+            'objectid' => 1,
+            'relateduserid' => 2,
+            'courseid' => $quizobj->get_courseid(),
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'page' => 0
+            ]
+        ];
+
+        $event = \mod_quiz\event\attempt_autosaved::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\attempt_autosaved', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
      * Test the edit page viewed event.
      *
      * There is no external API for updating a quiz, so the unit test will simply
@@ -667,7 +769,8 @@ class mod_quiz_events_testcase extends advanced_testcase {
             'courseid' => $course->id,
             'context' => context_module::instance($quiz->cmid),
             'other' => array(
-                'quizid' => $quiz->id
+                'quizid' => $quiz->id,
+                'page' => 0
             )
         );
         $event = \mod_quiz\event\attempt_viewed::create($params);
