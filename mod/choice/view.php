@@ -98,7 +98,9 @@ if (data_submitted() && !empty($action) && confirm_sesskey()) {
 choice_view($choice, $course, $cm, $context);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($choice->name), 2, null);
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading(format_string($choice->name), 2, null);
+}
 
 // Render the activity information.
 $completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
@@ -132,7 +134,7 @@ $onlyactive = $choice->includeinactive ? false : true;
 $allresponses = choice_get_response_data($choice, $cm, $groupmode, $onlyactive);   // Big function, approx 6 SQL calls per user.
 
 
-if (has_capability('mod/choice:readresponses', $context)) {
+if (has_capability('mod/choice:readresponses', $context) && !$PAGE->has_secondary_navigation()) {
     choice_show_reportlink($allresponses, $cm);
 }
 

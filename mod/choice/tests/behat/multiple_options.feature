@@ -72,7 +72,7 @@ Feature: Multiple option choice response
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Choice name"
-    And I follow "View 1 responses"
+    And I navigate to "Responses" in current page administration
     Then I should see "Option 1 (Full)"
     And I should see "Limit: 1"
     And I am on "Course 1" course homepage with editing mode on
@@ -83,6 +83,6 @@ Feature: Multiple option choice response
     And I press "Save and return to course"
     And I am on "Course 1" course homepage
     And I follow "Choice name"
-    And I follow "View 1 responses"
+    And I navigate to "Responses" in current page administration
     Then I should not see "Limit: 1"
     And I log out
