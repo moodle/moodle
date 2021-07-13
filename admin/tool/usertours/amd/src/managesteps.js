@@ -4,64 +4,55 @@
  * @module     tool_usertours/managesteps
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  */
-define(
-['jquery', 'core/str', 'core/notification'],
-function($, str, notification) {
-    var manager = {
-        /**
-         * Confirm removal of the specified step.
-         *
-         * @method  removeStep
-         * @param   {EventFacade}   e   The EventFacade
-         */
-        removeStep: function(e) {
-            e.preventDefault();
-            var targetUrl = $(e.currentTarget).attr('href');
-            str.get_strings([
-                {
-                    key:        'confirmstepremovaltitle',
-                    component:  'tool_usertours'
-                },
-                {
-                    key:        'confirmstepremovalquestion',
-                    component:  'tool_usertours'
-                },
-                {
-                    key:        'yes',
-                    component:  'moodle'
-                },
-                {
-                    key:        'no',
-                    component:  'moodle'
-                }
-            ])
-            .then(function(s) {
-                notification.confirm(s[0], s[1], s[2], s[3], function() {
-                    window.location = targetUrl;
-                });
+import {prefetchStrings} from 'core/prefetch';
+import {get_string as getString} from 'core/str';
+import {confirm as confirmModal} from 'core/notification';
 
-                return;
-            })
-            .catch();
-        },
+/**
+ * Handle step management actions.
+ *
+ * @param   {Event} e
+ * @private
+ */
+const removeStepHandler = e => {
+    const deleteButton = e.target.closest('[data-action="delete"]');
+    if (deleteButton) {
+        e.preventDefault();
+        removeStepFromLink(deleteButton.href);
+    }
+};
 
-        /**
-         * Setup the step management UI.
-         *
-         * @method          setup
-         */
-        setup: function() {
-
-            $('body').delegate('[data-action="delete"]', 'click', manager.removeStep);
+/**
+ * Handle removal of a step with confirmation.
+ *
+ * @param {string} targetUrl
+ * @private
+ */
+const removeStepFromLink = targetUrl => {
+    confirmModal(
+        getString('confirmstepremovaltitle', 'tool_usertours'),
+        getString('confirmstepremovalquestion', 'tool_usertours'),
+        getString('yes', 'core'),
+        getString('no', 'core'),
+        () => {
+            window.location = targetUrl;
         }
-    };
+    );
+};
 
-    return /** @alias module:tool_usertours/managesteps */ {
-        /**
-         * Setup the step management UI.
-         *
-         * @method          setup
-         */
-        setup: manager.setup
-    };
-});
+/**
+ * Set up the step management handlers.
+ */
+export const setup = () => {
+    prefetchStrings('tool_usertours', [
+        'confirmstepremovaltitle',
+        'confirmstepremovalquestion',
+    ]);
+
+    prefetchStrings('core', [
+        'yes',
+        'no',
+    ]);
+
+    document.querySelector('body').addEventListener('click', removeStepHandler);
+};
