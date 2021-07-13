@@ -61,6 +61,17 @@ $calendarEventColor: #0d5ca1 !default;
     }
 }
 
+@mixin footer-links {
+    span.footer-link:after {
+        content: "\2022";
+        color: $blue;
+    }
+
+    span.footer-link:last-child:after {
+        content: none;
+    }
+}
+
 // Calendar restyling.
 .path-calendar {
     .calendartable {
@@ -122,14 +133,7 @@ $calendarEventColor: #0d5ca1 !default;
             text-align: left;
             padding: 20px 0 0 20px;
 
-            span.export-link:after {
-                content: "\2022";
-                color: $blue;
-            }
-
-            span.export-link:last-child:after {
-                content: none;
-            }
+            @include footer-links;
         }
 
         .heightcontainer {
@@ -311,6 +315,15 @@ $calendarEventColor: #0d5ca1 !default;
 
 // Block minicalendar.
 .block {
+    .bottom {
+        // This adds a border on the top side of the footer container so we won't have to add a <hr> element in the footer_options template.
+        border-top: $border-width solid $card-border-color;
+        margin-top: map-get($spacers, 3);
+        padding-top: map-get($spacers, 2);
+
+        @include footer-links;
+    }
+
     .minicalendar {
         max-width: 280px;
         margin: 0 auto;

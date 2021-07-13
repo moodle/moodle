@@ -12908,10 +12908,10 @@ input[disabled] {
   .path-calendar .maincalendar .bottom {
     text-align: left;
     padding: 20px 0 0 20px; }
-    .path-calendar .maincalendar .bottom span.export-link:after {
+    .path-calendar .maincalendar .bottom span.footer-link:after {
       content: "\2022";
       color: #0f6fc5; }
-    .path-calendar .maincalendar .bottom span.export-link:last-child:after {
+    .path-calendar .maincalendar .bottom span.footer-link:last-child:after {
       content: none; }
   .path-calendar .maincalendar .heightcontainer {
     height: 100%;
@@ -13010,6 +13010,16 @@ input[disabled] {
 
 #page-calendar-export .indent {
   padding-left: 20px; }
+
+.block .bottom {
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  margin-top: 1rem;
+  padding-top: 0.5rem; }
+  .block .bottom span.footer-link:after {
+    content: "\2022";
+    color: #0f6fc5; }
+  .block .bottom span.footer-link:last-child:after {
+    content: none; }
 
 .block .minicalendar {
   max-width: 280px;

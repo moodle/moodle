@@ -145,6 +145,7 @@ $string['exportcalendar'] = 'Export calendar';
 $string['forcecalendartype'] = 'Force calendar';
 $string['fri'] = 'Fri';
 $string['friday'] = 'Friday';
+$string['fullcalendar'] = 'Full calendar';
 $string['generateurlbutton'] = 'Get calendar URL';
 $string['gotoactivity'] = 'Go to activity';
 $string['gotocalendar'] = 'Go to calendar';

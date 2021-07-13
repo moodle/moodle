@@ -54,16 +54,32 @@ class footer_options_exporter extends exporter {
     protected $token;
 
     /**
+     * @var bool $showexportlink Whether the export link should be displayed or not.
+     */
+    protected $showexportlink;
+
+    /**
+     * @var bool $showfullcalendarlink Whether the full calendar link should be displayed or not.
+     */
+    protected $showfullcalendarlink;
+
+    /**
      * Constructor for month_exporter.
      *
      * @param \calendar_information $calendar The calendar being represented
      * @param int $userid The user id
      * @param string $token The user sha1 token.
+     * @param array $options Display options for the footer. If an option is not set, a default value will be provided.
+     *                      It consists of:
+     *                      - showexportlink - bool - Whether to show the export link or not. Defaults to true.
+     *                      - showfullcalendarlink - bool - Whether to show the full calendar link or not. Defaults to false.
      */
-    public function __construct(\calendar_information $calendar, $userid, $token) {
+    public function __construct(\calendar_information $calendar, $userid, $token, array $options = []) {
         $this->calendar = $calendar;
         $this->userid = $userid;
         $this->token = $token;
+        $this->showexportlink = $options['showexportlink'] ?? true;
+        $this->showfullcalendarlink = $options['showfullcalendarlink'] ?? false;
     }
 
     /**
@@ -115,11 +131,28 @@ class footer_options_exporter extends exporter {
         global $CFG;
 
         $values = new stdClass();
+        $values->footerlinks = [];
+
+        if ($this->showfullcalendarlink) {
+            $values->footerlinks[] = (object)[
+                'url' => $this->get_calendar_url(),
+                'linkname' => get_string('fullcalendar', 'calendar'),
+            ];
+        }
 
         if (!empty($CFG->enablecalendarexport)) {
-            $values->exportcalendarlink = $this->get_export_calendar_link();
+            if ($this->showexportlink) {
+                $values->footerlinks[] = (object)[
+                    'url' => $this->get_export_calendar_link(),
+                    'linkname' => get_string('exportcalendar', 'calendar'),
+                ];
+            }
+
             if ($managesubscriptionlink = $this->get_manage_subscriptions_link()) {
-                $values->managesubscriptionlink = $managesubscriptionlink;
+                $values->footerlinks[] = (object)[
+                    'url' => $managesubscriptionlink,
+                    'linkname' => get_string('managesubscriptions', 'calendar'),
+                ];
             }
         }
 
@@ -132,14 +165,39 @@ class footer_options_exporter extends exporter {
      * @return array
      */
     public static function define_other_properties() {
-        return array(
-            'exportcalendarlink' => [
-                'type' => PARAM_URL
+        return [
+            'footerlinks' => [
+                'type' => [
+                    'url' => [
+                        'type' => PARAM_URL,
+                    ],
+                    'linkname' => [
+                        'type' => PARAM_TEXT,
+                    ],
+                ],
+                'multiple' => true,
+                'optional' => true,
             ],
-            'managesubscriptionlink' => [
-                'type' => PARAM_URL,
-                'default' => null,
-            ],
-        );
+        ];
+    }
+
+    /**
+     * Build the calendar URL.
+     *
+     * @return string The calendar URL.
+     */
+    public function get_calendar_url() {
+        $url = new moodle_url('/calendar/view.php', [
+            'view' => 'month',
+            'time' => $this->calendar->time,
+        ]);
+
+        if ($this->calendar->course && SITEID !== $this->calendar->course->id) {
+            $url->param('course', $this->calendar->course->id);
+        } else if ($this->calendar->categoryid) {
+            $url->param('category', $this->calendar->categoryid);
+        }
+
+        return $url->out(false);
     }
 }
