@@ -130,7 +130,7 @@ class stateupdates implements JsonSerializable {
      * @param int $sectionid The affected section id.
      */
     public function add_section_delete(int $sectionid): void {
-        $this->add_update('section', 'delete', (object)['id' => $sectionid]);
+        $this->add_update('section', 'remove', (object)['id' => $sectionid]);
     }
 
     /**
@@ -179,7 +179,7 @@ class stateupdates implements JsonSerializable {
      * @param int $cmid the affected course module id
      */
     public function add_cm_delete(int $cmid): void {
-        $this->add_update('cm', 'delete', (object)['id' => $cmid]);
+        $this->add_update('cm', 'remove', (object)['id' => $cmid]);
     }
 
     /**

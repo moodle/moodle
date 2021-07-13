@@ -132,6 +132,33 @@ export default class {
     }
 
     /**
+     * Add a new section to a specific course location.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {number} targetSectionId optional the target section id
+     */
+    async addSection(stateManager, targetSectionId) {
+        if (!targetSectionId) {
+            targetSectionId = 0;
+        }
+        const course = stateManager.get('course');
+        const updates = await this._callEditWebservice('section_add', course.id, [], targetSectionId);
+        stateManager.processUpdates(updates);
+    }
+
+    /**
+     * Delete sections.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of course modules ids
+     */
+    async sectionDelete(stateManager, sectionIds) {
+        const course = stateManager.get('course');
+        const updates = await this._callEditWebservice('section_delete', course.id, sectionIds);
+        stateManager.processUpdates(updates);
+    }
+
+    /**
      * Mark or unmark course modules as dragging.
      *
      * @param {StateManager} stateManager the current state manager

@@ -1504,20 +1504,8 @@ abstract class base {
 
         $course = $this->get_course();
         $coursecontext = context_course::instance($course->id);
-        switch($action) {
-            case 'hide':
-            case 'show':
-                require_capability('moodle/course:sectionvisibility', $coursecontext);
-                $visible = ($action === 'hide') ? 0 : 1;
-                course_update_section($course, $section, array('visible' => $visible));
-                break;
-            default:
-                throw new moodle_exception('sectionactionnotsupported', 'core', null, s($action));
-        }
-
-        $modules = [];
-
         $modinfo = $this->get_modinfo();
+        $renderer = $this->get_renderer($PAGE);
 
         if (!($section instanceof section_info)) {
             $section = $modinfo->get_section_info($section->section);
@@ -1527,9 +1515,24 @@ abstract class base {
             $this->set_section_number($sr);
         }
 
-        // Load the cmlist output.
-        $renderer = $this->get_renderer($PAGE);
+        switch($action) {
+            case 'hide':
+            case 'show':
+                require_capability('moodle/course:sectionvisibility', $coursecontext);
+                $visible = ($action === 'hide') ? 0 : 1;
+                course_update_section($course, $section, array('visible' => $visible));
+                break;
+            case 'refresh':
+                return [
+                    'content' => $renderer->course_section_updated($this, $section),
+                ];
+            default:
+                throw new moodle_exception('sectionactionnotsupported', 'core', null, s($action));
+        }
 
+        $modules = [];
+
+        // Load the cmlist output.
         $coursesections = $modinfo->sections;
         if (array_key_exists($section->section, $coursesections)) {
             foreach ($coursesections[$section->section] as $cmid) {

@@ -35,8 +35,10 @@ export default class Component extends BaseComponent {
 
     /**
      * Constructor hook.
+     *
+     * @param {Object} descriptor the component descriptor
      */
-    create() {
+    create(descriptor) {
         // Optional component name for debugging.
         this.name = 'course_format';
         // Default query selectors.
@@ -50,6 +52,7 @@ export default class Component extends BaseComponent {
             COLLAPSE: `[data-toggle="collapse"]`,
             // Formats can override the activity tag but a default one is needed to create new elements.
             ACTIVITYTAG: 'li',
+            SECTIONTAG: 'li',
         };
         // Default classes to toggle on refresh.
         this.classes = {
@@ -57,6 +60,7 @@ export default class Component extends BaseComponent {
             // Course content classes.
             ACTIVITY: `activity`,
             STATEDREADY: `stateready`,
+            SECTION: `section`,
         };
         // Array to save dettached elements during element resorting.
         this.dettachedCms = {};
@@ -64,6 +68,8 @@ export default class Component extends BaseComponent {
         // Index of sections and cms components.
         this.sections = {};
         this.cms = {};
+        // The page section return.
+        this.sectionReturn = descriptor.sectionReturn ?? 0;
     }
 
     /**
@@ -71,13 +77,15 @@ export default class Component extends BaseComponent {
      *
      * @param {string} target the DOM main element or its ID
      * @param {object} selectors optional css selector overrides
+     * @param {number} sectionReturn the content section return
      * @return {Component}
      */
-    static init(target, selectors) {
+    static init(target, selectors, sectionReturn) {
         return new Component({
             element: document.getElementById(target),
             reactive: getCurrentCourseEditor(),
             selectors,
+            sectionReturn,
         });
     }
 
@@ -138,6 +146,10 @@ export default class Component extends BaseComponent {
      * @returns {Array} of watchers
      */
     getWatchers() {
+        // Section return is a global page variable but most formats define it just before start printing
+        // the course content. This is the reason why we define this page setting here.
+        this.reactive.sectionReturn = this.sectionReturn;
+
         // Check if the course format is compatible with reactive components.
         if (!this.reactive.supportComponents) {
             return [];
@@ -159,22 +171,6 @@ export default class Component extends BaseComponent {
             {watch: `cm.visible:updated`, handler: this._reloadCm},
             {watch: `cm.sectionid:updated`, handler: this._reloadCm},
         ];
-    }
-
-    /**
-     * Reload a course module.
-     *
-     * Most course module HTML is still strongly backend dependant.
-     * Some changes require to get a new version af the module.
-     *
-     * @param {Object} param
-     * @param {Object} param.element update the state update data
-     */
-    _reloadCm({element}) {
-        const cmitem = this.getElement(this.selectors.CM, element.id);
-        if (cmitem) {
-            courseActions.refreshModule(cmitem, element.id);
-        }
     }
 
     /**
@@ -281,10 +277,14 @@ export default class Component extends BaseComponent {
      * @param {Object} param.element details the update details.
      */
     _refreshCourseSectionlist({element}) {
+        // If we have a section return means we only show a single section so no need to fix order.
+        if (this.reactive.sectionReturn != 0) {
+            return;
+        }
         const sectionlist = element.sectionlist ?? [];
         const listparent = this.getElement(this.selectors.COURSE_SECTIONLIST);
         // For now section cannot be created at a frontend level.
-        const createSection = () => undefined;
+        const createSection = this._createSectionItem.bind(this);
         if (listparent) {
             this._fixOrder(listparent, sectionlist, this.selectors.SECTION, this.dettachedSections, createSection);
         }
@@ -365,6 +365,26 @@ export default class Component extends BaseComponent {
     }
 
     /**
+     * Reload a course section contents.
+     *
+     * Section HTML is still strongly backend dependant.
+     * Some changes require to get a new version of the section.
+     *
+     * @param {details} param0 the watcher details
+     * @param {object} param0.element the state object
+     */
+    _reloadSection({element}) {
+        const sectionitem = this.getElement(this.selectors.SECTION, element.id);
+        if (sectionitem) {
+            const promise = courseActions.refreshSection(sectionitem, element.id);
+            promise.then(() => {
+                this._indexContents();
+                return;
+            }).catch();
+        }
+    }
+
+    /**
      * Create a new course module item in a section.
      *
      * Thos method will append a fake item in the container and trigger an ajax request to
@@ -384,6 +404,32 @@ export default class Component extends BaseComponent {
         container.append(newItem);
         this._reloadCm({
             element: this.reactive.get('cm', cmid),
+        });
+        return newItem;
+    }
+
+    /**
+     * Create a new section item.
+     *
+     * This method will append a fake item in the container and trigger an ajax request to
+     * replace the fake element by the real content.
+     *
+     * @param {Element} container the container element (section)
+     * @param {Number} sectionid the course-module ID
+     * @returns {Element} the created element
+     */
+    _createSectionItem(container, sectionid) {
+        const section = this.reactive.get('section', sectionid);
+        const newItem = document.createElement(this.selectors.SECTIONTAG);
+        newItem.dataset.for = 'section';
+        newItem.dataset.id = sectionid;
+        newItem.dataset.number = section.number;
+        // The legacy actions.js requires a specific ID and class to refresh the section.
+        newItem.id = `section-${sectionid}`;
+        newItem.classList.add(this.classes.SECTION);
+        container.append(newItem);
+        this._reloadSection({
+            element: section,
         });
         return newItem;
     }

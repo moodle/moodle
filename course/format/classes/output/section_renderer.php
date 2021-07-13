@@ -166,6 +166,7 @@ abstract class section_renderer extends core_course_renderer {
      * @param section_info $section the section info
      * @param cm_info $cm the course module ionfo
      * @param array $displayoptions optional extra display options
+     * @return string the rendered element
      */
     public function course_section_updated_cm_item(
         course_format $format,
@@ -177,6 +178,28 @@ abstract class section_renderer extends core_course_renderer {
         $cmitemclass = $format->get_output_classname('content\\section\\cmitem');
         $cmitem = new $cmitemclass($format, $section, $cm, $displayoptions);
         return $this->render($cmitem);
+    }
+
+    /**
+     * Get the updated rendered version of a section.
+     *
+     * This method will only be used when the course editor requires to get an updated cm item HTML
+     * to perform partial page refresh. It will be used for supporting the course editor webservices.
+     *
+     * By default, the template used for update a section is the same as when it renders initially,
+     * but format plugins are free to override this method to provide extra effects or so.
+     *
+     * @param course_format $format the course format
+     * @param section_info $section the section info
+     * @return string the rendered element
+     */
+    public function course_section_updated(
+        course_format $format,
+        section_info $section
+    ): string {
+        $sectionclass = $format->get_output_classname('content\\section');
+        $output = new $sectionclass($format, $section);
+        return $this->render($output);
     }
 
     /**

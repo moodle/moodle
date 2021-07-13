@@ -92,6 +92,7 @@ export default class Component extends DndSection {
      */
     getWatchers() {
         return [
+            {watch: `section[${this.id}]:deleted`, handler: this.remove},
             {watch: `section[${this.id}]:updated`, handler: this._refreshSection},
         ];
     }

@@ -32,9 +32,10 @@ import Templates from 'core/templates';
 import {prefetchStrings} from 'core/prefetch';
 import {get_string as getString} from 'core/str';
 import {getList} from 'core/normalise';
+import * as CourseEvents from 'core_course/events';
 
 // Load global strings.
-prefetchStrings('core', ['movecoursesection', 'movecoursemodule']);
+prefetchStrings('core', ['movecoursesection', 'movecoursemodule', 'confirm', 'delete']);
 
 export default class extends BaseComponent {
 
@@ -51,6 +52,7 @@ export default class extends BaseComponent {
             CMLINK: `[data-for='cm']`,
             SECTIONNODE: `[data-for='sectionnode']`,
             TOGGLER: `[data-toggle='collapse']`,
+            ADDSECTION: `[data-action='addSection']`,
         };
         // Component css classes.
         this.classes = {
@@ -61,19 +63,45 @@ export default class extends BaseComponent {
     /**
      * Initial state ready method.
      *
+     * @param {Object} state the state data.
+     *
      */
-    stateReady() {
+    stateReady(state) {
         // Delegate dispatch clicks.
         this.addEventListener(
             this.element,
             'click',
             this._dispatchClick
         );
+        // Check section limit.
+        this._checkSectionlist({state});
+        // Add an Event listener to recalculate limits it if a section HTML is altered.
+        this.addEventListener(
+            this.element,
+            CourseEvents.sectionRefreshed,
+            () => this._checkSectionlist({state})
+        );
+    }
+
+    /**
+     * Return the component watchers.
+     *
+     * @returns {Array} of watchers
+     */
+    getWatchers() {
+        return [
+            // Check section limit.
+            {watch: `course.sectionlist:updated`, handler: this._checkSectionlist},
+        ];
     }
 
     _dispatchClick(event) {
         const target = event.target.closest(this.selectors.ACTIONLINK);
         if (!target) {
+            return;
+        }
+        if (target.classList.contains(this.classes.DISABLED)) {
+            event.preventDefault();
             return;
         }
 
@@ -88,6 +116,17 @@ export default class extends BaseComponent {
     _actionMethodName(name) {
         const requestName = name.charAt(0).toUpperCase() + name.slice(1);
         return `_request${requestName}`;
+    }
+
+    /**
+     * Check the section list and disable some options if needed.
+     *
+     * @param {Object} detail the update details.
+     * @param {Object} detail.state the state object.
+     */
+    _checkSectionlist({state}) {
+        // Disable "add section" actions if the course max sections has been exceeded.
+        this._setAddSectionLocked(state.course.sectionlist.length > state.course.maxsections);
     }
 
     /**
@@ -218,6 +257,75 @@ export default class extends BaseComponent {
     }
 
     /**
+     * Handle a create section request.
+     *
+     * @param {Element} target the dispatch action element
+     * @param {Event} event the triggered event
+     */
+    async _requestAddSection(target, event) {
+        event.preventDefault();
+        this.reactive.dispatch('addSection', target.dataset.id ?? 0);
+    }
+
+    /**
+     * Handle a delete section request.
+     *
+     * @param {Element} target the dispatch action element
+     * @param {Event} event the triggered event
+     */
+    async _requestDeleteSection(target, event) {
+        // Check we have an id.
+        const sectionId = target.dataset.id;
+
+        if (!sectionId) {
+            return;
+        }
+        const sectionInfo = this.reactive.get('section', sectionId);
+
+        event.preventDefault();
+
+        const cmList = sectionInfo.cmlist ?? [];
+        if (cmList.length || sectionInfo.hassummary || sectionInfo.rawtitle) {
+            // We need confirmation if the section has something.
+            const modalParams = {
+                title: getString('confirm', 'core'),
+                body: getString('confirmdeletesection', 'moodle', sectionInfo.title),
+                saveButtonText: getString('delete', 'core'),
+                type: ModalFactory.types.SAVE_CANCEL,
+            };
+
+            const modal = await this._modalBodyRenderedPromise(modalParams);
+
+            modal.getRoot().on(
+                ModalEvents.save,
+                e => {
+                    // Stop the default save button behaviour which is to close the modal.
+                    e.preventDefault();
+                    modal.destroy();
+                    this.reactive.dispatch('sectionDelete', [sectionId]);
+                }
+            );
+            return;
+        } else {
+            // We don't need confirmation to delete empty sections.
+            this.reactive.dispatch('sectionDelete', [sectionId]);
+        }
+    }
+
+    /**
+     * Disable all add sections actions.
+     *
+     * @param {boolean} locked the new locked value.
+     */
+    _setAddSectionLocked(locked) {
+        const targets = this.getElements(this.selectors.ADDSECTION);
+        targets.forEach(element => {
+            element.classList.toggle(this.classes.DISABLED, locked);
+            this.setElementLocked(element, locked);
+        });
+    }
+
+    /**
      * Replace an element with a copy with a different tag name.
      *
      * @param {Element} element the original element
@@ -245,6 +353,10 @@ export default class extends BaseComponent {
                 modal.getRoot().on(ModalEvents.bodyRendered, () => {
                     resolve(modal);
                 });
+                // Configure some extra modal params.
+                if (modalParams.saveButtonText !== undefined) {
+                    modal.setSaveButtonText(modalParams.saveButtonText);
+                }
                 modal.show();
                 return;
             }).catch(() => {

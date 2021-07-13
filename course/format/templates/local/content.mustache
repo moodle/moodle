@@ -127,6 +127,7 @@
             "nextname": "Section 5",
             "selector": "<select><option>Section 4</option></select>"
         },
+        "sectionreturn": 1,
         "singlesection": {
             "num": 1,
             "id": 35,
@@ -183,6 +184,6 @@
 </div>
 {{#js}}
 require(['core_courseformat/local/content'], function(component) {
-    component.init('{{uniqid}}-course-format');
+    component.init('{{uniqid}}-course-format', {}, {{sectionreturn}});
 });
 {{/js}}

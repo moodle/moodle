@@ -96,11 +96,36 @@ M.course_dndupload = {
             this.add_status_div();
         }
 
-        // Any change to the course must be applied also to the course state via the courseeditor module.
         var self = this;
-        require(['core_courseformat/courseeditor'], function(editor) {
-            self.courseeditor = editor.getCurrentCourseEditor();
+        require([
+            'core_courseformat/courseeditor',
+            'core_course/events'
+        ], function(
+            Editor,
+            CourseEvents
+        ) {
+            // Any change to the course must be applied also to the course state via the courseeditor module.
+            self.courseeditor = Editor.getCurrentCourseEditor();
+
+            // Some formats can add sections without reloading the page.
+            document.querySelector('#' + self.pagecontentid).addEventListener(
+                CourseEvents.sectionRefreshed,
+                self.sectionRefreshed.bind(self)
+            );
         });
+    },
+
+    /**
+     * Setup Drag and Drop in a section.
+     * @param {CustomEvent} event The custom event
+     */
+    sectionRefreshed: function(event) {
+        if (event.detail.newSectionElement === undefined) {
+            return;
+        }
+        var element = this.Y.one(event.detail.newSectionElement);
+        this.add_preview_element(element);
+        this.init_events(element);
     },
 
     /**

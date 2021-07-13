@@ -164,6 +164,99 @@ class stateactions {
     }
 
     /**
+     * Create a course section.
+     *
+     * This method follows the same logic as changenumsections.php.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids not used
+     * @param int $targetsectionid optional target section id (if not passed section will be appended)
+     * @param int $targetcmid not used
+     */
+    public function section_add(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+
+        $coursecontext = context_course::instance($course->id);
+        require_capability('moodle/course:update', $coursecontext);
+
+        // Get course format settings.
+        $format = course_get_format($course->id);
+        $lastsectionnumber = $format->get_last_section_number();
+        $maxsections = $format->get_max_sections();
+
+        if ($lastsectionnumber >= $maxsections) {
+            throw new moodle_exception('maxsectionslimit', 'moodle', $maxsections);
+        }
+
+        $modinfo = get_fast_modinfo($course);
+
+        // Get target section.
+        if ($targetsectionid) {
+            $this->validate_sections($course, [$targetsectionid], __FUNCTION__);
+            $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
+            // Inserting sections at any position except in the very end requires capability to move sections.
+            require_capability('moodle/course:movesections', $coursecontext);
+            $insertposition = $targetsection->section + 1;
+        } else {
+            // Get last section.
+            $insertposition = 0;
+        }
+
+        course_create_section($course, $insertposition);
+
+        // Adding a section affects the full course structure.
+        $this->course_state($updates, $course);
+    }
+
+    /**
+     * Delete course sections.
+     *
+     * This method follows the same logic as editsection.php.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids section ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function section_delete(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+
+        $coursecontext = context_course::instance($course->id);
+        require_capability('moodle/course:update', $coursecontext);
+        require_capability('moodle/course:movesections', $coursecontext);
+
+        $modinfo = get_fast_modinfo($course);
+
+        foreach ($ids as $sectionid) {
+            $section = $modinfo->get_section_info_by_id($sectionid, MUST_EXIST);
+            // Send all activity deletions.
+            if (!empty($modinfo->sections[$section->section])) {
+                foreach ($modinfo->sections[$section->section] as $modnumber) {
+                    $cm = $modinfo->cms[$modnumber];
+                    $updates->add_cm_delete($cm->id);
+                }
+            }
+            course_delete_section($course, $section, true, true);
+            $updates->add_section_delete($sectionid);
+        }
+
+        // Removing a section affects the full course structure.
+        $this->course_state($updates, $course);
+    }
+
+    /**
      * Extract several cm_info from the course_modinfo.
      *
      * @param course_modinfo $modinfo the course modinfo.

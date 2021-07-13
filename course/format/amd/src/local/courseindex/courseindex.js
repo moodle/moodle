@@ -98,6 +98,8 @@ export default class Component extends BaseComponent {
             {watch: `section.isactive:updated`, handler: this._refreshSectionCollapsed},
             {watch: `cm:created`, handler: this._createCm},
             {watch: `cm:deleted`, handler: this._deleteCm},
+            {watch: `section:created`, handler: this._createSection},
+            {watch: `section:deleted`, handler: this._deleteSection},
             // Sections and cm sorting.
             {watch: `course.sectionlist:updated`, handler: this._refreshCourseSectionlist},
             {watch: `section.cmlist:updated`, handler: this._refreshSectionCmlist},
@@ -220,6 +222,35 @@ export default class Component extends BaseComponent {
     }
 
     /**
+     * Create a new section instance.
+     *
+     * @param {Object} details the update details.
+     * @param {Object} details.state the state data.
+     * @param {Object} details.element the element data.
+     */
+    async _createSection({state, element}) {
+        // Create a fake node while the component is loading.
+        const fakeelement = document.createElement('div');
+        fakeelement.classList.add('bg-pulse-grey', 'w-100');
+        fakeelement.innerHTML = '&nbsp;';
+        this.sections[element.id] = fakeelement;
+        // Place the fake node on the correct position.
+        this._refreshCourseSectionlist({
+            state,
+            element: state.course,
+        });
+        // Collect render data.
+        const exporter = this.reactive.getExporter();
+        const data = exporter.section(state, element);
+        // Create the new content.
+        const newcomponent = await this.renderComponent(fakeelement, 'core_courseformat/local/courseindex/section', data);
+        // Replace the fake node with the real content.
+        const newelement = newcomponent.getElement();
+        this.sections[element.id] = newelement;
+        fakeelement.parentNode.replaceChild(newelement, fakeelement);
+    }
+
+    /**
      * Refresh a section cm list.
      *
      * @param {object} param
@@ -290,5 +321,17 @@ export default class Component extends BaseComponent {
      */
     _deleteCm({element}) {
         delete this.cms[element.id];
+    }
+
+    /**
+     * Remove a section from the list.
+     *
+     * The actual DOM element removal is delegated to the section component.
+     *
+     * @param {Object} details the update details.
+     * @param {Object} details.element the element data.
+     */
+    _deleteSection({element}) {
+        delete this.sections[element.id];
     }
 }
