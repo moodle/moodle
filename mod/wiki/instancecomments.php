@@ -69,15 +69,15 @@ if ($action == 'add' || $action == 'edit') {
     if (!confirm_sesskey()) {
         print_error(get_string('invalidsesskey', 'wiki'));
     }
-    $comm = new page_wiki_handlecomments($wiki, $subwiki, $cm);
+    $comm = new page_wiki_handlecomments($wiki, $subwiki, $cm, 'modulepage');
     $comm->set_page($page);
 } else {
     if(!$confirm) {
-        $comm = new page_wiki_deletecomment($wiki, $subwiki, $cm);
+        $comm = new page_wiki_deletecomment($wiki, $subwiki, $cm, 'modulepage');
         $comm->set_page($page);
         $comm->set_url();
     } else {
-        $comm = new page_wiki_handlecomments($wiki, $subwiki, $cm);
+        $comm = new page_wiki_handlecomments($wiki, $subwiki, $cm, 'modulepage');
         $comm->set_page($page);
         if (!confirm_sesskey()) {
             print_error(get_string('invalidsesskey', 'wiki'));
@@ -90,6 +90,9 @@ if ($action == 'delete') {
 } else {
     if (empty($newcontent)) {
         $form = new mod_wiki_comments_form();
+        if ($form->is_cancelled()) {
+            redirect(new moodle_url('/mod/wiki/comments.php', ['pageid' => (int)$pageid]));
+        }
         $newcomment = $form->get_data();
         $content = $newcomment->entrycomment_editor['text'];
     } else {
