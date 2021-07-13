@@ -840,18 +840,20 @@ class helper {
     public static function prevent_unclosed_html_tags(
         string $message,
         bool $removebody = false
-    ) : string
-        {
-            $html = '';
-            if (!empty($message)) {
-                $doc = new DOMDocument();
-                @$doc->loadHTML($message);
-                $html = $doc->getElementsByTagName('body')->item(0)->C14N(false, true);
-                if ($removebody) {
-                    // Remove <body> element added in C14N function.
-                    $html = preg_replace('~<(/?(?:body))[^>]*>\s*~i', '', $html);
-                }
+    ) : string {
+        $html = '';
+        if (!empty($message)) {
+            $doc = new DOMDocument();
+            $olderror = libxml_use_internal_errors(true);
+            $doc->loadHTML('<?xml version="1.0" encoding="UTF-8" ?>' . $message);
+            libxml_clear_errors();
+            libxml_use_internal_errors($olderror);
+            $html = $doc->getElementsByTagName('body')->item(0)->C14N(false, true);
+            if ($removebody) {
+                // Remove <body> element added in C14N function.
+                $html = preg_replace('~<(/?(?:body))[^>]*>\s*~i', '', $html);
             }
+        }
 
         return $html;
     }
