@@ -102,7 +102,9 @@ if ($currentgroup) {
     $groupparam = "";
 }
 
-echo $OUTPUT->heading(format_string($chat->name), 2);
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading(format_string($chat->name), 2);
+}
 
 // Render the activity information.
 $cminfo = cm_info::create($cm);
@@ -124,28 +126,33 @@ if (has_capability('mod/chat:chat', $context)) {
     $chattime = $chat->chattime ?? 0;
     $span = $chattime - $now;
     if (!empty($chat->schedule) && $span > 0) {
-        echo html_writer::tag('p', get_string('sessionstartsin', 'chat', format_time($span)));
+        $attributes = ['class' => 'border bg-light rounded p-2'];
+        echo html_writer::tag('p', get_string('sessionstartsin', 'chat', format_time($span)), $attributes);
     }
 
     $params['id'] = $chat->id;
     $chattarget = new moodle_url("/mod/chat/gui_$CFG->chat_method/index.php", $params);
-    echo '<p>';
+    echo html_writer::start_div('container-fluid');
+    echo html_writer::start_div('row');
+    echo html_writer::start_div('col-xs-6 mr-3');
     echo $OUTPUT->action_link($chattarget,
                               $strenterchat,
                               new popup_action('click', $chattarget, "chat{$course->id}_{$chat->id}{$groupparam}",
-                                               array('height' => 500, 'width' => 700)));
-    echo '</p>';
+                                               array('height' => 500, 'width' => 700)), ['class' => 'btn btn-primary']);
+    echo html_writer::end_div();
+    echo html_writer::start_div('col-xs-6');
 
     $params['id'] = $chat->id;
     $link = new moodle_url('/mod/chat/gui_basic/index.php', $params);
     $action = new popup_action('click', $link, "chat{$course->id}_{$chat->id}{$groupparam}",
                                array('height' => 500, 'width' => 700));
-    echo '<p>';
     echo $OUTPUT->action_link($link, get_string('noframesjs', 'message'), $action,
-                              array('title' => get_string('modulename', 'chat')));
-    echo '</p>';
+                              array('title' => get_string('modulename', 'chat'), 'class' => 'btn btn-secondary'));
+    echo html_writer::end_div();
+    echo html_writer::end_div();
+    echo html_writer::end_div();
 
-    if ($chat->studentlogs or has_capability('mod/chat:readlog', $context)) {
+    if (($chat->studentlogs or has_capability('mod/chat:readlog', $context)) && !$PAGE->has_secondary_navigation()) {
         if ($msg = chat_get_session_messages($chat->id, $currentgroup)) {
             echo '<p>';
             echo html_writer::link(new moodle_url('/mod/chat/report.php', array('id' => $cm->id)),

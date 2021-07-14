@@ -46,7 +46,7 @@ $string['currentusers'] = 'Current users';
 $string['deletesession'] = 'Delete this session';
 $string['deletesessionsure'] = 'Are you sure you want to delete this session?';
 $string['donotusechattime'] = 'Don\'t publish any chat times';
-$string['enterchat'] = 'Click here to enter the chat now';
+$string['enterchat'] = 'Enter the chat';
 $string['errornousers'] = 'Could not find any users!';
 $string['explaingeneralconfig'] = 'These settings are <strong>always</strong> used';
 $string['explainmethoddaemon'] = 'These settings only have an effect if \'Chat server daemon\' is selected as chat method.';
@@ -174,7 +174,7 @@ $string['usingchat_help'] = 'The chat module contains some features to make chat
 * Emoting - You can start a line with "/me" or ":" to emote, for example if your name is Kim and you type ":laughs!" or "/me laughs!" then everyone will see "Kim laughs!"
 * Beeps - You can send a sound to other participants by clicking the "beep" link next to their name. A useful shortcut to beep all the people in the chat at once is to type "beep all".
 * HTML - If you know some HTML code, you can use it in your text to do things like insert images, play sounds or create different coloured text';
-$string['viewreport'] = 'View past chat sessions';
+$string['viewreport'] = 'Past sessions';
 
 // Deprecated since Moodle 3.11.
 $string['sessionstart'] = 'The next chat session will start on {$a->date}, ({$a->fromnow} from now)';
