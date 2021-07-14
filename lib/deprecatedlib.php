@@ -2340,13 +2340,6 @@ function message_mark_messages_read() {
 /**
  * @deprecated since Moodle 3.2
  */
-function message_page_type_list() {
-    throw new coding_exception('message_page_type_list() can not be used anymore.');
-}
-
-/**
- * @deprecated since Moodle 3.2
- */
 function message_can_post_message() {
     throw new coding_exception('message_can_post_message() can not be used anymore. Please use ' .
         '\core_message\api::can_send_message() instead.');
