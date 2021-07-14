@@ -74,7 +74,9 @@ $output = $PAGE->get_renderer('mod_folder');
 
 echo $output->header();
 
-echo $output->heading(format_string($folder->name), 2);
+if (!$PAGE->has_secondary_navigation()) {
+    echo $output->heading(format_string($folder->name), 2);
+}
 
 // Render the activity information.
 $cminfo = cm_info::create($cm);

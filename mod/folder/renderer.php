@@ -55,6 +55,32 @@ class mod_folder_renderer extends plugin_renderer_base {
                 $output .= format_module_intro('folder', $folder, $cm->id, false);
             }
         }
+        $buttons = '';
+        // Display the "Edit" button if current user can edit folder contents.
+        // Do not display it on the course page for the teachers because there
+        // is an "Edit settings" button right next to it with the same functionality.
+        $canmanagefolderfiles = has_capability('mod/folder:managefiles', $context);
+        $canmanagecourseactivities = has_capability('moodle/course:manageactivities', $context);
+        if ($canmanagefolderfiles && ($folder->display != FOLDER_DISPLAY_INLINE || !$canmanagecourseactivities)) {
+            $editbutton = new single_button(new moodle_url('/mod/folder/edit.php', ['id' => $cm->id]),
+                get_string('edit'), 'post', true);
+            $buttons .= $this->render($editbutton);
+        }
+
+        // Do not append the edit button on the course page.
+        $downloadable = folder_archive_available($folder, $cm);
+        if ($downloadable) {
+            $downloadbutton = new single_button(new moodle_url('/mod/folder/download_folder.php', ['id' => $cm->id]),
+                get_string('downloadfolder', 'folder'), 'get');
+            $downloadbutton->class .= ' ml-auto';
+            $buttons .= $this->render($downloadbutton);
+        }
+
+        if ($buttons) {
+            $output .= $this->output->container_start("box generalbox d-flex mb-3 folderbuttons");
+            $output .= $buttons;
+            $output .= $this->output->container_end();
+        }
 
         $foldertree = new folder_tree($folder, $cm);
         if ($folder->display == FOLDER_DISPLAY_INLINE) {
@@ -64,39 +90,6 @@ class mod_folder_renderer extends plugin_renderer_base {
         $output .= $this->output->container_start("box generalbox pt-0 pb-3 foldertree");
         $output .= $this->render($foldertree);
         $output .= $this->output->container_end();
-
-        // Do not append the edit button on the course page.
-        $downloadable = folder_archive_available($folder, $cm);
-
-        $buttons = '';
-        if ($downloadable) {
-            $downloadbutton = $this->output->single_button(
-                new moodle_url('/mod/folder/download_folder.php', array('id' => $cm->id)),
-                get_string('downloadfolder', 'folder'),
-                'get'
-            );
-
-            $buttons .= $downloadbutton;
-        }
-
-        // Display the "Edit" button if current user can edit folder contents.
-        // Do not display it on the course page for the teachers because there
-        // is an "Edit settings" button right next to it with the same functionality.
-        if (has_capability('mod/folder:managefiles', $context) &&
-            ($folder->display != FOLDER_DISPLAY_INLINE || !has_capability('moodle/course:manageactivities', $context))) {
-            $editbutton = $this->output->single_button(
-                new moodle_url('/mod/folder/edit.php', array('id' => $cm->id)),
-                get_string('edit')
-            );
-
-            $buttons .= $editbutton;
-        }
-
-        if ($buttons) {
-            $output .= $this->output->container_start("box generalbox pt-0 pb-3 folderbuttons");
-            $output .= $buttons;
-            $output .= $this->output->container_end();
-        }
 
         return $output;
     }
