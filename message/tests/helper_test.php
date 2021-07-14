@@ -214,6 +214,9 @@ class core_message_helper_testcase extends advanced_testcase {
             'Empty html' => [
                 '', '', false
             ],
+            'Check encoding UTF-8 is working' => [
+                '<body><h1>Title</h1><p>السلام عليكم</p></body>', '<body><h1>Title</h1><p>السلام عليكم</p></body>', false
+            ],
         ];
     }
 }
