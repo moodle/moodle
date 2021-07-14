@@ -394,7 +394,14 @@ class provider implements
             'secret' => $user->secret,
             'picture' => $user->picture,
             'url' => $user->url,
-            'description' => format_text($user->description, $user->descriptionformat, ['context' => $context]),
+            'description' => format_text(
+                writer::with_context($context)->rewrite_pluginfile_urls(
+                    [],
+                    'user',
+                    'profile',
+                    '',
+                    $user->description
+                ), $user->descriptionformat, ['context' => $context]),
             'maildigest' => transform::yesno($user->maildigest),
             'maildisplay' => $user->maildisplay,
             'autosubscribe' => transform::yesno($user->autosubscribe),
@@ -407,10 +414,7 @@ class provider implements
             'middlename' => format_string($user->middlename, true, ['context' => $context]),
             'alternatename'  => format_string($user->alternatename, true, ['context' => $context])
         ];
-        if (isset($data->description)) {
-            $data->description = writer::with_context($context)->rewrite_pluginfile_urls(
-                    [get_string('privacy:descriptionpath', 'user')], 'user', 'profile', '', $data->description);
-        }
+
         writer::with_context($context)->export_area_files([], 'user', 'profile', 0)
                 ->export_data([], $data);
         // Export profile images.
