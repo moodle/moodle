@@ -13230,6 +13230,11 @@ input[disabled] {
     word-break: break-all;
     overflow-wrap: break-word; }
 
+.path-calendar table#subscription_details_table td {
+  vertical-align: middle; }
+  .path-calendar table#subscription_details_table td > .btn-group button {
+    padding-left: 0; }
+
 #page-calendar-export .indent {
   padding-left: 20px; }
 

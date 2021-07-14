@@ -309,14 +309,51 @@ class core_calendar_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render the subscriptions header
+     *
+     * @return string
+     */
+    public function render_subscriptions_header(): string {
+        $importcalendarbutton = new single_button(new moodle_url('/calendar/import.php', calendar_get_export_import_link_params()),
+                get_string('importcalendar', 'calendar'), 'get', true);
+        $importcalendarbutton->class .= ' float-sm-right float-right';
+        $exportcalendarbutton = new single_button(new moodle_url('/calendar/export.php', calendar_get_export_import_link_params()),
+                get_string('exportcalendar', 'calendar'), 'get', true);
+        $exportcalendarbutton->class .= ' float-sm-right float-right';
+        $output = $this->output->heading(get_string('managesubscriptions', 'calendar'));
+        $output .= html_writer::start_div('header d-flex flex-wrap mt-5');
+        $output .= html_writer::tag('h3', get_string('yoursubscriptions', 'calendar'), ['class' => 'mr-auto']);
+        $output .= $this->output->render($importcalendarbutton);
+        $output .= $this->output->render($exportcalendarbutton);
+        $output .= html_writer::end_div();
+
+        return $output;
+    }
+
+    /**
+     * Render the subscriptions blank state appearance
+     *
+     * @return string
+     */
+    public function render_no_calendar_subscriptions(): string {
+        $output = html_writer::start_div('mt-5');
+        $importlink = html_writer::link((new moodle_url('/calendar/import.php', calendar_get_export_import_link_params()))->out(),
+                get_string('importcalendarexternal', 'calendar'));
+        $output .= get_string('nocalendarsubscriptions', 'calendar', $importlink);
+        $output .= html_writer::end_div();
+
+        return $output;
+    }
+
+    /**
      * Renders a table containing information about calendar subscriptions.
      *
      * @param int $unused
      * @param array $subscriptions
-     * @param string $importresults
+     * @param string $unused2
      * @return string
      */
-    public function subscription_details($unused, $subscriptions, $importresults = '') {
+    public function subscription_details($unused, $subscriptions, $unused2 = '') {
         $table = new html_table();
         $table->head  = array(
             get_string('colcalendar', 'calendar'),
@@ -325,9 +362,10 @@ class core_calendar_renderer extends plugin_renderer_base {
             get_string('colpoll', 'calendar'),
             get_string('colactions', 'calendar')
         );
-        $table->align = array('left', 'left', 'left', 'center');
+        $table->align = array('left', 'left', 'left', 'left', 'left');
         $table->width = '100%';
         $table->data  = array();
+        $table->id = 'subscription_details_table';
 
         if (empty($subscriptions)) {
             $cell = new html_table_cell(get_string('nocalendarsubscriptions', 'calendar'));
@@ -346,24 +384,54 @@ class core_calendar_renderer extends plugin_renderer_base {
                 $lastupdated = userdate($sub->lastupdated, get_string('strftimedatetimeshort', 'langconfig'));
             }
 
-            $cell = new html_table_cell($this->subscription_action_form($sub));
-            $cell->colspan = 2;
             $type = $sub->eventtype . 'events';
 
             $table->data[] = new html_table_row(array(
                 new html_table_cell($label),
                 new html_table_cell($lastupdated),
                 new html_table_cell(get_string($type, 'calendar')),
-                $cell
+                new html_table_cell($this->render_subscription_update_interval($sub)),
+                new html_table_cell($this->subscription_action_form($sub))
             ));
         }
 
         $out  = $this->output->box_start('generalbox calendarsubs');
 
-        $out .= $importresults;
         $out .= html_writer::table($table);
         $out .= $this->output->box_end();
         return $out;
+    }
+
+    /**
+     * Render subscription update interval form.
+     *
+     * @param stdClass $subscription
+     * @return string
+     */
+    protected function render_subscription_update_interval(stdClass $subscription): string {
+        // Assemble form for the subscription row.
+        $output = html_writer::start_tag('form',
+                ['action' => new moodle_url('/calendar/managesubscriptions.php', calendar_get_export_import_link_params()),
+                        'method' => 'post']);
+        if (empty($subscription->url)) {
+            $output .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'pollinterval', 'value' => '0']);
+        } else {
+            // Assemble pollinterval control.
+            $output .= html_writer::start_div();
+            $output .= html_writer::start_tag('select', ['name' => 'pollinterval', 'class' => 'custom-select']);
+            foreach (calendar_get_pollinterval_choices() as $k => $v) {
+                $attributes = array();
+                if ($k == $subscription->pollinterval) {
+                    $attributes['selected'] = 'selected';
+                }
+                $attributes['value'] = $k;
+                $output .= html_writer::tag('option', $v, $attributes);
+            }
+            $output .= html_writer::end_tag('select');
+            $output .= html_writer::end_div();
+        }
+
+        return $output;
     }
 
     /**
@@ -373,37 +441,17 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function subscription_action_form($subscription) {
-        // Assemble form for the subscription row.
-        $html = html_writer::start_tag('form', ['action' => $this->page->url->out(false) , 'method' => 'post']);
-        if (empty($subscription->url)) {
-            // Don't update an iCal file, which has no URL.
-            $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pollinterval', 'value' => '0'));
-        } else {
-            // Assemble pollinterval control.
-            $html .= html_writer::start_tag('div', array('style' => 'float:left;'));
-            $html .= html_writer::start_tag('select', array('name' => 'pollinterval', 'class' => 'custom-select'));
-            foreach (calendar_get_pollinterval_choices() as $k => $v) {
-                $attributes = array();
-                if ($k == $subscription->pollinterval) {
-                    $attributes['selected'] = 'selected';
-                }
-                $attributes['value'] = $k;
-                $html .= html_writer::tag('option', $v, $attributes);
-            }
-            $html .= html_writer::end_tag('select');
-            $html .= html_writer::end_tag('div');
-        }
-        $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
+        $html = html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $subscription->id));
-        $html .= html_writer::start_tag('div', array('class' => 'btn-group float-right'));
+        $html .= html_writer::start_tag('div', array('class' => 'btn-group float-left'));
         if (!empty($subscription->url)) {
-            $html .= html_writer::tag('button', get_string('update'), array('type'  => 'submit', 'name' => 'action',
-                                                                            'class' => 'btn btn-secondary',
-                                                                            'value' => CALENDAR_SUBSCRIPTION_UPDATE));
+            $html .= html_writer::tag('button', get_string('update'), array('type' => 'submit', 'name' => 'action',
+                    'class' => 'btn btn-link',
+                    'value' => CALENDAR_SUBSCRIPTION_UPDATE));
         }
-        $html .= html_writer::tag('button', get_string('remove'), array('type'  => 'submit', 'name' => 'action',
-                                                                        'class' => 'btn btn-secondary',
-                                                                        'value' => CALENDAR_SUBSCRIPTION_REMOVE));
+        $html .= html_writer::tag('button', get_string('remove'), array('type' => 'submit', 'name' => 'action',
+                'class' => 'btn btn-link',
+                'value' => CALENDAR_SUBSCRIPTION_REMOVE));
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('form');
         return $html;
