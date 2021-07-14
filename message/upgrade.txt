@@ -1,6 +1,11 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 3.11.2 ===
+
+* The `message_page_type_list` method was previouly deprecated, however it was still
+  used so has been recreated in message/lib.php
+
 === 3.10 ===
 
 * The following methods have been deprecated and should not be used any more:
