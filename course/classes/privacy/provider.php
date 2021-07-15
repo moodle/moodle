@@ -192,11 +192,17 @@ class provider implements
             $context = \context_course::instance($course->id);
             $courseformat = $course->format !== 'site' ? get_string('pluginname', 'format_' . $course->format) : get_string('site');
             $data = (object) [
-                'fullname' => $course->fullname,
+                'fullname' => format_string($course->fullname, true, ['context' => $context]),
                 'shortname' => $course->shortname,
                 'idnumber' => $course->idnumber,
-                'summary' => writer::with_context($context)->rewrite_pluginfile_urls([], 'course', 'summary', 0,
-                                                                                     format_string($course->summary)),
+                'summary' => format_text(
+                    writer::with_context($context)->rewrite_pluginfile_urls(
+                        [],
+                        'course',
+                        'summary',
+                        0,
+                        $course->summary
+                    ), $course->summaryformat, ['context' => $context]),
                 'format' => $courseformat,
                 'startdate' => transform::datetime($course->startdate),
                 'enddate' => transform::datetime($course->enddate)
