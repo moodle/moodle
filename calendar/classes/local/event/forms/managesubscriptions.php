@@ -53,7 +53,6 @@ class managesubscriptions extends \moodleform {
         $mform->setType('name', PARAM_TEXT);
 
         // Import from (url | importfile).
-        $mform->addElement('html', get_string('importfrominstructions', 'calendar'));
         $choices = array(CALENDAR_IMPORT_FROM_FILE => get_string('importfromfile', 'calendar'),
             CALENDAR_IMPORT_FROM_URL  => get_string('importfromurl',  'calendar'));
         $mform->addElement('select', 'importfrom', get_string('importcalendarfrom', 'calendar'), $choices);
