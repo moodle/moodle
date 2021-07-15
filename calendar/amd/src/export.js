@@ -38,12 +38,8 @@ const selectors = {
  * @method init
  */
 export const init = () => {
-    // Enable the copy URL button and focus on it after the page has loaded.
-    document.onreadystatechange = () => {
-        if (document.readyState === 'complete') {
-            const copyUrl = document.getElementById(selectors.copyUrlId);
-            copyUrl.removeAttribute('disabled');
-            copyUrl.focus();
-        }
-    };
+    // Enable the copy URL button and focus on it.
+    const copyUrl = document.getElementById(selectors.copyUrlId);
+    copyUrl.removeAttribute('disabled');
+    copyUrl.focus();
 };
