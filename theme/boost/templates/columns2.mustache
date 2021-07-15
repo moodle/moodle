@@ -90,6 +90,12 @@
         </div>
     </div>
     {{{ output.standard_after_main_region_html }}}
+    <div id="goto-top-link">
+        {{! go to top is sticky to footer so needs to be sibling }}
+        <a class="btn btn-light" role="button" href="#" aria-label="{{#str}} totop, theme_boost {{/str}}">
+            {{#pix}} i/up, core{{/pix}}
+        </a>
+    </div>
     {{> theme_boost/footer }}
 </div>
 
@@ -97,13 +103,8 @@
 </html>
 {{#js}}
 M.util.js_pending('theme_boost/loader');
-require(['theme_boost/loader'], function() {
+require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
+    Drawer.init();
     M.util.js_complete('theme_boost/loader');
-});
-
-M.util.js_pending('theme_boost/drawer');
-require(['theme_boost/drawer'], function(drawer) {
-    drawer.init();
-    M.util.js_complete('theme_boost/drawer');
 });
 {{/js}}

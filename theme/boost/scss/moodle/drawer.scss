@@ -93,11 +93,19 @@ body.drawer-ease {
     transition: margin-left 0.5s ease, margin-right 0.5s ease;
 }
 
-body.drawer-open-left {
+body:not(.uses-drawers).drawer-open-left {
     @include media-breakpoint-up(md) {
         margin-left: $drawer-width;
     }
 }
+
+body.drawer-open-left #page.drawers {
+    @include media-breakpoint-up(md) {
+        margin-left: $drawer-width;
+        padding-left: 1rem;
+    }
+}
+
 body.drawer-open-right {
     @include media-breakpoint-up(md) {
         margin-right: $drawer-width;
@@ -112,7 +120,7 @@ $right-drawer-width: 320px;
     @include transition(right .2s ease-in-out);
 
     &.drawer {
-        z-index: $zindex-sticky;
+        z-index: $zindex-sticky + 1;
         position: fixed;
         top: $navbar-height;
         right: 0;
@@ -141,7 +149,7 @@ $right-drawer-width: 320px;
         &.drawer {
             top: 0;
             height: 100%;
-            z-index: $zindex-fixed;
+            z-index: $zindex-fixed + 1;
         }
     }
     body.drawer-open-left,
@@ -154,4 +162,96 @@ $right-drawer-width: 320px;
     [data-region=right-hand-drawer] {
         box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
     }
+}
+
+@mixin drawer() {
+    transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease;
+    background-color: $body-bg;
+    z-index: $zindex-modal;
+    position: fixed;
+    height: 100vh;
+    top: 0;
+}
+
+@mixin drawertypes() {
+    &.drawer-left,
+    &.drawer-right {
+        width: $drawer-width;
+        max-width: $drawer-width;
+    }
+    &.drawer-right {
+        border-left: $border-width solid $border-color;
+        right: calc(-#{$drawer-width} + -10px);
+        @include box-shadow($box-shadow-drawer-right);
+        &.show {
+            right: 0;
+        }
+    }
+    &.drawer-left {
+        border-right: $border-width solid $border-color;
+        left: calc(-#{$drawer-width} + -10px);
+        @include box-shadow($box-shadow-drawer-left);
+        &.show {
+            left: 0;
+        }
+    }
+    &.drawer-bottom {
+        bottom: -110%;
+        &.show {
+            bottom: 0;
+        }
+    }
+}
+
+.drawer {
+    @include drawer();
+    @include drawertypes();
+}
+
+@include media-breakpoint-up(lg) {
+    .drawer {
+        z-index: inherit;
+    }
+}
+
+.drawer-md,
+.drawer-sm {
+    display: none;
+}
+
+@include media-breakpoint-down(md) {
+    .drawer-md {
+        display: block;
+        @include drawer();
+        @include drawertypes();
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .drawer-sm {
+        display: block;
+        @include drawer();
+        @include drawertypes();
+    }
+}
+
+.drawerheader {
+    padding: 0 0.75rem;
+    height: $navbar-height;
+    display: flex;
+    align-items: center;
+    border-bottom: $border-width solid $border-color;
+    .drawertoggle {
+        margin-left: auto;
+    }
+}
+
+.drawercontent {
+    position: relative;
+    height: calc(100% - #{$navbar-height});
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow-y: auto;
+    padding: 0.5rem;
 }

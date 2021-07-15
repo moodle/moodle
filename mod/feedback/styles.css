@@ -40,6 +40,11 @@
     width: 10%;
 }
 
+.path-mod-feedback .feedback_form .itemactions {
+    display: inline-block;
+    margin: 0 .5em;
+}
+
 /* Analysis page */
 .path-mod-feedback table.analysis {
     width: 100%;

@@ -23,3 +23,7 @@ $primary-nav-padding-y: ($spacer / 4) !default;
 $primary-nav-padding-x: ($spacer / 2) !default;
 
 $navbar-height: 50px !default;
+$course-content-maxwidth: 800px;
+
+$box-shadow-drawer-left: -0.25rem .25rem .8rem rgba($black, .025) !default;
+$box-shadow-drawer-right: 0 .25rem .8rem rgba($black, .025) !default;

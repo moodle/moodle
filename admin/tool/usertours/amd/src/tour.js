@@ -722,6 +722,10 @@ const Tour = class {
         if (this.isStepActuallyVisible(stepConfig)) {
             let targetNode = this.getStepTarget(stepConfig);
 
+            if (targetNode.parents('[data-usertour="scroller"]').length) {
+                animationTarget = targetNode.parents('[data-usertour="scroller"]');
+            }
+
             targetNode.data('flexitour', 'target');
 
             let zIndex = this.calculateZIndex(targetNode);
@@ -1166,16 +1170,21 @@ const Tour = class {
      * @return  {Number}
      */
     calculateScrollTop(stepConfig) {
-        let scrollTop = $(window).scrollTop();
         let viewportHeight = $(window).height();
         let targetNode = this.getStepTarget(stepConfig);
+
+        parent = $(window);
+        if (targetNode.parents('[data-usertour="scroller"]').length) {
+            parent = targetNode.parents('[data-usertour="scroller"]');
+        }
+        let scrollTop = parent.scrollTop();
 
         if (stepConfig.placement === 'top') {
             // If the placement is top, center scroll at the top of the target.
             scrollTop = targetNode.offset().top - (viewportHeight / 2);
         } else if (stepConfig.placement === 'bottom') {
             // If the placement is bottom, center scroll at the bottom of the target.
-            scrollTop = targetNode.offset().top + targetNode.height() - (viewportHeight / 2);
+            scrollTop = targetNode.offset().top + targetNode.height() + scrollTop - (viewportHeight / 2);
         } else if (targetNode.height() <= (viewportHeight * 0.8)) {
             // If the placement is left/right, and the target fits in the viewport, centre screen on the target
             scrollTop = targetNode.offset().top - ((viewportHeight - targetNode.height()) / 2);
@@ -1348,7 +1357,10 @@ const Tour = class {
             if (this.isStepActuallyVisible(stepConfig)) {
                 // The step has a visible target.
                 // Punch a hole through the backdrop.
-                let background = $('<div data-flexitour="step-background"></div>');
+                let background = $('[data-flexitour="step-background"]');
+                if (!background.length) {
+                    background = $('<div data-flexitour="step-background"></div>');
+                }
 
                 let targetNode = this.getStepTarget(stepConfig);
 
@@ -1359,11 +1371,18 @@ const Tour = class {
                     colorNode = $('body');
                 }
 
+                let drawertop = 0;
+                if (targetNode.parents('[data-usertour="scroller"]').length) {
+                    drawertop = targetNode.parents('[data-usertour="scroller"]').scrollTop();                background.css({
+                       position: 'fixed'
+                    });
+                }
+
                 background.css({
                     width: targetNode.outerWidth() + buffer + buffer,
                     height: targetNode.outerHeight() + buffer + buffer,
                     left: targetNode.offset().left - buffer,
-                    top: targetNode.offset().top - buffer,
+                    top: targetNode.offset().top + drawertop - buffer,
                     backgroundColor: this.calculateInherittedBackgroundColor(colorNode),
                 });
 
@@ -1374,7 +1393,7 @@ const Tour = class {
                     });
                 }
 
-                if (targetNode.offset().top < buffer) {
+                if ((targetNode.offset().top  + drawertop) < buffer) {
                     background.css({
                         height: targetNode.outerHeight() + targetNode.offset().top + buffer,
                         top: targetNode.offset().top,
@@ -1399,6 +1418,11 @@ const Tour = class {
                     opacity: backdrop.css('opacity'),
                 });
                 fader.attr('data-flexitour', 'step-background-fader');
+
+                if (targetNode.parents('[data-region="fixed-drawer"]').length) {
+                    let targetClone = targetNode.clone();
+                    background.append(targetClone);
+                }
 
                 if (stepConfig.zIndex) {
                     if (stepConfig.attachPoint === 'append') {
