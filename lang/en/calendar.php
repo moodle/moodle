@@ -28,11 +28,12 @@ $string['addevent'] = 'Add events';
 $string['annually'] = 'Annually';
 $string['activityevent'] = 'Activity event';
 $string['calendar'] = 'Calendar';
+$string['calendarexporturl'] = 'Calendar URL';
 $string['calendarheading'] = '{$a} Calendar';
 $string['calendarpreferences'] = 'Calendar preferences';
 $string['calendartypes'] = 'Calendar types';
 $string['calendarsubscriptions'] = 'Calendar subscriptions';
-$string['calendarurl'] = 'Calendar URL: {$a}';
+$string['calendarurlcopiedtoclipboard'] = 'Calendar URL copied to clipboard';
 $string['category'] = 'Category';
 $string['categoryevent'] = 'Category event';
 $string['clickhide'] = 'click to hide';
@@ -44,6 +45,8 @@ $string['colactions'] = 'Actions';
 $string['commontasks'] = 'Options';
 $string['confirmeventdelete'] = 'Are you sure you want to delete the "{$a}" event?';
 $string['confirmeventseriesdelete'] = 'The "{$a->name}" event is part of a series. Do you want to delete just this event, or all {$a->count} events in the series?';
+$string['copycalendarurl'] = 'Copy calendar URL';
+$string['copyurl'] = 'Copy URL';
 $string['course'] = 'Course';
 $string['courseevent'] = 'Course event';
 $string['courseevents'] = 'Course events';
@@ -277,6 +280,9 @@ $string['whendate'] = 'When: {$a}';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
 $string['yoursubscriptions'] = 'Your Subscriptions';
+
+// Deprecated since Moodle 4.0.
+$string['calendarurl'] = 'Calendar URL: {$a}';
 
 // Deprecated since Moodle 3.8.
 $string['global'] = 'Global';
