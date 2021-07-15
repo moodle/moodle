@@ -21,19 +21,22 @@
 
     Example context (json):
     {
-        "exportcalendarlink": "http://abc.com/calendar/export.php?course=1",
-        "managesubscriptionlink": "http://abc.com/calendar/managesubscriptions.php?course=1"
+        "footerlinks": [
+            {
+                "url": "calendar/view.php?view=month",
+                "linkname": "Full calendar"
+            },
+            {
+                "url": "calendar/managesubscriptions.php",
+                "linkname": "Manage subcriptions"
+            }
+        ]
     }
 }}
 <div class="bottom">
-    {{#exportcalendarlink}}
-        <span class="export-link">
-            <a href="{{.}}" title={{#quote}}{{#str}}exportcalendar, calendar{{/str}}{{/quote}}>{{#str}}exportcalendar, calendar{{/str}}</a>
+    {{#footerlinks}}
+        <span class="footer-link">
+            <a href="{{url}}">{{linkname}}</a>
         </span>
-    {{/exportcalendarlink}}
-    {{#managesubscriptionlink}}
-        <span class="export-link">
-            <a href="{{.}}" title={{#quote}}{{#str}}managesubscriptions, calendar{{/str}}{{/quote}}>{{#str}}managesubscriptions, calendar{{/str}}</a>
-        </span>
-    {{/managesubscriptionlink}}
+    {{/footerlinks}}
 </div>
