@@ -2011,7 +2011,7 @@ class quiz_attempt {
         // Transition to the appropriate state.
         switch ($this->quizobj->get_quiz()->overduehandling) {
             case 'autosubmit':
-                $this->process_finish($timestamp, false, $studentisonline ? $timestamp : $timeclose);
+                $this->process_finish($timestamp, false, $studentisonline ? $timestamp : $timeclose, $studentisonline);
                 return;
 
             case 'graceperiod':
@@ -2183,8 +2183,9 @@ class quiz_attempt {
      *      POST request are stored to be graded, before the attempt is finished.
      * @param ?int $timefinish if set, use this as the finish time for the attempt.
      *      (otherwise use $timestamp as the finish time as well).
+     * @param bool $studentisonline is the student currently interacting with Moodle?
      */
-    public function process_finish($timestamp, $processsubmitted, $timefinish = null) {
+    public function process_finish($timestamp, $processsubmitted, $timefinish = null, $studentisonline = false) {
         global $DB;
 
         $transaction = $DB->start_delegated_transaction();
@@ -2207,7 +2208,7 @@ class quiz_attempt {
             quiz_save_best_grade($this->get_quiz(), $this->attempt->userid);
 
             // Trigger event.
-            $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp);
+            $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp, $studentisonline);
 
             // Tell any access rules that care that the attempt is over.
             $this->get_access_manager($timestamp)->current_attempt_finished();
@@ -2246,7 +2247,7 @@ class quiz_attempt {
         $this->attempt->timecheckstate = $timestamp;
         $DB->update_record('quiz_attempts', $this->attempt);
 
-        $this->fire_state_transition_event('\mod_quiz\event\attempt_becameoverdue', $timestamp);
+        $this->fire_state_transition_event('\mod_quiz\event\attempt_becameoverdue', $timestamp, $studentisonline);
 
         $transaction->allow_commit();
 
@@ -2268,7 +2269,7 @@ class quiz_attempt {
         $this->attempt->timecheckstate = null;
         $DB->update_record('quiz_attempts', $this->attempt);
 
-        $this->fire_state_transition_event('\mod_quiz\event\attempt_abandoned', $timestamp);
+        $this->fire_state_transition_event('\mod_quiz\event\attempt_abandoned', $timestamp, $studentisonline);
 
         $transaction->allow_commit();
     }
@@ -2278,8 +2279,9 @@ class quiz_attempt {
      *
      * @param string $eventclass the event class name.
      * @param int $timestamp the timestamp to include in the event.
+     * @param bool $studentisonline is the student currently interacting with Moodle?
      */
-    protected function fire_state_transition_event($eventclass, $timestamp) {
+    protected function fire_state_transition_event($eventclass, $timestamp, $studentisonline) {
         global $USER;
         $quizrecord = $this->get_quiz();
         $params = array(
@@ -2289,10 +2291,10 @@ class quiz_attempt {
             'relateduserid' => $this->attempt->userid,
             'other' => array(
                 'submitterid' => CLI_SCRIPT ? null : $USER->id,
-                'quizid' => $quizrecord->id
+                'quizid' => $quizrecord->id,
+                'studentisonline' => $studentisonline
             )
         );
-
         $event = $eventclass::create($params);
         $event->add_record_snapshot('quiz', $this->get_quiz());
         $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
@@ -2462,7 +2464,7 @@ class quiz_attempt {
             if ($becomingabandoned) {
                 $this->process_abandon($timenow, true);
             } else {
-                $this->process_finish($timenow, !$toolate, $toolate ? $timeclose : $timenow);
+                $this->process_finish($timenow, !$toolate, $toolate ? $timeclose : $timenow, true);
             }
 
         } catch (question_out_of_sequence_exception $e) {

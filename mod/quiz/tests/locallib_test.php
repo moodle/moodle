@@ -941,4 +941,57 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
         $this->assertEquals('Settings overrides exist (Groups: 2, Users: 2)',
                 html_to_text($renderer->quiz_override_summary_links($quiz, $cm), 0, false));
     }
+
+    /**
+     *  Test quiz_send_confirmation function.
+     */
+    public function test_quiz_send_confirmation() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->preventResetByRollback();
+
+        $course = $this->getDataGenerator()->create_course();
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+
+        $recipient = $this->getDataGenerator()->create_user(['email' => 'student@example.com']);
+
+        // Allow recipent to receive email confirm submission.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        assign_capability('mod/quiz:emailconfirmsubmission', CAP_ALLOW, $studentrole->id,
+            context_course::instance($course->id), true);
+        $this->getDataGenerator()->enrol_user($recipient->id, $course->id, $studentrole->id, 'manual');
+
+        $timenow = time();
+        $data = new stdClass();
+        // Course info.
+        $data->courseid        = $course->id;
+        $data->coursename      = $course->fullname;
+        // Quiz info.
+        $data->quizname        = $quiz->name;
+        $data->quizurl         = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
+        $data->quizid          = $quiz->id;
+        $data->quizcmid        = $quiz->cmid;
+        $data->attemptid       = 1;
+        $data->submissiontime = userdate($timenow);
+
+        $sink = $this->redirectEmails();
+        quiz_send_confirmation($recipient, $data, true);
+        $messages = $sink->get_messages();
+        $message = reset($messages);
+        $this->assertStringContainsString("Thank you for submitting your answers" ,
+            quoted_printable_decode($message->body));
+        $sink->close();
+
+        $sink = $this->redirectEmails();
+        quiz_send_confirmation($recipient, $data, false);
+        $messages = $sink->get_messages();
+        $message = reset($messages);
+        $this->assertStringContainsString("Your answers were submitted automatically" ,
+            quoted_printable_decode($message->body));
+        $sink->close();
+    }
 }
