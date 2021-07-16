@@ -1959,6 +1959,7 @@ class core_plugin_manager {
                 'managecategories',
                 'previewquestion',
                 'tagquestion',
+                'usage',
                 'viewcreator',
                 'viewquestionname',
                 'viewquestiontext',
