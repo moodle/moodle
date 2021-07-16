@@ -89,6 +89,9 @@ course formats don't have their own renderer.
   category pages.
 * New core_course_category::get_nearest_editable_subcategory():
   - Return the core_course_category object for the first subcategory that the current user has the permission on it.
+* The following functions have been deprecated in favour partial course cache rebuild:
+  - course_purge_section_cache (replaced by course_modinfo::purge_course_section_cache_by_id() and course_modinfo::purge_course_section_cache_by_number())
+  - course_purge_module_cache (replaced by course_modinfo::purge_course_module_cache())
 
 === 3.11 ===
 * A new callback xxx_coursemodule_definition_after_data that allows plugins to extend activity forms after the data is set.

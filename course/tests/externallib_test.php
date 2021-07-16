@@ -1085,8 +1085,10 @@ class externallib_test extends externallib_advanced_testcase {
             array('course' => $course->id, 'intro' => 'forum completion tracking auto', 'trackingtype' => 2),
             array('showdescription' => true, 'completionview' => 1, 'completion' => COMPLETION_TRACKING_AUTOMATIC));
         $forumcompleteautocm = get_coursemodule_from_id('forum', $forumcompleteauto->cmid);
-
-        rebuild_course_cache($course->id, true);
+        $sectionrecord = $DB->get_record('course_sections', $conditions);
+        // Invalidate the section cache by given section number.
+        course_modinfo::purge_course_section_cache_by_number($sectionrecord->course, $sectionrecord->section);
+        rebuild_course_cache($course->id, true, true);
 
         return array($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm, $forumcompleteautocm);
     }

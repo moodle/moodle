@@ -367,7 +367,7 @@ class modinfolib_test extends advanced_testcase {
         $this->assertEquals($USER->id, $modinfo->userid);
         $this->assertEquals(array(0 => array($forum0->cmid, $assign0->cmid),
             1 => array($forum1->cmid, $assign1->cmid, $page1->cmid), 3 => array($page3->cmid)), $modinfo->sections);
-        $this->assertEquals(array('forum', 'assign', 'page'), array_keys($modinfo->instances));
+        $this->assertEquals(array('assign', 'forum', 'page'), array_keys($modinfo->instances));
         $this->assertEquals(array($assign0->id, $assign1->id), array_keys($modinfo->instances['assign']));
         $this->assertEquals(array($forum0->id, $forum1->id), array_keys($modinfo->instances['forum']));
         $this->assertEquals(array($page1->id, $page3->id), array_keys($modinfo->instances['page']));

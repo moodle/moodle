@@ -1143,6 +1143,7 @@ class courselib_test extends advanced_testcase {
 
         // Delete section in the middle (2).
         $this->assertFalse(course_delete_section($course, 2, false));
+        $this->assertEquals(4, course_get_format($course)->get_last_section_number());
         $this->assertTrue(course_delete_section($course, 2, true));
         $this->assertFalse($DB->record_exists('course_modules', array('id' => $assign21->cmid)));
         $this->assertFalse($DB->record_exists('course_modules', array('id' => $assign22->cmid)));

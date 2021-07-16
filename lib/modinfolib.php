@@ -514,7 +514,7 @@ class course_modinfo {
                             ' does not have context. Rebuilding cache for course '. $course->id);
                     // Re-request the course record from DB as well, don't use get_course() here.
                     $course = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
-                    $coursemodinfo = self::build_course_cache($course);
+                    $coursemodinfo = self::build_course_cache($course, true);
                     break;
                 }
             }
@@ -553,6 +553,7 @@ class course_modinfo {
                 $this->instances[$cm->modname] = array();
             }
             $this->instances[$cm->modname][$cm->instance] = $cm;
+            ksort($this->instances[$cm->modname]);
             $this->cms[$cm->id] = $cm;
 
             // Reconstruct sections. This works because modules are stored in order
@@ -562,6 +563,8 @@ class course_modinfo {
             $this->sections[$cm->sectionnum][] = $cm->id;
         }
 
+        ksort($this->cms);
+        ksort($this->instances);
         // Expand section objects
         $this->sectioninfo = array();
         foreach ($coursemodinfo->sectioncache as $number => $data) {
@@ -588,23 +591,37 @@ class course_modinfo {
      * in some other way.)
      *
      * @param stdClass $course Course object (must contain fields
+     * @param boolean $usecache use cached section info if exists, use true for partial course rebuild
      * @return array Information about sections, indexed by section number (not id)
      */
-    protected static function build_course_section_cache($course) {
+    protected static function build_course_section_cache(\stdClass $course, bool $usecache = false): array {
         global $DB;
 
         // Get section data
         $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section',
                 'section, id, course, name, summary, summaryformat, sequence, visible, availability');
-        $compressedsections = array();
+        $compressedsections = [];
+        $courseformat = course_get_format($course);
+
+        if ($usecache) {
+            $cachecoursemodinfo = \cache::make('core', 'coursemodinfo');
+            $coursemodinfo = $cachecoursemodinfo->get($course->id);
+            if ($coursemodinfo !== false) {
+                $compressedsections = $coursemodinfo->sectioncache;
+            }
+        }
 
         $formatoptionsdef = course_get_format($course)->section_format_options();
         // Remove unnecessary data and add availability
         foreach ($sections as $number => $section) {
+            $sectioninfocached = isset($compressedsections[$number]);
+            if ($sectioninfocached) {
+                continue;
+            }
             // Add cached options from course format to $section object
             foreach ($formatoptionsdef as $key => $option) {
                 if (!empty($option['cache'])) {
-                    $formatoptions = course_get_format($course)->get_format_options($section);
+                    $formatoptions = $courseformat->get_format_options($section);
                     if (!array_key_exists('cachedefault', $option) || $option['cachedefault'] !== $formatoptions[$key]) {
                         $section->$key = $formatoptions[$key];
                     }
@@ -615,6 +632,7 @@ class course_modinfo {
             section_info::convert_for_section_cache($compressedsections[$number]);
         }
 
+        ksort($compressedsections);
         return $compressedsections;
     }
 
@@ -652,19 +670,20 @@ class course_modinfo {
      *
      * @param stdClass $course object from DB table course. Must have property 'id'
      *     but preferably should have all cached fields.
+     * @param boolean $partialrebuild Indicate if it's partial course cache rebuild or not
      * @return stdClass object with all cached keys of the course plus fields modinfo and sectioncache.
      *     The same object is stored in MUC
      * @throws moodle_exception if course is not found (if $course object misses some of the
      *     necessary fields it is re-requested from database)
      */
-    public static function build_course_cache($course) {
+    public static function build_course_cache(\stdClass $course, bool $partialrebuild = false): \stdClass {
         if (empty($course->id)) {
             throw new coding_exception('Object $course is missing required property \id\'');
         }
 
         $lock = self::get_course_cache_lock($course->id);
         try {
-            return self::inner_build_course_cache($course, $lock);
+            return self::inner_build_course_cache($course, $lock, $partialrebuild);
         } finally {
             $lock->release();
         }
@@ -675,9 +694,11 @@ class course_modinfo {
      *
      * @param stdClass $course object from DB table course
      * @param \core\lock\lock $lock Lock object - not actually used, just there to indicate you have a lock
+     * @param bool $partialrebuild Indicate if it's partial course cache rebuild or not
      * @return stdClass Course object that has been stored in MUC
      */
-    protected static function inner_build_course_cache($course, \core\lock\lock $lock) {
+    protected static function inner_build_course_cache(\stdClass $course, \core\lock\lock $lock,
+            bool $partialrebuild = false): \stdClass {
         global $DB, $CFG;
         require_once("{$CFG->dirroot}/course/lib.php");
 
@@ -688,8 +709,8 @@ class course_modinfo {
 
         // Retrieve all information about activities and sections.
         $coursemodinfo = new stdClass();
-        $coursemodinfo->modinfo = get_array_of_activities($course->id);
-        $coursemodinfo->sectioncache = self::build_course_section_cache($course);
+        $coursemodinfo->modinfo = get_array_of_activities($course->id, $partialrebuild);
+        $coursemodinfo->sectioncache = self::build_course_section_cache($course, $partialrebuild);
         foreach (self::$cachedfields as $key) {
             $coursemodinfo->$key = $course->$key;
         }
@@ -697,6 +718,63 @@ class course_modinfo {
         $cachecoursemodinfo = cache::make('core', 'coursemodinfo');
         $cachecoursemodinfo->set_versioned($course->id, $course->cacherev, $coursemodinfo);
         return $coursemodinfo;
+    }
+
+    /**
+     * Purge the cache of a course section by its id.
+     *
+     * @param int $courseid The course to purge cache in
+     * @param int $sectionid The section _id_ to purge
+     */
+    public static function purge_course_section_cache_by_id(int $courseid, int $sectionid): void {
+        $cache = cache::make('core', 'coursemodinfo');
+        $cache->acquire_lock($courseid);
+        $coursemodinfo = $cache->get($courseid);
+        if ($coursemodinfo !== false) {
+            foreach ($coursemodinfo->sectioncache as $sectionno => $sectioncache) {
+                if ($sectioncache->id == $sectionid) {
+                    unset($coursemodinfo->sectioncache[$sectionno]);
+                    $cache->set($courseid, $coursemodinfo);
+                    break;
+                }
+            }
+        }
+        $cache->release_lock($courseid);
+    }
+
+    /**
+     * Purge the cache of a course section by its number.
+     *
+     * @param int $courseid The course to purge cache in
+     * @param int $sectionno The section number to purge
+     */
+    public static function purge_course_section_cache_by_number(int $courseid, int $sectionno): void {
+        $cache = cache::make('core', 'coursemodinfo');
+        $cache->acquire_lock($courseid);
+        $coursemodinfo = $cache->get($courseid);
+        if ($coursemodinfo !== false && array_key_exists($sectionno, $coursemodinfo->sectioncache)) {
+            unset($coursemodinfo->sectioncache[$sectionno]);
+            $cache->set($courseid, $coursemodinfo);
+        }
+        $cache->release_lock($courseid);
+    }
+
+    /**
+     * Purge the cache of a course module.
+     *
+     * @param int $courseid Course id
+     * @param int $cmid Course module id
+     */
+    public static function purge_course_module_cache(int $courseid, int $cmid): void {
+        $cache = cache::make('core', 'coursemodinfo');
+        $cache->acquire_lock($courseid);
+        $coursemodinfo = $cache->get($courseid);
+        $hascache = ($coursemodinfo !== false) && array_key_exists($cmid, $coursemodinfo->modinfo);
+        if ($hascache) {
+            unset($coursemodinfo->modinfo[$cmid]);
+            $cache->set($courseid, $coursemodinfo);
+        }
+        $cache->release_lock($courseid);
     }
 }
 
@@ -2450,9 +2528,21 @@ function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid
  * @param int $courseid id of course to rebuild, empty means all
  * @param boolean $clearonly only clear the cache, gets rebuild automatically on the fly.
  *     Recommended to set to true to avoid unnecessary multiple rebuilding.
+ * @param boolean $partialrebuild will not delete the whole cache when it's true.
+ *     use purge_module_cache() or purge_section_cache() must be
+ *         called before when partialrebuild is true.
+ *     use purge_module_cache() to invalidate mod cache.
+ *     use purge_section_cache() to invalidate section cache.
+ *
+ * @return void
+ * @throws coding_exception
  */
-function rebuild_course_cache($courseid=0, $clearonly=false) {
-    global $COURSE, $SITE, $DB, $CFG;
+function rebuild_course_cache(int $courseid = 0, bool $clearonly = false, bool $partialrebuild = false): void {
+    global $COURSE, $SITE, $DB;
+
+    if ($courseid == 0 and $partialrebuild) {
+        throw new coding_exception('partialrebuild only works when a valid course id is provided.');
+    }
 
     // Function rebuild_course_cache() can not be called during upgrade unless it's clear only.
     if (!$clearonly && !upgrade_ensure_not_running(true)) {
@@ -2468,7 +2558,10 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
     if (empty($courseid)) {
         // Clearing caches for all courses.
         increment_revision_number('course', 'cacherev', '');
-        $cachecoursemodinfo->purge();
+        if (!$partialrebuild) {
+            $cachecoursemodinfo->purge();
+        }
+        // Clear memory static cache.
         course_modinfo::clear_instance_cache();
         // Update global values too.
         $sitecacherev = $DB->get_field('course', 'cacherev', array('id' => SITEID));
@@ -2481,7 +2574,11 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
     } else {
         // Clearing cache for one course, make sure it is deleted from user request cache as well.
         increment_revision_number('course', 'cacherev', 'id = :id', array('id' => $courseid));
-        $cachecoursemodinfo->delete($courseid);
+        if (!$partialrebuild) {
+            // Purge all course modinfo.
+            $cachecoursemodinfo->delete($courseid);
+        }
+        // Clear memory static cache.
         course_modinfo::clear_instance_cache($courseid);
         // Update global values too.
         if ($courseid == $COURSE->id || $courseid == $SITE->id) {
@@ -2506,10 +2603,13 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         core_php_time_limit::raise();  // this could take a while!   MDL-10954
     }
 
-    $rs = $DB->get_recordset("course", $select,'','id,'.join(',', course_modinfo::$cachedfields));
+    $fields = 'id,' . join(',', course_modinfo::$cachedfields);
+    $sort = '';
+    $rs = $DB->get_recordset("course", $select, $sort, $fields);
+
     // Rebuild cache for each course.
     foreach ($rs as $course) {
-        course_modinfo::build_course_cache($course);
+        course_modinfo::build_course_cache($course, $partialrebuild);
     }
     $rs->close();
 }
