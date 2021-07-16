@@ -238,11 +238,14 @@
         $output .= "<p>base filename for expression is '$md5'</p>\n";
 
         // temporary paths
-        $tex = "$latex->temp_dir/$md5.tex";
+        $tex = "$md5.tex"; // Absolute paths won't work with openin_any = p setting.
         $dvi = "$latex->temp_dir/$md5.dvi";
         $ps = "$latex->temp_dir/$md5.ps";
         $convertformat = get_config('filter_tex', 'convertformat');
         $img = "$latex->temp_dir/$md5.{$convertformat}";
+
+        // Change directory to temp dir so that we can work with relative paths.
+        chdir($latex->temp_dir);
 
         // put the expression as a file into the temp area
         $expression = html_entity_decode($expression);
@@ -251,9 +254,6 @@
         $fh = fopen($tex, 'w');
         fputs($fh, $doc);
         fclose($fh);
-
-        // cd to temp dir
-        chdir($latex->temp_dir);
 
         // step 1: latex command
         $pathlatex = escapeshellarg($pathlatex);
