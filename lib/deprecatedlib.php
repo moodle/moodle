@@ -2757,20 +2757,12 @@ function get_courses_page() {
 }
 
 /**
- * Returns the models that generated insights in the provided context.
- *
- * @deprecated since Moodle 3.8 MDL-66091 - please do not use this function any more.
- * @todo MDL-65799 This will be deleted in Moodle 4.0
- * @see \core_analytics\manager::cached_models_with_insights
- * @param  \context $context
- * @return int[]
+ * @deprecated since Moodle 3.8
  */
 function report_insights_context_insights(\context $context) {
-
-    debugging('report_insights_context_insights is deprecated. Please use ' .
-        '\core_analytics\manager::cached_models_with_insights instead', DEBUG_DEVELOPER);
-
-    return \core_analytics\manager::cached_models_with_insights($context);
+    throw new coding_exception(
+        'Function report_insights_context_insights() has been removed. \core_analytics\manager::cached_models_with_insights instead'
+    );
 }
 
 /**
