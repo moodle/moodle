@@ -713,6 +713,9 @@ function chat_update_chat_times($chatid=0) {
         $cond = "modulename='chat' AND eventtype = :eventtype AND instance = :chatid AND timestart <> :chattime";
         $params = ['chattime' => $chat->chattime, 'eventtype' => CHAT_EVENT_TYPE_CHATTIME, 'chatid' => $chat->id];
 
+        $cm = get_coursemodule_from_instance('chat', $chat->id, $chat->course);
+        course_purge_module_cache($cm);
+
         if ($event->id = $DB->get_field_select('event', 'id', $cond, $params)) {
             $event->timestart = $chat->chattime;
             $event->timesort = $chat->chattime;
@@ -723,7 +726,7 @@ function chat_update_chat_times($chatid=0) {
 
     $courseids = array_unique($courseids);
     foreach ($courseids as $courseid) {
-        rebuild_course_cache($courseid, true);
+        rebuild_course_cache($courseid, true, true);
     }
 }
 
