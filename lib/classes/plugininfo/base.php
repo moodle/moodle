@@ -503,27 +503,17 @@ abstract class base {
      *
      * @return null|moodle_url
      */
-    public function get_settings_url() {
+    public function get_settings_url(): ?moodle_url {
         $section = $this->get_settings_section_name();
         if ($section === null) {
             return null;
         }
+
         $settings = admin_get_root()->locate($section);
-        if ($settings) {
-            if ($settings instanceof \admin_settingpage) {
-                return new moodle_url('/admin/settings.php', [
-                    'section' => $section,
-                ]);
-            }
-
-            if ($settings instanceof \admin_externalpage) {
-                return new moodle_url($settings->url);
-            }
-
-            if ($settings instanceof \admin_category) {
-                return $settings->get_settings_page_url();
-            }
+        if ($settings && $settings instanceof \core_admin\local\settings\linkable_settings_page) {
+            return $settings->get_settings_page_url();
         }
+
         return null;
     }
 

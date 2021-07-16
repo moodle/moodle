@@ -4377,12 +4377,13 @@ class settings_navigation extends navigation_node {
             // Now we need to display it and any children it may have
             $url = null;
             $icon = null;
-            if ($adminbranch instanceof admin_settingpage) {
-                $url = new moodle_url('/'.$CFG->admin.'/settings.php', array('section'=>$adminbranch->name));
-            } else if ($adminbranch instanceof admin_externalpage) {
-                $url = $adminbranch->url;
-            } else if (!empty($CFG->linkadmincategories) && $adminbranch instanceof admin_category) {
-                $url = new moodle_url('/'.$CFG->admin.'/category.php', array('category' => $adminbranch->name));
+
+            if ($adminbranch instanceof \core_admin\local\settings\linkable_settings_page) {
+                if (empty($CFG->linkadmincategories) && $adminbranch instanceof admin_category) {
+                    $url = null;
+                } else {
+                    $url = $adminbranch->get_settings_page_url();
+                }
             }
 
             // Add the branch
