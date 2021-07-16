@@ -17,9 +17,10 @@
 // phpcs:disable moodle.PHP.ForbiddenFunctions.Found
 
 /**
- * Fast login end point for BEHAT TESTS ONLY.
+ * Login end point for Behat tests only.
  *
- * @package    theme_cfz
+ * @package    core_auth
+ * @category   test
  * @author     Guy Thomas
  * @copyright  2021 Class Technologies Inc. {@link https://www.class.com/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,32 +29,48 @@ require(__DIR__.'/../../../config.php');
 
 $behatrunning = defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING;
 if (!$behatrunning) {
-    die;
+    redirect(new moodle_url('/'));
 }
 
 $username = required_param('username', PARAM_ALPHANUMEXT);
+$wantsurl = new moodle_url(optional_param('wantsurl', '/', PARAM_URL));
+
 // Note - with behat, the password is always the same as the username.
 $password = $username;
 
 $failurereason = null;
 $user = authenticate_user_login($username, $password, true, $failurereason, false);
 if ($failurereason) {
-    error_log("Failed to login as behat step for $username with reason: " . $failurereason);
-    throw new Exception($failurereason);
+    switch($failurereason) {
+        case AUTH_LOGIN_NOUSER:
+            $reason = get_string('invalidlogin');
+            break;
+        case AUTH_LOGIN_SUSPENDED:
+            $reason = 'User suspended';
+            break;
+        case AUTH_LOGIN_FAILED:
+            $reason = 'Login failed';
+            break;
+        case AUTH_LOGIN_LOCKOUT:
+            $reason = 'Account locked';
+            break;
+        case AUTH_LOGIN_UNAUTHORISED:
+            $reason = get_string('unauthorisedlogin', 'core', $username);
+            break;
+        default:
+            $reason = "Unknown login failure: '{$failureeason}'";
+            break;
+
+    }
+
+    // Note: Do not throw an exception here as we sometimes test that login does not work.
+    // Exceptions are automatic failures in Behat.
+    \core\notification::add($reason, \core\notification::ERROR);
+    redirect(new moodle_url('/'));
 }
+
 if (!complete_user_login($user)) {
     throw new Exception("Failed to login as behat step for $username");
 }
 
-$redirecturl = optional_param('redirecturl', null, PARAM_URL);
-$redirecturl = $redirecturl ?? $CFG->wwwroot;
-
-if (optional_param('forceeditmode', false, PARAM_INT)) {
-    $sesskey = sesskey();
-    $url = new moodle_url($redirecturl);
-    $url->param('edit', 1);
-    $url->param('sesskey', $sesskey);
-    $redirecturl = $url.'';
-}
-
-redirect($redirecturl);
+redirect($wantsurl);
