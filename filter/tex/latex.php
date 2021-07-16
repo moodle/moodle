@@ -114,10 +114,13 @@
                 $convertformat = 'png';
             }
             $filename = str_replace(".{$convertformat}", '', $filename);
-            $tex = "{$this->temp_dir}/$filename.tex";
+            $tex = "$filename.tex"; // Absolute paths won't work with openin_any = p setting.
             $dvi = "{$this->temp_dir}/$filename.dvi";
             $ps  = "{$this->temp_dir}/$filename.ps";
             $img = "{$this->temp_dir}/$filename.{$convertformat}";
+
+            // Change directory to temp dir so that we can work with relative paths.
+            chdir($this->temp_dir);
 
             // turn the latex doc into a .tex file in the temp area
             $fh = fopen( $tex, 'w' );
@@ -126,7 +129,7 @@
 
             // run latex on document
             $command = "$pathlatex --interaction=nonstopmode --halt-on-error $tex";
-            chdir( $this->temp_dir );
+
             if ($this->execute($command, $log)) { // It allways False on Windows
 //                return false;
             }
