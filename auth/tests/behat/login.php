@@ -58,7 +58,7 @@ if ($failurereason) {
             $reason = get_string('unauthorisedlogin', 'core', $username);
             break;
         default:
-            $reason = "Unknown login failure: '{$failureeason}'";
+            $reason = "Unknown login failure: '{$failurereason}'";
             break;
 
     }
