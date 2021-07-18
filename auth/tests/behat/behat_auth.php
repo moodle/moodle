@@ -53,7 +53,7 @@ class behat_auth extends behat_base {
             return;
         }
 
-        $loginurl = new moodle_url('/lib/tests/behat/login.php', [
+        $loginurl = new moodle_url('/auth/tests/behat/login.php', [
             'username' => $username,
         ]);
         if ($wantsurl !== null) {
@@ -70,11 +70,6 @@ class behat_auth extends behat_base {
      * @Given /^I log out$/
      */
     public function i_log_out() {
-
-        // Wait for page to be loaded.
-        $this->wait_for_pending_js();
-
-        // Click on logout link in footer, as it's much faster.
-        $this->execute('behat_general::i_click_on_in_the', array(get_string('logout'), 'link', '#page-footer', "css_element"));
+        $this->execute('behat_general::i_visit', [new moodle_url('/auth/tests/behat/logout.php')]);
     }
 }
