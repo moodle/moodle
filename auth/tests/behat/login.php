@@ -35,6 +35,15 @@ if (!$behatrunning) {
 $username = required_param('username', PARAM_ALPHANUMEXT);
 $wantsurl = new moodle_url(optional_param('wantsurl', '/', PARAM_URL));
 
+if (isloggedin()) {
+    // If the user is already logged in, log them out and redirect them back to login again.
+    require_logout();
+    redirect(new moodle_url('/auth/tests/behat/login.php', [
+        'username' => $username,
+        'wantsurl' => $wantsurl->out(false),
+    ]));
+}
+
 // Note - with behat, the password is always the same as the username.
 $password = $username;
 
