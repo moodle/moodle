@@ -710,29 +710,28 @@ class behat_navigation extends behat_base {
     protected function resolve_core_page_instance_url(string $type, string $identifier): moodle_url {
         global $DB;
 
-        switch ($type) {
-            case 'Category page':
-                $categoryid = $DB->get_field('course_categories', 'id', ['idnumber' => $identifier]);
+        switch (strtolower($type)) {
+            case 'category page':
+                $categoryid = $this->get_category_id($identifier);
                 if (!$categoryid) {
                     throw new Exception('The specified category with idnumber "' . $identifier . '" does not exist');
                 }
                 return new moodle_url('/course/category.php', ['id' => $categoryid]);
 
-            case 'Course':
-                $courseid = $DB->get_field_select('course', 'id', 'shortname = ?', [$identifier], IGNORE_MISSING);
+            case 'course':
+                $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
                     throw new Exception('The specified course with shortname, fullname, or idnumber "' .
                             $identifier . '" does not exist');
                 }
                 return new moodle_url('/course/view.php', ['id' => $courseid]);
 
-            case 'Activity':
-                $cm = $DB->get_record('course_modules', ['idnumber' => $identifier], 'id, course', IGNORE_MISSING);
+            case 'activity':
+                $cm = $this->get_course_module_for_identifier($identifier);
                 if (!$cm) {
                     throw new Exception('The specified activity with idnumber "' . $identifier . '" does not exist');
                 }
-                $modinfo = get_fast_modinfo($cm->course);
-                return $modinfo->cms[$cm->id]->url;
+                return $cm->url;
 
             default:
                 throw new Exception('Unrecognised core page type "' . $type . '."');
