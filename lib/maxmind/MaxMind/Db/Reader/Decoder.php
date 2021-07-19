@@ -7,12 +7,12 @@ namespace MaxMind\Db\Reader;
 // @codingStandardsIgnoreLine
 use RuntimeException;
 
-/**
+/*
  * @ignore
  *
  * We subtract 1 from the log to protect against precision loss.
  */
-\define(__NAMESPACE__ . '\_MM_MAX_INT_BYTES', (log(PHP_INT_MAX, 2) - 1) / 8);
+\define(__NAMESPACE__ . '\_MM_MAX_INT_BYTES', (int) ((log(\PHP_INT_MAX, 2) - 1) / 8));
 
 class Decoder
 {
@@ -123,33 +123,41 @@ class Decoder
         switch ($type) {
             case self::_MAP:
                 return $this->decodeMap($size, $offset);
+
             case self::_ARRAY:
                 return $this->decodeArray($size, $offset);
+
             case self::_BOOLEAN:
                 return [$this->decodeBoolean($size), $offset];
         }
 
         $newOffset = $offset + $size;
         $bytes = Util::read($this->fileStream, $offset, $size);
+
         switch ($type) {
             case self::_BYTES:
             case self::_UTF8_STRING:
                 return [$bytes, $newOffset];
+
             case self::_DOUBLE:
                 $this->verifySize(8, $size);
 
                 return [$this->decodeDouble($bytes), $newOffset];
+
             case self::_FLOAT:
                 $this->verifySize(4, $size);
 
                 return [$this->decodeFloat($bytes), $newOffset];
+
             case self::_INT32:
                 return [$this->decodeInt32($bytes, $size), $newOffset];
+
             case self::_UINT16:
             case self::_UINT32:
             case self::_UINT64:
             case self::_UINT128:
                 return [$this->decodeUint($bytes, $size), $newOffset];
+
             default:
                 throw new InvalidDatabaseException(
                     'Unknown or unexpected type: ' . $type
@@ -206,13 +214,17 @@ class Decoder
         switch ($size) {
             case 0:
                 return 0;
+
             case 1:
             case 2:
             case 3:
-                $bytes = str_pad($bytes, 4, "\x00", STR_PAD_LEFT);
+                $bytes = str_pad($bytes, 4, "\x00", \STR_PAD_LEFT);
+
                 break;
+
             case 4:
                 break;
+
             default:
                 throw new InvalidDatabaseException(
                     "The MaxMind DB file's data section contains bad data (unknown data type or corrupt data)"
@@ -249,12 +261,16 @@ class Decoder
                 $packed = \chr($ctrlByte & 0x7) . $buffer;
                 [, $pointer] = unpack('n', $packed);
                 $pointer += $this->pointerBase;
+
                 break;
+
             case 2:
                 $packed = "\x00" . \chr($ctrlByte & 0x7) . $buffer;
                 [, $pointer] = unpack('N', $packed);
                 $pointer += $this->pointerBase + 2048;
+
                 break;
+
             case 3:
                 $packed = \chr($ctrlByte & 0x7) . $buffer;
 
@@ -262,26 +278,26 @@ class Decoder
                 // first bit is 0.
                 [, $pointer] = unpack('N', $packed);
                 $pointer += $this->pointerBase + 526336;
+
                 break;
+
             case 4:
                 // We cannot use unpack here as we might overflow on 32 bit
                 // machines
                 $pointerOffset = $this->decodeUint($buffer, $pointerSize);
 
-                $byteLength = $pointerSize + $this->pointerBaseByteSize;
+                $pointerBase = $this->pointerBase;
 
-                if ($byteLength <= _MM_MAX_INT_BYTES) {
-                    $pointer = $pointerOffset + $this->pointerBase;
-                } elseif (\extension_loaded('gmp')) {
-                    $pointer = gmp_strval(gmp_add($pointerOffset, $this->pointerBase));
-                } elseif (\extension_loaded('bcmath')) {
-                    $pointer = bcadd($pointerOffset, (string) $this->pointerBase);
+                if (\PHP_INT_MAX - $pointerBase >= $pointerOffset) {
+                    $pointer = $pointerOffset + $pointerBase;
                 } else {
                     throw new RuntimeException(
-                        'The gmp or bcmath extension must be installed to read this database.'
+                        'The database offset is too large to be represented on your platform.'
                     );
                 }
+
                 break;
+
             default:
                 throw new InvalidDatabaseException(
                     'Unexpected pointer size ' . $pointerSize
@@ -291,6 +307,7 @@ class Decoder
         return [$pointer, $offset];
     }
 
+    // @phpstan-ignore-next-line
     private function decodeUint(string $bytes, int $byteLength)
     {
         if ($byteLength === 0) {
@@ -299,11 +316,17 @@ class Decoder
 
         $integer = 0;
 
+        // PHP integers are signed. _MM_MAX_INT_BYTES is the number of
+        // complete bytes that can be converted to an integer. However,
+        // we can convert another byte if the leading bit is zero.
+        $useRealInts = $byteLength <= _MM_MAX_INT_BYTES
+            || ($byteLength === _MM_MAX_INT_BYTES + 1 && (\ord($bytes[0]) & 0x80) === 0);
+
         for ($i = 0; $i < $byteLength; ++$i) {
             $part = \ord($bytes[$i]);
 
             // We only use gmp or bcmath if the final value is too big
-            if ($byteLength <= _MM_MAX_INT_BYTES) {
+            if ($useRealInts) {
                 $integer = ($integer << 8) + $part;
             } elseif (\extension_loaded('gmp')) {
                 $integer = gmp_strval(gmp_add(gmp_mul((string) $integer, '256'), $part));

@@ -247,7 +247,7 @@
     <location>maxmind/MaxMind</location>
     <name>MaxMind DB Reader API</name>
     <license>Apache 2.0</license>
-    <version>1.9.0</version>
+    <version>1.10.1</version>
   </library>
   <library>
     <location>ltiprovider</location>
