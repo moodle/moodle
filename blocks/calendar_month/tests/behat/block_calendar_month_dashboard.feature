@@ -15,5 +15,4 @@ Feature: View a site event on the dashboard
       | id_name | Site Event |
     And I log out
     When I log in as "student1"
-    And I hover over today in the calendar
     Then I should see "Site Event"

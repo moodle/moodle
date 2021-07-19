@@ -43,11 +43,11 @@ Feature: Perform basic calendar functionality
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And I follow "This month"
+    And I follow "Full calendar"
     And I should see "Really awesome event!"
     And I log out
     And I log in as "student2"
-    And I follow "This month"
+    And I follow "Full calendar"
     And I should see "Really awesome event!"
 
   @javascript
@@ -61,13 +61,13 @@ Feature: Perform basic calendar functionality
     And I log out
     And I log in as "student1"
     When I am on "Course 1" course homepage
-    And I follow "This month"
+    And I follow "Full calendar"
     And I click on "Really awesome event!" "link"
     And "Course 1" "link" should exist in the "Really awesome event!" "dialogue"
     And I click on "Close" "button"
     And I log out
     And I log in as "student2"
-    And I follow "This month"
+    And I follow "Full calendar"
     Then I should not see "Really awesome event!"
 
   @javascript
@@ -82,7 +82,7 @@ Feature: Perform basic calendar functionality
     And I log out
     And I log in as "student1"
     When I am on "Course 1" course homepage
-    And I follow "This month"
+    And I follow "Full calendar"
     Then I follow "Really awesome event!"
 
   @javascript
@@ -95,7 +95,7 @@ Feature: Perform basic calendar functionality
     And I log out
     And I log in as "student1"
     When I am on "Course 1" course homepage
-    And I follow "This month"
+    And I follow "Full calendar"
     Then I should not see "Really awesome event!"
 
   @javascript
@@ -106,7 +106,7 @@ Feature: Perform basic calendar functionality
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I am on "Course 1" course homepage
-    When I follow "This month"
+    When I follow "Full calendar"
     And I click on "Really awesome event!" "link"
     And I click on "Delete" "button" in the "Really awesome event!" "dialogue"
     And I click on "Delete event" "button"
@@ -122,7 +122,7 @@ Feature: Perform basic calendar functionality
       | Description | Come join this awesome event, sucka! |
       | Location | Cube office |
     And I am on "Course 1" course homepage
-    When I follow "This month"
+    When I follow "Full calendar"
     And I click on "Really awesome event!" "link"
     And ".location-content" "css_element" should exist
     And I should see "Cube office"
@@ -144,7 +144,7 @@ Feature: Perform basic calendar functionality
     And the following "activities" exist:
       | activity | course | idnumber | name        | intro                   | timeopen      | timeclose     |
       | choice   | C1     | choice1  | Test choice | Test choice description | ##today## | ##today##  |
-    When I follow "This month"
+    When I follow "Full calendar"
     Then I should see "Test choice opens"
     And I should see "Test choice closes"
     When I click on "Test choice opens" "link"
@@ -155,7 +155,7 @@ Feature: Perform basic calendar functionality
     And I wait to be redirected
     Then I should see "Test choice"
     And I am on "Course 1" course homepage
-    And I follow "This month"
+    And I follow "Full calendar"
     When I click on "Test choice closes" "link"
     Then "Delete" "button" should not exist in the "Test choice closes" "dialogue"
     And "Edit" "button" should not exist in the "Test choice closes" "dialogue"
@@ -168,12 +168,12 @@ Feature: Perform basic calendar functionality
   Scenario: Attempt to create event without fill required fields should display validation errors
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I follow "This month"
+    And I follow "Full calendar"
     And I click on "New event" "button"
     When I click on "Save" "button"
     Then I should see "Required" in the "Event title" "form_row"
     And I am on homepage
-    And I follow "This month"
+    And I follow "Full calendar"
     And I click on "New event" "button"
     And I set the field "Event title" to "Really awesome event!"
     And I set the field "Type of event" to "Course"
@@ -187,7 +187,7 @@ Feature: Perform basic calendar functionality
     And I click on "New event" "button"
     Then the field "Type of event" matches value "User"
     And I am on "Course 1" course homepage
-    And I follow "This month"
+    And I follow "Full calendar"
     When I click on "New event" "button"
     Then the field "Type of event" matches value "Course"
 
@@ -223,7 +223,7 @@ Feature: Perform basic calendar functionality
     When I click on "New event" "button"
     Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
     And I am on "Course 1" course homepage
-    And I follow "This month"
+    And I follow "Full calendar"
     When I click on "New event" "button"
     Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
     And I click on "Close" "button"
@@ -235,7 +235,7 @@ Feature: Perform basic calendar functionality
     And I log out
     Given I log in as "student1"
     And I am on "Course 1" course homepage
-    And I follow "This month"
+    And I follow "Full calendar"
     When I click on "New event" "button"
     Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
 
@@ -243,7 +243,7 @@ Feature: Perform basic calendar functionality
   Scenario: The calendar page must be accessible
     Given I log in as "student1"
     And I am on "Course 1" course homepage
-    When I follow "This month"
+    When I follow "Full calendar"
     Then the page should meet accessibility standards
     And the page should meet "wcag131, wcag143, wcag412" accessibility standards
     And the page should meet accessibility standards with "wcag131, wcag143, wcag412" extra tests

@@ -20,7 +20,7 @@ Feature: Limit displayed upcoming events
     Given I am on "Course 1" course homepage with editing mode on
     And I add the "Calendar" block
     And I add the "Upcoming events" block
-    And I follow "This month"
+    And I follow "Full calendar"
     And I click on "a.next" "css_element"
     And I click on "a.next" "css_element"
     When I create a calendar event:
