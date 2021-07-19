@@ -1,7 +1,7 @@
-@mod @mod_assign @javascript
+@mod @mod_assign
 Feature: When a Teacher hides an assignment from view for students it should consistently indicate it is hidden.
 
-  Scenario: Grade multiple students on one page
+  Background: Grade multiple students on one page
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
@@ -13,25 +13,27 @@ Feature: When a Teacher hides an assignment from view for students it should con
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test hidden assignment |
-    And I open "Test hidden assignment" actions menu
-    And I choose "Hide" in the open action menu
-    And I follow "Test hidden assignment"
-    And I should see "Test hidden assignment"
+    And the following "activity" exists:
+      | activity | assign                 |
+      | course   | C1                     |
+      | name     | Test hidden assignment |
+      | visible  | 0                      |
+    And the following "activity" exists:
+      | activity | assign                  |
+      | course   | C1                      |
+      | name     | Test visible assignment |
+
+  Scenario: A teacher can view a hidden assignment
+    When I am on the "Test hidden assignment" Activity page logged in as teacher1
+    Then I should see "Test hidden assignment"
     And I should see "Yes" in the "Hidden from students" "table_row"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "2" and I fill the form with:
-      | Assignment name | Test visible assignment |
-    And I follow "Test visible assignment"
-    And I should see "Test visible assignment"
+
+  Scenario: A teacher can view a visible assignment
+    Given I am on the "Test visible assignment" Activity page logged in as teacher1
+    Then I should see "Test visible assignment"
     And I should see "No" in the "Hidden from students" "table_row"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+
+  Scenario: A student cannot view a hidden assignment
+    And I am on the "C1" Course page logged in as student1
     And I should not see "Test hidden assignment"
     And I should see "Test visible assignment"

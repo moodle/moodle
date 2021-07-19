@@ -369,6 +369,25 @@ abstract class behat_generator_base {
     }
 
     /**
+     * Gets the course cmid for the specified activity based on the activity's idnumber.
+     *
+     * Note: this does not check the module type, only the idnumber.
+     *
+     * @throws Exception
+     * @param string $idnumber
+     * @return int
+     */
+    protected function get_activity_id(string $idnumber) {
+        global $DB;
+
+        if (!$id = $DB->get_field('course_modules', 'id', ['idnumber' => $idnumber])) {
+            throw new Exception('The specified activity with idnumber "' . $idnumber . '" could not be found.');
+        }
+
+        return $id;
+    }
+
+    /**
      * Gets the group id from it's idnumber.
      * @throws Exception
      * @param string $idnumber
