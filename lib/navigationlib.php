@@ -5326,7 +5326,7 @@ class settings_navigation extends navigation_node {
         if (can_edit_in_category($catcontext->instanceid)) {
             $url = new moodle_url('/course/management.php', array('categoryid' => $catcontext->instanceid));
             $editstring = get_string('managecategorythis');
-            $categorynode->add($editstring, $url, self::TYPE_SETTING, null, null, new pix_icon('i/edit', ''));
+            $categorynode->add($editstring, $url, self::TYPE_SETTING, null, 'managecategory', new pix_icon('i/edit', ''));
         }
 
         if (has_capability('moodle/category:manage', $catcontext)) {

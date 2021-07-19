@@ -166,6 +166,10 @@ class secondary extends view {
                 $this->load_module_navigation();
                 $defaultmoremenunodes = $this->get_default_module_more_menu_nodes();
                 break;
+            case CONTEXT_COURSECAT:
+                $this->headertitle = get_string('categoryheader');
+                $this->load_category_navigation();
+                break;
             case CONTEXT_SYSTEM:
                 $this->headertitle = get_string('homeheader');
                 $this->load_admin_navigation();
@@ -241,6 +245,19 @@ class secondary extends view {
             // We have finished inserting the initial structure.
             // Populate the menu with the rest of the nodes available.
             $this->load_remaining_nodes($mainnode, $nodes);
+        }
+    }
+
+    /**
+     * Load the course category navigation.
+     */
+    protected function load_category_navigation(): void {
+        $settingsnav = $this->page->settingsnav;
+        $mainnode = $settingsnav->find('categorysettings', self::TYPE_CONTAINER);
+        if ($mainnode) {
+            $url = new \moodle_url('/course/index.php', ['categoryid' => $this->context->instanceid]);
+            $this->add($this->context->get_context_name(), $url, self::TYPE_CONTAINER, null, 'categorymain');
+            $this->load_remaining_nodes($mainnode, []);
         }
     }
 
