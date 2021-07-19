@@ -31,7 +31,7 @@
     {
     }
 }}
-<div id="month-navigation-{{uniqid}}" class="controls">
+<div id="month-navigation-{{uniqid}}-{{calendarinstanceid}}" class="controls">
     <div class="calendar-controls">
         <a{{!
             }} href="{{previousperiodlink}}"{{!
@@ -64,7 +64,7 @@
 </div>
 {{#js}}
 require(['jquery', 'core_calendar/month_navigation_drag_drop'], function($, DragDrop) {
-    var root = $('#month-navigation-{{uniqid}}');
+    var root = $('#month-navigation-{{uniqid}}-{{calendarinstanceid}}');
     DragDrop.init(root);
 });
 {{/js}}

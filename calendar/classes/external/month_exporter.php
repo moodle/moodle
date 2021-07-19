@@ -39,6 +39,12 @@ use moodle_url;
  */
 class month_exporter extends exporter {
 
+    /** @var int Number of calendar instances displayed. */
+    protected static $calendarinstances = 0;
+
+    /** @var int This calendar instance's ID. */
+    protected $calendarinstanceid = 0;
+
     /**
      * @var \calendar_information $calendar The calendar to be rendered.
      */
@@ -77,6 +83,10 @@ class month_exporter extends exporter {
      * @param array $related The related information
      */
     public function __construct(\calendar_information $calendar, \core_calendar\type_base $type, $related) {
+        // Increment the calendar instances count on initialisation.
+        self::$calendarinstances++;
+        // Assign this instance an ID based on the latest calendar instances count.
+        $this->calendarinstanceid = self::$calendarinstances;
         $this->calendar = $calendar;
         $this->firstdayofweek = $type->get_starting_weekday();
 
@@ -190,6 +200,10 @@ class month_exporter extends exporter {
                 'type' => PARAM_INT,
                 'default' => 0,
             ],
+            'calendarinstanceid' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+            ],
         ];
     }
 
@@ -227,6 +241,7 @@ class month_exporter extends exporter {
             'rarrow' => $output->rarrow(),
             'includenavigation' => $this->includenavigation,
             'initialeventsloaded' => $this->initialeventsloaded,
+            'calendarinstanceid' => $this->calendarinstanceid,
         ];
 
         if ($this->showcoursefilter) {
@@ -252,7 +267,7 @@ class month_exporter extends exporter {
      */
     protected function get_course_filter_selector(renderer_base $output) {
         $content = '';
-        $content .= $output->course_filter_selector($this->url, '', $this->calendar->course->id);
+        $content .= $output->course_filter_selector($this->url, '', $this->calendar->course->id, $this->calendarinstanceid);
 
         return $content;
     }
