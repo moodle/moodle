@@ -25,32 +25,24 @@ Feature: In an assignment, teacher can submit feedback files during grading
       | user     | group |
       | student1 | G1    |
       | student2 | G1    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name                  | Test assignment name |
-      | Description                      | Submit your PDF file |
-      | Maximum number of uploaded files | 2                    |
-      | Students submit in groups        | Yes                  |
-    And I follow "Test assignment name"
-    And I navigate to "Edit settings" in current page administration
-    And I follow "Expand all"
-    And I set the field "assignfeedback_file_enabled" to "1"
-    And I press "Save and display"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I press "Add submission"
-    And I upload "mod/assign/feedback/file/tests/fixtures/submission.txt" file to "File submissions" filemanager
-    And I press "Save changes"
-    And I should see "Submitted for grading"
-    And I should see "submission.txt"
-    And I should see "Not graded"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And the following "activity" exists:
+      | activity                            | assign                |
+      | course                              | C1                    |
+      | name                                | Test assignment name  |
+      | assignsubmission_file_enabled       | 1                     |
+      | assignsubmission_file_maxfiles      | 1                     |
+      | assignsubmission_file_maxsizebytes  | 1024                  |
+      | assignfeedback_comments_enabled     | 1                     |
+      | assignfeedback_file_enabled         | 1                     |
+      | maxfilessubmission                  | 2                     |
+      | teamsubmission                      | 1                     |
+      | submissiondrafts                    | 0                     |
+    And the following "mod_assign > submission" exists:
+      | assign  | Test assignment name                                    |
+      | user    | student1                                                |
+      | file    | mod/assign/feedback/file/tests/fixtures/submission.txt  |
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I click on "Grade" "link" in the ".submissionlinks" "css_element"
     And I upload "mod/assign/feedback/file/tests/fixtures/feedback.txt" file to "Feedback files" filemanager
 
@@ -60,14 +52,10 @@ Feature: In an assignment, teacher can submit feedback files during grading
     And I press "Save changes"
     And I click on "Course 1" "link" in the "[data-region=assignment-info]" "css_element"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student1
     And I should see "feedback.txt"
     And I log out
-    When I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student2
     Then I should not see "feedback.txt"
 
   @javascript
@@ -75,12 +63,8 @@ Feature: In an assignment, teacher can submit feedback files during grading
     Given I press "Save changes"
     And I click on "Course 1" "link" in the "[data-region=assignment-info]" "css_element"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student1
     And I should see "feedback.txt"
     And I log out
-    When I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    When I am on the "Test assignment name" Activity page logged in as student2
     Then I should see "feedback.txt"

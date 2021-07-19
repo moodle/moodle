@@ -21,15 +21,16 @@ Feature: View the grading status of an assignment
 
   @javascript
   Scenario: View the grading status for an assignment with marking workflow enabled
-    # Add the assignment.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | Online text | 1 |
-      | Use marking workflow | Yes |
-    And I log out
+    Given the following "activity" exists:
+      | activity                            | assign                  |
+      | idnumber                            | ass1                    |
+      | course                              | C1                      |
+      | name                                | Test assignment name    |
+      | intro                               | Submit your online text |
+      | submissiondrafts                    | 0                       |
+      | markingworkflow                     | 1                       |
+      | assignfeedback_comments_enabled     | 1                       |
+      | assignsubmission_onlinetext_enabled | 1                       |
     # Add a submission.
     And I log in as "student1"
     And I am on "Course 1" course homepage
@@ -117,14 +118,16 @@ Feature: View the grading status of an assignment
 
   @javascript
   Scenario: View the grading status for an assignment with marking workflow disabled
-    # Add the assignment.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | Online text | 1 |
-    And I log out
+    Given the following "activity" exists:
+      | activity                            | assign                  |
+      | idnumber                            | ass1                    |
+      | course                              | C1                      |
+      | name                                | Test assignment name    |
+      | intro                               | Submit your online text |
+      | submissiondrafts                    | 0                       |
+      | assignfeedback_comments_enabled     | 1                       |
+      | markingworkflow                     | 0                       |
+      | assignsubmission_onlinetext_enabled | 1                       |
     # Add a submission.
     And I log in as "student1"
     And I am on "Course 1" course homepage
