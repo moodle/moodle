@@ -21,51 +21,45 @@ Feature: Prevent or allow assignment submission changes
 
   @javascript
   Scenario: Preventing changes and allowing them again
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | assignsubmission_file_enabled | 0 |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm the student submission |
-    And I press "Save changes"
+    Given the following "activity" exists:
+      | activity                                      | assign                  |
+      | course                                        | C1                      |
+      | name                                          | Test assignment name    |
+      | intro                                         | Submit your online text |
+      | submissiondrafts                              | 0                       |
+      | assignsubmission_onlinetext_enabled           | 1                       |
+      | assignsubmission_file_enabled                 | 0                       |
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                  |
+      | Test assignment name  | student1  | I'm the student submission  |
+
+    And I am on the "Test assignment name" Activity page logged in as student1
     And I press "Edit submission"
     And I set the following fields to these values:
       | Online text | I'm the student submission and he/she edited me |
     And I press "Save changes"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "View all submissions" in current page administration
     And I open the action menu in "Student 1" "table_row"
     And I follow "Prevent submission changes"
     Then I should see "Submission changes not allowed"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as student1
     And "Edit submission" "button" should not exist
     And I should see "This assignment is not accepting submissions"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I open the action menu in "Student 1" "table_row"
     And I follow "Allow submission changes"
     And I should not see "Submission changes not allowed"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as student1
     And I should not see "This assignment is not accepting submissions"
     And I press "Edit submission"
     And I set the following fields to these values:
@@ -76,41 +70,26 @@ Feature: Prevent or allow assignment submission changes
   @javascript @_alert
   Scenario: Preventing changes and allowing them again (batch action)
     Given the following "activities" exist:
-      | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
-      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1                                   | 0                             |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm the student submission |
-    And I press "Save changes"
-    And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm the student2 submission |
-    And I press "Save changes"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+      | activity | course | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
+      | assign   | C1     | Test assignment name | Test assignment description | 1                                   | 0                             |
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                  |
+      | Test assignment name  | student1  | I'm the student submission  |
+      | Test assignment name  | student2  | I'm the student2 submission  |
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "View all submissions" in current page administration
     And I set the field "selectall" to "1"
     And I click on "Go" "button" confirming the dialogue
     Then I should see "Submission changes not allowed" in the "Student 1" "table_row"
     And I should see "Submission changes not allowed" in the "Student 2" "table_row"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as student2
     And I should not see "Edit submission"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I set the field "selectall" to "1"
     And I set the field "id_operation" to "Unlock submissions"
@@ -118,9 +97,8 @@ Feature: Prevent or allow assignment submission changes
     And I should not see "Submission changes not allowed" in the "Student 1" "table_row"
     And I should not see "Submission changes not allowed" in the "Student 2" "table_row"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as student2
     And I press "Edit submission"
     And I set the following fields to these values:
       | Online text | I'm the student2 submission and he/she edited me |

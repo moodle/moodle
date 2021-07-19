@@ -17,18 +17,17 @@ Feature: In an assignment, students can upload files for assessment
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 0 |
-      | assignsubmission_file_enabled | 1 |
-      | Maximum number of uploaded files | 2 |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And the following "activity" exists:
+      | activity                            | assign                  |
+      | course                              | C1                      |
+      | name                                | Test assignment name    |
+      | intro                               | Submit your online text |
+      | submissiondrafts                    | 0                       |
+      | assignsubmission_onlinetext_enabled | 0                       |
+      | assignsubmission_file_enabled       | 1                       |
+      | assignsubmission_file_maxfiles      | 2                       |
+      | assignsubmission_file_maxsizebytes  | 1000000                 |
+    And I am on the "Test assignment name" Activity page logged in as student1
     When I press "Add submission"
     And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager
     And I press "Save changes"
