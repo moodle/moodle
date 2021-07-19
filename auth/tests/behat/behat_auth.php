@@ -68,6 +68,7 @@ class behat_auth extends behat_base {
      * Logs out of the system.
      *
      * @Given /^I log out$/
+     * @Given I am not logged in
      */
     public function i_log_out() {
         $this->execute('behat_general::i_visit', [new moodle_url('/auth/tests/behat/logout.php')]);
