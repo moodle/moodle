@@ -30,6 +30,8 @@ Feature: Use core page resolvers for the I am on the page steps
       | Course idnumber          | "2021-econ101"              | Course                       | Fundamentals of Economics  |
       | Forum idnumber           | fundamentalsofeconomics     | Activity                     | Add a new discussion       |
       | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Updating: Forum            |
+      | Forum name               | "Fundamentals of Economics" | "Forum activity"             | Add a new discussion       |
+      | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Updating: Forum            |
 
   Scenario Outline: When I am on an instance logged in as
     Given the following "categories" exist:
@@ -57,6 +59,8 @@ Feature: Use core page resolvers for the I am on the page steps
       | Course idnumber          | "2021-econ101"              | Course                       | Fundamentals of Economics  |
       | Forum idnumber           | fundamentalsofeconomics     | Activity                     | Add a new discussion       |
       | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Updating: Forum            |
+      | Forum name               | "Fundamentals of Economics" | "Forum activity"             | Add a new discussion       |
+      | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Updating: Forum            |
 
   Scenario Outline: When I am on a named page
     Given I log in as "admin"
