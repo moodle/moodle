@@ -697,10 +697,10 @@ class behat_navigation extends behat_base {
      * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
      *
      * Recognised page names are:
-     * | Page type     | Identifier meaning | description                          |
-     * | Category page | category idnumber  | List of courses in that category.    |
-     * | Course        | course shortname   | Main course home pag                 |
-     * | Activity      | activity idnumber  | Start page for that activity         |
+     * | Page type | Identifier meaning | description                       |
+     * | Category  | category idnumber  | List of courses in that category. |
+     * | Course    | course shortname   | Main course home pag              |
+     * | Activity  | activity idnumber  | Start page for that activity      |
      *
      * @param string $type identifies which type of page this is, e.g. 'Category page'.
      * @param string $identifier identifies the particular page, e.g. 'test-cat'.
@@ -711,12 +711,12 @@ class behat_navigation extends behat_base {
         global $DB;
 
         switch (strtolower($type)) {
-            case 'category page':
+            case 'category':
                 $categoryid = $this->get_category_id($identifier);
                 if (!$categoryid) {
                     throw new Exception('The specified category with idnumber "' . $identifier . '" does not exist');
                 }
-                return new moodle_url('/course/category.php', ['id' => $categoryid]);
+                return new moodle_url('/course/index.php', ['categoryid' => $categoryid]);
 
             case 'course':
                 $courseid = $this->get_course_id($identifier);
