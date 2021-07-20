@@ -444,7 +444,7 @@ $cache = '.var_export($cache, true).';
                     $path = $CFG->admin;
                 }
                 if (strpos($path, 'admin/') === 0) {
-                    $path = $CFG->admin . substr($path, 0, 5);
+                    $path = $CFG->admin . substr($path, 5);
                 }
             }
 
@@ -465,7 +465,7 @@ $cache = '.var_export($cache, true).';
         foreach (self::fetch_component_source('plugintypes') as $plugintype => $path) {
             // Replace admin/ with the config setting.
             if ($CFG->admin !== 'admin' && strpos($path, 'admin/') === 0) {
-                $path = $CFG->admin . substr($path, 0, 5);
+                $path = $CFG->admin . substr($path, 5);
             }
             $types[$plugintype] = "{$CFG->dirroot}/{$path}";
         }
