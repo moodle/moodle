@@ -715,10 +715,17 @@ class behat_navigation extends behat_base {
      * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
      *
      * Recognised page names are:
-     * | Page type | Identifier meaning | description                       |
-     * | Category  | category idnumber  | List of courses in that category. |
-     * | Course    | course shortname   | Main course home pag              |
-     * | Activity  | activity idnumber  | Start page for that activity      |
+     * | Page type                  | Identifier meaning        | description                          |
+     * | Category                   | category idnumber         | List of courses in that category.    |
+     * | Course                     | course shortname          | Main course home pag                 |
+     * | Activity                   | activity idnumber         | Start page for that activity         |
+     * | Activity editing           | activity idnumber         | Edit settings page for that activity |
+     * | [modname] Activity         | activity name or idnumber | Start page for that activity         |
+     * | [modname] Activity editing | activity name or idnumber | Edit settings page for that activity |
+     *
+     * Examples:
+     *
+     * When I am on the "Welcome to ECON101" "forum activity" page logged in as student1
      *
      * @param string $type identifies which type of page this is, e.g. 'Category page'.
      * @param string $identifier identifies the particular page, e.g. 'test-cat'.
@@ -750,6 +757,15 @@ class behat_navigation extends behat_base {
                     throw new Exception('The specified activity with idnumber "' . $identifier . '" does not exist');
                 }
                 return $cm->url;
+
+            case 'activity editing':
+                $cm = $this->get_course_module_for_identifier($identifier);
+                if (!$cm) {
+                    throw new Exception('The specified activity with idnumber "' . $identifier . '" does not exist');
+                }
+                return new moodle_url('/course/modedit.php', [
+                    'update' => $cm->id,
+                ]);
 
             default:
                 throw new Exception('Unrecognised core page type "' . $type . '."');
