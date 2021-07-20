@@ -735,7 +735,9 @@ class behat_navigation extends behat_base {
     protected function resolve_core_page_instance_url(string $type, string $identifier): moodle_url {
         global $DB;
 
-        switch (strtolower($type)) {
+        $type = strtolower($type);
+
+        switch ($type) {
             case 'category':
                 $categoryid = $this->get_category_id($identifier);
                 if (!$categoryid) {
@@ -766,10 +768,25 @@ class behat_navigation extends behat_base {
                 return new moodle_url('/course/modedit.php', [
                     'update' => $cm->id,
                 ]);
-
-            default:
-                throw new Exception('Unrecognised core page type "' . $type . '."');
         }
+
+        $parts = explode(' ', $type);
+        if (count($parts) > 1) {
+            if ($parts[1] === 'activity') {
+                $modname = $parts[0];
+                $cm = $this->get_cm_by_activity_name($modname, $identifier);
+
+                if (count($parts) == 2) {
+                    return new moodle_url($cm->url);
+                }
+
+                if ($parts[2] === 'editing') {
+                    return new moodle_url('/course/modedit.php', ['update' => $cm->id]);
+                }
+            }
+        }
+
+        throw new Exception('Unrecognised core page type "' . $type . '."');
     }
 
     /**
