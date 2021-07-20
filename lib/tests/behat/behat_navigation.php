@@ -543,7 +543,9 @@ class behat_navigation extends behat_base {
      *
      * For pages belonging to core, the 'core > ' bit is omitted.
      *
-     * @When I am on the :page page
+     * @When /^I am on the (?<page>[^ "]*) page$/
+     * @When /^I am on the "(?<page>[^"]*)" page$/
+     *
      * @param string $page the component and page name.
      *      E.g. 'Admin notifications' or 'core_user > Preferences'.
      * @throws Exception if the specified page cannot be determined.
@@ -561,7 +563,11 @@ class behat_navigation extends behat_base {
      * but with the advantage that you go straight to the desired page, without
      * having to wait for the Dashboard to load.
      *
-     * @When I am on the :page page logged in as :username
+     * @When /^I am on the (?<page>[^ "]*) page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the "(?<page>[^"]*)" page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the (?<page>[^ "]*) page logged in as "(?<username>[^ "]*)"$/
+     * @When /^I am on the "(?<page>[^"]*)" page logged in as "(?<username>[^ "]*)"$/
+     *
      * @param string $page the type of page. E.g. 'Admin notifications' or 'core_user > Preferences'.
      * @param string $username the name of the user to log in as. E.g. 'admin'.
      * @throws Exception if the specified page cannot be determined.
@@ -622,7 +628,11 @@ class behat_navigation extends behat_base {
      *
      * For pages belonging to core, the 'core > ' bit is omitted.
      *
-     * @When I am on the :identifier :type page
+     * @When /^I am on the (?<identifier>[^ "]*) (?<type>[^ "]*) page$/
+     * @When /^I am on the "(?<identifier>[^"]*)" "(?<type>[^"]*)" page$/
+     * @When /^I am on the (?<identifier>[^ "]*) "(?<type>[^"]*)" page$/
+     * @When /^I am on the "(?<identifier>[^"]*)" (?<type>[^ "]*) page$/
+     *
      * @param string $identifier identifies the particular page. E.g. 'Test quiz'.
      * @param string $type the component and page type. E.g. 'mod_quiz > View'.
      * @throws Exception if the specified page cannot be determined.
@@ -640,7 +650,15 @@ class behat_navigation extends behat_base {
      * but with the advantage that you go straight to the desired page, without
      * having to wait for the Dashboard to load.
      *
-     * @When I am on the :identifier :type page logged in as :username
+     * @When /^I am on the (?<identifier>[^ "]*) (?<type>[^ "]*) page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the "(?<identifier>[^"]*)" "(?<type>[^"]*)" page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the (?<identifier>[^ "]*) "(?<type>[^"]*)" page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the "(?<identifier>[^"]*)" (?<type>[^ "]*) page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the (?<identifier>[^ "]*) (?<type>[^ "]*) page logged in as "(?<username>[^"]*)"$/
+     * @When /^I am on the "(?<identifier>[^"]*)" "(?<type>[^"]*)" page logged in as "(?<username>[^"]*)"$/
+     * @When /^I am on the (?<identifier>[^ "]*) "(?<type>[^"]*)" page logged in as "(?<username>[^"]*)"$/
+     * @When /^I am on the "(?<identifier>[^"]*)" (?<type>[^ "]*) page logged in as "(?<username>[^"]*)"$/
+     *
      * @param string $identifier identifies the particular page. E.g. 'Test quiz'.
      * @param string $type the component and page type. E.g. 'mod_quiz > View'.
      * @param string $username the name of the user to log in as. E.g. 'student'.
