@@ -44,22 +44,19 @@ Feature: Outcome grading
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | Outcome Test | 1 |
+      | Assignment name                     | Test assignment name        |
+      | ID number                           | Test assignment name        |
+      | Description                         | Test assignment description |
+      | assignsubmission_onlinetext_enabled | 1                           |
+      | Outcome Test                        | 1                           |
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I press "Add submission"
     And I set the following fields to these values:
       | Online text | My online text |
     And I press "Save changes"
     And I log out
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    When I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 0" "table_row"
     And I set the following fields to these values:
@@ -67,7 +64,7 @@ Feature: Outcome grading
     And I press "Save changes"
     And I press "OK"
     And I click on "Edit settings" "link"
-    And I follow "Test assignment name"
+    When I am on the "Test assignment name" "assign activity" page
     And I navigate to "View all submissions" in current page administration
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 1" "table_row"
@@ -89,33 +86,28 @@ Feature: Outcome grading
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | Students submit in groups | Yes |
-      | Group mode | No groups |
-      | Outcome Test | 1 |
+      | Assignment name                     | Test assignment name        |
+      | Description                         | Test assignment description |
+      | ID number                           | Test assignment name        |
+      | assignsubmission_onlinetext_enabled | 1                           |
+      | Students submit in groups           | Yes                         |
+      | Group mode                          | No groups                   |
+      | Outcome Test                        | 1                           |
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I press "Add submission"
     And I set the following fields to these values:
       | Online text | My online text |
     And I press "Save changes"
     And I log out
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    When I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 0" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
       | Apply grades and feedback to entire group | Yes |
     And I press "Save changes"
-    And I press "OK"
-    And I click on "Edit settings" "link"
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page
     And I navigate to "View all submissions" in current page administration
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Excellent" in the "Student 1" "table_row"
@@ -125,9 +117,7 @@ Feature: Outcome grading
       | Outcome Test: | Disappointing |
       | Apply grades and feedback to entire group | No |
     And I press "Save changes"
-    And I press "OK"
-    And I click on "Edit settings" "link"
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page
     And I navigate to "View all submissions" in current page administration
     And I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Disappointing" in the "Student 1" "table_row"

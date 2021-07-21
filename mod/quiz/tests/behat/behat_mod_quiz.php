@@ -364,14 +364,12 @@ class behat_mod_quiz extends behat_question_base {
      */
     public function i_add_question_to_the_quiz_with($questiontype, $quizname, TableNode $questiondata) {
         $quizname = $this->escape($quizname);
-        $editquiz = $this->escape(get_string('editquiz', 'quiz'));
-        $quizadmin = $this->escape(get_string('pluginadministration', 'quiz'));
         $addaquestion = $this->escape(get_string('addaquestion', 'quiz'));
 
-        $this->execute('behat_general::click_link', $quizname);
-
-        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration",
-                $quizadmin . ' > ' . $editquiz);
+        $this->execute('behat_navigation::i_am_on_page_instance', [
+            $quizname,
+            'mod_quiz > Edit',
+        ]);
 
         if ($this->running_javascript()) {
             $this->execute("behat_action_menu::i_open_the_action_menu_in", array('.slots', "css_element"));
