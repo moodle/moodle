@@ -20,18 +20,19 @@ Feature: Check that the assignment grade can not be input in a wrong format.
     And the following "groups" exist:
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | Use marking workflow | Yes |
-    When I follow "Test assignment name"
-    Then I navigate to "View all submissions" in current page administration
+    And the following "activity" exists:
+      | activity         | assign                      |
+      | course           | C1                          |
+      | name             | Test assignment name        |
+      | intro            | Test assignment description |
+      | markingworkflow  | 1                           |
+      | submissiondrafts | 0                           |
+    When I am on the "Test assignment name" Activity page logged in as teacher1
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50,,6"
     And I press "Save changes"
-    And I should see "The grade provided could not be understood: 50,,6"
+    Then I should see "The grade provided could not be understood: 50,,6"
 
   @javascript
   Scenario: Error in the decimal separator .
@@ -49,15 +50,16 @@ Feature: Check that the assignment grade can not be input in a wrong format.
     And the following "groups" exist:
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | Use marking workflow | Yes |
-    When I follow "Test assignment name"
-    Then I navigate to "View all submissions" in current page administration
+    And the following "activity" exists:
+      | activity         | assign                      |
+      | course           | C1                          |
+      | name             | Test assignment name        |
+      | intro            | Test assignment description |
+      | markingworkflow  | 1                           |
+      | submissiondrafts | 0                           |
+    When I am on the "Test assignment name" Activity page logged in as teacher1
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50..6"
     And I press "Save changes"
-    And I should see "The grade provided could not be understood: 50..6"
+    Then I should see "The grade provided could not be understood: 50..6"
