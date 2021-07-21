@@ -63,7 +63,7 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
     }
 
     // Get the system default page
-    if (!$systempage = $DB->get_record('my_pages', array('userid' => null, 'private' => $private))) {
+    if (!$systempage = $DB->get_record('my_pages', array('userid' => null, 'name' => '__default', 'private' => $private))) {
         return false;  // error
     }
 
@@ -144,7 +144,7 @@ function my_reset_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') 
     }
 
     // Get the system default page
-    if (!$systempage = $DB->get_record('my_pages', array('userid' => null, 'private' => $private))) {
+    if (!$systempage = $DB->get_record('my_pages', array('userid' => null, 'name' => '__default', 'private' => $private))) {
         return false; // error
     }
 
