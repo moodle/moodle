@@ -96,8 +96,7 @@ Feature: availability_profile
     And I click on "Save and return to course" "button"
 
     # Edit it again and check the setting still works.
-    When I follow "P1"
-    And I navigate to "Edit settings" in current page administration
+    When I am on the P1 "page activity editing" page
     And I expand all fieldsets
     Then the field "User profile field" matches value "Super field"
     And the field "Value to compare against" matches value "Bananaman"

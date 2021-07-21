@@ -28,16 +28,13 @@ Feature: We can change what we are viewing on the grader report
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name 1"
+    And I am on the "Test assignment name 1" "assign activity" page logged in as student1
     When I press "Add submission"
     And I set the following fields to these values:
       | Online text | This is a submission for assignment 1 |
     And I press "Save changes"
     Then I should see "Submitted for grading"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name 2"
+    And I am on the "Test assignment name 2" "assign activity" page
     When I press "Add submission"
     And I set the following fields to these values:
       | Online text | This is a submission for assignment 2 |
@@ -55,7 +52,7 @@ Feature: We can change what we are viewing on the grader report
 
   @javascript
   Scenario: View and minimise the grader report containing hidden activities
-    And I am on "Course 1" course homepage with editing mode on
+    When I am on "Course 1" course homepage with editing mode on
     And I open "Test assignment name 2" actions menu
     And I click on "Hide" "link" in the "Test assignment name 2" activity
     And I am on "Course 1" course homepage
@@ -83,7 +80,7 @@ Feature: We can change what we are viewing on the grader report
 
   @javascript
   Scenario: View and minimise the grader report containing hidden activities without the 'moodle/grade:viewhidden' capability
-    And I am on "Course 1" course homepage with editing mode on
+    When I am on "Course 1" course homepage with editing mode on
     And I open "Test assignment name 2" actions menu
     And I click on "Hide" "link" in the "Test assignment name 2" activity
     And I log out

@@ -19,14 +19,20 @@ Feature: An activity module instance with questions in its context can be delete
   Scenario: Synchronously deleting a quiz with existing questions in its context
     Given the following config values are set as admin:
       | coursebinenable | 0 | tool_recyclebin |
-    And I log in as "teacher1"
+    And the following "activity" exists:
+      | activity | quiz           |
+      | course   | C1             |
+      | name     | Test quiz Q001 |
+    And the following "question categories" exist:
+      | contextlevel    | reference      | name                       |
+      | Activity module | Test quiz Q001 | Default for Test quiz Q001 |
+    And the following "questions" exist:
+      | questioncategory           | qtype     | name                             | questiontext                  |
+      | Default for Test quiz Q001 | truefalse | Test used question to be deleted | Write about whatever you want |
+    And quiz "Test quiz Q001" contains the following questions:
+      | question                         | page |
+      | Test used question to be deleted | 1    |
+    And I am on the "Course 1" course page logged in as teacher1
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Quiz" to section "1" and I fill the form with:
-      | Name | Test quiz Q001 |
-    And I add a "True/False" question to the "Test quiz" quiz with:
-      | Category      | Default for Test quiz Q001       |
-      | Question name | Test used question to be deleted |
-      | Question text | Write about whatever you want    |
-    And I am on "Course 1" course homepage
     When I delete "Test quiz Q001" activity
     Then I should not see "Test quiz Q001"

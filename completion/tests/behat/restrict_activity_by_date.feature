@@ -36,12 +36,10 @@ Feature: Restrict activity availability through date conditions
       | x[year] | 2037 |
     And I press "Save and return to course"
     And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     Then I should see "Available from 31 December 2037"
+    And "Test assignment 1" "link" should not exist in the "page" "region"
     And "Test assignment 1" activity should be dimmed
-    And "Test assignment 1" "link" should not exist
-    And I log out
 
   @javascript
   Scenario: Show activity hidden to students when available until date is in past
@@ -60,6 +58,5 @@ Feature: Restrict activity availability through date conditions
     And I click on ".availability-item .availability-eye img" "css_element"
     And I press "Save and return to course"
     And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    Then I should not see "Test assignment 2"
+    When I am on the "Course 1" course page logged in as student1
+    Then I should not see "Test assignment 2" in the "page" "region"

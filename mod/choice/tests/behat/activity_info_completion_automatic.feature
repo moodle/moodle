@@ -29,9 +29,7 @@ Feature: Automatic completion in the choice activity
       | teacher1 | C1     | editingteacher |
 
   Scenario: Viewing a choice activity with automatic completion as a student
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "What to drink?"
+    When I am on the "What to drink?" "choice activity" page logged in as student1
     Then the "View" completion condition of "What to drink?" is displayed as "done"
     And the "Make a choice" completion condition of "What to drink?" is displayed as "todo"
     And I set the field "Beer" to "1"
@@ -40,22 +38,17 @@ Feature: Automatic completion in the choice activity
     And the "Make a choice" completion condition of "What to drink?" is displayed as "done"
 
   Scenario: Viewing a choice activity with automatic completion as a teacher
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I follow "What to drink?"
+    When I am on the "What to drink?" "choice activity" page logged in as teacher1
     Then "What to drink?" should have the "View" completion condition
     And "What to drink?" should have the "Make a choice" completion condition
 
   @javascript
   Scenario: Overriding automatic choice completion for a user
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Reports > Activity completion" in current page administration
     And I click on "Student 1, What to drink?: Not completed" "link"
     And I press "Save changes"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "What to drink?"
+    When I am on the "What to drink?" "choice activity" page logged in as student1
     Then the "View" completion condition of "What to drink?" overridden by "Teacher 1" is displayed as "done"
     And the "Make a choice" completion condition of "What to drink?" overridden by "Teacher 1" is displayed as "done"
