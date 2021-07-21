@@ -83,7 +83,7 @@ const registerEventListeners = (root) => {
         const categoryId = wrapper.data('categoryid');
         const link = e.currentTarget;
 
-        if (view === 'month') {
+        if (view === 'month' || view === 'monthblock') {
             changeMonth(root, link.href, link.dataset.year, link.dataset.month, courseId, categoryId, link.dataset.day);
             e.preventDefault();
         } else if (view === 'day') {
@@ -152,10 +152,9 @@ export const refreshMonthContent = (root, year, month, courseId, categoryId, tar
     M.util.js_pending([root.get('id'), year, month, courseId].join('-'));
     const includenavigation = root.data('includenavigation');
     const mini = root.data('mini');
-    return CalendarRepository.getCalendarMonthData(year, month, courseId, categoryId, includenavigation, mini, day)
+    const viewMode = target.data('view');
+    return CalendarRepository.getCalendarMonthData(year, month, courseId, categoryId, includenavigation, mini, day, viewMode)
         .then(context => {
-            context.viewingmonth = true;
-            context.showviewselector = !mini;
             return Templates.render(template, context);
         })
         .then((html, js) => {

@@ -204,6 +204,18 @@ class month_exporter extends exporter {
                 'type' => PARAM_INT,
                 'default' => 0,
             ],
+            'viewingmonth' => [
+                'type' => PARAM_BOOL,
+                'default' => true,
+            ],
+            'showviewselector' => [
+                'type' => PARAM_BOOL,
+                'default' => true,
+            ],
+            'viewinginblock' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
         ];
     }
 
@@ -224,11 +236,13 @@ class month_exporter extends exporter {
         $previousperiodlink = new moodle_url($this->url);
         $previousperiodlink->param('time', $previousperiod[0]);
 
+        $viewmode = $this->calendar->get_viewmode() ?? 'month';
+
         $return = [
             'courseid' => $this->calendar->courseid,
             'weeks' => $this->get_weeks($output),
             'daynames' => $this->get_day_names($output),
-            'view' => 'month',
+            'view' => $viewmode,
             'date' => (new date_exporter($date))->export($output),
             'periodname' => userdate($this->calendar->time, get_string('strftimemonthyear')),
             'previousperiod' => (new date_exporter($previousperiod))->export($output),
@@ -242,6 +256,8 @@ class month_exporter extends exporter {
             'includenavigation' => $this->includenavigation,
             'initialeventsloaded' => $this->initialeventsloaded,
             'calendarinstanceid' => $this->calendarinstanceid,
+            'showviewselector' => $viewmode === 'month',
+            'viewinginblock' => $viewmode === 'monthblock',
         ];
 
         if ($this->showcoursefilter) {

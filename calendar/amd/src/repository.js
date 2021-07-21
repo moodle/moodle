@@ -92,9 +92,10 @@ export const submitCreateUpdateForm = (formData) => {
  * @param {boolean} includeNavigation Whether to include navigation.
  * @param {boolean} mini Whether the month is in mini view.
  * @param {number} day Day (optional)
+ * @param {string} view The calendar view mode.
  * @return {promise} Resolved with the month view data.
  */
-export const getCalendarMonthData = (year, month, courseId, categoryId, includeNavigation, mini, day = 1) => {
+export const getCalendarMonthData = (year, month, courseId, categoryId, includeNavigation, mini, day = 1, view = 'month') => {
     const request = {
         methodname: 'core_calendar_get_calendar_monthly_view',
         args: {
@@ -105,6 +106,7 @@ export const getCalendarMonthData = (year, month, courseId, categoryId, includeN
             includenavigation: includeNavigation,
             mini,
             day,
+            view,
         }
     };
 
