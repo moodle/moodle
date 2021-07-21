@@ -864,28 +864,8 @@ function choice_extend_settings_navigation(settings_navigation $settings, naviga
     global $PAGE;
 
     if (has_capability('mod/choice:readresponses', $PAGE->cm->context)) {
-
-        $groupmode = groups_get_activity_groupmode($PAGE->cm);
-        if ($groupmode) {
-            groups_get_activity_group($PAGE->cm, true);
-        }
-
-        $choice = choice_get_choice($PAGE->cm->instance);
-
-        // Check if we want to include responses from inactive users.
-        $onlyactive = $choice->includeinactive ? false : true;
-
-        // Big function, approx 6 SQL calls per user.
-        $allresponses = choice_get_response_data($choice, $PAGE->cm, $groupmode, $onlyactive);
-
-        $allusers = [];
-        foreach($allresponses as $optionid => $userlist) {
-            if ($optionid) {
-                $allusers = array_merge($allusers, array_keys($userlist));
-            }
-        }
-        $responsecount = count(array_unique($allusers));
-        $choicenode->add(get_string("viewallresponses", "choice", $responsecount), new moodle_url('/mod/choice/report.php', array('id'=>$PAGE->cm->id)));
+        $choicenode->add(get_string('responses', 'choice'),
+            new moodle_url('/mod/choice/report.php', array('id' => $PAGE->cm->id)));
     }
 }
 
