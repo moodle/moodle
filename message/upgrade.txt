@@ -1,6 +1,12 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+The following functions have been finally deprecated and can not be used anymore:
+  * can_post_message()
+  * get_individual_conversations_between_users()
+
 === 3.11.2 ===
 
 * The `message_page_type_list` method was previouly deprecated, however it was still
