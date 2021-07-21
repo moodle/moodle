@@ -40,14 +40,25 @@ $action = optional_param('action', '', PARAM_INT);
 $url = new moodle_url('/calendar/managesubscriptions.php');
 if ($courseid != SITEID && !empty($courseid)) {
     $url->param('course', $courseid);
-}
-if ($categoryid) {
+    navigation_node::override_active_url(new moodle_url('/course/view.php', ['id' => $courseid]));
+    $PAGE->navbar->add(
+        get_string('calendar', 'calendar'),
+        new moodle_url('/calendar/view.php', ['view' => 'month', 'course' => $courseid])
+    );
+} else if ($categoryid) {
     $url->param('categoryid', $categoryid);
+    navigation_node::override_active_url(new moodle_url('/course/index.php', ['categoryid' => $categoryid]));
+    $PAGE->set_category_by_id($categoryid);
+    $PAGE->navbar->add(
+        get_string('calendar', 'calendar'),
+        new moodle_url('/calendar/view.php', ['view' => 'month', 'category' => $categoryid])
+    );
+} else {
+    navigation_node::override_active_url(new moodle_url('/calendar/view.php', ['view' => 'month']));
 }
-navigation_node::override_active_url(new moodle_url('/calendar/view.php', array('view' => 'month')));
+
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
-$PAGE->navbar->add(get_string('managesubscriptions', 'calendar'));
 
 if ($courseid != SITEID && !empty($courseid)) {
     // Course ID must be valid and existing.
@@ -62,6 +73,8 @@ require_login($course, false);
 if (!calendar_user_can_add_event($course)) {
     print_error('errorcannotimport', 'calendar');
 }
+
+$PAGE->navbar->add(get_string('managesubscriptions', 'calendar'));
 
 $importresults = '';
 
