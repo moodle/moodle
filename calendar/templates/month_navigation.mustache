@@ -46,7 +46,12 @@
             <span class="arrow_text">{{previousperiodname}}</span>
         </a>
         <span class="hide"> | </span>
-        <h2 class="current">{{periodname}}</h2>
+        {{#viewinginblock}}
+            <h4 class="current">{{periodname}}</h4>
+        {{/viewinginblock}}
+        {{^viewinginblock}}
+            <h2 class="current">{{periodname}}</h2>
+        {{/viewinginblock}}
         <span class="hide"> | </span>
         <a{{!
             }} href="{{nextperiodlink}}"{{!

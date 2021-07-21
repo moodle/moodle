@@ -3501,6 +3501,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         $data = $month->export($renderer);
         $data->viewingmonth = true;
         $data->showviewselector = ($view == "month");
+        $data->viewinginblock = ($view == "monthblock");
     } else if ($view == "day") {
         $day = new \core_calendar\external\calendar_day_exporter($calendar, $related);
         $data = $day->export($renderer);
