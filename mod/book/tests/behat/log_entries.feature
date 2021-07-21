@@ -9,12 +9,13 @@ Feature: In a book, verify log entries
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    And I log in as "admin"
+    And the following "activity" exists:
+      | course   | C1        |
+      | activity | book      |
+      | name     | Test book |
+    And I am on the "Course 1" course page logged in as admin
     And I am on "Course 1" course homepage with editing mode on
-    When I add a "Book" to section "1" and I fill the form with:
-      | Name | Test book |
-      | Description | A book about dreams! |
-    And I follow "Test book"
+    And I am on the "Test book" "book activity" page
     And I set the following fields to these values:
       | Chapter title | First chapter |
       | Content | First chapter |

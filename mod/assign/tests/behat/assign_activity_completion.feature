@@ -10,20 +10,12 @@ Feature: View activity completion in the assignment activity
       | student1 | Vinnie    | Student1 | student1@example.com |
       | teacher1 | Darrell   | Teacher1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
+      | fullname | shortname | enablecompletion | showcompletionconditions |
+      | Course 1 | C1        | 1                | 1                        |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | C1     | student        |
       | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-      | Show activity completion conditions | Yes |
-    And I press "Save and display"
     And the following "activity" exists:
       | activity                 | assign        |
       | course                   | C1            |
@@ -36,7 +28,7 @@ Feature: View activity completion in the assignment activity
 
   @javascript
   Scenario: The manual completion button will be shown on the course page if the Show activity completion conditions is set to Yes
-    Given I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     # Teacher view.
     And the manual completion button for "Music history" should exist
     And the manual completion button for "Music history" should be disabled
@@ -51,43 +43,37 @@ Feature: View activity completion in the assignment activity
 
   @javascript
   Scenario: The manual completion button will not be shown on the course page if the Show activity completion conditions is set to No
-    Given I am on "Course 1" course homepage with editing mode on
+    Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "Show activity completion conditions" to "No"
     And I press "Save and display"
     # Teacher view.
     And the manual completion button for "Music history" should not exist
-    And I follow "Music history"
+    And I am on the "Music history" "assign activity" page
     And the manual completion button for "Music history" should exist
     And the manual completion button for "Music history" should be disabled
     And I log out
     # Student view.
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as "student1"
     Then the manual completion button for "Music history" should not exist
-    And I follow "Music history"
+    And I am on the "Music history" "assign activity" page
     And the manual completion button for "Music history" should exist
 
   @javascript
   Scenario: Use manual completion from the activity page
-    Given I am on "Course 1" course homepage
-    And I follow "Music history"
+    Given I am on the "Music history" "assign activity" page logged in as teacher1
     # Teacher view.
     And the manual completion button for "Music history" should be disabled
     And I log out
     # Student view.
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
+    And I am on the "Music history" "assign activity" page logged in as student1
     Then the manual completion button of "Music history" is displayed as "Mark as done"
     And I toggle the manual completion state of "Music history"
     And the manual completion button of "Music history" is displayed as "Done"
 
   Scenario: View automatic completion items as a teacher
-    Given I am on "Course 1" course homepage
-    And I follow "Music history"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Music history" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
       | Completion tracking | Show activity as complete when conditions are met |
@@ -101,9 +87,7 @@ Feature: View activity completion in the assignment activity
 
   @javascript
   Scenario: View automatic completion items as a student
-    Given I am on "Course 1" course homepage
-    And I follow "Music history"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Music history" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
       | assignsubmission_onlinetext_enabled | 1                                                 |
@@ -113,14 +97,11 @@ Feature: View activity completion in the assignment activity
       | completionsubmit                    | 1                                                 |
     And I press "Save and display"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
+    And I am on the "Music history" "assign activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Make a submission" completion condition of "Music history" is displayed as "todo"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
+    And I am on the "Music history" "assign activity" page
     And I press "Add submission"
     And I set the field "Online text" to "History of playing with drumsticks reversed"
     And I press "Save changes"
@@ -130,9 +111,7 @@ Feature: View activity completion in the assignment activity
     And the "Make a submission" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
+    And I am on the "Music history" "assign activity" page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Vinnie Student1" "table_row"
     And I set the field "Grade out of 100" to "33"
@@ -140,9 +119,7 @@ Feature: View activity completion in the assignment activity
     And I press "Save changes"
     And I follow "View all submissions"
     And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
+    When I am on the "Music history" "assign activity" page logged in as student1
     Then the "View" completion condition of "Music history" is displayed as "done"
     And the "Make a submission" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"

@@ -37,9 +37,7 @@ Feature: Do a H5P attempt
   Scenario: To an attempts and check on course log report
     When I click on "Save and return to course" "button"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Awesome H5P package"
+    Given I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     And I wait until the page is ready
     And I should not see "This content is displayed in preview mode"
     And I switch to "h5p-player" class iframe
@@ -48,8 +46,7 @@ Feature: Do a H5P attempt
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
     And I switch to the main frame
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And I navigate to course participants
     And I follow "Student 1"
     Then I follow "Today's logs"

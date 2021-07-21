@@ -49,9 +49,7 @@ Feature: Basic use of the Grades report
   @javascript
   Scenario: Using the Grades report
     # Basic check of the Grades report
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    When I am on the "Quiz 1" "quiz activity" page logged in as teacher1
     And I navigate to "Results > Grades" in current page administration
     Then I should see "Attempts: 2"
     # Check student1's grade
@@ -86,9 +84,7 @@ Feature: Basic use of the Grades report
   Scenario: View custom user profile fields in the grades report
     Given the following config values are set as admin:
       | showuseridentity | email,profile_field_fruit |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    And I am on the "Quiz 1" "quiz activity" page logged in as teacher1
     And I navigate to "Results > Grades" in current page administration
     Then I should see "Apple" in the "S1 Student1" "table_row"
     And I should see "Banana" in the "S2 Student2" "table_row"

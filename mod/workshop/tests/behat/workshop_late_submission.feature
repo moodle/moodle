@@ -22,9 +22,7 @@ Feature: Workshop 'Late submissions are allowed' task
       | activity | name          | intro                                              | course | idnumber  | latesubmissions | submisstionstart | submissionend |
       | workshop | TestWorkshop1 | TW3 with Submission deadline in future (1 Jan 2030)| c1     | workshop1 | 1               | 1514904308       | 1893369600    |
     # Teacher sets up assessment form and changes the phase to submission.
-    And I log in as "teacher1"
-    And I am on "Course1" course homepage
-    And I follow "TestWorkshop1"
+    And I am on the "TestWorkshop1" "workshop activity" page logged in as teacher1
     And I edit assessment form in workshop "TestWorkshop1" as:"
       | id_description__idx_0_editor | Aspect1 |
       | id_description__idx_1_editor | Aspect2 |
@@ -35,9 +33,7 @@ Feature: Workshop 'Late submissions are allowed' task
   @javascript
   Scenario: Student1 add his submission to TestWorkshop1 before submission deadline, but student2 does not submitt
     # Student1 submits.
-    Given I log in as "student1"
-    And I am on "Course1" course homepage
-    When I follow "TestWorkshop1"
+    When I am on the "TestWorkshop1" "workshop activity" page logged in as student1
     Then I should see "Submissions deadline:"
     And I should not see "Late submissions are allowed"
     And I add a submission in workshop "TestWorkshop1" as:"
@@ -46,9 +42,7 @@ Feature: Workshop 'Late submissions are allowed' task
     And I log out
 
     # Teacher modifies submission deadline.
-    Given I log in as "teacher1"
-    And I am on "Course1" course homepage
-    When I follow "TestWorkshop1"
+    When I am on the "TestWorkshop1" "workshop activity" page logged in as teacher1
     Then I should see "Late submissions are allowed"
     And I navigate to "Edit settings" in current page administration
     And I follow "Expand all"
@@ -60,27 +54,20 @@ Feature: Workshop 'Late submissions are allowed' task
     And I log out
 
     # Student1 has already submitted and cannot see 'Late submissions are allowed'.
-    Given I log in as "student1"
-    And I am on "Course1" course homepage
-    When I follow "TestWorkshop1"
+    When I am on the "TestWorkshop1" "workshop activity" page logged in as student1
     Then I should see "Submissions deadline:"
     And I should not see "Late submissions are allowed"
     And I log out
 
     # Student2 has not submitted yet who can see 'Late submissions are allowed' text after the submission deadline.
-    Given I log in as "student2"
-    And I am on "Course1" course homepage
-    When I follow "TestWorkshop1"
+    When I am on the "TestWorkshop1" "workshop activity" page logged in as student2
     Then I should see "Submissions deadline:"
     And I should see "Monday, 1 January 2018"
     And I should see "Late submissions are allowed"
     And I log out
 
     # Teacher can see 'Late submissions are allowed' text after submission deadline.
-    Given I log in as "teacher1"
-    And I am on "Course1" course homepage
-    When I follow "TestWorkshop1"
+    When I am on the "TestWorkshop1" "workshop activity" page logged in as teacher1
     Then I should see "Submissions deadline:"
     And I should see "Monday, 1 January 2018"
     And I should see "Late submissions are allowed"
-    And I log out
