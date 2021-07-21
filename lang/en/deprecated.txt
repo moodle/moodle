@@ -157,3 +157,4 @@ coursepreferences,core
 yourprogress,core_completion
 importfrominstructions,core_calendar
 proceedtocourse,core_enrol
+coursepage,core_admin
