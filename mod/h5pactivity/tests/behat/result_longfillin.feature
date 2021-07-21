@@ -30,9 +30,7 @@ Feature: View essay attempt report
 
   Scenario: View attempt essay content
     # Do an attempt.
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Awesome H5P package"
+    Given I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     And I change window size to "large"
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe

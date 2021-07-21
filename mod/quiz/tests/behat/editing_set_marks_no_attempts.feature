@@ -64,9 +64,8 @@ Feature: Edit quiz marks with no attempts
     And I should not see "2.000"
     And I should not see "3.000"
     And I should not see "Total of marks: 5.000"
-    And I follow "Quiz 1"
-    When I navigate to "Edit settings" in current page administration
-    And I set the following fields to these values:
+    And I am on the "Quiz 1" "quiz activity editing" page
+    When I set the following fields to these values:
       | Decimal places in grades | 3 |
       | Decimal places in question grades | 5 |
     And I press "Save and display"

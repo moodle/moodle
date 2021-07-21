@@ -22,16 +22,13 @@ Feature: Using the database activities which support point scale
 
   @javascript
   Scenario: Database rescale grade should not be possible when users are graded
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
     And I follow "Templates"
     And I wait until the page is ready
-    And I am on "Course 1" course homepage
-    And I follow "Test database name"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test database name" "data activity editing" page
     And I expand all fieldsets
     And I set the field "Ratings > Aggregate type" to "Count of ratings"
     And I set the field "Ratings > Type" to "Point"
@@ -44,13 +41,9 @@ Feature: Using the database activities which support point scale
       | Test field name | Student original entry 2 |
     And I press "Save and view"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test database name"
+    And I am on the "Test database name" "data activity" page logged in as teacher1
     And I follow "View single"
     And I set the field "rating" to "51"
-    And I am on "Course 1" course homepage
-    And I follow "Test database name"
-    When I navigate to "Edit settings" in current page administration
+    And I am on the "Test database name" "data activity editing" page
     And I expand all fieldsets
     Then the "Maximum grade" "field" should be disabled

@@ -19,30 +19,25 @@ Feature: A history of each wiki page is available
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Wiki" to section "1" and I fill the form with:
-      | Wiki name | Test wiki name |
-      | Description | Test wiki description |
-      | First page name | First page |
-      | Wiki mode | Collaborative wiki |
-    And I follow "Test wiki name"
+    And the following "activity" exists:
+      | course         | C1             |
+      | activity       | wiki           |
+      | name           | Test wiki name |
+      | firstpagetitle | First page     |
+      | wikimode       | collaborative  |
+    And I am on the "Test wiki name" "wiki activity" page logged in as teacher1
     And I press "Create page"
     And I set the following fields to these values:
       | HTML format | First edition |
     And I press "Save"
     And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test wiki name"
+    When I am on the "Test wiki name" "wiki activity" page logged in as student1
     And I follow "Edit"
     And I set the following fields to these values:
       | HTML format | Second edition |
     And I press "Save"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test wiki name"
+    When I am on the "Test wiki name" "wiki activity" page logged in as student2
     And I follow "Edit"
     And I set the following fields to these values:
       | HTML format | Third edition |

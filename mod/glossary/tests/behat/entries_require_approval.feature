@@ -27,53 +27,39 @@ Feature: A teacher can choose whether glossary entries require approval
     And I log out
 
   Scenario: Approve and undo approve glossary entries
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    Given I am on the "Test glossary name" "glossary activity" page logged in as student1
     When I add a glossary entry with the following data:
       | Concept | Just a test concept |
       | Definition | Concept definition |
       | Keyword(s) | Black |
     And I log out
     # Test that students can not see the unapproved entry.
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as student2
     Then I should see "No entries found in this section"
     And I log out
     # Approve the entry.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
     And I follow "Waiting approval"
     Then I should see "(this entry is currently hidden)"
     And I follow "Approve"
-    And I follow "Test glossary name"
+    And I click on "Test glossary name" "link" in the "page-header" "region"
     Then I should see "Concept definition"
     And I log out
     # Check that the entry can now be viewed by students.
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as student2
     Then I should see "Concept definition"
     And I log out
     # Undo the approval of the previous entry.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
     And I follow "Undo approval"
     And I log out
     # Check that the entry is no longer visible by students.
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as student2
     Then I should see "No entries found in this section"
 
   @javascript
   Scenario: View pending approval glossary items
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    Given I am on the "Test glossary name" "glossary activity" page logged in as student1
     When I add a glossary entry with the following data:
       | Concept | Just a test concept |
       | Definition | Concept definition |

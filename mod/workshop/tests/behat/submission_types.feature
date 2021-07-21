@@ -69,8 +69,7 @@ Feature: Submission types
     Given the following "activities" exist:
       | activity | name         | intro                     | course | idnumber  | submissiontypetext | submissiontypefile |
       | workshop | All required | Test workshop description | TEST   | workshop1 | 2                  | 2                  |
-    And I am on "Test" course homepage
-    And I follow "All required"
+    And I am on the "All required" "workshop activity" page
     And I follow "Switch to the submission phase"
     And I press "Continue"
     And I press "Add submission"
@@ -91,8 +90,7 @@ Feature: Submission types
     Given the following "activities" exist:
       | activity | name          | intro                     | course | idnumber  | submissiontypetext | submissiontypefile |
       | workshop | Optional file | Test workshop description | TEST   | workshop1 | 2                  | 1                  |
-    And I am on "Test" course homepage
-    And I follow "Optional file"
+    And I am on the "Optional file" "workshop activity" page
     And I follow "Switch to the submission phase"
     And I press "Continue"
     And I press "Add submission"
@@ -111,8 +109,7 @@ Feature: Submission types
     Given the following "activities" exist:
       | activity | name          | intro                     | course | idnumber  | submissiontypetext | submissiontypefile |
       | workshop | Optional text | Test workshop description | TEST   | workshop1 | 1                  | 2                  |
-    And I am on "Test" course homepage
-    And I follow "Optional text"
+    And I am on the "Optional text" "workshop activity" page
     And I follow "Switch to the submission phase"
     And I press "Continue"
     And I press "Add submission"
@@ -130,8 +127,7 @@ Feature: Submission types
     Given the following "activities" exist:
       | activity | name      | intro                     | course | idnumber  | submissiontypetext | submissiontypefile |
       | workshop | Only text | Test workshop description | TEST   | workshop1 | 2                  | 0                  |
-    And I am on "Test" course homepage
-    And I follow "Only text"
+    And I am on the "Only text" "workshop activity" page
     And I follow "Switch to the submission phase"
     And I press "Continue"
     When I press "Add submission"
@@ -151,8 +147,7 @@ Feature: Submission types
     Given the following "activities" exist:
       | activity | name      | intro                     | course | idnumber  | submissiontypetext | submissiontypefile |
       | workshop | Only file | Test workshop description | TEST   | workshop1 | 0                  | 2                  |
-    And I am on "Test" course homepage
-    And I follow "Only file"
+    And I am on the "Only file" "workshop activity" page
     And I follow "Switch to the submission phase"
     And I press "Continue"
     When I press "Add submission"
@@ -173,8 +168,7 @@ Feature: Submission types
     Given the following "activities" exist:
       | activity | name             | intro                     | course | idnumber  |
       | workshop | Neither required | Test workshop description | TEST   | workshop1 |
-    And I am on "Test" course homepage
-    And I follow "Neither required"
+    And I am on the "Neither required" "workshop activity" page
     And I follow "Switch to the submission phase"
     And I press "Continue"
     And I press "Add submission"

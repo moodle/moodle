@@ -30,9 +30,7 @@ Feature: We can bulk insert grades for students in a course
       | assign | C1 | a4 | Test assignment four | Submit nothing!    |
 
   Scenario: I can bulk insert grades and check their override flags for grade view.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment one"
+    Given I am on the "Test assignment one" "assign activity" page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
@@ -70,9 +68,7 @@ Feature: We can bulk insert grades for students in a course
     And the field "Override for Student 4" matches value "1"
 
   Scenario: I can bulk insert grades and check their override flags for user view.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment two"
+    Given I am on the "Test assignment two" "assign activity" page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
@@ -101,8 +97,7 @@ Feature: We can bulk insert grades for students in a course
     And the field "Override for Test assignment four" matches value "1"
 
   Scenario: I can not update grades if the value is out of bounds.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "View > Grader report" in the course gradebook
     And I follow "Single view for Test assignment one"
     And I set the field "Perform bulk insert" to "1"
