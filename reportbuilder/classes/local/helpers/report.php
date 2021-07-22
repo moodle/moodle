@@ -95,4 +95,141 @@ class report {
 
         return $report->delete();
     }
+
+
+    /**
+     * Add given column to report
+     *
+     * @param int $reportid
+     * @param string $uniqueidentifier
+     * @return column
+     * @throws invalid_parameter_exception
+     */
+    public static function add_report_column(int $reportid, string $uniqueidentifier): column {
+        $report = manager::get_report_from_id($reportid);
+
+        if (!array_key_exists($uniqueidentifier, $report->get_columns())) {
+            throw new invalid_parameter_exception('Invalid column');
+        }
+
+        $column = new column(0, (object) [
+            'reportid' => $reportid,
+            'uniqueidentifier' => $uniqueidentifier,
+            'columnorder' => column::get_max_columnorder($reportid, 'columnorder') + 1,
+            'sortorder' => column::get_max_columnorder($reportid, 'sortorder') + 1,
+        ]);
+
+        return $column->create();
+    }
+
+    /**
+     * Delete given column from report
+     *
+     * @param int $reportid
+     * @param int $columnid
+     * @return bool
+     * @throws invalid_parameter_exception
+     */
+    public static function delete_report_column(int $reportid, int $columnid): bool {
+        global $DB;
+
+        $column = column::get_record(['id' => $columnid, 'reportid' => $reportid]);
+        if ($column === false) {
+            throw new invalid_parameter_exception('Invalid column');
+        }
+
+        // After deletion, re-index remaining report columns.
+        if ($result = $column->delete()) {
+            $sqlupdateorder = '
+                UPDATE {' . column::TABLE . '}
+                   SET columnorder = columnorder - 1
+                 WHERE reportid = :reportid
+                   AND columnorder > :columnorder';
+
+            $DB->execute($sqlupdateorder, ['reportid' => $reportid, 'columnorder' => $column->get('columnorder')]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Re-order given column within a report
+     *
+     * @param int $reportid
+     * @param int $columnid
+     * @param int $position
+     * @return bool
+     * @throws invalid_parameter_exception
+     */
+    public static function reorder_report_column(int $reportid, int $columnid, int $position): bool {
+        $column = column::get_record(['id' => $columnid, 'reportid' => $reportid]);
+        if ($column === false) {
+            throw new invalid_parameter_exception('Invalid column');
+        }
+
+        // Get the rest of the report columns, excluding the one we are moving.
+        $columns = column::get_records_select('reportid = :reportid AND id <> :id', [
+            'reportid' => $reportid,
+            'id' => $columnid,
+        ], 'columnorder');
+
+        return static::reorder_persistents_by_field($column, $columns, $position, 'columnorder');
+    }
+
+    /**
+     * Get available columns for a given report
+     *
+     * @param report_model $persistent
+     * @return array
+     */
+    public static function get_available_columns(report_model $persistent) : array {
+        $available = [];
+
+        $report = manager::get_report_from_persistent($persistent);
+
+        // Get current report columns.
+        foreach ($report->get_columns() as $column) {
+            $entityname = $column->get_entity_name();
+            $entitytitle = $column->get_title();
+            if (!array_key_exists($entityname, $available)) {
+                $available[$entityname] = [
+                    'name' => (string) $report->get_entity_title($entityname),
+                    'key' => $entityname,
+                    'items' => [],
+                ];
+            }
+
+            $available[$entityname]['items'][] = [
+                'name' => $entitytitle,
+                'identifier' => $column->get_unique_identifier(),
+                'title' => get_string('addcolumn', 'core_reportbuilder', $entitytitle),
+                'action' => 'report-add-column'
+            ];
+        }
+
+        return array_values($available);
+    }
+
+    /**
+     * Helper method for re-ordering given persistents (columns, filters, etc)
+     *
+     * @param persistent $persistent The persistent we are moving
+     * @param persistent[] $persistents The rest of the persistents
+     * @param string $field The field we need to update
+     * @return bool
+     */
+    private static function reorder_persistents_by_field(persistent $persistent, array $persistents, int $position,
+        string $field): bool {
+
+        // Splice into new position.
+        array_splice($persistents, $position - 1, 0, [$persistent]);
+
+        $fieldorder = 1;
+        foreach ($persistents as $persistent) {
+            $persistent->set($field, $fieldorder++)
+                ->update();
+        }
+
+        return true;
+    }
 }

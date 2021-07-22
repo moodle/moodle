@@ -21,6 +21,7 @@ namespace core_reportbuilder\local\report;
 use coding_exception;
 use lang_string;
 use core_reportbuilder\local\helpers\database;
+use core_reportbuilder\local\models\column as column_model;
 
 /**
  * Class to represent a report column
@@ -84,6 +85,9 @@ final class column {
 
     /** @var bool $available Used to know if column is available to the current user or not */
     protected $available = true;
+
+    /** @var column_model $persistent */
+    protected $persistent;
 
     /**
      * Column constructor
@@ -540,5 +544,26 @@ final class column {
     public function set_is_available(bool $available): self {
         $this->available = $available;
         return $this;
+    }
+
+
+    /**
+     * Set column persistent
+     *
+     * @param column_model $persistent
+     * @return self
+     */
+    public function set_persistent(column_model $persistent): self {
+        $this->persistent = $persistent;
+        return $this;
+    }
+
+    /**
+     * Return column persistent
+     *
+     * @return mixed
+     */
+    public function get_persistent(): column_model {
+        return $this->persistent;
     }
 }

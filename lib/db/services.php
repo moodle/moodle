@@ -2804,6 +2804,84 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_reportbuilder_reports_get' => [
+        'classname'   => 'core_reportbuilder\external\reports\get',
+        'description' => 'Get custom report',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_add' => [
+        'classname'   => 'core_reportbuilder\external\columns\add',
+        'description' => 'Add column to report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_delete' => [
+        'classname'   => 'core_reportbuilder\external\columns\delete',
+        'description' => 'Delete column from report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_reorder' => [
+        'classname'   => 'core_reportbuilder\external\columns\reorder',
+        'description' => 'Re-order column within report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_sort_reorder' => [
+        'classname'   => 'core_reportbuilder\external\columns\sort\reorder',
+        'description' => 'Re-order column sorting within report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_sort_toggle' => [
+        'classname'   => 'core_reportbuilder\external\columns\sort\toggle',
+        'description' => 'Toggle sorting of column within report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_conditions_add' => [
+        'classname'   => 'core_reportbuilder\external\conditions\add',
+        'description' => 'Add condition to report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_conditions_delete' => [
+        'classname'   => 'core_reportbuilder\external\conditions\delete',
+        'description' => 'Delete condition from report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_conditions_reorder' => [
+        'classname'   => 'core_reportbuilder\external\conditions\reorder',
+        'description' => 'Re-order condition within report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_conditions_reset' => [
+        'classname'   => 'core_reportbuilder\external\conditions\reset',
+        'description' => 'Reset conditions for given report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_filters_add' => [
+        'classname'   => 'core_reportbuilder\external\filters\add',
+        'description' => 'Add filter to report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_filters_delete' => [
+        'classname'   => 'core_reportbuilder\external\filters\delete',
+        'description' => 'Delete filter from report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_filters_reorder' => [
+        'classname'   => 'core_reportbuilder\external\filters\reorder',
+        'description' => 'Re-order filter within report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
 );
 
 $services = array(

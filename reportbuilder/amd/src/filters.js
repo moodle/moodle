@@ -31,7 +31,7 @@ import {add as addToast} from 'core/toast';
 import DynamicForm from 'core_form/dynamicform';
 import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
-import {reset as resetFilters} from 'core_reportbuilder/local/repository/filters';
+import {resetFilters} from 'core_reportbuilder/local/repository/filters';
 
 /**
  * Update filter button text to indicate applied filter count
@@ -57,7 +57,7 @@ const setFilterButtonCount = async(reportElement, filterCount) => {
  * @param {Number} contextId
  */
 export const init = (reportId, contextId) => {
-    const reportElement = document.querySelector(reportSelectors.forSystemReport(reportId));
+    const reportElement = document.querySelector(reportSelectors.forReport(reportId));
     const filterFormContainer = reportElement.querySelector(reportSelectors.regions.filtersForm);
     const filterForm = new DynamicForm(filterFormContainer, '\\core_reportbuilder\\form\\filter');
 

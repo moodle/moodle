@@ -31,25 +31,32 @@
  */
 const SELECTORS = {
     regions: {
-        systemReport: '[data-region="core_reportbuilder/system-report"]',
+        report: '[data-region="core_reportbuilder/report"]',
+        reportTable: '[data-region="reportbuilder-table"]',
+        columnHeader: '[data-region="column-header"]',
         filterButtonLabel: '[data-region="filter-button-label"]',
         filtersForm: '[data-region="filters-form"]',
+        sidebarMenu: '[data-region="sidebar-menu"]',
+        sidebarCard: '[data-region="sidebar-card"]',
     },
     actions: {
         reportActionPopup: '[data-action="report-action-popup"]',
         reportCreate: '[data-action="report-create"]',
         reportEdit: '[data-action="report-edit"]',
         reportDelete: '[data-action="report-delete"]',
+        reportAddColumn: '[data-action="report-add-column"]',
+        reportRemoveColumn: '[data-action="report-remove-column"]',
+        sidebarSearch: '[data-action="sidebar-search"]',
     },
 };
 
 /**
  * Selector for given report
  *
- * @method forSystemReport
+ * @method forReport
  * @param {Number} reportId
  * @return {String}
  */
-SELECTORS.forSystemReport = reportId => `${SELECTORS.regions.systemReport}[data-reportid="${reportId}"]`;
+SELECTORS.forReport = reportId => `${SELECTORS.regions.report}[data-report-id="${reportId}"]`;
 
 export default SELECTORS;

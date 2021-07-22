@@ -58,5 +58,17 @@ class users extends datasource {
 
         // Add all columns from entities to be available in custom reports.
         $this->add_entity($userentity);
+
+        $userentityname = $userentity->get_entity_name();
+        $this->add_columns_from_entity($userentityname);
+    }
+
+    /**
+     * Return the columns that will be added to the report once is created
+     *
+     * @return string[]
+     */
+    public function get_default_columns(): array {
+        return ['user:fullname', 'user:username', 'user:email'];
     }
 }

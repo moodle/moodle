@@ -40,4 +40,58 @@ abstract class datasource extends base {
      * @return string
      */
     abstract public static function get_name(): string;
+
+    /**
+     * Add columns from the given entity name to be available to use in a custom report
+     *
+     * @param string $entityname
+     * @param array $include Include only these columns, if omitted then include all
+     * @param array $exclude Exclude these columns, if omitted then exclude none
+     * @throws coding_exception If both $include and $exclude are non-empty
+     */
+    final protected function add_columns_from_entity(string $entityname, array $include = [], array $exclude = []): void {
+        if (!empty($include) && !empty($exclude)) {
+            throw new coding_exception('Cannot specify columns to include and exclude simultaneously');
+        }
+
+        $entity = $this->get_entity($entityname);
+
+        // Retrieve filtered columns from entity, respecting given $include/$exclude parameters.
+        $columns = array_filter($entity->get_columns(), static function(column $column) use ($include, $exclude): bool {
+            if (!empty($include)) {
+                return in_array($column->get_name(), $include);
+            }
+
+            if (!empty($exclude)) {
+                return !in_array($column->get_name(), $exclude);
+            }
+
+            return true;
+        });
+
+        foreach ($columns as $column) {
+            $this->add_column($column);
+        }
+    }
+
+    /**
+     * Add default datasource columns to the report
+     *
+     * This method is optional and can be called when the report is created to add the default columns defined in the
+     * selected datasource.
+     */
+    public function add_default_columns(): void {
+        $reportid = $this->get_report_persistent()->get('id');
+        $columnidentifiers = $this->get_default_columns();
+        foreach ($columnidentifiers as $uniqueidentifier) {
+            report::add_report_column($reportid, $uniqueidentifier);
+        }
+    }
+
+    /**
+     * Return the columns that will be added to the report once is created
+     *
+     * @return string[]
+     */
+    abstract public function get_default_columns(): array;
 }

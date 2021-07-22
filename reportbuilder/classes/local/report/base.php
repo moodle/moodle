@@ -282,6 +282,20 @@ abstract class base {
     }
 
     /**
+     * Returns title of given report entity
+     *
+     * @return lang_string
+     * @throws coding_exception
+     */
+    final public function get_entity_title(string $name): lang_string {
+        if (!array_key_exists($name, $this->entitytitles)) {
+            throw new coding_exception('Invalid entity name', $name);
+        }
+
+        return $this->entitytitles[$name];
+    }
+
+    /**
      * Adds a column to the report
      *
      * @param column $column
@@ -432,6 +446,15 @@ abstract class base {
     }
 
     /**
+     * Return all active report filters (by default, all available filters)
+     *
+     * @return filter[]
+     */
+    public function get_active_filters(): array {
+        return $this->get_filters();
+    }
+
+    /**
      * Return all report filter instances
      *
      * @return filter_base[]
@@ -442,7 +465,7 @@ abstract class base {
             $filterclass = $filter->get_filter_class();
 
             return $filterclass::create($filter);
-        }, $this->get_filters());
+        }, $this->get_active_filters());
     }
 
     /**

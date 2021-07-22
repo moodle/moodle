@@ -20,6 +20,7 @@ namespace core_reportbuilder\output;
 
 use html_writer;
 use plugin_renderer_base;
+use core_reportbuilder\table\custom_report_table;
 use core_reportbuilder\table\system_report_table;
 
 /**
@@ -50,6 +51,21 @@ class renderer extends plugin_renderer_base {
      * @return string
      */
     protected function render_system_report_table(system_report_table $table): string {
+        ob_start();
+        $table->out($table->get_default_per_page(), false);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        return $output;
+    }
+
+    /**
+     * Render a custom report table
+     *
+     * @param custom_report_table $table
+     * @return string
+     */
+    protected function render_custom_report_table(custom_report_table $table): string {
         ob_start();
         $table->out($table->get_default_per_page(), false);
         $output = ob_get_contents();

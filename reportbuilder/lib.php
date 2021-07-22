@@ -58,6 +58,9 @@ function core_reportbuilder_inplace_editable($itemtype, $itemid, $newvalue) {
         case 'reportname':
             return \core_reportbuilder\output\report_name_editable::update($itemid, $newvalue);
 
+        case 'columnheading':
+            return \core_reportbuilder\output\column_heading_editable::update($itemid, $newvalue);
+
         default:
             return false;
     }

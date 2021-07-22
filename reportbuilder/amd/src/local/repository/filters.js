@@ -30,7 +30,7 @@ import Ajax from 'core/ajax';
  * @param {Number} reportId
  * @return {Promise}
  */
-export const reset = reportId => {
+export const resetFilters = reportId => {
     const request = {
         methodname: 'core_reportbuilder_filters_reset',
         args: {reportid: reportId}

@@ -225,6 +225,17 @@ class reports_list extends system_report {
      * Add actions to report
      */
     protected function add_actions(): void {
+        // Edit content action.
+        $this->add_action((new action(
+            new moodle_url('/reportbuilder/edit.php', ['id' => ':id']),
+            new pix_icon('t/right', get_string('editreportcontent', 'core_reportbuilder'))
+        ))
+            ->add_callback(function(stdClass $row): bool {
+                return $this->report_source_valid($row->source) && permission::can_edit_report($this->get_report_from_row($row));
+            })
+        );
+
+        // Edit details action.
         $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/edit', get_string('editreportdetails', 'core_reportbuilder')),
@@ -235,6 +246,7 @@ class reports_list extends system_report {
             })
         );
 
+        // Delete action.
         $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/delete', get_string('deletereport', 'core_reportbuilder')),
