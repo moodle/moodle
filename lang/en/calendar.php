@@ -32,7 +32,6 @@ $string['calendarexporturl'] = 'Calendar URL';
 $string['calendarheading'] = '{$a} Calendar';
 $string['calendarpreferences'] = 'Calendar preferences';
 $string['calendartypes'] = 'Calendar types';
-$string['calendarsubscriptions'] = 'Calendar subscriptions';
 $string['calendarurlcopiedtoclipboard'] = 'Calendar URL copied to clipboard';
 $string['category'] = 'Category';
 $string['categoryevent'] = 'Category event';
@@ -172,7 +171,6 @@ $string['importcalendarheading'] = 'Import calendar...';
 $string['importcalendarfrom'] = 'Import from';
 $string['importfromfile'] = 'Calendar file (.ics)';
 $string['importfromurl'] = 'Calendar URL';
-$string['importfrominstructions'] = 'Please provide either a URL to a remote calendar, or upload a file.';
 $string['invalidtimedurationminutes'] = 'The duration in minutes you have entered is invalid. Please enter the duration in minutes greater than 0 or select no duration.';
 $string['invalidtimedurationuntil'] = 'The date and time you selected for duration until is before the start time of the event. Please correct this before proceeding.';
 $string['invalideventtype'] = 'The event type you have selected is invalid.';
@@ -284,6 +282,7 @@ $string['yoursubscriptions'] = 'Your Subscriptions';
 
 // Deprecated since Moodle 4.0.
 $string['calendarurl'] = 'Calendar URL: {$a}';
+$string['importfrominstructions'] = 'Please provide either a URL to a remote calendar, or upload a file.';
 
 // Deprecated since Moodle 3.8.
 $string['global'] = 'Global';

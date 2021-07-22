@@ -117,15 +117,11 @@ if (!empty($formdata)) {
     redirect($managesubscriptionsurl, $importresults);
 }
 
-$calendarsubscriptions = get_string('calendarsubscriptions', 'calendar');
-
 $renderer = $PAGE->get_renderer('core_calendar');
 
 echo $OUTPUT->header();
 echo $renderer->start_layout();
 echo $OUTPUT->heading($heading);
 $form->display();
-echo $OUTPUT->spacer(null, true);
-echo $OUTPUT->action_link($managesubscriptionsurl, $OUTPUT->larrow() . ' ' . $calendarsubscriptions);
 echo $renderer->complete_layout();
 echo $OUTPUT->footer();
