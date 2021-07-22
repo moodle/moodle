@@ -166,7 +166,7 @@ require([
         M.util.js_pending("month-detailed-{{uniqid}}-filterChanged");
         // A filter value has been changed.
         // Find all matching cells in the popover data, and hide them.
-        var target = $("#month-detailed-{{uniqid}}").find(CalendarSelectors.eventType[data.type]);
+        var target = root.find(CalendarSelectors.eventType[data.type]);
 
         var transitionPromise = $.Deferred();
         if (data.hidden) {
