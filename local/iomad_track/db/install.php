@@ -155,6 +155,11 @@ function xmldb_local_iomad_track_record_certificates($courseid, $userid, $tracki
             $modinfo = new course_modinfo($course, $userid);
             $cm = $modinfo->get_cm($cm->id);
 
+            // Can the user see this certificate?
+            if (!$cm->uservisible) {
+                continue;
+            }
+
             // Find certificate issue record or create it (in cert lib.php)
             $certissue_function = CERTIFICATE . '_get_issue';
             $certissue = $certissue_function($course, $user, $certificate, $cm);
