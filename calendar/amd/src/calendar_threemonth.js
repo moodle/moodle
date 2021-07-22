@@ -132,7 +132,7 @@ function(
                 CalendarViewManager.refreshDayContent(calendarRoot, year, month, day, courseId, categoryId,
                     calendarRoot, 'core_calendar/calendar_day');
                 e.preventDefault();
-                window.history.pushState({}, '', '?view=day');
+                CalendarViewManager.updateUrl('?view=day');
         });
     };
 

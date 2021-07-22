@@ -1057,6 +1057,9 @@ class calendar_information {
     /** @var context The anticipated context that the calendar is viewed in */
     public $context = null;
 
+    /** @var string The calendar's view mode. */
+    protected $viewmode;
+
     /**
      * Creates a new instance
      *
@@ -1315,6 +1318,24 @@ class calendar_information {
         $block->footer = '';
         $block->title = get_string('monthlyview', 'calendar');
         $renderer->add_pretend_calendar_block($block, BLOCK_POS_RIGHT);
+    }
+
+    /**
+     * Getter method for the calendar's view mode.
+     *
+     * @return string
+     */
+    public function get_viewmode(): string {
+        return $this->viewmode;
+    }
+
+    /**
+     * Setter method for the calendar's view mode.
+     *
+     * @param string $viewmode
+     */
+    public function set_viewmode(string $viewmode): void {
+        $this->viewmode = $viewmode;
     }
 }
 
@@ -3493,17 +3514,18 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
     ];
 
     $data = [];
-    if ($view == "month" || $view == "mini" || $view == "minithree") {
+    $calendar->set_viewmode($view);
+    if ($view == "month" || $view == "monthblock" || $view == "mini" || $view == "minithree" ) {
         $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
         $month->set_includenavigation($includenavigation);
         $month->set_initialeventsloaded(!$skipevents);
-        $month->set_showcoursefilter($view == "month");
+        $month->set_showcoursefilter(($view == "month" || $view == "monthblock"));
         $data = $month->export($renderer);
-        $data->viewingmonth = true;
     } else if ($view == "day") {
         $day = new \core_calendar\external\calendar_day_exporter($calendar, $related);
         $data = $day->export($renderer);
         $data->viewingday = true;
+        $data->showviewselector = true;
         $template = 'core_calendar/calendar_day';
     } else if ($view == "upcoming" || $view == "upcoming_mini") {
         $upcoming = new \core_calendar\external\calendar_upcoming_exporter($calendar, $related);
@@ -3512,6 +3534,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         if ($view == "upcoming") {
             $template = 'core_calendar/calendar_upcoming';
             $data->viewingupcoming = true;
+            $data->showviewselector = true;
         } else if ($view == "upcoming_mini") {
             $template = 'core_calendar/calendar_upcoming_mini';
         }

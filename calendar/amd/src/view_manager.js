@@ -83,7 +83,7 @@ const registerEventListeners = (root) => {
         const categoryId = wrapper.data('categoryid');
         const link = e.currentTarget;
 
-        if (view === 'month') {
+        if (view === 'month' || view === 'monthblock') {
             changeMonth(root, link.href, link.dataset.year, link.dataset.month, courseId, categoryId, link.dataset.day);
             e.preventDefault();
         } else if (view === 'day') {
@@ -114,17 +114,17 @@ const registerEventListeners = (root) => {
             if (view == 'month') {
                 refreshMonthContent(root, year, month, courseId, categoryId, root, 'core_calendar/calendar_month', day)
                     .then(() => {
-                        return window.history.pushState({}, '', '?view=month');
+                        updateUrl('?view=month');
                     }).fail(Notification.exception);
             } else if (view == 'day') {
                 refreshDayContent(root, year, month, day, courseId, categoryId, root, 'core_calendar/calendar_day')
                     .then(() => {
-                        return window.history.pushState({}, '', '?view=day');
+                        updateUrl('?view=day');
                     }).fail(Notification.exception);
             } else if (view == 'upcoming') {
                 reloadCurrentUpcoming(root, courseId, categoryId, root, 'core_calendar/calendar_upcoming')
                     .then(() => {
-                        return window.history.pushState({}, '', '?view=upcoming');
+                        updateUrl('?view=upcoming');
                     }).fail(Notification.exception);
             }
         }
@@ -152,9 +152,9 @@ export const refreshMonthContent = (root, year, month, courseId, categoryId, tar
     M.util.js_pending([root.get('id'), year, month, courseId].join('-'));
     const includenavigation = root.data('includenavigation');
     const mini = root.data('mini');
-    return CalendarRepository.getCalendarMonthData(year, month, courseId, categoryId, includenavigation, mini, day)
+    const viewMode = target.data('view');
+    return CalendarRepository.getCalendarMonthData(year, month, courseId, categoryId, includenavigation, mini, day, viewMode)
         .then(context => {
-            context.viewingmonth = true;
             return Templates.render(template, context);
         })
         .then((html, js) => {
@@ -187,7 +187,7 @@ export const changeMonth = (root, url, year, month, courseId, categoryId, day = 
     return refreshMonthContent(root, year, month, courseId, categoryId, null, '', day)
         .then((...args) => {
             if (url.length && url !== '#') {
-                window.history.pushState({}, '', url);
+                updateUrl(url);
             }
             return args;
         })
@@ -241,6 +241,7 @@ export const refreshDayContent = (root, year, month, day, courseId, categoryId, 
     return CalendarRepository.getCalendarDayData(year, month, day, courseId, categoryId, includenavigation)
         .then((context) => {
             context.viewingday = true;
+            context.showviewselector = true;
             return Templates.render(template, context);
         })
         .then((html, js) => {
@@ -293,7 +294,7 @@ export const changeDay = (root, url, year, month, day, courseId, categoryId) => 
     return refreshDayContent(root, year, month, day, courseId, categoryId)
         .then((...args) => {
             if (url.length && url !== '#') {
-                window.history.pushState({}, '', url);
+                updateUrl(url);
             }
             return args;
         })
@@ -301,6 +302,20 @@ export const changeDay = (root, url, year, month, day, courseId, categoryId) => 
             $('body').trigger(CalendarEvents.dayChanged, [year, month, courseId, categoryId]);
             return args;
         });
+};
+
+/**
+ * Update calendar URL.
+ *
+ * @param {String} url The calendar url to be updated.
+ */
+export const updateUrl = (url) => {
+    const viewingFullCalendar = document.getElementById(CalendarSelectors.fullCalendarView);
+
+    // We want to update the url only if the user is viewing the full calendar.
+    if (viewingFullCalendar) {
+        window.history.pushState({}, '', url);
+    }
 };
 
 /**
@@ -348,6 +363,7 @@ export const reloadCurrentUpcoming = (root, courseId = 0, categoryId = 0, target
     return CalendarRepository.getCalendarUpcomingData(courseId, categoryId)
         .then((context) => {
             context.viewingupcoming = true;
+            context.showviewselector = true;
             return Templates.render(template, context);
         })
         .then((html, js) => {

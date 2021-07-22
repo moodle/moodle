@@ -32,7 +32,9 @@
     }
 }}
 <div class="header d-flex flex-wrap p-1">
-    {{> core_calendar/view_selector}}
+    {{#showviewselector}}
+        {{> core_calendar/view_selector}}
+    {{/showviewselector}}
     {{#filter_selector}}
         {{{filter_selector}}}
     {{/filter_selector}}

@@ -66,5 +66,6 @@ define([], function() {
         containers: {
             loadingIcon: '[data-region="overlay-icon-container"]',
         },
+        fullCalendarView: 'page-calendar-view',
     };
 });

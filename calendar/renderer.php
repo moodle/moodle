@@ -243,9 +243,10 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @param moodle_url $returnurl The URL that the user should be taken too upon selecting a course.
      * @param string $label The label to use for the course select.
      * @param int $courseid The id of the course to be selected.
+     * @param int|null $calendarinstanceid The instance ID of the calendar we're generating this course filter for.
      * @return string
      */
-    public function course_filter_selector(moodle_url $returnurl, $label = null, $courseid = null) {
+    public function course_filter_selector(moodle_url $returnurl, $label = null, $courseid = null, int $calendarinstanceid = null) {
         global $CFG, $DB;
 
         if (!isloggedin() or isguestuser()) {
@@ -301,9 +302,13 @@ class core_calendar_renderer extends plugin_renderer_base {
             $labelattributes['class'] = 'sr-only';
         }
 
-        $select = html_writer::label($label, 'course', false, $labelattributes);
+        $filterid = 'calendar-course-filter';
+        if ($calendarinstanceid) {
+            $filterid .= "-$calendarinstanceid";
+        }
+        $select = html_writer::label($label, $filterid, false, $labelattributes);
         $select .= html_writer::select($courseoptions, 'course', $selected, false,
-                ['class' => 'cal_courses_flt ml-1 mr-auto', 'id' => 'course']);
+                ['class' => 'cal_courses_flt ml-1 mr-auto', 'id' => $filterid]);
 
         return $select;
     }
