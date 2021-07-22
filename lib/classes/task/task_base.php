@@ -136,6 +136,28 @@ abstract class task_base {
      * @return string
      */
     public function get_component() {
+        if (empty($this->component)) {
+            // The component should be the root of the class namespace.
+            $classname = get_class($this);
+            $parts = explode('\\', $classname);
+
+            if (count($parts) === 1) {
+                $component = substr($classname, 0, strpos($classname, '_task'));
+            } else {
+                [$component] = $parts;
+            }
+
+            // Load component information from plugin manager.
+            if ($component !== 'core' && strpos($component, 'core_') !== 0) {
+                $plugininfo = \core_plugin_manager::instance()->get_plugin_info($component);
+                if ($plugininfo && $plugininfo->component) {
+                    $this->set_component($plugininfo->component);
+                } else {
+                    debugging("Component not set and the class namespace does not match a valid component ({$component}).");
+                }
+            }
+        }
+
         return $this->component;
     }
 

@@ -111,6 +111,46 @@ class core_adhoc_task_testcase extends advanced_testcase {
     }
 
     /**
+     * Test queueing an adhoc task belonging to a component, where we set the task component accordingly
+     */
+    public function test_queue_adhoc_task_for_component(): void {
+        $this->resetAfterTest();
+
+        $task = new \mod_forum\task\refresh_forum_post_counts();
+        $task->set_component('mod_test');
+
+        \core\task\manager::queue_adhoc_task($task);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test queueing an adhoc task belonging to a component, where we do not set the task component
+     */
+    public function test_queue_task_for_component_without_set_component(): void {
+        $this->resetAfterTest();
+
+        $task = new \mod_forum\task\refresh_forum_post_counts();
+
+        \core\task\manager::queue_adhoc_task($task);
+        $this->assertDebuggingNotCalled();
+
+        // Assert the missing component was set.
+        $this->assertEquals('mod_forum', $task->get_component());
+    }
+
+    /**
+     * Test queueing an adhoc task belonging to an invalid component, where we do not set the task component
+     */
+    public function test_queue_task_for_invalid_component_without_set_component(): void {
+        $this->resetAfterTest();
+
+        $task = new \mod_fake\task\adhoc_component_task();
+
+        \core\task\manager::queue_adhoc_task($task);
+        $this->assertDebuggingCalled('Component not set and the class namespace does not match a valid component (mod_fake).');
+    }
+
+    /**
      * Test empty set of adhoc tasks
      */
     public function test_get_adhoc_tasks_empty_set() {
