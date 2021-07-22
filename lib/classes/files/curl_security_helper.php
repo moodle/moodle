@@ -60,9 +60,15 @@ class curl_security_helper extends curl_security_helper_base {
      * could not be parsed, as well as those valid URLs which were found in the blocklist.
      *
      * @param string $urlstring the URL to check.
+     * @param int $notused There used to be an optional parameter $maxredirects for a short while here, not used any more.
      * @return bool true if the URL is blocked or invalid and false if the URL is not blocked.
      */
-    public function url_is_blocked($urlstring) {
+    public function url_is_blocked($urlstring, $notused = null) {
+
+        if ($notused !== null) {
+            debugging('The $maxredirects parameter of curl_security_helper::url_is_blocked() has been dropped!', DEBUG_DEVELOPER);
+        }
+
         // If no config data is present, then all hosts/ports are allowed.
         if (!$this->is_enabled()) {
             return false;
