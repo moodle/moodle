@@ -209,6 +209,7 @@ function uninstall_plugin($type, $name) {
     $DB->delete_records('event', ['component' => $component]);
 
     // Delete scheduled tasks.
+    $DB->delete_records('task_adhoc', ['component' => $component]);
     $DB->delete_records('task_scheduled', array('component' => $component));
 
     // Delete Inbound Message datakeys.
