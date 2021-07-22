@@ -202,7 +202,7 @@ class secondary extends view {
         $settingsnav = $this->page->settingsnav;
         $navigation = $this->page->navigation;
 
-        $url = new \moodle_url('/course/view.php', ['id' => $course->id, 'sesskey' => sesskey()]);
+        $url = new \moodle_url('/course/view.php', ['id' => $course->id]);
         $this->add(get_string('course'), $url, self::TYPE_COURSE, null, 'coursehome');
 
         $nodes = $this->get_default_course_mapping();
