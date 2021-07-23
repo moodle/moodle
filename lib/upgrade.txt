@@ -63,6 +63,8 @@ information provided here is intended especially for developers.
 * New method \core_user::awaiting_action() has been introduced to check if the user is fully ready to use the site or
   whether there is an action (such as filling the missing profile field, changing password or agreeing to the site
   policy) needed.
+* The function message_send() in messagelib.php now returns false if there is an error sending the message to the
+  message processor (MDL-70046).
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.
