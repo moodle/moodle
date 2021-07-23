@@ -32,6 +32,8 @@ Feature: Use core page resolvers for the I am on the page steps
       | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Updating: Forum            |
       | Forum name               | "Fundamentals of Economics" | "Forum activity"             | Add a new discussion       |
       | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Updating: Forum            |
+      | Forum name permissions   | "Fundamentals of Economics" | "Forum activity permissions" | Permissions in Forum: Fun  |
+      | Forum name roles         | "Fundamentals of Economics" | "Forum activity roles"       | Assign roles in Forum: Fun |
 
   Scenario Outline: When I am on an instance logged in as
     Given the following "categories" exist:
@@ -50,7 +52,6 @@ Feature: Use core page resolvers for the I am on the page steps
     Then I should see "<shouldsee>"
 
     Examples:
-      | description              | identifier                  | type                     | shouldsee                 |
       | description              | identifier                  | type                         | shouldsee                  |
       | Course Category idnumber | CAT1                        | category                     | Add a new course           |
       | Course Category name     | "Cat 1"                     | Category                     | Add a new course           |
@@ -61,6 +62,8 @@ Feature: Use core page resolvers for the I am on the page steps
       | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Updating: Forum            |
       | Forum name               | "Fundamentals of Economics" | "Forum activity"             | Add a new discussion       |
       | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Updating: Forum            |
+      | Forum name permissions   | "Fundamentals of Economics" | "Forum activity permissions" | Permissions in Forum: Fun  |
+      | Forum name roles         | "Fundamentals of Economics" | "Forum activity roles"       | Assign roles in Forum: Fun |
 
   Scenario Outline: When I am on a named page
     Given I log in as "admin"
