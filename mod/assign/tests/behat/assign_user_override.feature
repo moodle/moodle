@@ -79,7 +79,7 @@ Feature: Assign user override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And the activity date in "Test assignment name" should contain "Due: Saturday, 1 January 2000, 8:00"
+    Then I should see "Saturday, 1 January 2000, 8:00"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
