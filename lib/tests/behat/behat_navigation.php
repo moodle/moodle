@@ -777,11 +777,23 @@ class behat_navigation extends behat_base {
                 $cm = $this->get_cm_by_activity_name($modname, $identifier);
 
                 if (count($parts) == 2) {
+                    // View page.
                     return new moodle_url($cm->url);
                 }
 
                 if ($parts[2] === 'editing') {
+                    // Edit settings page.
                     return new moodle_url('/course/modedit.php', ['update' => $cm->id]);
+                }
+
+                if ($parts[2] === 'roles') {
+                    // Locally assigned roles page.
+                    return new moodle_url('/admin/roles/assign.php', ['contextid' => $cm->context->id]);
+                }
+
+                if ($parts[2] === 'permissions') {
+                    // Permissions page.
+                    return new moodle_url('/admin/roles/permissions.php', ['contextid' => $cm->context->id]);
                 }
             }
         }
