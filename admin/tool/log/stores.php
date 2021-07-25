@@ -50,6 +50,7 @@ switch ($action) {
     case 'disable':
         unset($enabled[$enrol]);
         set_config('enabled_stores', implode(',', array_keys($enabled)), 'tool_log');
+        add_to_config_log('tool_logstore_visibility', '1', '0', $enrol);
         break;
 
     case 'enable':
@@ -59,6 +60,7 @@ switch ($action) {
         $enabled = array_keys($enabled);
         $enabled[] = $enrol;
         set_config('enabled_stores', implode(',', $enabled), 'tool_log');
+        add_to_config_log('tool_logstore_visibility', '0', '1', $enrol);
         break;
 
     case 'up':
