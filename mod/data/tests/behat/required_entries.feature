@@ -120,7 +120,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | Field name | Not required Multimenu |
       | Field description | Not required Multimenu |
       | Options | Option 1 |
-    And I follow "Templates"
+    And I navigate to "Templates" in current page administration
     And I log out
 
   Scenario: Students receive errors for empty required fields but not for optional fields
@@ -128,7 +128,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
     And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
        | Base Text input | Some input to allow us to submit the otherwise empty form |
-    And I press "Save and view"
+    And I press "Save"
     Then ".alert" "css_element" should exist in the "Required Checkbox" "table_row"
     And ".alert" "css_element" should exist in the "Required Two-Option Checkbox" "table_row"
     And ".alert" "css_element" should exist in the "Required Latlong" "table_row"
@@ -149,7 +149,8 @@ Feature: Users can be required to specify certain fields when adding entries to 
     And ".alert" "css_element" should not exist in the "Not required Text area" "table_row"
     And ".alert" "css_element" should not exist in the "Not required URL" "table_row"
     And ".alert" "css_element" should not exist in the "Not required Multimenu" "table_row"
-    And I follow "View list"
+    And I am on "Course 1" course homepage
+    And I follow "Test database name"
     And I should see "No entries in database"
 
   Scenario: Students recieve no error for filled in required fields
@@ -169,8 +170,8 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/                                       |
        | Required Multimenu            | 1                                                         |
        | Required Two-Option Multimenu | 1                                                         |
-    And I press "Save and view"
-    And I follow "View list"
+    And I press "Save"
+    And I select "List view" from the "jump" singleselect
     Then I should not see "No entries in database"
     And I should see "New entry text"
 
@@ -189,7 +190,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/ |
        | Required Multimenu            | 1                   |
        | Required Two-Option Multimenu | 1                   |
-    And I press "Save and view"
+    And I press "Save"
     Then the following fields match these values:
        | Base Text input               |                     |
        | Latitude                      | 0                   |
@@ -220,7 +221,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required Multimenu            | 1                                                         |
        | Required Two-Option Multimenu | 1                                                         |
     And I set the field with xpath "//div[@title='Not required Latlong']//tr[td/label[normalize-space(.)='Latitude']]/td/input" to "20"
-    And I press "Save and view"
+    And I press "Save"
     Then ".alert" "css_element" should exist in the "Required Latlong" "table_row"
     And ".alert" "css_element" should exist in the "Not required Latlong" "table_row"
 
@@ -241,7 +242,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/                                       |
        | Required Multimenu            | 1                                                         |
        | Required Two-Option Multimenu | 1                                                         |
-    And I press "Save and view"
-    And I follow "View list"
+    And I press "Save"
+    And I select "List view" from the "jump" singleselect
     Then I should not see "No entries in database"
     And I should see "Some input to allow us to submit the otherwise empty form"

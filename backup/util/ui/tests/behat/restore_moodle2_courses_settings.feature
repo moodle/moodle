@@ -24,14 +24,14 @@ Feature: Restore Moodle 2 course backups with different user data settings
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
-    And I click on "Templates" "link" in the "region-main" "region"
+    And I navigate to "Templates" in current page administration
     And I wait until the page is ready
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
       | Test field name | Student entry |
-    And I press "Save and view"
+    And I press "Save"
     And I log out
     And I log in as "admin"
     And I backup "Course 1" course using this options:

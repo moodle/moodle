@@ -36,8 +36,7 @@ Feature: View activity completion in the database activity
     And I press "Save and display"
     And I add a "Text input" field to "Music history" database and I fill the form with:
       | Field name | Instrument types |
-    And I follow "Templates"
-    And I press "Save template"
+    And I navigate to "Templates" in current page administration
     And I log out
 
   Scenario: View automatic completion items as a teacher and confirm all tabs display conditions
@@ -45,31 +44,30 @@ Feature: View activity completion in the database activity
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
-    And I follow "View single"
+    And I select "Single view" from the "jump" singleselect
     And "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
-    And I follow "Search"
+    And I press "Add entry"
     And "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
-    And I follow "Add entry"
+    And I set the following fields to these values:
+      | Instrument types | Hurdygurdy |
+    And I press "Save"
+    And I press "Export entries"
     And "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
-    And I follow "Export"
+    And I navigate to "Templates" in current page administration
     And "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
-    And I follow "Templates"
+    And I navigate to "Fields" in current page administration
     And "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
-    And I follow "Fields"
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I follow "Presets"
+    And I navigate to "Presets" in current page administration
     And "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
@@ -82,7 +80,7 @@ Feature: View activity completion in the database activity
     And I am on "Course 1" course homepage
     And I add an entry to "Music history" database with:
       | Instrument types | Drums |
-    And I press "Save and view"
+    And I press "Save"
     # One entry is not enough to mark as complete.
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Make entries: 2" completion condition of "Music history" is displayed as "todo"
@@ -90,14 +88,14 @@ Feature: View activity completion in the database activity
     And I am on "Course 1" course homepage
     And I add an entry to "Music history" database with:
       | Instrument types | Hurdygurdy |
-    And I press "Save and view"
+    And I press "Save"
     Then the "View" completion condition of "Music history" is displayed as "done"
     And the "Make entries: 2" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And I log out
 
     And I am on the "Music history" "data activity" page logged in as teacher1
-    And I follow "View single"
+    And I select "Single view" from the "jump" singleselect
     And I set the field "rating" to "3"
     And I press "Rate"
     And I log out
