@@ -41,7 +41,7 @@ Feature: Add H5P activity context locking
   Scenario: Access participants report on a freeze context
     Given the "h5ppackage" "Activity module" is context frozen
     And I am on the "H5P package" "h5pactivity activity" page logged in as admin
-    When I follow "View all attempts (1 submitted)"
+    When I navigate to "Attempts report" in current page administration
     Then I should see "Student 1"
     And I should see "View user attempts (1)" in the "Student 1" "table_row"
     And I should see "Student 2"
@@ -50,7 +50,7 @@ Feature: Add H5P activity context locking
   Scenario: Access own attempts on a freeze context
     Given the "h5ppackage" "Activity module" is context frozen
     And I am on the "H5P package" "h5pactivity activity" page logged in as student1
-    When I follow "View my attempts"
+    When I navigate to "Attempts report" in current page administration
     And I follow "View report"
     Then I should see "Attempt #1: Student 1"
     And I should see "This attempt is completed"
@@ -60,7 +60,7 @@ Feature: Add H5P activity context locking
       | capability             | permission | role    | contextlevel | reference |
       | mod/h5pactivity:submit | Prohibit   | student | System       |           |
     And I am on the "H5P package" "h5pactivity activity" page logged in as admin
-    When I follow "View all attempts (1 submitted)"
+    When I navigate to "Attempts report" in current page administration
     Then I should see "Student 1"
     And I should see "View user attempts (1)" in the "Student 1" "table_row"
     And I should see "Student 2"
@@ -71,7 +71,7 @@ Feature: Add H5P activity context locking
       | capability           | permission | role    | contextlevel | reference |
       | mod/h5pactivity:view | Prohibit   | student | System       |           |
     And I am on the "H5P package" "h5pactivity activity" page logged in as admin
-    When I follow "View all attempts (0 submitted)"
+    When I navigate to "Attempts report" in current page administration
     Then I should see "No participants to display"
 
   Scenario: Access participant report but with no users with view or submit capability
@@ -80,7 +80,7 @@ Feature: Add H5P activity context locking
       | mod/h5pactivity:submit | Prohibit   | student | System       |           |
       | mod/h5pactivity:view   | Prohibit   | student | System       |           |
     And I am on the "H5P package" "h5pactivity activity" page logged in as admin
-    When I follow "View all attempts (0 submitted)"
+    When I navigate to "Attempts report" in current page administration
     Then I should see "No participants to display"
 
   Scenario: Access participant report in a hidden activity
@@ -88,7 +88,7 @@ Feature: Add H5P activity context locking
     And I am on "Course 1" course homepage with editing mode on
     And I click on "Hide" "link" in the "H5P package" activity
     When I am on the "H5P package" "h5pactivity activity" page
-    And I follow "View all attempts (1 submitted)"
+    And I navigate to "Attempts report" in current page administration
     Then I should see "Student 1"
     And I should see "View user attempts (1)"
     And I should see "Student 2"
