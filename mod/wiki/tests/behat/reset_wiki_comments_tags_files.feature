@@ -28,13 +28,13 @@ Feature: Teachers can reset wiki pages, tags and files
     And I press "Save"
     And I should see "Test tag 1" in the ".wiki-tags" "css_element"
     And I should see "Test tag 2" in the ".wiki-tags" "css_element"
-    And I follow "Comments"
+    And I select "Comments" from the "jump" singleselect
     And I follow "Add comment"
     And I set the following fields to these values:
       | Comment | Test comment |
     And I press "Save changes"
     And I should see "Test comment"
-    And I follow "Files"
+    And I select "Files" from the "jump" singleselect
     And I press "Edit wiki files"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I press "Save changes"
@@ -54,12 +54,12 @@ Feature: Teachers can reset wiki pages, tags and files
     And I press "Continue"
     And I am on the "Test wiki name" "wiki activity" page
     And I press "Create page"
-    When I follow "View"
+    When I select "View" from the "jump" singleselect
     Then I should not see "Test tag 1"
     And I should not see "Test tag 2"
-    And I follow "Comments"
+    And I select "Comments" from the "jump" singleselect
     And I should not see "Test comment"
-    And I follow "Files"
+    And I select "Files" from the "jump" singleselect
     And I should not see "empty.txt"
 
   Scenario: Reset only tags
@@ -73,9 +73,9 @@ Feature: Teachers can reset wiki pages, tags and files
     And I am on the "Test wiki name" "wiki activity" page
     Then I should not see "Test tag 1"
     And I should not see "Test tag 2"
-    And I follow "Comments"
+    And I select "Comments" from the "jump" singleselect
     And I should see "Test comment"
-    And I follow "Files"
+    And I select "Files" from the "jump" singleselect
     And I should see "empty.txt"
 
   Scenario: Reset only comments
@@ -89,7 +89,7 @@ Feature: Teachers can reset wiki pages, tags and files
     And I am on the "Test wiki name" "wiki activity" page
     Then I should see "Test tag 1"
     And I should see "Test tag 2"
-    And I follow "Comments"
+    And I select "Comments" from the "jump" singleselect
     And I should not see "Test comment"
-    And I follow "Files"
+    And I select "Files" from the "jump" singleselect
     And I should see "empty.txt"
