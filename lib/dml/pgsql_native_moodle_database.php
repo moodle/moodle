@@ -947,6 +947,37 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
+     * A faster version of pg_field_type
+     *
+     * The pg_field_type function in the php postgres driver internally makes an sql call
+     * to get the list of field types which it statically caches only for a single request.
+     * This wraps it in a cache keyed by oid to avoid these DB calls on every request.
+     *
+     * @param resource $result
+     * @param int $fieldnumber
+     * @return string Field type
+     */
+    public function pg_field_type($result, int $fieldnumber) {
+        static $map;
+        $cache = $this->get_metacache();
+
+        // Getting the oid doesn't make an internal query.
+        $oid = pg_field_type_oid($result, $fieldnumber);
+        if (!$map) {
+            $map = $cache->get('oid2typname');
+        }
+        if ($map === false) {
+            $map = [];
+        }
+        if (isset($map[$oid])) {
+            return $map[$oid];
+        }
+        $map[$oid] = pg_field_type($result, $fieldnumber);
+        $cache->set('oid2typname', $map);
+        return $map[$oid];
+    }
+
+    /**
      * Get a number of records as an array of objects using a SQL statement.
      *
      * Return value is like:
@@ -980,7 +1011,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $numfields = pg_num_fields($result);
         $blobs = array();
         for ($i = 0; $i < $numfields; $i++) {
-            $type = pg_field_type($result, $i);
+            $type = $this->pg_field_type($result, $i);
             if ($type == 'bytea') {
                 $blobs[] = pg_field_name($result, $i);
             }
@@ -1021,7 +1052,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $return = pg_fetch_all_columns($result, 0);
 
-        if (pg_field_type($result, 0) == 'bytea') {
+        if ($this->pg_field_type($result, 0) == 'bytea') {
             foreach ($return as $key => $value) {
                 $return[$key] = ($value === null ? $value : pg_unescape_bytea($value));
             }
