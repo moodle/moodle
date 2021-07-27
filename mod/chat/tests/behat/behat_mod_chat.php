@@ -43,8 +43,8 @@ class behat_mod_chat extends behat_base {
      * @throws Exception with a meaningful error message if the specified page cannot be found.
      */
     protected function resolve_page_instance_url(string $type, string $name): moodle_url {
-        switch ($type) {
-            case 'View':
+        switch (strtolower($type)) {
+            case 'view':
                 $cm = $this->get_cm_by_chat_name($name);
                 return new moodle_url('/mod/chat/view.php', ['id' => $cm->id]);
             default:

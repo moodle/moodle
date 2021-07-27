@@ -8,36 +8,27 @@ Feature: Scorm multi-sco completion
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
-    And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+    And the following "course" exists:
+      | fullname         | Course 1 |
+      | shortname        | C1       |
+      | enablecompletion | 1        |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
 
   @javascript
   Scenario: Test completion with a single sco completion.
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-    And I press "Save and display"
-    And I add a "SCORM package" to section "1"
-    And I set the following fields to these values:
-      | Name | Basic Multi-sco SCORM package |
-      | Description | Description |
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require all scos to return completion status | 0 |
-    And I set the field "Completed" to "1"
-    And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    Then I should see "Basic Multi-sco SCORM package"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
+    Given the following "activity" exists:
+      | activity                 | scorm                                                    |
+      | course                   | C1                                                       |
+      | name                     | Basic Multi-sco SCORM package                            |
+      | completion               | 2                                                        |
+      # Show activity as complete when conditions are met
+      | completionstatusallscos  | 0                                                        |
+      | packagefilepath          | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip |
+      | completionstatusrequired | 4                                                        |
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I should see "Normal"
     And I press "Enter"
     And I switch to "scorm_object" iframe
@@ -45,35 +36,23 @@ Feature: Scorm multi-sco completion
     And I switch to the main frame
     And I follow "Exit activity"
     And I wait until the page is ready
-    Then I should see "Basic Multi-sco SCORM package"
+    Then I should see "Basic Multi-sco SCORM package" in the "page" "region"
     And I am on homepage
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     Then "Student 1" user has completed "Basic Multi-sco SCORM package" activity
 
   @javascript
   Scenario: Test completion with all scos and correct sco load on re-entry.
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-    And I press "Save and display"
-    And I add a "SCORM package" to section "1"
-    And I set the following fields to these values:
-      | Name | ADV Multi-sco SCORM package |
-      | Description | Description |
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require all scos to return completion status | 1 |
-    And I set the field "Completed" to "1"
-    And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    Then I should see "ADV Multi-sco SCORM package"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "ADV Multi-sco SCORM package"
+    Given the following "activity" exists:
+      | activity                | scorm                                                    |
+      | course                  | C1                                                       |
+      | name                    | ADV Multi-sco SCORM package                              |
+      | completion              | 2                                                        |
+      # Show activity as complete when conditions are met
+      | packagefilepath         | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip |
+      | completionstatusallscos | 1                                                        |
+    And I am on the "ADV Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I should see "Normal"
     And I press "Enter"
     And I switch to "scorm_object" iframe
@@ -81,16 +60,14 @@ Feature: Scorm multi-sco completion
     And I switch to the main frame
     And I follow "Exit activity"
     And I wait until the page is ready
-    Then I should see "ADV Multi-sco SCORM package"
+    Then I should see "ADV Multi-sco SCORM package" in the "page" "region"
     And I am on homepage
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+
+    And I am on the "Course 1" course page logged in as teacher1
     Then "Student 1" user has not completed "ADV Multi-sco SCORM package" activity
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "ADV Multi-sco SCORM package"
+    And I am on the "ADV Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I should see "Normal"
     And I press "Enter"
     And I switch to "scorm_object" iframe
@@ -178,9 +155,7 @@ Feature: Scorm multi-sco completion
     And I switch to the main frame
     And I follow "Exit activity"
     And I wait until the page is ready
-    Then I should see "ADV Multi-sco SCORM package"
-    And I am on homepage
+    Then I should see "ADV Multi-sco SCORM package" in the "page" "region"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And "Student 1" user has completed "ADV Multi-sco SCORM package" activity

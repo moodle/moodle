@@ -18,10 +18,7 @@ Feature: Reuse my rubrics in other activities
       | activity   | name                      | intro                           | course | section | idnumber |
       | assign     | Test assignment 1 name    | Test assignment 1 description   | C1     | 1       | assign1  |
       | assign     | Test assignment 2 name    | Test assignment 2 description   | C1     | 1       | assign1  |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment 1"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test assignment 1 name" "assign activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Grading method | Rubric |
     And I press "Save and return to course"
@@ -34,10 +31,7 @@ Feature: Reuse my rubrics in other activities
       | Criterion 2 | Level 21 | 21 | Level 22 | 22 | Level 3 | 23 |
       | Criterion 3 | Level 31 | 31 | Level 32 | 32 |         |    |
     And I press "Save rubric and make it ready"
-    And I am on "Course 1" course homepage
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment 2"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test assignment 2 name" "assign activity editing" page
     And I set the following fields to these values:
       | Grading method | Rubric |
     And I press "Save and return to course"
@@ -51,7 +45,6 @@ Feature: Reuse my rubrics in other activities
     And I should see "Criterion 1"
     And I should see "Criterion 2"
     And I should see "Criterion 3"
-    And I press "Cancel"
 
   @javascript
   Scenario: A teacher can reuse one of his/her previously created rubrics, with Javascript enabled

@@ -28,9 +28,7 @@ Feature: Manual completion in the choice activity
 
   @javascript
   Scenario: Toggle manual completion as a student
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "What to drink?"
+    Given I am on the "What to drink?" "choice activity" page logged in as student1
     And the manual completion button of "What to drink?" is displayed as "Mark as done"
     When I toggle the manual completion state of "What to drink?"
     Then the manual completion button of "What to drink?" is displayed as "Done"
@@ -49,43 +47,33 @@ Feature: Manual completion in the choice activity
     But "Done" "button" should not exist
 
   Scenario: Viewing a choice activity with manual completion as a teacher
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I follow "What to drink?"
+    When I am on the "What to drink?" "choice activity" page logged in as teacher1
     Then the manual completion button for "What to drink?" should be disabled
 
   @javascript
   Scenario: Overriding a manual choice completion for a user to done
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Reports > Activity completion" in current page administration
     And I click on "Student 1, What to drink?: Not completed" "link"
     And I press "Save changes"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "What to drink?"
+    When I am on the "What to drink?" "choice activity" page logged in as student1
     Then the manual completion button of "What to drink?" overridden by "Teacher 1" is displayed as "Done"
     And I toggle the manual completion state of "What to drink?"
     And the manual completion button of "What to drink?" is displayed as "Mark as done"
 
   @javascript
   Scenario: Overriding a manual choice completion for a user to not done
-    Given  I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "What to drink?"
+    Given I am on the "What to drink?" "choice activity" page logged in as student1
     And I press "Mark as done"
     And I wait until the page is ready
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Reports > Activity completion" in current page administration
     And I click on "Student 1, What to drink?: Completed" "link"
     And I press "Save changes"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "What to drink?"
+    Given I am on the "What to drink?" "choice activity" page logged in as student1
     Then the manual completion button of "What to drink?" overridden by "Teacher 1" is displayed as "Mark as done"
     And I toggle the manual completion state of "What to drink?"
     And the manual completion button of "What to drink?" is displayed as "Done"

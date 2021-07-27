@@ -19,9 +19,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
     And the following "activities" exist:
       | activity | name               | intro                     | displayformat  | course | idnumber |
       | glossary | Test glossary name | Test glossary description | fullwithauthor | C1     | g1       |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
     And I add a glossary entries category named "The ones I like"
     And I add a glossary entries category named "All for you"
     And I add a glossary entry with the following data:
@@ -29,17 +27,13 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
       | Definition | Sour eggplants |
       | Categories | All for you |
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as student1
     And I add a glossary entry with the following data:
       | Concept | Cucumber |
       | Definition | Sweet cucumber |
       | Categories | The ones I like |
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
 
   @javascript
   Scenario: Search by keyword and browse by alphabet

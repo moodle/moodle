@@ -16,24 +16,20 @@ Feature: The recently accessed items block allows users to easily access their m
       | user     | course | role    |
       | student1 | C1     | student |
       | student1 | C2     | student |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I turn editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-    And I log out
+    And the following "activity" exists:
+      | course   | C1              |
+      | activity | forum           |
+      | idnumber | Test forum name |
+      | name     | Test forum name |
     And I log in as "student1"
-    When I press "Customise this page"
+    And I press "Customise this page"
     And I add the "Recently accessed items" block
 
   Scenario: User has not accessed any item
     Then I should see "No recent items" in the "Recently accessed items" "block"
 
   Scenario: User has accessed some items
-    Given I am on "Course 1" course homepage
-    When  I follow "Test forum name"
+    Given I change window size to "large"
+    When I am on the "Test forum name" "forum activity" page
     And I follow "Dashboard" in the user menu
-    And I change window size to "large"
     Then I should see "Test forum name" in the "Recently accessed items" "block"

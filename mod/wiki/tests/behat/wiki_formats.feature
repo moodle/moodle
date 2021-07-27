@@ -14,13 +14,13 @@ Feature: There is a choice of formats for editing a wiki page
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Wiki" to section "1" and I fill the form with:
-      | Wiki name | Test wiki name |
-      | Description | Test wiki description |
-      | First page name | First page |
-    And I follow "Test wiki name"
+    And the following "activity" exists:
+      | activity       | wiki           |
+      | course         | C1             |
+      | name           | Test wiki name |
+      | wikimode       | collaborative  |
+      | firstpagetitle | First page     |
+    And I am on the "Test wiki name" "wiki activity" page logged in as teacher1
 
   @javascript
   Scenario: Creole format

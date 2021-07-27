@@ -11,11 +11,11 @@ Feature: Submit assignment without group
       | Course 2 | C2        | 0        | 1         |
       | Course 3 | C3        | 0        | 1         |
     And the following "activities" exist:
-      | activity | course | idnumber | name                     | intro                       | assignsubmission_onlinetext_enabled | preventsubmissionnotingroup | teamsubmission |
-      | assign   | C1     | assign1  | Allow default group      | Test assignment description | 1                                   | 0                           | 1              |
-      | assign   | C1     | assign2  | Require group membership | Test assignment description | 1                                   | 1                           | 1              |
-      | assign   | C2     | assign2  | Require group membership | Test assignment description | 1                                   | 1                           | 1              |
-      | assign   | C3     | assign2  | Require group membership | Test assignment description | 1                                   | 1                           | 1              |
+      | activity | course | idnumber  | name                     | intro                       | assignsubmission_onlinetext_enabled | preventsubmissionnotingroup | teamsubmission |
+      | assign   | C1     | c1assign1 | Allow default group      | Test assignment description | 1                                   | 0                           | 1              |
+      | assign   | C1     | c1assign2 | Require group membership | Test assignment description | 1                                   | 1                           | 1              |
+      | assign   | C2     | c2assign1 | Require group membership | Test assignment description | 1                                   | 1                           | 1              |
+      | assign   | C3     | c3assign1 | Require group membership | Test assignment description | 1                                   | 1                           | 1              |
     And the following "users" exist:
       | username | firstname | lastname | email            |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
@@ -44,9 +44,7 @@ Feature: Submit assignment without group
       | student3 | GC31  |
       | student3 | GC32  |
     # Student 1 can only submit assignment in course 2.
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Allow default group"
+    When I am on the "c1assign1" "assign activity" page logged in as student1
     Then I should not see "Not a member of any group"
     And I should not see "This assignment requires submission in groups. You are not a member of any group"
     And I should see "Nothing has been submitted for this assignment"
@@ -57,14 +55,12 @@ Feature: Submit assignment without group
     And I press "Submit assignment"
     And I press "Continue"
     And I should see "Submitted for grading"
-    And I am on "Course 1" course homepage
-    And I follow "Require group membership"
+    And I am on the "c1assign2" "assign activity" page
     And I should see "Not a member of any group"
     And I should see "This assignment requires submission in groups. You are not a member of any group"
     And I should see "Nothing has been submitted for this assignment"
     And I should not see "Add submission"
-    And I am on "Course 2" course homepage
-    And I follow "Require group membership"
+    And I am on the "c2assign1" "assign activity" page
     And I should not see "Not a member of any group"
     And I should see "Nothing has been submitted for this assignment"
     And I press "Add submission"
@@ -76,18 +72,13 @@ Feature: Submit assignment without group
     And I should see "Submitted for grading"
     And I log out
     # Student 2 should see submitted for grading.
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Allow default group"
+    And I am on the "c1assign1" "assign activity" page logged in as student2
     And I should see "Submitted for grading"
-    And I am on "Course 2" course homepage
-    And I follow "Require group membership"
+    And I am on the "c2assign1" "assign activity" page
     And I should see "Submitted for grading"
     And I log out
     # Teacher should see student 1 and student 2 has submitted assignment.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Allow default group"
+    And I am on the "c1assign1" "assign activity" page logged in as teacher1
     And I should see "1" in the "Groups" "table_row"
     And I should not see "The setting 'Require group to make submission\' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
     And I navigate to "View all submissions" in current page administration
@@ -95,8 +86,7 @@ Feature: Submit assignment without group
     And I should see "Default group" in the "Student 2" "table_row"
     And I should see "Submitted for grading" in the "Student 1" "table_row"
     And I should see "Submitted for grading" in the "Student 2" "table_row"
-    And I am on "Course 1" course homepage
-    And I follow "Require group membership"
+    And I am on the "c1assign2" "assign activity" page
     And I should see "0" in the "Groups" "table_row"
     And I should see "The setting 'Require group to make submission' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
     And I navigate to "View all submissions" in current page administration
@@ -104,8 +94,7 @@ Feature: Submit assignment without group
     And I should see "Not a member of any group, so unable to make submissions." in the "Student 2" "table_row"
     And I should not see "Submitted for grading" in the "Student 1" "table_row"
     And I should not see "Submitted for grading" in the "Student 2" "table_row"
-    And I am on "Course 2" course homepage
-    And I follow "Require group membership"
+    And I am on the "c2assign1" "assign activity" page
     And I should see "1" in the "Groups" "table_row"
     And I should not see "The setting 'Require group to make submission' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
     And I navigate to "View all submissions" in current page administration
@@ -115,17 +104,13 @@ Feature: Submit assignment without group
     And I should see "Submitted for grading" in the "Student 2" "table_row"
     And I log out
     # Test student 3 (in multiple groups) should not be able to submit.
-    And I log in as "student3"
-    And I am on "Course 3" course homepage
-    And I follow "Require group membership"
+    And I am on the "c3assign1" "assign activity" page logged in as student3
     And I should see "Member of more than one group"
     And I should see "The assignment requires submission in groups. You are a member of more than one group."
     And I should see "Nothing has been submitted for this assignment"
     And I should not see "Add submission"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 3" course homepage
-    And I follow "Require group membership"
+    And I am on the "c3assign1" "assign activity" page logged in as teacher1
     And I should see "The setting 'Require group to make submission' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
     And I navigate to "View all submissions" in current page administration
     And I should see "Member of more than one group, so unable to make submissions." in the "Student 3" "table_row"
@@ -155,9 +140,7 @@ Feature: Submit assignment without group
       | user     | group |
       | student1 | G1    |
       | student2 | G2    |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Allow default group"
+    When I am on the "Allow default group" "assign activity" page logged in as teacher1
     Then I should not see "The setting 'Require group to make submission\' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
     And I should not see "The setting 'Students submit in groups' is enabled and some users are either not a member of any group, or are a member of more than one group. Please be aware that these students will submit as members of the 'Default group'."
 
@@ -185,9 +168,7 @@ Feature: Submit assignment without group
     And the following "group members" exist:
       | user     | group |
       | student1 | G1    |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Allow default group"
+    When I am on the "Allow default group" "assign activity" page logged in as teacher1
     Then I should not see "The setting 'Require group to make submission\' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
     And I should see "The setting 'Students submit in groups' is enabled and some users are either not a member of any group, or are a member of more than one group. Please be aware that these students will submit as members of the 'Default group'."
 
@@ -217,8 +198,6 @@ Feature: Submit assignment without group
       | student1 | G1    |
       | student2 | G1    |
       | student2 | G2    |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Allow default group"
+    When I am on the "Allow default group" "assign activity" page logged in as teacher1
     Then I should not see "The setting 'Require group to make submission\' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
     And I should see "The setting 'Students submit in groups' is enabled and some users are either not a member of any group, or are a member of more than one group. Please be aware that these students will submit as members of the 'Default group'."

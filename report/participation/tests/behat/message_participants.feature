@@ -26,9 +26,7 @@ Feature: Use the particiaption report to message groups of students
       | name        | Test book name |
       | description | Test book      |
       | idnumber    | book1          |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test book name"
+    And I am on the "Test book name" "book activity" page logged in as student1
     And I log out
 
   Scenario: Message all students from the participation report

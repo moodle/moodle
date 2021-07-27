@@ -25,25 +25,19 @@ Feature: Using the forum activities which support point scale
 
   @javascript
   Scenario: Forum rescale grade should not be possible when users are graded
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as student1
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion subject   |
       | Message | Test post in forum 1 |
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test forum name" "forum activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "Ratings > Aggregate type" to "Count of ratings"
     And I set the field "Ratings > Type" to "Point"
     And I press "Save and return to course"
-    And I follow "Test forum name"
+    And I am on the "Test forum name" "forum activity" page
     And I follow "Discussion subject"
     And I set the field "rating" to "30"
-    And I am on "Course 1" course homepage
-    And I follow "Test forum name"
-    When I navigate to "Edit settings" in current page administration
+    When I am on the "Test forum name" "forum activity editing" page
     And I expand all fieldsets
     Then the "Maximum grade" "field" should be disabled

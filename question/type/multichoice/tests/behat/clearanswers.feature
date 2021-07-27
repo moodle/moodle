@@ -39,10 +39,8 @@ Feature: Clear my answers
 
   @javascript
   Scenario: Attempt a quiz and reset my chosen answer.
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I press "Attempt quiz now"
+    Given I am on the "Quiz 1" "quiz activity" page logged in as student1
+    When I press "Attempt quiz now"
     And I should see "Question One"
     And I click on "Four" "qtype_multichoice > Answer" in the "Question One" "question"
     And I should see "Clear my choice"
@@ -53,10 +51,8 @@ Feature: Clear my answers
 
   @javascript
   Scenario: Attempt a quiz and revisit a cleared answer.
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I press "Attempt quiz now"
+    Given I am on the "Quiz 1" "quiz activity" page logged in as student1
+    When I press "Attempt quiz now"
     And I should see "Question One"
     And I click on "Four" "qtype_multichoice > Answer" in the "Question One" "question"
     And I follow "Finish attempt ..."

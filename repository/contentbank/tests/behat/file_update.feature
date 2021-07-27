@@ -17,12 +17,9 @@ Feature: Updating a file in the content bank after using in a course
     And the following "activities" exist:
       | activity | name       | intro      | introformat | course | content  | contentformat | idnumber |
       | page     | PageName1  | PageDesc1  | 1           | C1     | H5Ptest  | 1             | 1        |
-    And I log in as "admin"
 
   Scenario: Referenced files is the default option and updates alias as well
-    Given I am on "Course1" course homepage
-    And I follow "PageName1"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the PageName1 "Page activity editing" page logged in as admin
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
     And I select "Content bank" repository in file picker
@@ -53,17 +50,14 @@ Feature: Updating a file in the content bank after using in a course
     And I should see "This is a new text"
     And I switch to the main frame
     # Check the course page is updated.
-    Then I am on "Course1" course homepage
-    And I follow "PageName1"
+    When I am on the PageName1 "Page activity" page
     And I switch to "h5p-iframe" class iframe
     And I switch to "h5p-iframe" class iframe
-    And I should see "This is a new text"
+    Then I should see "This is a new text"
     And I switch to the main frame
 
   Scenario: Copied files should not be updated if the original is edited
-    Given I am on "Course1" course homepage
-    And I follow "PageName1"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the PageName1 "Page activity editing" page logged in as admin
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
     And I select "Content bank" repository in file picker
@@ -95,9 +89,8 @@ Feature: Updating a file in the content bank after using in a course
     And I should see "This is a new text"
     And I switch to the main frame
     # Check the course page is not updated.
-    Then I am on "Course1" course homepage
-    And I follow "PageName1"
+    When I am on the PageName1 "Page activity" page
     And I switch to "h5p-iframe" class iframe
     And I switch to "h5p-iframe" class iframe
-    And I should see "Press here to reveal answer"
+    Then I should see "Press here to reveal answer"
     And I switch to the main frame

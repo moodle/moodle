@@ -45,9 +45,7 @@ Feature: Basic use of the Grades report
       |   2  | True     |
 
     # Basic check of the Grades report
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    When I am on the "Quiz 1" "quiz activity" page logged in as teacher1
     And I navigate to "Results > Grades" in current page administration
     Then I should see "Attempts: 2"
     # Check student1's grade
