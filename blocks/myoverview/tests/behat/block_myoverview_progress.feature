@@ -28,7 +28,7 @@ Feature: Course overview block show users their progress on courses
 
   Scenario: User complete activity and verify his progress
     Given I am on the "Test choice 1" "choice activity" page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Completion tracking | Show activity as complete when conditions are met |
       | id_completionview   | 1                                                 |

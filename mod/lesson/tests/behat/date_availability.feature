@@ -25,7 +25,7 @@ Feature: A teacher can set available from and deadline dates to access a lesson
       | lesson     | Test lesson | Test lesson description   | C1     | 1       | lesson1  |
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "id_available_enabled" to "1"
     And I set the following fields to these values:
       | available[day] | 1 |
@@ -54,7 +54,7 @@ Feature: A teacher can set available from and deadline dates to access a lesson
       | lesson     | Test lesson | Test lesson description   | C1     | 1       | lesson1  |
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "id_deadline_enabled" to "1"
     And I set the following fields to these values:
       | deadline[day] | 1 |

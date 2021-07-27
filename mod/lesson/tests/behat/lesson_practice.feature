@@ -38,7 +38,7 @@ Feature: Practice mode in a lesson activity
 
   Scenario: Non-practice lesson records grades in the gradebook
     Given I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Name | Non-practice lesson |
       | Description | This lesson will affect your course grade |
@@ -58,7 +58,7 @@ Feature: Practice mode in a lesson activity
 
   Scenario: Practice lesson doesn't record grades in the gradebook
     Given I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Name | Practice lesson |
       | Description | This lesson will NOT affect your course grade |
@@ -78,7 +78,7 @@ Feature: Practice mode in a lesson activity
 
   Scenario: Practice lesson with scale doesn't record grades in the gradebook
     Given I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Name | Practice lesson with scale |
       | Description | This lesson will NOT affect your course grade |

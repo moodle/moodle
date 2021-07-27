@@ -59,7 +59,7 @@ Feature: Settings form fields disabled if not required
         | Attempts allowed | 3        |
     And I press "Save"
     And I follow "Test quiz"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
     Then the "Grading method" "field" should be enabled
@@ -73,7 +73,7 @@ Feature: Settings form fields disabled if not required
     And I set the field "Attempts allowed" to "2"
     And I press "Save"
     And I follow "Test quiz"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
     Then the "Grading method" "field" should be enabled
@@ -89,7 +89,7 @@ Feature: Settings form fields disabled if not required
         | Attempts allowed | Unlimited |
     And I press "Save"
     And I follow "Test quiz"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
     Then the "Grading method" "field" should be enabled

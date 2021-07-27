@@ -108,7 +108,7 @@ Feature: Assign reset
 
   Scenario: Use course reset to reset blind marking assignment.
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
         | blindmarking | 1 |
     And I press "Save"

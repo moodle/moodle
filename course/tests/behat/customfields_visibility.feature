@@ -32,7 +32,7 @@ Feature: The visibility of fields control where they are displayed
     And I log out
     Then I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Test field | testcontent |
     And I press "Save and display"
@@ -52,7 +52,7 @@ Feature: The visibility of fields control where they are displayed
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Test field | testcontent |
     And I press "Save and display"
@@ -72,7 +72,7 @@ Feature: The visibility of fields control where they are displayed
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Test field | testcontent |
     And I press "Save and display"

@@ -18,7 +18,7 @@ Feature: The search forums block allows users to search for forum posts on cours
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "id_newsitems" to "1"
     And I press "Save and display"
     And I turn editing mode on
@@ -41,7 +41,7 @@ Feature: The search forums block allows users to search for forum posts on cours
       | Message | My message |
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Announcements"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "id_visible" to "0"
     And I press "Save and return to course"

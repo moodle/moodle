@@ -31,7 +31,7 @@ Feature: Requiredness The course custom fields can be mandatory or not
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I press "Save and display"
     Then I should see "You must supply a value here"
     And I set the field "Test field" to "some value"
@@ -52,7 +52,7 @@ Feature: Requiredness The course custom fields can be mandatory or not
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I press "Save and display"
     Then I should see "Course 1"
     And I should see "Topic 1"

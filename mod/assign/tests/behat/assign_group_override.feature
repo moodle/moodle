@@ -70,7 +70,7 @@ Feature: Assign group override
 
   Scenario: Allow a group to have a different due date
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Allow submissions from | disabled             |
       | Due date               | ##1 Jan 2000 08:00## |
@@ -92,7 +92,7 @@ Feature: Assign group override
 
   Scenario: Allow a group to have a different cut off date
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Due date               | disabled             |
       | Allow submissions from | disabled             |
@@ -114,7 +114,7 @@ Feature: Assign group override
 
   Scenario: Allow a group to have a different start date
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Due date               | disabled                 |
       | Allow submissions from | ##1 January 2030 08:00## |
@@ -138,7 +138,7 @@ Feature: Assign group override
   @javascript
   Scenario: Add both a user and group override and verify that both are applied correctly
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Due date               | disabled                 |
       | Allow submissions from | ##1 January 2040 08:00## |

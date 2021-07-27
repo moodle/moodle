@@ -31,7 +31,7 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | section  | 1                       |
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | id_deadline_enabled | 1 |

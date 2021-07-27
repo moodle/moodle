@@ -24,7 +24,7 @@ Feature: Access to downloading course content can be controlled
   Scenario: Site admins can remove the download course content feature
     Given I log in as "admin"
     And I am on "Hockey 101" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Enable download course content" to "Yes"
     And I press "Save and display"
     And "Download course content" "link" should exist in current page administration
@@ -32,7 +32,7 @@ Feature: Access to downloading course content can be controlled
       | downloadcoursecontentallowed | 0 |
     And I am on "Hockey 101" course homepage
     Then "Download course content" "link" should not exist in current page administration
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I should not see "Enable download course content"
 
   Scenario: Site admins can set the default value for whether download course content is enabled in courses
@@ -49,12 +49,12 @@ Feature: Access to downloading course content can be controlled
     Given I log in as "teacher1"
     When I am on "Hockey 101" course homepage
     And "Download course content" "link" should not exist in current page administration
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I should see "Enable download course content"
     And I set the field "Enable download course content" to "Yes"
     And I press "Save and display"
     Then "Download course content" "link" should exist in current page administration
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Enable download course content" to "No"
     And I press "Save and display"
     And "Download course content" "link" should not exist in current page administration
@@ -69,7 +69,7 @@ Feature: Access to downloading course content can be controlled
     And I log in as "teacher1"
     And I am on "Hockey 101" course homepage
     And "Download course content" "link" should exist in current page administration
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And "Enable download course content" "select" should exist
     And I log out
     # Remove teacher's capabilities for download course content.
@@ -83,7 +83,7 @@ Feature: Access to downloading course content can be controlled
     When I log in as "teacher1"
     And I am on "Hockey 101" course homepage
     Then "Download course content" "link" should not exist in current page administration
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I should see "Enable download course content"
     And I should see "Site default (Yes)"
     And "Enable download course content" "select" should not exist
@@ -91,7 +91,7 @@ Feature: Access to downloading course content can be controlled
   Scenario: Students require a capability to access the download course content feature in a course
     Given I log in as "teacher1"
     And I am on "Hockey 101" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Enable download course content" to "Yes"
     And I press "Save and display"
     And I log out

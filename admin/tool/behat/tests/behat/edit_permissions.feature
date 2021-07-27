@@ -72,7 +72,7 @@ Feature: Edit capabilities
   @javascript
   Scenario: Edit permissions escapes role names correctly
     When I am on the "C1" "Course" page logged in as "admin"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Teacher'             | Teacher >= editing  |
       | Your word for 'Non-editing teacher' | Teacher < "editing" |

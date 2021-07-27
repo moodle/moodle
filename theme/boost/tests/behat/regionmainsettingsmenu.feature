@@ -24,7 +24,7 @@ Feature: Region main settings menu
     Then "#region-main-settings-menu [role=button]" "css_element" should not exist
     And I am on the "Choice name" "Choice activity" page
     And I click on "#region-main-settings-menu [role=button]" "css_element"
-    And I choose "Edit settings" in the open action menu
+    And I choose "Settings" in the open action menu
     And I should see "Updating: Choice"
     And I navigate to course participants
     And I click on "#region-main-settings-menu [role=button]" "css_element"

@@ -29,7 +29,7 @@ Feature: Allow choice preview
 
   Scenario: Enable the choice preview option and view the activity as a student before the opening time
     And I follow "Choice name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | timeopen[enabled] | 1 |
       | timeclose[enabled] | 1 |

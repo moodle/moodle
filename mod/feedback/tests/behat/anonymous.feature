@@ -237,7 +237,7 @@ Feature: Anonymous feedback
 
   Scenario: Collecting new non-anonymous feedback from a previously anonymous feedback activity
     When I am on the "Course feedback" "feedback activity" page logged in as teacher
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Allow multiple submissions | Yes |
     And I press "Save and display"

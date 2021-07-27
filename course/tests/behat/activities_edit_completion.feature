@@ -33,7 +33,7 @@ Feature: Edit completion settings of an activity
     Then I should see "Completion options unlocked"
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and display"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then the field "Completion tracking" matches value "Students can manually mark the activity as completed"
 
@@ -45,6 +45,6 @@ Feature: Edit completion settings of an activity
     When I click on "id_completionexpected_enabled" "checkbox"
     And I set the field "id_completionexpected_year" to "2013"
     And I press "Save and display"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then the field "id_completionexpected_year" matches value "2013"

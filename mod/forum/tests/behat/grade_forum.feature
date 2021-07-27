@@ -140,7 +140,7 @@ Feature: I can grade a students interaction across a forum
       | section                       | 1            |
     And I am on "Course 1" course homepage
     And I follow "Test Forum 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Ratings > Aggregate type" to "Count of ratings"
     And I set the field "Ratings > Type" to "Point"
     And I set the field "Ratings > Maximum grade" to "100"

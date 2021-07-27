@@ -28,7 +28,7 @@ Feature: Teachers can edit course custom fields
   Scenario: Display custom fields on course edit form
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then I should see "Category for test"
     And I should see "Field 1"
@@ -57,7 +57,7 @@ Feature: Teachers can edit course custom fields
       | customfield_f4[year]  | 2019         |
       | Field 5               | b            |
     And I press "Save and display"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the following fields match these values:
       | Course full name      | Course 2     |
       | Course short name     | C2           |
@@ -90,7 +90,7 @@ Feature: Teachers can edit course custom fields
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then the image at "//div[contains(@class, 'fitem')][contains(., 'Field 1')]/following-sibling::div[1]//img[contains(@src, 'pluginfile.php') and contains(@src, '/core_customfield/description/') and @alt='Example']" "xpath_element" should be identical to "lib/tests/fixtures/gd-logo.png"
     And I log out

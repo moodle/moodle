@@ -25,7 +25,7 @@ Feature: Tagging courses
       | teacher2 | c2     | teacher        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Tags | Mathematics |
     And I press "Save and display"
@@ -34,14 +34,14 @@ Feature: Tagging courses
   Scenario: Set course tags using the course edit form
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then "Mathematics" "autocomplete_suggestions" should exist
     And I set the following fields to these values:
       | Tags | Mathematics, Algebra |
     And I press "Save and display"
     And I am on "Course 2" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Tags | Mathematics, Geometry |
     And I press "Save and display"

@@ -53,7 +53,7 @@ Feature: Default value for the textarea custom field can contain images
      # Teacher will see the image when editing existing course.
     And I log in as "teacher"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then "//img[contains(@src, 'draftfile.php') and contains(@src, '/gd-logo.png') and @alt='Example']" "xpath_element" should exist in the "Test field" "form_row"
     # Save the course without changing the default value.

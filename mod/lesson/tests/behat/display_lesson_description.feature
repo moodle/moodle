@@ -31,7 +31,7 @@ Feature: Display the lesson description in the lesson and optionally in the cour
   Scenario: Show lesson description in the course homepage
     Given I am on "Course 1" course homepage
     And I follow "Test lesson"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the following fields match these values:
       | Display description on course page | |
     And I set the following fields to these values:
@@ -43,7 +43,7 @@ Feature: Display the lesson description in the lesson and optionally in the cour
   Scenario: Hide lesson description in the course homepage
     Given I am on "Course 1" course homepage
     And I follow "Test lesson"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the following fields match these values:
       | Display description on course page | |
     And I press "Save and return to course"

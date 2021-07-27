@@ -20,7 +20,7 @@ Feature: Rename roles in a course
   Scenario: Teacher can rename roles
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I should see "Role renaming"
     When I set the following fields to these values:
       | Your word for 'Teacher' | Lecturer |
@@ -46,6 +46,6 @@ Feature: Rename roles in a course
     And I follow "Log out"
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     Then I should not see "Role renaming"
     And I should not see "Your word for 'Teacher'"
