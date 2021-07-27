@@ -31,18 +31,14 @@ Feature: Users can see the H5P recent activity from the recent activity block
     And I click on "Save and return to course" "button"
     And I add the "Recent activity" block
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Awesome H5P package"
+    And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I click on "Wrong one" "text" in the ".h5p-question-content" "css_element"
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
     And I switch to the main frame
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Awesome H5P package"
+    And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student2
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I click on "Correct one" "text" in the ".h5p-question-content" "css_element"
@@ -52,8 +48,7 @@ Feature: Users can see the H5P recent activity from the recent activity block
 
   @javascript
   Scenario: Student see only his own activity
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as student1
     And I should see "H5P submitted:" in the "Recent activity" "block"
     And I should see "Student 1" in the "Recent activity" "block"
     And I should not see "Grade:" in the "Recent activity" "block"
@@ -66,8 +61,7 @@ Feature: Users can see the H5P recent activity from the recent activity block
 
   @javascript
   Scenario: Teacher see each student activity
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     And I should see "H5P submitted:" in the "Recent activity" "block"
     And I should see "Student 1" in the "Recent activity" "block"
     And I should not see "Grade:" in the "Recent activity" "block"

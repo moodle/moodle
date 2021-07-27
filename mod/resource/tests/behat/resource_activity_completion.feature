@@ -73,11 +73,11 @@ Feature: View activity completion information for file resources
       | id_display          | Embed                                                |
       | Completion tracking | Students can manually mark the activity as completed |
     And I upload "mod/resource/tests/fixtures/samplefile.txt" file to "Select files" filemanager
-    And I click on "Save and display" "button"
+    And I click on "Save and return to course" "button"
     # Teacher view.
     And the manual completion button for "Myfile" should exist
     And the manual completion button for "Myfile" should be disabled
-    And I follow "Myfile"
+    And I am on the "Myfile" "resource activity" page
     And the manual completion button for "Myfile" should exist
     And the manual completion button for "Myfile" should be disabled
     And I log out
@@ -85,7 +85,7 @@ Feature: View activity completion information for file resources
     When I log in as "student1"
     And I am on "Course 1" course homepage
     Then the manual completion button for "Myfile" should exist
-    And I follow "Myfile"
+    And I am on the "Myfile" "resource activity" page
     And the manual completion button of "Myfile" is displayed as "Mark as done"
     And I toggle the manual completion state of "Myfile"
     And the manual completion button of "Myfile" is displayed as "Done"
@@ -107,11 +107,11 @@ Feature: View activity completion information for file resources
     And I press "Save and display"
     And I am on "Course 1" course homepage
     # Teacher view.
-    And I follow "Myfile"
+    And I am on the "Myfile" "resource activity" page
     And "Myfile" should have the "View" completion condition
     And I log out
     # Student view.
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And I follow "Myfile"
+    And I am on the "Myfile" "resource activity" page
     Then the "View" completion condition of "Myfile" is displayed as "done"

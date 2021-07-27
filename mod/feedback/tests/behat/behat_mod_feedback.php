@@ -108,8 +108,7 @@ class behat_mod_feedback extends behat_base {
         $this->execute('behat_auth::i_log_in_as', $username);
 
         // Navigate to feedback complete form.
-        $this->execute('behat_navigation::i_am_on_course_homepage', $coursename);
-        $this->execute('behat_general::click_link', $feedbackname);
+        $this->execute('behat_navigation::i_am_on_page_instance', [$feedbackname, 'feedback activity']);
         $this->execute('behat_general::click_link', $completeform);
 
         // Fill form and submit.

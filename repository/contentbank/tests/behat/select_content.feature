@@ -39,9 +39,7 @@ Feature: Select content bank files using the content bank files repository
       | student  | mscC1  | student        |
 
   Scenario: Admin can navigate and see all existing content bank files using the content bank repository
-    Given I log in as "admin"
-    And I am on "MiscellaneousCourse1" course homepage
-    And I follow "Folder"
+    Given I am on the Folder "Folder activity" page logged in as admin
     And I click on "Edit" "button"
     And I click on "Add..." "button"
     And I should see "Content bank" in the ".fp-repo-area" "css_element"
@@ -81,9 +79,7 @@ Feature: Select content bank files using the content bank files repository
     And I should see "greeting-card-887.h5p" "file" in repository content area
 
   Scenario: Admin can select and re-use content bank files using the content bank repository
-    Given I log in as "admin"
-    And I am on "MiscellaneousCourse1" course homepage
-    And I follow "Folder"
+    Given I am on the Folder "Folder activity" page logged in as admin
     And I click on "Edit" "button"
     And I click on "Add..." "button"
     And I should see "Content bank" in the ".fp-repo-area" "css_element"
@@ -99,9 +95,7 @@ Feature: Select content bank files using the content bank files repository
     And I should see "ipsums.h5p" in the ".fp-content .fp-file" "css_element"
 
   Scenario: Editing teacher can navigate and see content bank files available to him using the content bank repository
-    Given I log in as "teacher1"
-    And I am on "MiscellaneousCourse1" course homepage
-    And I follow "Folder"
+    Given I am on the Folder "Folder activity" page logged in as teacher1
     And I click on "Edit" "button"
     And I click on "Add..." "button"
     And I should see "Content bank" in the ".fp-repo-area" "css_element"
@@ -120,9 +114,7 @@ Feature: Select content bank files using the content bank files repository
     And I should see "Miscellaneous" "folder" in repository content area
 
   Scenario: Editing teacher can select and re-use content bank files available to him using the content bank repository
-    Given I log in as "teacher1"
-    And I am on "MiscellaneousCourse1" course homepage
-    And I follow "Folder"
+    Given I am on the Folder "Folder activity" page logged in as teacher1
     And I click on "Edit" "button"
     And I click on "Add..." "button"
     And I should see "Content bank" in the ".fp-repo-area" "css_element"
@@ -137,18 +129,14 @@ Feature: Select content bank files using the content bank files repository
     And I should see "filltheblanks.h5p" in the ".fp-content .fp-file" "css_element"
 
   Scenario: Non-editing teacher can not see the content bank repository
-    Given I log in as "teacher2"
-    And I am on "MiscellaneousCourse1" course homepage
-    And I follow "Forum"
+    Given I am on the Forum "Forum activity" page logged in as teacher2
     And I click on "Add a new discussion topic" "link"
     And I click on "Link" "button"
     When I click on "Browse repositories..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"
 
   Scenario: Student can not see the content bank repository
-    Given I log in as "student"
-    And I am on "MiscellaneousCourse1" course homepage
-    And I follow "Forum"
+    Given I am on the Forum "Forum activity" page logged in as student
     And I click on "Add a new discussion topic" "link"
     And I click on "Link" "button"
     When I click on "Browse repositories..." "button"
@@ -158,9 +146,7 @@ Feature: Select content bank files using the content bank files repository
     Given the following "contentbank content" exist:
       | contextlevel | reference | contenttype     | user  | contentname | filepath                       |
       | Course       | mscC1     | contenttype_h5p | admin | My content  | /h5p/tests/fixtures/ipsums.h5p |
-    And I log in as "admin"
-    And I am on "MiscellaneousCourse1" course homepage
-    And I follow "Folder"
+    And I am on the Folder "Folder activity" page logged in as admin
     And I click on "Edit" "button"
     And I click on "Add..." "button"
     And I should see "Content bank" in the ".fp-repo-area" "css_element"

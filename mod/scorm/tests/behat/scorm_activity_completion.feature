@@ -10,42 +10,31 @@ Feature: View activity completion in the SCORM activity
       | student1 | Vinnie    | Student1 | student1@example.com |
       | teacher1 | Darrell   | Teacher1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
+      | fullname | shortname | enablecompletion |
+      | Course 1 | C1        | 1                |
     And the following "course enrolments" exist:
       | user | course | role           |
       | student1 | C1 | student        |
       | teacher1 | C1 | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-      | Show activity completion conditions | Yes |
-    And I press "Save and display"
-    And I turn editing mode on
-    And I add a "SCORM package" to section "1"
-    And I set the following fields to these values:
-      | Name                        | Music history                                     |
-      | Number of attempts          | 1 attempt                                         |
-      | Completion tracking         | Show activity as complete when conditions are met |
-      | Require view                | 1                                                 |
-      | Require grade               | 1                                                 |
-      | completionscoredisabled     | 0                                                 |
-      | completionscorerequired     | 3                                                 |
-      | completionstatusrequired[2] | 1                                                 |
-      | completionstatusrequired[4] | 1                                                 |
-      | completionstatusallscos     | 1                                                 |
-    And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    And I log out
+    And the following "activity" exists:
+      | activity                 | scorm                                                         |
+      | course                   | C1                                                            |
+      | name                     | Music history                                                 |
+      | completion               | 2                                                             |
+      | completionstatusallscos  | 0                                                             |
+      # Show activity as complete when conditions are met
+      | packagefilepath          | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip |
+      | completionstatusrequired | 6                                                             |
+      | completionscorerequired  | 3                                                             |
+      | completionstatusrequired | 6                                                             |
+      | completionstatusallscos | 1 |
+      | maxattempt               | 1                                                             |
+      | completionview           | 1                                                             |
+      | completionusegrade           | 1                                                             |
 
   @javascript
   Scenario: View automatic completion items as a teacher
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I follow "Music history"
+    Given I am on the "Music history" "scorm activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Receive a score of 3 or more" completion condition
     And "Music history" should have the "Do all parts of this activity" completion condition
@@ -54,9 +43,7 @@ Feature: View activity completion in the SCORM activity
 
   @javascript
   Scenario: View automatic completion items as a student
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
+    Given I am on the "Music history" "scorm activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "todo"
     And the "Receive a score of 3 or more" completion condition of "Music history" is displayed as "todo"
     And the "Do all parts of this activity" completion condition of "Music history" is displayed as "todo"
@@ -87,8 +74,8 @@ Feature: View activity completion in the SCORM activity
     And I press "Submit Answers"
     And I switch to the main frame
     And I follow "Exit activity"
-    And I follow "Music history"
-    And the "View" completion condition of "Music history" is displayed as "done"
+    When I am on the "Music history" "scorm activity" page
+    Then the "View" completion condition of "Music history" is displayed as "done"
     # Conditions that are not possible to achieve (eg score below requirement but all attempts used) are marked as failed.
     And the "Receive a score of 3 or more" completion condition of "Music history" is displayed as "failed"
     And the "Do all parts of this activity" completion condition of "Music history" is displayed as "done"
@@ -97,9 +84,7 @@ Feature: View activity completion in the SCORM activity
 
   @javascript
   Scenario: Use manual completion
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
+    Given I am on the "Music history" "scorm activity" page logged in as teacher1
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
@@ -108,9 +93,7 @@ Feature: View activity completion in the SCORM activity
     And the manual completion button for "Music history" should be disabled
     And I log out
     # Student view.
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
+    When I am on the "Music history" "scorm activity" page logged in as student1
     Then the manual completion button of "Music history" is displayed as "Mark as done"
     And I toggle the manual completion state of "Music history"
     And the manual completion button of "Music history" is displayed as "Done"
