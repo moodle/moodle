@@ -16,18 +16,18 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | course   | C1               |
+      | activity | lesson           |
+      | name     | Test lesson name |
     And I log in as "teacher1"
     And I follow "Manage private files"
     And I upload "mod/lesson/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
     And I click on "Save changes" "button"
-    When I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
 
   @javascript @_file_upload
   Scenario: Duplicate content page with an image.
-    Given I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -57,7 +57,7 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
 
   @javascript @_file_upload
   Scenario: Duplicate question page with image in answer.
-    Given I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
@@ -94,7 +94,7 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
 
   @javascript @_file_upload
   Scenario: Duplicate question page with image in feedback.
-    Given I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"

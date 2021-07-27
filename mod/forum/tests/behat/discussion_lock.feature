@@ -11,11 +11,11 @@ Feature: As a teacher, you can manually lock individual discussions when viewing
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
+    And the following "activity" exists:
+      | course   | C1              |
+      | activity | forum           |
+      | name     | Test forum name |
+    And I am on the "Course 1" course page logged in as admin
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 |
       | Message | Discussion contents 1, first message |
@@ -28,11 +28,9 @@ Feature: As a teacher, you can manually lock individual discussions when viewing
     And I reply "Discussion 2" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 2 |
       | Message | Discussion contents 2, second message |
-    And I log out
 
   Scenario: Lock a discussion and view
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page
     And I navigate to post "Discussion 1" in "Test forum name" forum
     And I press "Settings"
     Then "Lock this discussion" "link" should be visible

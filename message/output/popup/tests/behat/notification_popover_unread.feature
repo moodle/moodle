@@ -24,23 +24,17 @@ Feature: Notification popover unread notifications
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | assignsubmission_file_enabled | 0 |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I press "Add submission"
+    And the following "activity" exists:
+      | activity                            | assign               |
+      | course                              | C1                   |
+      | name                                | Test assignment name |
+      | assignsubmission_onlinetext_enabled | 1                    |
+      | assignsubmission_file_enabled       | 0                    |
+      | submissiondrafts                    | 0                    |
     # This should generate a notification.
-    And I set the following fields to these values:
-      | Online text | I'm the student first submission |
-    And I press "Save changes"
-    And I log out
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                   |
+      | Test assignment name  | student1  | I'm the student1 submission  |
 
   Scenario: Notification popover shows correct unread count
     When I log in as "student1"

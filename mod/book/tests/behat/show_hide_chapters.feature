@@ -16,16 +16,16 @@ Feature: Book activity chapter visibility management
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student        |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Book" to section "1" and I fill the form with:
-      | Name | Test book |
-      | Description | A book about dreams! |
-    And I follow "Test book"
+    And the following "activity" exists:
+      | course   | C1                  |
+      | activity | book                |
+      | name     | Test book           |
+    And I am on the "Test book" "book activity" page logged in as teacher1
     And I set the following fields to these values:
       | Chapter title | First chapter |
       | Content | First chapter |
     And I press "Save changes"
+    And I turn editing mode on
     And I click on "Add new chapter after \"First chapter\"" "link"
     And I set the following fields to these values:
       | Chapter title | Second chapter |
@@ -53,9 +53,8 @@ Feature: Book activity chapter visibility management
   Scenario: Show/hide chapters and subchapters
     When I follow "Hide chapter \"2. Second chapter\""
     And I follow "Hide chapter \"2. Third chapter\""
+    And I am on the "Test book" "book activity" page
     And I turn editing mode off
-    And I am on "Course 1" course homepage
-    And I follow "Test book"
     Then the "class" attribute of "a[title='Second chapter']" "css_element" should contain "dimmed_text"
     And the "class" attribute of "a[title='Third chapter']" "css_element" should contain "dimmed_text"
     And I turn editing mode on
@@ -70,13 +69,11 @@ Feature: Book activity chapter visibility management
     And I should see "Fourth chapter" in the ".book_content" "css_element"
     And I follow "Exit book"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test book"
+    And I am on the "Test book" "book activity" page logged in as student1
     And I should not see "Second chapter" in the "Table of contents" "block"
     And I should not see "Third chapter" in the "Table of contents" "block"
     And I follow "Next"
     And I should see "Fourth chapter" in the ".book_content" "css_element"
     And I follow "Exit book"
-    And I follow "Test book"
+    And I am on the "Test book" "book activity" page
     And I should see "First chapter" in the ".book_content" "css_element"

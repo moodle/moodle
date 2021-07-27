@@ -39,7 +39,7 @@ Feature: Add forum activities and discussions
       | Attachment | lib/tests/fixtures/upload_users.csv |
     Then I should see "Reply with attachment"
     And I should see "upload_users.csv"
-    And I follow "Test forum name"
+    And I am on the "Test forum name" "forum activity" page
     And I follow "Post with attachment"
     And I should see "empty.txt"
     And I follow "Edit"
