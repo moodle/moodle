@@ -57,6 +57,10 @@ information provided here is intended especially for developers.
   which is needed to store id of completion record on successful update which is later beeing used by
   completion_info::internal_set_data() to reaggregate completions that have been marked for instant course completion.
 
+=== 3.11.2 ===
+* For security reasons, filelib has been updated so all requests now use emulated redirects.
+  For this reason, manually disabling emulateredirects will no longer have any effect (and will generate a debugging message).
+
 === 3.11 ===
 * PHPUnit has been upgraded to 9.5 (see MDL-71036 for details).
   That comes with a few changes:
