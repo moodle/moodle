@@ -23,7 +23,7 @@ Feature: Importing glossary entries
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
-    And I follow "Glossary 1"
+    And I am on the "Glossary 1" "glossary activity" page
     And I navigate to "Import entries" in current page administration
     And I upload "mod/glossary/tests/fixtures/texfilter_glossary_en.xml" file to "File to import" filemanager
     When I press "Submit"
@@ -38,7 +38,7 @@ Feature: Importing glossary entries
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Tags" block
-    And I follow "Glossary 1"
+    And I am on the "Glossary 1" "glossary activity" page
     And I navigate to "Import entries" in current page administration
     And I upload "mod/glossary/tests/fixtures/musicians.xml" file to "File to import" filemanager
     When I press "Submit"

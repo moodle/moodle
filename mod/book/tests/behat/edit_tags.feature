@@ -24,9 +24,7 @@ Feature: Edited book chapters handle tags correctly
       | student1 | C1 | student |
 
   Scenario: Book chapter edition of custom tags works as expected
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test book"
+    Given I am on the "Test book" "book activity" page logged in as teacher1
     And I set the following fields to these values:
       | Chapter title | Dummy first chapter |
       | Content | Dream is the start of a journey |
@@ -50,9 +48,7 @@ Feature: Edited book chapters handle tags correctly
     And I set the field "Enter comma-separated list of new tags" to "OT1, OT2, OT3"
     And I press "Continue"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test book"
+    And I am on the "Test book" "book activity" page logged in as teacher1
     And I open the autocomplete suggestions list
     And I should see "OT1" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "OT2" in the ".form-autocomplete-suggestions" "css_element"

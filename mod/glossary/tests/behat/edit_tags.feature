@@ -16,17 +16,14 @@ Feature: Edited glossary entries handle tags correctly
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Glossary" to section "1" and I fill the form with:
-      | Name | Test glossary |
-      | Description | A glossary about dreams! |
-    And I log out
+    And the following "activity" exists:
+      | course   | C1                       |
+      | activity | glossary                 |
+      | name     | Test glossary            |
+      | intro    | A glossary about dreams! |
 
   Scenario: Glossary entry edition of custom tags works as expected
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary"
+    Given I am on the "Test glossary" "glossary activity" page logged in as teacher1
     And I press "Add a new entry"
     And I set the following fields to these values:
       | Concept | Dummy first entry |
@@ -50,9 +47,7 @@ Feature: Edited glossary entries handle tags correctly
     And I set the field "Enter comma-separated list of new tags" to "OT1, OT2, OT3"
     And I press "Continue"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary"
+    Given I am on the "Test glossary" "glossary activity" page logged in as teacher1
     And I press "Add a new entry"
     And I expand all fieldsets
     And I open the autocomplete suggestions list

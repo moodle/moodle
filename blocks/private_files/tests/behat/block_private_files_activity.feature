@@ -19,7 +19,7 @@ Feature: The private files block allows users to store files privately in moodle
       | page    | C1      | page1    | Test page name | Test page description |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test page name"
+    And I am on the "Test page name" "page activity" page
     And I add the "Private files" block
     And I should see "No files available" in the "Private files" "block"
     When I follow "Manage private files..."

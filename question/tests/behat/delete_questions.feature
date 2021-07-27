@@ -39,21 +39,27 @@ Feature: A teacher can delete questions in the question bank
 
   @javascript
   Scenario: Delete a question used in a quiz
-    Given I am on "Course 1" course homepage with editing mode on
-    And I add a "Quiz" to section "1" and I fill the form with:
-      | Name | Test quiz |
-    And I add a "True/False" question to the "Test quiz" quiz with:
-      | Question name | Test used question to be deleted |
-      | Question text | Write about whatever you want    |
-    And I am on "Course 1" course homepage
+    Given the following "activity" exists:
+      | course   | C1        |
+      | activity | quiz      |
+      | idnumber | Test quiz |
+      | name     | Test quiz |
+    And the following "question" exists:
+      | questioncategory | Test questions                   |
+      | qtype            | truefalse                        |
+      | name             | Test used question to be deleted |
+      | questiontext     | Write about whatever you want    |
+    And quiz "Test quiz" contains the following questions:
+      | question                         | page | requireprevious |
+      | Test used question to be deleted | 1    | 0               |
+    When I am on "Course 1" course homepage
     And I navigate to "Question bank > Questions" in current page administration
-    When I choose "Delete" action for "Test used question to be deleted" in the question bank
+    And I choose "Delete" action for "Test used question to be deleted" in the question bank
     And I press "Delete"
     Then I should not see "Test used question to be deleted"
     And I click on "Also show old questions" "checkbox"
     And I should see "Test used question to be deleted"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz"
+    And I am on the "Test quiz" "quiz activity" page
     And I click on "Preview quiz now" "button"
     And I should see "Write about whatever you want"
 

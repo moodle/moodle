@@ -17,16 +17,14 @@ Feature: Add preconfigured tools via teacher interface
 
   @javascript
   Scenario: Add a tool from a cartridge
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "External tool" to section "1" and I fill the form with:
-      | Activity name | Test tool activity 1 |
-    And I open "Test tool activity 1" actions menu
-    And I choose "Edit settings" in the open action menu
+    Given the following "activity" exists:
+      | course   | C1                 |
+      | activity | lti                |
+      | name     | Test tool activity |
+    When I am on the "Test tool activity" "lti activity editing" page logged in as teacher1
     And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml"
     And I press "Save and return to course"
-    And I open "Test tool activity 1" actions menu
-    And I choose "Edit settings" in the open action menu
+    And I am on the "Test tool activity" "lti activity editing" page
     And I expand all fieldsets
     Then the field "Tool URL" matches value "http://www.example.com/lti/provider.php"
     And the field "Secure tool URL" matches value "https://www.example.com/lti/provider.php"
@@ -35,12 +33,11 @@ Feature: Add preconfigured tools via teacher interface
 
   @javascript @_switch_window
   Scenario: Add a preconfigured tool from a cartridge
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "External tool" to section "1" and I fill the form with:
-      | Activity name | Test tool activity 1 |
-    And I open "Test tool activity 1" actions menu
-    And I choose "Edit settings" in the open action menu
+    Given the following "activity" exists:
+      | course   | C1                   |
+      | activity | lti                  |
+      | name     | Test tool activity 1 |
+    When I am on the "Test tool activity 1" "lti activity editing" page logged in as teacher1
     And I follow "Add preconfigured tool"
     And I switch to "add_tool" window
     And I set the field "Tool name" to "Placeholder"
@@ -56,20 +53,18 @@ Feature: Add preconfigured tools via teacher interface
     And I press "Cancel"
     And I switch to the main window
     And I press "Save and return to course"
-    And I open "Test tool activity 1" actions menu
-    And I choose "Edit settings" in the open action menu
+    And I am on the "Test tool activity 1" "lti activity editing" page
     And the field "Preconfigured tool" matches value "Placeholder"
 
   @javascript @_switch_window
   Scenario: Add and use a preconfigured tool
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "External tool" to section "1" and I fill the form with:
-      | Activity name | Test tool activity 1 |
-    And I open "Test tool activity 1" actions menu
-    And I choose "Edit settings" in the open action menu
+    Given the following "activity" exists:
+      | course   | C1                 |
+      | activity | lti                |
+      | name     | Test tool activity |
+    When I am on the "Test tool activity" "lti activity editing" page logged in as teacher1
     And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
     And I press "Save and return to course"
-    And I follow "Test tool activity 1"
+    And I am on the "Test tool activity" "lti activity" page
     And I switch to "contentframe" iframe
-    And I should see "This represents a tool provider"
+    Then I should see "This represents a tool provider"

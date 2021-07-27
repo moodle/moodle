@@ -87,7 +87,7 @@ class behat_workshopallocation_manual extends behat_base {
      * @param TableNode $table should have one column with title 'Reviewer' and another with title 'Participant' (or 'Reviewee')
      */
     public function i_allocate_submissions_in_workshop_as($workshopname, TableNode $table) {
-        $this->execute('behat_general::i_click_on', [$workshopname, 'link']);
+        $this->execute("behat_general::i_click_on_in_the", [$this->escape($workshopname), 'link', 'page', 'region']);
         $this->execute('behat_navigation::i_navigate_to_in_current_page_administration', get_string('allocate', 'workshop'));
         $rows = $table->getRows();
         $reviewer = $participant = null;

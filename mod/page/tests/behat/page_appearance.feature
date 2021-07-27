@@ -11,52 +11,20 @@ Feature: Configure page appearance
     And the following "activities" exist:
       | activity | name       | intro      | course | idnumber |
       | page     | PageName1  | PageDesc1  | C1     | PAGE1    |
-    And I log in as "admin"
 
   @javascript
-  Scenario: Hide and display the page name
-    Given I am on "Course 1" course homepage
-    When I follow "PageName1"
-    Then I should see "PageName1" in the "region-main" "region"
-    And I navigate to "Edit settings" in current page administration
-    And I follow "Appearance"
-    When I click on "Display page name" "checkbox"
+  Scenario Outline: Hide and display page features
+    Given I am on the "PageName1" "page activity editing" page logged in as admin
+    And I expand all fieldsets
+    And I set the field "Display page name" to "<value>"
     And I press "Save and display"
-    Then I should not see "PageName1" in the "region-main" "region"
-    And I navigate to "Edit settings" in current page administration
-    And I follow "Appearance"
-    When I click on "Display page name" "checkbox"
-    And I press "Save and display"
-    Then I should see "PageName1" in the "region-main" "region"
+    Then I <shouldornot> see "PageName1" in the "region-main" "region"
 
-  @javascript
-  Scenario: Display and hide the page description
-    Given I am on "Course 1" course homepage
-    When I follow "PageName1"
-    Then I should not see "PageDesc1" in the "region-main" "region"
-    And I navigate to "Edit settings" in current page administration
-    And I follow "Appearance"
-    When I click on "Display page description" "checkbox"
-    And I press "Save and display"
-    Then I should see "PageDesc1" in the "region-main" "region"
-    And I navigate to "Edit settings" in current page administration
-    And I follow "Appearance"
-    When I click on "Display page description" "checkbox"
-    And I press "Save and display"
-    Then I should not see "PageDesc1" in the "region-main" "region"
-
-  @javascript
-  Scenario: Display and hide the last modified date
-    Given I am on "Course 1" course homepage
-    When I follow "PageName1"
-    Then I should see "Last modified:" in the "region-main" "region"
-    And I navigate to "Edit settings" in current page administration
-    And I follow "Appearance"
-    When I click on "Display last modified date" "checkbox"
-    And I press "Save and display"
-    Then I should not see "Last modified:" in the "region-main" "region"
-    And I navigate to "Edit settings" in current page administration
-    And I follow "Appearance"
-    When I click on "Display last modified date" "checkbox"
-    And I press "Save and display"
-    Then I should see "Last modified:" in the "region-main" "region"
+    Examples:
+      | feature                    | lookfor        | value | shouldornot |
+      | Display page name          | PageName1      | 1     | should      |
+      | Display page name          | PageName1      | 0     | should not  |
+      | Display page description   | PageDesc1      | 1     | should      |
+      | Display page description   | PageDesc1      | 0     | should not  |
+      | Display last modified date | Last modified: | 1     | should      |
+      | Display last modified date | Last modified: | 0     | should not  |

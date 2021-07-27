@@ -20,15 +20,12 @@ Feature: Managers can create courses
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Latest announcements" block
-    Then "Latest announcements" "block" should exist
-    And I follow "Announcements"
+    And I am on the Announcements "forum activity" page
     And "Add a new topic" "link" should exist
     And "Subscription mode > Forced subscription" "link" should not exist in current page administration
     And "Subscription mode > Forced subscription" "text" should exist in current page administration
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Announcements"
+    And I am on the Announcements "forum activity" page logged in as student1
     And "Add a new topic" "link" should not exist
     And "Forced subscription" "text" should exist in current page administration
 

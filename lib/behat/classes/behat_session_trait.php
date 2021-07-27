@@ -1437,4 +1437,137 @@ EOF;
         $timeout = self::get_real_timeout(30) * 1000 * $factor;
         $driver->getWebDriver()->getCommandExecutor()->setRequestTimeout($timeout);
     }
+
+    /**
+     * Get the course category id from an identifier.
+     *
+     * The category idnumber, and name are checked.
+     *
+     * @param string $identifier
+     * @return int|null
+     */
+    protected function get_category_id(string $identifier): ?int {
+        global $DB;
+
+        $sql = <<<EOF
+    SELECT id
+      FROM {course_categories}
+     WHERE idnumber = :idnumber
+        OR name = :name
+EOF;
+
+        $result = $DB->get_field_sql($sql, [
+            'idnumber' => $identifier,
+            'name' => $identifier,
+        ]);
+
+        return $result ?: null;
+    }
+
+    /**
+     * Get the course id from an identifier.
+     *
+     * The course idnumber, shortname, and fullname are checked.
+     *
+     * @param string $identifier
+     * @return int|null
+     */
+    protected function get_course_id(string $identifier): ?int {
+        global $DB;
+
+        $sql = <<<EOF
+    SELECT id
+      FROM {course}
+     WHERE idnumber = :idnumber
+        OR shortname = :shortname
+        OR fullname = :fullname
+EOF;
+
+        $result = $DB->get_field_sql($sql, [
+            'idnumber' => $identifier,
+            'shortname' => $identifier,
+            'fullname' => $identifier,
+        ]);
+
+        return $result ?: null;
+    }
+
+    /**
+     * Get the activity course module id from its idnumber.
+     *
+     * Note: Only idnumber is supported here, not name at this time.
+     *
+     * @param string $identifier
+     * @return cm_info|null
+     */
+    protected function get_course_module_for_identifier(string $identifier): ?cm_info {
+        global $DB;
+
+        $coursetable = new \core\dml\table('course', 'c', 'c');
+        $courseselect = $coursetable->get_field_select();
+        $coursefrom = $coursetable->get_from_sql();
+
+        $cmtable = new \core\dml\table('course_modules', 'cm', 'cm');
+        $cmfrom = $cmtable->get_from_sql();
+
+        $sql = <<<EOF
+    SELECT {$courseselect}, cm.id as cmid
+      FROM {$cmfrom}
+INNER JOIN {$coursefrom} ON c.id = cm.course
+     WHERE cm.idnumber = :idnumber
+EOF;
+
+        $result = $DB->get_record_sql($sql, [
+            'idnumber' => $identifier,
+        ]);
+
+        if ($result) {
+            $course = $coursetable->extract_from_result($result);
+            return get_fast_modinfo($course)->get_cm($result->cmid);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get a coursemodule from an activity name or idnumber.
+     *
+     * @param string $activity
+     * @param string $identifier
+     * @return cm_info
+     */
+    protected function get_cm_by_activity_name(string $activity, string $identifier): cm_info {
+        global $DB;
+
+        $coursetable = new \core\dml\table('course', 'c', 'c');
+        $courseselect = $coursetable->get_field_select();
+        $coursefrom = $coursetable->get_from_sql();
+
+        $cmtable = new \core\dml\table('course_modules', 'cm', 'cm');
+        $cmfrom = $cmtable->get_from_sql();
+
+        $acttable = new \core\dml\table($activity, 'act', 'act');
+        $actselect = $acttable->get_field_select();
+        $actfrom = $acttable->get_from_sql();
+
+        $sql = <<<EOF
+    SELECT cm.id as cmid, {$courseselect}, {$actselect}
+      FROM {$cmfrom}
+INNER JOIN {$coursefrom} ON c.id = cm.course
+INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+INNER JOIN {$actfrom} ON cm.instance = act.id
+     WHERE cm.idnumber = :idnumber OR act.name = :name
+EOF;
+
+        $result = $DB->get_record_sql($sql, [
+            'modname' => $activity,
+            'idnumber' => $identifier,
+            'name' => $identifier,
+        ], MUST_EXIST);
+
+        $course = $coursetable->extract_from_result($result);
+        $instancedata = $acttable->extract_from_result($result);
+
+        return get_fast_modinfo($course)->get_cm($result->cmid);
+    }
 }

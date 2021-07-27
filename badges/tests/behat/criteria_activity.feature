@@ -51,18 +51,18 @@ Feature: Award badges based on activity completion
     And I log out
 
   Scenario: Student earns a badge using activity completion, but does not get passing grade
-    When I log in as "student1"
+    Given I log in as "student1"
     And I am on "Course 1" course homepage
     And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
-    And I follow "Test quiz name"
+    When I am on the "Test quiz name" "quiz activity" page
     And I press "Re-attempt quiz"
     And I set the field "False" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
     And I log out
-    Then I log in as "teacher1"
-    And I am on "Course 1" course homepage
+
+    And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge"
-    And I should see "Recipients (1)"
+    Then I should see "Recipients (1)"

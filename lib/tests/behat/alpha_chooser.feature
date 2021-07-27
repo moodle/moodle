@@ -240,8 +240,7 @@ Feature: Initials bar
     Given the following "activities" exist:
       | activity | course | idnumber | name           | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
-    And I am on the "assign1" "Activity" page logged in as "admin"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "assign1" "assign Activity editing" page logged in as "admin"
     And I expand all fieldsets
     And I set the field "Completion tracking" to "1"
     And I click on "Save and return to course" "button"

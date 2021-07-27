@@ -28,10 +28,7 @@ I need to limit the submittable file types
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit quiz" in current page administration
+    Given I am on the "Quiz 1" "mod_quiz > edit" page logged in as teacher1
     And I click on "Edit question TF1" "link"
     And I set the field "Allow attachments" to "1"
     And I set the field "Response format" to "No online text"
@@ -46,8 +43,7 @@ I need to limit the submittable file types
     And I follow "Manage private files"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    And I am on the "Quiz 1" "quiz activity" page
     And I press "Attempt quiz now"
     And I should see "First question"
     And I should see "You can drag and drop files here to add them."
@@ -65,8 +61,7 @@ I need to limit the submittable file types
     And I follow "Manage private files"
     And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filemanager
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    And I am on the "Quiz 1" "quiz activity" page
     And I press "Attempt quiz now"
     And I should see "First question"
     And I should see "You can drag and drop files here to add them."
