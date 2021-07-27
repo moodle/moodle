@@ -337,6 +337,39 @@ class core_filelib_testcase extends advanced_testcase {
         @unlink($tofile);
     }
 
+    /**
+     * Test that redirects to blocked hosts are blocked.
+     */
+    public function test_curl_blocked_redirect() {
+        $this->resetAfterTest();
+
+        $testurl = $this->getExternalTestFileUrl('/test_redir.php');
+
+        // Block a host.
+        // Note: moodle.com is the URL redirected to when test_redir.php has the param extdest=1 set.
+        set_config('curlsecurityblockedhosts', 'moodle.com');
+
+        // Redirecting to a non-blocked host should resolve.
+        $curl = new curl();
+        $contents = $curl->get("{$testurl}?redir=2");
+        $response = $curl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $curl->get_errno());
+
+        // Redirecting to the blocked host should fail.
+        $curl = new curl();
+        $blockedstring = $curl->get_security()->get_blocked_url_string();
+        $contents = $curl->get("{$testurl}?redir=1&extdest=1");
+        $this->assertSame($blockedstring, $contents);
+        $this->assertSame(0, $curl->get_errno());
+
+        // Redirecting to the blocked host after multiple successful redirects should also fail.
+        $curl = new curl();
+        $contents = $curl->get("{$testurl}?redir=3&extdest=1");
+        $this->assertSame($blockedstring, $contents);
+        $this->assertSame(0, $curl->get_errno());
+    }
+
     public function test_curl_relative_redirects() {
         // Test relative location redirects.
         $testurl = $this->getExternalTestFileUrl('/test_relative_redir.php');

@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.9.9 ===
+* For security reasons, filelib has been updated so all requests now use emulated redirects.
+  For this reason, manually disabling emulateredirects will no longer have any effect (and will generate a debugging message).
+
 === 3.9.7 ===
 * The signature of the get_context_name() function in the abstract class context and all extending classes (such as context_course)
   has been extended. The new parameter allows the to get the name without escaped characters.
