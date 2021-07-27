@@ -796,6 +796,30 @@ function initialise_cfg() {
 }
 
 /**
+ * Cache any immutable config locally to avoid constant DB lookups.
+ *
+ * Only to be used only from lib/setup.php
+ */
+function initialise_local_config_cache() {
+    global $CFG;
+
+    $bootstrapcachefile = $CFG->localcachedir . '/bootstrap.php';
+
+    if (!empty($CFG->siteidentifier) && !file_exists($bootstrapcachefile)) {
+        $contents = "<?php
+// ********** This file is generated DO NOT EDIT **********
+\$CFG->siteidentifier = '" . addslashes($CFG->siteidentifier) . "';
+define('SYSCONTEXTID', ".SYSCONTEXTID.");
+";
+
+        $temp = $bootstrapcachefile . '.tmp' . uniqid();
+        file_put_contents($temp, $contents);
+        @chmod($temp, $CFG->filepermissions);
+        rename($temp, $bootstrapcachefile);
+    }
+}
+
+/**
  * Initialises $FULLME and friends. Private function. Should only be called from
  * setup.php.
  */

@@ -651,6 +651,17 @@ if (PHPUNIT_TEST and !PHPUNIT_UTIL) {
     unset($dbhash);
 }
 
+// Load any immutable bootstrap config from local cache.
+$bootstrapcachefile = $CFG->localcachedir . '/bootstrap.php';
+if (is_readable($bootstrapcachefile)) {
+    try {
+        require_once($bootstrapcachefile);
+    } catch (Throwable $e) {
+        // If it is corrupted then attempt to delete it and it will be rebuilt.
+        @unlink($bootstrapcachefile);
+    }
+}
+
 // Load up any configuration from the config table or MUC cache.
 if (PHPUNIT_TEST) {
     phpunit_util::initialise_cfg();
@@ -752,8 +763,7 @@ if (isset($_SERVER['PHP_SELF'])) {
 // initialise ME's - this must be done BEFORE starting of session!
 initialise_fullme();
 
-// define SYSCONTEXTID in config.php if you want to save some queries,
-// after install it must match the system context record id.
+// SYSCONTEXTID is cached in local cache to eliminate 1 query per page.
 if (!defined('SYSCONTEXTID')) {
     context_system::instance();
 }
@@ -1055,6 +1065,9 @@ if (false) {
     $OUTPUT = new core_renderer(null, null);
     $PAGE = new moodle_page();
 }
+
+// Cache any immutable config locally to avoid constant DB lookups.
+initialise_local_config_cache();
 
 // Allow plugins to callback as soon possible after setup.php is loaded.
 $pluginswithfunction = get_plugins_with_function('after_config', 'lib.php');
