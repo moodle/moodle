@@ -100,7 +100,7 @@ Feature: Random glossary entry block is used in a course
     And I am on "Course 1" course homepage
     And I should see "There are no entries yet in the chosen glossary" in the "ManualGlossaryblock" "block"
     And I follow "GlossaryManual"
-    And I follow "Waiting approval"
+    And I follow "Pending approval"
     And I follow "Approve"
     And I click on "Course 1" "link" in the "#page-navbar" "css_element"
     And I should see "Concept1" in the "ManualGlossaryblock" "block"

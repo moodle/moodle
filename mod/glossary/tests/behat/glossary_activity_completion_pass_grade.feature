@@ -65,7 +65,7 @@ Feature: Pass grade completion in the glossary activity
     And the "Receive a passing grade" completion condition of "Music history" is displayed as "todo"
     When I am on "Course 1" course homepage
     And I follow "Music history"
-    And I press "Add a new entry"
+    And I press "Add entry"
     And I set the following fields to these values:
       | Concept    | Blast beats                                               |
       | Definition | Repeated fast tempo hits combining bass, snare and cymbal |
@@ -93,7 +93,7 @@ Feature: Pass grade completion in the glossary activity
     And the "Receive a passing grade" completion condition of "Music history" is displayed as "todo"
     When I am on "Course 1" course homepage
     And I follow "Music history"
-    And I press "Add a new entry"
+    And I press "Add entry"
     And I set the following fields to these values:
       | Concept    | Blast beats                                               |
       | Definition | Repeated fast tempo hits combining bass, snare and cymbal |
