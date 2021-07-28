@@ -3063,7 +3063,7 @@ class curl {
     public  $error;
     /** @var int error code */
     public  $errno;
-    /** @var bool use workaround for open_basedir restrictions, to be changed from unit tests only! */
+    /** @var bool Perform redirects at PHP level instead of relying on native cURL functionality. Always true now. */
     public $emulateredirects = null;
 
     /** @var array cURL options */
@@ -3160,9 +3160,13 @@ class curl {
             $this->proxy = false;
         }
 
-        if (!isset($this->emulateredirects)) {
-            $this->emulateredirects = ini_get('open_basedir');
-        }
+        // All redirects are performed at PHP level now and each one is checked against blocked URLs rules. We do not
+        // want to let cURL naively follow the redirect chain and visit every URL for security reasons. Even when the
+        // caller explicitly wants to ignore the security checks, we would need to fall back to the original
+        // implementation and use emulated redirects if open_basedir is in effect to avoid the PHP warning
+        // "CURLOPT_FOLLOWLOCATION cannot be activated when in safe_mode or an open_basedir". So it is better to simply
+        // ignore this property and always handle redirects at this PHP wrapper level and not inside the native cURL.
+        $this->emulateredirects = true;
 
         // Curl security setup. Allow injection of a security helper, but if not found, default to the core helper.
         if (isset($settings['securityhelper']) && $settings['securityhelper'] instanceof \core\files\curl_security_helper_base) {
@@ -3471,8 +3475,8 @@ class curl {
 
         // Set options.
         foreach($this->options as $name => $val) {
-            if ($name === 'CURLOPT_FOLLOWLOCATION' and $this->emulateredirects) {
-                // The redirects are emulated elsewhere.
+            if ($name === 'CURLOPT_FOLLOWLOCATION') {
+                // All the redirects are emulated at PHP level.
                 curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
                 continue;
             }
@@ -3644,8 +3648,12 @@ class curl {
             }
         }
 
-        // If curl security is enabled, check the URL against the blacklist before calling curl_exec.
-        // Note: This will only check the base url. In the case of redirects, the blacklist is also after the curl_exec.
+        if (empty($this->emulateredirects)) {
+            // Just in case someone had tried to explicitly disable emulated redirects in legacy code.
+            debugging('Attempting to disable emulated redirects has no effect any more!', DEBUG_DEVELOPER);
+        }
+
+        // If curl security is enabled, check the URL against the list of blocked URLs before calling the first curl_exec.
         if (!$this->ignoresecurity && $this->securityhelper->url_is_blocked($url)) {
             $this->error = $this->securityhelper->get_blocked_url_string();
             return $this->error;
@@ -3668,16 +3676,14 @@ class curl {
         $this->errno = curl_errno($curl);
         // Note: $this->response and $this->rawresponse are filled by $hits->formatHeader callback.
 
-        // In the case of redirects (which curl blindly follows), check the post-redirect URL against the blacklist entries too.
-        if (intval($this->info['redirect_count']) > 0 && !$this->ignoresecurity
-            && $this->securityhelper->url_is_blocked($this->info['url'])) {
-            $this->reset_request_state_vars();
-            $this->error = $this->securityhelper->get_blocked_url_string();
-            curl_close($curl);
-            return $this->error;
+        if (intval($this->info['redirect_count']) > 0) {
+            // For security reasons we do not allow the cURL handle to follow redirects on its own.
+            // See setting CURLOPT_FOLLOWLOCATION in {@see self::apply_opt()} method.
+            throw new coding_exception('Internal cURL handle should never follow redirects on its own!',
+                'Reported number of redirects: ' . $this->info['redirect_count']);
         }
 
-        if ($this->emulateredirects and $this->options['CURLOPT_FOLLOWLOCATION'] and $this->info['http_code'] != 200) {
+        if ($this->options['CURLOPT_FOLLOWLOCATION'] && $this->info['http_code'] != 200) {
             $redirects = 0;
 
             while($redirects <= $this->options['CURLOPT_MAXREDIRS']) {
@@ -3711,6 +3717,12 @@ class curl {
                 if (isset($this->info['redirect_url'])) {
                     if (preg_match('|^https?://|i', $this->info['redirect_url'])) {
                         $redirecturl = $this->info['redirect_url'];
+                    } else {
+                        // Emulate CURLOPT_REDIR_PROTOCOLS behaviour which we have set to (CURLPROTO_HTTP | CURLPROTO_HTTPS) only.
+                        $this->errno = CURLE_UNSUPPORTED_PROTOCOL;
+                        $this->error = 'Redirect to a URL with unsuported protocol: ' . $this->info['redirect_url'];
+                        curl_close($curl);
+                        return $this->error;
                     }
                 }
                 if (!$redirecturl) {
@@ -3738,6 +3750,13 @@ class curl {
                             $redirecturl = dirname($current).'/'.$redirecturl;
                         }
                     }
+                }
+
+                if (!$this->ignoresecurity && $this->securityhelper->url_is_blocked($redirecturl)) {
+                    $this->reset_request_state_vars();
+                    $this->error = $this->securityhelper->get_blocked_url_string();
+                    curl_close($curl);
+                    return $this->error;
                 }
 
                 curl_setopt($curl, CURLOPT_URL, $redirecturl);
