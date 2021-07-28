@@ -38,12 +38,13 @@ class message_airnotifier_manager_testcase extends advanced_testcase {
         $checks = $manager->check_configuration();
 
         $this->assertEquals(core\check\result::OK, $checks[0]->get_status());   // Mobile service enabled.
-        $this->assertEquals(core\check\result::OK, $checks[1]->get_status());   // Mobile notifications enabled.
-        $this->assertEquals(core\check\result::ERROR, $checks[2]->get_status());    // Airnotifier NOT configured, missing key.
-        $this->assertEquals(core\check\result::OK, $checks[3]->get_status());   // Airnotifier URL available.
-        $this->assertEquals(core\check\result::ERROR, $checks[4]->get_status());    // Missing access key.
-        $this->assertEquals(core\check\result::WARNING, $checks[5]->get_status());  // Only a few of default mobile notifications.
-        $this->assertEquals(core\check\result::ERROR, $checks[6]->get_status());  // No registered devices yet.
+        $this->assertEquals(core\check\result::OK, $checks[1]->get_status());   // Message output not disabled in config.php.
+        $this->assertEquals(core\check\result::OK, $checks[2]->get_status());   // Mobile notifications enabled.
+        $this->assertEquals(core\check\result::ERROR, $checks[3]->get_status());    // Airnotifier NOT configured, missing key.
+        $this->assertEquals(core\check\result::OK, $checks[4]->get_status());   // Airnotifier URL available.
+        $this->assertEquals(core\check\result::ERROR, $checks[5]->get_status());    // Missing access key.
+        $this->assertEquals(core\check\result::WARNING, $checks[6]->get_status());  // Only a few of default mobile notifications.
+        $this->assertEquals(core\check\result::ERROR, $checks[7]->get_status());  // No registered devices yet.
     }
 
     /** Test check_configuration with token **/
@@ -61,12 +62,13 @@ class message_airnotifier_manager_testcase extends advanced_testcase {
         $checks = $manager->check_configuration();
 
         $this->assertEquals(core\check\result::OK, $checks[0]->get_status());   // Mobile service enabled.
-        $this->assertEquals(core\check\result::OK, $checks[1]->get_status());   // Mobile notifications enabled.
-        $this->assertEquals(core\check\result::OK, $checks[2]->get_status());    // Airnotifier configured.
-        $this->assertEquals(core\check\result::OK, $checks[3]->get_status());   // Airnotifier URL available.
+        $this->assertEquals(core\check\result::OK, $checks[1]->get_status());   // Message output not disabled in config.php.
+        $this->assertEquals(core\check\result::OK, $checks[2]->get_status());   // Mobile notifications enabled.
+        $this->assertEquals(core\check\result::OK, $checks[3]->get_status());    // Airnotifier configured.
+        $this->assertEquals(core\check\result::OK, $checks[4]->get_status());   // Airnotifier URL available.
         // The original function fourth check (access key valid in the remote Airnotifier server) is not mockable.
-        $this->assertEquals(core\check\result::WARNING, $checks[4]->get_status());  // Only a few of default mobile notifications.
-        $this->assertEquals(core\check\result::ERROR, $checks[5]->get_status());  // No registered devices yet.
+        $this->assertEquals(core\check\result::WARNING, $checks[5]->get_status());  // Only a few of default mobile notifications.
+        $this->assertEquals(core\check\result::ERROR, $checks[6]->get_status());  // No registered devices yet.
     }
 
     /** Test check_configuration bad settings **/
@@ -82,16 +84,19 @@ class message_airnotifier_manager_testcase extends advanced_testcase {
         curl::mock_response(json_encode(['error' => 'Invalid access key']));  // Mock second request to check acces key.
         $CFG->airnotifieraccesskey = 'test';    // For enabling Airnotifier.
         $CFG->airnotifierappname .= ' ';
+
+        $CFG->noemailever = true;
         $checks = $manager->check_configuration();
 
         $this->assertEquals(core\check\result::OK, $checks[0]->get_status());   // Mobile service enabled.
-        $this->assertEquals(core\check\result::OK, $checks[1]->get_status());   // Mobile notifications enabled.
-        $this->assertEquals(core\check\result::OK, $checks[2]->get_status());    // Airnotifier configured.
-        $this->assertEquals(core\check\result::ERROR, $checks[3]->get_status());   // Airnotifier URL available.
-        $this->assertEquals(core\check\result::OK, $checks[4]->get_status());   // Invalid setting (empty space).
+        $this->assertEquals(core\check\result::CRITICAL, $checks[1]->get_status());   // Message output disabled in config.php.
+        $this->assertEquals(core\check\result::OK, $checks[2]->get_status());   // Mobile notifications enabled.
+        $this->assertEquals(core\check\result::OK, $checks[3]->get_status());    // Airnotifier configured.
+        $this->assertEquals(core\check\result::ERROR, $checks[4]->get_status());   // Airnotifier URL available.
+        $this->assertEquals(core\check\result::OK, $checks[5]->get_status());   // Invalid setting (empty space).
         // The original function fifth check (access key valid in the remote Airnotifier server) is not mockable.
-        $this->assertEquals(core\check\result::WARNING, $checks[5]->get_status());  // Only a few of default mobile notifications.
-        $this->assertEquals(core\check\result::ERROR, $checks[6]->get_status());  // No registered devices yet.
+        $this->assertEquals(core\check\result::WARNING, $checks[6]->get_status());  // Only a few of default mobile notifications.
+        $this->assertEquals(core\check\result::ERROR, $checks[7]->get_status());  // No registered devices yet.
     }
 
     /** Test has_enabled_devices **/

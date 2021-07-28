@@ -45,6 +45,8 @@ $string['messageprovidersempty'] = 'There are no mobile notifications enabled in
 $string['messageproviderslow'] = 'Only a few mobile notifications are enabled in default notification preferences.';
 $string['moodleappsportallimitswarning'] = 'Please note that the number of user devices allowed to receive notifications depends on your Moodle app subscription. For details, visit the <a href="{$a}" target="_blank">Moodle Apps Portal</a>.';
 $string['nodevices'] = 'No registered devices. Devices will automatically appear after you install the Moodle app and add this site.';
+$string['noemailevernotset'] = '$CFG->noemailever disabled';
+$string['noemaileverset'] = '$CFG->noemailever is enabled in config.php. You need to set this setting to false or remove it.';
 $string['nopermissiontomanagedevices'] = 'You don\'t have permission to manage devices.';
 $string['notconfigured'] = 'The Airnotifier server has not been configured so push notifications cannot be sent.';
 $string['notificationsserverconfiguration'] = 'Notifications server (Airnotifier) configuration';

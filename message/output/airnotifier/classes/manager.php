@@ -235,6 +235,15 @@ class message_airnotifier_manager {
             $results[] = new core\check\result(core\check\result::OK, $summary, get_string('enabled', 'admin'));
         }
 
+        // Check message outputs are not disabled in config.php.
+        $summary = get_string('noemailevernotset', 'message_airnotifier');
+        if (!empty($CFG->noemailever)) {
+            $results[] = new core\check\result(core\check\result::CRITICAL, $summary,
+                get_string('noemaileverset', 'message_airnotifier'));
+        } else {
+            $results[] = new core\check\result(core\check\result::OK, $summary, get_string('disabled', 'admin'));
+        }
+
         // Check Mobile notifications enabled.
         require_once($CFG->dirroot . '/message/lib.php');
         $processors = get_message_processors();
