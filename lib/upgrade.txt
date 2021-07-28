@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.11.2 ===
+* For security reasons, filelib has been updated so all requests now use emulated redirects.
+  For this reason, manually disabling emulateredirects will no longer have any effect (and will generate a debugging message).
+
 === 3.11 ===
 * PHPUnit has been upgraded to 9.5 (see MDL-71036 for details).
   That comes with a few changes:
