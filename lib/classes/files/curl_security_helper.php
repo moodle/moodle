@@ -60,10 +60,15 @@ class curl_security_helper extends curl_security_helper_base {
      * could not be parsed, as well as those valid URLs which were found in the blocklist.
      *
      * @param string $urlstring the URL to check.
-     * @param int $maxredirects Optional number of maximum redirects to follow - prevents infinite recursion.
+     * @param int $notused There used to be an optional parameter $maxredirects for a short while here, not used any more.
      * @return bool true if the URL is blocked or invalid and false if the URL is not blocked.
      */
-    public function url_is_blocked($urlstring, $maxredirects = 3) {
+    public function url_is_blocked($urlstring, $notused = null) {
+
+        if ($notused !== null) {
+            debugging('The $maxredirects parameter of curl_security_helper::url_is_blocked() has been dropped!', DEBUG_DEVELOPER);
+        }
+
         // If no config data is present, then all hosts/ports are allowed.
         if (!$this->is_enabled()) {
             return false;
@@ -86,30 +91,9 @@ class curl_security_helper extends curl_security_helper_base {
         }
 
         if ($parsed['port'] && $parsed['host']) {
-            // Check the host and port against the allow/block entries, and that we have not run out of redirects.
-            if ($this->host_is_blocked($parsed['host']) || $this->port_is_blocked($parsed['port']) || $maxredirects < 1) {
-                return true;
-            }
-
-            // Check if the host has a redirect in place, without following it.
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $urlstring);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-
-            curl_exec($ch);
-            $curlinfo = curl_getinfo($ch);
-            $redirecturl = $curlinfo['redirect_url'];
-
-            if (!$redirecturl) {
-                return false;
-            }
-
-            // Recursively check redirects, until final URL checked, redirects to a blocked host/port, or has too many redirects.
-            $maxredirects--;
-            return $this->url_is_blocked($redirecturl, $maxredirects);
+            // Check the host and port against the allow/block entries.
+            return $this->host_is_blocked($parsed['host']) || $this->port_is_blocked($parsed['port']);
         }
-
         return true;
     }
 
