@@ -61,8 +61,9 @@ Feature: Edit quiz marks with attempts
 
   @javascript
   Scenario: Verify the number of decimal places shown is what the quiz settings say it should be.
+    Given I change window size to "large"
     # Then the field "maxgrade" matches value "20.00" -- with exact match on decimal places.
-    Given "//input[@name = 'maxgrade' and @value = '20.00']" "xpath_element" should exist
+    And "//input[@name = 'maxgrade' and @value = '20.00']" "xpath_element" should exist
     And I should see "2.00"
     And I should see "3.00"
     And I should see "Total of marks: 5.00"

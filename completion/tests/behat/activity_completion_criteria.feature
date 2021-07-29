@@ -29,8 +29,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I expand all fieldsets
     And I set the field "Enable completion tracking" to "Yes"
     And I click on "Save and display" "button"
-    And I follow "Test assignment name"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test assignment name" "assign activity editing" page
     And I follow "Expand all"
     And I set the field "Completion tracking" to "Show activity as complete when conditions are met"
     And I set the field "completionusegrade" to "1"
@@ -45,10 +44,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
 
   @javascript
   Scenario: Update course completion when student marks activity as complete
-    Given I log in as "teacher1"
-    And I am on "Completion course" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test assignment name" "assign activity editing" page logged in as teacher1
     And I follow "Expand all"
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and return to course"
@@ -64,9 +60,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
 
   @javascript
   Scenario: Update course completion when teacher grades a single assignment
-    Given I log in as "teacher1"
-    And I am on "Completion course" course homepage
-    And I follow "Test assignment name"
+    Given I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
@@ -79,16 +73,13 @@ Feature: Allow to mark course as completed without cron for activity completion 
 
   @javascript
   Scenario: Update course completion with multiple activity criteria
-    Given I log in as "admin"
-    And the following "activity" exists:
+    Given the following "activity" exists:
       | activity                            | assign                      |
       | course                              | CC1                         |
       | name                                | Test assignment name2       |
       | idnumber                            | assign2                     |
       | description                         | Test assignment description |
-    And I am on "Completion course" course homepage
-    And I follow "Test assignment name2"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test assignment name2" "assign activity editing" page logged in as admin
     And I follow "Expand all"
     And I set the field "Completion tracking" to "Show activity as complete when conditions are met"
     And I set the field "completionusegrade" to "1"
@@ -98,8 +89,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I set the field "Assignment - Test assignment name" to "1"
     And I set the field "Assignment - Test assignment name2" to "1"
     And I press "Save changes"
-    And I am on "Completion course" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
@@ -110,9 +100,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I am on "Completion course" course homepage
     And I should see "Status: In progress"
     And I log out
-    When I log in as "teacher1"
-    And I am on "Completion course" course homepage
-    And I follow "Test assignment name2"
+    And I am on the "Test assignment name2" "assign activity" page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"

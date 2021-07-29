@@ -76,8 +76,7 @@ Feature: In an assignment, students can add and edit text online
       | Online text | text submission |
     # Wait for the draft auto save.
     And I wait "2" seconds
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page
     When I press "Add submission"
     # Confirm draft was restored.
     Then I should see "text submission" in the "#id_onlinetext_editoreditable" "css_element"

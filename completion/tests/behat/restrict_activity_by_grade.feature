@@ -46,7 +46,7 @@ Feature: Restrict activity availability through grade conditions
     Then I should see "Not available unless: You achieve a required score in Grade assignment"
     And "Test page name" activity should be dimmed
     And "Test page name" "link" should not exist
-    And I follow "Grade assignment"
+    And I am on the "Grade assignment" "assign activity" page
     And I press "Add submission"
     And I set the following fields to these values:
       | Online text | I'm the student submission |

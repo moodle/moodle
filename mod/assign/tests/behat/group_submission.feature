@@ -39,8 +39,7 @@ Feature: Group assignment submissions
     And "//tr[contains(., 'Student 1')][contains(., 'Default group')]" "xpath_element" should exist
     And "//tr[contains(., 'Student 2')][contains(., 'Default group')]" "xpath_element" should exist
     And "//tr[contains(., 'Student 3')][contains(., 'Default group')]" "xpath_element" should exist
-    And I follow "Test assignment name"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test assignment name" "assign activity editing" page
     And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save and return to course"
@@ -52,8 +51,7 @@ Feature: Group assignment submissions
       | user | group |
       | student0 | G1 |
       | student1 | G1 |
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page
     And I navigate to "View all submissions" in current page administration
     And I set the field "Separate groups" to "Group 1"
     And "//tr[contains(., 'Student 0')][contains(., 'Group 1')]" "xpath_element" should exist
@@ -176,7 +174,7 @@ Feature: Group assignment submissions
       | Allow another attempt | 1 |
     And I press "Save changes"
     When I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page
     And I navigate to "View all submissions" in current page administration
     Then "Student 1" row "Status" column of "generaltable" table should contain "Reopened"
     And "Student 2" row "Status" column of "generaltable" table should contain "Reopened"

@@ -79,25 +79,19 @@ Feature: In an assignment, teachers grade multiple students on one page
       | assignsubmission_file_enabled | 0 |
       | M8d skillZ! | 1 |
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I press "Add submission"
     And I set the following fields to these values:
       | Online text | I'm the student1 submission |
     And I press "Save changes"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student2
     When I press "Add submission"
     And I set the following fields to these values:
       | Online text | I'm the student2 submission |
     And I press "Save changes"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
@@ -114,27 +108,21 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should see "The grade changes were saved"
     And I press "Continue"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I should see "I'm the teacher first feedback"
     And I should see "60.0"
     And I follow "Grades" in the user menu
     And I click on "Course 1" "link" in the "region-main" "region"
     And I should see "1337"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student2
     And I should not see "I'm the teacher first feedback"
     And I should not see "60.0"
     And I follow "Grades" in the user menu
     And I click on "Course 1" "link" in the "region-main" "region"
     And I should not see "1337"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Hide User picture" "link"
     And I click on "Hide Full name" "link"
@@ -153,18 +141,14 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should see "The grade changes were saved"
     And I press "Continue"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I should see "I'm the teacher first feedback"
     And I should see "60.0"
     And I follow "Grades" in the user menu
     And I click on "Course 1" "link" in the "region-main" "region"
     And I should see "1337"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student2
     And I should not see "I'm the teacher first feedback"
     And I should not see "60.0"
     And I follow "Grades" in the user menu

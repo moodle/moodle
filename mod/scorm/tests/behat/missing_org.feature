@@ -20,15 +20,14 @@ Feature: Check a SCORM package with missing Organisational structure.
     And I set the following fields to these values:
       | Name | MissingOrg SCORM package |
       | Description | Description |
+      | ID number   | Missingorg  |
     And I upload "mod/scorm/tests/packages/singlescobasic_missingorg.zip" file to "Package file" filemanager
     And I click on "Save and display" "button"
     Then I should see "MissingOrg SCORM package"
     And I should see "Normal"
     And I should see "Preview"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "MissingOrg SCORM package"
+    And I am on the "Missingorg" Activity page logged in as student1
     And I should see "Normal"
     And I press "Enter"
     And I switch to "scorm_object" iframe

@@ -84,14 +84,10 @@ Feature: Assign group override
     And I press "Save"
     And I should see "Wednesday, 1 January 2020, 8:00"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student2
     Then the activity date in "Test assignment name" should contain "Due: Saturday, 1 January 2000, 8:00"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student1
     And the activity date in "Test assignment name" should contain "Due: Wednesday, 1 January 2020, 8:00"
 
   Scenario: Allow a group to have a different cut off date
@@ -110,14 +106,10 @@ Feature: Assign group override
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student2
     Then I should not see "You have not made a submission yet."
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student1
     And I should see "You have not made a submission yet."
 
   Scenario: Allow a group to have a different start date
@@ -136,15 +128,11 @@ Feature: Assign group override
     And I press "Save"
     And I should see "Thursday, 1 January 2015, 8:00"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student2
     Then the activity date in "Test assignment name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
     And I should not see "Add submission"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student1
     And I should not see "Tuesday, 1 January 2030, 8:00"
 
   @javascript
@@ -163,7 +151,7 @@ Feature: Assign group override
       | Allow submissions from | ##1 January 2030 08:00## |
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
@@ -172,19 +160,13 @@ Feature: Assign group override
     And I press "Save"
     And I should see "Wednesday, 1 January 2031, 8:00"
     And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student1
     And the activity date in "Test assignment name" should contain "Opens: Wednesday, 1 January 2031, 8:00"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student2
     And the activity date in "Test assignment name" should contain "Opens: Sunday, 1 January 2040, 8:00"
     And I log out
-    And I log in as "student3"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student3
     And the activity date in "Test assignment name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
 
   Scenario: Override a group when teacher is in no group, and does not have accessallgroups permission, and the activity's group mode is "separate groups"

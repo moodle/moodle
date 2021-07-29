@@ -76,14 +76,10 @@ Feature: Assign user override
     And I press "Save"
     Then I should see "Wednesday, 1 January 2020, 8:00"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student2
     And the activity date in "Test assignment name" should contain "Due: Saturday, 1 January 2000, 8:00"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student1
     And the activity date in "Test assignment name" should contain "Due: Wednesday, 1 January 2020, 8:00"
 
   @javascript
@@ -103,14 +99,10 @@ Feature: Assign user override
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student2
     Then I should not see "You have not made a submission yet."
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student1
     And I should see "You have not made a submission yet."
 
   @javascript
@@ -132,12 +124,12 @@ Feature: Assign user override
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I click on "Test assignment name" "link" in the "region-main" "region"
     Then the activity date in "Test assignment name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I click on "Test assignment name" "link" in the "region-main" "region"
     And I should not see "1 January 2030, 8:00"
 
   Scenario: Override a user when teacher is in no group, and does not have accessallgroups permission, and the activity's group mode is "separate groups"

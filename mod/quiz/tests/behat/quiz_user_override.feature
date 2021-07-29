@@ -27,6 +27,7 @@ Feature: Quiz user override
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
     And I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher"
+    And I change window size to "large"
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:

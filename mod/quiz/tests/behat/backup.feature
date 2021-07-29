@@ -61,7 +61,7 @@ Feature: Backup and restore of quizzes
     And I restore "test_backup.mbz" backup into a new course using this options:
       | Schema | Course name | Restored course |
     Then I should see "Restored course"
-    And I follow "Quiz 1"
+    And I click on "Quiz 1" "link" in the "region-main" "region"
     And I should see "Attempts: 1"
 
   @javascript @_file_upload
