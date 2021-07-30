@@ -116,6 +116,7 @@ completely removed from Moodle core too.
 * Final deprecation: The following functions along with associated tests have been removed:
   - core_grades_external::get_grades
   - core_grades_external::get_grade_item
+* \core\session\manager::init_empty_session() has a new optional parameter $newsid to indicate whether this is a new user session
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.

@@ -274,8 +274,10 @@ class manager {
      * This is intended for installation scripts, unit tests and other
      * special areas. Do NOT use for logout and session termination
      * in normal requests!
+     *
+     * @param mixed $newsid only used after initialising a user session, is this a new user session?
      */
-    public static function init_empty_session() {
+    public static function init_empty_session(?bool $newsid = null) {
         global $CFG;
 
         if (isset($GLOBALS['SESSION']->notifications)) {
@@ -283,6 +285,9 @@ class manager {
             $notifications = $GLOBALS['SESSION']->notifications;
         }
         $GLOBALS['SESSION'] = new \stdClass();
+        if (isset($newsid)) {
+            $GLOBALS['SESSION']->isnewsessioncookie = $newsid;
+        }
 
         $GLOBALS['USER'] = new \stdClass();
         $GLOBALS['USER']->id = 0;
@@ -419,7 +424,7 @@ class manager {
         if (!$sid) {
             // No session, very weird.
             error_log('Missing session ID, session not started!');
-            self::init_empty_session();
+            self::init_empty_session($newsid);
             return;
         }
 
@@ -547,7 +552,7 @@ class manager {
             self::set_user($user);
             self::add_session_record($user->id);
         } else {
-            self::init_empty_session();
+            self::init_empty_session($newsid);
             self::add_session_record(0);
         }
 
