@@ -21,7 +21,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool result
  */
 function xmldb_repository_dropbox_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
@@ -34,6 +34,49 @@ function xmldb_repository_dropbox_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2021052501) {
+        $key = get_config('dropbox', 'dropbox_key');
+        $secret = get_config('dropbox', 'dropbox_secret');
+
+        if ($key && $secret) {
+            $params = [
+                'name' => 'Dropbox',
+                'clientid' => $key,
+                'clientsecret' => $secret,
+                'loginparamsoffline' => 'token_access_type=offline',
+                'image' => '',
+                'showonloginpage' => 0, // Internal services only.
+            ];
+            $record = $DB->get_record('oauth2_issuer', ['name' => 'Dropbox'], 'id');
+            if (!$record) {
+                $params = array_merge($params, [
+                    'timecreated' => time(),
+                    'timemodified' => time(),
+                    'usermodified' => time(),
+                    'baseurl' => 0,
+                    'sortorder' => '',
+                    'loginparams' => '',
+                    'requireconfirmation' => 1,
+                    'alloweddomains' => '',
+                    'loginscopes' => 'openid profile email',
+                    'loginscopesoffline' => 'openid profile email',
+                ]);
+                $id = $DB->insert_record('oauth2_issuer', $params);
+            } else {
+                $id = $record->id;
+                $params['id'] = $id;
+                $DB->update_record('oauth2_issuer', $params);
+            }
+
+            set_config('dropbox_issuerid', $id, 'dropbox');
+            unset_config('dropbox_key', 'dropbox');
+            unset_config('dropbox_secret', 'dropbox');
+        }
+
+        // Dropbox savepoint reached.
+        upgrade_plugin_savepoint(true, 2021052501, 'repository', 'dropbox');
+    }
 
     return true;
 }

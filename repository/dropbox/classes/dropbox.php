@@ -25,9 +25,8 @@
 
 namespace repository_dropbox;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/oauthlib.php');
+use core\oauth2\client;
+use core\oauth2\issuer;
 
 /**
  * Dropbox V2 API.
@@ -36,7 +35,7 @@ require_once($CFG->libdir . '/oauthlib.php');
  * @copyright   Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dropbox extends \oauth2_client {
+class dropbox extends client {
 
     /**
      * @var array Custom continue endpoints that differ from the standard.
@@ -48,12 +47,23 @@ class dropbox extends \oauth2_client {
     /**
      * Create the DropBox API Client.
      *
-     * @param   string      $key        The API key
-     * @param   string      $secret     The API secret
+     * @param   issuer      $issuer     The dropbox issuer
      * @param   string      $callback   The callback URL
      */
-    public function __construct($key, $secret, $callback) {
-        parent::__construct($key, $secret, $callback, '');
+    public function __construct(issuer $issuer, $callback) {
+        parent::__construct($issuer, $callback, '', false, true);
+    }
+
+    /**
+     * Override - Return an empty string to override parent function.
+     *
+     * Dropbox does not require scopes to be provided and can function without them.
+     * Additional information MDL-70268
+     *
+     * @return string
+     */
+    protected function get_login_scopes() {
+        return '';
     }
 
     /**

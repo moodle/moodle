@@ -59,13 +59,8 @@ class repository_dropbox extends repository {
             ]);
 
         // Create the dropbox API instance.
-        $key = get_config('dropbox', 'dropbox_key');
-        $secret = get_config('dropbox', 'dropbox_secret');
-        $this->dropbox = new repository_dropbox\dropbox(
-                $key,
-                $secret,
-                $returnurl
-            );
+        $issuer = \core\oauth2\api::get_issuer(get_config('dropbox', 'dropbox_issuerid'));
+        $this->dropbox = new repository_dropbox\dropbox($issuer, $returnurl);
     }
 
     /**
@@ -436,7 +431,7 @@ class repository_dropbox extends repository {
     }
 
     /**
-     * Check if moodle has got access token and secret.
+     * Check if the dropbox is logged in via the oauth process.
      *
      * @inheritDocs
      */
@@ -507,29 +502,15 @@ class repository_dropbox extends repository {
      */
     public static function type_config_form($mform, $classname = 'repository') {
         parent::type_config_form($mform);
-        $key    = get_config('dropbox', 'dropbox_key');
-        $secret = get_config('dropbox', 'dropbox_secret');
-
-        if (empty($key)) {
-            $key = '';
+        $options = [];
+        $issuers = \core\oauth2\api::get_all_issuers();
+        foreach ($issuers as $issuer) {
+            $options[$issuer->get('id')] = s($issuer->get('name'));
         }
-        if (empty($secret)) {
-            $secret = '';
-        }
-
-        $mform->addElement('text', 'dropbox_key', get_string('apikey', 'repository_dropbox'), array('value'=>$key,'size' => '40'));
-        $mform->setType('dropbox_key', PARAM_RAW_TRIMMED);
-        $mform->addElement('text', 'dropbox_secret', get_string('secret', 'repository_dropbox'), array('value'=>$secret,'size' => '40'));
-
-        $mform->addRule('dropbox_key',    get_string('required'), 'required', null, 'client');
-        $mform->addRule('dropbox_secret', get_string('required'), 'required', null, 'client');
-        $mform->setType('dropbox_secret', PARAM_RAW_TRIMMED);
-        $mform->addElement('static', null, '', get_string('instruction', 'repository_dropbox'));
-        $mform->addElement('static', null,
-                get_string('oauth2redirecturi', 'repository_dropbox'),
-                self::get_oauth2callbackurl()->out()
-            );
-
+        $strrequired = get_string('required');
+        $mform->addElement('select', 'dropbox_issuerid', get_string('issuer', 'repository_dropbox'), $options);
+        $mform->addHelpButton('dropbox_issuerid', 'issuer', 'repository_dropbox');
+        $mform->addRule('dropbox_issuerid', $strrequired, 'required', null, 'client');
         $mform->addElement('text', 'dropbox_cachelimit', get_string('cachelimit', 'repository_dropbox'), array('size' => '40'));
         $mform->addRule('dropbox_cachelimit', null, 'numeric', null, 'client');
         $mform->setType('dropbox_cachelimit', PARAM_INT);
@@ -544,13 +525,9 @@ class repository_dropbox extends repository {
      * @return  mixed
      */
     public function set_option($options = []) {
-        if (!empty($options['dropbox_key'])) {
-            set_config('dropbox_key', trim($options['dropbox_key']), 'dropbox');
-            unset($options['dropbox_key']);
-        }
-        if (!empty($options['dropbox_secret'])) {
-            set_config('dropbox_secret', trim($options['dropbox_secret']), 'dropbox');
-            unset($options['dropbox_secret']);
+        if (!empty($options['dropbox_issuerid'])) {
+            set_config('dropbox_issuerid', trim($options['dropbox_issuerid']), 'dropbox');
+            unset($options['dropbox_issuerid']);
         }
         if (!empty($options['dropbox_cachelimit'])) {
             $this->cachelimit = (int) trim($options['dropbox_cachelimit']);
@@ -567,16 +544,13 @@ class repository_dropbox extends repository {
      * @return mixed
      */
     public function get_option($config = '') {
-        if ($config === 'dropbox_key') {
-            return trim(get_config('dropbox', 'dropbox_key'));
-        } else if ($config === 'dropbox_secret') {
-            return trim(get_config('dropbox', 'dropbox_secret'));
+        if ($config === 'dropbox_issuerid') {
+            return trim(get_config('dropbox', 'dropbox_issuerid'));
         } else if ($config === 'dropbox_cachelimit') {
             return $this->max_cache_bytes();
         } else {
             $options = parent::get_option();
-            $options['dropbox_key'] = trim(get_config('dropbox', 'dropbox_key'));
-            $options['dropbox_secret'] = trim(get_config('dropbox', 'dropbox_secret'));
+            $options['dropbox_issuerid'] = trim(get_config('dropbox', 'dropbox_issuerid'));
             $options['dropbox_cachelimit'] = $this->max_cache_bytes();
         }
 
@@ -601,8 +575,7 @@ class repository_dropbox extends repository {
      */
     public static function get_type_option_names() {
         return [
-                'dropbox_key',
-                'dropbox_secret',
+                'dropbox_issuerid',
                 'pluginname',
                 'dropbox_cachelimit',
             ];
