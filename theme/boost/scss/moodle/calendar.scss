@@ -64,7 +64,7 @@ $calendarEventColor: #0d5ca1 !default;
 @mixin footer-links {
     span.footer-link:after {
         content: "\2022";
-        color: $blue;
+        color: $primary;
     }
 
     span.footer-link:last-child:after {
