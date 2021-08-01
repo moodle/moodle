@@ -110,16 +110,18 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
      * @param  boolean $finishattempt whether to finish the new attempt
      * @param  string $behaviour the quiz preferredbehaviour, defaults to 'deferredfeedback'.
      * @param  boolean $includeqattachments whether to include a question that supports attachments, defaults to false.
+     * @param  array $extraoptions extra options for Quiz.
      * @return array array containing the quiz, context and the attempt
      */
     private function create_quiz_with_questions($startattempt = false, $finishattempt = false, $behaviour = 'deferredfeedback',
-            $includeqattachments = false) {
+            $includeqattachments = false, $extraoptions = []) {
 
         // Create a new quiz with attempts.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $data = array('course' => $this->course->id,
                       'sumgrades' => 2,
                       'preferredbehaviour' => $behaviour);
+        $data = array_merge($data, $extraoptions);
         $quiz = $quizgenerator->create_instance($data);
         $context = context_module::instance($quiz->cmid);
 
@@ -395,6 +397,8 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($quiz->id, $result['attempts'][0]['quiz']);
         $this->assertEquals($this->student->id, $result['attempts'][0]['userid']);
         $this->assertEquals(1, $result['attempts'][0]['attempt']);
+        $this->assertArrayHasKey('sumgrades', $result['attempts'][0]);
+        $this->assertEquals(1.0, $result['attempts'][0]['sumgrades']);
 
         // Test filters. Only finished.
         $result = mod_quiz_external::get_user_attempts($quiz->id, 0, 'finished', false);
@@ -458,6 +462,42 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         } catch (invalid_parameter_exception $e) {
             $this->assertEquals('invalidparameter', $e->errorcode);
         }
+    }
+
+    /**
+     * Test get_user_attempts with marks hidden
+     */
+    public function test_get_user_attempts_with_marks_hidden() {
+        // Create quiz with one attempt finished and hide the mark.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(
+                true, true, 'deferredfeedback', false,
+                ['marksduring' => 0, 'marksimmediately' => 0, 'marksopen' => 0, 'marksclosed' => 0]);
+
+        // Student cannot see the grades.
+        $this->setUser($this->student);
+        $result = mod_quiz_external::get_user_attempts($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+
+        $this->assertCount(1, $result['attempts']);
+        $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
+        $this->assertEquals($quiz->id, $result['attempts'][0]['quiz']);
+        $this->assertEquals($this->student->id, $result['attempts'][0]['userid']);
+        $this->assertEquals(1, $result['attempts'][0]['attempt']);
+        $this->assertArrayHasKey('sumgrades', $result['attempts'][0]);
+        $this->assertEquals(null, $result['attempts'][0]['sumgrades']);
+
+        // Test manager can see user grades.
+        $this->setUser($this->teacher);
+        $result = mod_quiz_external::get_user_attempts($quiz->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_attempts_returns(), $result);
+
+        $this->assertCount(1, $result['attempts']);
+        $this->assertEquals($attempt->id, $result['attempts'][0]['id']);
+        $this->assertEquals($quiz->id, $result['attempts'][0]['quiz']);
+        $this->assertEquals($this->student->id, $result['attempts'][0]['userid']);
+        $this->assertEquals(1, $result['attempts'][0]['attempt']);
+        $this->assertArrayHasKey('sumgrades', $result['attempts'][0]);
+        $this->assertEquals(1.0, $result['attempts'][0]['sumgrades']);
     }
 
     /**
