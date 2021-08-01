@@ -20,9 +20,9 @@
     "eslint-plugin-babel": "5.3.0",
     "eslint-plugin-promise": "4.2.1",
     "fb-watchman": "2.0.1",
-    "gherkin-lint": "4.0.1",
+    "gherkin-lint": "^4.2.2",
     "glob": "7.1.6",
-    "grunt": "1.1.0",
+    "grunt": "^1.4.1",
     "grunt-babel": "8.0.0",
     "grunt-contrib-uglify": "4.0.1",
     "grunt-contrib-watch": "1.1.0",
@@ -39,7 +39,7 @@
     "stylelint": "13.3.3",
     "stylelint-checkstyle-formatter": "0.1.2",
     "stylelint-csstree-validator": "1.8.0",
-    "xmldom": "0.3.0",
+    "xmldom": "^0.6.0",
     "xpath": "0.0.27"
   },
   "engines": {
