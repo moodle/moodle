@@ -24,6 +24,9 @@ require_once($CFG->dirroot.'/grade/export/grade_export_form.php');
  */
 abstract class grade_export {
 
+    /** @var int Value to state nothing is being exported. */
+    protected const EXPORT_SELECT_NONE = -1;
+
     public $plugin; // plgin name - must be filled in subclasses!
 
     public $grade_items; // list of all course grade items
@@ -112,9 +115,8 @@ abstract class grade_export {
         //with an empty $itemlist then reconstruct it in process_form() using $formdata
         $this->columns = array();
         if (!empty($itemlist)) {
-            if ($itemlist=='-1') {
-                //user deselected all items
-            } else {
+            // Check that user selected something.
+            if ($itemlist != self::EXPORT_SELECT_NONE) {
                 $itemids = explode(',', $itemlist);
                 // remove items that are not requested
                 foreach ($itemids as $itemid) {
@@ -149,9 +151,8 @@ abstract class grade_export {
 
         $this->columns = array();
         if (!empty($formdata->itemids)) {
-            if ($formdata->itemids=='-1') {
-                //user deselected all items
-            } else {
+            // Check that user selected something.
+            if ($formdata->itemids != self::EXPORT_SELECT_NONE) {
                 foreach ($formdata->itemids as $itemid=>$selected) {
                     if ($selected and array_key_exists($itemid, $this->grade_items)) {
                         $this->columns[$itemid] =& $this->grade_items[$itemid];
@@ -411,7 +412,7 @@ abstract class grade_export {
         $itemids = array_keys($this->columns);
         $itemidsparam = implode(',', $itemids);
         if (empty($itemidsparam)) {
-            $itemidsparam = '-1';
+            $itemidsparam = self::EXPORT_SELECT_NONE;
         }
 
         // We have a single grade display type constant.
