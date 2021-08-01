@@ -196,3 +196,20 @@ export const getCourseGroupsData = (courseId) => {
 
     return Ajax.call([request])[0];
 };
+
+/**
+ * Delete calendar subscription by id.
+ *
+ * @param {Number} subscriptionId The subscription id
+ * @return {promise}
+ */
+export const deleteSubscription = (subscriptionId) => {
+    const request = {
+        methodname: 'core_calendar_delete_subscription',
+        args: {
+            subscriptionid: subscriptionId
+        }
+    };
+
+    return Ajax.call([request])[0];
+};

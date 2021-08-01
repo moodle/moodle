@@ -293,6 +293,12 @@ $functions = array(
         'type'          => 'read',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ],
+    'core_calendar_delete_subscription' => [
+        'classname' => 'core_calendar\external\subscription\delete',
+        'description' => 'Delete the calendar subscription',
+        'type' => 'write',
+        'ajax' => true
+    ],
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'add_cohort_members',

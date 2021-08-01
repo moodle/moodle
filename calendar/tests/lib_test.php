@@ -190,7 +190,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, null, $sub->id);
+        calendar_import_events_from_ical($ical, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
 
@@ -207,7 +207,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, null, $sub->id);
+        calendar_import_events_from_ical($ical, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
 
@@ -224,7 +224,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, null, $sub->id);
+        calendar_import_events_from_ical($ical, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
 
@@ -240,11 +240,15 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, []);
 
         $sub = calendar_get_subscription($id);
-        $output = calendar_import_icalendar_events($ical, null, $sub->id);
-        $this->assertStringNotContainsString('Events deleted: 17', $output);
-        $this->assertStringContainsString('1 events were imported', $output);
-        $this->assertStringContainsString('0 events were skipped', $output);
-        $this->assertStringContainsString('0 events were updated', $output);
+        $output = calendar_import_events_from_ical($ical, $sub->id);
+        $this->assertArrayHasKey('eventsimported', $output);
+        $this->assertArrayHasKey('eventsskipped', $output);
+        $this->assertArrayHasKey('eventsupdated', $output);
+        $this->assertArrayHasKey('eventsdeleted', $output);
+        $this->assertEquals(1, $output['eventsimported']);
+        $this->assertEquals(0, $output['eventsskipped']);
+        $this->assertEquals(0, $output['eventsupdated']);
+        $this->assertEquals(0, $output['eventsdeleted']);
     }
 
     /**

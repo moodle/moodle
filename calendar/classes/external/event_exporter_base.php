@@ -101,19 +101,6 @@ class event_exporter_base extends exporter {
         if ($cm = $event->get_course_module()) {
             $data->modulename = $cm->get('modname');
             $data->instance = $cm->get('id');
-            $data->activityname = $cm->get('name');
-
-            $component = 'mod_' . $data->modulename;
-            if (!component_callback_exists($component, 'core_calendar_get_event_action_string')) {
-                $modulename = get_string('modulename', $data->modulename);
-                $data->activitystr = get_string('requiresaction', 'calendar', $modulename);
-            } else {
-                $data->activitystr = component_callback(
-                    $component,
-                    'core_calendar_get_event_action_string',
-                    [$event->get_type()]
-                );
-            }
         }
 
         parent::__construct($data, $related);
@@ -183,18 +170,6 @@ class event_exporter_base extends exporter {
                 'null' => NULL_ALLOWED
             ],
             'modulename' => [
-                'type' => PARAM_TEXT,
-                'optional' => true,
-                'default' => null,
-                'null' => NULL_ALLOWED
-            ],
-            'activityname' => [
-                'type' => PARAM_TEXT,
-                'optional' => true,
-                'default' => null,
-                'null' => NULL_ALLOWED
-            ],
-            'activitystr' => [
                 'type' => PARAM_TEXT,
                 'optional' => true,
                 'default' => null,
