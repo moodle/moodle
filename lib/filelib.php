@@ -2529,10 +2529,9 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
         $filename = rawurlencode($filename);
     }
 
-    // We need to force download and force filter the file content for the SVG file.
+    // Make sure we force download of SVG files for security reasons (https://digi.ninja/blog/svg_xss.php).
     if (file_is_svg_image_from_mimetype($mimetype)) {
         $forcedownload = true;
-        $filter = 1;
     }
 
     if ($forcedownload) {
