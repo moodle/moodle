@@ -104,6 +104,7 @@
         "privacy": "privacy",
         "question": "question",
         "rating": "rating",
+        "reportbuilder": "reportbuilder",
         "repository": "repository",
         "rss": "rss",
         "role": "admin\/roles",

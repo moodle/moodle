@@ -1,0 +1,46 @@
+/* Rportbuilder */
+.reportbuilder-table-wrapper {
+    .filters-dropdown {
+        width: 27rem;
+        padding: 0;
+        @include media-breakpoint-down(sm) {
+            width: 100%;
+        }
+    }
+    .reportbuilder-filters-wrapper {
+        .mform {
+            &.full-width-labels {
+                .fitem.row {
+                    > .col-md-3,
+                    > .col-md-9 {
+                        flex: 0 0 100%;
+                        max-width: 100%;
+                    }
+                    .fdate_selector {
+                        flex-wrap: wrap;
+                    }
+                }
+            }
+            .form-group {
+                margin-bottom: 0;
+            }
+        }
+        .filter {
+            .filter-header {
+                font-size: $h5-font-size;
+                .filter-name {
+                    font-size: 1rem;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    padding-right: 1rem;
+                }
+                .filter-name:hover {
+                    white-space: normal;
+                    text-overflow: clip;
+                    word-break: break-all;
+                }
+            }
+        }
+    }
+}

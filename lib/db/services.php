@@ -2773,6 +2773,12 @@ $functions = array(
         'type'        => 'read',
         'ajax'        => true,
     ],
+    'core_reportbuilder_filters_reset' => [
+        'classname'   => 'core_reportbuilder\external\filters\reset',
+        'description' => 'Reset filters for given report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
 );
 
 $services = array(

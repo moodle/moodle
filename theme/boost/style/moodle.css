@@ -20017,6 +20017,38 @@ div.editor_atto_toolbar button .icon {
 #page {
   margin-top: 50px; }
 
+/* Rportbuilder */
+.reportbuilder-table-wrapper .filters-dropdown {
+  width: 27rem;
+  padding: 0; }
+  @media (max-width: 767.98px) {
+    .reportbuilder-table-wrapper .filters-dropdown {
+      width: 100%; } }
+
+.reportbuilder-table-wrapper .reportbuilder-filters-wrapper .mform.full-width-labels .fitem.row > .col-md-3,
+.reportbuilder-table-wrapper .reportbuilder-filters-wrapper .mform.full-width-labels .fitem.row > .col-md-9 {
+  flex: 0 0 100%;
+  max-width: 100%; }
+
+.reportbuilder-table-wrapper .reportbuilder-filters-wrapper .mform.full-width-labels .fitem.row .fdate_selector {
+  flex-wrap: wrap; }
+
+.reportbuilder-table-wrapper .reportbuilder-filters-wrapper .mform .form-group {
+  margin-bottom: 0; }
+
+.reportbuilder-table-wrapper .reportbuilder-filters-wrapper .filter .filter-header {
+  font-size: 1.171875rem; }
+  .reportbuilder-table-wrapper .reportbuilder-filters-wrapper .filter .filter-header .filter-name {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 1rem; }
+  .reportbuilder-table-wrapper .reportbuilder-filters-wrapper .filter .filter-header .filter-name:hover {
+    white-space: normal;
+    text-overflow: clip;
+    word-break: break-all; }
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
