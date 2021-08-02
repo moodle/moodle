@@ -1026,7 +1026,7 @@ $string['profileshortnamenotunique'] = 'This short name is already in use';
 $string['profilesignup'] = 'Display on signup page?';
 $string['profilespecificsettings'] = 'Specific settings';
 $string['profilevisible'] = 'Who is this field visible to?';
-$string['profilevisible_help'] = '* Not visible - For private data only viewable by administrators
+$string['profilevisible_help'] = '* Not visible - For private data only viewable by administrators and managers
 * Visible to user - For private data only viewable by the user and administrators
 * Visible to user, teachers and admins - For private data only viewable by the user, administrators and teachers (on course profile)
 * Visible to everyone';
