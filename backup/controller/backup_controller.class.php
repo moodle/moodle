@@ -359,6 +359,15 @@ class backup_controller extends base_controller {
     }
 
     /**
+     * For debug only. Get a simple test display of all the settings.
+     *
+     * @return string
+     */
+    public function debug_display_all_settings_values(): string {
+        return $this->get_plan()->debug_display_all_settings_values();
+    }
+
+    /**
      * Sets the user roles that should be kept in the destination course
      * for a course copy operation.
      *
