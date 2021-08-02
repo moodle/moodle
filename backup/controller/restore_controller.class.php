@@ -350,6 +350,15 @@ class restore_controller extends base_controller {
         }
     }
 
+    /**
+     * For debug only. Get a simple test display of all the settings.
+     *
+     * @return string
+     */
+    public function debug_display_all_settings_values(): string {
+        return $this->get_plan()->debug_display_all_settings_values();
+    }
+
     public function get_info() {
         return $this->info;
     }
