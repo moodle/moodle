@@ -2119,7 +2119,6 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
 
     public function process_override($data) {
         $data = (object)$data;
-
         // Check roleid is one of the mapped ones
         $newrole = $this->get_mapping('role', $data->roleid);
         $newroleid = $newrole->newitemid ?? false;
@@ -2137,8 +2136,8 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
                 // Check if the new role is an overrideable role AND if the user performing the restore has the
                 // capability to assign the capability.
                 if (in_array($newrole->info['shortname'], $overrideableroles) &&
-                    ($safecapability && has_capability('moodle/role:safeoverride', $context, $userid) ||
-                        !$safecapability && has_capability('moodle/role:override', $context, $userid))
+                    (has_capability('moodle/role:override', $context, $userid) ||
+                            ($safecapability && has_capability('moodle/role:safeoverride', $context, $userid)))
                 ) {
                     assign_capability($data->capability, $data->permission, $newroleid, $this->task->get_contextid());
                 } else {
