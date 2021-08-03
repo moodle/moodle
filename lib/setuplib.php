@@ -618,24 +618,12 @@ function get_exception_info($ex) {
 }
 
 /**
- * Generate a V4 UUID.
- *
- * Unique is hard. Very hard. Attempt to use the PECL UUID function if available, and if not then revert to
- * constructing the uuid using mt_rand.
- *
- * It is important that this token is not solely based on time as this could lead
- * to duplicates in a clustered environment (especially on VMs due to poor time precision).
- *
- * @see https://tools.ietf.org/html/rfc4122
- *
  * @deprecated since Moodle 3.8 MDL-61038 - please do not use this function any more.
  * @see \core\uuid::generate()
- *
- * @return string The uuid.
  */
 function generate_uuid() {
-    debugging('generate_uuid() is deprecated. Please use \core\uuid::generate() instead.', DEBUG_DEVELOPER);
-    return \core\uuid::generate();
+    throw new coding_exception('generate_uuid() cannot be used anymore. Please use ' .
+        '\core\uuid::generate() instead.');
 }
 
 /**
