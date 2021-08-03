@@ -116,6 +116,7 @@ class secondary_test extends \advanced_testcase {
 
         }
         $PAGE->set_url($pageurl);
+        navigation_node::override_active_url($pageurl);
         $PAGE->set_course($pagecourse);
         $PAGE->set_context($contextrecord);
 
