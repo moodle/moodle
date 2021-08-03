@@ -102,6 +102,11 @@ class system_report_table extends table_sql implements dynamic, renderable {
 
             $columnheaders[$column->get_column_alias()] = $column->get_title();
 
+            // Specify whether column should behave as a user fullname column.
+            if (preg_match('/^user:fullname.*$/', $column->get_unique_identifier())) {
+                $this->userfullnamecolumns[] = $column->get_column_alias();
+            }
+
             // Add each columns fields, joins and params to our report.
             $fields = array_merge($fields, $column->get_fields());
             $joins = array_merge($joins, $column->get_joins());
