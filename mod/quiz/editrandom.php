@@ -53,7 +53,13 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->add_body_class('limitedwidth');
 
-if (!$question = $DB->get_record('question', array('id' => $slot->questionid))) {
+// Get the question object + category id.
+$sql = "SELECT q.*, qv.status, qbe.questioncategoryid AS category
+          FROM {question} q
+          JOIN {question_versions} qv ON qv.questionid = q.id
+          JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+         WHERE q.id = :id";
+if (!$question = $DB->get_record_sql($sql, ['id' => $slot->questionid])) {
     print_error('questiondoesnotexist', 'question', $returnurl);
 }
 
@@ -68,7 +74,7 @@ if (!$category = $DB->get_record('question_categories', array('id' => $question-
 question_require_capability_on($question, 'edit');
 
 $thiscontext = context_module::instance($cm->id);
-$contexts = new question_edit_contexts($thiscontext);
+$contexts = new core_question\lib\question_edit_contexts($thiscontext);
 
 // Create the question editing form.
 $mform = new mod_quiz\form\randomquestion_form(new moodle_url('/mod/quiz/editrandom.php'),

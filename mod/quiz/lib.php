@@ -2421,7 +2421,7 @@ function mod_quiz_output_fragment_add_random_question_form($args) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/quiz/addrandomform.php');
 
-    $contexts = new \question_edit_contexts($args['context']);
+    $contexts = new \core_question\lib\question_edit_contexts($args['context']);
     $formoptions = [
         'contexts' => $contexts,
         'cat' => $args['cat']

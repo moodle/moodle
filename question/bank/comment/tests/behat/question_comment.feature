@@ -63,6 +63,7 @@ Feature: A Teacher can comment in a question
     And I navigate to "Question bank" in current page administration
     And I set the field "Select a category" to "Test questions"
     And I choose "Preview" action for "First question" in the question bank
+    And I click on "Comments" "link"
     Then I should see "Save comment"
     And I add "Super test comment 01" comment to question preview
     And I click on "Save comment" "link"
@@ -71,7 +72,8 @@ Feature: A Teacher can comment in a question
     And I click on "Close preview" "button"
     Then I should see "1" on the comments column
     And I choose "Preview" action for "First question" in the question bank
-    And I delete "Super test comment 01" comment from question
+    And I click on "Comments" "link"
+    And I delete "Super test comment 01" comment from question preview
     And I should not see "Super test comment 01"
     And I click on "Close preview" "button"
     Then I should see "0" on the comments column
@@ -100,6 +102,7 @@ Feature: A Teacher can comment in a question
     And I press "id_submitbutton"
     Then I should see "Essay 01 new"
     And I choose "Preview" action for "Essay 01 new" in the question bank
+    And I click on "Comments" "link"
     Then I should see "Save comment"
     And I log out
     Then I log in as "teacher2"

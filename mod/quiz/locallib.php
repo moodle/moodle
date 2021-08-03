@@ -2432,15 +2432,17 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
     // Find existing random questions in this category that are
     // not used by any quiz.
     $existingquestions = $DB->get_records_sql(
-        "SELECT q.id, q.qtype FROM {question} q
-        WHERE qtype = 'random'
-            AND category = ?
-            AND " . $DB->sql_compare_text('questiontext') . " = ?
-            AND NOT EXISTS (
-                    SELECT *
-                      FROM {quiz_slots}
-                     WHERE questionid = q.id)
-        ORDER BY id", array($category->id, $includesubcategories ? '1' : '0'));
+        "SELECT q.id, q.qtype
+               FROM {question} q
+               JOIN {question_versions} qv ON qv.questionid = q.id
+               JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+              WHERE q.qtype = 'random'
+                AND qbe.questioncategoryid = ?
+                AND " . $DB->sql_compare_text('questiontext') . " = ?
+     AND NOT EXISTS (SELECT *
+                       FROM {quiz_slots}
+                      WHERE questionid = q.id)
+           ORDER BY q.id", array($category->id, $includesubcategories ? '1' : '0'));
 
     for ($i = 0; $i < $number; $i++) {
         // Take as many of orphaned "random" questions as needed.
@@ -2450,7 +2452,7 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
             $form->includesubcategories = $includesubcategories;
             $form->fromtags = $tagstrings;
             $form->defaultmark = 1;
-            $form->hidden = 1;
+            $form->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
             $form->stamp = make_unique_id_code(); // Set the unique code (not to be changed).
             $question = new stdClass();
             $question->qtype = 'random';

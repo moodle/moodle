@@ -290,7 +290,29 @@ class random_question_loader {
             $fieldsstring = implode(',', $fields);
         }
 
-        return $DB->get_records_list('question', 'id', $questionids, 'id', $fieldsstring, $offset, $limit);
+        // Create the query to get the questions (validate that at least we have a question id. If not, do not execute the sql.)
+        $hasquestions = false;
+        $where = 'IN (';
+        foreach ($questionids as $questionid) {
+            $where = $where . $questionid . ',';
+            // Extra validation, we do not want an infinite loop.
+            $hasquestions = (bool)$questionid;
+        }
+        $where = rtrim($where,',');
+        $where = $where . ')';
+
+        if ($hasquestions) {
+            $sql = "SELECT {$fieldsstring}
+                      FROM (SELECT q.*, qbe.questioncategoryid as category
+                      FROM {question} q
+                      JOIN {question_versions} qv ON qv.questionid = q.id
+                      JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                     WHERE q.id {$where}) q";
+
+            return $DB->get_records_sql($sql, [], $offset, $limit);
+        } else {
+            return [];
+        }
     }
 
     /**

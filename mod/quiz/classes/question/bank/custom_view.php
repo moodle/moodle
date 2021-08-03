@@ -44,8 +44,8 @@ class custom_view extends \core_question\local\bank\view {
     const MAX_TEXT_LENGTH = 200;
 
     /**
-     * Constructor for custom_view.
-     * @param \question_edit_contexts $contexts
+     * Constructor.
+     * @param \core_question\lib\question_edit_contexts $contexts
      * @param \moodle_url $pageurl
      * @param \stdClass $course course settings
      * @param \stdClass $cm activity settings.

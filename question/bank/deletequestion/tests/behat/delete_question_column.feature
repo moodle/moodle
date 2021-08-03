@@ -55,7 +55,8 @@ Feature: Use the qbank plugin manager page for deletequestion
     Given I log in as "admin"
     And I am on the "Test quiz" "quiz activity" page
     And I navigate to "Question bank > Questions" in current page administration
-    And I click on "Select all" "checkbox"
+    And I click on "First question" "checkbox"
+    And I click on "First question second" "checkbox"
     And I click on "With selected" "button"
     And I click on question bulk action "deleteselected"
     And I click on "Delete" "button" in the "Confirm" "dialogue"

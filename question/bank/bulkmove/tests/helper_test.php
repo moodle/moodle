@@ -202,7 +202,7 @@ class helper_test extends \advanced_testcase {
     public function test_get_displaydata() {
         $this->helper_setup();
         $coursecontext = \context_course::instance($this->course->id);
-        $contexts = new \question_edit_contexts($coursecontext);
+        $contexts = new question_edit_contexts($coursecontext);
         $addcontexts = $contexts->having_cap('moodle/question:add');
         $url = new \moodle_url('/question/bank/bulkmove/move.php');
         $displaydata = \qbank_bulkmove\helper::get_displaydata($addcontexts, $url, $url);

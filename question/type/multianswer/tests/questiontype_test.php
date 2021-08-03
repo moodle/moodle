@@ -67,10 +67,12 @@ class qtype_multianswer_test extends advanced_testcase {
         $q->generalfeedbackformat = FORMAT_HTML;
         $q->defaultmark = 2;
         $q->penalty = 0.3333333;
+        $q->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $q->versionid = 0;
+        $q->version = 1;
+        $q->questionbankentryid = 0;
         $q->length = 1;
         $q->stamp = make_unique_id_code();
-        $q->version = make_unique_id_code();
-        $q->hidden = 0;
         $q->timecreated = time();
         $q->timemodified = time();
         $q->createdby = $USER->id;
@@ -139,8 +141,8 @@ class qtype_multianswer_test extends advanced_testcase {
 
         $this->assertEquals(['id', 'category', 'parent', 'name', 'questiontext', 'questiontextformat',
                 'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty', 'qtype',
-                'length', 'stamp', 'version', 'hidden', 'timecreated', 'timemodified',
-                'createdby', 'modifiedby', 'idnumber', 'contextid', 'options', 'hints', 'categoryobject'],
+                'length', 'stamp', 'timecreated', 'timemodified', 'createdby', 'modifiedby', 'idnumber', 'contextid',
+                'status', 'versionid', 'version', 'questionbankentryid', 'categoryobject', 'options', 'hints'],
                 array_keys(get_object_vars($questiondata)));
         $this->assertEquals($category->id, $questiondata->category);
         $this->assertEquals(0, $questiondata->parent);
@@ -153,7 +155,7 @@ class qtype_multianswer_test extends advanced_testcase {
         $this->assertEquals(0, $questiondata->penalty);
         $this->assertEquals('multianswer', $questiondata->qtype);
         $this->assertEquals(1, $questiondata->length);
-        $this->assertEquals(0, $questiondata->hidden);
+        $this->assertEquals(0, $questiondata->status);
         $this->assertEquals($question->createdby, $questiondata->createdby);
         $this->assertEquals($question->createdby, $questiondata->modifiedby);
         $this->assertEquals('', $questiondata->idnumber);
@@ -205,7 +207,6 @@ class qtype_multianswer_test extends advanced_testcase {
                 'qtype' => $value->qtype,
                 'length' => $value->length,
                 'stamp' => $value->stamp,
-                'hidden' => 0,
                 'timecreated' => $value->timecreated,
                 'timemodified' => $value->timemodified,
                 'createdby' => $value->createdby,
@@ -215,7 +216,15 @@ class qtype_multianswer_test extends advanced_testcase {
         }
         // Need to get rid of (version, idnumber, options, hints, maxmark). They are missing @ fromform.
         $gotquestions = array_map(function($question) {
-                unset($question->version);
+                $question->id = (int) $question->id;
+                $question->category = (int) $question->category;
+                $question->defaultmark = (float) $question->defaultmark;
+                $question->penalty = (float) $question->penalty;
+                $question->length = (int) $question->length;
+                $question->timecreated = (int) $question->timecreated;
+                $question->timemodified = (int) $question->timemodified;
+                $question->createdby = (int) $question->createdby;
+                $question->modifiedby = (int) $question->modifiedby;
                 unset($question->idnumber);
                 unset($question->options);
                 unset($question->hints);
@@ -250,7 +259,8 @@ class qtype_multianswer_test extends advanced_testcase {
         $actualquestiondata = end($actualquestionsdata);
 
         foreach ($questiondata as $property => $value) {
-            if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated', 'options', 'hints', 'stamp'))) {
+            if (!in_array($property, ['id', 'timemodified', 'timecreated', 'options', 'hints', 'stamp',
+                'idnumber', 'version', 'versionid', 'questionbankentryid'])) {
                 $this->assertEquals($value, $actualquestiondata->$property);
             }
         }
@@ -273,8 +283,8 @@ class qtype_multianswer_test extends advanced_testcase {
         $this->assertObjectHasAttribute('questions', $actualquestiondata->options);
 
         $subqpropstoignore =
-            array('id', 'category', 'parent', 'contextid', 'question', 'options', 'stamp', 'version', 'timemodified',
-                'timecreated');
+            ['id', 'category', 'parent', 'contextid', 'question', 'options', 'stamp', 'timemodified',
+                'timecreated', 'status', 'idnumber', 'version', 'versionid', 'questionbankentryid'];
         foreach ($questiondata->options->questions as $subqno => $subq) {
             $actualsubq = $actualquestiondata->options->questions[$subqno];
             foreach ($subq as $subqproperty => $subqvalue) {

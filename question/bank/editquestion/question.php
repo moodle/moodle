@@ -108,7 +108,7 @@ if ($cmid) {
 } else {
     throw new moodle_exception('missingcourseorcmid', 'question');
 }
-$contexts = new question_edit_contexts($thiscontext);
+$contexts = new core_question\lib\question_edit_contexts($thiscontext);
 $PAGE->set_pagelayout('admin');
 
 if (optional_param('addcancel', false, PARAM_BOOL)) {
@@ -174,6 +174,7 @@ if ($id) {
     if (!$formeditable) {
         question_require_capability_on($question, 'view');
     }
+    $question->beingcopied = false;
     if ($makecopy) {
         // If we are duplicating a question, add some indication to the question name.
         $question->name = get_string('questionnamecopy', 'question', $question->name);
@@ -210,6 +211,13 @@ if ($formeditable && $id) {
 $toform->appendqnumstring = $appendqnumstring;
 $toform->returnurl = $originalreturnurl;
 $toform->makecopy = $makecopy;
+if (isset($question->id)) {
+    $questionobject = question_bank::load_question($question->id);
+    $toform->status = $questionobject->status;
+    $toform->idnumber = $questionobject->idnumber;
+} else {
+    $toform->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+}
 if ($cm !== null) {
     $toform->cmid = $cm->id;
     $toform->courseid = $cm->course;
@@ -236,7 +244,12 @@ if ($mform->is_cancelled()) {
     // If we are saving as a copy, break the connection to the old question.
     if ($makecopy) {
         $question->id = 0;
-        $question->hidden = 0; // Copies should not be hidden.
+        $question->status = \core_question\local\bank\constants::QUESTION_STATUS_READY; // Copies should not be hidden.
+    }
+
+    // If is will be added directly to a module send the module name to be referenced.
+    if ($appendqnumstring && $cm) {
+        $fromform->modulename = 'mod_' . $cm->modname;
     }
 
     // Process the combination of usecurrentcat, categorymoveto and category form
@@ -248,7 +261,7 @@ if ($mform->is_cancelled()) {
     // If we are moving a question, check we have permission to move it from
     // whence it came (Where we are moving to is validated by the form).
     list($newcatid, $newcontextid) = explode(',', $fromform->category);
-    if (!empty($question->id) && $newcatid != $question->category) {
+    if (!empty($question->id) && $newcatid != $question->categoryobject->id) {
         $contextid = $newcontextid;
         question_require_capability_on($question, 'move');
     } else {

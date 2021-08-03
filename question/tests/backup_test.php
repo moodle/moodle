@@ -173,6 +173,12 @@ class core_question_backup_testcase extends advanced_testcase {
         delete_course($courseid2, false);
         foreach ($questions as $question) {
             question_delete_question($question->id);
+
+            // TODO: Remove this assert when restore a question is fixed (create version and bank entry).
+            $this->assertDebuggingCalled('Deleting question ' . $question->id .
+                ' which is no longer linked to a context. Assuming system context ' .
+                'to avoid errors, but this may mean that some data like ' .
+                'files, tags, are not cleaned up.');
         }
         $category1->delete_full(false);
 
@@ -190,9 +196,11 @@ class core_question_backup_testcase extends advanced_testcase {
 
         // The questions should have been moved to a question category that belongs to a course context.
         $questions = $DB->get_records_sql("SELECT q.*
-                                             FROM {question} q
-                                             JOIN {question_categories} qc ON q.category = qc.id
-                                            WHERE qc.contextid = ?", [$coursecontext3->id]);
+                                                FROM {question} q
+                                                JOIN {question_versions} qv ON qv.questionid = q.id
+                                                JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                                                JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                                               WHERE qc.contextid = ?", [$coursecontext3->id]);
         $this->assertCount(2, $questions);
 
         // Now, retrieve tags for each question and check if they are assigned at the right context.

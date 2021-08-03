@@ -109,6 +109,18 @@ class core_questionlib_testcase extends advanced_testcase {
         return array($category, $course, $quiz, $qcat, $questions);
     }
 
+    /**
+     * Assert that a category contains a specific number of questions.
+     *
+     * @param int $categoryid int Category id.
+     * @param int $numberofquestions Number of question in a category.
+     * @return void Questions in a category.
+     */
+    function assert_category_contains_questions(int $categoryid, int $numberofquestions): void {
+        $questionsid = question_bank::get_finder()->get_questions_from_categories([$categoryid], null);
+        $this->assertEquals($numberofquestions, count($questionsid));
+    }
+
     public function test_question_reorder_qtypes() {
         $this->assertEquals(
             array(0 => 't2', 1 => 't1', 2 => 't3'),
@@ -327,8 +339,7 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
 
         // Verify questions deleted or moved.
-        $criteria = array('category' => $qcat->id);
-        $this->assertEquals(0, $DB->count_records('question', $criteria));
+        $this->assert_category_contains_questions($qcat->id, 0);
 
         // Verify question not deleted.
         $criteria = array('id' => $questions[0]->id);
@@ -355,8 +366,7 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
 
         // Verify questions deleted or moved.
-        $criteria = array('category' => $qcat->id);
-        $this->assertEquals(0, $DB->count_records('question', $criteria));
+        $this->assert_category_contains_questions($qcat->id, 0);
     }
 
     /**
@@ -377,8 +387,7 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
 
         // Verify questions deleted or moved.
-        $criteria = array('category' => $qcat->id);
-        $this->assertEquals(0, $DB->count_records('question', $criteria));
+        $this->assert_category_contains_questions($qcat->id, 0);
     }
 
     /**
@@ -399,8 +408,7 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
 
         // Verify questions deleted or moved.
-        $criteria = array('category' => $qcat->id);
-        $this->assertEquals(0, $DB->count_records('question', $criteria));
+        $this->assert_category_contains_questions($qcat->id, 0);
     }
 
     /**
@@ -421,8 +429,7 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
 
         // Verify questions deleted or moved.
-        $criteria = array('category' => $qcat->id);
-        $this->assertEquals(0, $DB->count_records('question', $criteria));
+        $this->assert_category_contains_questions($qcat->id, 0);
     }
 
     /**
@@ -449,9 +456,11 @@ class core_questionlib_testcase extends advanced_testcase {
         // Verify questions are moved.
         $params = array($qcat2->contextid);
         $actualquestionscount = $DB->count_records_sql("SELECT COUNT(*)
-                                                          FROM {question} q
-                                                          JOIN {question_categories} qc ON q.category = qc.id
-                                                         WHERE qc.contextid = ?", $params);
+                                                              FROM {question} q
+                                                              JOIN {question_versions} qv ON qv.questionid = q.id
+                                                              JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                                                              JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                                                             WHERE qc.contextid = ?", $params);
         $this->assertEquals($questionsinqcat1 + $questionsinqcat2, $actualquestionscount);
 
         // Verify there is just a single top-level category.
@@ -1728,15 +1737,10 @@ class core_questionlib_testcase extends advanced_testcase {
         $qtype = 'truefalse';
         $overrides = [
             'category' => $questioncat->id,
+            'createdby' => ($isowner) ? $user->id : $otheruser->id,
         ];
 
         $question = $questiongenerator->create_question($qtype, null, $overrides);
-
-        // The question generator does not support setting of the createdby for some reason.
-        $question->createdby = ($isowner) ? $user->id : $otheruser->id;
-        $fromform = test_question_maker::get_question_form_data($qtype, null);
-        $fromform = (object) $generator->combine_defaults_and_record((array) $fromform, $overrides);
-        question_bank::get_qtype($qtype)->save_question($question, $fromform);
 
         $this->setUser($user);
         $result = question_has_capability_on($question, $capability);
@@ -1779,15 +1783,10 @@ class core_questionlib_testcase extends advanced_testcase {
         $qtype = 'truefalse';
         $overrides = [
             'category' => $questioncat->id,
+            'createdby' => ($isowner) ? $user->id : $otheruser->id,
         ];
 
         $question = $questiongenerator->create_question($qtype, null, $overrides);
-
-        // The question generator does not support setting of the createdby for some reason.
-        $question->createdby = ($isowner) ? $user->id : $otheruser->id;
-        $fromform = test_question_maker::get_question_form_data($qtype, null);
-        $fromform = (object) $generator->combine_defaults_and_record((array) $fromform, $overrides);
-        question_bank::get_qtype($qtype)->save_question($question, $fromform);
 
         $this->setUser($user);
         $result = question_has_capability_on($question->id, $capability);
@@ -1830,15 +1829,10 @@ class core_questionlib_testcase extends advanced_testcase {
         $qtype = 'truefalse';
         $overrides = [
             'category' => $questioncat->id,
+            'createdby' => ($isowner) ? $user->id : $otheruser->id,
         ];
 
         $question = $questiongenerator->create_question($qtype, null, $overrides);
-
-        // The question generator does not support setting of the createdby for some reason.
-        $question->createdby = ($isowner) ? $user->id : $otheruser->id;
-        $fromform = test_question_maker::get_question_form_data($qtype, null);
-        $fromform = (object) $generator->combine_defaults_and_record((array) $fromform, $overrides);
-        question_bank::get_qtype($qtype)->save_question($question, $fromform);
 
         $this->setUser($user);
         $result = question_has_capability_on((string) $question->id, $capability);
@@ -1887,15 +1881,10 @@ class core_questionlib_testcase extends advanced_testcase {
         $qtype = 'truefalse';
         $overrides = [
             'category' => $questioncat->id,
+            'createdby' => ($isowner) ? $user->id : $otheruser->id,
         ];
 
         $question = $questiongenerator->create_question($qtype, null, $overrides);
-
-        // The question generator does not support setting of the createdby for some reason.
-        $question->createdby = ($isowner) ? $user->id : $otheruser->id;
-        $fromform = test_question_maker::get_question_form_data($qtype, null);
-        $fromform = (object) $generator->combine_defaults_and_record((array) $fromform, $overrides);
-        question_bank::get_qtype($qtype)->save_question($question, $fromform);
 
         // Move the question.
         question_move_questions_to_category([$question->id], $newquestioncat->id);
@@ -1941,11 +1930,9 @@ class core_questionlib_testcase extends advanced_testcase {
         // Create the question.
         $question = $questiongenerator->create_question('truefalse', null, [
             'category' => $questioncat->id,
+            'createdby' => ($isowner) ? $user->id : $otheruser->id,
         ]);
         $question = question_bank::load_question_data($question->id);
-
-        // The question generator does not support setting of the createdby for some reason.
-        $question->createdby = ($isowner) ? $user->id : $otheruser->id;
 
         $this->setUser($user);
         $result = question_has_capability_on($question, $capability);
@@ -1970,11 +1957,9 @@ class core_questionlib_testcase extends advanced_testcase {
         // Create the question.
         $question = $questiongenerator->create_question('truefalse', null, [
             'category' => $questioncat->id,
+            'createdby' => $user->id,
         ]);
         $question = question_bank::load_question_data($question->id);
-
-        // The question generator does not support setting of the createdby for some reason.
-        $question->createdby = $user->id;
 
         $this->setUser($user);
         $result = question_has_capability_on((string)$question->id, 'tag');
@@ -2057,4 +2042,218 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertSame('id11', core_question_find_next_unused_idnumber('id9', $category->id));
         $this->assertSame('id11', core_question_find_next_unused_idnumber('id8', $category->id));
     }
+
+    /**
+     * Tests for the question_move_questions_to_category function.
+     *
+     * @covers ::question_move_questions_to_category
+     */
+    public function test_question_move_questions_to_category() {
+        $this->resetAfterTest();
+
+        // Create the test data.
+        list($category1, $course1, $quiz1, $questioncat1, $questions1) = $this->setup_quiz_and_questions();
+        list($category2, $course2, $quiz2, $questioncat2, $questions2) = $this->setup_quiz_and_questions();
+
+        $this->assertCount(2, $questions1);
+        $this->assertCount(2, $questions2);
+        $questionsidtomove = [];
+        foreach ($questions1 as $question1) {
+            $questionsidtomove[] = $question1->id;
+        }
+
+        // Move the question from quiz 1 to quiz 2.
+        question_move_questions_to_category($questionsidtomove, $questioncat2->id);
+        $this->assert_category_contains_questions($questioncat2->id, 4);
+    }
+
+    /**
+     * Tests for the idnumber_exist_in_question_category function.
+     *
+     * @covers ::idnumber_exist_in_question_category
+     */
+    public function test_idnumber_exist_in_question_category() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create the test data.
+        list($category1, $course1, $quiz1, $questioncat1, $questions1) = $this->setup_quiz_and_questions();
+        list($category2, $course2, $quiz2, $questioncat2, $questions2) = $this->setup_quiz_and_questions();
+
+        $questionbankentry1 = get_question_bank_entry($questions1[0]->id);
+        $entry = new stdClass();
+        $entry->id = $questionbankentry1->id;
+        $entry->idnumber = 1;
+        $DB->update_record('question_bank_entry', $entry);
+
+        $questionbankentry2 = get_question_bank_entry($questions2[0]->id);
+        $entry2 = new stdClass();
+        $entry2->id = $questionbankentry2->id;
+        $entry2->idnumber = 1;
+        $DB->update_record('question_bank_entry', $entry2);
+
+        $questionbe = $DB->get_record('question_bank_entry', ['id' => $questionbankentry1->id]);
+
+        // Validate that a first stage of an idnumber exists (this format: xxxx_x).
+        list($response, $record) = idnumber_exist_in_question_category($questionbe->idnumber, $questioncat1->id);
+        $this->assertEquals([], $record);
+        $this->assertEquals(true, $response);
+
+        // Move the question to a category that has a question with the same idnumber.
+        question_move_questions_to_category($questions1[0]->id, $questioncat2->id);
+
+        // Validate that function return the last record used for the idnumber.
+        list($response, $record) = idnumber_exist_in_question_category($questionbe->idnumber, $questioncat2->id);
+        $record = reset($record);
+        $idnumber = $record->idnumber;
+        $this->assertEquals($idnumber, '1_1');
+        $this->assertEquals(true, $response);
+    }
+
+    /**
+     * Test method is_latest().
+     *
+     * @covers ::is_latest
+     *
+     */
+    public function test_is_latest() {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qcat1 = $generator->create_question_category(['name' => 'My category', 'sortorder' => 1, 'idnumber' => 'myqcat']);
+        $question = $generator->create_question('shortanswer', null, ['name' => 'q1', 'category' => $qcat1->id]);
+        $record = $DB->get_record('question_versions', ['questionid' => $question->id]);
+        $firstversion = $record->version;
+        $questionbankentryid = $record->questionbankentryid;
+        $islatest = is_latest($firstversion, $questionbankentryid);
+        $this->assertTrue($islatest);
+    }
+
+    /**
+     * Test question bank entry deletion.
+     *
+     * @covers ::delete_question_bank_entry
+     */
+    public function test_delete_question_bank_entry() {
+        global $DB;
+        $this->resetAfterTest();
+        // Setup.
+        $context = context_system::instance();
+        $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qcat = $qgen->create_question_category(array('contextid' => $context->id));
+        $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+        // Make sure there is an entry in the entry table.
+        $sql = 'SELECT qbe.id as id,
+                       qv.id as versionid
+                  FROM {question_bank_entries} qbe
+                  JOIN {question_versions} qv
+                    ON qbe.id = qv.questionbankentryid
+                  JOIN {question} q
+                    ON qv.questionid = q.id
+                 WHERE q.id = ?';
+        $records = $DB->get_records_sql($sql, [$q1->id]);
+        $this->assertCount(1, $records);
+        // Delete the record.
+        $record = reset($records);
+        delete_question_bank_entry($record->id);
+        $records = $DB->get_records('question_bank_entries', ['id' => $record->id]);
+        // As the version record exists, it wont delete the data to resolve any errors.
+        $this->assertCount(1, $records);
+        $DB->delete_records('question_versions', ['id' => $record->versionid]);
+        delete_question_bank_entry($record->id);
+        $records = $DB->get_records('question_bank_entries', ['id' => $record->id]);
+        $this->assertCount(0, $records);
+    }
+
+    /**
+     * Test question bank entry object.
+     *
+     * @covers ::get_question_bank_entry
+     */
+    public function test_get_question_bank_entry() {
+        global $DB;
+        $this->resetAfterTest();
+        // Setup.
+        $context = context_system::instance();
+        $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qcat = $qgen->create_question_category(array('contextid' => $context->id));
+        $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+        // Make sure there is an entry in the entry table.
+        $sql = 'SELECT qbe.id as id,
+                       qv.id as versionid
+                  FROM {question_bank_entries} qbe
+                  JOIN {question_versions} qv
+                    ON qbe.id = qv.questionbankentryid
+                  JOIN {question} q
+                    ON qv.questionid = q.id
+                 WHERE q.id = ?';
+        $records = $DB->get_records_sql($sql, [$q1->id]);
+        $this->assertCount(1, $records);
+        $record = reset($records);
+        $questionbankentry = get_question_bank_entry($q1->id);
+        $this->assertEquals($questionbankentry->id, $record->id);
+    }
+
+    /**
+     * Test the version objects for a question.
+     *
+     * @covers ::get_question_version
+     */
+    public function test_get_question_version() {
+        global $DB;
+        $this->resetAfterTest();
+        // Setup.
+        $context = context_system::instance();
+        $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qcat = $qgen->create_question_category(array('contextid' => $context->id));
+        $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+        // Make sure there is an entry in the entry table.
+        $sql = 'SELECT qbe.id as id,
+                       qv.id as versionid
+                  FROM {question_bank_entries} qbe
+                  JOIN {question_versions} qv
+                    ON qbe.id = qv.questionbankentryid
+                  JOIN {question} q
+                    ON qv.questionid = q.id
+                 WHERE q.id = ?';
+        $records = $DB->get_records_sql($sql, [$q1->id]);
+        $this->assertCount(1, $records);
+        $record = reset($records);
+        $questionversions = get_question_version($q1->id);
+        $questionversion = reset($questionversions);
+        $this->assertEquals($questionversion->id, $record->versionid);
+    }
+
+    /**
+     * Test get next version of a question.
+     *
+     * @covers ::get_next_version
+     */
+    public function test_get_next_version() {
+        global $DB;
+        $this->resetAfterTest();
+        // Setup.
+        $context = context_system::instance();
+        $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qcat = $qgen->create_question_category(array('contextid' => $context->id));
+        $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+        // Make sure there is an entry in the entry table.
+        $sql = 'SELECT qbe.id as id,
+                       qv.id as versionid,
+                       qv.version
+                  FROM {question_bank_entries} qbe
+                  JOIN {question_versions} qv
+                    ON qbe.id = qv.questionbankentryid
+                  JOIN {question} q
+                    ON qv.questionid = q.id
+                 WHERE q.id = ?';
+        $records = $DB->get_records_sql($sql, [$q1->id]);
+        $this->assertCount(1, $records);
+        $record = reset($records);
+        $this->assertEquals(1, $record->version);
+        $nextversion = get_next_version($record->id);
+        $this->assertEquals(2, $nextversion);
+    }
+
 }

@@ -70,7 +70,7 @@ class view {
     protected $editquestionurl;
 
     /**
-     * @var \question_edit_contexts
+     * @var \core_question\lib\question_edit_contexts
      */
     protected $contexts;
 
@@ -157,7 +157,7 @@ class view {
     /**
      * Constructor for view.
      *
-     * @param \question_edit_contexts $contexts
+     * @param \core_question\lib\question_edit_contexts $contexts
      * @param \moodle_url $pageurl
      * @param object $course course settings
      * @param object $cm (optional) activity settings.
@@ -244,8 +244,9 @@ class view {
                 'preview_action_column',
                 'delete_action_column',
                 'export_xml_action_column',
+                'question_status_column',
                 'creator_name_column',
-                'modifier_name_column'
+                'comment_count_column'
         ];
         if (question_get_display_preference('qbshowtext', 0, PARAM_BOOL, new \moodle_url(''))) {
             $corequestionbankcolumns[] = 'question_text_row';
@@ -560,7 +561,7 @@ class view {
     protected function build_query(): void {
         // Get the required tables and fields.
         $joins = [];
-        $fields = ['q.hidden', 'q.category'];
+        $fields = ['qv.status', 'qc.id', 'qv.version', 'qv.id as versionid', 'qbe.id as questionbankentryid'];
         if (!empty($this->requiredcolumns)) {
             foreach ($this->requiredcolumns as $column) {
                 $extrajoins = $column->get_extra_joins();
@@ -583,7 +584,12 @@ class view {
         }
 
         // Build the where clause.
-        $tests = ['q.parent = 0'];
+        $latestversion = 'qv.version = (SELECT MAX(v.version)
+                                          FROM {question_versions} v
+                                          JOIN {question_bank_entry} be
+                                            ON be.id = v.questionbankentryid
+                                         WHERE be.id = qbe.id)';
+        $tests = ['q.parent = 0', $latestversion];
         $this->sqlparams = [];
         foreach ($this->searchconditions as $searchcondition) {
             if ($searchcondition->where()) {
@@ -1153,7 +1159,7 @@ class view {
      */
     protected function get_row_classes($question, $rowcount): array {
         $classes = [];
-        if ($question->hidden) {
+        if ((int)$question->status === 1) {
             $classes[] = 'dimmed_text';
         }
         if ($question->id == $this->lastchangedid) {

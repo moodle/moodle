@@ -71,7 +71,7 @@ class generator_test extends \advanced_testcase {
         question_move_questions_to_category([$quest1->id], $qcat1->id);
         $this->assertSame('myquest', \question_bank::load_question_data($quest1->id)->idnumber);
         // Can only change idnumber of quest2 once quest1 has been moved to another category.
-        $quest2 = $generator->update_question($questions[1], null, ['idnumber' => 'myquest']);
+        $quest2 = $generator->update_question($questions[1], null, ['idnumber' => 'myquest_4']);
         question_move_questions_to_category([$quest2->id], $qcat1->id);
         $this->assertSame('myquest_4', \question_bank::load_question_data($quest2->id)->idnumber);
         // Check can add an idnumber of 0.

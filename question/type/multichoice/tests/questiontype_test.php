@@ -133,7 +133,8 @@ class qtype_multichoice_test extends advanced_testcase {
         $actualquestiondata = end($actualquestionsdata);
 
         foreach ($questiondata as $property => $value) {
-            if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated', 'options', 'hints', 'stamp'))) {
+            if (!in_array($property, ['id', 'timemodified', 'timecreated', 'options', 'hints', 'stamp',
+                'versionid', 'questionbankentryid'])) {
                 $this->assertEquals($value, $actualquestiondata->$property);
             }
         }

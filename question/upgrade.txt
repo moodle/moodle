@@ -40,7 +40,6 @@ This files describes API changes for code that uses the question API.
    'core_question\bank\copy_action_column' => 'qbank_editquestion\copy_action_column',
    'core_question\bank\edit_action_column' => 'qbank_editquestion\edit_action_column',
    'core_question\bank\creator_name_column' => 'qbank_viewcreator\creator_name_column',
-   'core_question\bank\modifier_name_column' => 'qbank_viewcreator\modifier_name_column',
    'core_question\bank\question_name_column' => 'qbank_viewquestionname\viewquestionname_column_helper',
    'core_question\bank\question_name_idnumber_tags_column' => 'qbank_viewquestionname\question_name_idnumber_tags_column',
    'core_question\bank\delete_action_column' => 'qbank_deletequestion\delete_action_column',

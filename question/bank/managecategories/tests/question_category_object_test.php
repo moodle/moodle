@@ -25,7 +25,7 @@ use context;
 use context_course;
 use context_module;
 use moodle_url;
-use question_edit_contexts;
+use core_question\lib\question_edit_contexts;
 use stdClass;
 
 /**

@@ -15,32 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin entrypoint for columns.
+ * Helper functions and callbacks.
  *
- * @package    qbank_editquestion
+ * @package    qbank_viewcreator
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace qbank_editquestion;
 
 /**
- * Class columns is the entrypoint for the columns.
+ * Edit page callback for information.
  *
- * @package    qbank_editquestion
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Safat Shahin <safatshahin@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @param object $question
+ * @return string
  */
-class plugin_feature extends \core_question\local\bank\plugin_features_base{
-
-    public function get_question_columns($qbank): array {
-        return [
-            new edit_action_column($qbank),
-            new copy_action_column($qbank),
-            new question_status_column($qbank)
-        ];
+function qbank_viewcreator_edit_form_display($question): string {
+    global $DB, $PAGE;
+    $versiondata = [];
+    $questionversion = $DB->get_record('question_versions', ['questionid' => $question->id])->version;
+    $versiondata['versionnumber'] = $questionversion;
+    if (!empty($question->createdby)) {
+        $a = new stdClass();
+        $a->time = userdate($question->timecreated);
+        $a->user = fullname($DB->get_record('user', ['id' => $question->createdby]));
+        $versiondata['createdby'] = get_string('created', 'question') . ' ' .
+                                    get_string('byandon', 'question', $a) ;
     }
+    return $PAGE->get_renderer('qbank_viewcreator')->render_version_info($versiondata);
 
 }

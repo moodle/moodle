@@ -120,7 +120,7 @@ class qtype_shortanswer_test extends advanced_testcase {
         $actualquestiondata = end($actualquestionsdata);
 
         foreach ($questiondata as $property => $value) {
-            if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated', 'options'))) {
+            if (!in_array($property, array('id', 'timemodified', 'timecreated', 'options'))) {
                 $this->assertEquals($value, $actualquestiondata->$property);
             }
         }

@@ -15,9 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Renderer for adding/editing a question.
- *
- * This code is based on question/renderer.php by The Open University.
+ * A column to show the status of the question.
  *
  * @package    qbank_editquestion
  * @copyright  2021 Catalyst IT Australia Pty Ltd
@@ -25,46 +23,34 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace qbank_editquestion\output;
+namespace qbank_editquestion;
+
+defined('MOODLE_INTERNAL') || die();
+
+use core_question\local\bank\column_base;
 
 /**
- * Renderer for add/edit/copy
+ * Class question_status_column.
  *
  * @package    qbank_editquestion
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class renderer extends \plugin_renderer_base {
+class question_status_column extends column_base {
 
-    /**
-     * Render a qbank_chooser.
-     *
-     * @param \renderable $qbankchooser The chooser.
-     * @return string
-     */
-    public function render_qbank_chooser (\renderable $qbankchooser) {
-        return $this->render_from_template('qbank_editquestion/qbank_chooser', $qbankchooser->export_for_template($this));
+    public function get_name(): string {
+        return 'questionstatus';
     }
 
-    /**
-     * Render add question button.
-     *
-     * @param array $addquestiondata
-     * @return bool|string
-     */
-    public function render_create_new_question_button ($addquestiondata) {
-        return $this->render_from_template('qbank_editquestion/add_new_question', $addquestiondata);
+    protected function get_title(): string {
+        return get_string('questionstatus', 'qbank_editquestion');
     }
 
-    /**
-     * Render question information for edit form.
-     *
-     * @param array $questiondata
-     * @return bool|string
-     */
-    public function render_question_info($questiondata) {
-        return $this->render_from_template('qbank_editquestion/question_info', $questiondata);
+    protected function display_content($question, $rowclasses): void {
+        global $DB;
+        $version = $DB->get_record('question_versions', ['questionid' => $question->id], 'status');
+        echo \html_writer::tag('a', editquestion_helper::get_question_status_string($version->status));
     }
 
 }
