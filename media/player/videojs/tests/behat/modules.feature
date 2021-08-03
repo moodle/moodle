@@ -43,7 +43,8 @@ Feature: Embed videos without the media filter
       | Page title | Placeholder content |
       | Description | Just so we can preview the lesson |
     And I press "Save page"
-    And I navigate to "Preview" in current page administration
+    And I am on site homepage
+    And I follow "Lesson"
     And I follow "Click here to view"
     And I switch to "lessonmediafile" window
     Then ".video-js" "css_element" should exist
