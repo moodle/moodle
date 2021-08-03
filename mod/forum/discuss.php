@@ -315,7 +315,7 @@ if ($isnestedv2displaymode) {
     $settingstrigger = $OUTPUT->render_from_template('mod_forum/settings_drawer_trigger', null);
     $PAGE->add_header_action($settingstrigger);
 } else {
-    $PAGE->set_button(forum_search_form($course));
+    $PAGE->add_header_action(forum_search_form($course));
 }
 
 echo $OUTPUT->header();

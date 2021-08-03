@@ -370,10 +370,6 @@ a.autolink.glossary:hover {
     font-weight: bold;
 }
 
-img.userpicture {
-    margin-right: 0.5rem;
-}
-
 img.resize {
     height: 1em;
     width: 1em;
@@ -2038,6 +2034,9 @@ img#persona_signin {
 
 /** Page header */
 #page-header {
+    h1.h2 {
+        font-weight: bold;
+    }
     .logo {
         margin: $spacer 0;
         img {

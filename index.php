@@ -96,6 +96,7 @@ $PAGE->set_docs_path('');
 $editing = $PAGE->user_is_editing();
 $PAGE->set_title($SITE->fullname);
 $PAGE->set_heading($SITE->fullname);
+$PAGE->has_secondary_navigation_setter(false);
 $courserenderer = $PAGE->get_renderer('core', 'course');
 echo $OUTPUT->header();
 

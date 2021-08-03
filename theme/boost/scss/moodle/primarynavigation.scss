@@ -1,8 +1,9 @@
-.navbar.fixed-top {
-    .moremenu {
+.primary-navigation {
+    .navigation {
         height: $navbar-height;
         .nav-link {
             height: $navbar-height;
+            color: $gray-900;
         }
     }
 }

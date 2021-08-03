@@ -173,6 +173,14 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
     }
 }
 
+.navbar-nav {
+    .popover-region {
+        .icon {
+            font-weight: bolder;
+        }
+    }
+}
+
 .navbar {
     .popover-region {
         &.collapsed {

@@ -8,10 +8,50 @@
         height: $moremenu-height;
         display: flex;
         align-items: center;
+        border-right: none;
+        border-bottom: solid 3px transparent;
+        border-left: none;
+        border-top: none;
+        @include hover-focus() {
+            @include hover-navbar();
+        }
+
+        &.active {
+            font-weight: bold;
+            border-bottom: solid 3px $blue;
+        }
+        &[data-toggle="tab"] {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            &::after {
+                content: attr(data-text) / "";
+                height: 0;
+                visibility: hidden;
+                overflow: hidden;
+                user-select: none;
+                pointer-events: none;
+                font-weight: bold;
+
+                @media speech {
+                    display: none;
+                }
+            }
+        }
     }
     .nav-tabs {
         margin-left: 0;
+        background-color: $body-bg;
     }
+    .show > .nav-link,
+    .active > .nav-link,
+    .nav-link.show,
+    .nav-link.active {
+        background: transparent;
+    }
+
     // Styling for dropdown menus inside the MoreButton.
     .dropdownmoremenu > .dropdown-menu {
         & > .dropdown-item {

@@ -1,7 +1,12 @@
+@mixin hover-navbar {
+    background-color: $gray-200;
+}
+
 .navbar.fixed-top {
     padding-top: 0;
     padding-bottom: 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    box-shadow: none;
+    border-bottom: $gray-300 1px solid;
     align-items: stretch;
     height: $navbar-height;
 
@@ -24,6 +29,10 @@
     #usernavigation .nav-link {
         padding: 0 $primary-nav-padding-x;
     }
+    .login {
+        display: flex;
+        align-items: center;
+    }
     .usermenu {
         display: flex;
         .action-menu {
@@ -40,9 +49,6 @@
                 display: flex;
                 align-items: center;
                 height: 100%;
-            }
-            .dropdown-toggle::after {
-                display: none;
             }
         }
         .dropdown-menu {
@@ -88,6 +94,22 @@
         .login {
             display: flex;
             align-items: center;
+        }
+    }
+    .usermenu,
+    .langmenu {
+        .dropdown {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            .dropdown-toggle {
+                padding-top: 0;
+                padding-bottom: 0;
+                border-radius: 0;
+                display: flex;
+                align-items: center;
+                height: 100%;
+            }
         }
     }
     .langmenu {
