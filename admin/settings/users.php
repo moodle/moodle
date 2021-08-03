@@ -42,6 +42,7 @@ if ($hassiteconfig
         $choices['firstaccess'] = new lang_string('firstaccess', 'filters');
         $choices['lastaccess'] = new lang_string('lastaccess');
         $choices['neveraccessed'] = new lang_string('neveraccessed', 'filters');
+        $choices['timecreated'] = new lang_string('timecreated');
         $choices['timemodified'] = new lang_string('lastmodified');
         $choices['nevermodified'] = new lang_string('nevermodified', 'filters');
         $choices['auth'] = new lang_string('authentication');
