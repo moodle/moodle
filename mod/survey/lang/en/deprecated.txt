@@ -1,0 +1,2 @@
+clicktocontinue,mod_survey
+viewsurveyresponses,mod_survey

@@ -71,7 +71,9 @@ $strsurvey = get_string("modulename", "survey");
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($survey->name));
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading(format_string($survey->name));
+}
 
 // Render the activity information.
 $completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
@@ -90,11 +92,7 @@ if (has_capability('mod/survey:readresponses', $context) or ($groupmode == VISIB
     $currentgroup = 0;
 }
 
-if (has_capability('mod/survey:readresponses', $context)) {
-    $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
-    echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">".
-          get_string("viewsurveyresponses", "survey", $numusers)."</a></div>";
-} else if (!$cm->visible) {
+if (!$cm->visible) {
     notice(get_string("activityiscurrentlyhidden"));
 }
 
@@ -103,9 +101,7 @@ if (!is_enrolled($context)) {
 }
 
 if ($surveyalreadydone) {
-
     $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
-
     if ($showscales) {
         // Ensure that graph.php will allow the user to see the graph.
         if (has_capability('mod/survey:readresponses', $context) || !$groupmode || groups_is_member($currentgroup)) {
@@ -183,7 +179,7 @@ if (!is_enrolled($context)) {
 $PAGE->requires->js_call_amd('mod_survey/validation', 'ensureRadiosChosen', array('surveyform'));
 
 echo '<br />';
-echo '<input type="submit" class="btn btn-primary" value="'.get_string("clicktocontinue", "survey").'" />';
+echo '<input type="submit" class="btn btn-primary" value="'. get_string("submit"). '" />';
 echo '</div>';
 echo "</form>";
 
