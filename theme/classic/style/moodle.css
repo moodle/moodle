@@ -14630,6 +14630,9 @@ body.drawer-ease {
   flex-wrap: nowrap;
   overflow-y: auto;
   padding: 0.5rem; }
+  .drawercontent .dropdown-menu .dropdown-item {
+    width: 220px;
+    white-space: normal; }
 
 #page-my-index {
   background-color: #f7f7f7; }
