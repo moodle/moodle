@@ -6,6 +6,7 @@ Feature: Basic OAuth2 functionality
 
   Background:
     Given I log in as "admin"
+    And I change window size to "large"
     And I navigate to "Server > OAuth 2 services" in site administration
 
   Scenario: Create, edit and delete standard service for Google

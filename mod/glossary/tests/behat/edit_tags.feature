@@ -41,6 +41,7 @@ Feature: Edited glossary entries handle tags correctly
 
   Scenario: Glossary entry edition of standard tags works as expected
     Given I log in as "admin"
+    And I change window size to "large"
     And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     And I follow "Add standard tags"
