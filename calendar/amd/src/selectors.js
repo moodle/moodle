@@ -52,6 +52,8 @@ define([], function() {
         },
         elements: {
             courseSelector: 'select[name="course"]',
+            dateContainer: '.clickable.hasevent',
+            dateContent: '[data-region="day-content"]',
         },
         today: '.today',
         day: '[data-region="day"]',
