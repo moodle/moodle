@@ -15,7 +15,3 @@
 #page-admin-tool-task-scheduledtasks .task-clearfaildelay {
     font-size: 0.75em;
 }
-
-#page-admin-tool-task-scheduledtasks :target {
-    scroll-margin-top: 60px;
-}
