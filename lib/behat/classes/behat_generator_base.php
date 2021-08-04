@@ -549,7 +549,7 @@ abstract class behat_generator_base {
         $cmtable = new \core\dml\table('course_modules', 'cm', 'cm');
         $cmfrom = $cmtable->get_from_sql();
 
-        $acttable = new \core\dml\table($activity, 'act', 'act');
+        $acttable = new \core\dml\table($activity, 'a', 'a');
         $actselect = $acttable->get_field_select();
         $actfrom = $acttable->get_from_sql();
 
@@ -558,8 +558,8 @@ abstract class behat_generator_base {
       FROM {$cmfrom}
 INNER JOIN {$coursefrom} ON c.id = cm.course
 INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-INNER JOIN {$actfrom} ON cm.instance = act.id
-     WHERE cm.idnumber = :idnumber OR act.name = :name
+INNER JOIN {$actfrom} ON cm.instance = a.id
+     WHERE cm.idnumber = :idnumber OR a.name = :name
 EOF;
 
         $result = $DB->get_record_sql($sql, [
