@@ -55,7 +55,9 @@ switch ($action) {
         $major = optional_param('majorVersion', 0, PARAM_INT);
         $minor = optional_param('minorVersion', 0, PARAM_INT);
 
-        $language = optional_param('default-language', null, PARAM_ALPHA);
+        // Normalise Moodle language using underscore, as opposed to H5P which uses dash.
+        $language = optional_param('default-language', null, PARAM_RAW);
+        $language = clean_param(str_replace('-', '_', $language), PARAM_LANG);
 
         if (!empty($name)) {
             $editor->ajax->action(H5PEditorEndpoints::SINGLE_LIBRARY, $name,
