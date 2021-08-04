@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Izaberite jezik koji će se koristiti tokom inst
 $string['clialreadyconfigured'] = 'Datoteka config.php već postoji. Molimo, koristite admin/cli/install_database.php ako želite da instalirate Moodle na ovom serveru.';
 $string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Molimo koristite admin/cli/upgrade.php ako želite da nadogradite Moodle na ovom serveru.';
 $string['cliinstallheader'] = 'Moodle {$a} program za instalaciju iz komandne linije';
+$string['clitablesexist'] = 'Baza podataka već postoji. Nije moguće nastaviti instalaciju iz komandne linije.';
 $string['databasehost'] = 'Server baze podataka';
 $string['databasename'] = 'Ime baze podataka';
 $string['databasetypehead'] = 'Izaberite drajver baze podataka';

@@ -96,6 +96,7 @@ $string['issueruseininternalonly'] = 'Internal services only';
 $string['issueruseinloginonly'] = 'Login page only';
 $string['issuerusedforlogin'] = 'Login';
 $string['issuerusedforinternal'] = 'Internal services';
+$string['linkedin_service'] = 'LinkedIn';
 $string['logindisplay'] = 'Display on login page as';
 $string['loginissuer'] = 'Allow login';
 $string['microsoft_service'] = 'Microsoft';

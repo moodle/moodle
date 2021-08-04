@@ -17,7 +17,6 @@
  * A type of dialogue used as for choosing options.
  *
  * @module     core_course/local/chooser/dialogue
- * @package    core
  * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

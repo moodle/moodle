@@ -380,6 +380,10 @@ class fields {
                         case PROFILE_VISIBLE_PRIVATE:
                             $allowed = !$context || has_capability('moodle/user:viewalldetails', $context);
                             break;
+                        case PROFILE_VISIBLE_TEACHERS:
+                            // This is actually defined (in user/profile/lib.php) based on whether
+                            // you have moodle/site:viewuseridentity in context. We already checked
+                            // that, so treat it as visible (fall through).
                         case PROFILE_VISIBLE_ALL:
                             $allowed = true;
                             break;

@@ -16,8 +16,7 @@
 /**
  * This class provides the enhancements to the drag-drop marker editing form.
  *
- * @package    qtype_ddmarker
- * @subpackage form
+ * @module     qtype_ddmarker/form
  * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

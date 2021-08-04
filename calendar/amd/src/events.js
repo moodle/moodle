@@ -17,8 +17,6 @@
  * Contain the events the calendar component can fire.
  *
  * @module     core_calendar/events
- * @class      calendar_events
- * @package    core_calendar
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

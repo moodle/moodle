@@ -16,18 +16,17 @@ Feature: Users can edit approved entries in database activities
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
   @javascript
   Scenario: Students can manage their approved entries to a database
-    # Create database activity and allow editing of
-    # approved entries.
-    And I add a "Database" to section "1" and I fill the form with:
-      | Name              | Test database name |
-      | Description       | Test               |
-      | id_approval       | Yes                |
-      | id_manageapproved | Yes                |
+    Given the following "activity" exists:
+      | activity       | data               |
+      | course         | C1                 |
+      | idnumber       | Test database name |
+      | name           | Test database name |
+      | approval       | 1                  |
+      | manageapproved | 1                  |
+    And I am on the "Test database name" "data activity" page logged in as teacher1
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
@@ -35,34 +34,31 @@ Feature: Users can edit approved entries in database activities
     And I follow "Templates"
     And I log out
     # Add an entry as a student.
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Test database name" "data activity" page logged in as student1
     And I add an entry to "Test database name" database with:
       | Test field name | Student entry |
     And I press "Save and view"
     And I log out
     # Approve the student's entry as a teacher.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test database name"
+    And I am on the "Test database name" "data activity" page logged in as teacher1
     And I follow "Approve"
     And I log out
     # Make sure the student can still edit their entry after it's approved.
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test database name"
+    When I am on the "Test database name" "data activity" page logged in as student1
     Then I should see "Student entry"
     And "Edit" "link" should exist
 
   @javascript
   Scenario: Students can not manage their approved entries to a database
-    # Create database activity and don't allow editing of
-    # approved entries.
-    And I add a "Database" to section "1" and I fill the form with:
-      | Name              | Test database name |
-      | Description       | Test               |
-      | id_approval       | Yes                |
-      | id_manageapproved | No                 |
+    # Create database activity and don't allow editing of approved entries.
+    Given the following "activity" exists:
+      | activity       | data               |
+      | course         | C1                 |
+      | idnumber       | Test database name |
+      | name           | Test database name |
+      | approval       | 1                  |
+      | manageapproved | 0                  |
+    And I am on the "Test database name" "data activity" page logged in as teacher1
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
@@ -70,21 +66,16 @@ Feature: Users can edit approved entries in database activities
     And I follow "Templates"
     And I log out
     # Add an entry as a student.
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Test database name" "data activity" page logged in as student1
     And I add an entry to "Test database name" database with:
       | Test field name | Student entry |
     And I press "Save and view"
     And I log out
     # Approve the student's entry as a teacher.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test database name"
+    And I am on the "Test database name" "data activity" page logged in as teacher1
     And I follow "Approve"
     And I log out
     # Make sure the student isn't able to edit their entry after it's approved.
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test database name"
-    Then I should see "Student entry"
-    And "Edit" "link" should not exist
+    When I am on the "Test database name" "data activity" page logged in as student1
+    Then "Edit" "link" should not exist
+    And I should see "Student entry"

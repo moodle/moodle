@@ -43,10 +43,7 @@ Feature: View gradebook when scales are used
     And the following "activities" exist:
       | activity | course | idnumber | name                | intro             | gradecategory  |
       | assign   | C1     | a1       | Test assignment one | Submit something! | Sub category 1 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test assignment one" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Scale"
     And I set the field "grade[modgrade_scale]" to "EN Letterscale"

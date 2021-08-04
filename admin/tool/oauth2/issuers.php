@@ -234,6 +234,12 @@ if ($mform && $mform->is_cancelled()) {
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('imsobv2p1_service', 'tool_oauth2'));
 
+    // Linkedin template.
+    $docs = 'admin/tool/oauth2/issuers/linkedin';
+    $params = ['action' => 'edittemplate', 'type' => 'linkedin', 'sesskey' => sesskey(), 'docslink' => $docs];
+    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+    echo $renderer->single_button($addurl, get_string('linkedin_service', 'tool_oauth2'));
+
     // Generic issuer.
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);
     echo $renderer->single_button($addurl, get_string('custom_service', 'tool_oauth2'));

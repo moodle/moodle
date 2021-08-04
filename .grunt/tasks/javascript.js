@@ -37,17 +37,23 @@ const babelRename = function(destPath, srcPath) {
 };
 
 module.exports = grunt => {
+    // Load the Ignorefiles tasks.
+    require('./ignorefiles')(grunt);
+
     // Load the Shifter tasks.
     require('./shifter')(grunt);
 
     // Load ESLint.
     require('./eslint')(grunt);
 
+    // Load JSDoc.
+    require('./jsdoc')(grunt);
+
     const path = require('path');
 
     // Register JS tasks.
     grunt.registerTask('yui', ['eslint:yui', 'shifter']);
-    grunt.registerTask('amd', ['eslint:amd', 'babel']);
+    grunt.registerTask('amd', ['ignorefiles', 'eslint:amd', 'babel']);
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register NPM tasks.

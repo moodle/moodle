@@ -13,6 +13,8 @@ information provided here is intended especially for developers.
   - activity_dates_information_in_activity_should_not_exist()
     - Given the activity date information in "<ActivityName>" should not exist
 * A user preference usemodchooser has been removed and the activities/resources (non-ajax) activity chooser has been deprecated and will be removed in the future.
+* The `\core\event\course_category_deleted` event is now created with a snapshot of the category record being deleted,
+  available inside event observers via `$event->get_record_snapshot`
 
 === 3.10 ===
 

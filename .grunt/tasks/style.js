@@ -21,6 +21,9 @@
  */
 
 module.exports = grunt => {
+    // Load the ignorefiles tasks.
+    require('./ignorefiles')(grunt);
+
     // Load the Style Lint tasks.
     require('./stylelint')(grunt);
 

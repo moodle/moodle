@@ -125,8 +125,9 @@ module.exports = grunt => {
             grunt.config.merge(getScssConfigForFiles(scssFiles));
             scssTasks.unshift('stylelint:scss');
         }
+        scssTasks.unshift('ignorefiles');
 
-        const cssTasks = [];
+        const cssTasks = ['ignorefiles'];
         if (hasCss) {
             grunt.config.merge(getCssConfigForFiles(cssFiles));
             cssTasks.push('stylelint:css');
@@ -169,6 +170,7 @@ module.exports = grunt => {
                 excludes: [
                     '**/moodle.css',
                     '**/editor.css',
+                    'jsdoc/styles/*.css',
                 ],
                 tasks: ['rawcss']
             },

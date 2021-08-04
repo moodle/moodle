@@ -17,7 +17,6 @@
  * Custom Field interaction management for Moodle.
  *
  * @module     core_customfield/form
- * @package    core_customfield
  * @copyright  2018 Toni Barbera
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

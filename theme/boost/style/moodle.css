@@ -10731,8 +10731,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   font-size: 1.5rem;
   line-height: 1.5; }
 
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
-  font-size: 1.5rem; }
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h5 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-bottom: 0;
+  line-height: 1.5; }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
   /*rtl:raw:
@@ -11914,6 +11917,21 @@ input[disabled] {
 .core_payment_gateways_modal .custom-control-label::after {
   top: 45%; }
 
+.visual-scroll-x {
+  scrollbar-width: thin;
+  scrollbar-color: #0f6fc5 #a8d2f8;
+  -ms-overflow-style: -ms-autohiding-scrollbar; }
+  .visual-scroll-x::-webkit-scrollbar {
+    height: 8px;
+    -webkit-appearance: none;
+    appearance: none; }
+  .visual-scroll-x::-webkit-scrollbar-thumb {
+    background-color: #0f6fc5;
+    border-right: 1px solid #fff; }
+  .visual-scroll-x::-webkit-scrollbar-track {
+    background-color: #a8d2f8;
+    border-right: 1px solid #fff; }
+
 .icon {
   font-size: 16px;
   width: 16px;
@@ -12744,8 +12762,8 @@ input[disabled] {
 .block_navigation .block_tree [aria-expanded="false"] {
   background-image: none; }
 
-.block_settings .block_tree [aria-expanded="true"]:before,
-.block_navigation .block_tree [aria-expanded="true"]:before {
+.block_settings .block_tree [aria-expanded="true"] > p:before,
+.block_navigation .block_tree [aria-expanded="true"] > p:before {
   content: "";
   margin-right: 0;
   display: inline-block;
@@ -12757,8 +12775,8 @@ input[disabled] {
   font-size: 16px;
   width: 16px; }
 
-.block_settings .block_tree [aria-expanded="false"]:before,
-.block_navigation .block_tree [aria-expanded="false"]:before {
+.block_settings .block_tree [aria-expanded="false"] > p:before,
+.block_navigation .block_tree [aria-expanded="false"] > p:before {
   content: "";
   margin-right: 0;
   display: inline-block;
@@ -12770,8 +12788,8 @@ input[disabled] {
   font-size: 16px;
   width: 16px; }
 
-.dir-rtl .block_settings .block_tree [aria-expanded="false"]:before,
-.dir-rtl .block_navigation .block_tree [aria-expanded="false"]:before {
+.dir-rtl .block_settings .block_tree [aria-expanded="false"] > p:before,
+.dir-rtl .block_navigation .block_tree [aria-expanded="false"] > p:before {
   content: ""; }
 
 .block_navigation .block_tree p.hasicon,
@@ -16677,12 +16695,22 @@ textarea[data-auto-rows] {
   margin-right: 0; }
   .mform.full-width-labels .fitem.row > .col-md-3,
   .mform.full-width-labels .fitem.row > .col-md-9 {
-    float: none;
+    flex: 0 0 100%;
+    max-width: 100%;
     width: inherit;
     padding-right: 0;
     padding-left: 0; }
   .mform.full-width-labels .fitem.row.femptylabel > .col-md-3 {
     display: none; }
+  .mform.full-width-labels .fitem.row .form-control {
+    width: 100%; }
+
+.mform .col-form-label .form-label-addon {
+  margin-left: 0.25rem; }
+
+@media (min-width: 576px) {
+  .mform:not(.full-width-labels) .col-form-label .form-label-addon {
+    margin-left: auto; } }
 
 /** Allow wrapping an mform in a div with the form-inline class to have an inline, responsive form. */
 @media (min-width: 768px) {

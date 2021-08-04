@@ -17,7 +17,6 @@
  * Contain the events the payment modal can fire.
  *
  * @module     core_payment/events
- * @package    core_payment
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

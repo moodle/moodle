@@ -461,6 +461,12 @@ class core_course_enrolment_manager_testcase extends advanced_testcase {
         $this->assertEquals([], array_keys($users[0]));
         $users = array_values($manager->get_potential_users($enrolid, 'Frogs'));
         $this->assertEquals([], array_keys($users[0]));
+
+        // Search for username field (there is special handling for this one field).
+        set_config('showuseridentity', 'username');
+        $this->setAdminUser();
+        $users = array_values($manager->get_potential_users($enrolid, 'newuse'));
+        $this->assertEquals([$newuser->id], array_keys($users[0]));
     }
 
     /**

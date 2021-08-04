@@ -48,3 +48,12 @@ Feature: An administrator can browse user accounts
       | User Two             | Tree            | Defence    |
     And I should not see "Email address" in the "table" "css_element"
     And I should not see "one@example.com"
+
+  Scenario: Sort user accounts by custom profile field
+    Given the following config values are set as admin:
+      | showuseridentity | profile_field_frog |
+    When I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I follow "Favourite frog"
+    Then "Kermit" "text" should appear before "Tree" "text"
+    And I follow "Favourite frog"
+    Then "Tree" "text" should appear before "Kermi" "text"

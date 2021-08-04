@@ -1995,7 +1995,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Create a category.
         $category = $this->getDataGenerator()->create_category();
 
-        // Save the context before it is deleted.
+        // Save the original record/context before it is deleted.
+        $categoryrecord = $category->get_db_record();
         $categorycontext = context_coursecat::instance($category->id);
 
         // Catch the update event.
@@ -2014,6 +2015,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals('course_categories', $event->objecttable);
         $this->assertEquals($category->id, $event->objectid);
         $this->assertEquals($categorycontext->id, $event->contextid);
+        $this->assertEquals([
+            'name' => $category->name,
+        ], $event->other);
+        $this->assertEquals($categoryrecord, $event->get_record_snapshot($event->objecttable, $event->objectid));
         $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
         $this->assertEquals(null, $event->get_url());
         $this->assertEventLegacyData($category, $event);
@@ -2024,7 +2029,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         $category = $this->getDataGenerator()->create_category();
         $category2 = $this->getDataGenerator()->create_category();
 
-        // Save the context before it is moved and then deleted.
+        // Save the original record/context before it is moved and then deleted.
+        $category2record = $category2->get_db_record();
         $category2context = context_coursecat::instance($category2->id);
 
         // Catch the update event.
@@ -2043,6 +2049,11 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals('course_categories', $event->objecttable);
         $this->assertEquals($category2->id, $event->objectid);
         $this->assertEquals($category2context->id, $event->contextid);
+        $this->assertEquals([
+            'name' => $category2->name,
+            'contentmovedcategoryid' => $category->id,
+        ], $event->other);
+        $this->assertEquals($category2record, $event->get_record_snapshot($event->objecttable, $event->objectid));
         $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
         $this->assertEventLegacyData($category2, $event);
         $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category2->name . '(ID ' . $category2->id . ')');
@@ -4550,7 +4561,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                 'totalcourses' => 0,
                 'limit' => 0,
                 'offset' => 0,
-                'expecteddbqueries' => 1,
+                'expecteddbqueries' => 4,
                 'expectedresult' => $buildexpectedresult(0, 0)
             ],
             'less than query limit' => [
@@ -4558,7 +4569,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                 'totalcourses' => 2,
                 'limit' => 0,
                 'offset' => 0,
-                'expecteddbqueries' => 1,
+                'expecteddbqueries' => 2,
                 'expectedresult' => $buildexpectedresult(2, 0)
             ],
             'more than query limit' => [
@@ -4566,7 +4577,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                 'totalcourses' => 7,
                 'limit' => 0,
                 'offset' => 0,
-                'expecteddbqueries' => 3,
+                'expecteddbqueries' => 4,
                 'expectedresult' => $buildexpectedresult(7, 0)
             ],
             'limit less than query limit' => [
@@ -4574,7 +4585,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                 'totalcourses' => 7,
                 'limit' => 2,
                 'offset' => 0,
-                'expecteddbqueries' => 1,
+                'expecteddbqueries' => 2,
                 'expectedresult' => $buildexpectedresult(2, 0)
             ],
             'limit less than query limit with offset' => [
@@ -4582,7 +4593,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                 'totalcourses' => 7,
                 'limit' => 2,
                 'offset' => 2,
-                'expecteddbqueries' => 1,
+                'expecteddbqueries' => 2,
                 'expectedresult' => $buildexpectedresult(2, 2)
             ],
             'limit less than total' => [
@@ -4590,7 +4601,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                 'totalcourses' => 9,
                 'limit' => 6,
                 'offset' => 0,
-                'expecteddbqueries' => 2,
+                'expecteddbqueries' => 3,
                 'expectedresult' => $buildexpectedresult(6, 0)
             ],
             'less results than limit' => [
@@ -4598,7 +4609,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                 'totalcourses' => 9,
                 'limit' => 20,
                 'offset' => 0,
-                'expecteddbqueries' => 3,
+                'expecteddbqueries' => 4,
                 'expectedresult' => $buildexpectedresult(9, 0)
             ],
             'less results than limit exact divisible' => [
@@ -4606,7 +4617,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                 'totalcourses' => 9,
                 'limit' => 20,
                 'offset' => 0,
-                'expecteddbqueries' => 4,
+                'expecteddbqueries' => 5,
                 'expectedresult' => $buildexpectedresult(9, 0)
             ],
             'less results than limit with offset' => [
@@ -4614,7 +4625,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                 'totalcourses' => 9,
                 'limit' => 10,
                 'offset' => 5,
-                'expecteddbqueries' => 2,
+                'expecteddbqueries' => 3,
                 'expectedresult' => $buildexpectedresult(4, 5)
             ],
         ];
@@ -5442,7 +5453,16 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Every course accessed, order by shortname DESC. The last create course ($course[2]) should have the greater shortname.
         $result = course_get_recent_courses($student->id, 0, 0, 'shortname DESC');
         $this->assertCount(3, $result);
-        $this->assertEquals($courses[2]->id, array_shift($result)->id);
+        $this->assertEquals($courses[2]->id, array_values($result)[0]->id);
+        $this->assertEquals($courses[1]->id, array_values($result)[1]->id);
+        $this->assertEquals($courses[0]->id, array_values($result)[2]->id);
+
+        // Every course accessed, order by shortname ASC.
+        $result = course_get_recent_courses($student->id, 0, 0, 'shortname ASC');
+        $this->assertCount(3, $result);
+        $this->assertEquals($courses[0]->id, array_values($result)[0]->id);
+        $this->assertEquals($courses[1]->id, array_values($result)[1]->id);
+        $this->assertEquals($courses[2]->id, array_values($result)[2]->id);
 
         $guestcourse = $generator->create_course(
             (object)array('shortname' => 'guestcourse',
@@ -5462,6 +5482,57 @@ class core_course_courselib_testcase extends advanced_testcase {
         $result = course_get_recent_courses($student->id);
         $this->assertCount(3, $result);
         $this->assertArrayNotHasKey($courses[0]->id, $result);
+    }
+
+    /**
+     * Test the validation of the sort value in course_get_recent_courses().
+     *
+     * @dataProvider course_get_recent_courses_sort_validation_provider
+     * @param string $sort The sort value
+     * @param string $expectedexceptionmsg The expected exception message
+     */
+    public function test_course_get_recent_courses_sort_validation(string $sort, string $expectedexceptionmsg) {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        if (!empty($expectedexceptionmsg)) {
+            $this->expectException('invalid_parameter_exception');
+            $this->expectExceptionMessage($expectedexceptionmsg);
+        }
+        course_get_recent_courses($user->id, 0, 0, $sort);
+    }
+
+    /**
+     * Data provider for test_course_get_recent_courses_sort_validation().
+     *
+     * @return array
+     */
+    function course_get_recent_courses_sort_validation_provider() {
+        return [
+            'Invalid sort format (SQL injection attempt)' =>
+                [
+                    'shortname DESC LIMIT 1--',
+                    'Invalid structure of the sort parameter, allowed structure: fieldname [ASC|DESC].',
+                ],
+            'Sort uses \'sort by\' field that does not exist' =>
+                [
+                    'shortname DESC, xyz ASC',
+                    'Invalid field in the sort parameter, allowed fields: id, idnumber, summary, summaryformat, ' .
+                    'startdate, enddate, category, shortname, fullname, timeaccess, component, visible, ' .
+                    'showactivitydates, showcompletionconditions.',
+            ],
+            'Sort uses invalid value for the sorting direction' =>
+                [
+                    'shortname xyz, lastaccess',
+                    'Invalid sort direction in the sort parameter, allowed values: asc, desc.',
+                ],
+            'Valid sort format' =>
+                [
+                    'shortname asc, timeaccess',
+                    ''
+                ]
+        ];
     }
 
     /**

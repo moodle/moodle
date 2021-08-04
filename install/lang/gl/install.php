@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = 'Escolla un idioma para o proceso de instalación
 $string['clialreadyconfigured'] = 'Xa existe o ficheiro config.php. Empregue admin/cli/install_database.php se quere actualizar o seu sitio web.';
 $string['clialreadyinstalled'] = 'Xa existe o ficheiro config.php. Empregue admin/cli/upgrade.php se quere actualizar o seu sitio web.';
 $string['cliinstallheader'] = 'Programa de instalación de Moodle en liña de ordes {$a}';
+$string['clitablesexist'] = 'Xa existen táboas de base de datos, a instalación CLI non pode continuar.';
 $string['databasehost'] = 'Enderezo/máquina da base de datos';
 $string['databasename'] = 'Nome de base de datos';
 $string['databasetypehead'] = 'Escolla o controlador da base de datos';

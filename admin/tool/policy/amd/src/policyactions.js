@@ -17,7 +17,6 @@
  * Policy actions.
  *
  * @module     tool_policy/policyactions
- * @package    tool_policy
  * @copyright  2018 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

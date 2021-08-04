@@ -36,6 +36,7 @@ $string['chooselanguagesub'] = '请选择在安装过程中使用的语言。这
 $string['clialreadyconfigured'] = 'config.php 文件已存在。如果您想安装此网站，请使用 admin/cli/install_database.php。';
 $string['clialreadyinstalled'] = '文件config.php已存在。如果您想升级此网站，请使用admin/cli/upgrade.php。';
 $string['cliinstallheader'] = 'Moodle {$a}命令行安装程序';
+$string['clitablesexist'] = '数据库表已经存在，命令行安装不能继续。';
 $string['databasehost'] = '数据库主机';
 $string['databasename'] = '数据库名';
 $string['databasetypehead'] = '选择数据库驱动';

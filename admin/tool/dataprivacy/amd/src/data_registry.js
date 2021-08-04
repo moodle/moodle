@@ -17,7 +17,6 @@
  * Request actions.
  *
  * @module     tool_dataprivacy/data_registry
- * @package    tool_dataprivacy
  * @copyright  2018 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

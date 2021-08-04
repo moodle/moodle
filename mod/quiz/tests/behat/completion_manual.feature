@@ -33,16 +33,11 @@ Feature: Manually complete a quiz
 
   @javascript
   Scenario: Use manual completion
-    When I log in as "teacher1"
-    # Teacher view.
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz name"
+    Given I am on the "Test quiz name" "quiz activity" page logged in as teacher1
     And the manual completion button for "Test quiz name" should be disabled
     And I log out
     # Student view.
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test quiz name"
+    When I am on the "Test quiz name" "quiz activity" page logged in as student1
     Then the manual completion button of "Test quiz name" is displayed as "Mark as done"
     And I toggle the manual completion state of "Test quiz name"
     And the manual completion button of "Test quiz name" is displayed as "Done"

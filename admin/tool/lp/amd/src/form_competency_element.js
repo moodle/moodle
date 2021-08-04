@@ -17,7 +17,6 @@
  * Badge select competency actions
  *
  * @module     tool_lp/form_competency_element
- * @package    tool_lp
  * @copyright  2019 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

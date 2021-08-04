@@ -120,7 +120,7 @@ class behat_core_generator extends behat_generator_base {
             'activities' => [
                 'singular' => 'activity',
                 'datagenerator' => 'activity',
-                'required' => ['activity', 'idnumber', 'course'],
+                'required' => ['activity', 'course'],
                 'switchids' => ['course' => 'course', 'gradecategory' => 'gradecat', 'grouping' => 'groupingid'],
             ],
             'blocks' => [
@@ -386,6 +386,17 @@ class behat_core_generator extends behat_generator_base {
 
             if (!isset($data['gradetype'])) {
                 $data['gradetype'] = GRADE_TYPE_SCALE;
+            }
+        }
+
+        if (!array_key_exists('idnumber', $data)) {
+            $data['idnumber'] = $data['name'];
+            if (strlen($data['name']) > 100) {
+                throw new Exception(
+                    "Activity '{$activityname}' cannot be used as the default idnumber. " .
+                    "The idnumber has a max length of 100 chars. " .
+                    "Please manually specify an idnumber."
+                );
             }
         }
 

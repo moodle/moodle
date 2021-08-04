@@ -17,7 +17,6 @@
  * Handle selection changes and actions on the competency tree.
  *
  * @module     tool_lp/competencyactions
- * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -49,17 +48,17 @@ define(['jquery',
     var moveTarget = null;
     /** @var {Number} pageContextId The page context ID. */
     var pageContextId;
-    /** @type {Object} Picker instance. */
+    /** @var {Object} Picker instance. */
     var pickerInstance;
-    /** @type {Object} Rule config instance. */
+    /** @var {Object} Rule config instance. */
     var ruleConfigInstance;
-    /** @type {Object} The competency we're picking a relation to. */
+    /** @var {Object} The competency we're picking a relation to. */
     var relatedTarget;
-    /** @type {Object} Taxonomy constants indexed per level. */
+    /** @var {Object} Taxonomy constants indexed per level. */
     var taxonomiesConstants;
-    /** @type {Array} The rules modules. Values are object containing type, namd and amd. */
+    /** @var {Array} The rules modules. Values are object containing type, namd and amd. */
     var rulesModules;
-    /** @type {Number} the selected competency ID. */
+    /** @var {Number} the selected competency ID. */
     var selectedCompetencyId = null;
 
     /**

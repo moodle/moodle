@@ -17,7 +17,6 @@
  * Module to manage content bank actions, such as delete or rename.
  *
  * @module     core_contentbank/actions
- * @package    core_contentbank
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

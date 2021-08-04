@@ -113,11 +113,22 @@ class helper {
      */
     private static function unserializesession($serializedstring) {
         $variables = array();
-        $a = preg_split("/(\w+)\|/", $serializedstring, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-        $counta = count($a);
-        for ($i = 0; $i < $counta; $i = $i + 2) {
-            $variables[$a[$i]] = unserialize($a[$i + 1]);
+
+        $index = 0;
+
+        // Find next delimiter after current index. It's key being the characters between those points.
+        while ($delimiterpos = strpos($serializedstring, '|', $index)) {
+            $key = substr($serializedstring, $index, $delimiterpos - $index);
+
+            // Start unserializing immediately after the delimiter. PHP will read as much valid data as possible.
+            $value = unserialize(substr($serializedstring, $delimiterpos + 1),
+                ['allowed_classes' => ['stdClass']]);
+            $variables[$key] = $value;
+
+            // Advance index beyond the length of the previously captured serialized value.
+            $index = $delimiterpos + 1 + strlen(serialize($value));
         }
+
         return $variables;
     }
 }

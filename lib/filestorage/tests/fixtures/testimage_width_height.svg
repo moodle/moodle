@@ -1,0 +1,14 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+        <!ENTITY ns_flows "http://ns.adobe.com/Flows/1.0/">
+        ]>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100px" height="100px" preserveAspectRatio="xMinYMid meet">
+    <g id='gtop' stroke-width="12" stroke="#000">
+        <g id="svgstar" transform="translate(50,50)">
+            <path id="svgbar" d="M-27-5a7,7,0,1,0,0,10h54a7,7,0,1,0,0-10z"/>
+            <use id='use1' xlink:href="#svgbar" transform="rotate(45)"/>
+            <use id='use2' xlink:href="#svgbar" transform="rotate(90)"/>
+            <use id='use3' xlink:href="#svgbar" transform="rotate(135)"/>
+        </g>
+    </g>
+    <use id="usetop" xlink:href="#svgstar" fill="#FB4"/>
+</svg>

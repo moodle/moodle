@@ -17,7 +17,6 @@
  * Load the navigation tree javascript.
  *
  * @module     block_navigation/navblock
- * @package    core
  * @copyright  2015 John Okely <john@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

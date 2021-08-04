@@ -221,8 +221,9 @@ class behat_course extends behat_base {
      * @param int $section
      */
     public function i_add_to_section($activity, $section) {
+        $this->require_javascript('Please use the \'the following "activity" exists:\' data generator instead.');
 
-        if ($this->getSession()->getPage()->find('css', 'body#page-site-index') && (int)$section <= 1) {
+        if ($this->getSession()->getPage()->find('css', 'body#page-site-index') && (int) $section <= 1) {
             // We are on the frontpage.
             if ($section) {
                 // Section 1 represents the contents on the frontpage.
@@ -237,41 +238,24 @@ class behat_course extends behat_base {
             $sectionxpath = "//li[@id='section-" . $section . "']";
         }
 
+        // Clicks add activity or resource section link.
+        $sectionnode = $this->find('xpath', $sectionxpath);
+        $this->execute('behat_general::i_click_on_in_the', [
+            get_string('addresourceoractivity', 'moodle'),
+            'button',
+            $sectionnode,
+            'NodeElement',
+        ]);
+
+        // Clicks the selected activity if it exists.
         $activityliteral = behat_context_helper::escape(ucfirst($activity));
+        $activityxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' modchooser ')]" .
+                "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optioninfo ')]" .
+                "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optionname ')]" .
+                "[normalize-space(.)=$activityliteral]" .
+                "/parent::a";
 
-        if ($this->running_javascript()) {
-
-            // Clicks add activity or resource section link.
-            $sectionxpath = $sectionxpath . "/descendant::div" .
-                    "[contains(concat(' ', normalize-space(@class) , ' '), ' section-modchooser ')]/button";
-
-            $this->execute('behat_general::i_click_on', [$sectionxpath, 'xpath']);
-
-            // Clicks the selected activity if it exists.
-            $activityxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' modchooser ')]" .
-                    "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optioninfo ')]" .
-                    "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optionname ')]" .
-                    "[normalize-space(.)=$activityliteral]" .
-                    "/parent::a";
-
-            $this->execute('behat_general::i_click_on', [$activityxpath, 'xpath']);
-
-        } else {
-            // Without Javascript.
-
-            // Selecting the option from the select box which contains the option.
-            $selectxpath = $sectionxpath . "/descendant::div" .
-                    "[contains(concat(' ', normalize-space(@class), ' '), ' section_add_menus ')]" .
-                    "/descendant::select[option[normalize-space(.)=$activityliteral]]";
-            $selectnode = $this->find('xpath', $selectxpath);
-            $selectnode->selectOption($activity);
-
-            // Go button.
-            $gobuttonxpath = $selectxpath . "/ancestor::form/descendant::input[@type='submit']";
-            $gobutton = $this->find('xpath', $gobuttonxpath);
-            $gobutton->click();
-        }
-
+        $this->execute('behat_general::i_click_on', [$activityxpath, 'xpath']);
     }
 
     /**
@@ -1344,44 +1328,6 @@ class behat_course extends behat_base {
      */
     protected function is_editing_on() {
         return $this->getSession()->getPage()->findButton(get_string('turneditingoff')) ? true : false;
-    }
-
-    /**
-     * Returns the id of the category with the given idnumber.
-     *
-     * Please note that this function requires the category to exist. If it does not exist an ExpectationException is thrown.
-     *
-     * @param string $idnumber
-     * @return string
-     * @throws ExpectationException
-     */
-    protected function get_category_id($idnumber) {
-        global $DB;
-        try {
-            return $DB->get_field('course_categories', 'id', array('idnumber' => $idnumber), MUST_EXIST);
-        } catch (dml_missing_record_exception $ex) {
-            throw new ExpectationException(sprintf("There is no category in the database with the idnumber '%s'", $idnumber),
-                $this->getSession());
-        }
-    }
-
-    /**
-     * Returns the id of the course with the given idnumber.
-     *
-     * Please note that this function requires the category to exist. If it does not exist an ExpectationException is thrown.
-     *
-     * @param string $idnumber
-     * @return string
-     * @throws ExpectationException
-     */
-    protected function get_course_id($idnumber) {
-        global $DB;
-        try {
-            return $DB->get_field('course', 'id', array('idnumber' => $idnumber), MUST_EXIST);
-        } catch (dml_missing_record_exception $ex) {
-            throw new ExpectationException(sprintf("There is no course in the database with the idnumber '%s'", $idnumber),
-                $this->getSession());
-        }
     }
 
     /**

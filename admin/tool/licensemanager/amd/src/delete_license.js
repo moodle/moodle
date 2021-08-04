@@ -17,8 +17,6 @@
  * Modal for confirming deletion of a custom license.
  *
  * @module     tool_licensemanager/delete_license
- * @class      delete_license
- * @package    tool_licensemanager
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

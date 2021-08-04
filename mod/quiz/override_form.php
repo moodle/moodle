@@ -236,7 +236,7 @@ class quiz_override_form extends moodleform {
         $namefields = [];
         foreach ($extrauserfields as $field) {
             if (isset($user->$field) && $user->$field !== '') {
-                $namefields[] = $user->$field;
+                $namefields[] = s($user->$field);
             }
         }
         if ($namefields) {

@@ -16,7 +16,7 @@
 /**
  * Competency rule config.
  *
- * @package    tool_lp
+ * @module     tool_lp/competency_outcomes
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ define(['jquery',
         OUTCOME_COMPLETE = 2,
         OUTCOME_RECOMMEND = 3;
 
-    return /** @alias module:tool_lp/competency_outcomes */ {
+    return {
 
         NONE: OUTCOME_NONE,
         EVIDENCE: OUTCOME_EVIDENCE,
@@ -79,5 +79,4 @@ define(['jquery',
             });
         }
     };
-
 });

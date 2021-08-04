@@ -16,8 +16,7 @@
 /**
  * Grading panel functions.
  *
- * @module     mod_forum/local/grades/local/grader/gradingpnael
- * @package    mod_forum
+ * @module     mod_forum/local/grades/local/grader/gradingpanel
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,6 +26,7 @@
  * This function dynamically pulls the relevant gradingpanel JS file defined in the grading method.
  * We do this because we do not know until execution time what the grading type is and we do not want to import unused files.
  *
+ * @method
  * @param {String} component The component being graded
  * @param {Number} context The contextid of the thing being graded
  * @param {String} gradingComponent The thing providing the grading type

@@ -70,23 +70,25 @@ class quiz_overview_table extends quiz_attempts_report_table {
         $this->add_separator();
 
         if (!empty($this->groupstudentsjoins->joins)) {
-            $sql = "SELECT DISTINCT u.id
+            $hasgroupstudents = $DB->record_exists_sql("
+                    SELECT 1
                       FROM {user} u
                     {$this->groupstudentsjoins->joins}
-                     WHERE {$this->groupstudentsjoins->wheres}";
-            $groupstudents = $DB->get_records_sql($sql, $this->groupstudentsjoins->params);
-            if ($groupstudents) {
+                     WHERE {$this->groupstudentsjoins->wheres}
+                    ", $this->groupstudentsjoins->params);
+            if ($hasgroupstudents) {
                 $this->add_average_row(get_string('groupavg', 'grades'), $this->groupstudentsjoins);
             }
         }
 
         if (!empty($this->studentsjoins->joins)) {
-            $sql = "SELECT DISTINCT u.id
+            $hasstudents = $DB->record_exists_sql("
+                    SELECT 1
                       FROM {user} u
                     {$this->studentsjoins->joins}
-                     WHERE {$this->studentsjoins->wheres}";
-            $students = $DB->get_records_sql($sql, $this->studentsjoins->params);
-            if ($students) {
+                     WHERE {$this->studentsjoins->wheres}
+                    " , $this->studentsjoins->params);
+            if ($hasstudents) {
                 $this->add_average_row(get_string('overallaverage', 'grades'), $this->studentsjoins);
             }
         }

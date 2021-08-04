@@ -501,6 +501,16 @@ class client extends \oauth2_client {
             return false;
         }
 
+        return $this->map_userinfo_to_fields($userinfo);
+    }
+
+    /**
+     * Maps the oauth2 response to userfields.
+     *
+     * @param stdClass $userinfo
+     * @return array
+     */
+    protected function map_userinfo_to_fields(stdClass $userinfo): array {
         $map = $this->get_userinfo_mapping();
 
         $user = new stdClass();
@@ -508,10 +518,25 @@ class client extends \oauth2_client {
             // We support nested objects via a-b-c syntax.
             $getfunc = function($obj, $prop) use (&$getfunc) {
                 $proplist = explode('-', $prop, 2);
-                if (empty($proplist[0]) || empty($obj->{$proplist[0]})) {
+
+                // The value of proplist[0] can be falsey, so just check if not set.
+                if (empty($obj) || !isset($proplist[0])) {
                     return false;
                 }
-                $obj = $obj->{$proplist[0]};
+
+                if (preg_match('/^(.*)\[([0-9]*)\]$/', $proplist[0], $matches)
+                        && count($matches) == 3) {
+                    $property = $matches[1];
+                    $index = $matches[2];
+                    $obj = $obj->{$property}[$index] ?? null;
+                } else if (!empty($obj->{$proplist[0]})) {
+                    $obj = $obj->{$proplist[0]};
+                } else if (is_array($obj) && !empty($obj[$proplist[0]])) {
+                    $obj = $obj[$proplist[0]];
+                } else {
+                    // Nothing found after checking all possible valid combinations, return false.
+                    return false;
+                }
 
                 if (count($proplist) > 1) {
                     return $getfunc($obj, $proplist[1]);

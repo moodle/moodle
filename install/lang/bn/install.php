@@ -35,6 +35,7 @@ $string['chooselanguagehead'] = 'একটি ভাষা নির্বাচ
 $string['chooselanguagesub'] = 'ইনস্টলেশনের জন্য একটি ভাষা নির্বাচন। এই ভাষাই সাইটের জন্য নির্ধারিত ভাষা হিসাবে ব্যবহৃত হবে এবং এটা পরে যেকোনো সময় পরিবর্তন করা হতে পারে।';
 $string['clialreadyinstalled'] = 'ফাইল config.php ইতিমধ্যে আছে, অনুগ্রহ করে আপনি আপনার সাইটটি আপগ্রেড করতে চাইলে admin/cli/upgrade.php ব্যবহার।';
 $string['cliinstallheader'] = 'মুডল {$a} কমান্ড লাইন ইনস্টলেশন প্রোগ্রাম';
+$string['clitablesexist'] = 'ইতিমধ্যেই ডাটাবেস টেবিল বিদ্যমান রয়েছে, cli ইনস্টলেশন চালানো যাচ্ছে না।';
 $string['databasehost'] = 'ডাটাবেস হোস্ট';
 $string['databasename'] = 'ডাটাবেস নাম';
 $string['databasetypehead'] = 'ডাটাবেস ড্রাইভার নির্বাচন';

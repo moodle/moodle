@@ -17,7 +17,6 @@
  * Provides the required functionality for an autocomplete element to select a user.
  *
  * @module      core_user/form_user_selector
- * @package     core_webservice
  * @copyright   2020 David Mudrák <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

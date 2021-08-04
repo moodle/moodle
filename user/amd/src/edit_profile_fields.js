@@ -20,7 +20,6 @@ import {get_string as getString} from 'core/str';
  * User profile fields editor
  *
  * @module     core_user/edit_profile_fields
- * @package    core_user
  * @copyright  2021 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

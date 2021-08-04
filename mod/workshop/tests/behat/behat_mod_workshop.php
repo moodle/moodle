@@ -52,7 +52,7 @@ class behat_mod_workshop extends behat_base {
         $xpath = "//*[@class='userplan']/descendant::div[./span[contains(.,$phaseliteral)]]";
         $continue = $this->escape(get_string('continue'));
 
-        $this->execute('behat_general::click_link', $workshopname);
+        $this->execute("behat_general::i_click_on_in_the", [$this->escape($workshopname), 'link', 'page', 'region']);
 
         $this->execute('behat_general::i_click_on_in_the',
             array('a.action-icon', "css_element", $this->escape($xpath), "xpath_element")
@@ -73,7 +73,7 @@ class behat_mod_workshop extends behat_base {
         $savechanges = $this->escape(get_string('savechanges'));
         $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' ownsubmission ')]/descendant::*[@type='submit']";
 
-        $this->execute('behat_general::click_link', $workshopname);
+        $this->execute("behat_navigation::i_am_on_page_instance", [$this->escape($workshopname), 'workshop activity']);
 
         $this->execute("behat_general::i_click_on", array($xpath, "xpath_element"));
 
@@ -90,7 +90,7 @@ class behat_mod_workshop extends behat_base {
      * @param TableNode $table data to fill the submission form with, must contain 'Title'
      */
     public function i_edit_assessment_form_in_workshop_as($workshopname, $table) {
-        $this->execute('behat_general::click_link', $workshopname);
+        $this->execute("behat_navigation::i_am_on_page_instance", [$this->escape($workshopname), 'workshop activity']);
 
         $this->execute('behat_navigation::i_navigate_to_in_current_page_administration',
             get_string('editassessmentform', 'workshop'));
@@ -116,7 +116,7 @@ class behat_mod_workshop extends behat_base {
         $assess = $this->escape(get_string('assess', 'workshop'));
         $saveandclose = $this->escape(get_string('saveandclose', 'workshop'));
 
-        $this->execute('behat_general::click_link', $workshopname);
+        $this->execute("behat_navigation::i_am_on_page_instance", [$workshopname, 'workshop activity']);
 
         $this->execute('behat_general::i_click_on_in_the',
             array($assess, "button", $xpath, "xpath_element")

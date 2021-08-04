@@ -21,7 +21,6 @@
  * between the different stages of the drag/drop lifecycle.
  *
  * @module     core_calendar/drag_drop_data_store
- * @package    core_calendar
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -151,7 +151,7 @@ class token_table extends \table_sql {
         $identity = [];
 
         foreach ($this->userextrafields as $userextrafield) {
-            $identity[] = $data->$userextrafield;
+            $identity[] = s($data->$userextrafield);
         }
 
         $userprofilurl = new \moodle_url('/user/profile.php', ['id' => $data->userid]);

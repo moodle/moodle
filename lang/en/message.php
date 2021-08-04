@@ -151,6 +151,7 @@ $string['on'] = 'On';
 $string['online'] = 'Online';
 $string['otherparticipants'] = 'Other participants';
 $string['outputnotavailable'] = 'Not available';
+$string['page-message-x'] = 'Any message pages';
 $string['participants'] = 'Participants';
 $string['pendingcontactrequests'] = 'There are {$a} pending contact requests';
 $string['permitted'] = 'Permitted';

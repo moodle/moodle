@@ -67,18 +67,14 @@ class custom_completion extends activity_custom_completion {
 
                 // Get available status list.
                 $statuses = array_flip(\scorm_status_options());
-                $statusbits = 0;
 
                 $requiredcompletionstatusid = $this->cm->customdata['customcompletionrules']['completionstatusrequired'] ?? 0;
+                $isanystatus = ($requiredcompletionstatusid == array_sum($statuses));
 
                 // Check at least one track meets the required completion status value(s).
                 foreach ($tracks as $track) {
-                    if (array_key_exists($track->value, $statuses)) {
-                        $statusbits |= $statuses[$track->value];
-                    }
-
-                    // All completion status requirements met.
-                    if ($statusbits == $requiredcompletionstatusid) {
+                    if (array_key_exists($track->value, $statuses)
+                        && ($isanystatus || $statuses[$track->value] == $requiredcompletionstatusid)) {
                         $status = COMPLETION_COMPLETE;
                         break;
                     }

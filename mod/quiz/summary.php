@@ -79,6 +79,8 @@ if ($attemptobj->is_finished()) {
     redirect($attemptobj->review_url());
 }
 
+\core\session\manager::keepalive(); // Try to prevent sessions expiring during quiz attempts.
+
 // Arrange for the navigation to be displayed.
 if (empty($attemptobj->get_quiz()->showblocks)) {
     $PAGE->blocks->show_only_fake_blocks();

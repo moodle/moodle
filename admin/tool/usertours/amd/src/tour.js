@@ -16,6 +16,7 @@
 /**
  * Manage user tours in Moodle.
  *
+ * @module tool_usertours/tour
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +28,7 @@ import Popper from 'core/popper';
 /**
  * A Tour.
  *
- * @class Tour
+ * @class
  */
 export default class Tour {
     /**

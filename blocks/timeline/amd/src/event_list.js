@@ -18,7 +18,6 @@
  * given day range.
  *
  * @module     block_timeline/event_list
- * @package    block_timeline
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -174,9 +173,9 @@ function(
      * @param {Number} limit Limit the result set to this number of items
      * @param {Number} daysOffset How many days (from midnight) to offset the results from
      * @param {int|undefined} daysLimit How many dates (from midnight) to limit the result to
-     * @param {int|falsey} lastId The ID of the last seen event (if any)
+     * @param {int|false} lastId The ID of the last seen event (if any)
      * @param {int|undefined} courseId Course ID to restrict events to
-     * @return {promise} A jquery promise
+     * @return {Promise} A jquery promise
      */
     var load = function(midnight, limit, daysOffset, daysLimit, lastId, courseId) {
         var startTime = midnight + (daysOffset * SECONDS_IN_DAY);

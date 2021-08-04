@@ -23,7 +23,7 @@ namespace core_user;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class fields_testcase extends \advanced_testcase {
+class fields_test extends \advanced_testcase {
 
     /**
      * Tests getting the user picture fields.
@@ -51,18 +51,26 @@ class fields_testcase extends \advanced_testcase {
      * Tests getting the identity fields.
      */
     public function test_get_identity_fields() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest();
 
-        // Create two custom profile fields, one of which is private.
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
+        // Create custom profile fields, one with each visibility option.
         $generator = self::getDataGenerator();
-        $generator->create_custom_profile_field(['datatype' => 'text', 'shortname' => 'a', 'name' => 'A']);
+        $generator->create_custom_profile_field(['datatype' => 'text', 'shortname' => 'a', 'name' => 'A',
+                'visible' => PROFILE_VISIBLE_ALL]);
         $generator->create_custom_profile_field(['datatype' => 'text', 'shortname' => 'b', 'name' => 'B',
                 'visible' => PROFILE_VISIBLE_PRIVATE]);
+        $generator->create_custom_profile_field(['datatype' => 'text', 'shortname' => 'c', 'name' => 'C',
+                'visible' => PROFILE_VISIBLE_NONE]);
+        $generator->create_custom_profile_field(['datatype' => 'text', 'shortname' => 'd', 'name' => 'D',
+                'visible' => PROFILE_VISIBLE_TEACHERS]);
 
-        // Set the extra user fields to include email, department, and both custom profile fields.
-        set_config('showuseridentity', 'email,department,profile_field_a,profile_field_b');
+        // Set the extra user fields to include email, department, and all custom profile fields.
+        set_config('showuseridentity', 'email,department,profile_field_a,profile_field_b,' .
+                'profile_field_c,profile_field_d');
         set_config('hiddenuserfields', 'email');
 
         // Create a test course and a student in the course.
@@ -74,7 +82,8 @@ class fields_testcase extends \advanced_testcase {
         $generator->enrol_user($user->id, $course->id, 'student');
 
         // When no context is provided, it does no access checks and should return all specified.
-        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b'],
+        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b',
+                'profile_field_c', 'profile_field_d'],
                 fields::get_identity_fields(null));
 
         // If you turn off custom profile fields, you don't get those.
@@ -82,7 +91,8 @@ class fields_testcase extends \advanced_testcase {
 
         // Request in context as an administator.
         $this->setAdminUser();
-        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b'],
+        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b',
+                'profile_field_c', 'profile_field_d'],
                 fields::get_identity_fields($coursecontext));
         $this->assertEquals(['email', 'department'],
                 fields::get_identity_fields($coursecontext, false));
@@ -92,24 +102,26 @@ class fields_testcase extends \advanced_testcase {
         $this->setUser($user);
         $this->assertEquals([], fields::get_identity_fields($coursecontext));
 
-        // Give the student the basic identity fields permission.
+        // Give the student the basic identity fields permission (also makes them count as 'teacher'
+        // for the teacher-restricted field).
         $roleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
         role_change_permission($roleid, $coursecontext, 'moodle/site:viewuseridentity', CAP_ALLOW);
-        $this->assertEquals(['department', 'profile_field_a'],
+        $this->assertEquals(['department', 'profile_field_a', 'profile_field_d'],
                 fields::get_identity_fields($coursecontext));
         $this->assertEquals(['department'],
                 fields::get_identity_fields($coursecontext, false));
 
         // Give them permission to view hidden user fields.
         role_change_permission($roleid, $coursecontext, 'moodle/course:viewhiddenuserfields', CAP_ALLOW);
-        $this->assertEquals(['email', 'department', 'profile_field_a'],
+        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_d'],
                 fields::get_identity_fields($coursecontext));
         $this->assertEquals(['email', 'department'],
                 fields::get_identity_fields($coursecontext, false));
 
         // Also give them permission to view all profile fields.
         role_change_permission($roleid, $coursecontext, 'moodle/user:viewalldetails', CAP_ALLOW);
-        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b'],
+        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b',
+                'profile_field_c', 'profile_field_d'],
                 fields::get_identity_fields($coursecontext));
         $this->assertEquals(['email', 'department'],
                 fields::get_identity_fields($coursecontext, false));
@@ -120,21 +132,22 @@ class fields_testcase extends \advanced_testcase {
 
         // Give them basic permission.
         role_change_permission($roleid, $usercontext, 'moodle/site:viewuseridentity', CAP_ALLOW);
-        $this->assertEquals(['department', 'profile_field_a'],
+        $this->assertEquals(['department', 'profile_field_a', 'profile_field_d'],
                 fields::get_identity_fields($usercontext));
         $this->assertEquals(['department'],
                 fields::get_identity_fields($usercontext, false));
 
         // Give them the hidden user fields permission (it's a different one).
         role_change_permission($roleid, $usercontext, 'moodle/user:viewhiddendetails', CAP_ALLOW);
-        $this->assertEquals(['email', 'department', 'profile_field_a'],
+        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_d'],
                 fields::get_identity_fields($usercontext));
         $this->assertEquals(['email', 'department'],
                 fields::get_identity_fields($usercontext, false));
 
         // Also give them permission to view all profile fields.
         role_change_permission($roleid, $usercontext, 'moodle/user:viewalldetails', CAP_ALLOW);
-        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b'],
+        $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b',
+                'profile_field_c', 'profile_field_d'],
                 fields::get_identity_fields($usercontext));
         $this->assertEquals(['email', 'department'],
                 fields::get_identity_fields($usercontext, false));

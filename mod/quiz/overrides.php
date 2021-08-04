@@ -242,7 +242,7 @@ foreach ($overrides as $override) {
         foreach ($extrauserfields as $field) {
             $usercell = new html_table_cell();
             $usercell->rowspan = count($fields);
-            $usercell->text = $override->$field;
+            $usercell->text = s($override->$field);
             $usercells[] = $usercell;
         }
     }

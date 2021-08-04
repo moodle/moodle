@@ -264,6 +264,8 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Renders HTML for the menus to add activities and resources to the current course
      *
+     * Renders the ajax control (the link which when clicked produces the activity chooser modal). No noscript fallback.
+     *
      * @param stdClass $course
      * @param int $section relative section number (field course_sections.section)
      * @param int $sectionreturn The section to link back to
@@ -272,41 +274,34 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     function course_section_add_cm_control($course, $section, $sectionreturn = null, $displayoptions = array()) {
-        // The returned control HTML can be one of the following:
-        // - Only the non-ajax control (select menus of activities and resources) with a noscript fallback for non js clients.
-        // Please note that non-ajax control has been deprecated and it will be removed in the future.
-
-        // - Only the ajax control (the link which when clicked produces the activity chooser modal). No noscript fallback.
-
-        $courseajaxenabled = course_ajax_enabled($course);
-
-        // Non ajax control is under deprecated, $rendernonajaxcontrol will be removed in later versions.
-        $rendernonajaxcontrol = !$courseajaxenabled || $course->id != $this->page->course->id;
-        if ($rendernonajaxcontrol) {
-            // The non-ajax control, which includes an entirely non-js (<noscript>) fallback too.
-            return $this->course_section_add_cm_control_nonajax($course, $section, $sectionreturn, $displayoptions);
-        } else {
-            // The ajax control - the 'Add an activity or resource' link.
-            // The module chooser link.
-            $straddeither = get_string('addresourceoractivity');
-            $ajaxcontrol = html_writer::start_tag('div', array('class' => 'mdl-right'));
-            $ajaxcontrol .= html_writer::start_tag('div', array('class' => 'section-modchooser'));
-            $icon = $this->output->pix_icon('t/add', '');
-            $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
-            $ajaxcontrol .= html_writer::tag('button', $icon . $span, [
-                    'class' => 'section-modchooser-link btn btn-link',
-                    'data-action' => 'open-chooser',
-                    'data-sectionid' => $section,
-                    'data-sectionreturnid' => $sectionreturn,
-                ]
-            );
-            $ajaxcontrol .= html_writer::end_tag('div');
-            $ajaxcontrol .= html_writer::end_tag('div');
-
-            // Load the JS for the modal.
-            $this->course_activitychooser($course->id);
-            return $ajaxcontrol;
+        // Check to see if user can add menus.
+        if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))
+                || !$this->page->user_is_editing()) {
+            return '';
         }
+
+        $straddeither = get_string('addresourceoractivity');
+
+        $ajaxcontrol = html_writer::start_tag('div', array('class' => 'mdl-right'));
+        $ajaxcontrol .= html_writer::start_tag('div', array('class' => 'section-modchooser'));
+
+        $icon = $this->output->pix_icon('t/add', '');
+        $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
+
+        $ajaxcontrol .= html_writer::tag('button', $icon . $span, [
+            'class' => 'section-modchooser-link btn btn-link',
+            'data-action' => 'open-chooser',
+            'data-sectionid' => $section,
+            'data-sectionreturnid' => $sectionreturn,
+        ]);
+
+        $ajaxcontrol .= html_writer::end_tag('div');
+        $ajaxcontrol .= html_writer::end_tag('div');
+
+        // Load the JS for the modal.
+        $this->course_activitychooser($course->id);
+
+        return $ajaxcontrol;
     }
 
     /**

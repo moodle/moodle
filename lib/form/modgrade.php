@@ -240,6 +240,13 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
             $label = html_writer::tag('label', $this->maxgradeformelement->getLabel(),
                 array('for' => $this->maxgradeformelement->getAttribute('id')));
             $this->_elements[] = $this->createFormElement('static', 'pointlabel', '', $label);
+
+            // Check if there are grades and if so then disable maxgradeformelement.
+            if ($this->hasgrades) {
+                // If it has grades then disable it.
+                $this->maxgradeformelement->updateAttributes(['disabled' => 'disabled']);
+            }
+
             $this->_elements[] = $this->maxgradeformelement;
             $this->_elements[] = $this->createFormElement('static', 'pointspacer', '', '<br />');
         }

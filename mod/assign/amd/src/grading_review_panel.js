@@ -17,8 +17,6 @@
  * Javascript controller for the "Review" panel at the left of the page.
  *
  * @module     mod_assign/grading_review_panel
- * @package    mod_assign
- * @class      GradingReviewPanel
  * @copyright  2016 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
@@ -28,7 +26,7 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
     /**
      * GradingReviewPanel class.
      *
-     * @class GradingReviewPanel
+     * @class mod_assign/grading_review_panel
      * @param {String} selector The selector for the page region containing the user navigation.
      */
     var GradingReviewPanel = function() {
@@ -36,7 +34,7 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
         this.registerEventListeners();
     };
 
-    /** @type {JQuery} JQuery node for the page region containing the user navigation. */
+    /** @property {JQuery} JQuery node for the page region containing the user navigation. */
     GradingReviewPanel.prototype._region = null;
 
     /**

@@ -17,8 +17,6 @@
  * Retrieves messages from the server.
  *
  * @module     core_message/message_repository
- * @class      message_repository
- * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

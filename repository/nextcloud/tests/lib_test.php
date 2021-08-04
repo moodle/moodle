@@ -623,12 +623,12 @@ JSON;
 
     /**
      * Test supported_returntypes.
-     * FILE_INTERNAL when no system account is connected.
-     * FILE_INTERNAL | FILE_CONTROLLED_LINK when a system account is connected.
+     * FILE_INTERNAL | FILE_REFERENCE when no system account is connected.
+     * FILE_INTERNAL | FILE_CONTROLLED_LINK | FILE_REFERENCE when a system account is connected.
      */
     public function test_supported_returntypes() {
         global $DB;
-        $this->assertEquals(FILE_INTERNAL, $this->repo->supported_returntypes());
+        $this->assertEquals(FILE_INTERNAL | FILE_REFERENCE, $this->repo->supported_returntypes());
         $dataobject = new stdClass();
         $dataobject->timecreated = time();
         $dataobject->timemodified = time();
@@ -641,12 +641,12 @@ JSON;
 
         $DB->insert_record('oauth2_system_account', $dataobject);
         // When a system account is registered the file_type FILE_CONTROLLED_LINK is supported.
-        $this->assertEquals(FILE_INTERNAL | FILE_CONTROLLED_LINK,
+        $this->assertEquals(FILE_INTERNAL | FILE_CONTROLLED_LINK | FILE_REFERENCE,
             $this->repo->supported_returntypes());
     }
 
     /**
-     * The reference_file_selected() methode is called every time a FILE_CONTROLLED_LINK is chosen for upload.
+     * The reference_file_selected() method is called every time a FILE_CONTROLLED_LINK is chosen for upload.
      * Since the function is very long the private function are tested separately, and merely the abortion of the
      * function are tested.
      *
@@ -845,6 +845,150 @@ XML;
     }
 
     /**
+     * This function provides the data for test_sync_reference
+     *
+     * @return array[]
+     */
+    public function sync_reference_provider():array {
+        return [
+            'referecncelastsync done recently' => [
+                [
+                    'storedfile_record' => [
+                            'contextid' => context_system::instance()->id,
+                            'component' => 'core',
+                            'filearea'  => 'unittest',
+                            'itemid'    => 0,
+                            'filepath'  => '/',
+                            'filename'  => 'testfile.txt',
+                    ],
+                    'storedfile_reference' => json_encode(
+                        [
+                            'type' => 'FILE_REFERENCE',
+                            'link' => 'https://test.local/fakelink/',
+                            'usesystem' => true,
+                            'referencelastsync' => DAYSECS + time()
+                        ]
+                    ),
+                ],
+                'mockfunctions' => ['get_referencelastsync'],
+                'expectedresult' => false
+            ],
+            'file without link' => [
+                [
+                    'storedfile_record' => [
+                        'contextid' => context_system::instance()->id,
+                        'component' => 'core',
+                        'filearea'  => 'unittest',
+                        'itemid'    => 0,
+                        'filepath'  => '/',
+                        'filename'  => 'testfile.txt',
+                    ],
+                    'storedfile_reference' => json_encode(
+                        [
+                            'type' => 'FILE_REFERENCE',
+                            'usesystem' => true,
+                        ]
+                    ),
+                ],
+                'mockfunctions' => [],
+                'expectedresult' => false
+            ],
+            'file extenstion to exclude' => [
+                [
+                    'storedfile_record' => [
+                        'contextid' => context_system::instance()->id,
+                        'component' => 'core',
+                        'filearea'  => 'unittest',
+                        'itemid'    => 0,
+                        'filepath'  => '/',
+                        'filename'  => 'testfile.txt',
+                    ],
+                    'storedfile_reference' => json_encode(
+                        [
+                            'link' => 'https://test.local/fakelink/',
+                            'type' => 'FILE_REFERENCE',
+                            'usesystem' => true,
+                        ]
+                    ),
+                ],
+                'mockfunctions' => [],
+                'expectedresult' => false
+            ],
+            'file extenstion for image' => [
+                [
+                    'storedfile_record' => [
+                        'contextid' => context_system::instance()->id,
+                        'component' => 'core',
+                        'filearea'  => 'unittest',
+                        'itemid'    => 0,
+                        'filepath'  => '/',
+                        'filename'  => 'testfile.png',
+                    ],
+                    'storedfile_reference' => json_encode(
+                        [
+                            'link' => 'https://test.local/fakelink/',
+                            'type' => 'FILE_REFERENCE',
+                            'usesystem' => true,
+                        ]
+                    ),
+                    'mock_curl' => true,
+                ],
+                'mockfunctions' => [''],
+                'expectedresult' => true
+            ],
+        ];
+    }
+
+    /**
+     * Testing sync_reference
+     *
+     * @dataProvider sync_reference_provider
+     * @param array $storedfileargs
+     * @param array $storedfilemethodsmock
+     * @param bool $expectedresult
+     * @return void
+     */
+    public function test_sync_reference(array $storedfileargs, $storedfilemethodsmock, bool $expectedresult):void {
+        $this->resetAfterTest(true);
+
+        if (isset($storedfilemethodsmock[0])) {
+            $storedfile = $this->createMock(stored_file::class);
+
+            if ($storedfilemethodsmock[0] === 'get_referencelastsync') {
+                if (!$expectedresult) {
+                    $storedfile->method('get_referencelastsync')->willReturn(DAYSECS + time());
+                }
+            } else {
+                $storedfile->method('get_referencelastsync')->willReturn(null);
+            }
+
+            $storedfile->method('get_reference')->willReturn($storedfileargs['storedfile_reference']);
+            $storedfile->method('get_filepath')->willReturn($storedfileargs['storedfile_record']['filepath']);
+            $storedfile->method('get_filename')->willReturn($storedfileargs['storedfile_record']['filename']);
+
+            if ((isset($storedfileargs['mock_curl']) && $storedfileargs)) {
+                // Lets mock curl, else it would not serve the purpose here.
+                $curl = $this->createMock(curl::class);
+                $curl->method('download_one')->willReturn(true);
+                $curl->method('get_info')->willReturn(['http_code' => 200]);
+
+                $reflectionproperty = new \ReflectionProperty($this->repo, 'curl');
+                $reflectionproperty->setAccessible(true);
+                $reflectionproperty->setValue($this->repo, $curl);
+            }
+        } else {
+            $fs = get_file_storage();
+            $storedfile = $fs->create_file_from_reference(
+                $storedfileargs['storedfile_record'],
+                $this->repo->id,
+                $storedfileargs['storedfile_reference']);
+        }
+
+        $actualresult = $this->repo->sync_reference($storedfile);
+        $this->assertEquals($expectedresult, $actualresult);
+    }
+
+    /**
      * Helper method, which inserts a given mock value into the repository_nextcloud object.
      *
      * @param mixed $value mock value that will be inserted.
@@ -878,6 +1022,8 @@ XML;
         $ret['manage'] = '';
         $ret['defaultreturntype'] = FILE_INTERNAL;
         $ret['list'] = array();
+
+        $ret['filereferencewarning'] = get_string('externalpubliclinkwarning', 'repository_nextcloud');
 
         return $ret;
     }

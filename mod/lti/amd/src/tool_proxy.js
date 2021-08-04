@@ -17,14 +17,12 @@
  * Provides an interface for a tool proxy in the Moodle server.
  *
  * @module     mod_lti/tool_proxy
- * @class      tool_proxy
- * @package    mod_lti
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
 define(['core/ajax', 'core/notification'], function(ajax, notification) {
-    return /** @alias module:mod_lti/tool_proxy */ {
+    return {
         /**
          * Get a list of tool types from Moodle for the given
          * search args.

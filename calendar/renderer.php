@@ -374,7 +374,7 @@ class core_calendar_renderer extends plugin_renderer_base {
      */
     protected function subscription_action_form($subscription) {
         // Assemble form for the subscription row.
-        $html = html_writer::start_tag('form', array('action' => new moodle_url('/calendar/managesubscriptions.php'), 'method' => 'post'));
+        $html = html_writer::start_tag('form', ['action' => $this->page->url->out(false) , 'method' => 'post']);
         if (empty($subscription->url)) {
             // Don't update an iCal file, which has no URL.
             $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pollinterval', 'value' => '0'));

@@ -17,7 +17,6 @@
  * Various actions on modules and sections in the editing mode - hiding, duplicating, deleting, etc.
  *
  * @module     core_course/actions
- * @package    core
  * @copyright  2016 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.3
