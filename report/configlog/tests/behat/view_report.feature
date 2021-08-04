@@ -1,4 +1,4 @@
-@report @report_configlog
+@report @report_configlog @core_reportbuilder
 Feature: In a report, admin can see configuration changes
   In order see configuration changes
   As an admin
@@ -16,7 +16,7 @@ Feature: In a report, admin can see configuration changes
   @javascript
   Scenario: Display configuration changes report
     When I navigate to "Reports > Config changes" in site administration
-    Then the following should exist in the "report-configlog-report-table" table:
+    Then the following should exist in the "reportbuilder-table" table:
       | User       | Plugin | Setting             | New value | Original value |
       | Admin User | quiz   | initialnumfeedbacks | 5         | 2              |
       | Admin User | folder | maxsizetodownload   | 2048      | 0              |
@@ -25,16 +25,19 @@ Feature: In a report, admin can see configuration changes
   @javascript
   Scenario Outline: Search configuration changes report
     When I navigate to "Reports > Config changes" in site administration
-    And I click on "Show more..." "link"
-    And I set the field "<field>" to "<search>"
-    And I click on "Search" "button" in the "#fitem_id_submitbutton" "css_element"
-    Then the following should exist in the "report-configlog-report-table" table:
+    And I click on "Filters" "button"
+    And I set the following fields in the "<field>" "core_reportbuilder > Filter" to these values:
+      | <field> operator | Contains   |
+      | <field> value    | <search>   |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "Filters applied"
+    Then the following should exist in the "reportbuilder-table" table:
       | Plugin   | Setting   | New value |
       | <plugin> | <setting> | <value>   |
-    And I should not see "<excluded>" in the "report-configlog-report-table" "table"
+    And I should not see "<excluded>" in the "reportbuilder-table" "table"
     Examples:
-      | field   | search              | plugin | setting             | value  | excluded            |
-      | Setting | initialnumfeedbacks | quiz   | initialnumfeedbacks | 5      | maxsizetodownload   |
-      | Setting | maxsizetodownload   | folder | maxsizetodownload   | 2048   | initialnumfeedbacks |
-      | Value   | Perth               | core   | defaultcity         | Perth  | maxsizetodownload   |
-      | User    | Admin               | core   | defaultcity         | Perth  | zzzzzzzzz           |
+      | field     | search              | plugin | setting             | value  | excluded            |
+      | Setting   | initialnumfeedbacks | quiz   | initialnumfeedbacks | 5      | maxsizetodownload   |
+      | Setting   | maxsizetodownload   | folder | maxsizetodownload   | 2048   | initialnumfeedbacks |
+      | New value | Perth               | core   | defaultcity         | Perth  | maxsizetodownload   |
+      | Full name | Admin User          | core   | defaultcity         | Perth  | zzzzzzzzz           |

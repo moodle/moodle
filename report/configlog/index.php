@@ -23,6 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_reportbuilder\system_report_factory;
+use core_reportbuilder\local\filters\text;
+use report_configlog\local\systemreports\config_changes;
+
 require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
@@ -34,50 +38,15 @@ admin_externalpage_setup('reportconfiglog', '', ['search' => $search], '', ['pag
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('configlog', 'report_configlog'));
 
-/** @var cache_session $cache */
-$cache = cache::make_from_params(cache_store::MODE_SESSION, 'report_customlog', 'search');
-
+// Create out report instance, setting initial filtering if required.
+$report = system_report_factory::create(config_changes::class, context_system::instance());
 if (!empty($search)) {
-    $searchdata = (object) ['setting' => $search];
-} else {
-    $searchdata = $cache->get('data');
+    $report->set_filter_values([
+        'config_change:setting_operator' => text::IS_EQUAL_TO,
+        'config_change:setting_value' => $search,
+    ]);
 }
 
-$mform = new \report_configlog\form\search();
-$mform->set_data($searchdata);
-
-$searchclauses = [];
-
-// Check if we have a form submission, or a cached submission.
-$data = ($mform->is_submitted() ? $mform->get_data() : fullclone($searchdata));
-if ($data instanceof stdClass) {
-    if (!empty($data->value)) {
-        $searchclauses[] = $data->value;
-    }
-    if (!empty($data->setting)) {
-        $searchclauses[] = "setting:{$data->setting}";
-    }
-    if (!empty($data->user)) {
-        $searchclauses[] = "user:{$data->user}";
-    }
-    if (!empty($data->datefrom)) {
-        $searchclauses[] = "datefrom:{$data->datefrom}";
-    }
-    if (!empty($data->dateto)) {
-        $dateto = $data->dateto + DAYSECS - 1;
-        $searchclauses[] = "dateto:{$dateto}";
-    }
-
-    // Cache form submission so that it is preserved while paging through the report.
-    unset($data->submitbutton);
-    $cache->set('data', $data);
-}
-
-$mform->display();
-
-$table = new \report_configlog\output\report_table(implode(' ', $searchclauses));
-$table->define_baseurl($PAGE->url);
-
-echo $PAGE->get_renderer('report_configlog')->render($table);
+echo $report->output();
 
 echo $OUTPUT->footer();
