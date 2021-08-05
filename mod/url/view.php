@@ -58,7 +58,9 @@ $PAGE->set_url('/mod/url/view.php', array('id' => $cm->id));
 $exturl = trim($url->externalurl);
 if (empty($exturl) or $exturl === 'http://') {
     url_print_header($url, $cm, $course);
-    url_print_heading($url, $cm, $course);
+    if (!$PAGE->has_secondary_navigation()) {
+        url_print_heading($url, $cm, $course);
+    }
     url_print_intro($url, $cm, $course);
     notice(get_string('invalidstoredurl', 'url'), new moodle_url('/course/view.php', array('id'=>$cm->course)));
     die;
