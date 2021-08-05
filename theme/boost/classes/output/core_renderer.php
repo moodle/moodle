@@ -53,7 +53,7 @@ class core_renderer extends \core_renderer {
      * @return string the HTML for the navbar.
      */
     public function navbar(): string {
-        $newnav = new \theme_boost\boostnavbar($this->page->navbar);
+        $newnav = new \theme_boost\boostnavbar($this->page);
         return $this->render_from_template('core/navbar', $newnav);
     }
 
