@@ -81,18 +81,19 @@ $string['pathssubdataroot'] = '<p>Un directorio onde Moodle almacenará todo o c
 <p>Este directorio debería ser lexíbel e escribíbel polo usuario do servidor web (normalmente «www-data«» «ninguén» ou «apache»).</p>
 <p> Non debe ser accesíbel directamente na web. </p>
 <p> Se o directorio non existe actualmente, o proceso de instalación tentará crealo. </p>';
-$string['pathssubdirroot'] = '<p>Ruta completa do directorio de instalación de Moodle.</p>';
+$string['pathssubdirroot'] = 'Ruta completa do directorio de instalación de Moodle.';
 $string['pathssubwwwroot'] = '<p>O enderezo completo onde se accederá a Moodle, é dicir, o enderezo que os usuarios introducirán na barra de enderezos do seu navegador para acceder a Moodle.</p>
 <p>Non é posíbel acceder a Moodle con varias direccións. Se o seu sitio é accesíbel a través de varios enderezos, escolla o máis sinxelo e configure unha redirección permanente para cada un dos outros enderezos.</p>
 <p Se o seu sitio é accesíbel tanto dende a Internet como dende unha rede interna (ás veces chamada Intranet), entón use o enderezo público aquí.</p>
 <p>Se o enderezo actual non é correcto, cambie o URL na barra de enderezos do seu navegador e reinicie a instalación.</p>';
-$string['pathsunsecuredataroot'] = 'A localización de «dataroot» non é segura';
+$string['pathsunsecuredataroot'] = 'A localización de dataroot non é segura';
 $string['pathswrongadmindir'] = 'Non existe o directorio Admin';
 $string['phpextension'] = 'Extensión PHP {$a}';
 $string['phpversion'] = 'Versión PHP';
-$string['phpversionhelp'] = '<p>Moodle require polo menos unha das versións de PHP 5.6.5 ou 7.1 (7.0.x ten algunhas limitacións de motor).</p>
+$string['phpversionhelp'] = '<p>Moodle require polo menos unha das versións de PHP 4.3.0 ou 5.1.0 ( as versións 5.0.x teñen unha serie de problemas coñecidos).</p>
 <p>Neste momento está executandose a versión {$a}</p>
-<p>Debe actualizar PHP ou trasladarse a outro servidor cunha versión máis recente de PHP.</p>';
+<p>Debe actualizar PHP ou trasladarse a outro servidor cunha versión máis recente de PHP!<br />
+(NO caso de 5.0.x podería tamén reverter cara a versión 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Se esta a ver esta páxina é porque puido instalar satisfactoriamente e
     executar o paquete <strong>{$a->packname} {$a->packversion}</strong> no seu computador. Parabéns!';
