@@ -69,6 +69,9 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 
+// Activate the secondary nav tab.
+$PAGE->set_secondary_active_tab("mod_quiz_useroverrides");
+
 // Delete orphaned group overrides.
 $sql = 'SELECT o.id
           FROM {quiz_overrides} o
@@ -303,32 +306,32 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
 // Output the table and button.
-echo html_writer::start_tag('div', ['id' => 'quizoverrides']);
+$output = '';
+
+$output .= html_writer::start_tag('div', ['id' => 'quizoverrides']);
 if (count($table->data)) {
-    echo html_writer::table($table);
+    $output .= html_writer::table($table);
 } else {
     if ($groupmode) {
-        echo $OUTPUT->notification(get_string('overridesnoneforgroups', 'quiz'), 'info', false);
+        $output .= $OUTPUT->notification(get_string('overridesnoneforgroups', 'quiz'), 'info', false);
     } else {
-        echo $OUTPUT->notification(get_string('overridesnoneforusers', 'quiz'), 'info', false);
+        $output .= $OUTPUT->notification(get_string('overridesnoneforusers', 'quiz'), 'info', false);
     }
 }
 if ($hasinactive) {
-    echo $OUTPUT->notification(get_string('inactiveoverridehelp', 'quiz'), 'info', false);
+    $output .= $OUTPUT->notification(get_string('inactiveoverridehelp', 'quiz'), 'info', false);
 }
 
+$addbutton = '';
+$options = [];
 if ($canedit) {
-    echo html_writer::start_tag('div', ['class' => 'buttons']);
-    $options = [];
+    $output .= html_writer::start_tag('div', ['class' => 'buttons']);
     if ($groupmode) {
         if (empty($groups)) {
             // There are no groups.
-            echo $OUTPUT->notification(get_string('groupsnone', 'quiz'), 'error');
+            $output .= $OUTPUT->notification(get_string('groupsnone', 'quiz'), 'error');
             $options['disabled'] = true;
         }
-        echo $OUTPUT->single_button($overrideediturl->out(true,
-                ['action' => 'addgroup', 'cmid' => $cm->id]),
-                get_string('addnewgroupoverride', 'quiz'), 'post', $options);
     } else {
         $users = [];
         // See if there are any students in the quiz.
@@ -346,17 +349,22 @@ if ($canedit) {
 
         if (empty($users)) {
             // There are no students.
-            echo $OUTPUT->notification($nousermessage, 'error');
+            $output .= $OUTPUT->notification($nousermessage, 'error');
             $options['disabled'] = true;
         }
-        echo $OUTPUT->single_button($overrideediturl->out(true,
-                ['action' => 'adduser', 'cmid' => $cm->id]),
-                get_string('addnewuseroverride', 'quiz'), 'get', $options);
     }
-    echo html_writer::end_tag('div');
+    $output .= html_writer::end_tag('div');
 }
 
-echo html_writer::end_tag('div');
+$output .= html_writer::end_tag('div');
+
+// Outputs overrides action.
+$overridesaction = new \mod_quiz\output\overridesaction($cmid, $mode, $canedit, $options);
+$renderer = $PAGE->get_renderer('mod_quiz');
+echo $renderer->overrides_action($overridesaction);
+
+// Now output what we captured after the overrides action.
+echo $output;
 
 // Finish the page.
 echo $OUTPUT->footer();

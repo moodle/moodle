@@ -1731,15 +1731,9 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
     }
 
     if (has_any_capability(['mod/quiz:manageoverrides', 'mod/quiz:viewoverrides'], $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$PAGE->cm->id));
-        $node = navigation_node::create(get_string('groupoverrides', 'quiz'),
-                new moodle_url($url, array('mode'=>'group')),
-                navigation_node::TYPE_SETTING, null, 'mod_quiz_groupoverrides');
-        $quiznode->add_node($node, $beforekey);
-
-        $node = navigation_node::create(get_string('useroverrides', 'quiz'),
-                new moodle_url($url, array('mode'=>'user')),
-                navigation_node::TYPE_SETTING, null, 'mod_quiz_useroverrides');
+        $url = new moodle_url('/mod/quiz/overrides.php', array('cmid' => $PAGE->cm->id));
+        $node = navigation_node::create(get_string('overrides', 'quiz'),
+                    $url, navigation_node::TYPE_SETTING, null, 'mod_quiz_useroverrides');
         $quiznode->add_node($node, $beforekey);
     }
 
@@ -1748,7 +1742,8 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
                 new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id)),
                 navigation_node::TYPE_SETTING, null, 'mod_quiz_edit',
                 new pix_icon('t/edit', ''));
-        $quiznode->add_node($node, $beforekey);
+        $editquiznode = $quiznode->add_node($node, $beforekey);
+        $editquiznode->set_show_in_secondary_navigation(false);
     }
 
     if (has_capability('mod/quiz:preview', $PAGE->cm->context)) {
@@ -1757,8 +1752,11 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
         $node = navigation_node::create(get_string('preview', 'quiz'), $url,
                 navigation_node::TYPE_SETTING, null, 'mod_quiz_preview',
                 new pix_icon('i/preview', ''));
-        $quiznode->add_node($node, $beforekey);
+        $previewnode = $quiznode->add_node($node, $beforekey);
+        $previewnode->set_show_in_secondary_navigation(false);
     }
+
+    question_extend_settings_navigation($quiznode, $PAGE->cm->context)->trim_if_empty();
 
     if (has_any_capability(array('mod/quiz:viewreports', 'mod/quiz:grade'), $PAGE->cm->context)) {
         require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
@@ -1768,7 +1766,7 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
                 array('id' => $PAGE->cm->id, 'mode' => reset($reportlist)));
         $reportnode = $quiznode->add_node(navigation_node::create(get_string('results', 'quiz'), $url,
                 navigation_node::TYPE_SETTING,
-                null, null, new pix_icon('i/report', '')), $beforekey);
+                null, null, new pix_icon('i/report', '')));
 
         foreach ($reportlist as $report) {
             $url = new moodle_url('/mod/quiz/report.php',
@@ -1778,8 +1776,6 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
                     null, 'quiz_report_' . $report, new pix_icon('i/item', '')));
         }
     }
-
-    question_extend_settings_navigation($quiznode, $PAGE->cm->context)->trim_if_empty();
 }
 
 /**
