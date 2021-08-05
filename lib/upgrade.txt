@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.11.5 ===
+* Added the cleanstr mustache template helper to clean strings after loading them from language packs.
+
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
   Note: This option overrides the forced download of directly accessed SVGs, so should only be used where the calling method is
