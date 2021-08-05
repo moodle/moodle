@@ -71,7 +71,7 @@ $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Anda melihat halaman ini karena Anda telah berhasil memasang dan meluncurkan paket <strong> {$a->packname} {$a->packversion}</strong> di komputer Anda. Selamat!';
 $string['welcomep30'] = 'Rilis <strong> {$a->installername}</strong> ini mencakup aplikasi untuk menciptakan lingkungan tempat <strong> Moodle </strong> yang akan digunakan, yaitu:';
 $string['welcomep40'] = 'Paket juga termasuk <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Penggunaan semua aplikasi dalam paket ini diatur oleh lisensi masing-masing. Paket <strong>{$a->installername}</strong> lengkap adalah <a href="http://www.opensource.org/docs/definition_plain.html"> sumber terbuka </a> dan didistribusikan di bawah lisensi <a href="http://www.gnu.org/copyleft/gpl.html"> GPL </a>.';
+$string['welcomep50'] = 'Penggunaan semua aplikasi dalam paket ini diatur oleh lisensi masing-masing. Paket lengkap <strong>{$a->installername}</strong> adalah <a href="https://www.opensource.org/docs/definition_plain.html"> open source </a> dan didistribusikan di bawah lisensi <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'Halaman berikut akan menuntun Anda melalui beberapa langkah yang mudah diikuti untuk mengonfigurasi dan menyiapkan <strong> Moodle </strong> di komputer Anda. Anda dapat menerima pengaturan bawaan atau, secara opsional, mengubahnya sesuai dengan kebutuhan Anda.';
 $string['welcomep70'] = 'Klik tombol "Selanjutnya" di bawah untuk melanjutkan instalasi <strong> Moodle </strong>.';
 $string['wwwroot'] = 'Alamat web';
