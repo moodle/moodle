@@ -3809,34 +3809,6 @@ EOD;
     }
 
     /**
-     * Renders a navigation bar into a "more menu" navigation bar
-     *
-     * @param array $content
-     * @param string $navbarstyle navbar-nav or nav-tabs
-     * @param boolean $hastabs
-     * @return string
-     */
-    public function more_menu($content, $navbarstyle, $hastabs = false) {
-        $tabs = ($navbarstyle == 'nav-tabs');
-        if (is_object($content)) {
-            if (!isset($content->children) || count($content->children) == 0) {
-                return false;
-            }
-            return $this->render_from_template('core/moremenu', (object) [
-                'nodecollection' => $content,
-                'navbarstyle' => $navbarstyle,
-                'tabs' => $hastabs
-            ]);
-        } else {
-            return $this->render_from_template('core/moremenu', (object) [
-                'nodearray' => $content,
-                'navbarstyle' => $navbarstyle,
-                'tabs' => $hastabs
-            ]);
-        }
-    }
-
-    /**
      * Renders theme links for switching between default and other themes.
      *
      * @return string

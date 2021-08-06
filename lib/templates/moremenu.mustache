@@ -45,7 +45,7 @@
     }
 }}
 <nav class="moremenu">
-    <ul id="moremenu-{{ uniqid }}" role="menubar" class="nav more-nav {{navbarstyle}}">
+    <ul id="moremenu-{{ uniqid }}-{{navbarstyle}}" role="menubar" class="nav more-nav {{navbarstyle}}">
         {{#nodecollection}}
             {{#children}}
                 {{> core/moremenu_children}}
@@ -65,7 +65,6 @@
 </nav>
 {{#js}}
 require(['core/moremenu'], function(moremenu) {
-    var moreMenu = document.querySelector('#moremenu-{{ uniqid }}');
-    moremenu(moreMenu);
+    moremenu(document.querySelector('#moremenu-{{ uniqid }}-{{navbarstyle}}'));
 });
 {{/js}}

@@ -52,8 +52,9 @@
         {{/ output.should_display_navbar_logo }}
         {{{ sitename }}}
     </a>
-
-    {{{primarymoremenu}}}
+    {{#primarymoremenu}}
+        {{> core/moremenu }}
+    {{/primarymoremenu}}
 
     <ul class="navbar-nav d-none d-md-flex my-1 px-1">
         <!-- page_heading_menu -->

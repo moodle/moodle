@@ -68,11 +68,13 @@ $buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_action
 // If the settings menu will be included in the header then don't add it here.
 $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
 
-if (defined('BEHAT_SITE_RUNNING')) {
-    $secondarynavigation = false;
-} else {
+$secondarynavigation = false;
+if (!defined('BEHAT_SITE_RUNNING')) {
     $buildsecondarynavigation = $PAGE->has_secondary_navigation();
-    $secondarynavigation = $buildsecondarynavigation ? $OUTPUT->more_menu($PAGE->secondarynav, 'nav-tabs') : false;
+    if ($buildsecondarynavigation) {
+        $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs');
+        $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+    }
 }
 
 $primary = new core\navigation\output\primary($PAGE);
@@ -91,7 +93,7 @@ $templatecontext = [
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
     'courseindex' => $courseindex,
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
-    'primarymoremenu' => $OUTPUT->more_menu(array_merge($primarymenu['primary'], $primarymenu['custom']), 'navbar-nav'),
+    'primarymoremenu' => $primarymenu['moremenu'],
     'secondarymoremenu' => $secondarynavigation,
     'usermenu' => $primarymenu['user'],
     'langmenu' => $primarymenu['lang'],
