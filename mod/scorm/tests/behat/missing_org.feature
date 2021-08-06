@@ -24,11 +24,11 @@ Feature: Check a SCORM package with missing Organisational structure.
     And I upload "mod/scorm/tests/packages/singlescobasic_missingorg.zip" file to "Package file" filemanager
     And I click on "Save and display" "button"
     Then I should see "MissingOrg SCORM package"
-    And I should see "Normal"
+    And I should see "Enter"
     And I should see "Preview"
     And I log out
     And I am on the "Missingorg" Activity page logged in as student1
-    And I should see "Normal"
+    And I should see "Enter"
     And I press "Enter"
     And I switch to "scorm_object" iframe
     And I switch to "contentFrame" iframe
