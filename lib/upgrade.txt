@@ -63,6 +63,8 @@ information provided here is intended especially for developers.
 * New method \core_user::awaiting_action() has been introduced to check if the user is fully ready to use the site or
   whether there is an action (such as filling the missing profile field, changing password or agreeing to the site
   policy) needed.
+* The inplace_editable element constructor now accepts an optional pix_icon parameter to use as it's editing icon when
+  rendered. The default icon for "select" types has also changed to a dropdown caret ("t/expanded").
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.
