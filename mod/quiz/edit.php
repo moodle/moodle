@@ -171,7 +171,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 // Get the question bank view.
 $questionbank = new mod_quiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $quiz);
 $questionbank->set_quiz_has_attempts($quizhasattempts);
-$questionbank->process_actions($thispageurl, $cm);
+$questionbank->process_actions();
 
 // End of process commands =====================================================.
 

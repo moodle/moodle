@@ -25,8 +25,6 @@
 
 namespace core\plugininfo;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Base class for qbank plugins.
  *
@@ -38,6 +36,9 @@ defined('MOODLE_INTERNAL') || die();
 class qbank extends base {
 
     public function is_uninstall_allowed(): bool {
+        if (in_array($this->name, \core_plugin_manager::standard_plugins_list('qbank'))) {
+            return false;
+        }
         return true;
     }
 

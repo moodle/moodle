@@ -21,37 +21,7 @@
  * @subpackage questionbank
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/formslib.php');
-
-
-/**
- * Form for moving questions between categories.
- *
- * @copyright  2008 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 4.0 MDL-71585
  * @see qbank_managecategories\form\question_move_form
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
-class question_move_form extends moodleform {
-    protected function definition() {
-        debugging('Class question_move_form in \core_question\move_form is deprecated,
-        please use qbank_managecategories\form\question_move_form instead.', DEBUG_DEVELOPER);
-
-        $mform = $this->_form;
-
-        $currentcat = $this->_customdata['currentcat'];
-        $contexts = $this->_customdata['contexts'];
-
-        $mform->addElement('questioncategory', 'category', get_string('category', 'question'), compact('contexts', 'currentcat'));
-
-        $this->add_action_buttons(true, get_string('categorymoveto', 'question'));
-
-        $mform->addElement('hidden', 'delete', $currentcat);
-        $mform->setType('delete', PARAM_INT);
-    }
-}

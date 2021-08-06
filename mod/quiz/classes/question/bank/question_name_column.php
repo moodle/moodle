@@ -14,39 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * A column type for the name of the question name.
- *
- * @package   core_question
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_quiz\question\bank;
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * A column type for the name of the question name.
  *
+ * @package   mod_quiz
+ * @category  question
  * @copyright 2009 Tim Hunt
+ * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @todo MDL-72004 delete the class and add it to lib/db/renameclasses.php pointing to the plugin
  */
-class question_name_column extends \core_question\bank\column_base {
+class question_name_column extends \core_question\local\bank\column_base {
+
+    /**
+     * @var null $checkboxespresent
+     */
     protected $checkboxespresent = null;
 
-    public function get_name() {
+    public function get_name(): string {
         return 'questionname';
     }
 
-    protected function get_title() {
+    protected function get_title(): string {
         return get_string('question');
     }
 
-    protected function label_for($question) {
+    protected function label_for($question): string {
         if (is_null($this->checkboxespresent)) {
-            $this->checkboxespresent = $this->qbank->has_column('core_question\bank\checkbox_column');
+            $this->checkboxespresent = $this->qbank->has_column('core_question\local\bank\checkbox_column');
         }
         if ($this->checkboxespresent) {
             return 'checkq' . $question->id;
@@ -55,19 +51,19 @@ class question_name_column extends \core_question\bank\column_base {
         }
     }
 
-    protected function display_content($question, $rowclasses) {
+    protected function display_content($question, $rowclasses): void {
         $labelfor = $this->label_for($question);
         if ($labelfor) {
-            echo '<label for="' . $labelfor . '">';
+            echo \html_writer::start_tag('label', ['for' => $labelfor]);
         }
         echo format_string($question->name);
         if ($labelfor) {
-            echo '</label>';
+            echo \html_writer::end_tag('label');
         }
     }
 
-    public function get_required_fields() {
-        return array('q.id', 'q.name');
+    public function get_required_fields(): array {
+        return ['q.id', 'q.name'];
     }
 
     public function is_sortable() {

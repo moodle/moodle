@@ -2107,7 +2107,7 @@ class quiz_attempt {
         } else {
             $tagids = quiz_retrieve_slot_tag_ids($this->slots[$slot]->id);
 
-            $randomloader = new \core_question\bank\random_question_loader($qubaids, array());
+            $randomloader = new \core_question\local\bank\random_question_loader($qubaids, array());
             $newqusetionid = $randomloader->get_next_question_id($questiondata->category,
                     (bool) $questiondata->questiontext, $tagids);
             if ($newqusetionid === null) {

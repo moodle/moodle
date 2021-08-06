@@ -77,11 +77,11 @@ class question_created extends question_base {
     public function get_url() {
         if ($this->courseid) {
             if ($this->contextlevel == CONTEXT_MODULE) {
-                return new \moodle_url('/question/preview.php', ['cmid' => $this->contextinstanceid, 'id' => $this->objectid]);
+                return new \moodle_url('/question/bank/previewquestion/preview.php', ['cmid' => $this->contextinstanceid, 'id' => $this->objectid]);
             }
-            return new \moodle_url('/question/preview.php', ['courseid' => $this->courseid, 'id' => $this->objectid]);
+            return new \moodle_url('/question/bank/previewquestion/preview.php', ['courseid' => $this->courseid, 'id' => $this->objectid]);
         }
         // Lets try editing from the frontpage for contexts above course.
-        return new \moodle_url('/question/preview.php', ['courseid' => SITEID, 'id' => $this->objectid]);
+        return new \moodle_url('/question/bank/previewquestion/preview.php', ['courseid' => SITEID, 'id' => $this->objectid]);
     }
 }
