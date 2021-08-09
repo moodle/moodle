@@ -42,7 +42,7 @@ Feature: Attachments count column data available
       | user     | forum  | name        | message  | attachments        | inlineattachments |
       | teacher1 | forum1 | discussion1 | message1 | att1.jpg, att2.txt |                   |
     When I am on the forum1C1 "forum activity" page logged in as teacher1
-    And I navigate to "Forum summary report" in current page administration
+    And I navigate to "Reports" in current page administration
     Then "Teacher 1" row "Number of attachments" column of "forumreport_summary_table" table should contain "6"
     And "Student 1" row "Number of attachments" column of "forumreport_summary_table" table should contain "5"
     And "Student 2" row "Number of attachments" column of "forumreport_summary_table" table should contain "0"

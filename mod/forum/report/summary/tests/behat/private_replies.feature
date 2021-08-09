@@ -42,7 +42,7 @@ Feature: Include private replies in the summary report
 
   Scenario: Private replies are counted for Teacher
     When I am on the forum1 "forum activity" page logged in as teacher2
-    And I navigate to "Forum summary report" in current page administration
+    And I navigate to "Reports" in current page administration
     Then "Teacher 1" row "Number of replies posted" column of "forumreport_summary_table" table should contain "3"
 
   Scenario: Private replies are not counted when Teacher has not capability
@@ -50,5 +50,5 @@ Feature: Include private replies in the summary report
       | capability                   | permission | role           | contextlevel | reference |
       | mod/forum:readprivatereplies | Prevent    | editingteacher | Course       | C1        |
     When I am on the forum1 "forum activity" page logged in as teacher2
-    And I navigate to "Forum summary report" in current page administration
+    And I navigate to "Reports" in current page administration
     Then "Teacher 1" row "Number of replies posted" column of "forumreport_summary_table" table should contain "2"

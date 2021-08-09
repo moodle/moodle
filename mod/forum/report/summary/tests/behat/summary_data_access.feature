@@ -34,7 +34,7 @@ Feature: Report relevant content availability
   @javascript
   Scenario: Teachers can access report data about other users by default
     Given I am on the "forum1" "forum activity" page logged in as teacher1
-    And I navigate to "Forum summary report" in current page administration
+    And I navigate to "Reports" in current page administration
     Then the following should exist in the "forumreport_summary_table" table:
       | -2-       | -3- | -4- | -5- | -6- | -7- | -8- |
       | Student 1 | 1   | 1   | 5   | 0   | 3   | 14  |
@@ -64,7 +64,7 @@ Feature: Report relevant content availability
       | capability               | permission | role    | contextlevel | reference |
       | forumreport/summary:view | Allow      | student | Course       | C1        |
     When I am on the "forum1" "forum activity" page logged in as student1
-    And I navigate to "Forum summary report" in current page administration
+    And I navigate to "Reports" in current page administration
     Then the following should exist in the "forumreport_summary_table" table:
       | -1-       | -2- | -3- | -4- | -5- | -6- | -7- |
       | Student 1 | 1   | 1   | 5   | 1   | 3   | 14  |

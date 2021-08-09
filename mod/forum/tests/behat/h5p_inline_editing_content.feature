@@ -80,7 +80,7 @@ Feature: Inline editing H5P content in mod_forum
     Given I am on the "C1" "Course" page logged in as "admin"
     # Add H5P content to a forum post as admin.
     And I am on the "ForumName1" "forum activity" page
-    And I click on "Add a new discussion topic" "link"
+    And I click on "Add discussion topic" "link"
     And I set the following fields to these values:
       | Subject | Forum post by admin |
     And I click on "Insert H5P" "button" in the "#fitem_id_message" "css_element"
