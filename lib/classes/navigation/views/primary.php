@@ -35,8 +35,10 @@ class primary extends view {
             return;
         }
         $this->id = 'primary_navigation';
-        $this->add(get_string('home'), new \moodle_url('/'), self::TYPE_SYSTEM,
+        if (get_home_page() == HOMEPAGE_SITE && isloggedin() && !isguestuser()) {
+            $this->add(get_string('home'), new \moodle_url('/'), self::TYPE_SYSTEM,
                 null, 'home', new \pix_icon('i/home', ''));
+        }
 
         // Add the dashboard link.
         if (isloggedin() && !isguestuser()) {  // Makes no sense if you aren't logged in.
