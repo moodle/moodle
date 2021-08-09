@@ -57,8 +57,8 @@
         <div class="event-name-container flex-grow-1 text-truncate line-height-3">
             <h6 class="event-name text-truncate mb-0">
                 <a href="{{url}}"
-                        title={{#quote}}{{{name}}}{{/quote}}
-                        aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{activityname}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'>
+                        title="{{name}}"
+                        aria-label='{{#cleanstr}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{activityname}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/cleanstr}}'>
                     {{{activityname}}}</a>
                 {{#overdue}}<span class="badge badge-pill badge-danger ml-1">{{#str}} overdue, block_timeline {{/str}}</span>{{/overdue}}
             </h6>

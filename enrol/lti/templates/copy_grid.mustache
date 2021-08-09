@@ -49,7 +49,7 @@
 {{#rows}}
     <div>
         <label style="display: inline-block; width: 5em"
-            {{#id}}for={{#quote}}{{{id}}}-{{{uniqid}}}{{/quote}}{{/id}} {{#hidelabel}}
+            {{#id}}for="{{id}}-{{uniqid}}"{{/id}} {{#hidelabel}}
                class="accesshide"{{/hidelabel}}>{{label}}</label>
         <div style="display: inline-block">{{> core/copy_box }}</div>
     </div>

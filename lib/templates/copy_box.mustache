@@ -31,7 +31,7 @@
     Example context (json):
     { "text": "Copyable text"}
 }}
-<input type="text" class="copy_box" value="{{{ text }}}" readonly="readonly" size="48" {{#id}}id={{#quote}}{{{id}}}-{{{uniqid}}}{{/quote}}{{/id}}/>
+<input type="text" class="copy_box" value="{{{ text }}}" readonly="readonly" size="48" {{#id}}id="{{id}}-{{uniqid}}"{{/id}}/>
 {{# js }}
 require(['jquery'], function($) {
     $('.copy_box').on('click', function() {
