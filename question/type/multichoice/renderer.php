@@ -113,7 +113,7 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             $questionanswer = html_writer::div($answertext, 'flex-fill ml-1');
 
             $radiobuttons[] = $hidden . html_writer::empty_tag('input', $inputattributes) .
-                    html_writer::div($questionnumber . $questionanswer, 'd-flex w-100', [
+                    html_writer::div($questionnumber . $questionanswer, 'd-flex w-auto', [
                         'id' => $inputattributes['id'] . '_label',
                         'data-region' => 'answer-label',
                     ]);

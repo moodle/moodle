@@ -656,6 +656,10 @@ a#hidebankcmd {
     display: inline;
 }
 
+.que .content .answer div[data-region="answer-label"] .mediaplugin {
+    width: 400px;
+}
+
 body.path-question-type .mform fieldset.hidden {
     padding: 0;
     margin: 0.7em 0 0;
