@@ -48,6 +48,6 @@
     </div>
     <input type="text" name="{{name}}" id="{{id}}" value="{{value}}" size="12" class="form-control text-ltr" {{#readonly}}disabled{{/readonly}}>
     {{#haspreviewconfig}}
-        <input type="button" id="{{id}}_preview" value={{#quote}}{{#str}}preview{{/str}}{{/quote}} class="admin_colourpicker_preview">
+        <input type="button" id="{{id}}_preview" value="{{#cleanstr}}preview{{/cleanstr}}" class="admin_colourpicker_preview">
     {{/haspreviewconfig}}
 </div>

@@ -141,14 +141,14 @@
                             <input type="text" name="username" id="username"
                                 class="form-control"
                                 value="{{username}}"
-                                placeholder={{#quote}}{{^canloginbyemail}}{{#str}}username{{/str}}{{/canloginbyemail}}{{#canloginbyemail}}{{#str}}usernameemail{{/str}}{{/canloginbyemail}}{{/quote}}
+                                placeholder="{{^canloginbyemail}}{{#cleanstr}}username{{/cleanstr}}{{/canloginbyemail}}{{#canloginbyemail}}{{#cleanstr}}usernameemail{{/cleanstr}}{{/canloginbyemail}}"
                                 autocomplete="username">
                         </div>
                         <div class="form-group">
                             <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
                             <input type="password" name="password" id="password" value=""
                                 class="form-control"
-                                placeholder={{#quote}}{{#str}}password{{/str}}{{/quote}}
+                                placeholder="{{#cleanstr}}password{{/cleanstr}}"
                                 autocomplete="current-password">
                         </div>
                         {{#rememberusername}}
@@ -188,7 +188,7 @@
                     <div class="potentialidplist mt-3">
                         {{#identityproviders}}
                             <div class="potentialidp">
-                                <a href="{{url}}" title={{#quote}}{{name}}{{/quote}} class="btn btn-secondary btn-block">
+                                <a href="{{url}}" title="{{name}}" class="btn btn-secondary btn-block">
                                     {{#iconurl}}
                                         <img src="{{iconurl}}" alt="" width="24" height="24"/>
                                     {{/iconurl}}
