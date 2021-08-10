@@ -15,18 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'atto_backcolor', language 'en'.
+ * Atto text editor integration version file.
  *
  * @package    atto_backcolor
- * @copyright  2014 Rossiani Wijaya  <rwijaya@moodle.com>
+ * @copyright  2021 Huong Nguyen <huongn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['color_white'] = 'White';
-$string['color_red'] = 'Red';
-$string['color_yellow'] = 'Yellow';
-$string['color_green'] = 'Green';
-$string['color_blue'] = 'Blue';
-$string['color_black'] = 'Black';
-$string['pluginname'] = 'Background colour';
-$string['privacy:metadata'] = 'The atto_backcolor plugin does not store any personal data.';
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Initialise the js strings required for this module.
+ */
+function atto_backcolor_strings_for_js() {
+    global $PAGE;
+
+    $PAGE->requires->strings_for_js([
+        'color_white',
+        'color_red',
+        'color_yellow',
+        'color_green',
+        'color_blue',
+        'color_black'
+    ], 'atto_backcolor');
+}
