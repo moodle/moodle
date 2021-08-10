@@ -2778,5 +2778,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021091100.02);
     }
 
+    if ($oldversion < 2021091700.01) {
+        // If portfolio_picasa is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/portfolio/picasa/version.php')) {
+            $instance = $DB->get_record('portfolio_instance', ['plugin' => 'picasa']);
+            if (!empty($instance)) {
+                // Remove all records from portfolio_instance_config.
+                $DB->delete_records('portfolio_instance_config', ['instance' => $instance->id]);
+                // Remove all records from portfolio_instance_user.
+                $DB->delete_records('portfolio_instance_user', ['instance' => $instance->id]);
+                // Remove all records from portfolio_log.
+                $DB->delete_records('portfolio_log', ['portfolio' => $instance->id]);
+                // Remove all records from portfolio_tempdata.
+                $DB->delete_records('portfolio_tempdata', ['instance' => $instance->id]);
+                // Remove the record from the portfolio_instance table.
+                $DB->delete_records('portfolio_instance', ['id' => $instance->id]);
+            }
+
+            // Clean config.
+            unset_all_config_for_plugin('portfolio_picasa');
+        }
+
+        upgrade_main_savepoint(true, 2021091700.01);
+    }
+
     return true;
 }

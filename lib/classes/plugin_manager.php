@@ -1725,6 +1725,7 @@ class core_plugin_manager {
             'block' => array('course_overview', 'messages', 'community', 'participants'),
             'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
+            'portfolio' => array('picasa'),
             'qformat' => array('webct'),
             'message' => array('jabber'),
             'quizaccess' => array('safebrowser'),
@@ -1933,7 +1934,7 @@ class core_plugin_manager {
             ),
 
             'portfolio' => array(
-                'boxnet', 'download', 'flickr', 'googledocs', 'mahara', 'picasa'
+                'boxnet', 'download', 'flickr', 'googledocs', 'mahara'
             ),
 
             'profilefield' => array(
