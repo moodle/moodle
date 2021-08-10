@@ -147,7 +147,7 @@ class task_log extends base {
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$tablealias}.timestart")
             ->set_is_sortable(true)
-            ->add_callback([format::class, 'userdate']);
+            ->add_callback([format::class, 'userdate'], get_string('strftimedatetimeshortaccurate', 'core_langconfig'));
 
         // Duration column.
         $columns[] = (new column(
