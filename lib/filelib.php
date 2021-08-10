@@ -1107,6 +1107,12 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         return $text;
     }
 
+    if ($itemid === false) {
+        // Catch a potentially dangerous coding error.
+        throw new coding_exception('file_save_draft_area_files was called with $itemid false. ' .
+                "This suggests a bug, because it would wipe all ($contextid, $component, $filearea) files.");
+    }
+
     $usercontext = context_user::instance($USER->id);
     $fs = get_file_storage();
 
