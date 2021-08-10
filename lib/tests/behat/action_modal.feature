@@ -13,7 +13,7 @@ Feature: Close modals by clicking outside them
       | activity | name           | intro                 | course | idnumber |
       | quiz     | Test quiz name | Test quiz description | C1     | quiz1    |
     And I am on the "quiz1" "Activity" page logged in as "admin"
-    And I click on "Edit quiz" "button"
+    And I follow "Add question"
     And I click on "Add" "link"
     And I click on "a new question" "link"
     # Cannot use the normal ‘I click on’ here, because the pop-up gets in the way.
@@ -42,8 +42,5 @@ Feature: Close modals by clicking outside them
       | activity | name           | intro                 | course | idnumber |
       | quiz     | Test quiz name | Test quiz description | C1     | quiz1    |
     And I am on the "quiz1" "Activity" page logged in as "admin"
-    And I click on "Edit quiz" "button"
-    And I click on "Help with Editing quiz" "icon"
-    And I should see "More help"
-    And I click on "body" "css_element"
+    And I follow "Add question"
     Then I should not see "More help"
