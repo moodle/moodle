@@ -70,10 +70,10 @@
                 </span>
                 <b class="caret"></b>
             </a>
-            <div role="menu" aria-labelledby="user-menu-toggle" id="user-action-menu" class="dropdown-menu dropdown-menu-right">
+            <div aria-label="{{#str}}user{{/str}}" id="user-action-menu" class="dropdown-menu dropdown-menu-right">
                 <div id="usermenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
                     <div class="carousel-inner">
-                        <div id="carousel-item-main" class="carousel-item active" tabindex="-1" aria-label="{{#str}}usermenu{{/str}}">
+                        <div id="carousel-item-main" class="carousel-item active" role="menu" tabindex="-1" aria-label="{{#str}}usermenu{{/str}}">
                             {{> core/user_action_menu_items }}
                         </div>
                         {{#submenus}}

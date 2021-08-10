@@ -91,6 +91,7 @@ Feature: Saving, using and deleting feedback templates
     And I press "Use this template"
     And I set the field "Delete old items" to "1"
     And I press "Save changes"
+    And I am on the "Another feedback in course 1" "feedback activity" page
     And I follow "Edit questions"
     And I should not see "What is your favourite subject"
     And I should see "this is a multiple choice 1"

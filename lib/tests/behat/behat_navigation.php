@@ -939,7 +939,14 @@ class behat_navigation extends behat_base {
         if ($parentnodes) {
             $tabname = behat_context_helper::escape($parentnodes[0]);
             $tabxpath = '//ul[@role=\'tablist\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
-            if ($node = $this->getSession()->getPage()->find('xpath', $tabxpath)) {
+            $menubarxpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
+            $linkname = behat_context_helper::escape(get_string('moremenu'));
+            $menubarmorexpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $linkname . ')]';
+            $tabnode = $this->getSession()->getPage()->find('xpath', $tabxpath);
+            $menunode = $this->getSession()->getPage()->find('xpath', $menubarxpath);
+            $menubuttons = $this->getSession()->getPage()->findAll('xpath', $menubarmorexpath);
+            if ($tabnode || $menunode) {
+                $node = is_object($tabnode) ? $tabnode : $menunode;
                 if ($this->running_javascript()) {
                     $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
                     // Click on the tab and add 'active' tab to the xpath.
@@ -950,18 +957,17 @@ class behat_navigation extends behat_base {
                     $xpath .= '//div[@id = ' . $tabid . ']';
                 }
                 array_shift($parentnodes);
-            } else {
-                $linkname = behat_context_helper::escape(get_string('moremenu'));
-                $menuxpath = '//ul[@role=\'tablist\']/li/a[contains(normalize-space(.), ' . $linkname . ')]';
-                $morebutton = $this->getSession()->getPage()->find('xpath', $menuxpath);
-                if ($morebutton) {
-                    $this->execute('behat_general::i_click_on', [$morebutton, 'NodeElement']);
-                    $moreitemxpath = '//ul[@data-region=\'moredropdown\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
-                    if ($morenode = $this->getSession()->getPage()->find('xpath', $moreitemxpath)) {
-                        $this->execute('behat_general::i_click_on', [$morenode, 'NodeElement']);
-                        $xpath .= '//div[contains(@class,\'active\')]';
-                        array_shift($parentnodes);
-                    }
+            } else if (count($menubuttons) > 0) {
+                try {
+                    $this->execute('behat_general::i_click_on', [$menubuttons[1], 'NodeElement']);
+                } catch (Exception $e) {
+                    $this->execute('behat_general::i_click_on', [$menubuttons[0], 'NodeElement']);
+                }
+                $moreitemxpath = '//ul[@data-region=\'moredropdown\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
+                if ($morenode = $this->getSession()->getPage()->find('xpath', $moreitemxpath)) {
+                    $this->execute('behat_general::i_click_on', [$morenode, 'NodeElement']);
+                    $xpath .= '//div[contains(@class,\'active\')]';
+                    array_shift($parentnodes);
                 }
             }
         }

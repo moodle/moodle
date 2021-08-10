@@ -1739,6 +1739,7 @@ $string['rename'] = 'Rename';
 $string['renamefileto'] = 'Rename <b>{$a}</b> to';
 $string['report'] = 'Report';
 $string['reports'] = 'Reports';
+$string['reporttype'] = 'Report type';
 $string['repositories'] = 'Repositories';
 $string['requestcourse'] = 'Request a course';
 $string['requestedby'] = 'Requested by';
