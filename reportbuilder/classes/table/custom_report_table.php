@@ -81,9 +81,20 @@ class custom_report_table extends base_report_table {
             return;
         }
 
+        // If we are aggregating any columns, we should group by the remaining ones.
+        $aggregatedcolumns = array_filter($columns, static function(column $column): bool {
+            return !empty($column->get_aggregation());
+        });
+        $hasaggregatedcolumns = !empty($aggregatedcolumns);
+
         $columnheaders = [];
         foreach ($columns as $column) {
             $columnheaders[$column->get_column_alias()] = $column->get_persistent()->get('heading') ?: $column->get_title();
+
+            $columnaggregation = $column->get_aggregation();
+            if ($hasaggregatedcolumns && empty($columnaggregation)) {
+                $groupby = array_merge($groupby, $column->get_groupby_sql());
+            }
 
             // Add each columns fields, joins and params to our report.
             $fields = array_merge($fields, $column->get_fields());
@@ -189,13 +200,17 @@ class custom_report_table extends base_report_table {
                 $column->set_persistent($instance);
                 // We should clone the report column to ensure if it's added twice to a report, each operates independently.
                 $columns[$instance->get('id')] = clone $column
-                    ->set_index($index);
+                    ->set_index($index)
+                    ->set_aggregation($instance->get('aggregation'));
             }
         }
 
         return $columns;
     }
 
+    /**
+     * Override parent method for printing headers so we can render our custom controls in each cell
+     */
     public function print_headers() {
         global $OUTPUT, $PAGE;
 
@@ -214,13 +229,14 @@ class custom_report_table extends base_report_table {
             $column = $columns[$index];
 
             $headingeditable = new column_heading_editable(0, $column->get_persistent());
+            $aggregationeditable = new column_aggregation_editable(0, $column->get_persistent());
 
             // Render table header cell, with all editing controls.
             $headercell = $OUTPUT->render_from_template('core_reportbuilder/table_header_cell', [
                 'entityname' => $this->report->get_entity_title($column->get_entity_name()),
                 'name' => $column->get_title(),
                 'headingeditable' => $headingeditable->render($renderer),
-                'aggregationeditable' => 'Aggregation',
+                'aggregationeditable' => $aggregationeditable->render($renderer),
                 'movetitle' => get_string('movecolumn', 'core_reportbuilder', $column->get_title()),
             ]);
 

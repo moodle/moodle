@@ -24,7 +24,20 @@
 
 $string['actions'] = 'Actions';
 $string['addcolumn'] = 'Add column \'{$a}\'';
+$string['aggregatecolumn'] = 'Aggregate column \'{$a}\'';
+$string['aggregationavg'] = 'Average';
+$string['aggregationcount'] = 'Count';
+$string['aggregationcountdistinct'] = 'Count distinct';
+$string['aggregationgroupconcat'] = 'Comma separated values';
+$string['aggregationgroupconcatdistinct'] = 'Comma separated distinct values';
+$string['aggregationmax'] = 'Maximum';
+$string['aggregationmin'] = 'Minimum';
+$string['aggregationnone'] = 'No aggregation';
+$string['aggregationpercent'] = 'Percentage';
+$string['aggregationsum'] = 'Sum';
 $string['apply'] = 'Apply';
+$string['columnadded'] = 'Added column \'{$a}\'';
+$string['columnaggregated'] = 'Aggregated column \'{$a}\'';
 $string['columnsortdirectionasc'] = 'Sort column \'{$a}\' ascending';
 $string['columnsortdirectiondesc'] = 'Sort column \'{$a}\' descending';
 $string['columnsortdisable'] = 'Disable sorting for column \'{$a}\'';

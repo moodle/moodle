@@ -27,6 +27,7 @@
 import $ from 'jquery';
 import {dispatchEvent} from 'core/event_dispatcher';
 import 'core/inplace_editable';
+import {eventTypes as inplaceEditableEvents} from 'core/local/inplace_editable/events';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {publish} from 'core/pubsub';
@@ -138,6 +139,23 @@ export const init = (reportElement, initialized) => {
                 .then(() => {
                     dispatchEvent(reportEvents.tableReload, {preservePagination: true}, reportElement);
                     return pendingPromise.resolve();
+                })
+                .catch(Notification.exception);
+        }
+    });
+
+    // Initialize inplace editable listeners for column aggregation.
+    reportElement.addEventListener(inplaceEditableEvents.elementUpdated, event => {
+
+        const columnAggregation = event.target.closest('[data-itemtype="columnaggregation"]');
+        if (columnAggregation) {
+            const columnHeader = columnAggregation.closest(reportSelectors.regions.columnHeader);
+
+            getString('columnaggregated', 'core_reportbuilder', columnHeader.dataset.columnName)
+                .then(addToast)
+                .then(() => {
+                    dispatchEvent(reportEvents.tableReload, {}, reportElement);
+                    return;
                 })
                 .catch(Notification.exception);
         }
