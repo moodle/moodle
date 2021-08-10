@@ -1199,6 +1199,7 @@ export default class Tour {
             return this;
         }
 
+        stepConfig.placement = this.recalculatePlacement(stepConfig);
         let flipBehavior;
         switch (stepConfig.placement) {
             case 'left':
@@ -1291,6 +1292,33 @@ export default class Tour {
         this.currentStepPopper = new Popper(target, content[0], config);
 
         return this;
+    }
+
+    /**
+     * For left/right placement, checks that there is room for the step at current window size.
+     *
+     * If there is not enough room, changes placement to 'top'.
+     *
+     * @method  recalculatePlacement
+     * @param   {Object}    stepConfig      The step configuration of the step
+     * @return  {String}                    The placement after recalculate
+     */
+    recalculatePlacement(stepConfig) {
+        const buffer = 10;
+        const arrowWidth = 16;
+        let target = this.getStepTarget(stepConfig);
+        let widthContent = this.currentStepNode.width() + arrowWidth;
+        let targetOffsetLeft = target.offset().left - buffer;
+        let targetOffsetRight = target.offset().left + target.width() + buffer;
+        let placement = stepConfig.placement;
+
+        if (['left', 'right'].indexOf(placement) !== -1) {
+            if ((targetOffsetLeft < (widthContent + buffer)) &&
+                ((targetOffsetRight + widthContent + buffer) > document.documentElement.clientWidth)) {
+                placement = 'top';
+            }
+        }
+        return placement;
     }
 
     /**
