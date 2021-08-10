@@ -17,7 +17,6 @@
  * Report builder filter management
  *
  * @module      core_reportbuilder/filters
- * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,8 +32,9 @@ import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {reset as resetFilters} from 'core_reportbuilder/local/repository/filters';
 
 /**
- * Initialise module
+ * Initialise module for given report
  *
+ * @method
  * @param {Number} reportId
  */
 export const init = reportId => {

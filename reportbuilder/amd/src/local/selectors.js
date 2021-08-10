@@ -17,11 +17,17 @@
  * Report builder selectors
  *
  * @module      core_reportbuilder/local/selectors
- * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Selectors for the Report builder subsystem
+ *
+ * @property {Object} regions
+ * @property {String} regions.systemReport System report page region
+ * @property {String} regions.filtersForm Filters form page region
+ */
 const SELECTORS = {
     regions: {
         systemReport: '[data-region="core_reportbuilder/system-report"]',
@@ -29,6 +35,13 @@ const SELECTORS = {
     },
 };
 
+/**
+ * Selector for given report
+ *
+ * @method forSystemReport
+ * @param {Number} reportId
+ * @return {String}
+ */
 SELECTORS.forSystemReport = reportId => `${SELECTORS.regions.systemReport}[data-reportid="${reportId}"]`;
 
 export default SELECTORS;

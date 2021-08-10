@@ -17,7 +17,6 @@
  * Module to handle filter AJAX requests
  *
  * @module      core_reportbuilder/local/repository/filters
- * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,6 +26,7 @@ import Ajax from 'core/ajax';
 /**
  * Reset all filters for given report
  *
+ * @method
  * @param {Number} reportId
  * @return {Promise}
  */
