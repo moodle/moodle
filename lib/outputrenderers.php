@@ -4220,8 +4220,6 @@ EOD;
                                 'page' => $this->page
                             );
                     }
-
-                    $this->page->requires->string_for_js('changesmadereallygoaway', 'moodle');
                 }
             } else {
                 $heading = null;

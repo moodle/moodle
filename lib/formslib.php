@@ -1615,7 +1615,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     var $_disableShortforms = false;
 
-    /** @var bool whether to automatically initialise M.formchangechecker for this form. */
+    /** @var bool whether to automatically initialise the form change detector this form. */
     protected $_use_form_change_checker = true;
 
     /**
@@ -3135,14 +3135,10 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
 
         if ($form->is_form_change_checker_enabled()) {
-            $PAGE->requires->yui_module('moodle-core-formchangechecker',
-                    'M.core_formchangechecker.init',
-                    array(array(
-                        'formid' => $formid,
-                        'initialdirtystate' => $form->is_dirty(),
-                    ))
-            );
-            $PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
+            $PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', [$formid]);
+            if ($form->is_dirty()) {
+                $PAGE->requires->js_call_amd('core_form/changechecker', 'markFormAsDirtyById', [$formid]);
+            }
         }
         if (!empty($this->_collapsibleElements)) {
             if (count($this->_collapsibleElements) > 1) {

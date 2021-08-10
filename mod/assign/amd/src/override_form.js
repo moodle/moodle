@@ -21,6 +21,7 @@
  */
 
 import $ from 'jquery';
+import * as FormChangeChecker from 'core_form/changechecker';
 
 export const init = (formId, selectElementName) => {
     const form = document.getElementById(formId);
@@ -34,9 +35,7 @@ export const init = (formId, selectElementName) => {
 
         form.appendChild(inputElement);
 
-        if (typeof M.core_formchangechecker !== 'undefined') {
-            M.core_formchangechecker.reset_form_dirty_state();
-        }
+        FormChangeChecker.markFormSubmitted(inputElement);
 
         form.submit();
     });
