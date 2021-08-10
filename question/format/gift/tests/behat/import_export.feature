@@ -19,7 +19,8 @@ Feature: Test importing questions from GIFT format.
 
   @javascript @_file_upload
   Scenario: import some GIFT questions
-    When I navigate to "Question bank > Import" in current page administration
+    When I navigate to "Question bank" in current page administration
+    And I select "Import" from the "questionbankactionselect" singleselect
     And I set the field "id_format_gift" to "1"
     And I upload "question/format/gift/tests/fixtures/questions.gift.txt" file to "Import" filemanager
     And I press "id_submitbutton"
@@ -30,14 +31,17 @@ Feature: Test importing questions from GIFT format.
     Then I should see "colours"
 
     # Now export again.
-    And I follow "Export"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I select "Export" from the "questionbankactionselect" singleselect
     And I set the field "id_format_gift" to "1"
     And I press "Export questions to file"
     And following "click here" should download between "1500" and "1800" bytes
 
   @javascript @_file_upload
   Scenario: import a GIFT file which specifies the category
-    When I navigate to "Question bank > Import" in current page administration
+    When I navigate to "Question bank" in current page administration
+    And I select "Import" from the "questionbankactionselect" singleselect
     And I set the field "id_format_gift" to "1"
     And I upload "question/format/gift/tests/fixtures/questions_in_category.gift.txt" file to "Import" filemanager
     And I press "id_submitbutton"

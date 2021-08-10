@@ -44,7 +44,7 @@ I need to limit the submittable file types
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I press "Save changes"
     And I am on the "Quiz 1" "quiz activity" page
-    And I press "Attempt quiz now"
+    And I follow "Attempt quiz"
     And I should see "First question"
     And I should see "You can drag and drop files here to add them."
     And I click on "Add..." "button"
@@ -62,7 +62,7 @@ I need to limit the submittable file types
     And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filemanager
     And I press "Save changes"
     And I am on the "Quiz 1" "quiz activity" page
-    And I press "Attempt quiz now"
+    And I follow "Attempt quiz"
     And I should see "First question"
     And I should see "You can drag and drop files here to add them."
     And I click on "Add..." "button"

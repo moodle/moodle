@@ -26,7 +26,8 @@ Feature: Test exporting drag and drop into text questions
   @javascript
   Scenario: Export a drag and drop into text question
     # Import sample file.
-    When I navigate to "Question bank > Export" in current page administration
+    When I navigate to "Question bank" in current page administration
+    And I select "Export" from the "questionbankactionselect" singleselect
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     And following "click here" should download between "1550" and "1700" bytes

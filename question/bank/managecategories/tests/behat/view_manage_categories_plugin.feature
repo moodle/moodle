@@ -22,13 +22,11 @@ Feature: Use the qbank plugin manager page for managecategories
     And I should see "Manage categories"
     And I click on "Disable" "link" in the "Manage categories" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
-    Then I should not see "Categories"
+    Then "Categories" "link" should not exist in current page administration
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Manage categories" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
-    And I should see "Categories"
+    And "Categories" "link" should exist in current page administration
 
   Scenario: Enable/disable the tab New category when tyring to add a random question to a quiz
     Given I log in as "admin"
