@@ -1730,7 +1730,7 @@ class core_plugin_manager {
             'message' => array('jabber'),
             'quizaccess' => array('safebrowser'),
             'report' => array('search'),
-            'repository' => array('alfresco'),
+            'repository' => array('alfresco', 'picasa'),
             'tinymce' => array('dragmath'),
             'tool' => array('bloglevelupgrade', 'qeupgradehelper', 'timezoneimport', 'assignmentupgrade'),
             'theme' => array('bootstrapbase', 'clean', 'more', 'afterburner', 'anomaly', 'arialist', 'base',
@@ -1995,7 +1995,7 @@ class core_plugin_manager {
             'repository' => array(
                 'areafiles', 'boxnet', 'contentbank', 'coursefiles', 'dropbox', 'equella', 'filesystem',
                 'flickr', 'flickr_public', 'googledocs', 'local', 'merlot', 'nextcloud',
-                'onedrive', 'picasa', 'recent', 'skydrive', 's3', 'upload', 'url', 'user', 'webdav',
+                'onedrive', 'recent', 'skydrive', 's3', 'upload', 'url', 'user', 'webdav',
                 'wikimedia', 'youtube'
             ),
 

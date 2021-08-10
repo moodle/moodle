@@ -2802,5 +2802,28 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021091700.01);
     }
 
+    if ($oldversion < 2021091700.02) {
+        // If repository_picasa is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/repository/picasa/version.php')) {
+            $instance = $DB->get_record('repository', ['type' => 'picasa']);
+            if (!empty($instance)) {
+                // Remove all records from repository_instance_config table.
+                $DB->delete_records('repository_instance_config', ['instanceid' => $instance->id]);
+                // Remove all records from repository_instances table.
+                $DB->delete_records('repository_instances', ['typeid' => $instance->id]);
+                // Remove the record from the repository table.
+                $DB->delete_records('repository', ['id' => $instance->id]);
+            }
+
+            // Clean config.
+            unset_all_config_for_plugin('picasa');
+
+            // Remove orphaned files.
+            upgrade_delete_orphaned_file_records();
+        }
+
+        upgrade_main_savepoint(true, 2021091700.02);
+    }
+
     return true;
 }

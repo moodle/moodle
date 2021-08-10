@@ -3,6 +3,9 @@ information provided here is intended especially for developers. Full
 details of the repository API are available on Moodle docs:
 http://docs.moodle.org/dev/Repository_API
 
+=== 4.0 ===
+* The repository_picasa has been completely removed (Picasa is discontinued since 2016).
+
 === 3.11 ===
 * The Google Drive repository now includes a new rest API function 'shared_drives_list', which can be used to fetch
   a list of existing shared drives.
