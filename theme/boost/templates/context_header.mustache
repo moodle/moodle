@@ -1,0 +1,81 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/context_header
+
+    Context variables required for this template:
+    * logo - Information to display a logo
+    * imagedata - Data for an image if the header has one
+    * prefix - Information displayed before the heading.
+    * heading - The heading.
+    * userbuttons - Additional buttons. Currently only shown when displaying the user.
+
+
+    Example context (json):
+    {
+        "logo": {
+            "image": {
+                "src": "https://www.example.com/feeds/news/kitchen.jpg",
+                "alt": "Alternate text"
+            },
+            "heading": "Name of the site."
+        },
+        "imagedata": "Image data",
+        "prefix": "Assignment",
+        "heading": "Title of the assignment",
+        "userbuttons": {
+            "page": true,
+            "formattedimage": "formatted image",
+            "title": "Press me"
+        }
+    }
+}}
+{{#logo}}
+    <div class="logo">
+        <img src="{{image.src}}" alt="{{image.alt}}" class="img-fluid" />
+    </div>
+    {{{heading}}}
+{{/logo}}
+{{^logo}}
+    <div class="page-context-header">
+        {{#imagedata}}
+            <div class="page-header-image icon-size-6">{{{imagedata}}}</div>
+        {{/imagedata}}
+        <div class="page-header-headings">
+        {{#prefix}}
+            <div class="text-muted text-uppercase">{{prefix}}</div>
+        {{/prefix}}
+        <!-- Need a better way to do the header. -->
+        {{{heading}}}
+        </div>
+        {{#userbuttons}}
+            <div class="btn-group header-button-group">
+                <a href="{{{url}}}" {{{linkattributes}}}>
+                    <span>
+                        {{#page}}
+                            {{#pix}}{{formattedimage}}, moodle, {{title}}{{/pix}}
+                            <span class="header-button-title">{{title}}</span>
+                        {{/page}}
+                        {{^page}}
+                            <img src="{{formattedimage}}" role="presentation" />
+                        {{/page}}
+                    </span>
+                </a>
+            </div>
+        {{/userbuttons}}
+    </div>
+{{/logo}}
