@@ -664,6 +664,7 @@ $capabilities = array(
         )
     ),
 
+    // The ability to override the permissions for any capability.
     'moodle/role:override' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
@@ -675,6 +676,8 @@ $capabilities = array(
         )
     ),
 
+    // The ability to override the permissions for 'safe' capabilities (those without risks).
+    // If a user has moodle/role:override then you should not check this capability.
     'moodle/role:safeoverride' => array(
 
         'riskbitmask' => RISK_SPAM,
