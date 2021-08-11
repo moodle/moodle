@@ -52,9 +52,9 @@ class repository_contentbank_browser_testcase extends advanced_testcase {
         $coursecategory = $this->getDataGenerator()->create_category(['name' => 'Category']);
         $coursecatcontext = \context_coursecat::instance($coursecategory->id);
 
-        // Get the default 'Miscellaneous' category.
-        $miscellaneouscat = \core_course_category::get(1);
-        $miscellaneouscatcontext = \context_coursecat::instance($miscellaneouscat->id);
+        // Get the default course category.
+        $defaultcat = \core_course_category::get(1);
+        $defaultcatcontext = \context_coursecat::instance($defaultcat->id);
 
         // Create course.
         $course = $this->getDataGenerator()->create_course(['category' => $coursecategory->id]);
@@ -77,12 +77,12 @@ class repository_contentbank_browser_testcase extends advanced_testcase {
         $repositorycontentnodes = $browser->get_content();
         // All content nodes should be available to the admin user.
         // There should be a total of 5 nodes, 3 file nodes representing the existing content bank files in the
-        // system context and 2 folder nodes representing the default course category 'Miscellaneous' and 'Category'.
+        // system context and 2 folder nodes representing the default course category and 'Category'.
         $this->assertCount(5, $repositorycontentnodes);
         $contextfolders = [
             [
-                'name' => 'Miscellaneous',
-                'contextid' => $miscellaneouscatcontext->id
+                'name' => get_string('defaultcategoryname'),
+                'contextid' => $defaultcatcontext->id
             ],
             [
                 'name' => 'Category',
@@ -235,7 +235,7 @@ class repository_contentbank_browser_testcase extends advanced_testcase {
         $category = $this->getDataGenerator()->create_category(['name' => 'Category']);
         // Create course1 in 'Category'.
         $course1 = $this->getDataGenerator()->create_course(['fullname' => 'Course1', 'category' => $category->id]);
-        // Create course2 in 'Miscellaneous' by default.
+        // Create course2 in default category by default.
         $course2 = $this->getDataGenerator()->create_course(['fullname' => 'Course2']);
         // Create a teacher enrolled in course1.
         $teacher = $this->getDataGenerator()->create_and_enrol($course1, 'teacher');

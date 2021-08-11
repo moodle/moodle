@@ -40,7 +40,7 @@ Feature: Set up contextual data for tests
     And I should see "Course 2"
     And I follow "Cat 2"
     And I should see "No courses in this category"
-    And I follow "Miscellaneous"
+    And I follow "Category 1"
     And I should see "Course 3"
 
   @javascript

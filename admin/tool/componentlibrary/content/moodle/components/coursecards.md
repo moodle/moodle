@@ -33,7 +33,7 @@ Course cards should always show
             "courseimage": "https://placekitten.com/300/500",
             "fullname": "Mathematics Year One",
             "isfavourite": true,
-            "coursecategory": "Miscellaneous",
+            "coursecategory": "Category 1",
             "showcoursecategory": true,
             "visible": true
         }
@@ -71,7 +71,7 @@ The example below show a deck of cards as used on the starred courses block
             "courseimage": "https://placekitten.com/300/500",
             "fullname": "Mathematics Year One",
             "isfavourite": true,
-            "coursecategory": "Miscellaneous",
+            "coursecategory": "Category 1",
             "showcoursecategory": true,
             "visible": true
         },

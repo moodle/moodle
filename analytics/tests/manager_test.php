@@ -510,7 +510,11 @@ class analytics_manager_testcase extends advanced_testcase {
 
         $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSECAT], 'Course category'));
         $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSECAT], 'Course category 1'));
-        $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSECAT], 'Miscellaneous'));
+        $this->assertCount(
+            2,
+            \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSECAT],
+            get_string('defaultcategoryname')
+        ));
         $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSE], 'Test course 1'));
         $this->assertCount(1, \core_analytics\manager::get_potential_context_restrictions([CONTEXT_COURSE], 'Test course'));
     }

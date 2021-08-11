@@ -20,7 +20,7 @@ Feature: Browse course list and return back from enrolment page
   Scenario: A user can return to the category page from enrolment page
     When I log in as "user2"
     And I am on course index
-    And I follow "Miscellaneous"
+    And I follow "Category 1"
     And I follow "Sample course"
     And I press "Continue"
     Then I should see "Courses" in the ".breadcrumb" "css_element"
@@ -67,7 +67,7 @@ Feature: Browse course list and return back from enrolment page
     And I log out
     When I log in as "user1"
     And I am on course index
-    And I follow "Miscellaneous"
+    And I follow "Category 1"
     And I follow "Sample course"
     And I follow "Test choice"
     And I should see "Sorry, only enrolled users are allowed to make choices."

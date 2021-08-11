@@ -121,8 +121,8 @@ class behat_course extends behat_base {
         // Ensure you are on course management page.
         $this->execute("behat_course::i_should_see_the_courses_management_page", get_string('categories'));
 
-        // Select Miscellaneous category.
-        $this->i_click_on_category_in_the_management_interface(get_string('miscellaneous'));
+        // Select default course category.
+        $this->i_click_on_category_in_the_management_interface(get_string('defaultcategoryname'));
         $this->execute("behat_course::i_should_see_the_courses_management_page", get_string('categoriesandcourses'));
 
         // Click create new course.

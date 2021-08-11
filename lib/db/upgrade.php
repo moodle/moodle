@@ -2717,5 +2717,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021090200.01);
     }
 
+    if ($oldversion < 2021091100.01) {
+        // Set the description field to HTML format for the Default course category.
+        $category = $DB->get_record('course_categories', ['id' => 1]);
+
+        if ($category->descriptionformat == FORMAT_MOODLE) {
+            // Format should be changed only if it's still set to FORMAT_MOODLE.
+            if (!is_null($category->description)) {
+                // If description is not empty, format the content to HTML.
+                $category->description = format_text($category->description, FORMAT_MOODLE);
+            }
+            $category->descriptionformat = FORMAT_HTML;
+            $DB->update_record('course_categories', $category);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021091100.01);
+    }
+
     return true;
 }

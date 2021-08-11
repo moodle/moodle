@@ -135,7 +135,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminuser();
 
-        $misc = $DB->get_record('course_categories', ['name' => 'Miscellaneous']);
+        $misc = $DB->get_record('course_categories', ['name' => get_string('defaultcategoryname')]);
         $miscctx = \context_coursecat::instance($misc->id);
 
         $category = $this->getDataGenerator()->create_category();
