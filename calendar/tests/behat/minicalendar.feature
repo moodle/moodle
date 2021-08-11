@@ -37,6 +37,23 @@ Feature: Open calendar popup
     And I should see "Event 1:2"
 
   @javascript
+  Scenario: I view a day event then another day event
+    Given I follow "This month"
+    And I create a calendar event:
+      | Type of event     | site |
+      | Event title       | Event 3:1 |
+      | timestart[day]    | 3  |
+    And I create a calendar event:
+      | Type of event     | site |
+      | Event title       | Event 4:1 |
+      | timestart[day]    | 4  |
+    And I reload the page
+    When I click day "3" of this month in the calendar
+    Then I should see "Event 3:1" in the ".eventlist" "css_element"
+    And I click day "4" of this month in the calendar
+    And I should see "Event 4:1" in the ".eventlist" "css_element"
+
+  @javascript
   Scenario: I view calendar details for today
     Given I follow "This month"
     And I create a calendar event:
