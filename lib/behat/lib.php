@@ -400,7 +400,9 @@ function behat_update_vars_for_process() {
 function behat_is_requested_url($url) {
 
     $parsedurl = parse_url($url . '/');
-    $parsedurl['port'] = isset($parsedurl['port']) ? $parsedurl['port'] : 80;
+    if (!isset($parsedurl['port'])) {
+        $parsedurl['port'] = ($parsedurl['scheme'] === 'https') ? 443 : 80;
+    }
     $parsedurl['path'] = rtrim($parsedurl['path'], '/');
 
     // Removing the port.
