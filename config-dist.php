@@ -733,6 +733,14 @@ $CFG->admin = 'admin';
 // automatically generating them. This is only needed if you want to ensure that keys are consistent
 // across a cluster when not using shared storage. If you stop the server generating keys, you will
 // need to manually generate them by running 'php admin/cli/generate_key.php'.
+//
+// H5P crossorigin
+//
+//      $CFG->h5pcrossorigin = 'anonymous';
+//
+// Settings this to anonymous will enable CORS requests for media elements to have the credentials
+// flag set to 'same-origin'. This may be needed when using tool_objectfs as an alternative file
+// system with CloudFront configured.
 
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
