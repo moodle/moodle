@@ -1725,6 +1725,7 @@ class core_plugin_manager {
             'block' => array('course_overview', 'messages', 'community', 'participants'),
             'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
+            'media' => array('swf'),
             'qformat' => array('webct'),
             'message' => array('jabber'),
             'quizaccess' => array('safebrowser'),
@@ -1908,7 +1909,7 @@ class core_plugin_manager {
             ),
 
             'media' => array(
-                'html5audio', 'html5video', 'swf', 'videojs', 'vimeo', 'youtube'
+                'html5audio', 'html5video', 'videojs', 'vimeo', 'youtube'
             ),
 
             'message' => array(

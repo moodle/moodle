@@ -131,7 +131,7 @@ function xmldb_main_install() {
         'filterall'             => 0, // setting page, so have to be initialised here.
         'texteditors'           => 'atto,tinymce,textarea',
         'antiviruses'           => '',
-        'media_plugins_sortorder' => 'videojs,youtube,swf',
+        'media_plugins_sortorder' => 'videojs,youtube',
         'upgrade_extracreditweightsstepignored' => 1, // New installs should not run this upgrade step.
         'upgrade_calculatedgradeitemsignored' => 1, // New installs should not run this upgrade step.
         'upgrade_letterboundarycourses' => 1, // New installs should not run this upgrade step.

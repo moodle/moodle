@@ -34,8 +34,8 @@ class filter_mediaplugin_testcase extends advanced_testcase {
     function test_filter_mediaplugin_link() {
         $this->resetAfterTest(true);
 
-        // we need to enable the plugins somehow and the flash fallback.
-        \core\plugininfo\media::set_enabled_plugins('vimeo,youtube,videojs,html5video,swf,html5audio');
+        // We need to enable the media plugins.
+        \core\plugininfo\media::set_enabled_plugins('vimeo,youtube,videojs,html5video,html5audio');
         set_config('useflash', true, 'media_videojs');
 
         $filterplugin = new filter_mediaplugin(null, array());

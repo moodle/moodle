@@ -126,7 +126,6 @@ class manager {
             new environment\publicpaths(),
             new environment\configrw(),
             new environment\preventexecpath(),
-            new security\mediafilterswf(),
             new security\embed(),
             new security\openprofiles(),
             new security\crawlers(),
@@ -156,4 +155,3 @@ class manager {
         return $checks;
     }
 }
-

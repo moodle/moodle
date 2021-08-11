@@ -2778,5 +2778,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021091100.02);
     }
 
+    if ($oldversion < 2021091700.01) {
+        // Remove media_swf (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/media/player/swf/classes/plugin.php')) {
+            unset_all_config_for_plugin('media_swf');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021091700.01);
+    }
+
     return true;
 }
