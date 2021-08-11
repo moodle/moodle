@@ -99,24 +99,24 @@ if ($formaction == 'bulkchange.php') {
                         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
                     }
 
-                    // TODO Does not support custom user profile fields (MDL-70456).
-                    $identityfields = \core_user\fields::get_identity_fields($context, false);
-                    $identityfieldsselect = '';
+                    // Retrieve all identity fields required for users.
+                    $userfieldsapi = \core_user\fields::for_identity($context);
+                    $userfields = $userfieldsapi->get_sql('u', true, '', '', false);
 
+                    $identityfields = array_keys($userfields->mappings);
                     foreach ($identityfields as $field) {
-                        $columnnames[$field] = get_string($field);
-                        $identityfieldsselect .= ', u.' . $field . ' ';
+                        $columnnames[$field] = \core_user\fields::get_display_name($field);
                     }
 
                     [$useridsql, $useridparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid');
                     [$userordersql, $userorderparams] = users_order_by_sql('u', null, $context);
 
-                    $params = array_merge($useridparams, $userorderparams);
+                    $params = array_merge($userfields->params, $useridparams, $userorderparams);
 
                     // Add column for groups if the user can view them.
                     if (!isset($hiddenfields['groups'])) {
                         $columnnames['groupnames'] = get_string('groups');
-                        $identityfieldsselect .= ', gcn.groupnames';
+                        $userfields->selects .= ', gcn.groupnames';
 
                         [$groupconcatnamesql, $groupconcatnameparams] = groups_get_names_concat_sql($course->id);
                         $groupconcatjoin = "LEFT JOIN ({$groupconcatnamesql}) gcn ON gcn.userid = u.id";
@@ -125,8 +125,9 @@ if ($formaction == 'bulkchange.php') {
                         $groupconcatjoin = '';
                     }
 
-                    $sql = "SELECT u.firstname, u.lastname" . $identityfieldsselect . "
+                    $sql = "SELECT u.firstname, u.lastname, {$userfields->selects}
                               FROM {user} u
+                                   {$userfields->joins}
                                    {$groupconcatjoin}
                              WHERE u.id {$useridsql}
                           ORDER BY {$userordersql}";
