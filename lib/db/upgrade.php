@@ -2707,5 +2707,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021072800.01);
     }
 
+    if ($oldversion < 2021090200.01) {
+        // Remove qformat_webct (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/question/format/webct/format.php')) {
+            unset_all_config_for_plugin('qformat_webct');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021090200.01);
+    }
+
     return true;
 }

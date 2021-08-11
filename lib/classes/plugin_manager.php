@@ -1725,6 +1725,7 @@ class core_plugin_manager {
             'block' => array('course_overview', 'messages', 'community', 'participants'),
             'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
+            'qformat' => array('webct'),
             'quizaccess' => array('safebrowser'),
             'report' => array('search'),
             'repository' => array('alfresco'),
@@ -1958,7 +1959,7 @@ class core_plugin_manager {
 
             'qformat' => array(
                 'aiken', 'blackboard_six', 'examview', 'gift',
-                'missingword', 'multianswer', 'webct',
+                'missingword', 'multianswer',
                 'xhtml', 'xml'
             ),
 
