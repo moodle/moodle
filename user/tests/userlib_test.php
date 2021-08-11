@@ -588,11 +588,8 @@ class core_userliblib_testcase extends advanced_testcase {
         $avatarhtml = $opts->metadata['useravatar'];
 
         $matches = [];
-        preg_match('/(?:.*width=")(\d*)(?:" height=")(\d*)(?:".*\/>)/', $avatarhtml, $matches);
-        $this->assertCount(3, $matches);
-
-        $this->assertEquals(intval($matches[1]), $testsize);
-        $this->assertEquals(intval($matches[2]), $testsize);
+        preg_match('/size-100/', $avatarhtml, $matches);
+        $this->assertCount(1, $matches);
     }
 
     /**
