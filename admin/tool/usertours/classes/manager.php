@@ -622,7 +622,26 @@ class manager {
      * @return  array
      */
     public static function get_matching_tours(\moodle_url $pageurl): array {
-        global $PAGE;
+        global $PAGE, $USER;
+
+        // The following three checks make sure that the user is fully ready to use the site. If not, we do not show any tours.
+        // We need the user to get properly set up so that all require_login() and other bits work as expected.
+
+        if (user_not_fully_set_up($USER)) {
+            return [];
+        }
+
+        if (get_user_preferences('auth_forcepasswordchange', false)) {
+            return [];
+        }
+
+        if (empty($USER->policyagreed) && !is_siteadmin()) {
+            $manager = new \core_privacy\local\sitepolicy\manager();
+
+            if ($manager->is_defined(isguestuser())) {
+                return [];
+            }
+        }
 
         $tours = cache::get_matching_tourdata($pageurl);
 
