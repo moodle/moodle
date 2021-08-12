@@ -1134,4 +1134,39 @@ class core_user {
         }
     }
 
+    /**
+     * Is the user expected to perform an action to start using Moodle properly?
+     *
+     * This covers cases such as filling the profile, changing password or agreeing to the site policy.
+     *
+     * @param stdClass $user User object, defaults to the current user.
+     * @return bool
+     */
+    public static function awaiting_action(stdClass $user = null): bool {
+        global $USER;
+
+        if ($user === null) {
+            $user = $USER;
+        }
+
+        if (user_not_fully_set_up($user)) {
+            // Awaiting the user to fill all fields in the profile.
+            return true;
+        }
+
+        if (get_user_preferences('auth_forcepasswordchange', false, $user)) {
+            // Awaiting the user to change their password.
+            return true;
+        }
+
+        if (empty($user->policyagreed) && !is_siteadmin($user)) {
+            $manager = new \core_privacy\local\sitepolicy\manager();
+
+            if ($manager->is_defined(isguestuser($user))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

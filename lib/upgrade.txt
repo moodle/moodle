@@ -58,6 +58,9 @@ information provided here is intended especially for developers.
   completion_info::internal_set_data() to reaggregate completions that have been marked for instant course completion.
 * The following functions have been finally deprecated and can not be used anymore:
   - generate_uuid
+* New method \core_user::awaiting_action() has been introduced to check if the user is fully ready to use the site or
+  whether there is an action (such as filling the missing profile field, changing password or agreeing to the site
+  policy) needed.
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.

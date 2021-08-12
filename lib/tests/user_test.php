@@ -770,4 +770,53 @@ class core_user_testcase extends advanced_testcase {
         $this->assertFalse(\core_user::is_real_user(core_user::get_support_user()->id, true));
     }
 
+    /**
+     * Tests for the {@see \core_user::awaiting_action()} method.
+     */
+    public function test_awaiting_action() {
+        global $CFG, $DB, $USER;
+
+        $guest = \core_user::get_user($CFG->siteguest);
+        $student = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+        $manager = $this->getDataGenerator()->create_user();
+        $admin = get_admin();
+
+        $this->getDataGenerator()->role_assign($DB->get_field('role', 'id', ['shortname' => 'manager']),
+            $manager->id, \context_system::instance()->id);
+
+        // Scenario: Guests required to agree to site policy.
+        $this->assertFalse(\core_user::awaiting_action($guest));
+
+        $CFG->sitepolicyguest = 'https://example.com';
+        $this->assertTrue(\core_user::awaiting_action($guest));
+
+        $guest->policyagreed = 1;
+        $this->assertFalse(\core_user::awaiting_action($guest));
+
+        // Scenario: Student required to fill their profile.
+        $this->assertFalse(\core_user::awaiting_action($student));
+
+        $student->firstname = '';
+        $this->assertTrue(\core_user::awaiting_action($student));
+
+        $student->firstname = 'Alice';
+        $this->assertFalse(\core_user::awaiting_action($student));
+
+        // Scenario: Teacher force to change their password.
+        $this->assertFalse(\core_user::awaiting_action($teacher));
+
+        set_user_preference('auth_forcepasswordchange', 1, $teacher);
+        $this->assertTrue(\core_user::awaiting_action($teacher));
+
+        unset_user_preference('auth_forcepasswordchange', $teacher);
+        $this->assertFalse(\core_user::awaiting_action($teacher));
+
+        // Scenario: Admins do not need to agree to the policy but others do.
+        $this->assertFalse(\core_user::awaiting_action($admin));
+        $this->assertFalse(\core_user::awaiting_action($manager));
+        $CFG->sitepolicy = 'https://example.com';
+        $this->assertFalse(\core_user::awaiting_action($admin));
+        $this->assertTrue(\core_user::awaiting_action($manager));
+    }
 }
