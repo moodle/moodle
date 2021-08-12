@@ -67,7 +67,7 @@ module.exports = grunt => {
      * @returns {Object} Reference to the spawned task
      */
     const docsBuild = () => spawnNodeCall([
-        'node_modules/.bin/hugo',
+        'node_modules/hugo-bin/cli.js',
         '--config', getCLPath('config.yml'),
         '--cleanDestinationDir',
     ]);
@@ -91,7 +91,7 @@ module.exports = grunt => {
      * @returns {Object} Reference to the spawned task
      */
     const cssBuild = () => spawnNodeCall([
-        'node_modules/.bin/node-sass',
+        'node_modules/node-sass/bin/node-sass',
         '--output-style', 'expanded',
         '--source-map', true,
         '--source-map-contents', true,
