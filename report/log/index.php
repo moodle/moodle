@@ -105,8 +105,6 @@ $url = new moodle_url("/report/log/index.php", $params);
 $PAGE->set_url('/report/log/index.php', array('id' => $id));
 $PAGE->set_pagelayout('report');
 
-report_helper::save_selected_report($id, $url);
-
 // Get course details.
 $course = null;
 if ($id) {

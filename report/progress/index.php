@@ -156,8 +156,6 @@ $grandtotal = $completion->get_num_tracked_users('', array(), $group);
 // Get user data
 $progress = array();
 
-report_helper::save_selected_report($id, $url);
-
 if ($total) {
     $progress = $completion->get_progress_all(
         implode(' AND ', $where),

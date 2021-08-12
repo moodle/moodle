@@ -73,8 +73,6 @@ $PAGE->set_title($title);
 $PAGE->set_heading($coursename);
 $PAGE->set_pagelayout('incourse');
 
-report_helper::save_selected_report($id, $navurl);
-
 $output = $PAGE->get_renderer('report_competency');
 
 echo $output->header();
