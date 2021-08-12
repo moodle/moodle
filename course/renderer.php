@@ -287,23 +287,11 @@ class core_course_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $straddeither = get_string('addresourceoractivity');
-
-        $ajaxcontrol = html_writer::start_tag('div', array('class' => 'mdl-right'));
-        $ajaxcontrol .= html_writer::start_tag('div', array('class' => 'section-modchooser'));
-
-        $icon = $this->output->pix_icon('t/add', '');
-        $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
-
-        $ajaxcontrol .= html_writer::tag('button', $icon . $span, [
-            'class' => 'section-modchooser-link btn btn-link',
-            'data-action' => 'open-chooser',
-            'data-sectionid' => $section,
-            'data-sectionreturnid' => $sectionreturn,
-        ]);
-
-        $ajaxcontrol .= html_writer::end_tag('div');
-        $ajaxcontrol .= html_writer::end_tag('div');
+        $data = [
+            'sectionid' => $section,
+            'sectionreturn' => $sectionreturn
+        ];
+        $ajaxcontrol = $this->render_from_template('course/activitychooserbutton', $data);
 
         // Load the JS for the modal.
         $this->course_activitychooser($course->id);

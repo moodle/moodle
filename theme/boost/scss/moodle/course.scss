@@ -1253,3 +1253,25 @@ span.editinstructions {
         font-size: 100%;
     }
 }
+
+$activity-item-background: theme-color-level('primary', -12) !default;
+$activity-item-border: theme-color-level('primary', -2) !default;
+$activity-item-color: $body-color;
+$activity-item-hover: theme-color-level('primary', -10) !default;
+.activity-add {
+    @if $enable-rounded {
+        @include border-radius($card-border-radius);
+    }
+    @include alert-variant($activity-item-background, $activity-item-border, $activity-item-border);
+    border-width: $border-width;
+    border-style: dashed;
+    .pluscontainer {
+        border: $border-width solid $activity-item-border;
+    }
+    &:hover {
+        cursor: pointer;
+        background-color: $activity-item-hover;
+    }
+    width: 100%;
+    border-radius: 4px;
+}
