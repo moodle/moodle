@@ -58,6 +58,12 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         1)
     );
 
+    $optionalsubsystems->add(new admin_setting_configcheckbox('messaging',
+        new lang_string('messaging', 'admin'),
+        new lang_string('configmessaging', 'admin'),
+        1)
+    );
+
     $fullunicodesupport = true;
     if ($DB->get_dbfamily() == 'mysql') {
         $collation = $DB->get_dbcollation();
