@@ -624,6 +624,12 @@ class manager {
     public static function get_matching_tours(\moodle_url $pageurl): array {
         global $PAGE;
 
+        if (\core_user::awaiting_action()) {
+            // User not fully ready to use the site. Don't show any tours, we need the user to get properly set up so
+            // that all require_login() and other bits work as expected.
+            return [];
+        }
+
         $tours = cache::get_matching_tourdata($pageurl);
 
         $matches = [];
