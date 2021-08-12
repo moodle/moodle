@@ -62,8 +62,7 @@ class report_helper {
             if (!empty($menu)) {
                 $select = new url_select($menu, $activeurl, null, 'choosecoursereport');
                 $select->set_label(get_string('reporttype'), ['class' => 'accesshide']);
-                $select->attributes['style'] = "margin-bottom: 1.5rem";
-                $select->class .= " mb-4";
+                $select->class .= " mb-3";
                 echo $OUTPUT->render($select);
             }
         }
