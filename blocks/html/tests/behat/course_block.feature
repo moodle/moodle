@@ -1,10 +1,10 @@
 @block @block_html
-Feature: HTML blocks in a course
-  In order to have one or multiple HTML blocks in a course
+Feature: Text blocks in a course
+  In order to have one or multiple Text blocks in a course
   As a teacher
   I need to be able to create and change such blocks
 
-  Scenario: Adding HTML block in a course
+  Scenario: Adding Text block in a course
     Given the following "users" exist:
       | username | firstname | lastname | email            |
       | teacher1 | Terry1    | Teacher1 | teacher@example.com  |
@@ -18,15 +18,15 @@ Feature: HTML blocks in a course
       | student1 | C1     | student        |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "HTML" block
-    And I configure the "(new HTML block)" block
+    And I add the "Text" block
+    And I configure the "(new text block)" block
     And I set the field "Content" to "First block content"
-    And I set the field "HTML block title" to "First block header"
+    And I set the field "Text block title" to "First block header"
     And I press "Save changes"
-    And I add the "HTML" block
-    And I configure the "(new HTML block)" block
+    And I add the "Text" block
+    And I configure the "(new text block)" block
     And I set the field "Content" to "Second block content"
-    And I set the field "HTML block title" to "Second block header"
+    And I set the field "Text block title" to "Second block header"
     And I press "Save changes"
     And I log out
     And I log in as "student1"
