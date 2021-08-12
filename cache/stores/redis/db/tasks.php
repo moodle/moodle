@@ -15,16 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Redis Cache Store - Version information
+ * Scheduled tasks.
  *
- * @package   cachestore_redis
- * @copyright 2013 Adam Durana
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2021 The Open University
+ * @package cachestore_redis
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version    = 2021081200;
-$plugin->requires   = 2021052500; // Requires this Moodle version.
-$plugin->maturity   = MATURITY_STABLE;
-$plugin->component  = 'cachestore_redis';
+$tasks = [
+    [
+        'classname' => '\cachestore_redis\task\ttl',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 0
+    ]
+];

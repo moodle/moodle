@@ -41,12 +41,15 @@ $string['server'] = 'Server';
 $string['server_help'] = 'This sets the hostname or IP address of the Redis server to use.';
 $string['password'] = 'Password';
 $string['password_help'] = 'This sets the password of the Redis server.';
+$string['task_ttl'] = 'Free up memory used by expired entries in Redis caches';
 $string['test_server'] = 'Test server';
 $string['test_server_desc'] = 'Redis server to use for testing.';
 $string['test_password'] = 'Test server password';
 $string['test_password_desc'] = 'Redis test server password.';
 $string['test_serializer'] = 'Serializer';
 $string['test_serializer_desc'] = 'Serializer to use for testing.';
+$string['test_ttl'] = 'Testing TTL';
+$string['test_ttl_desc'] = 'Run the performance test using a cache that requires TTL (slower sets).';
 $string['useserializer'] = 'Use serializer';
 $string['useserializer_help'] = 'Specifies the serializer to use for serializing.
 The valid serializers are Redis::SERIALIZER_PHP or Redis::SERIALIZER_IGBINARY.
