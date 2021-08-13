@@ -391,6 +391,10 @@ class csv_export_writer {
      */
     var $path;
     /**
+     * @var boolean $bom  If true prefix file with byte order mark (BOM).
+     */
+    private $bom = false;
+    /**
      * @var resource $fp  File pointer for the csv file.
      */
     protected $fp;
@@ -401,8 +405,9 @@ class csv_export_writer {
      * @param string $delimiter      The name of the character used to seperate fields. Supported types(comma, tab, semicolon, colon, cfg)
      * @param string $enclosure      The character used for determining the enclosures.
      * @param string $mimetype       Mime type of the file that we are exporting.
+     * @param boolean $bom           If true, prefix file with byte order mark.
      */
-    public function __construct($delimiter = 'comma', $enclosure = '"', $mimetype = 'application/download') {
+    public function __construct($delimiter = 'comma', $enclosure = '"', $mimetype = 'application/download', $bom = false) {
         $this->delimiter = $delimiter;
         // Check that the enclosure is a single character.
         if (strlen($enclosure) == 1) {
@@ -412,6 +417,7 @@ class csv_export_writer {
         }
         $this->filename = "Moodle-data-export.csv";
         $this->mimetype = $mimetype;
+        $this->bom = $bom;
     }
 
     /**
@@ -437,6 +443,10 @@ class csv_export_writer {
         if(!isset($this->path)) {
             $this->set_temp_file_path();
             $this->fp = fopen($this->path, 'w+');
+
+            if ($this->bom) {
+                fputs($this->fp, core_text::UTF8_BOM);
+            }
         }
         $delimiter = csv_import_reader::get_delimiter($this->delimiter);
         fputcsv($this->fp, $row, $delimiter, $this->csvenclosure);
