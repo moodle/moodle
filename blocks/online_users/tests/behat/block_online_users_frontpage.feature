@@ -114,6 +114,7 @@ Feature: The online users block allow you to see who is currently online on fron
     And the following config values are set as admin:
       | block_online_users_onlinestatushiding | 0 |
     When I log in as "student1"
+    And I am on site homepage
     Then I should see "Student 1" in the "Online users" "block"
     And "Hide" "icon" should not exist in the ".block.block_online_users" "css_element"
 
