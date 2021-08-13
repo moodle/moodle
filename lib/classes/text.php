@@ -47,6 +47,8 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_text {
+    /** @var string Byte order mark for UTF-8 */
+    const UTF8_BOM = "\xef\xbb\xbf";
 
     /**
      * @var string[] Array of strings representing Unicode non-characters
@@ -626,7 +628,7 @@ class core_text {
      * @return string
      */
     public static function trim_utf8_bom($str) {
-        $bom = "\xef\xbb\xbf";
+        $bom = self::UTF8_BOM;
         if (strpos($str, $bom) === 0) {
             return substr($str, strlen($bom));
         }
