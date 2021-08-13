@@ -96,6 +96,80 @@ abstract class datasource extends base {
     abstract public function get_default_columns(): array;
 
     /**
+     * Add filters from the given entity name to be available to use in a custom report
+     *
+     * @param string $entityname
+     * @param array $include Include only these filters, if omitted then include all
+     * @param array $exclude Exclude these filters, if omitted then exclude none
+     * @throws coding_exception If both $include and $exclude are non-empty
+     */
+    final protected function add_filters_from_entity(string $entityname, array $include = [], array $exclude = []): void {
+        if (!empty($include) && !empty($exclude)) {
+            throw new coding_exception('Cannot specify filters to include and exclude simultaneously');
+        }
+
+        $entity = $this->get_entity($entityname);
+
+        // Retrieve filtered filters from entity, respecting given $include/$exclude parameters.
+        $filters = array_filter($entity->get_filters(), static function(filter $filter) use ($include, $exclude): bool {
+            if (!empty($include)) {
+                return in_array($filter->get_name(), $include);
+            }
+
+            if (!empty($exclude)) {
+                return !in_array($filter->get_name(), $exclude);
+            }
+
+            return true;
+        });
+
+        foreach ($filters as $filter) {
+            $this->add_filter($filter);
+        }
+    }
+
+    /**
+     * Add default datasource filters to the report
+     *
+     * This method is optional and can be called when the report is created to add the default filters defined in the
+     * selected datasource.
+     */
+    public function add_default_filters(): void {
+        $reportid = $this->get_report_persistent()->get('id');
+        $filteridentifiers = $this->get_default_filters();
+        foreach ($filteridentifiers as $uniqueidentifier) {
+            report::add_report_filter($reportid, $uniqueidentifier);
+        }
+    }
+
+    /**
+     * Return the filters that will be added to the report once is created
+     *
+     * @return string[]
+     */
+    abstract public function get_default_filters(): array;
+
+    /**
+     * Return all configured report filters
+     *
+     * @return filter[]
+     */
+    public function get_active_filters(): array {
+        $filters = [];
+
+        $activefilters = filter_model::get_filter_records($this->get_report_persistent()->get('id'), 'filterorder');
+        foreach ($activefilters as $filter) {
+            $instance = $this->get_filter($filter->get('uniqueidentifier'));
+            if ($instance !== null && $instance->get_is_available()) {
+                $filters[$instance->get_unique_identifier()] = $instance
+                    ->set_persistent($filter);
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
      * Add conditions from the given entity name to be available to use in a custom report
      *
      * @param string $entityname

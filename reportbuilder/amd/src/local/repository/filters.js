@@ -38,3 +38,52 @@ export const resetFilters = reportId => {
 
     return Ajax.call([request])[0];
 };
+
+/**
+ * Add a filter to the given report
+ *
+ * @param {Number} reportId
+ * @param {String} uniqueIdentifier
+ * @return {Promise}
+ */
+export const addFilter = (reportId, uniqueIdentifier) => {
+    const request = {
+        methodname: 'core_reportbuilder_filters_add',
+        args: {reportid: reportId, uniqueidentifier: uniqueIdentifier}
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Remove filter from given report
+ *
+ * @param {Number} reportId
+ * @param {Number} filterId
+ * @return {Promise}
+ */
+export const deleteFilter = (reportId, filterId) => {
+    const request = {
+        methodname: 'core_reportbuilder_filters_delete',
+        args: {reportid: reportId, filterid: filterId}
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Reorder a filter in a given report
+ *
+ * @param {Number} reportId
+ * @param {Number} filterId
+ * @param {Number} position
+ * @return {Promise}
+ */
+export const reorderFilter = (reportId, filterId, position) => {
+    const request = {
+        methodname: 'core_reportbuilder_filters_reorder',
+        args: {reportid: reportId, filterid: filterId, position: position}
+    };
+
+    return Ajax.call([request])[0];
+};

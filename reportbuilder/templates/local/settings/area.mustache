@@ -40,6 +40,16 @@
                 {{/body}}
             {{/ core_reportbuilder/toggle_card }}
 
+            {{< core_reportbuilder/toggle_card }}
+                {{$collapsed}}collapsed{{/collapsed}}
+                {{$id}}settingsfilters{{/id}}
+                {{$header}}{{#str}} filters, core_reportbuilder {{/str}}{{/header}}
+                {{$helpicon}}{{{filters.helpicon}}}{{/helpicon}}
+                {{$body}}
+                    {{> core_reportbuilder/local/settings/filters}}
+                {{/body}}
+            {{/ core_reportbuilder/toggle_card }}
+
         </div>
     </div>
 </div>

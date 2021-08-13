@@ -89,6 +89,8 @@ class custom_report_exporter extends persistent_exporter {
             'table' => ['type' => PARAM_RAW],
             'sidebarmenucards' => ['type' => custom_report_menu_cards_exporter::read_properties_definition()],
             'conditions' => ['type' => custom_report_conditions_exporter::read_properties_definition()],
+            'filters' => ['type' => custom_report_filters_exporter::read_properties_definition()],
+            'filtersapplied' => ['type' => PARAM_INT],
             'filtersform' => [
                 'type' => PARAM_RAW,
                 'optional' => true,
@@ -119,6 +121,7 @@ class custom_report_exporter extends persistent_exporter {
         $report = manager::get_report_from_persistent($this->persistent);
 
         $conditionsexporter = new custom_report_conditions_exporter(null, ['report' => $report]);
+        $filtersexporter = new custom_report_filters_exporter(null, ['report' => $report]);
         if ($this->editmode) {
             $menucardexporter = new custom_report_menu_cards_exporter(null, [
                 'menucards' => report_helper::get_available_columns($report->get_report_persistent())
@@ -130,6 +133,8 @@ class custom_report_exporter extends persistent_exporter {
             'table' => $output->render($table),
             'sidebarmenucards' => $menucards,
             'conditions' => (array) $conditionsexporter->export($output),
+            'filters' => (array) $filtersexporter->export($output),
+            'filtersapplied' => $report->get_applied_filter_count(),
             'filtersform' => $filtersform,
             'editmode' => (int)$this->editmode,
             'showeditbutton' => $this->showeditbutton,

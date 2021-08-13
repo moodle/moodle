@@ -61,6 +61,7 @@ class users extends datasource {
 
         $userentityname = $userentity->get_entity_name();
         $this->add_columns_from_entity($userentityname);
+        $this->add_filters_from_entity($userentityname);
         $this->add_conditions_from_entity($userentityname);
     }
 
@@ -70,6 +71,15 @@ class users extends datasource {
      * @return string[]
      */
     public function get_default_columns(): array {
+        return ['user:fullname', 'user:username', 'user:email'];
+    }
+
+    /**
+     * Return the filters that will be added to the report once is created
+     *
+     * @return string[]
+     */
+    public function get_default_filters(): array {
         return ['user:fullname', 'user:username', 'user:email'];
     }
 

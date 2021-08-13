@@ -257,6 +257,86 @@ class report {
     }
 
     /**
+     * Add given filter to report
+     *
+     * @param int $reportid
+     * @param string $uniqueidentifier
+     * @return filter
+     * @throws invalid_parameter_exception
+     */
+    public static function add_report_filter(int $reportid, string $uniqueidentifier): filter {
+        $report = manager::get_report_from_id($reportid);
+
+        $reportfilters = $report->get_filters();
+        if (!array_key_exists($uniqueidentifier, $reportfilters)) {
+            throw new invalid_parameter_exception('Invalid filter');
+        }
+
+        $filter = new filter(0, (object) [
+            'reportid' => $reportid,
+            'uniqueidentifier' => $uniqueidentifier,
+            'filterorder' => filter::get_max_filterorder($reportid) + 1,
+        ]);
+
+        return $filter->create();
+    }
+
+    /**
+     * Delete given filter from report
+     *
+     * @param int $reportid
+     * @param int $filterid
+     * @return bool
+     * @throws invalid_parameter_exception
+     */
+    public static function delete_report_filter(int $reportid, int $filterid): bool {
+        global $DB;
+
+        $filter = filter::get_filter_record($reportid, $filterid);
+        if ($filter === false) {
+            throw new invalid_parameter_exception('Invalid filter');
+        }
+
+        // After deletion, re-index remaining report filters.
+        if ($result = $filter->delete()) {
+            $sqlupdateorder = '
+                UPDATE {' . filter::TABLE . '}
+                   SET filterorder = filterorder - 1
+                 WHERE reportid = :reportid
+                   AND filterorder > :filterorder
+                   AND iscondition = 0';
+
+            $DB->execute($sqlupdateorder, ['reportid' => $reportid, 'filterorder' => $filter->get('filterorder')]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Re-order given filter within a report
+     *
+     * @param int $reportid
+     * @param int $filterid
+     * @param int $position
+     * @return bool
+     * @throws invalid_parameter_exception
+     */
+    public static function reorder_report_filter(int $reportid, int $filterid, int $position): bool {
+        $filter = filter::get_filter_record($reportid, $filterid);
+        if ($filter === false) {
+            throw new invalid_parameter_exception('Invalid filter');
+        }
+
+        // Get the rest of the report filters, excluding the one we are moving.
+        $filters = filter::get_records_select('reportid = :reportid AND iscondition = 0 AND id <> :id', [
+            'reportid' => $reportid,
+            'id' => $filterid,
+        ], 'filterorder');
+
+        return static::reorder_persistents_by_field($filter, $filters, $position, 'filterorder');
+    }
+
+    /**
      * Get available columns for a given report
      *
      * @param report_model $persistent

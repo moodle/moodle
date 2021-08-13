@@ -287,6 +287,7 @@ abstract class base {
     /**
      * Returns title of given report entity
      *
+     * @param string $name
      * @return lang_string
      * @throws coding_exception
      */
@@ -345,17 +346,10 @@ abstract class base {
      * Each entity must have already been added to the report before calling this method
      *
      * @param string[] $columns Unique identifier of each entity column
-     * @throws coding_exception For unknown entities
      */
     final protected function add_columns_from_entities(array $columns): void {
         foreach ($columns as $column) {
-            [$entityname, $columnname] = explode(':', $column, 2);
-
-            if (!array_key_exists($entityname, $this->entities)) {
-                throw new coding_exception('Invalid entity name', $entityname);
-            }
-
-            $this->add_column($this->entities[$entityname]->get_column($columnname));
+            $this->add_column_from_entity($column);
         }
     }
 
@@ -502,7 +496,6 @@ abstract class base {
         return (array) json_decode($conditions);
     }
 
-
     /**
      * Adds a filter to the report
      *
@@ -531,22 +524,29 @@ abstract class base {
     }
 
     /**
+     * Add given filter to the report from an entity
+     *
+     * The entity must have already been added to the report before calling this method
+     *
+     * @param string $uniqueidentifier
+     * @return filter
+     */
+    final protected function add_filter_from_entity(string $uniqueidentifier): filter {
+        [$entityname, $filtername] = explode(':', $uniqueidentifier, 2);
+
+        return $this->add_filter($this->get_entity($entityname)->get_filter($filtername));
+    }
+
+    /**
      * Add given filters to the report from one or more entities
      *
      * Each entity must have already been added to the report before calling this method
      *
      * @param string[] $filters Unique identifier of each entity filter
-     * @throws coding_exception For unknown entities
      */
     final protected function add_filters_from_entities(array $filters): void {
         foreach ($filters as $filter) {
-            [$entityname, $filtername] = explode(':', $filter, 2);
-
-            if (!array_key_exists($entityname, $this->entities)) {
-                throw new coding_exception('Invalid entity name', $entityname);
-            }
-
-            $this->add_filter($this->entities[$entityname]->get_filter($filtername));
+            $this->add_filter_from_entity($filter);
         }
     }
 
@@ -581,7 +581,7 @@ abstract class base {
     }
 
     /**
-     * Return all report filter instances
+     * Return all active report filter instances
      *
      * @return filter_base[]
      */

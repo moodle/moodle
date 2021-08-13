@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\table;
 
+use core\output\notification;
 use html_writer;
 use moodle_exception;
 use moodle_url;
@@ -40,6 +41,9 @@ class custom_report_table extends base_report_table {
 
     /** @var string Unique ID prefix for the table */
     private const UNIQUEID_PREFIX = 'custom-report-table-';
+
+    /** @var bool Whether filters should be applied in report (we don't want them when editing) */
+    protected const REPORT_APPLY_FILTERS = false;
 
     /**
      * Table constructor. Note that the passed unique ID value must match the pattern "custom-report-table-(\d+)" so that
@@ -101,6 +105,8 @@ class custom_report_table extends base_report_table {
         $this->pageable(true);
 
         // Initialise table SQL properties.
+        $this->set_filters_applied(static::REPORT_APPLY_FILTERS);
+
         $fieldsql = implode(', ', $fields);
         $this->init_sql($fieldsql, "{{$maintable}} {$maintablealias}", $joins, $where, $params, $groupby);
     }
@@ -195,7 +201,6 @@ class custom_report_table extends base_report_table {
 
         $columns = $this->get_active_columns();
         if (empty($columns)) {
-            $this->print_nothing_to_display();
             return;
         }
 
@@ -250,13 +255,21 @@ class custom_report_table extends base_report_table {
     }
 
     /**
-     * Override end of HTML to ensure that column headers are always added
+     * Override print_nothing_to_display to ensure that column headers are always added.
      */
-    public function finish_html() {
-        if ($this->totalrows == 0 && !$this->started_output) {
-            $this->start_output();
-        }
+    public function print_nothing_to_display() {
+        global $OUTPUT;
 
-        parent::finish_html();
+        $this->start_html();
+        $this->print_headers();
+        echo html_writer::end_tag('table');
+        echo html_writer::end_tag('div');
+        $this->wrap_html_finish();
+
+        $notification = (new notification(get_string('nothingtodisplay'), notification::NOTIFY_INFO))
+            ->set_extra_classes(['mt-3']);
+        echo $OUTPUT->render($notification);
+
+        echo $this->get_dynamic_table_html_end();
     }
 }

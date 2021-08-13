@@ -41,6 +41,9 @@ const SELECTORS = {
         settingsConditions: '[data-region="settings-conditions"]',
         activeConditions: '[data-region="active-conditions"]',
         activeCondition: '[data-region="active-condition"]',
+        settingsFilters: '[data-region="settings-filters"]',
+        activeFilters: '[data-region="active-filters"]',
+        activeFilter: '[data-region="active-filter"]',
     },
     actions: {
         reportActionPopup: '[data-action="report-action-popup"]',
@@ -51,6 +54,8 @@ const SELECTORS = {
         reportRemoveColumn: '[data-action="report-remove-column"]',
         reportAddCondition: '[data-action="report-add-condition"]',
         reportRemoveCondition: '[data-action="report-remove-condition"]',
+        reportAddFilter: '[data-action="report-add-filter"]',
+        reportRemoveFilter: '[data-action="report-remove-filter"]',
         sidebarSearch: '[data-action="sidebar-search"]',
     },
 };

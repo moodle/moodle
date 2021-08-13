@@ -28,6 +28,7 @@ use core_reportbuilder\local\filters\base;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base as base_report;
 use core_reportbuilder\local\report\filter;
+use core\output\notification;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -50,6 +51,9 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
 
     /** @var string $groupbysql */
     protected $groupbysql = '';
+
+    /** @var bool $applyfilters */
+    protected $applyfilters = true;
 
     /**
      * Initialises table SQL properties
@@ -81,19 +85,23 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         }
 
         // For each filter, we also need to apply their values (will differ according to user viewing the report).
-        $filtervalues = $this->report->get_filter_values();
-        foreach ($this->report->get_active_filters() as $filter) {
-            [$filtersql, $filterparams] = $this->get_filter_sql($filter, $filtervalues);
-            if ($filtersql !== '') {
-                $joins = array_merge($joins, $filter->get_joins());
-                $wheres[] = "({$filtersql})";
-                $params = array_merge($params, $filterparams);
+        if ($this->applyfilters) {
+            $filtervalues = $this->report->get_filter_values();
+            foreach ($this->report->get_active_filters() as $filter) {
+                [$filtersql, $filterparams] = $this->get_filter_sql($filter, $filtervalues);
+                if ($filtersql !== '') {
+                    $joins = array_merge($joins, $filter->get_joins());
+                    $wheres[] = "({$filtersql})";
+                    $params = array_merge($params, $filterparams);
+                }
             }
         }
 
-        $wheresql = '1=1';
+        // Join all the filters into a SQL WHERE clause, falling back to all records.
         if (!empty($wheres)) {
             $wheresql = implode(' AND ', $wheres);
+        } else {
+            $wheresql = '1=1';
         }
 
         if (!empty($groupby)) {
@@ -113,6 +121,16 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
                      WHERE {$wheresql}
                            {$this->groupbysql}
                    ) {$counttablealias}", $params);
+    }
+
+    /**
+     * Whether active filters should be applied to the report, defaults to true except in the case where we are editing a report
+     * and we do not want filters to be applied to it
+     *
+     * @param bool $applyfilters
+     */
+    public function set_filters_applied(bool $applyfilters): void {
+        $this->applyfilters = $applyfilters;
     }
 
     /**
@@ -168,5 +186,19 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
      */
     public function guess_base_url(): void {
         $this->baseurl = new moodle_url('/');
+    }
+
+    /**
+     * Override print_nothing_to_display to modity the output styles.
+     */
+    public function print_nothing_to_display() {
+        global $OUTPUT;
+
+        echo $this->get_dynamic_table_html_start();
+        echo $this->render_reset_button();
+
+        echo $OUTPUT->render(new notification(get_string('nothingtodisplay'), notification::NOTIFY_INFO));
+
+        echo $this->get_dynamic_table_html_end();
     }
 }
