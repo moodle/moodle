@@ -33,6 +33,7 @@ $string['admindirname'] = 'Skrbniška mapa';
 $string['availablelangs'] = 'Jezikovni paketi na voljo';
 $string['chooselanguagehead'] = 'Izberite jezik';
 $string['chooselanguagesub'] = 'Izberite jezik za namestitev. Pozneje boste lahko izbrali tudi jezike strani in uporabniške jezike.';
+$string['clialreadyconfigured'] = 'Konfiguracijska datoteka config.php že obstaja. Uporabite admin/cli/install_database.php, če želite namestiti Moodle na to spletno mesto.';
 $string['clialreadyinstalled'] = 'Datoteka config.php že obstaja, prosimo uporabite admin/cli/install_database.php, če želite posodobiti vašo stran.';
 $string['cliinstallheader'] = 'Moodle {$a} namestitveni program z ukazno vrstico';
 $string['databasehost'] = 'Gostitelj podatkovne baze';
