@@ -36,9 +36,9 @@ $string['cliincorrectvalueretry'] = 'Nepravilna vrednost, prosimo poskusite znov
 $string['clitypevalue'] = 'vtipkajte vrednost';
 $string['clitypevaluedefault'] = 'vtipkajte vrednost, kliknite Enter za uporabo privzete vrednosti ({$a})';
 $string['cliunknowoption'] = 'Neprepoznane možnosti:
-{$a}
+  {$a}
 Uporabite možnost --help.';
 $string['cliyesnoprompt'] = 'vtipkajte d (pomeni da) ali n (pomeni ne)';
-$string['environmentrequireinstall'] = 'namestitev oz. omogočanje je zahtevano';
+$string['environmentrequireinstall'] = 'zahtevano je, da namestite in omogočite';
 $string['environmentrequireversion'] = 'različica {$a->needed} je zahtevana, vi uporabljate {$a->current}';
 $string['upgradekeyset'] = 'Ključ za nadgradnjo (pustite prazno, če ga ne želite nastaviti)';
