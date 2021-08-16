@@ -55,9 +55,16 @@ jobs:
         include:
           - os: ubuntu-18.04
             php: 7.2
+            # Need to disable both redis and memcached (both are optional) in order to keep igbinary installed.
+            # (there are dependencies that become broken if we just switch the igbinary version).
+            # Need to do this for php 7.2 because of a bug with current default igbinary
+            # versions used by GHA being >= 3.2.2 and <= 3.2.4 (buggy ones).
+            # TODO: MDL-72399 - Revert this patch once igbinary 3.2.5 or up is the default @ GHA.
+            extensions: :redis, :memcached, igbinary-3.2.6
             db: mysqli
           - os: ubuntu-18.04
             php: 7.4
+            extensions:
             db: pgsql
 
     steps:
@@ -88,6 +95,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
           coverage: none
 
       - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
