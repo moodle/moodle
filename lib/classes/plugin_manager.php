@@ -1726,6 +1726,7 @@ class core_plugin_manager {
             'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
             'qformat' => array('webct'),
+            'message' => array('jabber'),
             'quizaccess' => array('safebrowser'),
             'report' => array('search'),
             'repository' => array('alfresco'),
@@ -1911,7 +1912,7 @@ class core_plugin_manager {
             ),
 
             'message' => array(
-                'airnotifier', 'email', 'jabber', 'popup'
+                'airnotifier', 'email', 'popup'
             ),
 
             'mnetservice' => array(
