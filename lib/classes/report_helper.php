@@ -71,12 +71,16 @@ class report_helper {
     /**
      * Save the last selected report in the session
      *
+     * @deprecated since Moodle 4.0
      * @param int $id The course id
      * @param moodle_url $url The moodle url
      * @return void
      */
     public static function save_selected_report(int $id, moodle_url $url):void {
         global $USER;
+
+        debugging('save_selected_report() has been deprecated because it is no longer used and will be '.
+            'removed in future versions of Moodle', DEBUG_DEVELOPER);
 
         // Last selected report.
         if (!isset($USER->course_last_report)) {

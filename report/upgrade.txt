@@ -1,6 +1,10 @@
 This files describes API changes in /report/* - plugins,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+* The method report_helper::save_selected_report() has been been deprecated because it is no longer used.
+
 === 3.11 ===
 
 * The new report plugin's can have drop down, which can be included by calling static
