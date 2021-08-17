@@ -12298,17 +12298,19 @@ body.dragging .dragging {
 .helplink .icon {
   margin-left: 0.5rem; }
 
-.icons-collapse-expand .expanded-icon {
-  display: block; }
-
-.icons-collapse-expand .collapsed-icon {
-  display: none; }
-
-.icons-collapse-expand.collapsed .expanded-icon {
-  display: none; }
-
-.icons-collapse-expand.collapsed .collapsed-icon {
-  display: block; }
+.icons-collapse-expand {
+  display: flex;
+  align-items: center; }
+  .icons-collapse-expand .expanded-icon {
+    display: flex;
+    align-items: center; }
+  .icons-collapse-expand .collapsed-icon {
+    display: none; }
+  .icons-collapse-expand.collapsed .expanded-icon {
+    display: none; }
+  .icons-collapse-expand.collapsed .collapsed-icon {
+    display: flex;
+    align-items: center; }
 
 /* admin.less */
 .formtable tbody th {
