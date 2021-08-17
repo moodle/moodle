@@ -683,11 +683,15 @@ class grade_edit_tree {
                 $gradeitem->grademin, $gradeitem->grademax, 'gradebook');
         }
 
-        // Update hiding flag.
-        if ($hiddenuntil) {
-            $gradeitem->set_hidden($hiddenuntil, false);
-        } else {
-            $gradeitem->set_hidden($hidden, false);
+        // Only update the category's 'hidden' status if it has changed. Leaving a category as 'unhidden' (checkbox left
+        // unmarked) and submitting the form without this conditional check will result in displaying any grade items that
+        // are in the category, including those that were previously 'hidden'.
+        if (($gradecategory->get_hidden() != $hiddenuntil) || ($gradecategory->get_hidden() != $hidden)) {
+            if ($hiddenuntil) {
+                $gradecategory->set_hidden($hiddenuntil, true);
+            } else {
+                $gradecategory->set_hidden($hidden, true);
+            }
         }
 
         $gradeitem->set_locktime($locktime); // Locktime first - it might be removed when unlocking.
