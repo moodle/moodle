@@ -28,6 +28,7 @@
         "repository": "repository",
         "portfolio": "portfolio",
         "search": "search\/engine",
+        "qbank": "question\/bank",
         "qbehaviour": "question\/behaviour",
         "qformat": "question\/format",
         "plagiarism": "plagiarism",

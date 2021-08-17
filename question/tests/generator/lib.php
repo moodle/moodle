@@ -45,14 +45,14 @@ class core_question_generator extends component_generator_base {
 
         $this->categorycount++;
 
-        $defaults = array(
+        $defaults = [
             'name'       => 'Test question category ' . $this->categorycount,
             'info'       => '',
             'infoformat' => FORMAT_HTML,
             'stamp'      => make_unique_id_code(),
             'sortorder'  => 999,
             'idnumber'   => null
-        );
+        ];
 
         $record = $this->datagenerator->combine_defaults_and_record($defaults, $record);
 
@@ -175,12 +175,12 @@ class core_question_generator extends component_generator_base {
 
         $qcat = $this->create_question_category(['contextid' => $context->id]);
 
-        $questions = array(
+        $questions = [
                 $this->create_question('shortanswer', null, ['category' => $qcat->id]),
                 $this->create_question('shortanswer', null, ['category' => $qcat->id]),
-        );
+        ];
 
-        return array($category, $course, $qcat, $questions);
+        return [$category, $course, $qcat, $questions];
     }
 
     /**

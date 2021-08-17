@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for representing a column in a {@link question_bank_view}.
+ * Base class for representing a column in a {@see question_bank_view}.
  *
  * @package   core_question
  * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
@@ -27,12 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Base class for representing a column in a {@link question_bank_view}.
+ * Base class for representing a column in a {@see question_bank_view}.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @todo MDL-72004 delete the class and add it to lib/db/renameclasses.php pointing to core_question/local/bank
  */
 abstract class column_base {
+
     /**
      * @var view $qbank the question bank view we are helping to render.
      */
@@ -42,10 +44,10 @@ abstract class column_base {
     protected $isheading = false;
 
     /**
-     * Constructor.
-     * @param view $qbank the question bank view we are helping to render.
+     * Constructor for the question bank view we are helping to render.
+     * @param view $qbank
      */
-    public function __construct(view $qbank) {
+    public function __construct($qbank) {
         $this->qbank = $qbank;
         $this->init();
     }
@@ -65,6 +67,27 @@ abstract class column_base {
     }
 
     public function is_extra_row() {
+        return false;
+    }
+
+    /**
+     * Check if the row has an extra preference to view/hide.
+     */
+    public function has_preference(): bool {
+        return false;
+    }
+
+    /**
+     * Get if the preference key of the row.
+     */
+    public function get_preference_key(): string {
+        return '';
+    }
+
+    /**
+     * Get if the preference of the row.
+     */
+    public function get_preference(): bool {
         return false;
     }
 
@@ -272,7 +295,7 @@ abstract class column_base {
     /**
      * Load the tags for each question.
      *
-     * Helper that can be used from {@link load_additional_data()};
+     * Helper that can be used from {@see load_additional_data()};
      *
      * @param array $questions
      */

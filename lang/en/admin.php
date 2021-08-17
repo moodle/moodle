@@ -1515,6 +1515,7 @@ $string['webproxyinfo'] = 'Fill in the following options if your Moodle server c
 $string['xmlrpcrecommended'] = 'The XMLRPC extension is useful for web services and Moodle networking.';
 $string['yuicomboloading'] = 'YUI combo loading';
 $string['ziprequired'] = 'The Zip PHP extension is now required by Moodle, info-ZIP binaries or PclZip library are not used anymore.';
+$string['manageqbanks'] = 'Manage question bank plugins';
 
 
 $string['caching'] = 'Caching';

@@ -140,13 +140,14 @@ function question_can_delete_cat($todelete) {
 
 
 /**
- * Base class for representing a column in a {@link question_bank_view}.
+ * Base class for representing a column in a {@see question_bank_view}.
  *
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\column_base', 'question_bank_column_base', true);
+class_alias('core_question\local\bank\column_base', 'question_bank_column_base', true);
 
 /**
  * A column with a checkbox for each question with name q{questionid}.
@@ -154,8 +155,9 @@ class_alias('core_question\bank\column_base', 'question_bank_column_base', true)
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\checkbox_column', 'question_bank_checkbox_column', true);
+class_alias('core_question\local\bank\checkbox_column', 'question_bank_checkbox_column', true);
 
 /**
  * A column type for the name of the question type.
@@ -163,6 +165,7 @@ class_alias('core_question\bank\checkbox_column', 'question_bank_checkbox_column
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
 class_alias('core_question\bank\question_type_column', 'question_bank_question_type_column', true);
 
@@ -173,6 +176,7 @@ class_alias('core_question\bank\question_type_column', 'question_bank_question_t
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
 class_alias('core_question\bank\question_name_column', 'question_bank_question_name_column', true);
 
@@ -183,6 +187,7 @@ class_alias('core_question\bank\question_name_column', 'question_bank_question_n
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
 class_alias('core_question\bank\creator_name_column', 'question_bank_creator_name_column', true);
 
@@ -193,6 +198,7 @@ class_alias('core_question\bank\creator_name_column', 'question_bank_creator_nam
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
 class_alias('core_question\bank\modifier_name_column', 'question_bank_modifier_name_column', true);
 
@@ -203,8 +209,9 @@ class_alias('core_question\bank\modifier_name_column', 'question_bank_modifier_n
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\action_column_base', 'question_bank_action_column_base', true);
+class_alias('core_question\local\bank\action_column_base', 'question_bank_action_column_base', true);
 
 
 /**
@@ -213,6 +220,7 @@ class_alias('core_question\bank\action_column_base', 'question_bank_action_colum
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
 class_alias('core_question\bank\edit_action_column', 'question_bank_edit_action_column', true);
 
@@ -222,6 +230,7 @@ class_alias('core_question\bank\edit_action_column', 'question_bank_edit_action_
  * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
 class_alias('core_question\bank\copy_action_column', 'question_bank_copy_action_column', true);
 
@@ -231,6 +240,7 @@ class_alias('core_question\bank\copy_action_column', 'question_bank_copy_action_
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
 class_alias('core_question\bank\preview_action_column', 'question_bank_preview_action_column', true);
 
@@ -241,6 +251,7 @@ class_alias('core_question\bank\preview_action_column', 'question_bank_preview_a
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
 class_alias('core_question\bank\delete_action_column', 'question_bank_delete_action_column', true);
 
@@ -250,8 +261,9 @@ class_alias('core_question\bank\delete_action_column', 'question_bank_delete_act
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\row_base', 'question_bank_row_base', true);
+class_alias('core_question\local\bank\row_base', 'question_bank_row_base', true);
 
 /**
  * A column type for the name of the question name.
@@ -259,6 +271,7 @@ class_alias('core_question\bank\row_base', 'question_bank_row_base', true);
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
 class_alias('core_question\bank\question_text_row', 'question_bank_question_text_row', true);
 
@@ -266,8 +279,9 @@ class_alias('core_question\bank\question_text_row', 'question_bank_question_text
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 2.7 MDL-40457
+ * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\view', 'question_bank_view', true);
+class_alias('core_question\local\bank\view', 'question_bank_view', true);
 
 /**
  * Common setup for all pages for editing questions.

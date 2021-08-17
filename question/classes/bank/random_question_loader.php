@@ -41,6 +41,7 @@ namespace core_question\bank;
  *
  * @copyright 2015 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @todo MDL-72004 delete the class and add it to lib/db/renameclasses.php pointing to core_question/local/bank
  */
 class random_question_loader {
     /** @var \qubaid_condition which usages to consider previous attempts from. */

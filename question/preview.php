@@ -87,7 +87,7 @@ if ($previewid) {
         // actually from the user point of view, it makes sense.
         print_error('submissionoutofsequencefriendlymessage', 'question',
                 question_preview_url($question->id, $options->behaviour,
-                $options->maxmark, $options, $options->variant, $context), null, $e);
+                        $options->maxmark, $options, $options->variant, $context), null, $e);
     }
 
     if ($quba->get_owning_context()->instanceid != $USER->id) {
@@ -255,15 +255,15 @@ echo $quba->render_question($slot, $options, $displaynumber);
 // Finish the question form.
 echo html_writer::start_tag('div', array('id' => 'previewcontrols', 'class' => 'controls'));
 echo html_writer::empty_tag('input', $restartdisabled + array('type' => 'submit',
-        'name' => 'restart', 'value' => get_string('restart', 'question'), 'class' => 'btn btn-secondary'));
+                'name' => 'restart', 'value' => get_string('restart', 'question'), 'class' => 'btn btn-secondary'));
 echo html_writer::empty_tag('input', $finishdisabled + array('type' => 'submit',
-        'name' => 'save', 'value' => get_string('save', 'question'), 'class' => 'btn btn-secondary',
-        'id' => 'id_save_question_preview'));
+                'name' => 'save', 'value' => get_string('save', 'question'), 'class' => 'btn btn-secondary',
+                'id' => 'id_save_question_preview'));
 echo html_writer::empty_tag('input', $filldisabled    + array('type' => 'submit',
-        'name' => 'fill',    'value' => get_string('fillincorrect', 'question'), 'class' => 'btn btn-secondary'));
+                'name' => 'fill',    'value' => get_string('fillincorrect', 'question'), 'class' => 'btn btn-secondary'));
 echo html_writer::empty_tag('input', $finishdisabled + array('type' => 'submit',
-        'name' => 'finish', 'value' => get_string('submitandfinish', 'question'), 'class' => 'btn btn-secondary',
-        'id' => 'id_finish_question_preview'));
+                'name' => 'finish', 'value' => get_string('submitandfinish', 'question'), 'class' => 'btn btn-secondary',
+                'id' => 'id_finish_question_preview'));
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('form');
 
@@ -277,8 +277,17 @@ print_collapsible_region_end();
 
 // Output a link to export this single question.
 if (question_has_capability_on($question, 'view')) {
-    echo html_writer::link(question_get_export_single_question_url($question),
-            get_string('exportonequestion', 'question'));
+    if (class_exists('qbank_exporttoxml\\exporttoxml_helper')) {
+        if (\core\plugininfo\qbank::is_plugin_enabled('qbank_exporttoxml')) {
+            $exportfunction = '\\qbank_exporttoxml\\exporttoxml_helper::question_get_export_single_question_url';
+            echo html_writer::link($exportfunction($question),
+                    get_string('exportonequestion', 'question'));
+        }
+    } else {
+        $exportfunction = 'question_get_export_single_question_url';
+        echo html_writer::link($exportfunction($question),
+                get_string('exportonequestion', 'question'));
+    }
 }
 
 // Log the preview of this question.
@@ -290,10 +299,9 @@ $optionsform->display();
 
 $PAGE->requires->js_module('core_question_engine');
 $PAGE->requires->strings_for_js(array(
-    'closepreview',
+        'closepreview',
 ), 'question');
 $PAGE->requires->yui_module('moodle-question-preview', 'M.question.preview.init');
 $PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_save_question_preview']);
 $PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_finish_question_preview']);
 echo $OUTPUT->footer();
-

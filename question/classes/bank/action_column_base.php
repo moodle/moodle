@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @todo MDL-72004 delete the class and add it to lib/db/renameclasses.php pointing to core_question/local/bank
  */
 abstract class action_column_base extends column_base {
 

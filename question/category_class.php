@@ -133,14 +133,15 @@ class question_category_list_item extends list_item {
     }
 
     public function item_html($extraargs = array()){
-        global $CFG, $OUTPUT;
+        global $CFG, $PAGE, $OUTPUT;
         $str = $extraargs['str'];
         $category = $this->item;
 
         $editqestions = get_string('editquestions', 'question');
 
         // Each section adds html to be displayed as part of this list item.
-        $questionbankurl = new moodle_url('/question/edit.php', $this->parentlist->pageurl->params());
+        $nodeparent = $PAGE->settingsnav->find('questionbank', \navigation_node::TYPE_CONTAINER);
+        $questionbankurl = new moodle_url($nodeparent->action->get_path(), $this->parentlist->pageurl->params());
         $questionbankurl->param('cat', $category->id . ',' . $category->contextid);
         $item = '';
         $text = format_string($category->name, true, ['context' => $this->parentlist->context]);

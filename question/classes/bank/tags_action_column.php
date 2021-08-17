@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @copyright 2018 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @todo MDL-72004 delete the class and add it to lib/db/renameclasses.php pointing to the plugin
  */
 class tags_action_column extends action_column_base implements menuable_action {
     /**
@@ -39,6 +40,11 @@ class tags_action_column extends action_column_base implements menuable_action {
 
     public function init() {
         parent::init();
+        global $CFG;
+        if ($CFG->usetags) {
+            global $PAGE;
+            $PAGE->requires->js_call_amd('core_question/edit_tags', 'init', ['#questionscontainer']);
+        }
         $this->managetags = get_string('managetags', 'tag');
     }
 

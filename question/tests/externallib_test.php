@@ -57,7 +57,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         $this->student = self::getDataGenerator()->create_user();
 
         // Users enrolments.
-        $this->studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id, 'manual');
     }
 
@@ -73,7 +73,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
 
         $quba = question_engine::make_questions_usage_by_activity('core_question_update_flag', context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
-        $questiondata = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $questiondata = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
         $question = question_bank::load_question($questiondata->id);
         $slot = $quba->add_question($question);
         $qa = $quba->get_question_attempt($slot);

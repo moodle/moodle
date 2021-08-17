@@ -107,16 +107,16 @@ class core_question_backup_testcase extends advanced_testcase {
 
         // Create a new course category and and a new course in that.
         $category1 = $this->getDataGenerator()->create_category();
-        $course = $this->getDataGenerator()->create_course(array('category' => $category1->id));
+        $course = $this->getDataGenerator()->create_course(['category' => $category1->id]);
         $courseshortname = $course->shortname;
         $coursefullname = $course->fullname;
 
         // Create 2 questions.
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $context = context_coursecat::instance($category1->id);
-        $qcat = $qgen->create_question_category(array('contextid' => $context->id));
-        $question1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id, 'idnumber' => 'q1'));
-        $question2 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id, 'idnumber' => 'q2'));
+        $qcat = $qgen->create_question_category(['contextid' => $context->id]);
+        $question1 = $qgen->create_question('shortanswer', null, ['category' => $qcat->id, 'idnumber' => 'q1']);
+        $question2 = $qgen->create_question('shortanswer', null, ['category' => $qcat->id, 'idnumber' => 'q2']);
 
         // Tag the questions with 2 question tags and 2 course level question tags.
         $qcontext = context::instance_by_id($qcat->contextid);
@@ -127,7 +127,7 @@ class core_question_backup_testcase extends advanced_testcase {
         core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['ctag3', 'ctag4']);
 
         // Create a quiz and add one of the questions to that.
-        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
         quiz_add_quiz_question($question1->id, $quiz);
 
         // Backup the course twice for future use.
@@ -144,7 +144,7 @@ class core_question_backup_testcase extends advanced_testcase {
 
         // The questions should remain in the question category they were which is
         // a question category belonging to a course category context.
-        $questions = $DB->get_records('question', array('category' => $qcat->id), 'idnumber');
+        $questions = $DB->get_records('question', ['category' => $qcat->id], 'idnumber');
         $this->assertCount(2, $questions);
 
         // Retrieve tags for each question and check if they are assigned at the right context.
@@ -179,10 +179,10 @@ class core_question_backup_testcase extends advanced_testcase {
         // Create a new course category to restore the backup file into it.
         $category2 = $this->getDataGenerator()->create_category();
 
-        $expectedwarnings = array(
+        $expectedwarnings = [
                 get_string('qcategory2coursefallback', 'backup', (object) ['name' => 'top']),
                 get_string('qcategory2coursefallback', 'backup', (object) ['name' => $qcat->name])
-        );
+        ];
 
         // Restore to a new course in the new course category.
         $courseid3 = $this->restore_course($backupid2, $coursefullname, $courseshortname . '_3', $category2->id, $expectedwarnings);
@@ -192,7 +192,7 @@ class core_question_backup_testcase extends advanced_testcase {
         $questions = $DB->get_records_sql("SELECT q.*
                                              FROM {question} q
                                              JOIN {question_categories} qc ON q.category = qc.id
-                                            WHERE qc.contextid = ?", array($coursecontext3->id));
+                                            WHERE qc.contextid = ?", [$coursecontext3->id]);
         $this->assertCount(2, $questions);
 
         // Now, retrieve tags for each question and check if they are assigned at the right context.
