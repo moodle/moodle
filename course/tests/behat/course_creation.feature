@@ -91,5 +91,26 @@ Feature: Managers can create courses
       | Course short name | myfirstcourse |
     And I press "Save and display"
     And I follow "Participants"
-    Then I should see "Kevin the"
-    And I should see "Teacher"
+    Then I should see "My first course"
+    And I should see "Participants"
+
+  Scenario: Creators' role in new courses setting behavior
+    Given the following "users" exist:
+      | username  | firstname | lastname | email          |
+      | kevin  | Kevin   | the        | kevin@example.com |
+    And the following "system role assigns" exist:
+      | user   | role    | contextlevel |
+      | kevin  | coursecreator | System       |
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | Creators' role in new courses | Non-editing teacher |
+    And I log out
+    And I log in as "kevin"
+    And I am on site homepage
+    When I press "Add a new course"
+    And I set the following fields to these values:
+      | Course full name  | My first course |
+      | Course short name | myfirstcourse |
+    And I press "Save and display"
+    And I click on "Participants" "link"
+    Then I should see "Non-editing teacher" in the "Kevin the" "table_row"

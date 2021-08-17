@@ -57,7 +57,6 @@ Feature: Teachers can edit course custom fields
       | customfield_f4[year]  | 2019         |
       | Field 5               | b            |
     And I press "Save and display"
-    And I press "Proceed to course content"
     And I navigate to "Edit settings" in current page administration
     And the following fields match these values:
       | Course full name      | Course 2     |
