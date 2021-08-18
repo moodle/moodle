@@ -33,8 +33,7 @@ class message_airnotifier_manager_testcase extends advanced_testcase {
 
         // Mock server responses.
         $CFG->airnotifierurl = 'localhost';
-        curl::mock_response(json_encode(['status' => 'ok']));   // Mock first request to check URL.
-        curl::mock_response(json_encode(['error' => 'Invalid access key']));  // Mock second request to check acces key.
+        curl::mock_response(json_encode(['error' => 'Invalid access key']));  // Mock request to check access key.
         $checks = $manager->check_configuration();
 
         $this->assertEquals(core\check\result::OK, $checks[0]->get_status());   // Mobile service enabled.
@@ -103,7 +102,6 @@ class message_airnotifier_manager_testcase extends advanced_testcase {
         $manager = new message_airnotifier_manager();
 
         // No devices yet for current user.
-        curl::mock_response(json_encode(['status' => 'ok']));
         $this->assertFalse($manager->has_enabled_devices($CFG->airnotifiermobileappname));
 
         // Add devices.
