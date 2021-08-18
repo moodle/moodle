@@ -64,17 +64,6 @@ const isSmall = () => {
 };
 
 /**
- * Check if the user uses a medium size browser.
- *
- * @returns {boolean} true if the body is smaller than sizes.medium max size.
- * @private
- */
-const isMedium = () => {
-    const browserWidth = getCurrentWidth();
-    return (browserWidth >= sizes.medium) && (browserWidth < sizes.large);
-};
-
-/**
  * Check if the user uses a large size browser.
  *
  * @returns {boolean} true if the body is smaller than sizes.large max size.
@@ -340,7 +329,7 @@ export default class Drawers {
         getBackdrop().then(backdrop => {
             backdrop.hide();
 
-            if (isMedium()) {
+            if (isSmall()) {
                 const pageWrapper = document.getElementById('page-wrapper');
                 pageWrapper.style.overflow = 'auto';
             }

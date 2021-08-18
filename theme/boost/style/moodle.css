@@ -19461,8 +19461,8 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 
 #page.drawers {
   margin-top: calc(50px + 2rem);
-  padding-left: 10px;
-  padding-right: 10px; }
+  padding-left: 15px;
+  padding-right: 15px; }
   #page.drawers .main-inner {
     max-width: 100%;
     width: 100%;
