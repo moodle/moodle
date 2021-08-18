@@ -495,16 +495,19 @@ function(
 
                     pageDeferred.resolve({events: events});
 
+                    var additionalConfig = {courseview: true};
                     // Re-initialise the events list with the preloaded events we just got from
                     // the server.
                     Str.get_string('ariaeventlistpaginationnavcourses', 'block_timeline', courseName)
                         .then(function(string) {
-                            EventList.init(eventListContainer, COURSE_EVENT_LIMIT, {'1': pageDeferred.promise()}, string);
+                            EventList.init(eventListContainer, COURSE_EVENT_LIMIT, {'1': pageDeferred.promise()},
+                                string, additionalConfig);
                             return string;
                         })
                         .catch(function() {
                             // Ignore a failure to load the string. Just render with the default string.
-                            EventList.init(eventListContainer, COURSE_EVENT_LIMIT, {'1': pageDeferred.promise()});
+                            EventList.init(eventListContainer, COURSE_EVENT_LIMIT, {'1': pageDeferred.promise()},
+                                undefined, additionalConfig);
                         });
                 });
 

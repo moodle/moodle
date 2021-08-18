@@ -42,6 +42,7 @@ function(
 ) {
 
     var SECONDS_IN_DAY = 60 * 60 * 24;
+    var courseview = false;
 
     var SELECTORS = {
         EMPTY_MESSAGE: '[data-region="empty-message"]',
@@ -127,6 +128,7 @@ function(
     var buildTemplateContext = function(calendarEvents, midnight) {
         var eventsByDay = {};
         var templateContext = {
+            courseview,
             eventsbyday: []
         };
 
@@ -405,8 +407,10 @@ function(
      * @param {string} paginationAriaLabel String to set as the aria label for the pagination bar.
      * @param {object} additionalConfig Additional config options to pass to pagedContentFactory
      */
-    var init = function(root, pageLimit, preloadedPages, paginationAriaLabel, additionalConfig) {
+    var init = function(root, pageLimit, preloadedPages, paginationAriaLabel, additionalConfig = {}) {
         root = $(root);
+
+        courseview = !!additionalConfig.courseview;
 
         // Create a promise that will be resolved once the first set of page
         // data has been loaded. This ensures that the loading placeholder isn't

@@ -41,33 +41,37 @@
         }
     }
 }}
-<div class="list-group-item flex-column py-2 pl-0 pr-0 border-0"
-    data-region="event-list-item"
-    >
-    <div class="d-flex">
-        <div class="icon-size-4 d-flex align-self-top">
+<div class="list-group-item timeline-event-list-item flex-column py-2 pl-0 pr-0 border-bottom"
+        data-region="event-list-item">
+    <div class="d-flex justify-content-between flex-wrap">
+        <small class="text-right text-nowrap align-self-center ml-1">
+            {{#userdate}} {{timesort}}, {{#str}} strftimetime24, core_langconfig {{/str}} {{/userdate}}
+        </small>
+        <div class="icon-size-4 align-self-top align-self-center mx-2">
             {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
         </div>
-        <div class="w-100 event-name-container text-truncate line-height-3">
+        <div class="event-name-container flex-grow-1 text-truncate line-height-3">
             <a href="{{url}}"
                title={{#quote}}{{{name}}}{{/quote}}
-               aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{name}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
-            ><h6 class="event-name text-truncate mb-0">{{{name}}}</h6></a>
+               aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{name}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'>
+                <h6 class="event-name text-truncate mb-0">{{{name}}}</h6>
+            </a>
             {{#course.fullnamedisplay}}
             <small class="text-muted text-truncate mb-0">{{{course.fullnamedisplay}}}</small>
             {{/course.fullnamedisplay}}
-            {{#action.actionable}}
-            <h6 class="mb-0 pt-2">
-                <a href="{{action.url}}" aria-label="{{action.name}}" title="{{action.name}}" class="list-group-item-action">{{{action.name}}}</a>
-                {{#action.showitemcount}}
-                <span class="badge badge-secondary">{{action.itemcount}}</span>
-                {{/action.showitemcount}}
-            </h6>
-            {{/action.actionable}}
         </div>
-        <small class="text-right text-nowrap ml-1">
-            {{#userdate}} {{timesort}}, {{#str}} strftimetime24, core_langconfig {{/str}} {{/userdate}}
-        </small>
-
+        {{#action.actionable}}
+        <h6 class="event-action">
+            <a class="list-group-item-action btn btn-outline-secondary btn-sm text-nowrap"
+                   href="{{action.url}}"
+                   aria-label="{{action.name}}"
+                   title="{{action.name}}">
+               {{{action.name}}}
+               {{#action.showitemcount}}
+               <span class="badge badge-secondary">{{action.itemcount}}</span>
+               {{/action.showitemcount}}
+            </a>
+        </h6>
+        {{/action.actionable}}
     </div>
 </div>
