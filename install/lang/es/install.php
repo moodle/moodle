@@ -94,10 +94,7 @@ $string['welcomep30'] = 'Esta versión de <strong>{$a->installername}</strong> i
     aplicaciones necesarias para que <strong>Moodle</strong> funcione en su ordenador,
     principalmente:';
 $string['welcomep40'] = 'El paquete también incluye <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'El uso de todas las aplicaciones del paquete está gobernado por sus respectivas
-    licencias. El programa <strong>{$a->installername}</strong> es
-    <a href="http://www.opensource.org/docs/definition_plain.html">código abierto</a> y se distribuye
-    bajo licencia <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
+$string['welcomep50'] = 'El uso de todas las aplicaciones del paquete está supeditado a sus respectivas licencias. El programa <strong>{$a->installername}</strong> es <a href="http://www.opensource.org/docs/definition_plain.html">de código abierto</a> y se distribuye bajo licencia <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'Las siguientes páginas le guiarán a través de algunos sencillos pasos para configurar y ajustar <strong>Moodle</strong> en su ordenador. Puede utilizar los valores por defecto sugeridos o, de forma opcional, modificarlos para que se ajusten a sus necesidades.';
 $string['welcomep70'] = 'Pulse en el botón "Siguiente" para continuar con la configuración de <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Dirección Web';
