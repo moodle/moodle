@@ -383,6 +383,18 @@ class block_manager {
     }
 
     /**
+     * Determine whether a region contains any fake blocks.
+     *
+     * (Fake blocks are typically added to the extracontent array per region)
+     *
+     * @param string $region a block region that exists on this page.
+     * @return boolean Whether there are fake blocks in this region.
+     */
+    public function region_has_fakeblocks($region): bool {
+        return !empty($this->extracontent[$region]);
+    }
+
+    /**
      * Get an array of all of the installed blocks.
      *
      * @return array contents of the block table.

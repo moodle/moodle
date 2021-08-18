@@ -75,7 +75,7 @@
     {{#hasblocks}}
         {{< theme_boost/drawer }}
             {{$id}}theme_boost-drawers-blocks{{/id}}
-            {{$drawerclasses}}drawer drawer-right {{#blockdraweropen}}show{{/blockdraweropen}}{{/drawerclasses}}
+            {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
             {{$drawerheading}}
                 {{#str}} blocks {{/str}}
             {{/drawerheading}}
@@ -85,6 +85,7 @@
                 </section>
             {{/drawercontent}}
             {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
+            {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
             {{$drawerstate}}show-drawer-right{{/drawerstate}}
             {{$drawercloseonresize}}1{{/drawercloseonresize}}
         {{/ theme_boost/drawer}}

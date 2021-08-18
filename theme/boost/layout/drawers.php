@@ -64,6 +64,7 @@ if (!$courseindex) {
 }
 
 $bodyattributes = $OUTPUT->body_attributes($extraclasses);
+$forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 
 $buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_actions();
 // If the settings menu will be included in the header then don't add it here.
@@ -98,6 +99,7 @@ $templatecontext = [
     'secondarymoremenu' => $secondarynavigation,
     'usermenu' => $primarymenu['user'],
     'langmenu' => $primarymenu['lang'],
+    'forceblockdraweropen' => $forceblockdraweropen,
 ];
 
 $nav = $PAGE->flatnav;
