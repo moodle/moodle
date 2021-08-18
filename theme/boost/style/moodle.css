@@ -6009,13 +6009,13 @@ input[type="button"].btn-block {
   .alert-secondary .alert-link {
     color: #525557; }
 
-.alert-success {
+.alert-success, .environmenttable .ok {
   color: #1c3f1a;
   background-color: #d7e4d6;
   border-color: #c6dac6; }
-  .alert-success hr {
+  .alert-success hr, .environmenttable .ok hr {
     border-top-color: #b7d0b7; }
-  .alert-success .alert-link {
+  .alert-success .alert-link, .environmenttable .ok .alert-link {
     color: #0c1b0b; }
 
 .alert-info {
@@ -6027,22 +6027,22 @@ input[type="button"].btn-block {
   .alert-info .alert-link {
     color: #00171b; }
 
-.alert-warning {
+.alert-warning, .environmenttable .warn {
   color: #7d5a29;
   background-color: #fcefdc;
   border-color: #fbe8cd; }
-  .alert-warning hr {
+  .alert-warning hr, .environmenttable .warn hr {
     border-top-color: #f9ddb5; }
-  .alert-warning .alert-link {
+  .alert-warning .alert-link, .environmenttable .warn .alert-link {
     color: #573e1c; }
 
-.alert-danger {
+.alert-danger, .environmenttable .error {
   color: #691911;
   background-color: #f4d6d2;
   border-color: #f0c5c1; }
-  .alert-danger hr {
+  .alert-danger hr, .environmenttable .error hr {
     border-top-color: #ebb2ac; }
-  .alert-danger .alert-link {
+  .alert-danger .alert-link, .environmenttable .error .alert-link {
     color: #3d0f0a; }
 
 .alert-light {
@@ -11795,16 +11795,16 @@ input[disabled] {
 .alert-secondary a {
   color: #525557; }
 
-.alert-success a {
+.alert-success a, .environmenttable .ok a {
   color: #0c1b0b; }
 
 .alert-info a {
   color: #00171b; }
 
-.alert-warning a {
+.alert-warning a, .environmenttable .warn a {
   color: #573e1c; }
 
-.alert-danger a {
+.alert-danger a, .environmenttable .error a {
   color: #3d0f0a; }
 
 .alert-light a {
@@ -12057,18 +12057,6 @@ input[disabled] {
 
 .path-admin .admintable .leftalign {
   text-align: left; }
-
-.environmenttable .warn {
-  background-color: #fcefdc;
-  color: #f0ad4e; }
-
-.environmenttable .error {
-  background-color: #f4d6d2;
-  color: #ca3120; }
-
-.environmenttable .ok {
-  background-color: #d7e4d6;
-  color: #357a32; }
 
 .path-admin .admintable.environmenttable .name,
 .path-admin .admintable.environmenttable .info,
