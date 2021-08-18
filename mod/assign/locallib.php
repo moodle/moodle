@@ -7585,10 +7585,10 @@ class assign {
      *
      * @param int $userid - The student userid
      * @param bool $checkworkflow - whether to include a check for the workflow state.
+     * @param stdClass $gradinginfo - optional, allow gradinginfo to be passed for performance.
      * @return bool $gradingdisabled
      */
-    public function grading_disabled($userid, $checkworkflow=true) {
-        global $CFG;
+    public function grading_disabled($userid, $checkworkflow = true, $gradinginfo = null) {
         if ($checkworkflow && $this->get_instance()->markingworkflow) {
             $grade = $this->get_user_grade($userid, false);
             $validstates = $this->get_marking_workflow_states_for_current_user();
@@ -7596,11 +7596,15 @@ class assign {
                 return true;
             }
         }
-        $gradinginfo = grade_get_grades($this->get_course()->id,
-                                        'mod',
-                                        'assign',
-                                        $this->get_instance()->id,
-                                        array($userid));
+
+        if (is_null($gradinginfo)) {
+            $gradinginfo = grade_get_grades($this->get_course()->id,
+                'mod',
+                'assign',
+                $this->get_instance()->id,
+                array($userid));
+        }
+
         if (!$gradinginfo) {
             return false;
         }
