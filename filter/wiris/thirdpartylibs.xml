@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>integration</location>
+        <name>MathType Web Integration PHP library</name>
+        <version>7.23.0</version>
+        <license>GPL</license>
+        <licenseversion>3.0+</licenseversion>
+    </library>
+    <library>
+        <location>render</location>
+        <name>MathType Web Integration Javascript library</name>
+        <version>7.23.0</version>
+        <license>GPL</license>
+        <licenseversion>3.0+</licenseversion>
+    </library>
+</libraries>

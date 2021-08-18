@@ -1,0 +1,7 @@
+﻿  <COMPATIBILITY_MATRIX>
+  <PLUGIN name="qformat_wordtable">
+    <PHP_EXTENSIONS>
+      <PHP_EXTENSION name="xsl" level="required" />
+    </PHP_EXTENSIONS>
+  </PLUGIN>
+</COMPATIBILITY_MATRIX>

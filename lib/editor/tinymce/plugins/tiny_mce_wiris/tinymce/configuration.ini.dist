@@ -1,0 +1,208 @@
+#################################################################################################
+# This is a sample configuration file                                                           #
+# You can uncomment any line and rename this file to configuration.ini                          #
+# For further information go to http://www.wiris.com/plugins/docs/resources/configuration-table #
+#################################################################################################
+
+#########################
+# Connection properties #
+#########################
+
+## Specifies formula image server host.
+
+#wirisimageservicehost = www.wiris.net
+
+## Specifies formula image server path.
+
+#wirisimageservicepath = /demo/editor/render
+
+## Specifies formula image server port. If left blank, it is computed automatically.
+
+#wirisimageserviceport = 80
+
+## Specifies formula image server protocol. If left blank, it is computed automatically.
+
+#wirisimageserviceprotocol = http
+
+#######################
+# Proxy configuration #
+#######################
+
+## Specifies if your server is using a proxy connection or not. false by default.
+
+#wirisproxy = false
+
+## If wirisproxy is true, this value specifies the proxy host..
+
+#wirisproxy_host =
+
+## If wirisproxy is true, this value specifies the proxy port.
+
+#wirisproxy_port =
+
+############################################
+# Basic authentication proxy configuration #
+############################################
+
+#wirisproxy_user =
+#wirisproxy_password =
+
+#####################
+# Folder properties #
+#####################
+
+## Place to store the cached images.
+
+#wiriscachedirectory = /var/cache
+
+## Place to store the formulas.
+
+#wirisformuladirectory = /var/formulas
+
+######################
+# Class overridables #
+######################
+
+## Name of the class that manages the storage of formulas.
+
+#wirisstorageclass = com.wiris.plugin.storage.FileStorageAndCache
+
+## Name of the class that updates the loaded configuration.
+
+#wirisconfigurationclass =
+
+
+## Enables accessProvider to access control. false by default.
+#wirisaccessproviderenabled = false
+
+## Name of the class that manages the Access provider
+#wirisaccessproviderclass =
+
+####################
+# Editor behaviour #
+####################
+
+## Specifies if math editor is enabled.
+
+#wiriseditorenabled = true
+
+## Specifies the image attribute to store mathml content.
+
+#wiriseditormathmlattribute = data-mathml
+
+## Specifies how formulas are stored in the database. MathML by default. http://www.wiris.com/en/plugins/docs/full-mathml-mode
+
+#wiriseditorsavemode = xml
+
+## Specifies if in base64 save mode, images should be stored as a base64 string  or as an image.
+
+#wiriseditoreditmode = default
+
+## Specifies if LaTeX content generated with MathType should be shown as an image outside editing areas.
+
+#wiriseditorparselatex = true
+
+## Specifies if mathml should be parsed on non-mathml modes (image or base64).
+
+#wiriseditorparsexml = false
+
+## Specifies editor size attributes.
+
+#wiriseditorwindowattributes = width=570, height=450, scroll=no, resizable=yes
+
+## On image mode specifies if the vertical align of the image should be calculated instead of add extra space to vertically center the image.
+
+#wiriseditorsetsize = false
+
+## Specifies if the modal window should be opened in full-screen mode. false by default.
+
+#wiriseditormodalwindowfullscreen = false
+
+## Specifies if chemistry editor is enabled. true by default.
+
+#wirischemeditorenabled = true
+
+## Specifies image format (svg or png). svg by default.
+
+#wirisimageformat = svg
+
+## Specifies if MathML should contain semantics element. false by default.
+
+#wirissavehandtraces = false
+
+###############################################################################################
+# Editor inherit parameters                                                                   #
+# The format is a JSON containing MathType Web parameters defined on the following page:     #
+# http://www.wiris.com/editor/docs/reference/parameters                                       #
+# Editor parameter key should be the JSON key and the corresponnding value is the JSON value. #
+###############################################################################################
+
+#wiriseditorparameters = {}
+
+#################
+# Accessibility #
+#################
+
+## Specifies if the accesibility should be included in generated images as "alt" attribute. true by default.
+
+#wirisaccessibilityenabled = true
+
+#########################
+# Cross-Domain policies #
+#########################
+
+## Enables CORS domains policies. false by default.
+wiriscorsenabled = false
+
+###################
+# External plugin #
+###################
+
+## Specifies if the plugin is an external plugin. false by default.
+
+#wirisexternalplugin = false
+
+########################
+# Performance settings #
+########################
+
+## Specifies if the response should be a JSON instead of a binary which allows requests be cached. true by default.
+
+#wirispluginperformance = true
+
+##############################################################################################################################
+# Clean cache  service parameters. For further information go to http://www.wiris.com/en/plugins/docs/resources/clean-backup #
+##############################################################################################################################
+
+## Specifies if the delete cache gui is enabled. false by default.
+
+# wiriscleancachegui = false
+
+## Token needed to delete cache.
+
+# wiriscleancachetoken = token
+
+##############################################################################################
+# Deprecated. Editor parameters should be parsed as a Json on wiriseditorparameters variale. #
+##############################################################################################
+
+#wiristransparency = true
+#wirisfontfamily = Arial
+#wirisimagecolor = #000000
+#wirisimagebackgroundcolor = #ffffff
+#wirisimagefontsize = 16px
+#wirisimagedpi = 96
+#wiriseditortoolbar = quizzes
+#wirisrtllanguages = ar
+#wirisltrlanguages = ar_ma
+#wirisarabicindiclanguages = ar_eg, ar_sd, ar_sa
+#wiriseasternarabicindiclanguages = fa, ps, ur
+#wiriseuropeanlanguages =
+
+###############################################################################################
+# Debug mode to show extra information on test page. Don't enable in production environments. #
+###############################################################################################
+
+#wirisdebug = false
+
+## End of file

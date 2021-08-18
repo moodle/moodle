@@ -1,0 +1,26 @@
+body.wrs_plugin.wrs_filter {
+    font-family: Arial;
+}
+span.wrs_plugin.wrs_filter {
+    font-weight: bold;
+}
+span.wrs_ok.wrs_plugin.wrs_filter {
+    color: #090;
+}
+span.wrs_error.wrs_plugin.wrs_filter {
+    color: #d00;
+}
+table.wrs_plugin.wrs_filter,
+th.wrs_plugin.wrs_filter,
+td.wrs_plugin.wrs_filter,
+tr.wrs_plugin.wrs_filter {
+    border: solid 1px #000;
+    border-collapse: collapse;
+    padding: 5px;
+}
+th.wrs_plugin.wrs_filter {
+    background-color: #eee;
+}
+img.wrs_plugin.wrs_filter {
+    border: none;
+}

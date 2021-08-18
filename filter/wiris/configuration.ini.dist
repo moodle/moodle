@@ -1,0 +1,189 @@
+###########################################################################################################
+# This is a sample configuration file                                                                     #
+# You can uncomment any line and rename this file to configuration.ini                                    #
+# For further information go to https://docs.wiris.com/en/mathtype/mathtype_web/integrations/config-table #
+###########################################################################################################
+
+#########################
+# Connection properties #
+#########################
+
+## Specifies formula image server host.
+
+#wirisimageservicehost = www.wiris.net
+
+## Specifies formula image server path.
+
+#wirisimageservicepath = /demo/editor/render
+
+## Specifies formula image server port. If left blank, it is computed automatically.
+
+#wirisimageserviceport = 80
+
+## Specifies formula image server protocol. If left blank, it is computed automatically.
+
+#wirisimageserviceprotocol = http
+
+#######################
+# Proxy configuration #
+#######################
+
+## Specifies if your server is using a proxy connection or not. false by default.
+
+#wirisproxy = false
+
+## If wirisproxy is true, this value specifies the proxy host..
+
+#wirisproxy_host =
+
+## If wirisproxy is true, this value specifies the proxy port.
+
+#wirisproxy_port =
+
+# If wirisproxy is true, this value specifies the proxy user.
+
+#wirisproxy_user =
+
+# If wirisproxy is true, this value specifies the proxy password.
+
+#wirisproxy_password =
+
+#####################
+# Folder properties #
+#####################
+
+## Place to store the cached images.
+
+#wiriscachedirectory = /var/cache
+
+## Place to store the formulas.
+
+#wirisformuladirectory = /var/formulas
+
+######################
+# Class overridables #
+######################
+
+## Name of the class that manages the storage of formulas.
+
+#wirisstorageclass = com.wiris.plugin.storage.CustomStorageAndCache
+
+## Name of the class that updates the loaded configuration.
+
+#wirisconfigurationclass = com.wiris.plugin.configuration.CustomConfiguration
+
+## Enables accessProvider to access control. false by default.
+
+#wirisaccessproviderenabled = false
+
+## Name of the class that manages the Access provider
+
+#wirisaccessproviderclass =
+
+######################
+# Content properties #
+######################
+
+## Specifies how formulas are stored in the database. MathML by default. https://docs.wiris.com/en/mathtype/mathtype_web/integrations/mathml-mode
+
+#wiriseditorsavemode = xml
+
+## Specifies if MathML should contain semantics element. false by default.
+
+#wirissavehandtraces = false
+
+## Specifies if mathml should be parsed on non-mathml modes (image or base64).
+
+#wiriseditorparsexml = false
+
+## Specifies if LaTeX content should be parsed to MathML.
+
+#wiriseditorparselatex = true
+
+## Specifies if in base64 save mode, images should be stored as a base64 string or as an image.
+
+#wiriseditorbase64savemode = default
+
+####################
+# Image properties #
+####################
+
+## Specifies image format (svg or png). svg by default.
+
+#wirisimageformat = svg
+
+## Specifies the image attribute to store mathml content.
+
+#wiriseditormathmlattribute = data-mathml
+
+## Specifies if the accesibility should be included in generated images as "alt" attribute. true by default.
+
+#wirisaccessibilityenabled = true
+
+#####################
+# Editor properties #
+#####################
+
+## Specifies if math editor is enabled.
+
+#wiriseditorenabled = true
+
+## Specifies if chemistry editor is enabled. true by default.
+
+#wirischemeditorenabled = true
+
+## Specifies editor size attributes.
+
+#wiriseditorwindowattributes = width=570, height=450, scroll=no, resizable=yes
+
+## Specifies if the modal window should be opened in full-screen mode. false by default.
+
+#wiriseditormodalwindowfullscreen = false
+
+###############################################################################################
+# Editor inherit parameters                                                                   #
+# The format is a JSON containing MathType Web parameters defined on the following page:      #
+# https://docs.wiris.com/en/mathtype/mathtype_web/sdk-api/parameters                          #
+# Editor parameter key should be the JSON key and the corresponnding value is the JSON value. #
+###############################################################################################
+
+#wiriseditorparameters = {}
+
+#########################
+# Cross-Domain policies #
+#########################
+
+## Enables CORS domains policies. false by default.
+#wiriscorsenabled = false
+
+## Specifies if the plugin is an external plugin. false by default.
+
+#wirisexternalplugin = false
+
+########################
+# Performance settings #
+########################
+
+## Specifies if the response should be a JSON instead of a binary which allows requests be cached. true by default.
+
+#wirispluginperformance = true
+
+############################################################################################################################################
+# Clean cache  service parameters. For further information go to https://docs.wiris.com/en/mathtype/mathtype_web/integrations/clean-backup #
+############################################################################################################################################
+
+## Specifies if the delete cache gui is enabled. false by default.
+
+#wiriscleancachegui = false
+
+## Token needed to delete cache.
+
+#wiriscleancachetoken = token
+
+###############################################################################################
+# Debug mode to show extra information on test page. Don't enable in production environments. #
+###############################################################################################
+
+#wirisdebug = false
+
+## End of file

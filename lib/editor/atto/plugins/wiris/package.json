@@ -1,0 +1,32 @@
+{
+  "name": "mathtype-integrtion-js-dev",
+  "description": "MathType Web Integration JavaScript development tools",
+  "main": "core.src.js",
+  "scripts": {
+    "build-dev": "webpack --mode development",
+    "build": "webpack --mode production",
+    "lint": "eslint --quiet src"
+  },
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "babel-loader": "^8.0.2",
+    "css-loader": "^1.0.0",
+    "eslint": "^5.6.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "jsdoc": "^3.5.5",
+    "jsdoc-export-default-interop": "^0.3.1",
+    "mini-css-extract-plugin": "^0.4.2",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "style-loader": "^0.23.0",
+    "uglifyjs-webpack-plugin": "^1.2.8",
+    "url-loader": "^1.1.1",
+    "webpack": "^4.17.2",
+    "webpack-cli": "^3.1.0"
+  },
+  "dependencies": {
+    "npx": "^10.2.0"
+  }
+}

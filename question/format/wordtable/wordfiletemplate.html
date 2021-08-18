@@ -1,0 +1,1232 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:w="urn:schemas-microsoft-com:office:word"
+>
+<!--
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+ * Word-compatible XHTML file which acts as a stylesheet to wrap XHTML tables derived from Moodle Question XML questions into Word
+ *
+ * @package    qformat_wordtable
+ * @copyright  2010-2015 Eoin Campbell
+ * @author     Eoin Campbell
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later (5)
+-->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+    <meta name="ProgId" content="Word.Document"/>
+    <meta name="Generator" content="Microsoft Word 11"/>
+    <meta name="Originator" content="Microsoft Word 11"/>
+    <!-- Folder and file name for header and footer info
+<?replace insert-filelist-filename?>
+-->
+    <title>
+      <?replace insert-title?>
+    </title>
+    <xml>
+      <o:DocumentProperties xmlns:o="urn:schemas-microsoft-com:office:office">
+        <o:Author><?replace insert-author?></o:Author>
+        <o:Template>moodleQuestion.dotx</o:Template>
+        <o:LastAuthor><?replace insert-author?></o:LastAuthor>
+        <o:Title><?replace insert-title?></o:Title>
+        <o:Revision>1</o:Revision>
+        <o:TotalTime>1</o:TotalTime>
+        <o:LastPrinted>2019-07-15T00:00:00Z</o:LastPrinted>
+        <o:Created>2019-07-15T00:00:00Z</o:Created>
+        <o:LastSaved>2019-07-15T00:00:00Z</o:LastSaved>
+        <o:Pages>1</o:Pages>
+        <o:Company><?replace insert-moodle_site_name?></o:Company>
+        <o:Lines>1</o:Lines>
+        <o:Paragraphs>1</o:Paragraphs>
+        <o:Version>14.00</o:Version>
+      </o:DocumentProperties>
+  <o:CustomDocumentProperties>
+  <?replace insert-meta?>
+  </o:CustomDocumentProperties>
+    </xml>
+    <xml>
+      <w:WordDocument xmlns:w="urn:schemas-microsoft-com:office:word">
+        <w:AttachedTemplate HRef="moodleQuestion.dotx"/>
+        <!--
+<w:UpdateStylesOnOpen/>
+ -->
+        <w:PunctuationKerning/>
+        <w:ValidateAgainstSchemas/>
+        <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+        <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+        <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+        <w:View>Print</w:View>
+        <w:Compatibility>
+          <w:BreakWrappedTables/>
+          <w:SnapToGridInCell/>
+          <w:WrapTextWithPunct/>
+          <w:UseAsianBreakRules/>
+          <w:DontGrowAutofit/>
+        </w:Compatibility>
+        <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+      </w:WordDocument>
+    </xml>
+    <xml>
+      <w:LatentStyles xmlns:w="urn:schemas-microsoft-com:office:word" DefLockedState="false" LatentStyleCount="156"/>
+    </xml>
+    <style xmlns="">
+p.MsoListTitle, li.MsoListTitle, div.MsoListTitle
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.25in;
+text-align:center;
+text-indent:0;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Arial";
+font-weight:bold;
+mso-style-name:"List Title";
+mso-style-next:"Body Text"
+}
+/* Numbered style definitions: do not edit by hand */
+
+h1
+  {mso-style-next:"Body Text Indent";
+  margin-top:0cm;
+  margin-right:0cm;
+  margin-bottom:16.0pt;
+  margin-left:0cm;
+  line-height:16.0pt;
+  mso-pagination:widow-orphan;
+  page-break-after:avoid;
+  mso-outline-level:1;
+  tab-stops:0cm list 54.0pt;
+  font-size:14.0pt;
+  font-family:Arial;
+  mso-font-kerning:0pt;
+  mso-ansi-language:<?replace insert-language?>;
+  font-weight:bold;}
+h2
+  {mso-style-next:"Body Text Indent";
+  margin-top:12.0pt;
+  margin-right:0cm;
+  margin-bottom:3.0pt;
+  margin-left:0cm;
+  mso-line-height-alt:12.0pt;
+  mso-pagination:widow-orphan lines-together;
+  page-break-after:avoid;
+  mso-outline-level:2;
+  tab-stops:0cm list 54.0pt 72.0pt;
+  font-size:13.0pt;
+  font-family:Arial;
+  mso-ansi-language:<?replace insert-language?>;
+  font-weight:bold;}
+h3
+{
+mso-style-next:"Body Text Indent";
+margin-top:12.0pt;
+margin-right:0in;
+margin-bottom:6.0pt;
+margin-left:-.3in;
+line-height:12.0pt;
+mso-pagination:widow-orphan lines-together;
+page-break-after:avoid;
+font-family:"Arial";
+mso-style-name:"Heading 3";
+font-size:11.0pt;
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l1 level3 lfo1;
+font-weight:bold;}
+h4
+{
+mso-style-next:"Body Text Indent";
+margin-top:12.0pt;
+margin-right:0in;
+margin-bottom:6.0pt;
+margin-left:-.3in;
+line-height:12.0pt;
+mso-pagination:widow-orphan lines-together;
+page-break-after:avoid;
+font-family:"Arial";
+mso-style-name:"Heading 4";
+font-size:11.0pt;
+font-weight:bold;
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l1 level4 lfo1;}
+h5
+{
+mso-style-next:"Body Text Indent";
+margin-top:12.0pt;
+margin-right:0in;
+margin-bottom:6.0pt;
+margin-left:-.3in;
+line-height:12.0pt;
+mso-pagination:widow-orphan lines-together;
+page-break-after:avoid;
+font-family:"Arial";
+mso-style-name:"Heading 5";
+font-size:10.0pt;
+font-weight:normal;
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l1 level5 lfo1;}
+p.MsoListBullet, li.MsoListBullet, div.MsoListBullet
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.25in;
+text-align:left;
+text-indent:-0.25in;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+tab-stops:list .25in;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-style-name:"List Bullet";
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l2 level1 lfo2;}
+p.MsoListBullet2, li.MsoListBullet2, div.MsoListBullet2
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.5in;
+text-align:left;
+text-indent:-0.25in;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+tab-stops:list .5in;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-style-name:"List Bullet 2";
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l2 level2 lfo2;}
+p.MsoListBullet3, li.MsoListBullet3, div.MsoListBullet3
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.75in;
+text-align:left;
+text-indent:-0.25in;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+tab-stops:list .75in;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-style-name:"List Bullet 3";
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l2 level3 lfo2;}
+p.MsoListBullet4, li.MsoListBullet4, div.MsoListBullet4
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:1in;
+text-align:left;
+text-indent:-0.25in;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+tab-stops:list 1in;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-style-name:"List Bullet 4";
+mso-list:l2 level4 lfo2;}
+p.ListNumberReset, li.ListNumberReset, div.ListNumberReset
+{mso-style-name:"List Number Reset";
+margin:0cm;
+font-size:9pt;
+text-align:center;
+font-weight:bold;
+font-family:"Arial";
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l4 level1 lfo4;}
+p.MsoListNumber, li.MsoListNumber, div.MsoListNumber
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.25in;
+text-align:left;
+text-indent:0.0in;
+line-height:11.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Arial";
+mso-style-name:"List Number";
+tab-stops:list .20in;
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l4 level2 lfo4;}
+p.MsoListContinue, li.MsoListContinue, div.MsoListContinue
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.25in;
+text-align:left;
+text-indent:0;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-ansi-language:<?replace insert-language?>;
+mso-style-name:"List Continue";}
+p.MsoListNumber2, li.MsoListNumber2, div.MsoListNumber2
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.5in;
+text-align:left;
+text-indent:-.25in;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-ansi-language:<?replace insert-language?>;
+mso-style-name:"List Number 2";
+tab-stops:list .5in;
+mso-list:l4 level3 lfo4;}
+p.MsoListContinue2, li.MsoListContinue2, div.MsoListContinue2
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.5in;
+text-align:left;
+text-indent:0;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-ansi-language:<?replace insert-language?>;
+mso-style-name:"List Continue 2";}
+p.MsoListNumber3, li.MsoListNumber3, div.MsoListNumber3
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.75in;
+text-align:left;
+text-indent:-.25in;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-style-name:"List Number 3";
+tab-stops:list .75in;
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l4 level4 lfo4;}
+p.MsoListContinue3, li.MsoListContinue3, div.MsoListContinue3
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.75in;
+text-align:left;
+text-indent:0;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-ansi-language:<?replace insert-language?>;
+mso-style-name:"List Continue 3";}
+p.MsoListNumber4, li.MsoListNumber4, div.MsoListNumber4
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:1in;
+text-align:left;
+text-indent:-.25in;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-style-name:"List Number 4";
+tab-stops:list 1.0in;
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l4 level5 lfo4;}
+p.MsoListContinue4, li.MsoListContinue4, div.MsoListContinue4
+{
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:1in;
+text-align:left;
+text-indent:0;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Times New Roman";
+mso-ansi-language:<?replace insert-language?>;
+mso-style-name:"List Continue 4";}
+p.MsoCaption, li.MsoCaption, div.MsoCaption
+{
+mso-style-name:"Caption";
+mso-style-next:"Body Text";
+margin-top:3.0pt;
+margin-right:0in;
+margin-bottom:3.0pt;
+margin-left:0.75in;
+text-indent:-.75in;
+tab-stops:list .75in 1in;
+mso-pagination:widow-orphan;
+font-size:9.0pt;
+font-weight:bold;
+font-family:"Arial";
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l6 level2 lfo6;}
+p.TableTitle, li.TableTitle, div.TableTitle
+{
+mso-style-name:"Table Title";
+mso-margin-top-alt:auto;
+margin-right:0in;
+mso-margin-bottom-alt:auto;
+margin-left:0.75in;
+text-indent:-.75in;
+tab-stops:.75in;
+line-height:12.0pt;
+page-break-after:avoid;
+mso-pagination:widow-orphan;
+font-size:9.0pt;
+font-family:"Arial";
+font-weight:bold;
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l7 level2 lfo7;}
+p.QFQuestion, li.QFQuestion, div.QFQuestion
+{
+mso-style-name:"QF Question";
+margin-top:12.0pt;
+margin-left:0in;
+margin-right:0in;
+margin-bottom:2.0pt;
+tab-stops:list 0in 0.25in 0.5in;
+text-indent:-0.35in;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+page-break-after:avoid;
+font-size:9.0pt;
+font-family:"Arial";
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l10 level2 lfo10;}
+p.QFOptionReset, li.QFOptionReset, div.QFOptionReset
+{mso-style-name:"QF Option Reset";
+margin:0cm;
+margin-left:0in;
+font-size:10pt;
+text-align:center;
+font-weight:bold;
+font-family:"Arial";
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l12 level1 lfo12;}
+p.QFOption, li.QFOption, div.QFOption
+{
+margin-top:3pt;
+margin-left:3pt;
+margin-right:3pt;
+margin-bottom:3pt;
+text-indent:0in;
+line-height:11.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Arial";
+mso-style-name:"QF Option";
+mso-style-next:"QF Option";
+page-break-after:avoid;
+tab-stops:list 0.20in;
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l12 level2 lfo12;}
+p.ListNumberalphaReset, li.ListNumberalphaReset, div.ListNumberalphaReset
+{mso-style-name:"List Number alpha Reset";
+margin:0cm;
+font-size:1pt;
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l13 level1 lfo13;}
+p.ListNumberalpha, li.ListNumberalpha, div.ListNumberalpha
+{
+mso-style-name:"List Number alpha";
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:0.25in;
+text-align:left;
+text-indent:-.25in;
+line-height:12.0pt;
+mso-pagination:widow-orphan;
+font-size:10.0pt;
+font-family:"Times New Roman";
+tab-stops:list .25in;
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l13 level2 lfo13;}
+</style>
+    <style>
+
+ /* Style Definitions */
+p.MsoTitle, li.MsoTitle, div.MsoTitle
+  {mso-margin-top-alt:auto;
+  margin-right:0cm;
+  mso-margin-bottom-alt:auto;
+  margin-left:0cm;
+  line-height:16.0pt;
+  mso-pagination:widow-orphan;
+  font-size:16.0pt;
+  font-family:Arial;
+  mso-fareast-font-family:"Times New Roman";
+  mso-ansi-language:<?replace insert-language?>;
+  font-weight:bold;
+  mso-bidi-font-weight:normal;}
+p.MsoSubtitle, li.MsoSubtitle, div.MsoSubtitle
+  {mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  line-height:14.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:14.0pt;
+  font-family:"Arial", Palatino;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+  {mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:12.0pt;
+  font-family:"Times New Roman", Palatino;}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+  {
+  margin-top:6.0pt;
+  margin-right:0in;
+  margin-bottom:0in;
+  margin-left:0in;
+  margin-bottom:.0001pt;
+  text-align:justify;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  tab-stops:.35in right dotted 5.0in;
+  border:none;
+  mso-border-top-alt:solid windowtext .5pt;
+  mso-border-bottom-alt:solid windowtext .5pt;
+  padding:0in;
+  mso-padding-alt:1.0pt 0in 1.0pt 0in;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:8.5pt;
+  font-family:Arial, "Frutiger 55 Roman";
+  font-weight:bold;}
+p.MsoFootnoteText, li.MsoFootnoteText, div.MsoFootnoteText
+  {margin-top:3.0pt;
+  margin-right:0in;
+  margin-bottom:3.0pt;
+  margin-left:0in;
+  text-align:left;
+  line-height:12.0pt;
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:10.0pt;
+  font-family:"Times New Roman", Palatino;}
+span.MsoFootnoteReference
+  {vertical-align:super;}
+p.MsoCommentText, li.MsoCommentText, div.MsoCommentText
+  {mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:12.0pt;
+  font-family:"Times New Roman", Palatino;}
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+  {
+  mso-style-parent:"";
+  margin-top:3.0pt;
+  margin-right:0in;
+  margin-bottom:3.0pt;
+  margin-left:0in;
+  text-align:left;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language-direction?>;
+  font-size:10.0pt;
+  font-family:"Times New Roman", Palatino;}
+p.MsoBlockText, li.MsoBlockText, div.MsoBlockText
+  {margin-top:3.0pt;
+  margin-right:0.25in;
+  margin-bottom:3.0pt;
+  margin-left:0.25in;
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:9.0pt;
+  line-height:11.0pt;
+  font-family:"Arial";}
+p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
+  {
+  margin-top:3.0pt;
+  margin-right:0in;
+  margin-bottom:3.0pt;
+  margin-left:0in;
+  text-align:left;
+  text-indent:12.25pt;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  layout-grid-mode:char;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:10.0pt;
+  font-family:"Times New Roman", Palatino;
+  mso-hansi-font-family:"Times New Roman";}
+
+p.MsoBodyTextFirst, li.MsoBodyTextFirst, div.MsoBodyTextFirst
+  {mso-style-name:"Body Text First";
+  mso-style-parent:"Body Text";
+  margin-top:3.0pt;
+  margin-right:0in;
+  margin-bottom:3.0pt;
+  margin-left:0in;
+  text-align:left;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  layout-grid-mode:char;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:10.0pt;
+  font-family:"Times New Roman", Palatino;
+  mso-hansi-font-family:"Times New Roman";}
+p.BlockQuote, li.BlockQuote, div.BlockQuote
+  {mso-style-name:"Block Quote";
+  margin-top:3.0pt;
+  margin-right:18.0pt;
+  margin-bottom:3.0pt;
+  margin-left:18.0pt;
+  text-align:left;
+  line-height:12.0pt;
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:9.0pt;
+  font-family:Arial;}
+p.Figure, li.Figure, div.Figure
+  {mso-style-name:"Figure";
+  mso-style-parent:"Body Text";
+  mso-style-next:"Body Text";
+  margin-top:3.0pt;
+  margin-right:0in;
+  margin-bottom:3.0pt;
+  margin-left:0.0pt;
+  /*line-height:12.0pt; Omit line height, so that figure displays in full */
+  page-break-after:avoid;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  layout-grid-mode:char;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:10.0pt;
+  font-family:"Times New Roman", Palatino;
+  mso-hansi-font-family:"Times New Roman";}
+p.QFNormal, li.QFNormal, div.QFNormal
+  {mso-style-name:"QF Normal";
+  margin-top:3.0pt;
+  margin-right:0in;
+  margin-bottom:3.0pt;
+  margin-left:0in;
+  line-height:11.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:9.0pt;
+  font-family:Arial, "Frutiger 55 Roman";}
+p.QFHeading, li.QFHeading, div.QFHeading
+  {mso-style-name:"QF Heading";
+  mso-style-next:"QF Normal";
+  margin-top:6.0pt;
+  margin-right:0in;
+  margin-bottom:3.0pt;
+  margin-left:0.0in; /* EC: Check this */
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:12.0pt;
+  font-family:Arial;
+  font-weight:bold;
+  font-style:italic;}
+p.QFFeedback, li.QFFeedback, div.QFFeedback
+  {mso-style-name:"QF Feedback";
+  mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:10.0pt;
+  /*font-style:italic;*/
+  font-family:Arial;}
+p.QFGrade, li.QFGrade, div.QFGrade
+  {mso-style-name:"QF Grade";
+  mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  line-height:11.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  page-break-after:avoid;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:10.0pt;
+  font-style:italic;
+  font-family:Arial;}
+p.QFType, li.QFType, div.QFType
+  {mso-style-name:"QF Type";
+  mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  page-break-after:avoid;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:9.0pt;
+  font-style:italic;
+  font-family:Arial;
+  }
+p.QFName, li.QFName, div.QFName
+  {mso-style-name:"QF Name";
+  mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  page-break-after:avoid;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:9.0pt;
+  font-style:italic;
+  font-family:Arial;
+}
+p.QFWeight, li.QFWeight, div.QFWeight
+  {mso-style-name:"QF Weight";
+  mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  text-align:right;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  page-break-after:avoid;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:9.0pt;
+  font-style:italic;
+  font-family:Arial;}
+p.QFCaseStudy, li.QFCaseStudy, div.QFCaseStudy
+  {mso-style-name:"QF CaseStudy";
+  mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  text-align:left;
+  line-height:11.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:9.0pt;
+  font-family:Arial, "Frutiger 55 Roman";}
+p.QFAnswer, li.QFAnswer, div.QFAnswer
+  {mso-style-name:"QF Answer";
+  mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  text-align:left;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:9.0pt;
+  font-family:Arial, "Frutiger 55 Roman";}
+p.QFItemNumber, li.QFItemNumber, div.QFItemNumber
+{
+mso-style-name:"QF Item Number";
+mso-style-next:"QF Item Number";
+margin-top:0.0pt;
+margin-right:0in;
+margin-bottom:0.0pt;
+margin-left:0in;
+text-indent:0in;
+mso-pagination:widow-orphan;
+font-size:9.0pt;
+font-weight:bold;
+font-family:"Arial";
+mso-ansi-language:<?replace insert-language?>;
+mso-list:l17 level2 lfo17;}
+p.QFID, li.QFID, div.QFID
+  {mso-style-name:"QF ID";
+  mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  text-align:left;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  page-break-after:avoid;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:9.0pt;
+  /*font-style:italic;*/
+  font-family:Arial;}
+
+
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+  {margin-top:0in;
+  margin-right:0in;
+  margin-bottom:4.0pt;
+  margin-left:-1.0in;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  tab-stops:right 415.3pt;
+  font-size:8.0pt;
+  font-family:Arial, "Eras Demi ITC";
+  font-weight:bold;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+  {margin-top:0in;
+  margin-right:0in;
+  margin-bottom:0in;
+  margin-left:.75in;
+  margin-bottom:.0001pt;
+  text-indent:-.75in;
+  line-height:12.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  tab-stops:center 207.65pt;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:7.0pt;
+  font-family:Arial, "Eras Medium ITC";}
+
+
+strong
+{
+  font-weight:bold;
+}
+
+p.spacer, li.spacer, div.spacer
+  {mso-style-name:spacer;
+  mso-style-parent:"";
+  margin:0in;
+  margin-bottom:.0001pt;
+  mso-pagination:widow-orphan;
+  font-size:1.0pt;
+  font-family:Arial;
+  color:white;
+  mso-ansi-language:<?replace insert-language?>;}
+
+
+
+
+/* Table Definitions */
+
+table
+  {border: solid;
+  mso-padding-alt: 0cm 0.0cm 0cm 0.0cm;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;}
+tr {
+  page-break-inside:avoid;
+}
+
+p.TableHead, li.TableHead, div.TableHead
+  {mso-style-name:"Table Head";
+  mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  line-height:11.0pt;
+  text-align:center;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  page-break-after:avoid;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:10.0pt;
+  font-weight:bold;
+  font-family:"Arial";}
+p.TableRowHead, li.TableRowHead, div.TableRowHead
+  {mso-style-name:"Table Row Head";
+  mso-margin-top-alt:auto;
+  margin-right:0in;
+  mso-margin-bottom-alt:auto;
+  margin-left:0in;
+  text-align:left;
+  line-height:11.0pt;
+  /* mso-line-height-rule:exactly; */
+  mso-pagination:widow-orphan;
+  page-break-after:avoid;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:10.0pt;
+  font-weight:bold;
+  font-family:"Arial";}
+p.Cell, li.Cell, div.Cell
+  {mso-style-name:"Cell";
+  margin-top:1.0pt;
+  margin-right:.1in;
+  margin-bottom:2.0pt;
+  margin-left:2.0pt;
+  mso-pagination:widow-orphan;
+  page-break-after:avoid;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:11.0pt;
+  font-family:Arial, "Frutiger 55 Roman";
+  }
+p.Cell2, li.Cell2, div.Cell2
+  {mso-style-name:"Cell2";
+  margin-top:1.0pt;
+  margin-right:0in;
+  margin-bottom:1.0pt;
+  margin-left:2.0pt;
+  mso-pagination:widow-orphan;
+  page-break-after:avoid;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:10.0pt;
+  font-family:"Times New Roman", Palatino;}
+p.TableNote
+  {mso-style-name:"Table Note";
+  margin-top:1.0pt;
+  margin-right:0in;
+  margin-bottom:1.0pt;
+  margin-left:0in;
+  mso-pagination:widow-orphan;
+  page-break-before:avoid;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:9.0pt;
+  font-family:Arial, "Frutiger 55 Roman";
+}
+
+/* Bootstrap Alert Components */
+p.Success, li.Success, div.Success
+  {mso-style-name:"Success";
+  margin-top:6.0pt;
+  margin-right:18.0pt;
+  margin-bottom:6.0pt;
+  margin-left:18.0pt;
+  text-align:left;
+  line-height:13.0pt;
+  mso-pagination:widow-orphan;
+  background:#DFF0D8;
+  border: #D0E9C6;
+  mso-border-alt:solid #D0E9C6 .5pt;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:11.0pt;
+  font-family:Arial;}
+
+p.Warning, li.Warning, div.Warning
+  {mso-style-name:"Warning";
+  margin-top:6.0pt;
+  margin-right:18.0pt;
+  margin-bottom:6.0pt;
+  margin-left:18.0pt;
+  text-align:left;
+  line-height:13.0pt;
+  mso-pagination:widow-orphan;
+  background:#FCF8E2;
+  border:#FBEED5;
+  mso-border-alt:solid #FBEED5 .5pt;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:11.0pt;
+  font-family:Arial;}
+
+p.Info, li.Info, div.Info
+  {mso-style-name:"Info";
+  margin-top:6.0pt;
+  margin-right:18.0pt;
+  margin-bottom:6.0pt;
+  margin-left:18.0pt;
+  text-align:left;
+  line-height:13.0pt;
+  mso-pagination:widow-orphan;
+  background: #D9EDF7;
+  border:#BCE8F1;
+  mso-border-alt:solid #BCE8F1 .5pt;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:11.0pt;
+  font-family:Arial;}
+
+p.Danger, li.Danger, div.Danger
+  {mso-style-name:"Danger";
+  margin-top:6.0pt;
+  margin-right:18.0pt;
+  margin-bottom:6.0pt;
+  margin-left:18.0pt;
+  text-align:left;
+  line-height:13.0pt;
+  mso-pagination:widow-orphan;
+  color:#B94A48;
+  background:#F2DEDE;
+  border:#EED3D7;
+  mso-border-alt:solid #EED3D7 .5pt;
+  mso-ansi-language:<?replace insert-language?>;
+  font-size:11.0pt;
+  font-family:Arial;}
+
+
+</style>
+    <style xmlns="">
+/* List definitions: do not edit by hand */
+
+@list l1
+{mso-list-id:100000001}
+@list l1:level1
+{
+mso-level-tab-stop:none;
+mso-level-text:"%1\.";
+mso-level-number-position:left;
+margin-left:0in;}
+@list l1:level2
+{
+mso-level-text:"%1\.%2";
+mso-level-number-position:left;}
+@list l1:level3
+{
+mso-level-text:"%1\.%2\.%3";
+mso-level-number-position:left;
+font-weight:normal;}
+@list l1:level4
+{
+mso-level-text:"%1\.%2\.%3\.%4";
+mso-level-number-position:left;
+font-weight:normal;}
+@list l1:level5
+{
+mso-level-text:"%1\.%2\.%3\.%4\.%5";
+mso-level-number-position:left;
+font-weight:normal;}
+@list l2
+{mso-list-id:100000002}
+@list l2:level1
+{
+mso-level-number-format:bullet;
+mso-level-text:"\F0B7";
+mso-level-tab-stop:18.0pt;
+mso-level-number-position:left;
+margin-left:18.0pt;
+text-indent:-18.0pt;
+font-family:"Symbol";}
+@list l2:level2
+{
+mso-level-number-format:bullet;
+mso-level-text:"\F02D";
+mso-level-tab-stop:36.0pt;
+mso-level-number-position:left;
+margin-left:36.0pt;
+text-indent:-18.0pt;
+font-family:"Symbol";}
+@list l2:level3
+{
+mso-level-number-format:bullet;
+mso-level-text:"\F0A7";
+mso-level-tab-stop:54.0pt;
+mso-level-number-position:left;
+margin-left:54.0pt;
+text-indent:-18.0pt;
+font-family:"Wingdings";}
+@list l2:level4
+{
+mso-level-number-format:bullet;
+mso-level-text:"\F0A0";
+mso-level-tab-stop:72.0pt;
+mso-level-number-position:left;
+margin-left:72.0pt;
+text-indent:-18.0pt;
+font-family:"Wingdings";}
+@list l3
+{mso-list-id:100000003}
+@list l3:level1
+{
+mso-level-number-format:bullet;
+mso-level-text:"\F0B7";
+mso-level-number-position:left;
+font-family:"Symbol";}
+@list l3:level2
+{
+mso-level-number-format:bullet;
+mso-level-text:"";
+mso-level-number-position:left;
+font-family:"Arial";}
+@list l4
+{mso-list-id:100000004}
+@list l4:level1
+{
+mso-level-number-format:none;
+mso-level-style-link:"List Number Reset";}
+@list l4:level2
+{
+mso-level-number-format:decimal;
+mso-level-text:"%2\.";
+mso-level-tab-stop:36.0pt;
+mso-level-number-position:left;
+margin-left:36.0pt;
+text-indent:-18.0pt;}
+@list l4:level3
+{
+mso-level-number-format:alpha-lower;
+mso-level-text:"\(%3\)";
+mso-level-tab-stop:72.0pt;
+mso-level-number-position:left;
+margin-left:54.0pt;
+text-indent:-18.0pt;}
+@list l4:level4
+{
+mso-level-number-format:roman-lower;
+mso-level-text:"\(%4\)";
+mso-level-tab-stop:90.0pt;
+mso-level-number-position:left;
+margin-left:72.0pt;
+text-indent:-18.0pt;}
+@list l4:level5
+{
+mso-level-number-format:roman-upper;
+mso-level-text:"\(%5\)";
+mso-level-tab-stop:108.0pt;
+mso-level-number-position:left;
+margin-left:90.0pt;
+text-indent:-18.0pt;}
+@list l6
+{mso-list-id:100000006}
+@list l6:level1
+{
+mso-level-text:"";
+mso-level-number-position:left;}
+@list l6:level2
+{
+mso-level-text:"Figure %1\.%2";
+mso-level-number-position:left;}
+@list l7
+{mso-list-id:100000007}
+@list l7:level1
+{
+mso-level-text:"";
+mso-level-number-position:left;}
+@list l7:level2
+{
+mso-level-text:"Table %1\.%2";
+mso-level-number-position:left;}
+@list l8
+{mso-list-id:100000008}
+@list l8:level1
+{
+mso-level-text:"";}
+@list l10
+{mso-list-id:100000010}
+@list l10:level1
+{
+mso-level-text:"";
+mso-level-number-position:left;}
+@list l10:level2
+{
+mso-level-text:"%1\.%2";
+mso-level-number-position:left;}
+@list l12
+{mso-list-id:100000012}
+@list l12:level1
+{
+mso-level-number-format:none;
+mso-level-text:"";
+mso-level-suffix:none;
+mso-level-style-link:"QF Option Reset";}
+@list l12:level2
+{
+mso-level-number-format:alpha-upper;
+mso-level-text:"%2\.";
+mso-level-number-position:left;}
+@list l13
+{mso-list-id:100000013}
+@list l13:level1
+{
+mso-level-number-format:none;
+mso-level-style-link:"List Number alpha Reset";}
+@list l13:level2
+{
+mso-level-number-format:alpha-lower;
+mso-level-text:"\(%2\)";
+mso-level-number-position:left;
+margin-left:36.0pt;
+text-indent:-18.0pt;}
+@list l15
+{mso-list-id:100000015}
+@list l15:level1
+{
+mso-level-text:"%1\.";
+mso-level-number-position:left;}
+@list l16
+{mso-list-id:100000016}
+@list l16:level1
+{
+mso-level-number-format:bullet;
+mso-level-text:"\F0B7";
+mso-level-tab-stop:18.0pt;
+mso-level-number-position:left;
+margin-left:18.0pt;
+text-indent:-18.0pt;
+font-family:"Symbol";}
+@list l17
+{mso-list-id:100000017}
+@list l17:level1
+{
+mso-level-text:"";
+mso-level-number-position:left;}
+@list l17:level2
+{
+mso-level-number-format:arabic-leading-zero;
+mso-level-suffix:none;
+mso-level-number-position:left;}
+</style>
+    <style>
+ /* Page Definitions */
+@page
+  {size:210mm 297mm;
+  margin:1.0in 48.25pt 1.0in 130.3pt;
+  mso-header-margin:35.3pt;
+  mso-footer-margin:35.3pt;
+  mso-page-numbers:1;
+  mso-page-numbers-chapter-style:header-1;
+  mso-title-page:yes;
+}
+@page Section
+  {size:535.7pt 697.7pt;
+  margin:1.0in 48.25pt 1.0in 130.3pt;
+  mso-header-margin:35.3pt;
+  mso-footer-margin:35.3pt;
+  mso-page-numbers:1;
+  mso-page-numbers-chapter-style:header-1;
+  mso-title-page:yes;
+  mso-paper-source:0;}
+div.Section
+  {page:Section;}
+
+
+</style>
+  </head>
+  <body lang="EN-UK" style="tab-interval:36.0pt">
+    <?replace insert-content?>
+  </body>
+</html>

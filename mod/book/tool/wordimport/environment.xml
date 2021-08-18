@@ -1,0 +1,7 @@
+﻿  <COMPATIBILITY_MATRIX>
+  <PLUGIN name="booktool_wordimport">
+    <PHP_EXTENSIONS>
+      <PHP_EXTENSION name="xsl" level="required" />
+    </PHP_EXTENSIONS>
+  </PLUGIN>
+</COMPATIBILITY_MATRIX>
