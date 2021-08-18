@@ -4676,7 +4676,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         sort($expectedresult);
 
         $this->assertEquals($expectedresult, $actualresult);
-        $this->assertEquals($expecteddbqueries, $DB->perf_get_queries() - $initialquerycount);
+        $this->assertLessThanOrEqual($expecteddbqueries, $DB->perf_get_queries() - $initialquerycount);
     }
 
     /**
