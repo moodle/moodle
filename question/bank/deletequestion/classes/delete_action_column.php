@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * action to delete (or hide) a question, or restore a previously hidden question.
+ * Action to delete (or hide) a question, or restore a previously hidden question.
  *
  * @package   qbank_deletequestion
  * @copyright 2009 Tim Hunt
@@ -24,12 +24,10 @@
 
 namespace qbank_deletequestion;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_question\local\bank\menu_action_column_base;
 
 /**
- * action to delete (or hide) a question, or restore a previously hidden question.
+ * Action to delete (or hide) a question, or restore a previously hidden question.
  *
  * @package   qbank_deletequestion
  * @copyright 2009 Tim Hunt
@@ -107,7 +105,4 @@ class delete_action_column extends menu_action_column_base {
         $required[] = 'q.hidden';
         return $required;
     }
-
 }
-
-

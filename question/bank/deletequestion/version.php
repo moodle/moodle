@@ -29,4 +29,3 @@ $plugin->component = 'qbank_deletequestion';
 $plugin->version   = 2021070700;
 $plugin->requires  = 2021052500;
 $plugin->maturity  = MATURITY_STABLE;
-
