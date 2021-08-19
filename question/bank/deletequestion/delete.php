@@ -34,6 +34,10 @@ $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 
+if ($returnurl) {
+    $returnurl = new moodle_url($returnurl);
+}
+
 \core_question\local\bank\helper::require_plugin_enabled('qbank_deletequestion');
 
 if ($cmid) {
