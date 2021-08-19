@@ -85,7 +85,7 @@ class create_gradecategories_testcase extends \externallib_advanced_testcase {
             'display' => GRADE_DISPLAY_TYPE_LETTER,
             // Hack. This must be -2 to use the default setting.
             'decimals' => 3,
-            'hiddenuntil' => time(),
+            'hiddenuntil' => 0,
             'locktime' => time(),
             'weightoverride' => 1,
             'aggregationcoef2' => 20,
