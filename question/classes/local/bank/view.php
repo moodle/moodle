@@ -242,9 +242,11 @@ class view {
                 'copy_action_column',
                 'tags_action_column',
                 'preview_action_column',
+                'history_action_column',
                 'delete_action_column',
                 'export_xml_action_column',
                 'question_status_column',
+                'version_number_column',
                 'creator_name_column',
                 'comment_count_column'
         ];
