@@ -190,7 +190,7 @@ if ($mform->is_cancelled()) {
 
     if ($item->cancontrolvisibility) {
         // Update hiding flag.
-        $gradeitem->set_hidden($hide, false);
+        $gradeitem->set_hidden($hide, true);
     }
 
     $gradeitem->set_locktime($locktime); // Locktime first - it might be removed when unlocking.
