@@ -808,7 +808,7 @@ class view {
 
         // The html will be refactored in the filter feature implementation.
         echo \html_writer::start_tag('form', ['method' => 'get',
-                'action' => new \moodle_url($this->baseurl->get_path()), 'id' => 'displayoptions']);
+                'action' => new \moodle_url($this->baseurl), 'id' => 'displayoptions']);
         echo \html_writer::start_div();
 
         $excludes = ['recurse', 'showhidden', 'qbshowtext'];
@@ -946,14 +946,14 @@ class view {
             $column->load_additional_data($questions);
         }
 
-        $pageingurl = new \moodle_url($pageurl->get_path(), $pageurl->params());
+        $pageingurl = new \moodle_url($pageurl, $pageurl->params());
         $pagingbar = new \paging_bar($totalnumber, $page, $perpage, $pageingurl);
         $pagingbar->pagevar = 'qpage';
 
         $this->display_top_pagnation($OUTPUT->render($pagingbar));
 
         // This html will be refactored in the bulk actions implementation.
-        echo \html_writer::start_tag('form', ['action' => $pageurl->get_path(), 'method' => 'post']);
+        echo \html_writer::start_tag('form', ['action' => $pageurl, 'method' => 'post']);
         echo \html_writer::start_tag('fieldset', ['class' => 'invisiblefieldset', 'style' => "display: block;"]);
         echo \html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
         echo \html_writer::input_hidden_params($this->baseurl);
@@ -999,7 +999,7 @@ class view {
         if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
             $displaydata['showall'] = true;
             if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
-                $url = new \moodle_url($pageurl->get_path(), array_merge($pageurl->params(),
+                $url = new \moodle_url($pageurl, array_merge($pageurl->params(),
                         ['qpage' => 0, 'qperpage' => MAXIMUM_QUESTIONS_PER_PAGE]));
                 if ($totalnumber > MAXIMUM_QUESTIONS_PER_PAGE) {
                     $displaydata['totalnumber'] = MAXIMUM_QUESTIONS_PER_PAGE;
@@ -1008,7 +1008,7 @@ class view {
                     $displaydata['totalnumber'] = $totalnumber;
                 }
             } else {
-                $url = new \moodle_url($pageurl->get_path(), array_merge($pageurl->params(),
+                $url = new \moodle_url($pageurl, array_merge($pageurl->params(),
                         ['qperpage' => DEFAULT_QUESTIONS_PER_PAGE]));
                 $displaydata['totalnumber'] = DEFAULT_QUESTIONS_PER_PAGE;
             }
@@ -1298,7 +1298,7 @@ class view {
             if ($inuse) {
                 $questionnames .= '<br />'.get_string('questionsinuse', 'question');
             }
-            $baseurl = new \moodle_url($this->baseurl->get_path(), $this->baseurl->params());
+            $baseurl = new \moodle_url($this->baseurl, $this->baseurl->params());
             $deleteurl = new \moodle_url($baseurl, ['deleteselected' => $questionlist, 'confirm' => md5($questionlist),
                     'sesskey' => sesskey()]);
 
