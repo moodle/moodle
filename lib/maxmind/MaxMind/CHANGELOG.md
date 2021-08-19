@@ -1,6 +1,22 @@
 CHANGELOG
 =========
 
+1.10.1 (2021-04-14)
+-------------------
+
+* Fix a `TypeError` exception in the pure PHP reader when using large
+  databases on 32-bit PHP builds with the `bcmath` extension. Reported
+  by dodo1708. GitHub #124.
+
+1.10.0 (2021-02-09)
+-------------------
+
+* When using the pure PHP reader, unsigned integers up to PHP_MAX_INT
+  will now be integers in PHP rather than strings. Previously integers
+  greater than 2^24 on 32-bit platforms and 2^56 on 64-bit platforms
+  would be strings due to the use of `gmp` or `bcmath` to decode them.
+  Reported by Alejandro Celaya. GitHub #119.
+
 1.9.0 (2021-01-07)
 ------------------
 
