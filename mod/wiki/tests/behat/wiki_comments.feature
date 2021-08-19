@@ -49,7 +49,7 @@ Feature: Users can comment on wiki pages
     And "Edit" "link" should exist in the "wiki-comments" "table"
     And "Delete" "link" should exist in the "wiki-comments" "table"
     And I click on "Delete" "link" in the "wiki-comments" "table"
-    And I press "Yes"
+    And I press "Continue"
     And I should not see "student 1 updated comment"
 
   @javascript
