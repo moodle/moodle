@@ -25,7 +25,7 @@ $tasks = array(
     array(
         'classname' => '\auth_mnet\task\cron_task',
         'blocking' => 0,
-        'minute' => '*',
+        'minute' => '*/10',
         'hour' => '*',
         'day' => '*',
         'month' => '*',
