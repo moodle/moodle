@@ -1538,27 +1538,13 @@ class api {
     }
 
     /**
-     * Determines if a user is permitted to send another user a private message.
-     * If no sender is provided then it defaults to the logged in user.
-     *
      * @deprecated since 3.8
-     * @todo Final deprecation in MDL-66266
-     * @param \stdClass $recipient The user object.
-     * @param \stdClass|null $sender The user object.
-     * @return bool true if user is permitted, false otherwise.
      */
-    public static function can_post_message($recipient, $sender = null) {
-        global $USER;
-
-        debugging('\core_message\api::can_post_message is deprecated, please use ' .
-            '\core_message\api::can_send_message instead.', DEBUG_DEVELOPER);
-
-        if (is_null($sender)) {
-            // The message is from the logged in user, unless otherwise specified.
-            $sender = $USER;
-        }
-
-        return self::can_send_message($recipient->id, $sender->id);
+    public static function can_post_message() {
+        throw new \coding_exception('
+            \core_message\api::can_post_message is deprecated and
+            no longer used, please use
+            \core_message\api::can_send_message instead.');
     }
 
     /**
@@ -2063,56 +2049,11 @@ class api {
     }
 
     /**
-     * Returns the conversations between sets of users.
-     *
-     * The returned array of results will be in the same order as the requested
-     * arguments, null will be returned if there is no conversation for that user
-     * pair.
-     *
-     * For example:
-     * If we have 6 users with ids 1, 2, 3, 4, 5, 6 where only 2 conversations
-     * exist. One between 1 and 2 and another between 5 and 6.
-     *
-     * Then if we call:
-     * $conversations = get_individual_conversations_between_users([[1,2], [3,4], [5,6]]);
-     *
-     * The conversations array will look like:
-     * [<conv_record>, null, <conv_record>];
-     *
-     * Where null is returned for the pairing of [3, 4] since no record exists.
-     *
      * @deprecated since 3.8
-     * @param array $useridsets An array of arrays where the inner array is the set of user ids
-     * @return stdClass[] Array of conversation records
      */
-    public static function get_individual_conversations_between_users(array $useridsets) : array {
-        global $DB;
-
-        debugging('\core_message\api::get_individual_conversations_between_users is deprecated and no longer used',
-            DEBUG_DEVELOPER);
-
-        if (empty($useridsets)) {
-            return [];
-        }
-
-        $hashes = array_map(function($userids) {
-            return  helper::get_conversation_hash($userids);
-        }, $useridsets);
-
-        list($inorequalsql, $params) = $DB->get_in_or_equal($hashes);
-        array_unshift($params, self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL);
-        $where = "type = ? AND convhash ${inorequalsql}";
-        $conversations = array_fill(0, count($hashes), null);
-        $records = $DB->get_records_select('message_conversations', $where, $params);
-
-        foreach (array_values($records) as $record) {
-            $index = array_search($record->convhash, $hashes);
-            if ($index !== false) {
-                $conversations[$index] = $record;
-            }
-        }
-
-        return $conversations;
+    public static function get_individual_conversations_between_users() {
+        throw new \coding_exception('\core_message\api::get_individual_conversations_between_users ' .
+            ' is deprecated and no longer used.');
     }
 
     /**
