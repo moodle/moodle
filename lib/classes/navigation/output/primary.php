@@ -56,7 +56,7 @@ class primary implements renderable, templatable {
         }
 
         $menudata = (object) array_merge($this->get_primary_nav(), $this->get_custom_menu($output));
-        $moremenu = new \core\navigation\output\more_menu($menudata, 'navbar-nav', false, false);
+        $moremenu = new \core\navigation\output\more_menu($menudata, 'navbar-nav', false);
 
         return [
             'moremenu' => $moremenu->export_for_template($output),

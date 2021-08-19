@@ -33,7 +33,6 @@ class more_menu implements renderable, templatable {
 
     protected $content;
     protected $navbarstyle;
-    protected $hastabs;
     protected $haschildren;
 
     /**
@@ -41,13 +40,11 @@ class more_menu implements renderable, templatable {
      *
      * @param object $content Navigation objects.
      * @param string $navbarstyle class name.
-     * @param bool $hastabs If tabs are being used.
      * @param bool $haschildren  The content has children.
      */
-    public function __construct(object $content, string $navbarstyle, bool $hastabs = false, bool $haschildren = true) {
+    public function __construct(object $content, string $navbarstyle, bool $haschildren = true) {
         $this->content = $content;
         $this->navbarstyle = $navbarstyle;
-        $this->hastabs = $hastabs;
         $this->haschildren = $haschildren;
     }
 
@@ -58,7 +55,7 @@ class more_menu implements renderable, templatable {
      * @return array Data for rendering a template
      */
     public function export_for_template(renderer_base $output): array {
-        $data = ['navbarstyle' => $this->navbarstyle, 'tabs' => $this->hastabs];
+        $data = ['navbarstyle' => $this->navbarstyle];
         if ($this->haschildren) {
             if (!isset($this->content->children) || count($this->content->children) == 0) {
                 $data = [];
