@@ -266,4 +266,31 @@ class course_completion_form extends moodleform {
             $mform->addElement('cancel');
         }
     }
+
+    /**
+     * Form validation
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = [];
+
+        if (!isset($data['criteria_course']) || $data['criteria_course'] === 0) {
+            return $errors;
+        }
+
+        foreach ($data['criteria_course'] as $courseid) {
+            $course = get_course($courseid);
+            $completioninfo = new completion_info($course);
+
+            if (! $completioninfo->is_enabled()) {
+                $errors[] = get_string('completionnotenabledforcourse', 'completion');
+                break;
+            }
+        }
+
+        return $errors;
+    }
 }
