@@ -1541,10 +1541,10 @@ class api {
      * @deprecated since 3.8
      */
     public static function can_post_message() {
-        throw new \coding_exception('
-            \core_message\api::can_post_message is deprecated and
-            no longer used, please use
-            \core_message\api::can_send_message instead.');
+        throw new \coding_exception(
+            '\core_message\api::can_post_message is deprecated and no longer used, ' .
+            'please use \core_message\api::can_send_message instead.'
+        );
     }
 
     /**
