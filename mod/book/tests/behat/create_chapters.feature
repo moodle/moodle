@@ -15,13 +15,13 @@ Feature: In a book, create chapters and sub chapters
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity | name      | intro                 | course | idnumber | section |
-      | book     | Test book | A book about dreams!  | C1     | book1    | 1       |
+      | activity | name      | intro                 | course | section |
+      | book     | Test book | A book about dreams!  | C1     | 1       |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Create chapters and sub chapters and navigate between them
-    Given I follow "Test book"
+    Given I am on the "Test book" Activity page
     And I should see "Add new chapter"
     And I set the following fields to these values:
       | Chapter title | Dummy first chapter |
@@ -51,7 +51,7 @@ Feature: In a book, create chapters and sub chapters
     And I should not see "Next" in the ".book_content" "css_element"
     And I click on "Exit book" "link"
     And I should see "Test book" in the "Topic 1" "section"
-    And I follow "Test book"
+    And I click on "Test book" "link" in the "Topic 1" "section"
     And I should not see "Previous" in the ".book_content" "css_element"
     And I should see "1. Dummy first chapter" in the "strong" "css_element"
     When I click on "Next" "link"
@@ -62,7 +62,7 @@ Feature: In a book, create chapters and sub chapters
     And I should see "1. Dummy first chapter" in the "strong" "css_element"
 
   Scenario: Change editing mode for an individual chapter
-    Given I follow "Test book"
+    Given I am on the "Test book" Activity page
     And I should see "Add new chapter"
     And I set the following fields to these values:
       | Chapter title | Dummy first chapter |

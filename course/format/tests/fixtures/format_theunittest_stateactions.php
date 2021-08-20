@@ -85,7 +85,7 @@ class stateactions extends core_actions {
         ?int $targetcmid = null
     ): void {
 
-        $updates->add_section_update($targetsectionid);
+        $updates->add_section_put($targetsectionid);
     }
 
     /**
@@ -105,7 +105,7 @@ class stateactions extends core_actions {
         ?int $targetcmid = null
     ): void {
 
-        $updates->add_cm_update($targetcmid);
+        $updates->add_cm_put($targetcmid);
     }
 
 }

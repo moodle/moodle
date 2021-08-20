@@ -73,19 +73,19 @@ class stateupdates implements JsonSerializable {
     /**
      * Add track about a general course state change.
      */
-    public function add_course_update(): void {
+    public function add_course_put(): void {
         $courseclass = $this->format->get_output_classname('state\\course');
         $currentstate = new $courseclass($this->format);
-        $this->add_update('course', 'update', $currentstate->export_for_template($this->output));
+        $this->add_update('course', 'put', $currentstate->export_for_template($this->output));
     }
 
     /**
-     * Add track about a section state update.
+     * Add track about a section state put.
      *
      * @param int $sectionid The affected section id.
      */
-    public function add_section_update(int $sectionid): void {
-        $this->create_or_update_section($sectionid, 'update');
+    public function add_section_put(int $sectionid): void {
+        $this->create_or_put_section($sectionid, 'put');
     }
 
     /**
@@ -94,19 +94,19 @@ class stateupdates implements JsonSerializable {
      * @param int $sectionid The affected section id.
      */
     public function add_section_create(int $sectionid): void {
-        $this->create_or_update_section($sectionid, 'create');
+        $this->create_or_put_section($sectionid, 'create');
     }
 
     /**
-     * Add track about section created or updated.
+     * Add track about section created or put.
      *
      * @param int $sectionid The affected section id.
-     * @param string $action The action to track for the section ('create' or 'update).
+     * @param string $action The action to track for the section ('create' or 'put').
      */
-    protected function create_or_update_section(int $sectionid, string $action): void {
-        if ($action != 'create' && $action != 'update') {
+    protected function create_or_put_section(int $sectionid, string $action): void {
+        if ($action != 'create' && $action != 'put') {
             throw new coding_exception(
-                "Invalid action passed ($action) to create_or_update_section. Only 'create' and 'update' are valid."
+                "Invalid action passed ($action) to create_or_put_section. Only 'create' and 'put' are valid."
             );
         }
         $course = $this->format->get_course();
@@ -138,8 +138,8 @@ class stateupdates implements JsonSerializable {
      *
      * @param int $cmid the affected course module id
      */
-    public function add_cm_update(int $cmid): void {
-        $this->create_or_update_cm($cmid, 'update');
+    public function add_cm_put(int $cmid): void {
+        $this->create_or_put_cm($cmid, 'put');
     }
 
     /**
@@ -148,16 +148,16 @@ class stateupdates implements JsonSerializable {
      * @param int $cmid the affected course module id
      */
     public function add_cm_create(int $cmid): void {
-        $this->create_or_update_cm($cmid, 'create', true);
+        $this->create_or_put_cm($cmid, 'create', true);
     }
 
     /**
-     * Add track about section created or updated.
+     * Add track about section created or put.
      *
      * @param int $cmid The affected course module id.
-     * @param string $action The action to track for the section ('create' or 'update').
+     * @param string $action The action to track for the section ('create' or 'put').
      */
-    protected function create_or_update_cm(int $cmid, string $action): void {
+    protected function create_or_put_cm(int $cmid, string $action): void {
         $modinfo = course_modinfo::instance($this->format->get_course());
 
         $cm = $modinfo->get_cm($cmid);

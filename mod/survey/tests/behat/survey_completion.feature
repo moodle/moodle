@@ -22,9 +22,7 @@ Feature: A teacher can use activity completion to track a student progress
     Given the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    |
       | survey     | Test survey name       | Test survey description       | C1     | survey1     |
-    And I am on "Course 1" course homepage
-    And I follow "Test survey name"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test survey name" "survey activity editing" page
     And I set the following fields to these values:
       | Survey type | Critical incidents |
       | Completion tracking | Show activity as complete when conditions are met |
@@ -47,16 +45,14 @@ Feature: A teacher can use activity completion to track a student progress
     Given the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    |
       | survey     | Test survey name       | Test survey description       | C1     | survey1     |
-    And I am on "Course 1" course homepage
-    And I follow "Test survey name"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test survey name" "survey activity editing" page
     And I set the following fields to these values:
       | Survey type | Critical incidents |
       | Completion tracking | Show activity as complete when conditions are met |
       | completionview   | 1 |
       | completionsubmit | 1 |
     And I press "Save and return to course"
-    And I follow "Test survey name"
+    And I am on the "Test survey name" "survey activity" page
     # Teacher view.
     And "Test survey name" should have the "Submit answers" completion condition
     And I log out
@@ -82,9 +78,7 @@ Feature: A teacher can use activity completion to track a student progress
     And the manual completion button for "Test survey name" should be disabled
     And I log out
     # Student view.
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test survey name"
+    When I am on the "survey1" Activity page logged in as student1
     Then the manual completion button of "Test survey name" is displayed as "Mark as done"
     And I toggle the manual completion state of "Test survey name"
     And the manual completion button of "Test survey name" is displayed as "Done"

@@ -1,0 +1,102 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/courseindex/section
+
+    Displays a course index section entry.
+
+    Example context (json):
+    {
+        "title": "General",
+        "id": 23,
+        "uniqid": "0",
+        "number": 1,
+        "sectionurl": "#",
+        "isactive": 1,
+        "current": 1,
+        "visible": 1,
+        "cms": [
+            {
+                "id": 10,
+                "name": "Glossary of characters",
+                "url": "#",
+                "visible": 1,
+                "isactive": 0
+            },
+            {
+                "id": 11,
+                "name": "World Cinema forum",
+                "url": "#",
+                "visible": 1,
+                "isactive": 0
+            },
+            {
+                "id": 12,
+                "name": "Announcements",
+                "url": "#",
+                "visible": 0,
+                "isactive": 1
+            }
+        ]
+    }
+}}
+<div
+    class="courseindex-section {{#current}}current{{/current}}"
+    id="{{uniqid}}-course-index-section-{{id}}"
+    data-for="section"
+    data-id="{{id}}"
+    data-number="{{number}}"
+>
+    <div class="courseindex-item d-flex {{^visible}}dimmed{{/visible}} courseindex-section-title"
+        id="courseindexsection{{number}}"
+        data-for="section_item"
+    >
+        <a data-toggle="collapse"
+            href="#courseindexcollapse{{number}}"
+            aria-expanded="{{#isactive}}true{{/isactive}}{{^isactive}}false{{/isactive}}"
+            aria-controls="courseindexcollapse{{number}}"
+            class="courseindex-link icons-collapse-expand {{^isactive}}collapsed{{/isactive}}"
+        >
+            <span class="collapsed-icon icon-no-margin mr-1"
+                data-toggle="tooltip" title="{{#str}} expand, core {{/str}}">
+                {{#pix}} t/collapsed, core {{/pix}}
+                <span class="sr-only">{{#str}} expand, core {{/str}}</span>
+            </span>
+            <span class="expanded-icon icon-no-margin mr-1"
+                data-toggle="tooltip" title="{{#str}} collapse, core {{/str}}">
+                {{#pix}} t/expanded, core {{/pix}}
+                <span class="sr-only">{{#str}} collapse, core {{/str}}</span>
+            </span>
+        </a>
+        <a href="{{{sectionurl}}}"
+            class="courseindex-link text-truncate"
+            data-action="togglecourseindexsection"
+            data-for="section_title"
+        >
+            {{{title}}}
+        </a>
+    </div>
+    <div id="courseindexcollapse{{number}}"
+        class="courseindex-item-content collapse {{#isactive}}show{{/isactive}}"
+        aria-labelledby="courseindexsection{{number}}">
+        <ul class="courseindex-sectioncontent unlist" data-for="cmlist" data-id="{{id}}">
+            {{#cms}}
+            {{> core_courseformat/local/courseindex/cm }}
+            {{/cms}}
+        </ul>
+    </div>
+</div>

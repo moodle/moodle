@@ -51,61 +51,37 @@ export default class {
      * Get updated state data related to some cm ids.
      *
      * @method cmState
-     * @param {StateManager} statemanager the current state
+     * @param {StateManager} stateManager the current state
      * @param {array} cmids the list of cm ids to update
      */
-    async cmState(statemanager, cmids) {
-        const state = statemanager.state;
-        const updates = await this._callEditWebservice('cm_state', state.course.id, cmids);
-        statemanager.setReadOnly(false);
-        this._processUpdates(statemanager, updates);
+    async cmState(stateManager, cmids) {
+        const course = stateManager.get('course');
+        const updates = await this._callEditWebservice('cm_state', course.id, cmids);
+        stateManager.processUpdates(updates);
     }
 
     /**
      * Get updated state data related to some section ids.
      *
      * @method sectionState
-     * @param {StateManager} statemanager the current state
+     * @param {StateManager} stateManager the current state
      * @param {array} sectionIds the list of section ids to update
      */
-    async sectionState(statemanager, sectionIds) {
-        const state = statemanager.state;
-        const updates = await this._callEditWebservice('section_state', state.course.id, sectionIds);
-        this._processUpdates(statemanager, updates);
+    async sectionState(stateManager, sectionIds) {
+        const course = stateManager.get('course');
+        const updates = await this._callEditWebservice('section_state', course.id, sectionIds);
+        stateManager.processUpdates(updates);
     }
 
     /**
-     * Helper to propcess both section_state and cm_state action results.
-     *
-     * @param {StateManager} statemanager the current state
-     * @param {Array} updates of updates.
-     */
-    _processUpdates(statemanager, updates) {
-
-        const state = statemanager.state;
-
-        statemanager.setReadOnly(false);
-
-        // The cm_state and section_state state action returns only updated states. However, most of the time we need this
-        // mutation to fix discrepancies between the course content and the course state because core_course_edit_module
-        // does not provide enough information to rebuild some state objects. This is the reason why we cannot use
-        // the batch method processUpdates as the rest of mutations do.
-        updates.forEach((update) => {
-            if (update.name === undefined) {
-                throw Error('Missing state update name');
-            }
-            // Compare the action with the current state.
-            let current = state[update.name];
-            if (current instanceof Map) {
-                current = state[update.name].get(update.fields.id);
-            }
-            if (!current) {
-                update.action = 'create';
-            }
-
-            statemanager.processUpdate(update.name, update.action, update.fields);
-        });
-
-        statemanager.setReadOnly(true);
+    * Get the full updated state data of the course.
+    *
+    * @param {StateManager} stateManager the current state
+    */
+    async courseState(stateManager) {
+        const course = stateManager.get('course');
+        const updates = await this._callEditWebservice('course_state', course.id);
+        stateManager.processUpdates(updates);
     }
+
 }

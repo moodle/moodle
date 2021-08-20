@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use core_courseformat\base as course_format;
+
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/datalib.php');
@@ -3197,13 +3199,6 @@ function course_ajax_enabled($course) {
 function include_course_ajax($course, $usedmodules = array(), $enabledmodules = null, $config = null) {
     global $CFG, $PAGE, $SITE;
 
-    // All the new editor elements will be loaded after the course is presented and
-    // the initial course state will be generated using core_courseformat_get_state webservice.
-    if ($SITE->id !== $course->id) {
-        $PAGE->requires->js_call_amd('core_courseformat/courseeditor', 'getCourseEditor', [$course->id]);
-    }
-    // TODO: as part of MDL-70907, add a way to indicate the plugin needs the legacy libraries (and get a deprecation message).
-
     // Ensure that ajax should be included
     if (!course_ajax_enabled($course)) {
         return false;
@@ -3293,6 +3288,29 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
     $PAGE->requires->js_call_amd('core_course/actions', 'initCoursePage', array($course->format));
 
     return true;
+}
+
+/**
+ * Include and configure the course editor modules.
+ *
+ * @param course_format $format the course format instance.
+ */
+function include_course_editor(course_format $format) {
+    global $PAGE, $SITE;
+
+    $course = $format->get_course();
+
+    if ($SITE->id === $course->id) {
+        return;
+    }
+
+    // Edition mode and some format specs must be passed to the init method.
+    $setup = (object)[
+        'editing' => $format->show_editor(),
+    ];
+    // All the new editor elements will be loaded after the course is presented and
+    // the initial course state will be generated using core_course_get_state webservice.
+    $PAGE->requires->js_call_amd('core_courseformat/courseeditor', 'setViewFormat', [$course->id, $setup]);
 }
 
 /**
@@ -3833,6 +3851,24 @@ function core_course_core_calendar_get_valid_event_timestart_range(\calendar_eve
     }
 
     return [$mindate, $maxdate];
+}
+
+/**
+ * Render the main course drawer to be included in the left part of the page.
+ *
+ * @return string HTML
+ */
+function core_course_drawer(): string {
+    global $PAGE;
+    // Only course and mod pages are able to render course index.
+    if (!preg_match('/^(mod|course).*/', $PAGE->pagetype)) {
+        return '';
+    }
+
+    $format = course_get_format($PAGE->course);
+    $renderer = $format->get_renderer($PAGE);
+    $placeholder = $renderer->course_index_drawer($format);
+    return $placeholder;
 }
 
 /**

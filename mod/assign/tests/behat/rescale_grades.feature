@@ -36,7 +36,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And "Student 1" row "Grade" column of "generaltable" table should contain "40.00"
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page
 
   Scenario: Update the max grade for an assignment without rescaling existing grades
     Given I navigate to "Edit settings" in current page administration

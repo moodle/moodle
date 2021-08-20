@@ -49,6 +49,18 @@ function dispatchStateChangedEvent(detail, target) {
 }
 
 /**
+ * Setup the current view settings
+ *
+ * @param {number} courseId the course id
+ * @param {setup} setup format, page and course settings
+ * @property {boolean} setup.editing if the page is in edit mode
+ */
+export const setViewFormat = (courseId, setup) => {
+    const editor = getCourseEditor(courseId);
+    editor.setViewFormat(setup);
+};
+
+/**
  * Get a specific course editor reactive instance.
  *
  * @param {number} courseId the course id

@@ -26,9 +26,7 @@ Feature: Non anonymous feedback
       | activity   | name            | course               | idnumber  | anonymous | publish_stats | section |
       | feedback   | Site feedback   | Acceptance test site | feedback0 | 2         | 1             | 1       |
       | feedback   | Course feedback | C1                   | feedback1 | 2         | 1             | 0       |
-    When I log in as "manager"
-    And I am on site homepage
-    And I follow "Site feedback"
+    When I am on the "Site feedback" "feedback activity" page logged in as manager
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like our site?              |
@@ -39,16 +37,14 @@ Feature: Non anonymous feedback
     And I log out
 
   Scenario: Guests can see non anonymous feedback on front page but can not complete
-    When I follow "Site feedback"
+    When I am on the "Site feedback" "feedback activity" page
     Then I should not see "Answer the questions"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
 
   Scenario: Complete non anonymous feedback on the front page as an authenticated user
-    And I log in as "user1"
-    And I am on site homepage
-    And I follow "Site feedback"
+    When I am on the "Site feedback" "feedback activity" page logged in as user1
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -67,18 +63,14 @@ Feature: Non anonymous feedback
       | capability                   | permission |
       | mod/feedback:viewanalysepage | Allow      |
     And I log out
-    And I log in as "user1"
-    And I am on site homepage
-    When I follow "Site feedback"
+    When I am on the "Site feedback" "feedback activity" page logged in as user1
     And I follow "Answer the questions"
     And I should see "Do you like our site?"
     And I set the following fields to these values:
       | Yes of course | 1 |
     And I press "Submit your answers"
     And I log out
-    And I log in as "user2"
-    And I am on site homepage
-    When I follow "Site feedback"
+    And I am on the "Site feedback" "feedback activity" page logged in as user2
     And I follow "Answer the questions"
     And I set the following fields to these values:
       | Not at all | 1 |
@@ -93,9 +85,7 @@ Feature: Non anonymous feedback
     And I should see "1 (50.00 %)" in the "Not at all" "table_row"
     And I should not see "Show responses"
     And I log out
-    And I log in as "manager"
-    And I am on site homepage
-    And I follow "Site feedback"
+    And I am on the "Site feedback" "feedback activity" page logged in as manager
     And I navigate to "Show responses" in current page administration
     And I should see "Username"
     And I should see "Non anonymous entries (2)"

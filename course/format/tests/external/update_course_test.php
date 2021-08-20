@@ -111,7 +111,7 @@ class update_course_test extends \externallib_advanced_testcase {
                 'action' => 'cm_state',
                 'expected' => [
                     'count' => 2,
-                    'action' => 'update',
+                    'action' => 'put',
                     'visible' => 1,
                 ],
                 'expectexception' => false,
@@ -223,14 +223,14 @@ class update_course_test extends \externallib_advanced_testcase {
         $results = json_decode(update_course::execute('targetsection_test', $course->id, [], $section->id));
         $this->assertDebuggingCalled();
         $this->assertCount(1, $results);
-        $update = $this->find_update($results, 'update', 'section', $section->id);
+        $update = $this->find_update($results, 'put', 'section', $section->id);
         $this->assertNotEmpty($update);
 
         // Execute action with targetcmid.
         $results = json_decode(update_course::execute('targetcm_test', $course->id, [], null, $activity->cmid));
         $this->assertDebuggingCalled();
         $this->assertCount(1, $results);
-        $update = $this->find_update($results, 'update', 'cm', $activity->cmid);
+        $update = $this->find_update($results, 'put', 'cm', $activity->cmid);
         $this->assertNotEmpty($update);
     }
 }

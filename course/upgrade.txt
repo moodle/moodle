@@ -52,6 +52,8 @@ course formats don't have their own renderer.
 * New external function core_course_update_course runs given action to edit course status.
 * The `\core\event\course_category_deleted` event is now created with a snapshot of the category record being deleted,
   available inside event observers via `$event->get_record_snapshot`
+* New include_course_editor() function to include and configure course editor modules.
+* New core_course_drawer() function to render the message drawer in the top of the body of each page.
 
 === 3.11 ===
 * A new callback xxx_coursemodule_definition_after_data that allows plugins to extend activity forms after the data is set.

@@ -78,7 +78,7 @@ Feature: Assign reset
     And I press "Reset course"
     And I press "Continue"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I click on "Test assignment name" "link" in the "region-main" "region"
     And I navigate to "User overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
@@ -102,8 +102,7 @@ Feature: Assign reset
         | Delete all group overrides | 1  |
     And I press "Reset course"
     And I press "Continue"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page
     And I navigate to "Group overrides" in current page administration
     Then I should not see "Group 1"
 
@@ -113,7 +112,7 @@ Feature: Assign reset
     And I set the following fields to these values:
         | blindmarking | 1 |
     And I press "Save"
-    When I follow "Test assignment name"
+    When I am on the "Test assignment name" Activity page
     And I navigate to "View all submissions" in current page administration
     And I select "Reveal student identities" from the "Grading action" singleselect
     And I press "Continue"
@@ -124,7 +123,6 @@ Feature: Assign reset
         | Delete all submissions | 1 |
     And I press "Reset course"
     And I press "Continue"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page
     And I navigate to "View all submissions" in current page administration
     Then I should not see "Sam1 Student1"

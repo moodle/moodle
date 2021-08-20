@@ -15,6 +15,7 @@
 
 import {Reactive} from 'core/reactive';
 import notification from 'core/notification';
+import Exporter from 'core_courseformat/local/courseeditor/exporter';
 import log from 'core/log';
 import ajax from 'core/ajax';
 
@@ -44,6 +45,9 @@ export default class extends Reactive {
             throw new Error(`Cannot load ${courseId}, course already loaded with id ${this.courseId}`);
         }
 
+        // Default view format setup.
+        this._editing = false;
+
         this.courseId = courseId;
 
         let stateData;
@@ -56,11 +60,17 @@ export default class extends Reactive {
             return;
         }
 
-        // Edit mode is part of the state but it could change over time.
-        // Components should use isEditing method to check the editing mode instead.
-        this._editing = stateData.course.editmode ?? false;
-
         this.setInitialState(stateData);
+    }
+
+    /**
+     * Setup the current view settings
+     *
+     * @param {Object} setup format, page and course settings
+     * @property {boolean} setup.editing if the page is in edit mode
+     */
+    setViewFormat(setup) {
+        this._editing = setup.editing ?? false;
     }
 
     /**
@@ -95,6 +105,15 @@ export default class extends Reactive {
      */
     get isEditing() {
         return this._editing ?? false;
+    }
+
+    /**
+     * Return a data exporter to transform state part into mustache contexts.
+     *
+     * @return {Exporter} the exporter class
+     */
+    getExporter() {
+        return new Exporter(this);
     }
 
     /**

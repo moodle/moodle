@@ -20,6 +20,7 @@ Feature: Settings form fields disabled if not required
       | student2 | C1     | student        |
     And I log in as "teacher"
     And I am on "Course 1" course homepage with editing mode on
+    And I change window size to "large"
 
   @javascript
   Scenario: Depending on the number of attempts, different form fields are disabled.
