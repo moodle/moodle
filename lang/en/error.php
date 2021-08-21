@@ -354,6 +354,7 @@ $string['invalidoutcome'] = 'Incorrect outcome ID';
 $string['invalidpagesize'] = 'Invalid page size';
 $string['invalidpasswordpolicy'] = 'Invalid password policy';
 $string['invalidpaymentmethod'] = 'Invalid payment method: {$a}';
+$string['invalidpersistenterror'] = 'Error: {$a}';
 $string['invalidqueryparam'] = 'ERROR: Incorrect number of query parameters. Expected {$a->expected}, got {$a->actual}.';
 $string['invalidratingarea'] = 'Invalid rating area';
 $string['invalidrecord'] = 'Can\'t find data record in database table {$a}.';
