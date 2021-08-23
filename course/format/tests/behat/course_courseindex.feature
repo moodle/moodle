@@ -29,8 +29,6 @@ Feature: Course index depending on role
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage
     Then I should see "Open course index drawer"
-    And I follow "Activity sample 1"
-    And I should see "Open course index drawer"
 
   @javascript
   Scenario: Course index as a teacher
