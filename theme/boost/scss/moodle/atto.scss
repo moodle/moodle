@@ -80,6 +80,14 @@ div.editor_atto_toolbar div.atto_group {
     background: #fff;
 }
 
+div.editor_atto_toolbar .atto_toolbar_row {
+    margin: 6px 0 -3px 5px;
+    display: table;
+    div.atto_group {
+        margin: 3px 5px 3px 4px;
+    }
+}
+
 .editor_atto_content img {
     resize: both;
     overflow: auto;
