@@ -24,9 +24,9 @@ Feature: Edit activities in main menu block
 
   @javascript
   Scenario: Activities in main menu block can be made available but not visible on a course page
-    And I log in as "admin"
-    And I set the following administration settings values:
+    Given the following config values are set as admin:
       | allowstealth | 1 |
+    And I log in as "admin"
     And I am on site homepage
     And I navigate to "Turn editing on" in current page administration
     And I add the "Main menu" block

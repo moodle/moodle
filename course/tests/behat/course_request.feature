@@ -13,11 +13,11 @@ Feature: Users can request and approve courses
 
   Scenario: Simple course request workflow
     Given the following "system role assigns" exist:
-      | user  | course | role |
+      | user  | course               | role    |
       | user2 | Acceptance test site | manager |
-    Given I log in as "admin"
-    And I set the following administration settings values:
+    And the following config values are set as admin:
       | lockrequestcategory | 1 |
+    Given I log in as "admin"
     And I set the following system permissions of "Authenticated user" role:
       | capability | permission |
       | moodle/course:request | Allow |
