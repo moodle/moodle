@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tests\core_courseformat;
+namespace core_courseformat\output\local\state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -43,7 +43,7 @@ class state_test extends \advanced_testcase {
      * Test the behaviour of state::export_for_template().
      *
      * @dataProvider state_provider
-     * @covers ::export_for_template
+     * @coversDefaultClass core_courseformat\output\local\state
      *
      * @param string $format The course format of the course where the method will be executed.
      */
