@@ -54,11 +54,6 @@ class footer_options_exporter extends exporter {
     protected $token;
 
     /**
-     * @var bool $showexportlink Whether the export link should be displayed or not.
-     */
-    protected $showexportlink;
-
-    /**
      * @var bool $showfullcalendarlink Whether the full calendar link should be displayed or not.
      */
     protected $showfullcalendarlink;
@@ -71,25 +66,13 @@ class footer_options_exporter extends exporter {
      * @param string $token The user sha1 token.
      * @param array $options Display options for the footer. If an option is not set, a default value will be provided.
      *                      It consists of:
-     *                      - showexportlink - bool - Whether to show the export link or not. Defaults to true.
      *                      - showfullcalendarlink - bool - Whether to show the full calendar link or not. Defaults to false.
      */
     public function __construct(\calendar_information $calendar, $userid, $token, array $options = []) {
         $this->calendar = $calendar;
         $this->userid = $userid;
         $this->token = $token;
-        $this->showexportlink = $options['showexportlink'] ?? true;
         $this->showfullcalendarlink = $options['showfullcalendarlink'] ?? false;
-    }
-
-    /**
-     * Get the export calendar link.
-     *
-     * @return string The export calendar hyperlink.
-     */
-    protected function get_export_calendar_link(): string {
-        $exportcalendarurl = new moodle_url('/calendar/export.php', $this->get_link_params());
-        return $exportcalendarurl->out(true);
     }
 
     /**
@@ -140,20 +123,11 @@ class footer_options_exporter extends exporter {
             ];
         }
 
-        if (!empty($CFG->enablecalendarexport)) {
-            if ($this->showexportlink) {
-                $values->footerlinks[] = (object)[
-                    'url' => $this->get_export_calendar_link(),
-                    'linkname' => get_string('exportcalendar', 'calendar'),
-                ];
-            }
-
-            if ($managesubscriptionlink = $this->get_manage_subscriptions_link()) {
-                $values->footerlinks[] = (object)[
-                    'url' => $managesubscriptionlink,
-                    'linkname' => get_string('managesubscriptions', 'calendar'),
-                ];
-            }
+        if (!empty($CFG->enablecalendarexport) && $managesubscriptionlink = $this->get_manage_subscriptions_link()) {
+            $values->footerlinks[] = (object)[
+                'url' => $managesubscriptionlink,
+                'linkname' => get_string('managesubscriptions', 'calendar'),
+            ];
         }
 
         return (array) $values;
