@@ -2778,5 +2778,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021091100.02);
     }
 
+    if ($oldversion < 2021091700.01) {
+        // Default 'off' for existing sites as this is the behaviour they had earlier.
+        set_config('enroladminnewcourse', false);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021091700.01);
+    }
+
     return true;
 }

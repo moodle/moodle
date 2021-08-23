@@ -164,7 +164,15 @@ if ($editform->is_cancelled()) {
         // Get the context of the newly created course.
         $context = context_course::instance($course->id, MUST_EXIST);
 
-        if (!empty($CFG->creatornewroleid) and !is_viewing($context, NULL, 'moodle/role:assign') and !is_enrolled($context, NULL, 'moodle/role:assign')) {
+        // Admins have all capabilities, so is_viewing is returning true for admins.
+        // We are checking 'enroladminnewcourse' setting to decide to enrol them or not.
+        if (is_siteadmin($USER->id)) {
+            $enroluser = $CFG->enroladminnewcourse;
+        } else {
+            $enroluser = !is_viewing($context, null, 'moodle/role:assign');
+        }
+
+        if (!empty($CFG->creatornewroleid) and $enroluser and !is_enrolled($context, null, 'moodle/role:assign')) {
             // Deal with course creators - enrol them internally with default role.
             // Note: This does not respect capabilities, the creator will be assigned the default role.
             // This is an expected behaviour. See MDL-66683 for further details.
