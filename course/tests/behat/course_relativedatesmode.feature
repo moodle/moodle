@@ -6,9 +6,9 @@ Feature: Courses can be set up to display dates relative to the user's enrolment
 
   @javascript
   Scenario: Create a course with relative dates feature disabled
-    Given  I log in as "admin"
-    And I set the following administration settings values:
+    Given the following config values are set as admin:
       | enablecourserelativedates | 0 |
+    And  I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
     When I press "Add a new course"
@@ -18,20 +18,19 @@ Feature: Courses can be set up to display dates relative to the user's enrolment
 
   @javascript
   Scenario: Create a course with relative dates feature enabled
-    Given  I log in as "admin"
-    And I set the following administration settings values:
+    Given the following config values are set as admin:
       | enablecourserelativedates | 1 |
+    And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
     When I press "Add a new course"
-    And I wait until the page is ready
     Then I should see "Relative dates mode"
     And I should see "Relative dates mode cannot be changed once the course has been created."
 
   Scenario: Edit courses with relative dates feature enabled
-    Given  I log in as "admin"
-    And I set the following administration settings values:
+    Given the following config values are set as admin:
       | enablecourserelativedates | 1 |
+    And  I log in as "admin"
     And I create a course with:
       | Course full name    | Course 1  |
       | Course short name   | C1        |
