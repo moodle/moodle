@@ -80,7 +80,7 @@ class sectionnavigation implements renderable, templatable {
         $sections = $modinfo->get_section_info_all();
 
         // FIXME: This is really evil and should by using the navigation API.
-        $canviewhidden = has_capability('moodle/course:viewhiddensections', $context, $USER) || !$course->hiddensections;
+        $canviewhidden = has_capability('moodle/course:viewhiddensections', $context, $USER);
 
         $data = (object)[
             'previousurl' => '',
