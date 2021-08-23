@@ -14,10 +14,8 @@ Feature: Duplicate activities
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | backup_import_activities    | 0 |
-    And I log out
+    And the following config values are set as admin:
+      | backup_import_activities | 0 | backup |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Database" to section "1" and I fill the form with:
