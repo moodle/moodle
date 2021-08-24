@@ -96,10 +96,18 @@ $course = get_course($courseid);
 
 if ($iscoursecalendar && !empty($courseid)) {
     navigation_node::override_active_url(new moodle_url('/course/view.php', array('id' => $course->id)));
+    $PAGE->navbar->add(
+        get_string('calendar', 'calendar'),
+        new moodle_url('/calendar/view.php', ['view' => 'month', 'course' => $course->id])
+    );
 } else if (!empty($categoryid)) {
     core_course_category::get($categoryid); // Check that category exists and can be accessed.
     $PAGE->set_category_by_id($categoryid);
     navigation_node::override_active_url(new moodle_url('/course/index.php', array('categoryid' => $categoryid)));
+    $PAGE->navbar->add(
+        get_string('calendar', 'calendar'),
+        new moodle_url('/calendar/view.php', ['view' => 'month', 'category' => $categoryid])
+    );
 } else {
     $PAGE->set_context(context_system::instance());
 }

@@ -55,6 +55,7 @@ if (empty($CFG->enablecalendarexport)) {
 }
 
 $courseid = optional_param('course', SITEID, PARAM_INT);
+$categoryid  = optional_param('category', null, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 $day = optional_param('cal_d', 0, PARAM_INT);
 $mon = optional_param('cal_m', 0, PARAM_INT);
@@ -76,32 +77,44 @@ if (!empty($day) && !empty($mon) && !empty($year)) {
     $time = time();
 }
 
+$url = new moodle_url('/calendar/export.php', array('time' => $time));
+$managesubscriptionsurl = new moodle_url('/calendar/managesubscriptions.php');
+
 if ($courseid != SITEID && !empty($courseid)) {
     // Course ID must be valid and existing.
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     $courses = array($course->id => $course);
-    $issite = false;
+    $url->param('course', $course->id);
+    $managesubscriptionsurl->param('course', $course->id);
+
+    navigation_node::override_active_url(new moodle_url('/course/view.php', ['id' => $course->id]));
+    $PAGE->navbar->add(
+        get_string('calendar', 'calendar'),
+        new moodle_url('/calendar/view.php', ['view' => 'month', 'course' => $course->id])
+    );
 } else {
     $course = get_site();
     $courses = calendar_get_default_courses();
-    $issite = true;
+
+    if (!empty($categoryid)) {
+        $managesubscriptionsurl->param('category', $categoryid);
+
+        navigation_node::override_active_url(new moodle_url('/course/index.php', ['categoryid' => $categoryid]));
+        $PAGE->set_category_by_id($categoryid);
+        $PAGE->navbar->add(
+            get_string('calendar', 'calendar'),
+            new moodle_url('/calendar/view.php', ['view' => 'month', 'category' => $categoryid])
+        );
+    } else {
+        navigation_node::override_active_url(new moodle_url('/calendar/view.php', ['view' => 'month']));
+    }
 }
 require_login($course, false);
-
-$url = new moodle_url('/calendar/export.php', array('time' => $time));
-$managesubscriptionsurl = new moodle_url('/calendar/managesubscriptions.php');
 
 if ($action !== '') {
     $url->param('action', $action);
 }
 
-if ($course !== NULL) {
-    $url->param('course', $course->id);
-
-    if ($course->id != SITEID) {
-        $managesubscriptionsurl->param('course', $course->id);
-    }
-}
 $PAGE->set_url($url);
 
 $calendar = new calendar_information(0, 0, 0, $time);
@@ -109,15 +122,10 @@ $calendar->set_sources($course, $courses);
 
 $pagetitle = get_string('export', 'calendar');
 
-// Print title and header
-if ($issite) {
-    $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
-}
-$link = new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming', 'course'=>$calendar->courseid));
-$PAGE->navbar->add(get_string('calendar', 'calendar'), calendar_get_link_href($link, 0, 0, 0, $time));
 $PAGE->navbar->add(get_string('managesubscriptions', 'calendar'), $managesubscriptionsurl);
 $PAGE->navbar->add($pagetitle);
 
+// Print title and header.
 $PAGE->set_title($course->shortname.': '.get_string('calendar', 'calendar').': '.$pagetitle);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
