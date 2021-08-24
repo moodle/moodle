@@ -102,6 +102,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_admin\local\settings\linkable_settings_page;
+
 defined('MOODLE_INTERNAL') || die();
 
 /// Add libraries
@@ -770,7 +772,7 @@ interface parentable_part_of_admin_tree extends part_of_admin_tree {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_category implements parentable_part_of_admin_tree {
+class admin_category implements parentable_part_of_admin_tree, linkable_settings_page {
 
     /** @var part_of_admin_tree[] An array of part_of_admin_tree objects that are this object's children */
     protected $children;
@@ -809,6 +811,20 @@ class admin_category implements parentable_part_of_admin_tree {
         $this->name        = $name;
         $this->visiblename = $visiblename;
         $this->hidden      = $hidden;
+    }
+
+    /**
+     * Get the URL to view this settings page.
+     *
+     * @return moodle_url
+     */
+    public function get_settings_page_url(): moodle_url {
+        return new moodle_url(
+            '/admin/category.php',
+            [
+                'category' => $this->name,
+            ]
+        );
     }
 
     /**
@@ -1192,7 +1208,7 @@ class admin_root extends admin_category {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_externalpage implements part_of_admin_tree {
+class admin_externalpage implements part_of_admin_tree, linkable_settings_page {
 
     /** @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
@@ -1240,6 +1256,15 @@ class admin_externalpage implements part_of_admin_tree {
         }
         $this->hidden = $hidden;
         $this->context = $context;
+    }
+
+    /**
+     * Get the URL to view this settings page.
+     *
+     * @return moodle_url
+     */
+    public function get_settings_page_url(): moodle_url {
+        return new moodle_url($this->url);
     }
 
     /**
@@ -1413,7 +1438,7 @@ class admin_settingdependency {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_settingpage implements part_of_admin_tree {
+class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
 
     /** @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
@@ -1463,6 +1488,20 @@ class admin_settingpage implements part_of_admin_tree {
         }
         $this->hidden      = $hidden;
         $this->context     = $context;
+    }
+
+    /**
+     * Get the URL to view this page.
+     *
+     * @return moodle_url
+     */
+    public function get_settings_page_url(): moodle_url {
+        return new moodle_url(
+            '/admin/settings.php',
+            [
+                'section' => $this->name,
+            ]
+        );
     }
 
     /**
