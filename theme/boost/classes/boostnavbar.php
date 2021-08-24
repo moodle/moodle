@@ -56,7 +56,8 @@ class boostnavbar implements \renderable {
         // Set the designated one path for courses.
         $mycoursesnode = $this->get_item('mycourses');
         if (!is_null($mycoursesnode)) {
-            $url = new \moodle_url('/mycourses/');
+            // TODO: Once MDL-70801 lands point this to the new page.
+            $url = new \moodle_url('/course/');
             $mycoursesnode->action = $url;
             $mycoursesnode->text = get_string('courses');
         }

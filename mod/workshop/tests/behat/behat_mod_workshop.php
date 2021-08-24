@@ -90,7 +90,7 @@ class behat_mod_workshop extends behat_base {
      * @param TableNode $table data to fill the submission form with, must contain 'Title'
      */
     public function i_edit_assessment_form_in_workshop_as($workshopname, $table) {
-        $this->execute("behat_navigation::go_to_breadcrumb_location", $workshopname);
+        $this->execute("behat_navigation::i_am_on_page_instance", [$this->escape($workshopname), 'workshop activity']);
 
         $this->execute('behat_navigation::i_navigate_to_in_current_page_administration',
             get_string('editassessmentform', 'workshop'));

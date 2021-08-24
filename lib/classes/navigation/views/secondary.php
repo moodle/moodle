@@ -206,10 +206,13 @@ class secondary extends view {
         $nodesordered += $this->get_leaf_nodes($navigation, $nodes['navigation'] ?? []);
         $this->add_ordered_nodes($nodesordered);
 
-        // All additional nodes will be available under the 'Course admin' page.
-        $text = get_string('courseadministration');
-        $url = new \moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
-        $this->add($text, $url, null, null, 'courseadmin', new \pix_icon('t/edit', $text));
+        $coursecontext = \context_course::instance($course->id);
+        if (has_capability('moodle/course:update', $coursecontext)) {
+            // All additional nodes will be available under the 'Course admin' page.
+            $text = get_string('courseadministration');
+            $url = new \moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
+            $this->add($text, $url, null, null, 'courseadmin', new \pix_icon('t/edit', $text));
+        }
     }
 
     /**
