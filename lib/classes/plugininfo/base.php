@@ -509,13 +509,22 @@ abstract class base {
             return null;
         }
         $settings = admin_get_root()->locate($section);
-        if ($settings && $settings instanceof \admin_settingpage) {
-            return new moodle_url('/admin/settings.php', array('section' => $section));
-        } else if ($settings && $settings instanceof \admin_externalpage) {
-            return new moodle_url($settings->url);
-        } else {
-            return null;
+        if ($settings) {
+            if ($settings instanceof \admin_settingpage) {
+                return new moodle_url('/admin/settings.php', [
+                    'section' => $section,
+                ]);
+            }
+
+            if ($settings instanceof \admin_externalpage) {
+                return new moodle_url($settings->url);
+            }
+
+            if ($settings instanceof \admin_category) {
+                return $settings->get_settings_page_url();
+            }
         }
+        return null;
     }
 
     /**
