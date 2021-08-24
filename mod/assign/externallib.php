@@ -2316,7 +2316,7 @@ class mod_assign_external extends external_api {
                 'assignid' => new external_value(PARAM_INT, 'assignment instance id'),
                 'userid' => new external_value(PARAM_INT, 'user id (empty for current user)', VALUE_DEFAULT, 0),
                 'groupid' => new external_value(PARAM_INT, 'filter by users in group (used for generating the grading summary).
-                    Empty or 0 for all groups information.', VALUE_DEFAULT, 0),
+                    0 for all groups information, any other empty value will calculate currrent group.', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -2368,8 +2368,9 @@ class mod_assign_external extends external_api {
                 throw new moodle_exception('notingroup');
             }
         } else {
-            // A null gorups means that following functions will calculate the current group.
-            $groupid = null;
+            // A null group means that following functions will calculate the current group.
+            // A groupid set to 0 means all groups.
+            $groupid = ($params['groupid'] == 0) ? 0 : null;
         }
         if ($assign->can_view_grades($groupid)) {
             $gradingsummary = $assign->get_assign_grading_summary_renderable($groupid);
