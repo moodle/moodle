@@ -140,7 +140,7 @@ $formdata = array(
 );
 
 // Disable submit protection so that the submit buttons continue working after being pressed.
-$exportform = new core_calendar_export_form(null, $formdata, 'POST', '', ['data-double-submit-protection' => 'off']);
+$exportform = new core_calendar_export_form($FULLME, $formdata, 'POST', '', ['data-double-submit-protection' => 'off']);
 $calendarurl = '';
 if ($data = $exportform->get_data()) {
     $params = array();
