@@ -3755,6 +3755,8 @@ class core_course_external extends external_api {
                     VALUE_DEFAULT, null),
                 'customfieldvalue' => new external_value(PARAM_RAW, 'Used when classification = customfield',
                     VALUE_DEFAULT, null),
+                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against',
+                    VALUE_DEFAULT, null),
             )
         );
     }
@@ -3779,6 +3781,7 @@ class core_course_external extends external_api {
      * @param  string $sort SQL sort string for results
      * @param  string $customfieldname
      * @param  string $customfieldvalue
+     * @param  string $searchvalue
      * @return array list of courses and warnings
      * @throws  invalid_parameter_exception
      */
@@ -3788,7 +3791,8 @@ class core_course_external extends external_api {
         int $offset = 0,
         string $sort = null,
         string $customfieldname = null,
-        string $customfieldvalue = null
+        string $customfieldvalue = null,
+        string $searchvalue = null
     ) {
         global $CFG, $PAGE, $USER;
         require_once($CFG->dirroot . '/course/lib.php');
@@ -3800,6 +3804,7 @@ class core_course_external extends external_api {
                 'offset' => $offset,
                 'sort' => $sort,
                 'customfieldvalue' => $customfieldvalue,
+                'searchvalue' => $searchvalue,
             )
         );
 
@@ -3808,6 +3813,7 @@ class core_course_external extends external_api {
         $offset = $params['offset'];
         $sort = $params['sort'];
         $customfieldvalue = $params['customfieldvalue'];
+        $searchvalue = $params['searchvalue'];
 
         switch($classification) {
             case COURSE_TIMELINE_ALLINCLUDINGHIDDEN:
@@ -3823,6 +3829,8 @@ class core_course_external extends external_api {
             case COURSE_FAVOURITES:
                 break;
             case COURSE_TIMELINE_HIDDEN:
+                break;
+            case COURSE_TIMELINE_SEARCH:
                 break;
             case COURSE_CUSTOMFIELD:
                 break;
@@ -3847,6 +3855,19 @@ class core_course_external extends external_api {
                 COURSE_DB_QUERY_LIMIT, $hiddencourses);
 
             // Otherwise get the requested courses and exclude the hidden courses.
+        } else if ($classification == COURSE_TIMELINE_SEARCH) {
+            // Prepare the search API options.
+            $searchcriteria['search'] = $searchvalue;
+            $options = ['idonly' => true];
+            $courses = course_get_enrolled_courses_for_logged_in_user_from_search(
+                0,
+                $offset,
+                $sort,
+                $fields,
+                COURSE_DB_QUERY_LIMIT,
+                $searchcriteria,
+                $options
+            );
         } else {
             $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields,
                 COURSE_DB_QUERY_LIMIT, [], $hiddencourses);
@@ -3886,6 +3907,9 @@ class core_course_external extends external_api {
 
         $renderer = $PAGE->get_renderer('core');
         $formattedcourses = array_map(function($course) use ($renderer, $favouritecourseids) {
+            if ($course == null) {
+                return;
+            }
             context_helper::preload_from_record($course);
             $context = context_course::instance($course->id);
             $isfavourite = false;
@@ -3895,6 +3919,12 @@ class core_course_external extends external_api {
             $exporter = new course_summary_exporter($course, ['context' => $context, 'isfavourite' => $isfavourite]);
             return $exporter->export($renderer);
         }, $filteredcourses);
+
+        $formattedcourses = array_filter($formattedcourses, function($course) {
+            if ($course != null) {
+                return $course;
+            }
+        });
 
         return [
             'courses' => $formattedcourses,
