@@ -812,6 +812,20 @@ class admin_category implements parentable_part_of_admin_tree {
     }
 
     /**
+     * Get the URL to view this page.
+     *
+     * @return moodle_url
+     */
+    public function get_settings_page_url(): moodle_url {
+        return new moodle_url(
+            '/admin/category.php',
+            [
+                'category' => $this->name,
+            ]
+        );
+    }
+
+    /**
      * Returns a reference to the part_of_admin_tree object with internal name $name.
      *
      * @param string $name The internal name of the object we want.
