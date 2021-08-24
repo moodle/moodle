@@ -73,7 +73,7 @@ class behat_mod_workshop extends behat_base {
         $savechanges = $this->escape(get_string('savechanges'));
         $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' ownsubmission ')]/descendant::*[@type='submit']";
 
-        $this->execute("behat_navigation::go_to_breadcrumb_location", $workshopname);
+        $this->execute("behat_navigation::i_am_on_page_instance", [$workshopname, 'workshop activity']);
 
         $this->execute("behat_general::i_click_on", array($xpath, "xpath_element"));
 

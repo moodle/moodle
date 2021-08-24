@@ -48,7 +48,7 @@ class behat_mod_data extends behat_base {
      * @param TableNode $fielddata
      */
     public function i_add_a_field_to_database_and_i_fill_the_form_with($fieldtype, $activityname, TableNode $fielddata) {
-        $this->execute("behat_navigation::go_to_breadcrumb_location", $this->escape($activityname));
+        $this->execute('behat_navigation::i_am_on_page_instance', [$this->escape($activityname), 'data activity']);
 
         // Open "Fields" tab if it is not already open.
         $fieldsstr = get_string('fields', 'mod_data');
