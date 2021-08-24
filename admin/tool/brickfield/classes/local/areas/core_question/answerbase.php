@@ -20,9 +20,9 @@ use core\event\question_created;
 use core\event\question_updated;
 
 /**
- * Base class for various question-related areas
+ * Base class for various question-related areas.
  *
- * This is an abstract class so it will be skipped by manager when it finds all areas
+ * This is an abstract class so it will be skipped by manager when it finds all areas.
  *
  * @package    tool_brickfield
  * @copyright  2020 onward: Brickfield Education Labs, www.brickfield.ie
@@ -32,6 +32,7 @@ abstract class answerbase extends base {
 
     /**
      * Get table name reference.
+     *
      * @return string
      */
     public function get_ref_tablename(): string {
@@ -40,34 +41,38 @@ abstract class answerbase extends base {
 
     /**
      * Find recordset of the relevant areas.
+     *
      * @param \core\event\base $event
      * @return \moodle_recordset|null
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public function find_relevant_areas(\core\event\base $event): ?\moodle_recordset {
         global $DB;
-
         if (($event instanceof question_created) || ($event instanceof question_updated)) {
-            $rs = $DB->get_recordset_sql(
-                "SELECT {$this->get_type()} AS type,
-                ctx.id AS contextid,
-                {$this->get_standard_area_fields_sql()}
-                a.id AS itemid,
-                {$this->get_reftable_field_sql()}
-                t.id AS refid,
-                {$this->get_course_and_cat_sql($event)}
-                a.{$this->get_fieldname()} AS content
-            FROM {question} t
-            INNER JOIN {question_answers} a ON a.question = t.id
-            INNER JOIN {question_categories} qc ON qc.id = t.category
-            INNER JOIN {context} ctx ON ctx.id = qc.contextid
-            WHERE (t.id = :refid)
-            ORDER BY a.id",
-                [
-                    'refid' => $event->objectid,
-                ]);
+            $sql = "SELECT {$this->get_type()} AS type,
+                           ctx.id AS contextid,
+                           {$this->get_standard_area_fields_sql()}
+                           a.id AS itemid,
+                           {$this->get_reftable_field_sql()}
+                           q.id AS refid,
+                           {$this->get_course_and_cat_sql($event)}
+                           a.{$this->get_fieldname()} AS content
+                      FROM {question} q
+                INNER JOIN {question_answers} a
+                        ON a.question = q.id
+                INNER JOIN {question_versions} qv
+                        ON qv.questionid = q.id
+                INNER JOIN {question_bank_entries} qbe
+                        ON qbe.id = qv.questionbankentryid
+                INNER JOIN {question_categories} qc
+                        ON qc.id = qbe.questioncategoryid
+                INNER JOIN {context} ctx
+                        ON ctx.id = qc.contextid
+                     WHERE (q.id = :refid)
+                  ORDER BY a.id";
+
+            $rs = $DB->get_recordset_sql($sql, ['refid' => $event->objectid]);
             return $rs;
+
         }
         return null;
     }
@@ -75,61 +80,90 @@ abstract class answerbase extends base {
     /**
      * Return an array of area objects that contain content at the site and system levels only. This would be question content from
      * question categories at the system context, or course category context.
+     *
      * @return mixed
-     * @throws \dml_exception
      */
     public function find_system_areas(): ?\moodle_recordset {
         global $DB;
-        $select = 'SELECT ' . $this->get_type() . ' AS type, qc.contextid AS contextid, ' . $this->get_standard_area_fields_sql() .
-            ' a.id AS itemid, ' . $this->get_reftable_field_sql() . 't.id AS refid, '.
-            SITEID . ' as courseid, cc.id as categoryid, a.'.$this->get_fieldname().' AS content ';
-        $from = 'FROM {question} t ' .
-            'INNER JOIN {question_answers} a ON a.question = t.id ' .
-            'INNER JOIN {question_categories} qc ON qc.id = t.category ' .
-            'INNER JOIN {context} ctx ON ctx.id = qc.contextid ' .
-            'LEFT JOIN {course_categories} cc ON cc.id = ctx.instanceid AND ctx.contextlevel = :coursecat ';
-        $where = 'WHERE (ctx.contextlevel = :syscontext) OR (ctx.contextlevel = :coursecat2) ';
-        $order = 'ORDER BY a.id';
         $params = [
             'syscontext' => CONTEXT_SYSTEM,
             'coursecat' => CONTEXT_COURSECAT,
             'coursecat2' => CONTEXT_COURSECAT,
         ];
 
-        return $DB->get_recordset_sql($select . $from . $where . $order, $params);
+        $sql = "SELECT {$this->get_type()} AS type,
+                       qc.contextid AS contextid,
+                       {$this->get_standard_area_fields_sql()}
+                       a.id AS itemid,
+                       {$this->get_reftable_field_sql()}
+                       q.id AS refid,
+                       " . SITEID . "  as courseid,
+                       cc.id as categoryid,
+                       a.{$this->get_fieldname()} AS content
+                  FROM {question} q
+            INNER JOIN {question_answers} a
+                    ON a.question = q.id
+            INNER JOIN {question_versions} qv
+                    ON qv.questionid = q.id
+            INNER JOIN {question_bank_entries} qbe
+                    ON qbe.id = qv.questionbankentryid
+            INNER JOIN {question_categories} qc
+                    ON qc.id = qbe.questioncategoryid
+            INNER JOIN {context} ctx
+                    ON ctx.id = qc.contextid
+             LEFT JOIN {course_categories} cc
+                    ON cc.id = ctx.instanceid
+                   AND ctx.contextlevel = :coursecat
+                 WHERE (ctx.contextlevel = :syscontext)
+                    OR (ctx.contextlevel = :coursecat2)
+              ORDER BY a.id";
+
+        return $DB->get_recordset_sql($sql, $params);
     }
 
     /**
      * Find recordset of the course areas.
+     *
      * @param int $courseid
      * @return \moodle_recordset
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public function find_course_areas(int $courseid): ?\moodle_recordset {
         global $DB;
 
         $coursecontext = \context_course::instance($courseid);
-        return $DB->get_recordset_sql(
-            "SELECT {$this->get_type()} AS type,
-                ctx.id AS contextid,
-                {$this->get_standard_area_fields_sql()}
-                a.id AS itemid,
-                {$this->get_reftable_field_sql()}
-                t.id AS refid,
-                {$courseid} AS courseid,
-                a.{$this->get_fieldname()} AS content
-            FROM {question} t
-            INNER JOIN {question_answers} a ON a.question = t.id
-            INNER JOIN {question_categories} qc ON qc.id = t.category
-            INNER JOIN {context} ctx ON ctx.id = qc.contextid
-            WHERE (ctx.contextlevel = :ctxcourse AND ctx.id = qc.contextid AND ctx.instanceid = :courseid) OR
-                (ctx.contextlevel = :module AND {$DB->sql_like('ctx.path', ':coursecontextpath')})
-            ORDER BY a.id",
-            ['ctxcourse' => CONTEXT_COURSE,
-             'courseid' => $courseid,
-             'module' => CONTEXT_MODULE,
-             'coursecontextpath' => $DB->sql_like_escape($coursecontext->path) . '/%',
-            ]);
+        $param = [
+            'ctxcourse' => CONTEXT_COURSE,
+            'courseid' => $courseid,
+            'module' => CONTEXT_MODULE,
+            'coursecontextpath' => $DB->sql_like_escape($coursecontext->path) . '/%',
+        ];
+
+        $sql = "SELECT {$this->get_type()} AS type,
+                       ctx.id AS contextid,
+                       {$this->get_standard_area_fields_sql()}
+                       a.id AS itemid,
+                       {$this->get_reftable_field_sql()}
+                       q.id AS refid,
+                       {$courseid} AS courseid,
+                       a.{$this->get_fieldname()} AS content
+                  FROM {question} q
+            INNER JOIN {question_answers} a
+                    ON a.question = q.id
+            INNER JOIN {question_versions} qv
+                    ON qv.questionid = q.id
+            INNER JOIN {question_bank_entries} qbe
+                    ON qbe.id = qv.questionbankentryid
+            INNER JOIN {question_categories} qc
+                    ON qc.id = qbe.questioncategoryid
+            INNER JOIN {context} ctx
+                    ON ctx.id = qc.contextid
+                 WHERE (ctx.contextlevel = :ctxcourse
+                   AND ctx.id = qc.contextid
+                   AND ctx.instanceid = :courseid)
+                    OR (ctx.contextlevel = :module
+                   AND {$DB->sql_like('ctx.path', ':coursecontextpath')})
+              ORDER BY a.id ASC";
+
+        return $DB->get_recordset_sql($sql, $param);
     }
 }
