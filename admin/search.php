@@ -46,6 +46,8 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->action) and 
     }
 }
 
+$PAGE->has_secondary_navigation_setter(false);
+
 // and finally, if we get here, then there are matching settings and we have to print a form
 // to modify them
 echo $OUTPUT->header($focus);
@@ -88,7 +90,10 @@ if ($hassiteconfig) {
 if ($showsettingslinks) {
     $node = $PAGE->settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN);
     if ($node) {
-        echo $OUTPUT->render_from_template('core/settings_link_page', ['node' => $node]);
+        $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs');
+        $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+        echo $OUTPUT->render_from_template('core/settings_link_page',
+            ['node' => $node, 'secondarynavigation' => $secondarynavigation]);
     }
 }
 

@@ -32,6 +32,19 @@
     <div class="col-12 pt-3 pb-3">
         <div class="card {{^contextheader}}border-0 bg-transparent{{/contextheader}}">
             <div class="card-body {{^contextheader}}p-2{{/contextheader}}">
+                <div class="d-flex flex-wrap">
+                    {{#hasnavbar}}
+                    <div id="page-navbar">
+                        {{{navbar}}}
+                    </div>
+                    {{/hasnavbar}}
+                    <div class="ml-auto d-flex">
+                        {{{pageheadingbutton}}}
+                    </div>
+                    <div id="course-header">
+                        {{{courseheader}}}
+                    </div>
+                </div>
                 <div class="d-sm-flex align-items-center">
                     {{#contextheader}}
                     <div class="mr-auto">
@@ -48,19 +61,6 @@
                         {{#headeractions}}
                             <div class="header-action ml-2">{{{.}}}</div>
                         {{/headeractions}}
-                    </div>
-                </div>
-                <div class="d-flex flex-wrap">
-                    {{#hasnavbar}}
-                    <div id="page-navbar">
-                        {{{navbar}}}
-                    </div>
-                    {{/hasnavbar}}
-                    <div class="ml-auto d-flex">
-                        {{{pageheadingbutton}}}
-                    </div>
-                    <div id="course-header">
-                        {{{courseheader}}}
                     </div>
                 </div>
             </div>

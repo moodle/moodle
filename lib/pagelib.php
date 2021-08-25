@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 use core\navigation\views\primary;
 use core\navigation\views\secondary;
+use core\navigation\output\primary as primaryoutput;
 
 /**
  * $PAGE is a central store of information about the current page we are
@@ -84,6 +85,7 @@ use core\navigation\views\secondary;
  * @property-read secondary $secondarynav The secondary navigation object
  *      used to display the secondarynav in boost
  * @property-read primary $primarynav The primary navigation object used to display the primary nav in boost
+ * @property-read primaryoutput $primarynavcombined The primary navigation object used to display the primary nav in boost
  * @property-read global_navigation $navigation The navigation structure for this page.
  * @property-read xhtml_container_stack $opencontainers Tracks XHTML tags on this page that have been opened but not closed.
  *      mainly for internal use by the rendering code.
@@ -312,6 +314,12 @@ class moodle_page {
     protected $_primarynav = null;
 
     /**
+     * @var primaryoutput Contains the combined nav nodes that will appear
+     * in the primary navigation. Includes - primarynav, langmenu, usermenu
+     */
+    protected $_primarynavcombined = null;
+
+    /**
      * @var navbar Contains the navbar structure.
      */
     protected $_navbar = null;
@@ -379,6 +387,11 @@ class moodle_page {
      * @var bool Should the region main settings menu be rendered in the header.
      */
     protected $_regionmainsettingsinheader = false;
+
+    /**
+     * @var bool Should the secondary menu be rendered.
+     */
+    protected $_hassecondarynavigation = true;
 
     /**
      * Force the settings menu to be displayed on this page. This will only force the
@@ -806,7 +819,13 @@ class moodle_page {
      */
     protected function magic_get_secondarynav() {
         if ($this->_secondarynav === null) {
-            $this->_secondarynav = new secondary($this);
+            $class = 'core\navigation\views\secondary';
+            // Try and load a custom class first.
+            if (class_exists("mod_{$this->activityname}\\local\\views\\secondary")) {
+                $class = "mod_{$this->activityname}\\local\\views\\secondary";
+            }
+
+            $this->_secondarynav = new $class($this);
             $this->_secondarynav->initialise();
         }
         return $this->_secondarynav;
@@ -822,6 +841,17 @@ class moodle_page {
             $this->_primarynav->initialise();
         }
         return $this->_primarynav;
+    }
+
+    /**
+     * Returns the primary navigation object
+     * @return primary
+     */
+    protected function magic_get_primarynavcombined() {
+        if ($this->_primarynavcombined === null) {
+            $this->_primarynavcombined = new primaryoutput($this);
+        }
+        return $this->_primarynavcombined;
     }
 
     /**
@@ -1238,6 +1268,14 @@ class moodle_page {
         } else {
             $this->_subpage = $subpage;
         }
+    }
+
+    /**
+     * Force set secondary_nav. Useful in cases where we dealing with non course modules. e.g. blocks, tools.
+     * @param secondary $nav
+     */
+    public function set_secondarynav(secondary $nav) {
+        $this->_secondarynav = $nav;
     }
 
     /**
@@ -2132,5 +2170,23 @@ class moodle_page {
      */
     public function include_region_main_settings_in_header_actions() : bool {
         return $this->_regionmainsettingsinheader;
+    }
+
+    /**
+     * Set the flag to indicate if the secondary navigation should be rendered.
+     *
+     * @param bool $value If the secondary navigation should be rendered.
+     */
+    public function has_secondary_navigation_setter(bool $value) : void {
+        $this->_hassecondarynavigation = $value;
+    }
+
+    /**
+     * Check if the secondary navigation should be rendered.
+     *
+     * @return bool
+     */
+    public function has_secondary_navigation() : bool {
+        return $this->_hassecondarynavigation;
     }
 }

@@ -152,6 +152,7 @@ Feature: Award badges based on cohort
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Second User (second@example.com)"
     And I press "Award badge"
+    And I navigate to "Badges > Manage badges" in site administration
     And I follow "Site Badge"
     Then I should see "Recipients (1)"
     And I log out
@@ -203,6 +204,7 @@ Feature: Award badges based on cohort
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Second User (second@example.com)"
     And I press "Award badge"
+    And I navigate to "Badges > Manage badges" in site administration
     And I follow "Site Badge"
     Then I should see "Recipients (2)"
     And I log out
@@ -259,6 +261,7 @@ Feature: Award badges based on cohort
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Second User (second@example.com)"
     And I press "Award badge"
+    And I navigate to "Badges > Manage badges" in site administration
     And I follow "Site Badge"
     Then I should see "Recipients (2)"
     And I log out
@@ -317,6 +320,7 @@ Feature: Award badges based on cohort
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Second User (second@example.com)"
     And I press "Award badge"
+    And I navigate to "Badges > Manage badges" in site administration
     And I follow "Site Badge"
     Then I should see "Recipients (1)"
     And I log out

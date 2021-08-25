@@ -3321,40 +3321,25 @@ EOD;
 
         $loginpage = $this->is_login_page();
         $loginurl = get_login_url();
-        // If not logged in, show the typical not-logged-in string.
-        if (!isloggedin()) {
-            $returnstr = get_string('loggedinnot', 'moodle');
-            if (!$loginpage) {
-                $returnstr .= " (<a href=\"$loginurl\">" . get_string('login') . '</a>)';
-            }
-            return html_writer::div(
-                html_writer::span(
-                    $returnstr,
-                    'login nav-link'
-                ),
-                $usermenuclasses
-            );
-
-        }
-
-        // If logged in as a guest user, show a string to that effect.
-        if (isguestuser()) {
-            $returnstr = get_string('loggedinasguest');
-            if (!$loginpage && $withlinks) {
-                $returnstr .= " (<a href=\"$loginurl\">".get_string('login').'</a>)';
-            }
-
-            return html_writer::div(
-                html_writer::span(
-                    $returnstr,
-                    'login nav-link'
-                ),
-                $usermenuclasses
-            );
-        }
 
         // Get some navigation opts.
         $opts = user_get_user_navigation_info($user, $this->page);
+
+        if (!empty($opts->unauthenticateduser)) {
+            $returnstr = get_string($opts->unauthenticateduser['content'], 'moodle');
+            // If not logged in, show the typical not-logged-in string.
+            if (!$loginpage && (!$opts->unauthenticateduser['guest'] || $withlinks)) {
+                $returnstr .= " (<a href=\"$loginurl\">" . get_string('login') . '</a>)';
+            }
+
+            return html_writer::div(
+                html_writer::span(
+                    $returnstr,
+                    'login nav-link'
+                ),
+                $usermenuclasses
+            );
+        }
 
         $avatarclasses = "avatars";
         $avatarcontents = html_writer::span($opts->metadata['useravatar'], 'avatar current');
@@ -4293,10 +4278,14 @@ EOD;
         // Image data.
         if (isset($contextheader->imagedata)) {
             // Header specific image.
-            $html .= html_writer::div($contextheader->imagedata, 'page-header-image');
+            $html .= html_writer::div($contextheader->imagedata, 'page-header-image icon-size-7');
         }
 
         // Headings.
+        if (isset($contextheader->prefix)) {
+            $prefix = html_writer::div($contextheader->prefix, 'text-muted');
+            $heading = $prefix . $heading;
+        }
         $html .= html_writer::tag('div', $heading, array('class' => 'page-header-headings'));
 
         // Buttons.

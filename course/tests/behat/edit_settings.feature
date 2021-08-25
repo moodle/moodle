@@ -23,7 +23,6 @@ Feature: Edit course settings
       | Course short name | Edited course shortname |
       | Course summary | Edited course summary |
     And I press "Save and display"
-    And I follow "Edited course fullname"
     Then I should not see "Course 1"
     And I should not see "C1"
     And I should see "Edited course fullname"

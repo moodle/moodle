@@ -32,6 +32,10 @@ use navigation_node;
 class secondary extends view {
     /** @var string $headertitle The header for this particular menu*/
     public $headertitle;
+
+    /** @var int The maximum limit of navigation nodes displayed in the secondary navigation */
+    const MAX_DISPLAYED_NAV_NODES = 5;
+
     /**
      * Defines the default structure for the secondary nav in a course context.
      *
@@ -85,13 +89,13 @@ class secondary extends view {
         return [
             self::TYPE_SETTING => [
                 'modedit' => 1,
-                'roleoverride' => 3,
-                'rolecheck' => 3.1,
-                'logreport' => 4,
-                "mod_{$this->page->activityname}_useroverrides" => 5, // Overrides are module specific.
-                "mod_{$this->page->activityname}_groupoverrides" => 6,
-                'roleassign' => 7,
-                'filtermanage' => 8,
+                "mod_{$this->page->activityname}_useroverrides" => 3, // Overrides are module specific.
+                "mod_{$this->page->activityname}_groupoverrides" => 4,
+                'roleassign' => 5,
+                'filtermanage' => 6,
+                'roleoverride' => 7,
+                'rolecheck' => 7.1,
+                'logreport' => 8,
                 'backup' => 9,
                 'restore' => 10,
                 'competencybreakdown' => 11,
@@ -100,6 +104,34 @@ class secondary extends view {
                 'advgrading' => 2,
             ],
         ];
+    }
+
+    /**
+     * Define the keys of the course secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_course_more_menu_nodes(): array {
+        return [];
+    }
+
+    /**
+     * Define the keys of the module secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_module_more_menu_nodes(): array {
+        return ['roleoverride', 'rolecheck', 'logreport', 'roleassign', 'filtermanage', 'backup', 'restore',
+            'competencybreakdown'];
+    }
+
+    /**
+     * Define the keys of the admin secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_admin_more_menu_nodes(): array {
+        return [];
     }
 
     /**
@@ -119,23 +151,36 @@ class secondary extends view {
         $this->id = 'secondary_navigation';
         $context = $this->context;
         $this->headertitle = get_string('menu');
+        $defaultmoremenunodes = [];
 
         switch ($context->contextlevel) {
             case CONTEXT_COURSE:
                 if ($this->page->course->id != $SITE->id) {
                     $this->headertitle = get_string('courseheader');
                     $this->load_course_navigation();
+                    $defaultmoremenunodes = $this->get_default_course_more_menu_nodes();
                 }
                 break;
             case CONTEXT_MODULE:
                 $this->headertitle = get_string('activityheader');
                 $this->load_module_navigation();
+                $defaultmoremenunodes = $this->get_default_module_more_menu_nodes();
                 break;
             case CONTEXT_SYSTEM:
+                $this->headertitle = get_string('homeheader');
                 $this->load_admin_navigation();
+                $defaultmoremenunodes = $this->get_default_admin_more_menu_nodes();
                 break;
         }
 
+        $this->remove_unwanted_nodes();
+
+        // Don't need to show anything if only the view node is available. Remove it.
+        if ($this->children->count() == 1) {
+            $this->children->remove('modulepage');
+        }
+
+        $this->force_nodes_into_more_menu($defaultmoremenunodes);
         // Search and set the active node.
         $this->scan_for_active_node($this);
         $this->initialised = true;
@@ -157,14 +202,17 @@ class secondary extends view {
         $this->add(get_string('coursepage', 'admin'), $url, self::TYPE_COURSE, null, 'coursehome');
 
         $nodes = $this->get_default_course_mapping();
-        $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings']);
-        $nodesordered += $this->get_leaf_nodes($navigation, $nodes['navigation']);
+        $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings'] ?? []);
+        $nodesordered += $this->get_leaf_nodes($navigation, $nodes['navigation'] ?? []);
         $this->add_ordered_nodes($nodesordered);
 
-        // All additional nodes will be available under the 'Course admin' page.
-        $text = get_string('courseadministration');
-        $url = new \moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
-        $this->add($text, $url, null, null, 'courseadmin', new \pix_icon('t/edit', $text));
+        $coursecontext = \context_course::instance($course->id);
+        if (has_capability('moodle/course:update', $coursecontext)) {
+            // All additional nodes will be available under the 'Course admin' page.
+            $text = get_string('courseadministration');
+            $url = new \moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
+            $this->add($text, $url, null, null, 'courseadmin', new \pix_icon('t/edit', $text));
+        }
     }
 
     /**
@@ -180,7 +228,12 @@ class secondary extends view {
         $nodes = $this->get_default_module_mapping();
 
         if ($mainnode) {
-            $this->add(get_string('module', 'course'), $this->page->url, null, null, 'modulepage');
+            $url = new \moodle_url('/mod/' . $this->page->activityname . '/view.php', ['id' => $this->page->cm->id]);
+            $setactive = $url->compare($this->page->url, URL_MATCH_BASE);
+            $node = $this->add(get_string('module', 'course'), $url, null, null, 'modulepage');
+            if ($setactive) {
+                $node->make_active();
+            }
             // Add the initial nodes.
             $nodesordered = $this->get_leaf_nodes($mainnode, $nodes);
             $this->add_ordered_nodes($nodesordered);
@@ -266,6 +319,43 @@ class secondary extends view {
         foreach ($leftover as $key) {
             if (!in_array($key, $flattenednodes) && $leftovernode = $completenode->get($key)) {
                 $this->add_node($leftovernode);
+            }
+        }
+    }
+
+    /**
+     * Force certain secondary navigation nodes to be displayed in the "more" menu.
+     *
+     * @param array $defaultmoremenunodes Array with navigation node keys of the pre-defined nodes that
+     *                                    should be added into the "more" menu by default
+     */
+    protected function force_nodes_into_more_menu(array $defaultmoremenunodes = []) {
+        // Counter of the navigation nodes that are initially displayed in the secondary nav
+        // (excludes the nodes from the "more" menu).
+        $displayednodescount = 0;
+        foreach ($this->children as $child) {
+            // Skip if the navigation node has been already forced into the "more" menu.
+            if ($child->forceintomoremenu) {
+                continue;
+            }
+            // If the navigation node is in the pre-defined list of nodes that should be added by default in the
+            // "more" menu or the maximum limit of displayed navigation nodes has been reached.
+            if (in_array($child->key, $defaultmoremenunodes) || $displayednodescount >= self::MAX_DISPLAYED_NAV_NODES) {
+                // Force the node and its children into the "more" menu.
+                $child->set_force_into_more_menu(true);
+                continue;
+            }
+            $displayednodescount++;
+        }
+    }
+
+    /**
+     * Remove navigation nodes that should not be displayed in the secondary navigation.
+     */
+    protected function remove_unwanted_nodes() {
+        foreach ($this->children as $child) {
+            if (!$child->showinsecondarynavigation) {
+                $child->remove();
             }
         }
     }

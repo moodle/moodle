@@ -1,4 +1,7 @@
 {
+    "contexts": [
+        "behat_theme_boost_behat_navigation"
+    ],
     "features": [
         "lib/tests/behat/action_menu.feature",
         "blocks/tests/behat/hide_blocks.feature",

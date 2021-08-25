@@ -57,6 +57,7 @@ Feature: Teachers can edit or delete any forum post
     And I should see "Edited by Teacher 1 - original submission"
 
   Scenario: A student can't edit or delete another user's posts
-    When I follow "Teacher post subject"
+    When I follow "Test forum name"
+    And I follow "Teacher post subject"
     Then I should not see "Edit" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][contains(., 'Teacher post subject')]" "xpath_element"
     And I should not see "Delete" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][contains(., 'Teacher post subject')]" "xpath_element"

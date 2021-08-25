@@ -97,7 +97,7 @@ if (data_submitted()) {
 }
 
 $strsubscribers = get_string("subscribers", "forum");
-$PAGE->navbar->add($strsubscribers);
+$PAGE->navbar->add($strsubscribers, $url);
 $PAGE->set_title($strsubscribers);
 $PAGE->set_heading($COURSE->fullname);
 if (has_capability('mod/forum:managesubscriptions', $context) && \mod_forum\subscriptions::is_forcesubscribed($forum) === false) {

@@ -52,20 +52,26 @@
         {{/ output.should_display_navbar_logo }}
         {{{ sitename }}}
     </a>
+    {{#primarymoremenu}}
+        {{> core/moremenu }}
+    {{/primarymoremenu}}
 
     <ul class="navbar-nav d-none d-md-flex my-1 px-1">
-        <!-- custom_menu -->
-        {{{ output.custom_menu }}}
         <!-- page_heading_menu -->
         {{{ output.page_heading_menu }}}
     </ul>
 
     <div id="usernavigation" class="navbar-nav my-1 ml-auto">
+        {{#langmenu}}
+            {{> theme_boost/language_menu }}
+        {{/langmenu}}
         <div class="divider border-left h-50 align-self-center mx-1"></div>
         {{{ output.search_box }}}
         {{{ output.navbar_plugin_output }}}
         <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
-            {{{ output.user_menu }}}
+            {{#usermenu}}
+                {{> core/user_menu }}
+            {{/usermenu}}
         </div>
     </div>
 </nav>

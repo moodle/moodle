@@ -86,7 +86,7 @@ Feature: Managers can create and manage tag collections
     And I should see "Tag3"
     And I should not see "Tag1"
     And I should not see "Tag2"
-    And I follow "Manage tags"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     # Tag "Swimming" was not standard and was moved completely.
     And I should not see "Swimming"

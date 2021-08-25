@@ -4564,18 +4564,19 @@ class assign {
         $gradingoptionsform->set_data($gradingoptionsdata);
 
         $actionformtext = $this->get_renderer()->render($gradingactions);
+
+        $currenturl = new moodle_url('/mod/assign/view.php', ['id' => $this->get_course_module()->id, 'action' => 'grading']);
+
         $header = new assign_header($this->get_instance(),
                                     $this->get_context(),
                                     false,
                                     $this->get_course_module()->id,
                                     get_string('grading', 'assign'),
-                                    $actionformtext);
+                                    $actionformtext,
+                                    '',
+                                    $currenturl);
         $o .= $this->get_renderer()->render($header);
 
-        $currenturl = $CFG->wwwroot .
-                      '/mod/assign/view.php?id=' .
-                      $this->get_course_module()->id .
-                      '&action=grading';
 
         $o .= groups_print_activity_menu($this->get_course_module(), $currenturl, true);
 

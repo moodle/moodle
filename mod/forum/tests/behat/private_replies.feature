@@ -36,7 +36,8 @@ Feature: Forum posts can be replied to in private
       | Reply privately | 1                                                                |
 
   Scenario: As a teacher I can see my own response
-    Given I follow "Answers to the homework"
+    Given I follow "Study discussions"
+    And I follow "Answers to the homework"
     Then I should see "How about you and I have a meeting after class about plagiarism?"
 
   Scenario: As a fellow teacher I can see the other teacher's response

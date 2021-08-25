@@ -379,10 +379,12 @@ img.resize {
 
 .action-menu .dropdown-toggle {
     text-decoration: none;
+    display: inline-block;
 }
 
 .action-menu {
     white-space: nowrap;
+    display: inline;
 }
 
 .block img.resize {
@@ -2076,7 +2078,8 @@ nav.navbar .logo img {
 
     .page-header-image {
         margin-right: 1em;
-        margin-bottom: 1em;
+        margin-bottom: 0.5em;
+        margin-top: 0.7em;
         & > a {
             display: inline-block;
         }
@@ -2706,7 +2709,7 @@ $picker-emojis-per-row: 7 !default;
             }
         }
     }
-    .nav-tabs,
+    .nav-tabs:not(.more-nav),
     .nav-pills {
         margin: 0;
         border: 0;

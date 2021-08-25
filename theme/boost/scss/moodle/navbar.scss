@@ -33,11 +33,89 @@
         .dropdown-toggle::after {
             display: none;
         }
+        .dropdown-menu {
+            min-width: 235px;
+            .carousel-navigation-link {
+                > * {
+                    pointer-events: none;
+                }
+            }
+            .dropdown-item {
+                padding: .25rem 1.75rem .25rem .75rem;
+                &.carousel-navigation-link::after {
+                    font-family: FontAwesome;
+                    content: $fa-var-caret-right;
+                    font-size: 1rem;
+                    right: .75rem;
+                    position: absolute;
+                }
+            }
+            .submenu {
+                .header {
+                    padding: .25rem .75rem;
+                    font-size: .975rem;
+                    .icon {
+                        font-size: 20px;
+                        height: 20px;
+                        width: 20px;
+                        margin: 0;
+                    }
+                }
+                .items {
+                    .dropdown-item {
+                        &[aria-current="true"]::before {
+                            font-family: FontAwesome;
+                            content: $fa-var-check;
+                            font-size: 0.75rem;
+                            padding-left: .25rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .langmenu {
+        .dropdown-menu {
+            .dropdown-item {
+                &[aria-current="true"]::before {
+                    content: "\f00c";
+                    font-size: 0.75rem;
+                    padding-left: .25rem;
+                }
+            }
+        }
     }
     .moodle-actionmenu .menubar,
     .action-menu-trigger .dropdown {
         height: 100%;
         display: flex;
+    }
+}
+.dir-rtl .navbar.fixed-top {
+    .usermenu {
+        .dropdown-menu {
+            .dropdown-item {
+                &.carousel-navigation-link::after {
+                    content: $fa-var-caret-left;
+                }
+            }
+            .carousel {
+                .carousel-inner {
+                    .carousel-item-prev.carousel-item-right,
+                    .carousel-item-next.carousel-item-left {
+                        transform: translateX(0);
+                    }
+                    .carousel-item-next,
+                    .carousel-item-right.active {
+                        transform: translateX(-100%);
+                    }
+                    .carousel-item-prev,
+                    .carousel-item-left.active {
+                        transform: translateX(100%);
+                    }
+                }
+            }
+        }
     }
 }
 #page {

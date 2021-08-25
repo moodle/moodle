@@ -823,6 +823,16 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
     $returnobject->navitems = array();
     $returnobject->metadata = array();
 
+    $guest = isguestuser();
+    if (!isloggedin() || $guest) {
+        $returnobject->unauthenticateduser = [
+            'guest' => $guest,
+            'content' => $guest ? 'loggedinasguest' : 'loggedinnot',
+        ];
+
+        return $returnobject;
+    }
+
     $course = $page->course;
 
     // Query the environment.

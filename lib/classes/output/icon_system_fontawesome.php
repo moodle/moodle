@@ -345,6 +345,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/warning' => 'fa-exclamation text-warning',
             'core:i/window_close' => 'fa-window-close',
             'core:i/withsubcat' => 'fa-plus-square',
+            'core:i/language' => 'fa-language',
             'core:m/USD' => 'fa-usd',
             'core:t/addcontact' => 'fa-address-card',
             'core:t/add' => 'fa-plus',

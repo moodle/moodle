@@ -110,6 +110,11 @@
                 {{/hasblocks}}
             </div>
             {{{ output.full_header }}}
+            <div class="secondarynavigation">
+                {{#secondarymoremenu}}
+                    {{> core/moremenu}}
+                {{/secondarymoremenu}}
+            </div>
             <div id="page-content" class="pb-3 d-print-block">
                 <div id="region-main-box">
                     {{#hasregionmainsettingsmenu}}

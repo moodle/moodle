@@ -56,7 +56,7 @@ Feature: Manage plearning plan
     And I set the field "Select cohorts to sync" to "cohort plan"
     When I click on "Add cohorts" "button"
     Then I should see "2 learning plans were created."
-    And I follow "Learning plan templates"
+    And I navigate to "Competencies > Learning plan templates" in site administration
     And I click on ".template-userplans" "css_element" in the "Science template cohort" "table_row"
     And I should see "Student 1"
     And I should see "Student 2"

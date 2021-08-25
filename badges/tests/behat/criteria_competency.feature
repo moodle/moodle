@@ -40,7 +40,6 @@ Feature: Award badges based on competency completion
     # Add a badge to the course
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |

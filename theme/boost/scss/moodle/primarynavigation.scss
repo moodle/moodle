@@ -1,0 +1,8 @@
+.navbar.fixed-top {
+    .moremenu {
+        height: $navbar-height;
+        .nav-link {
+            height: $navbar-height;
+        }
+    }
+}

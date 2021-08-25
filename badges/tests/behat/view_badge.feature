@@ -35,6 +35,7 @@ Feature: Display badges
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     And I press "Award badge"
     # Check badge details are displayed.
+    And I navigate to "Badges > Manage badges" in site administration
     And I follow "Testing system badge"
     And I follow "Recipients (1)"
     When I click on "View issued badge" "link" in the "Student 1" "table_row"
@@ -59,6 +60,7 @@ Feature: Display badges
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     And I press "Award badge"
     # Check badge details are displayed.
+    And I navigate to "Badges > Manage badges" in site administration
     And I follow "Testing system badge"
     And I follow "Recipients (1)"
     When I click on "View issued badge" "link" in the "Student 1" "table_row"
@@ -107,6 +109,7 @@ Feature: Display badges
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     And I press "Award badge"
     # Check "Expires" date is displayed.
+    And I navigate to "Badges > Manage badges" in site administration
     And I follow "Testing system badge"
     And I follow "Recipients (1)"
     And I click on "View issued badge" "link" in the "Student 1" "table_row"
@@ -130,6 +133,7 @@ Feature: Display badges
     # Wait 1 second to guarantee the badge is expired.
     And I wait "1" seconds
     # Check "Expired" date is displayed.
+    And I navigate to "Badges > Manage badges" in site administration
     And I follow "Testing system badge"
     And I follow "Recipients (1)"
     And I click on "View issued badge" "link" in the "Student 1" "table_row"

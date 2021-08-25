@@ -81,12 +81,12 @@ Feature: Course activity controls works as expected
 
     Examples:
       | courseformat | coursedisplay | targetpage              | should_see_other_sections | should_see_other_sections_following_block_sections_links | belowpage                |
-      | topics       | 0             | "Course 1"              | should                    | should                                                   | "Topic 2"                |
+      | topics       | 0             | "C1"                    | should                    | should                                                   | "Topic 2"                |
       | topics       | 1             | "Topic 1"               | should not                | should not                                               | "Topic 2"                |
-      | topics       | 1             | "Course 1"              | should                    | should not                                               | "Topic 2"                |
-      | weeks        | 0             | "Course 1"              | should                    | should                                                   | "8 January - 14 January" |
+      | topics       | 1             | "C1"                    | should                    | should not                                               | "Topic 2"                |
+      | weeks        | 0             | "C1"                    | should                    | should                                                   | "8 January - 14 January" |
       | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
-      | weeks        | 1             | "Course 1"              | should                    | should not                                               | "8 January - 14 January" |
+      | weeks        | 1             | "C1"                    | should                    | should not                                               | "8 January - 14 January" |
 
   Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected
     Given the following "users" exist:
@@ -146,9 +146,9 @@ Feature: Course activity controls works as expected
 
     Examples:
       | courseformat | coursedisplay | targetpage              | should_see_other_sections | should_see_other_sections_following_block_sections_links | belowpage                |
-      | topics       | 0             | "Course 1"              | should                    | should                                                   | "Topic 2"                |
+      | topics       | 0             | "C1"                    | should                    | should                                                   | "Topic 2"                |
       | topics       | 1             | "Topic 1"               | should not                | should not                                               | "Topic 2"                |
-      | topics       | 1             | "Course 1"              | should                    | should not                                               | "Topic 2"                |
-      | weeks        | 0             | "Course 1"              | should                    | should                                                   | "8 January - 14 January" |
+      | topics       | 1             | "C1"                    | should                    | should not                                               | "Topic 2"                |
+      | weeks        | 0             | "C1"                    | should                    | should                                                   | "8 January - 14 January" |
       | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
-      | weeks        | 1             | "Course 1"              | should                    | should not                                               | "8 January - 14 January" |
+      | weeks        | 1             | "C1"                    | should                    | should not                                               | "8 January - 14 January" |

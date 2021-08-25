@@ -545,6 +545,58 @@ class core_navigationlib_testcase extends advanced_testcase {
         // Test it's empty again!
         $this->assertEquals(0, count($navigationnodecollection->get_key_list()));
     }
+
+    /**
+     * Test the set_force_into_more_menu method.
+     *
+     * @param bool $haschildren       Whether the navigation node has children nodes
+     * @param bool $forceintomoremenu Whether to force the navigation node and its children into the "more" menu
+     * @dataProvider test_set_force_into_more_menu_provider
+     */
+    public function test_set_force_into_more_menu(bool $haschildren, bool $forceintomoremenu) {
+        // Create a navigation node.
+        $node = new navigation_node(['text' => 'Navigation node', 'key' => 'navnode']);
+
+        // If required, add some children nodes to the navigation node.
+        if ($haschildren) {
+            for ($i = 1; $i <= 3; $i++) {
+                $node->add("Child navigation node {$i}");
+            }
+        }
+
+        $node->set_force_into_more_menu($forceintomoremenu);
+        // Assert that the expected value has been assigned to the 'forceintomoremenu' property
+        // in the navigation node and its children.
+        $this->assertEquals($forceintomoremenu, $node->forceintomoremenu);
+        foreach ($node->children as $child) {
+            $this->assertEquals($forceintomoremenu, $child->forceintomoremenu);
+        }
+    }
+
+    /**
+     * Data provider for the test_set_force_into_more_menu function.
+     *
+     * @return array
+     */
+    public function test_set_force_into_more_menu_provider(): array {
+        return [
+            'Navigation node without any children nodes; Force into "more" menu => true.' =>
+                [
+                    false,
+                    true,
+                ],
+            'Navigation node with children nodes; Force into "more" menu => true.' =>
+                [
+                    true,
+                    true,
+                ],
+            'Navigation node with children nodes; Force into "more" menu => false.' =>
+                [
+                    true,
+                    false,
+                ],
+        ];
+    }
 }
 
 

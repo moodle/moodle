@@ -21,7 +21,6 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     # Create course badge 1.
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge 1 |
       | Description | Course badge 1 description |
@@ -38,7 +37,6 @@ Feature: Award badges
     # Badge #2
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge 2 |
       | Description | Course badge 2 description |
@@ -57,6 +55,7 @@ Feature: Award badges
     # Award course badge 1 to student 1.
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     When I press "Award badge"
+    And I follow "Manage badges"
     And I follow "Course Badge 1"
     And I follow "Recipients (1)"
     Then I should see "Recipients (1)"
@@ -149,6 +148,7 @@ Feature: Award badges
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "student 1 (student1@example.com)"
     And I press "Award badge"
+    And I navigate to "Badges > Manage badges" in site administration
     When I follow "Site Badge"
     Then I should see "Recipients (2)"
     And I log out
@@ -174,7 +174,6 @@ Feature: Award badges
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
@@ -191,6 +190,7 @@ Feature: Award badges
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     When I press "Award badge"
+    And I follow "Manage badges"
     And I follow "Course Badge"
     Then I should see "Recipients (2)"
     And I log out
@@ -225,7 +225,6 @@ Feature: Award badges
       | id_completion | 1                     |
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
@@ -279,7 +278,6 @@ Feature: Award badges
     And I press "Save changes"
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
@@ -328,7 +326,6 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     # Create course badge 1.
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge 1 |
       | Description | Course badge description |
@@ -347,13 +344,13 @@ Feature: Award badges
     # Award course badge 1 to student 1.
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     When I press "Award badge"
+    And I follow "Manage badges"
     And I follow "Course Badge 1"
     And I follow "Recipients (1)"
     Then I should see "Recipients (1)"
     # Add course badge 2.
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge 2 |
       | Description | Course badge description |
@@ -372,6 +369,7 @@ Feature: Award badges
     # Award course badge 2 to student 2.
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
     When I press "Award badge"
+    And I follow "Manage badges"
     And I follow "Course Badge 2"
     And I follow "Recipients (1)"
     Then I should see "Recipients (1)"
@@ -409,7 +407,6 @@ Feature: Award badges
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
@@ -426,6 +423,7 @@ Feature: Award badges
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     When I press "Award badge"
+    And I follow "Manage badges"
     And I follow "Course Badge"
     Then I should see "Recipients (2)"
     And I follow "Recipients (2)"
@@ -434,5 +432,6 @@ Feature: Award badges
     And I press "Revoke badge"
     And I set the field "existingrecipients[]" to "Student 1 (student1@example.com)"
     When I press "Revoke badge"
+    And I follow "Manage badges"
     And I follow "Course Badge"
     Then I should see "Recipients (0)"
