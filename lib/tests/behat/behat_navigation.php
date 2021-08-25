@@ -165,7 +165,7 @@ class behat_navigation extends behat_base {
 
         if ($this->running_javascript()) {
             // The user menu must be expanded when JS is enabled.
-            $xpath = "//div[contains(concat(' ', @class, ' '), ' usermenu ')]//button[contains(concat(' ', @class, ' '), ' dropdown-toggle ')]";
+            $xpath = "//div[contains(concat(' ', @class, ' '), ' usermenu ')]//a[contains(concat(' ', @class, ' '), ' dropdown-toggle ')]";
             $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
         }
 
