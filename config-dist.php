@@ -880,6 +880,10 @@ $CFG->admin = 'admin';
 // $CFG->behat_wwwroot = 'http://127.0.0.1/moodle';
 // $CFG->behat_prefix = 'bht_';
 // $CFG->behat_dataroot = '/home/example/bht_moodledata';
+// $CFG->behat_dbname = 'behat'; // optional
+// $CFG->behat_dbuser = 'username'; // optional
+// $CFG->behat_dbpass = 'password'; // optional
+// $CFG->behat_dbhost = 'localhost'; // optional
 //
 // You can override default Moodle configuration for Behat and add your own
 // params; here you can add more profiles, use different Mink drivers than Selenium...
