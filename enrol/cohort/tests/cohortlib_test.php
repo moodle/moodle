@@ -135,4 +135,82 @@ class enrol_cohort_lib_testcase extends advanced_testcase {
         // Cohort-sync has enrol actions for suspended students -- unenrol.
         $this->assertCount(1, $actions);
     }
+
+    public function test_enrol_cohort_unenrolaction_suspend_only() {
+        global $CFG, $DB, $PAGE;
+        $this->resetAfterTest();
+
+        $trace = new null_progress_trace();
+
+        $cohortplugin = enrol_get_plugin('cohort');
+        $cohortplugin->set_config('unenrolaction', ENROL_EXT_REMOVED_SUSPEND);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->assertNotEmpty($studentrole);
+
+        // Setup a test course.
+        $course = $this->getDataGenerator()->create_course();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $cohort = $this->getDataGenerator()->create_cohort();
+
+        $cohortplugin->add_instance($course, ['customint1' => $cohort->id,
+            'roleid' => $studentrole->id]
+        );
+
+        cohort_add_member($cohort->id, $user1->id);
+        cohort_add_member($cohort->id, $user2->id);
+        cohort_add_member($cohort->id, $user3->id);
+        cohort_add_member($cohort->id, $user4->id);
+
+        // Test sync.
+        enrol_cohort_sync($trace, $course->id);
+
+        // All users should be enrolled.
+        $this->assertTrue(is_enrolled(context_course::instance($course->id), $user1));
+        $this->assertTrue(is_enrolled(context_course::instance($course->id), $user2));
+        $this->assertTrue(is_enrolled(context_course::instance($course->id), $user3));
+        $this->assertTrue(is_enrolled(context_course::instance($course->id), $user4));
+
+        // Remove cohort member.
+        cohort_remove_member($cohort->id, $user1->id);
+        $this->assertTrue(is_enrolled(context_course::instance($course->id), $user1));
+
+        // Run the sync again.
+        enrol_cohort_sync($trace, $course->id);
+
+        $enrolid = $DB->get_field('enrol', 'id', ['enrol' => 'cohort', 'customint1' => $cohort->id]);
+        $ue = $DB->get_record('user_enrolments', ['enrolid' => $enrolid, 'userid' => $user1->id]);
+
+        // Check user is suspended.
+        $this->assertEquals($ue->status, ENROL_USER_SUSPENDED);
+        // Check that user4 still have student role.
+        $userrole = $DB->get_record('role_assignments', ['userid' => $user1->id]);
+        $this->assertNotEmpty($userrole);
+        $this->assertEquals($studentrole->id, $userrole->roleid);
+
+        // Delete the cohort.
+        cohort_delete_cohort($cohort);
+
+        // Run the sync again.
+        enrol_cohort_sync($trace, $course->id);
+
+        $ue = $DB->get_records('user_enrolments', ['enrolid' => $enrolid], '', 'userid, status, enrolid');
+
+        // Check users are suspended.
+        $this->assertEquals($ue[$user2->id]->status, ENROL_USER_SUSPENDED);
+        $this->assertEquals($ue[$user3->id]->status, ENROL_USER_SUSPENDED);
+        $this->assertEquals($ue[$user4->id]->status, ENROL_USER_SUSPENDED);
+
+        // Check that users still have student role.
+        $usersrole = $DB->get_records('role_assignments', ['itemid' => $enrolid], '', 'userid, roleid');
+        $this->assertNotEmpty($usersrole);
+        $this->assertEquals($studentrole->id, $usersrole[$user2->id]->roleid);
+        $this->assertEquals($studentrole->id, $usersrole[$user3->id]->roleid);
+        $this->assertEquals($studentrole->id, $usersrole[$user4->id]->roleid);
+    }
 }
