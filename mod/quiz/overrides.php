@@ -108,17 +108,16 @@ if ($groupmode) {
     // User overrides.
     $colclasses[] = 'colname';
     $headers[] = get_string('user');
-    // TODO Does not support custom user profile fields (MDL-70456).
-    $userfieldsapi = \core_user\fields::for_identity($context, false)->with_name()->with_userpic();
+    $userfieldsapi = \core_user\fields::for_identity($context)->with_name()->with_userpic();
     $extrauserfields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
+    $userfieldssql = $userfieldsapi->get_sql('u', true, '', 'userid', false);
     foreach ($extrauserfields as $field) {
         $colclasses[] = 'col' . $field;
         $headers[] = \core_user\fields::get_display_name($field);
     }
 
-    list($sort, $params) = users_order_by_sql('u');
+    list($sort, $params) = users_order_by_sql('u', null, $context, $extrauserfields);
     $params['quizid'] = $quiz->id;
-    $userfields = $userfieldsapi->get_sql('u', true, '', 'userid', false)->selects;
 
     if ($showallgroups) {
         $groupsjoin = '';
@@ -137,14 +136,15 @@ if ($groupmode) {
     }
 
     $overrides = $DB->get_records_sql("
-            SELECT o.*, $userfields
+            SELECT o.*, {$userfieldssql->selects}
               FROM {quiz_overrides} o
               JOIN {user} u ON o.userid = u.id
+                  {$userfieldssql->joins}
               $groupsjoin
              WHERE o.quiz = :quizid
                $groupswhere
              ORDER BY $sort
-            ", $params);
+            ", array_merge($params, $userfieldssql->params));
 }
 
 // Initialise table.
