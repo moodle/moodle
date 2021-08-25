@@ -82,8 +82,6 @@ $form->set_data(array(
     'course' => $course->id
 ));
 
-$importresults = '';
-
 $formdata = $form->get_data();
 if (!empty($formdata)) {
     require_sesskey(); // Must have sesskey for all actions.
@@ -112,6 +110,7 @@ if (!empty($formdata)) {
     if (calendar_can_edit_subscription($subscriptionid)) {
         try {
             $importresults = calendar_process_subscription_row($subscriptionid, $pollinterval, $action);
+            redirect($PAGE->url, $importresults);
         } catch (moodle_exception $e) {
             // If exception caught, then user should be redirected to page where he/she came from.
             print_error($e->errorcode, $e->module, $PAGE->url);
@@ -205,7 +204,7 @@ foreach($subscriptions as $subscription) {
 }
 
 // Display a table of subscriptions.
-echo $renderer->subscription_details($courseid, $subscriptions, $importresults);
+echo $renderer->subscription_details($courseid, $subscriptions);
 // Display the add subscription form.
 $form->display();
 echo $OUTPUT->footer();
