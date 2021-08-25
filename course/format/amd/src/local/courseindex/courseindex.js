@@ -49,6 +49,7 @@ export default class Component extends BaseComponent {
             SECTIONHIDDEN: 'dimmed',
             CMHIDDEN: 'dimmed',
             SECTIONCURRENT: 'current',
+            COLLAPSED: `collapsed`,
         };
         // Arrays to keep cms and sections elements.
         this.sections = {};
@@ -111,8 +112,10 @@ export default class Component extends BaseComponent {
     _setupSectionTogglers(event) {
         const sectionlink = event.target.closest(this.selectors.TOGGLER);
         if (sectionlink) {
-            event.preventDefault();
-            sectionlink.parentNode.querySelector(this.selectors.COLLAPSE).click();
+            const toggler = sectionlink.parentNode.querySelector(this.selectors.COLLAPSE);
+            if (toggler?.classList.contains(this.classes.COLLAPSED)) {
+                toggler.click();
+            }
         }
     }
 
