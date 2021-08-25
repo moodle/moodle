@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the export questions form.
+ * Defines the import questions form.
  *
  * @package    qbank_importquestions
  * @copyright  2007 Jamie Pratt me@jamiep.org
