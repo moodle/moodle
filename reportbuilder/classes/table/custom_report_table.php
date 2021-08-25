@@ -50,9 +50,10 @@ class custom_report_table extends base_report_table {
      * dynamic updates continue to load the same report
      *
      * @param string $uniqueid
+     * @param string $download
      * @throws moodle_exception For invalid unique ID
      */
-    public function __construct(string $uniqueid) {
+    public function __construct(string $uniqueid, string $download = '') {
         if (!preg_match('/^' . self::UNIQUEID_PREFIX . '(?<id>\d+)$/', $uniqueid, $matches)) {
             throw new moodle_exception('invalidcustomreportid', 'core_reportbuilder', '', null, $uniqueid);
         }
@@ -73,6 +74,10 @@ class custom_report_table extends base_report_table {
 
         $this->set_attribute('data-region', 'reportbuilder-table');
         $this->set_attribute('class', $this->attributes['class'] . ' reportbuilder-table');
+
+        // Download options.
+        $this->showdownloadbuttonsat = [TABLE_P_BOTTOM];
+        $this->is_downloading($download ?? null, $this->persistent->get_formatted_name());
 
         // Retrieve all report columns, exit early if there are none.
         $columns = $this->get_active_columns();
@@ -126,10 +131,11 @@ class custom_report_table extends base_report_table {
      * Return a new instance of the class for given report ID
      *
      * @param int $reportid
+     * @param string $download
      * @return static
      */
-    public static function create(int $reportid): self {
-        return new static(self::UNIQUEID_PREFIX . $reportid);
+    public static function create(int $reportid, string $download = ''): self {
+        return new static(self::UNIQUEID_PREFIX . $reportid, $download);
     }
 
     /**
@@ -176,12 +182,11 @@ class custom_report_table extends base_report_table {
     }
 
     /**
-     * Get the html for the download buttons
+     * Download is disabled when editing the report
      *
      * @return string
      */
     public function download_buttons(): string {
-        // TODO.
         return '';
     }
 
@@ -255,22 +260,6 @@ class custom_report_table extends base_report_table {
     }
 
     /**
-     * Override start of HTML to remove top pagination
-     */
-    public function start_html() {
-        // Render the dynamic table header.
-        echo $this->get_dynamic_table_html_start();
-
-        // Render button to allow user to reset table preferences.
-        echo $this->render_reset_button();
-
-        $this->wrap_html_start();
-
-        echo html_writer::start_tag('div', array('class' => 'no-overflow'));
-        echo html_writer::start_tag('table', $this->attributes);
-    }
-
-    /**
      * Override print_nothing_to_display to ensure that column headers are always added.
      */
     public function print_nothing_to_display() {
@@ -282,7 +271,7 @@ class custom_report_table extends base_report_table {
         echo html_writer::end_tag('div');
         $this->wrap_html_finish();
 
-        $notification = (new notification(get_string('nothingtodisplay'), notification::NOTIFY_INFO))
+        $notification = (new notification(get_string('nothingtodisplay'), notification::NOTIFY_INFO, false))
             ->set_extra_classes(['mt-3']);
         echo $OUTPUT->render($notification);
 

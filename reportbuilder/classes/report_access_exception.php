@@ -31,8 +31,10 @@ class report_access_exception extends moodle_exception {
 
     /**
      * Constructor
+     *
+     * @param string $errorcode
      */
-    public function __construct() {
-        parent::__construct('errorreportaccess', 'reportbuilder');
+    public function __construct(string $errorcode = 'errorreportview') {
+        parent::__construct($errorcode, 'reportbuilder');
     }
 }

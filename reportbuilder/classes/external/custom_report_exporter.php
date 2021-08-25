@@ -49,16 +49,25 @@ class custom_report_exporter extends persistent_exporter {
     /** @var bool $showeditbutton When showing the report on view.php the Edit button has to be hidden */
     protected $showeditbutton;
 
+    /** @var string */
+    protected $download;
+
     /**
      * report_exporter constructor.
      *
      * @param persistent $persistent
      * @param array $related
+     * @param bool $editmode
+     * @param bool $showeditbutton
+     * @param string $download
      */
-    public function __construct(persistent $persistent, array $related = array(), bool $editmode = true, bool $showeditbutton = true) {
+    public function __construct(persistent $persistent, array $related = [], bool $editmode = true,
+            bool $showeditbutton = true, string $download = '') {
+
         parent::__construct($persistent, $related);
         $this->editmode = $editmode;
         $this->showeditbutton = $showeditbutton;
+        $this->download = $download;
     }
     /**
      * Return the name of the class we are exporting
@@ -116,7 +125,17 @@ class custom_report_exporter extends persistent_exporter {
             $table = custom_report_table::create($this->persistent->get('id'));
             $table->set_filterset(new custom_report_table_filterset());
         } else {
+            $table = custom_report_table_view::create($this->persistent->get('id'), $this->download);
+            $table->set_filterset(new custom_report_table_view_filterset());
 
+            // Generate filters form if report contains any filters.
+            $source = $this->persistent->get('source');
+            /** @var datasource $datasource */
+            $datasource = new $source($this->persistent);
+
+            if (!empty($datasource->get_active_filters())) {
+                $filtersform = $this->generate_filters_form()->render();
+            }
         }
 
         $report = manager::get_report_from_persistent($this->persistent);

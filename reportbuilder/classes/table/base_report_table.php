@@ -22,6 +22,7 @@ use context;
 use moodle_url;
 use renderable;
 use table_sql;
+use html_writer;
 use core_table\dynamic;
 use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\filters\base;
@@ -197,8 +198,24 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         echo $this->get_dynamic_table_html_start();
         echo $this->render_reset_button();
 
-        echo $OUTPUT->render(new notification(get_string('nothingtodisplay'), notification::NOTIFY_INFO));
+        echo $OUTPUT->render(new notification(get_string('nothingtodisplay'), notification::NOTIFY_INFO, false));
 
         echo $this->get_dynamic_table_html_end();
+    }
+
+    /**
+     * Override start of HTML to remove top pagination.
+     */
+    public function start_html() {
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
+        $this->wrap_html_start();
+
+        echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        echo html_writer::start_tag('table', $this->attributes);
     }
 }

@@ -21,6 +21,7 @@ namespace core_reportbuilder\output;
 use html_writer;
 use plugin_renderer_base;
 use core_reportbuilder\table\custom_report_table;
+use core_reportbuilder\table\custom_report_table_view;
 use core_reportbuilder\table\system_report_table;
 
 /**
@@ -60,12 +61,39 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render a custom report
+     *
+     * @param custom_report $report
+     * @return string
+     */
+    protected function render_custom_report(custom_report $report): string {
+        $context = $report->export_for_template($this);
+
+        return $this->render_from_template('core_reportbuilder/custom_report', $context);
+    }
+
+    /**
      * Render a custom report table
      *
      * @param custom_report_table $table
      * @return string
      */
     protected function render_custom_report_table(custom_report_table $table): string {
+        ob_start();
+        $table->out($table->get_default_per_page(), false);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        return $output;
+    }
+
+    /**
+     * Render a custom report table (view only mode)
+     *
+     * @param custom_report_table_view $table
+     * @return string
+     */
+    protected function render_custom_report_table_view(custom_report_table_view $table): string {
         ob_start();
         $table->out($table->get_default_per_page(), false);
         $output = ob_get_contents();

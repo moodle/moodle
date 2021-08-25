@@ -43,17 +43,24 @@ class custom_report implements renderable, templatable {
     /** @var bool $showeditbutton */
     protected $showeditbutton;
 
+    /** @var string $download */
+    protected $download;
+
     /**
      * Class constructor
      *
      * @param report $reportpersistent
      * @param bool $editmode
      * @param bool $showeditbutton
+     * @param string $download
      */
-    public function __construct(report $reportpersistent, bool $editmode = true, bool $showeditbutton = true) {
+    public function __construct(report $reportpersistent, bool $editmode = true, bool $showeditbutton = true,
+            string $download = '') {
+
         $this->persistent = $reportpersistent;
         $this->editmode = $editmode;
         $this->showeditbutton = $showeditbutton;
+        $this->download = $download;
     }
 
     /**
@@ -63,7 +70,7 @@ class custom_report implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output): stdClass {
-        $exporter = new custom_report_exporter($this->persistent, [], $this->editmode, $this->showeditbutton);
+        $exporter = new custom_report_exporter($this->persistent, [], $this->editmode, $this->showeditbutton, $this->download);
 
         return $exporter->export($output);
     }

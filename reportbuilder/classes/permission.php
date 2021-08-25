@@ -54,6 +54,34 @@ class permission {
     }
 
     /**
+     * Require given user can view report
+     *
+     * @param report $report
+     * @param int|null $userid User ID to check, or the current user if omitted
+     * @throws report_access_exception
+     */
+    public static function require_can_view_report(report $report, ?int $userid = null): void {
+        if (!static::can_view_report($report, $userid)) {
+            throw new report_access_exception('errorreportview');
+        }
+    }
+
+    /**
+     * Whether given user can view report
+     *
+     * @param report $report
+     * @param int|null $userid User ID to check, or the current user if omitted
+     * @return bool
+     */
+    public static function can_view_report(report $report, ?int $userid = null): bool {
+        if (!static::can_view_reports_list()) {
+            return false;
+        }
+
+        return true; // TODO: Audience.
+    }
+
+    /**
      * Require given user can edit report
      *
      * @param report $report

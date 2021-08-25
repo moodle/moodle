@@ -246,6 +246,18 @@ class reports_list extends system_report {
             })
         );
 
+        // Preview action.
+        $this->add_action((new action(
+            new moodle_url('/reportbuilder/view.php', ['id' => ':id']),
+            new pix_icon('i/search', get_string('view', 'moodle')),
+            []
+        ))
+            ->add_callback(function(stdClass $row): bool {
+                // We check this only to give the action to editors, because normal users can just click on the report name.
+                return $this->report_source_valid($row->source) && permission::can_edit_report($this->get_report_from_row($row));
+            })
+        );
+
         // Delete action.
         $this->add_action((new action(
             new moodle_url('#'),

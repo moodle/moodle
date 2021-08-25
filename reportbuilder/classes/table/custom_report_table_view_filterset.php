@@ -1,3 +1,4 @@
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -13,44 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+declare(strict_types=1);
+
+namespace core_reportbuilder\table;
+
 /**
- * Module to handle report AJAX requests
+ * Custom report dynamic table filterset class
  *
- * @module      core_reportbuilder/local/repository/reports
  * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-import Ajax from 'core/ajax';
-
-/**
- * Delete given report
- *
- * @param {Number} reportId
- * @return {Promise}
- */
-export const deleteReport = reportId => {
-    const request = {
-        methodname: 'core_reportbuilder_reports_delete',
-        args: {reportid: reportId}
-    };
-
-    return Ajax.call([request])[0];
-};
-
-/**
- * Get report content
- *
- * @param {Number} reportId
- * @param {Boolean} editMode
- * @return {Promise}
- */
-export const getReport = (reportId, editMode) => {
-    const request = {
-        methodname: 'core_reportbuilder_reports_get',
-        args: {reportid: reportId, editmode: editMode}
-    };
-
-    return Ajax.call([request])[0];
-};
+class custom_report_table_view_filterset extends custom_report_table_filterset {
+}

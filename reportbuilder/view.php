@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit a custom report
+ * View a custom report
  *
  * @package   core_reportbuilder
  * @copyright 2021 David Matamoros <davidmc@moodle.com>
@@ -33,10 +33,10 @@ require_once("{$CFG->libdir}/adminlib.php");
 
 $reportid = required_param('id', PARAM_INT);
 
-admin_externalpage_setup('customreports', null, ['id' => $reportid], new moodle_url('/reportbuilder/edit.php'));
+admin_externalpage_setup('customreports', null, ['id' => $reportid], new moodle_url('/reportbuilder/view.php'));
 
 $report = manager::get_report_from_id($reportid);
-permission::require_can_edit_report($report->get_report_persistent());
+permission::require_can_view_report($report->get_report_persistent());
 
 $PAGE->set_context($report->get_context());
 
@@ -50,7 +50,7 @@ $PAGE->set_heading($reportname);
 
 echo $OUTPUT->header();
 
-$customreport = (new custom_report($report->get_report_persistent()));
+$customreport = (new custom_report($report->get_report_persistent(), false, false));
 echo $renderer->render($customreport);
 
 echo $OUTPUT->footer();

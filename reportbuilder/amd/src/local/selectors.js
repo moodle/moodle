@@ -60,6 +60,7 @@ const SELECTORS = {
         reportToggleColumnSort: '[data-action="report-toggle-column-sorting"]',
         reportToggleColumnSortDirection: '[data-action="report-toggle-sort-direction"]',
         sidebarSearch: '[data-action="sidebar-search"]',
+        toggleEditPreview: '[data-action="toggle-edit-preview"]',
     },
 };
 
