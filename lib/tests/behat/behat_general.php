@@ -1717,7 +1717,7 @@ EOF;
     }
 
     /**
-     * Press a named key with an optional set of modifiers.
+     * Press a named or character key with an optional set of modifiers.
      *
      * Supported named keys are:
      * - up
@@ -1734,6 +1734,8 @@ EOF;
      * - escape
      * - enter
      * - tab
+     *
+     * You can also use a single character for the key name e.g. 'Ctrl C'.
      *
      * Supported moderators are:
      * - shift
@@ -1830,7 +1832,12 @@ EOF;
                 $keys[] = behat_keys::SPACE;
                 break;
             default:
-                throw new \coding_exception("Unknown key '$key'}");
+                // You can enter a single ASCII character (e.g. a letter) to directly type that key.
+                if (strlen($key) === 1) {
+                    $keys[] = strtolower($key);
+                } else {
+                    throw new \coding_exception("Unknown key '$key'}");
+                }
         }
 
         behat_base::type_keys($this->getSession(), $keys);
