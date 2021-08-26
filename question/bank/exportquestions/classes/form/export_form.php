@@ -17,12 +17,14 @@
 /**
  * Defines the export questions form.
  *
- * @package    moodlecore
- * @subpackage questionbank
+ * @package    qbank_exportquestions
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace qbank_exportquestions\form;
+
+use moodleform;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,15 +36,15 @@ require_once($CFG->libdir . '/formslib.php');
  *
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated since Moodle 4.0 MDL-71573
- * @see qbank_exportquestions\form\export_form
  */
-class question_export_form extends moodleform {
+class export_form extends moodleform {
 
+    /**
+     * Build the form definition.
+     *
+     * This adds all the form fields that the export questions feature needs.
+     */
     protected function definition() {
-        debugging('Class question_export_form in \core_question\export_form is deprecated,
-        please use core_question\bank\exportquestions\export_form instead.', DEBUG_DEVELOPER);
-
         global $OUTPUT;
 
         $mform = $this->_form;
@@ -54,8 +56,8 @@ class question_export_form extends moodleform {
         $mform->addElement('header', 'fileformat', get_string('fileformat', 'question'));
 
         $fileformatnames = get_import_export_formats('export');
-        $radioarray = array();
-        $separators = array();
+        $radioarray = [];
+        $separators = [];
         foreach ($fileformatnames as $shortname => $fileformatname) {
             $radioarray[] = $mform->createElement('radio', 'format', '', $fileformatname, $shortname);
 
@@ -75,11 +77,11 @@ class question_export_form extends moodleform {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('questioncategory', 'category', get_string('exportcategory', 'question'),
-                array('contexts' => $contexts, 'top' => true));
+                ['contexts' => $contexts, 'top' => true]);
         $mform->setDefault('category', $defaultcategory);
         $mform->addHelpButton('category', 'exportcategory', 'question');
 
-        $categorygroup = array();
+        $categorygroup = [];
         $categorygroup[] = $mform->createElement('checkbox', 'cattofile', '', get_string('tofilecategory', 'question'));
         $categorygroup[] = $mform->createElement('checkbox', 'contexttofile', '', get_string('tofilecontext', 'question'));
         $mform->addGroup($categorygroup, 'categorygroup', '', '', false);
@@ -87,7 +89,7 @@ class question_export_form extends moodleform {
         $mform->setDefault('cattofile', 1);
         $mform->setDefault('contexttofile', 1);
 
-        // Set a template for the format select elements
+        // Set a template for the format select elements.
         $renderer = $mform->defaultRenderer();
         $template = "{help} {element}\n";
         $renderer->setGroupElementTemplate($template, 'format');

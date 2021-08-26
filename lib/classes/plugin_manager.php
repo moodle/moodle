@@ -1939,7 +1939,9 @@ class core_plugin_manager {
             ),
 
             'qbank' => [
-                'deletequestion', 'importquestions',
+                'deletequestion',
+                'exportquestions',
+                'importquestions',
             ],
 
             'qbehaviour' => array(

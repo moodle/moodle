@@ -2336,9 +2336,13 @@ function core_question_question_preview_pluginfile($previewcontext, $questionid,
  * @param string $withcategories
  * @param string $ithcontexts
  * @param moodle_url export file url
+ * @deprecated since Moodle 4.0 MDL-71573
+ * @see qbank_exportquestions\exportquestions_helper
  */
 function question_make_export_url($contextid, $categoryid, $format, $withcategories,
         $withcontexts, $filename) {
+    debugging('Function question_make_export_url() has been deprecated and moved to qbank_exportquestions plugin,
+    Please use qbank_exportquestions\exportquestions_helper::question_make_export_url() instead.', DEBUG_DEVELOPER);
     global $CFG;
     $urlbase = "$CFG->wwwroot/pluginfile.php";
     return moodle_url::make_file_url($urlbase,
