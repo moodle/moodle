@@ -24,8 +24,9 @@
 }}
 <div data-region="view-selector" class="btn-group mb-1">
     <button type="button" class="btn btn-outline-secondary dropdown-toggle icon-no-margin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-            aria-label="{{#str}} ariaviewselector, block_timeline{{/str}}" aria-controls="menusortby">
-        <span data-active-item-text>
+            aria-label="{{#str}} ariaviewselector, block_timeline{{/str}}" aria-controls="menusortby"
+            title="{{#str}} ariaviewselector, block_timeline{{/str}}" aria-describedby="timeline-view-selector-current-selection">
+        <span id="timeline-view-selector-current-selection" data-active-item-text>
             {{#sorttimelinecourses}}{{#str}} sortbycourses, block_timeline{{/str}}{{/sorttimelinecourses}}
             {{#sorttimelinedates}}{{#str}} sortbydates, block_timeline {{/str}}{{/sorttimelinedates}}
         </span>
