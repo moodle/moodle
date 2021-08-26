@@ -186,6 +186,7 @@ class discussion_list {
             'forum' => (array) $forumexporter->export($this->renderer),
             'contextid' => $forum->get_context()->id,
             'cmid' => $cm->id,
+            'groupid' => $groupid,
             'name' => format_string($forum->get_name()),
             'courseid' => $course->id,
             'coursename' => format_string($course->shortname),
