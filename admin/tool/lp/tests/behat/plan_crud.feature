@@ -152,7 +152,6 @@ Feature: Manage plearning plan
     And I create a course with:
       | Course full name | New course fullname |
       | Course short name | New course shortname |
-    And I follow "New course fullname"
     And I follow "Competencies"
     And I press "Add competencies to course"
     And "Competency picker" "dialogue" should be visible
