@@ -95,7 +95,7 @@ if ($fromform = $exportform->get_data()) {
 
     echo $OUTPUT->continue_button(new moodle_url($PAGE->settingsnav->find(
                                             'questionbank',
-                                            \navigation_node::TYPE_CONTAINER)->action->get_path(), $thispageurl->params()));
+                                            \navigation_node::TYPE_CONTAINER)->action, $thispageurl->params()));
     echo $OUTPUT->footer();
     exit;
 }
