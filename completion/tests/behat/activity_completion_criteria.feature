@@ -61,7 +61,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
   @javascript
   Scenario: Update course completion when teacher grades a single assignment
     Given I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
@@ -90,7 +90,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I set the field "Assignment - Test assignment name2" to "1"
     And I press "Save changes"
     And I am on the "Test assignment name" "assign activity" page
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
@@ -101,7 +101,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I should see "Status: In progress"
     And I log out
     And I am on the "Test assignment name2" "assign activity" page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
