@@ -1940,6 +1940,7 @@ class core_plugin_manager {
 
             'qbank' => [
                 'deletequestion',
+                'editquestion',
                 'exportquestions',
                 'importquestions',
             ],

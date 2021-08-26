@@ -17,30 +17,27 @@
 /**
  * The qbank_chooser renderable.
  *
- * @package    core_question
+ * @package    qbank_editquestion
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_question\output;
-defined('MOODLE_INTERNAL') || die();
+namespace qbank_editquestion;
 
+use context;
 use context_course;
 use core\output\chooser_section;
 use lang_string;
 use moodle_url;
 use question_bank;
-
+use stdClass;
 
 /**
  * The qbank_chooser renderable class.
  *
- * @package    core_question
+ * @package    qbank_editquestion
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated since Moodle 4.0
- * @see \qbank_editquestion\qbank_chooser
- * @todo MDL-72004 delete the class and add it to lib/db/renameclasses.php pointing to the plugin
  */
 class qbank_chooser extends \core\output\chooser {
 
@@ -67,7 +64,7 @@ class qbank_chooser extends \core\output\chooser {
                 }, $fake));
         }
 
-        parent::__construct(new moodle_url('/question/question.php'),
+        parent::__construct(new moodle_url('/question/bank/editquestion/question.php'),
                 new lang_string('chooseqtypetoadd', 'question'), $sections, 'qtype');
 
         $this->set_instructions(new lang_string('selectaqtypefordescription', 'question'));
@@ -87,7 +84,7 @@ class qbank_chooser extends \core\output\chooser {
      * @param array|null $allowedqtypes Allowed question types.
      * @return qbank_chooser
      */
-    public static function get($course, $hiddenparams, array $allowedqtypes = null) {
+    public static function get($course, $hiddenparams, array $allowedqtypes = null): qbank_chooser {
         $realqtypes = array();
         $fakeqtypes = array();
 
