@@ -43,7 +43,7 @@ Feature: I can grade a students by group with separate groups
     And I set the field "Whole forum grading > Type" to "Point"
     And I set the field "Common module settings > Group mode" to "Separate groups"
     And I press "Save and return to course"
-    And I follow "Test Forum 1"
+    And I am on the "Test Forum 1" "forum activity" page
 
   @javascript
   Scenario: Grade users by group A
