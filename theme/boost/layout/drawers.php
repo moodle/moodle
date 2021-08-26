@@ -71,11 +71,19 @@ $buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_action
 $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
 
 $secondarynavigation = false;
+$overflow = false;
 if (!defined('BEHAT_SITE_RUNNING')) {
     $buildsecondarynavigation = $PAGE->has_secondary_navigation();
     if ($buildsecondarynavigation) {
-        $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs');
+        $secondary = $PAGE->secondarynav;
+        $moremenu = new \core\navigation\output\more_menu($secondary, 'nav-tabs');
         $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+
+        // Get the pre-content stuff.
+        $overflowdata = $secondary->get_overflow_menu_data();
+        if (!is_null($overflowdata)) {
+            $overflow = $overflowdata->export_for_template($OUTPUT);
+        }
     }
 }
 
@@ -100,6 +108,7 @@ $templatecontext = [
     'usermenu' => $primarymenu['user'],
     'langmenu' => $primarymenu['lang'],
     'forceblockdraweropen' => $forceblockdraweropen,
+    'overflow' => $overflow
 ];
 
 $nav = $PAGE->flatnav;
