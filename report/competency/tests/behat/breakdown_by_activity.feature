@@ -41,9 +41,7 @@ Feature: See the competencies for an activity
     And "Competency picker" "dialogue" should be visible
     And I select "Test-Comp2" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
-    And I am on "Course 1" course homepage
-    And I follow "PageName1"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the PageName1 "page activity editing" page
     And I follow "Expand all"
     And I set the field "Course competencies" to "Test-Comp1"
     And I press "Save and return to course"
