@@ -17,7 +17,6 @@
  * Report builder report management
  *
  * @module      core_reportbuilder/report
- * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,8 +27,9 @@ import {setPageNumber, refreshTableContent} from 'core_table/dynamic';
 import * as tableSelectors from 'core_table/local/dynamic/selectors';
 
 /**
- * Initialise module
+ * Initialise module for given report
  *
+ * @method
  * @param {Number} reportId
  */
 export const init = reportId => {

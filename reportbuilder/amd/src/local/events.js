@@ -17,13 +17,30 @@
  * Report builder events
  *
  * @module      core_reportbuilder/local/events
- * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Events for the Report builder subsystem
+ *
+ * @constant
+ * @property {String} tableReload See {@link event:tableReload}
+ */
 export default {
-    // Trigger table reloading, passing optional `preservePagination` details argument can be used to
-    // define whether current pagination should be preserved (default is false, i.e. reload first page.)
+    /**
+     * Trigger table reloading
+     *
+     * @event tableReload
+     * @type {CustomEvent}
+     * @property {object} detail
+     * @property {Boolean} detail.preservePagination Whether current pagination should be preserved (default false)
+     *
+     * @example <caption>Triggering table reload</caption>
+     * import {dispatchEvent} from 'core/event_dispatcher';
+     * import * as reportEvents from 'core_reportbuilder/local/events';
+     *
+     * dispatchEvent(reportEvents.tableReload, {}, document.querySelector(...));
+     */
     tableReload: 'core_reportbuilder_table_reload',
 };
