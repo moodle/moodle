@@ -3163,6 +3163,11 @@
           <ON_CHECK message="sixtyfourbitswarning" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_igbinary322_version" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="igbinary322buggyversion" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="3.10" requires="3.5">
@@ -3343,6 +3348,11 @@
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_sixtyfour_bits" level="optional">
         <FEEDBACK>
           <ON_CHECK message="sixtyfourbitswarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_igbinary322_version" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="igbinary322buggyversion" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
