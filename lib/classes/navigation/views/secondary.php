@@ -57,6 +57,7 @@ class secondary extends view {
                 'gradebooksetup' => 2.1,
                 'outcomes' => 2.2,
                 'coursecompletion' => 6,
+                'filtermanagement' => 9,
             ],
         ];
         $nodes['navigation'] = [
