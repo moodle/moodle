@@ -27,7 +27,7 @@ Feature: Managers can create courses
     And I log out
     And I am on the Announcements "forum activity" page logged in as student1
     And "Add a new topic" "link" should not exist
-    And "Forced subscription" "text" should exist in current page administration
+    And "Forced subscription" "text" should exist
 
   Scenario: Create a course from the management interface and return to it
     Given the following "courses" exist:

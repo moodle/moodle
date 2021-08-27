@@ -24,7 +24,7 @@ Feature: The questions in the question bank can be selected in various ways
       | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
 
   @javascript
   Scenario: The question text can be chosen all in the list of questions

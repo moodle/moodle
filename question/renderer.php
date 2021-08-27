@@ -48,7 +48,7 @@ class core_question_bank_renderer extends plugin_renderer_base {
                 foreach ($children as $key => $node) {
                     $tabs[] = new \tabobject($node->key, $node->action, $node->text);
                 }
-                if (empty($active)) {
+                if (empty($active) && $questionnode->find_active_node()) {
                     $active = $questionnode->find_active_node()->key;
                 }
                 return \html_writer::div(print_tabs([$tabs], $active, null, null, true),

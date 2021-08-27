@@ -325,7 +325,7 @@ class behat_grade extends behat_base {
         // If we are not on one of the gradebook pages already, follow "Grades" link in the navigation drawer.
         $xpath = '//div[contains(@class,\'grade-navigation\')]';
         if (!$this->getSession()->getPage()->findAll('xpath', $xpath)) {
-            $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', get_string('grades'));
+            $this->execute('behat_navigation::i_select_from_secondary_navigation', get_string('grades'));
         }
 
         $this->select_in_gradebook_tabs($gradepath);

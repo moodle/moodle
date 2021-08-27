@@ -20,7 +20,8 @@ Feature: In a course administration page, navigate through report page, test for
   Scenario: Selector should be available in the course competency page
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    When I navigate to "Reports > Competency breakdown" in current page administration
+    When I navigate to "Reports" in current page administration
+    And I select "Competency breakdown" from the "Report type" singleselect
     Then "Report" "field" should exist
     And the "Report" select box should contain "Competency breakdown"
     And the field "Report" matches value "Competency breakdown"

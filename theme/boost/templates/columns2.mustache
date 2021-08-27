@@ -58,7 +58,6 @@
     {{{ output.standard_top_of_body_html }}}
 
     {{> theme_boost/navbar }}
-    {{> theme_boost/nav-drawer }}
 
     <div id="page" class="container-fluid d-print-block">
         {{{ output.full_header }}}
@@ -71,7 +70,7 @@
             <div id="region-main-box" class="col-12">
                 {{#hasregionmainsettingsmenu}}
                 <div id="region-main-settings-menu" class="d-print-none {{#hasblocks}}has-blocks{{/hasblocks}}">
-                    <div> {{{ output.region_main_settings_menu }}} </div>
+                    <div> {{{ regionmainsettingsmenu }}} </div>
                 </div>
                 {{/hasregionmainsettingsmenu}}
                 <section id="region-main" {{#hasblocks}}class="has-blocks mb-3"{{/hasblocks}} aria-label="{{#str}}content{{/str}}">

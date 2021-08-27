@@ -28,7 +28,7 @@ Feature: Adding questions to a quiz from the question bank
   Scenario: The questions can be filtered by tag
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    When I navigate to "Question bank > Questions" in current page administration
+    When I navigate to "Question bank" in current page administration
     And I choose "Edit question" action for "question 01 name" in the question bank
     And I set the following fields to these values:
       | Tags | foo |

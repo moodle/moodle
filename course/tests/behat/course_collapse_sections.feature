@@ -155,7 +155,7 @@ Feature: Collapse course sections
       | Course layout | Show one section per page |
     And I press "Save and display"
     And "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
-    And I follow "Topic 2"
+    And I click on "Topic 2" "link" in the "region-main" "region"
     And I should see "Assignment 2" in the "region-main" "region"
     And "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
     Then "Topic 1" "section" should not exist
@@ -178,7 +178,7 @@ Feature: Collapse course sections
       | Course layout | Show one section per page |
     And I press "Save and display"
     And "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
-    And I follow "8 May - 14 May"
+    And I click on "8 May - 14 May" "link" in the "region-main" "region"
     And I should see "Assignment 2" in the "region-main" "region"
     And "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
     Then "1 May - 7 May" "section" should not exist

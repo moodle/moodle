@@ -71,7 +71,9 @@ class behat_mod_lesson_behat extends behat_base {
         try {
             $this->execute("behat_general::click_link", [get_string('edit', 'mod_lesson')]);
         } catch (ElementNotFoundException $e) {
-            $this->execute("behat_general::i_click_on", [get_string('edit', 'mod_lesson'), 'button']);
+            $this->execute("behat_general::i_click_on_in_the",
+                [get_string('edit', 'mod_lesson'), 'button', 'region-main', 'region']
+            );
         }
     }
 }

@@ -58,7 +58,6 @@ Feature: Settings form fields disabled if not required
         | Override user    | Student1 |
         | Attempts allowed | 3        |
     And I press "Save"
-    And I follow "Test quiz"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
@@ -72,7 +71,6 @@ Feature: Settings form fields disabled if not required
     And I click on "Edit" "link" in the "region-main" "region"
     And I set the field "Attempts allowed" to "2"
     And I press "Save"
-    And I follow "Test quiz"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
@@ -88,7 +86,6 @@ Feature: Settings form fields disabled if not required
         | Override user    | Student2  |
         | Attempts allowed | Unlimited |
     And I press "Save"
-    And I follow "Test quiz"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"

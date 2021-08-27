@@ -58,7 +58,6 @@ Feature: Block appearances
     And I set the following fields to these values:
       | Visible | No |
     And I press "Save changes"
-    And I click on "Topic 1" "link"
-    And I turn editing mode off
+    And I am on "Course 1" course homepage with editing mode off
     And I click on "Test book name" "link" in the "region-main" "region"
     Then I should not see "Comments"

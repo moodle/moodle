@@ -465,7 +465,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     When I press "Log in as a guest"
     Then I should see "If you continue browsing this website, you agree to our policies"
     # Confirm when navigating, the pop-up policies are displayed.
-    When I follow "Home"
+    When I am on the "My courses" page
     Then I should see "If you continue browsing this website, you agree to our policies"
     And I should see "This site policy"
     And I should see "This guests policy"

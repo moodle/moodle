@@ -35,6 +35,7 @@ Feature: Converting rubric score to grades
       | Criterion 2 | Level 21 | 20 | Level 22 | 25 | Level 23 | 30 |           |     |
       | Criterion 3 | Level 31 | 10 | Level 32 | 20 |          |    |           |     |
     And I press "Save rubric and make it ready"
+    And I navigate to "Assignment" in current page administration
     # Grading a student.
     And I go to "Student 1" "Test assignment 1" activity advanced grading page
     And I grade by filling the rubric with:

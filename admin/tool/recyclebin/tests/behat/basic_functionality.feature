@@ -124,8 +124,7 @@ Feature: Basic recycle bin functionality
   Scenario: Show recycle bin on category action menu
     Given I log in as "admin"
     And I navigate to "Courses >  Manage courses and categories" in site administration
-    And I click on "Actions menu" "link"
-    And I click on "Recycle bin" "link"
+    And I navigate to "Recycle bin" in current page administration
     Then I should see "There are no items in the recycle bin."
 
   @javascript

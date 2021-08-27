@@ -36,7 +36,8 @@ Feature: We can customise the letter boundary of a course.
     And I turn editing mode on
     And I give the grade "57" to the user "Student 1" for the grade item "Test assignment one"
     And I press "Save changes"
-    And I turn editing mode off
+    And I am on "Course 1" course homepage with editing mode off
+    And I navigate to "View > Grader report" in the course gradebook
     Then the following should exist in the "user-grades" table:
       | -1-       | -4- | -5- |
       | Student 1 | D   | D   |

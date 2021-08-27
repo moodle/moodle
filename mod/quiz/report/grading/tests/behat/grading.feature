@@ -43,7 +43,7 @@ Feature: Basic use of the Manual grading report
     # Check report shows nothing when there are no attempts.
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher1"
     And I navigate to "Results > Manual grading" in current page administration
-    Then I should see "Manual grading"
+    Then I should see "Quiz 1" in the "//nav[contains(concat(' ', normalize-space(@aria-label), ' '), ' Navigation bar ')]" "xpath_element"
     And I should see "Quiz 1"
     And I should see "Nothing to display"
     And I follow "Also show questions that have been graded automatically"

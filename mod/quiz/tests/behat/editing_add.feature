@@ -120,7 +120,7 @@ Feature: Edit quiz page - adding things
     Then I press "id_submitbutton"
     And I should see "Subcat 2"
 
-    And I follow "Question bank"
+    And I click on "Questions" "link"
     Then I should see "Question bank"
     And I should see "Select a category"
 

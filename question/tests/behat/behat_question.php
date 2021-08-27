@@ -49,10 +49,6 @@ class behat_question extends behat_question_base {
      * @param TableNode $questiondata The data to fill the question type form.
      */
     public function i_add_a_question_filling_the_form_with($questiontypename, TableNode $questiondata) {
-
-        // Go to question bank.
-        $this->execute("behat_general::click_link", get_string('questionbank', 'question'));
-
         // Click on create question.
         $this->execute('behat_forms::press_button', get_string('createnewquestion', 'question'));
 

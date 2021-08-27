@@ -28,7 +28,7 @@ Feature: A teacher can move questions between categories in the question bank
 
   @javascript
   Scenario: Move a question between categories via the question page
-    When I navigate to "Question bank > Questions" in current page administration
+    When I navigate to "Question bank" in current page administration
     And I set the field "Select a category" to "Used category"
     And I click on "Test question to be moved" "checkbox" in the "Test question to be moved" "table_row"
     And I click on "With selected" "button"
@@ -42,7 +42,7 @@ Feature: A teacher can move questions between categories in the question bank
 
   @javascript
   Scenario: Move a question between categories via the question settings page
-    When I navigate to "Question bank > Questions" in current page administration
+    When I navigate to "Question bank" in current page administration
     And I set the field "Select a category" to "Used category"
     And I choose "Edit question" action for "Test question to be moved" in the question bank
     And I click on "Use this category" "checkbox"

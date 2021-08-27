@@ -27,9 +27,8 @@ Feature: Course activity controls works as expected
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I follow <targetpage>
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
+    When I follow the breadcrumb <targetpage>
     And I add the "Recent activity" block
     And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
@@ -99,9 +98,8 @@ Feature: Course activity controls works as expected
       | forum     | Test forum name 1      | Test forum description 1      | C1     | 0001         | 1       |
       | forum     | Test forum name 2      | Test forum description 2      | C1     | 0002         | 1       |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I follow <targetpage>
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
+    When I follow the breadcrumb <targetpage>
     And I add the "Recent activity" block
     And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"

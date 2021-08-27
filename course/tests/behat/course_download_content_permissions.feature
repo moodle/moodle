@@ -27,11 +27,13 @@ Feature: Access to downloading course content can be controlled
     And I navigate to "Settings" in current page administration
     And I set the field "Enable download course content" to "Yes"
     And I press "Save and display"
-    And "Download course content" "link" should exist in current page administration
+    And I navigate to "Course administration" in current page administration
+    And "Download course content" "link" should exist
     When the following config values are set as admin:
       | downloadcoursecontentallowed | 0 |
     And I am on "Hockey 101" course homepage
-    Then "Download course content" "link" should not exist in current page administration
+    And I navigate to "Course administration" in current page administration
+    And "Download course content" "link" should not exist
     And I navigate to "Settings" in current page administration
     And I should not see "Enable download course content"
 
@@ -43,7 +45,8 @@ Feature: Access to downloading course content can be controlled
     And I set the field "Enable download course content" to "Yes"
     And I press "Save changes"
     And I am on "Hockey 101" course homepage
-    Then "Download course content" "link" should exist in current page administration
+    And I navigate to "Course administration" in current page administration
+    Then "Download course content" "link" should exist
 
   Scenario: A teacher can enable and disable the download course content feature when it is available
     Given I log in as "teacher1"
@@ -53,11 +56,13 @@ Feature: Access to downloading course content can be controlled
     And I should see "Enable download course content"
     And I set the field "Enable download course content" to "Yes"
     And I press "Save and display"
-    Then "Download course content" "link" should exist in current page administration
+    And I navigate to "Course administration" in current page administration
+    Then "Download course content" "link" should exist
     And I navigate to "Settings" in current page administration
     And I set the field "Enable download course content" to "No"
     And I press "Save and display"
-    And "Download course content" "link" should not exist in current page administration
+    And I navigate to "Course administration" in current page administration
+    And "Download course content" "link" should not exist
 
   Scenario: Teachers require a capability to access the download course content feature or modify its availability in a course
     Given I log in as "admin"
@@ -68,7 +73,8 @@ Feature: Access to downloading course content can be controlled
     # Check teacher can see download option and enable dropdown.
     And I log in as "teacher1"
     And I am on "Hockey 101" course homepage
-    And "Download course content" "link" should exist in current page administration
+    And I navigate to "Course administration" in current page administration
+    And "Download course content" "link" should exist
     And I navigate to "Settings" in current page administration
     And "Enable download course content" "select" should exist
     And I log out
@@ -82,7 +88,8 @@ Feature: Access to downloading course content can be controlled
     # Check teacher can no longer see download option, and that enable value is visible, but dropdown no longer available.
     When I log in as "teacher1"
     And I am on "Hockey 101" course homepage
-    Then "Download course content" "link" should not exist in current page administration
+    And I navigate to "Course administration" in current page administration
+    Then "Download course content" "link" should not exist
     And I navigate to "Settings" in current page administration
     And I should see "Enable download course content"
     And I should see "Site default (Yes)"

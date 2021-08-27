@@ -98,8 +98,6 @@ Feature: In an assignment, students can comment in their submissions
       | Grade out of 100   | 50                        |
       | Feedback comments  | I'm the teacher feedback  |
     And I press "Save changes"
-    And I click on "Edit settings" "link"
-    And I follow "Test assignment name"
     And I follow "View all submissions"
     Then I should see "50.00" in the "Student 1" "table_row"
     And I should see "I'm the teacher feedback" in the "Student 1" "table_row"
