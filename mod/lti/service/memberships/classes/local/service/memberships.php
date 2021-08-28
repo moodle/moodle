@@ -360,6 +360,8 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
             $lti, $info, $response) {
         global $DB, $CFG;
 
+        $includegroups = optional_param('groups', 'false', PARAM_TEXT) === 'true';
+
         $tool = $this->get_type();
         $toolconfig = $this->get_typeconfig();
 
@@ -373,6 +375,11 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
             'context' => $context,
             'members' => []
         ];
+
+        $groups = null;
+        if ($includegroups) {
+            $groups = groups_get_all_groups($course->id, 0, 0, 'g.*', true);
+        }
 
         $islti2 = $tool->toolproxyid > 0;
         $n = 0;
@@ -467,6 +474,20 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
                 }
             }
 
+            if ($includegroups) {
+                $member->group_enrollments = array();
+                foreach ($groups as $group) {
+                    foreach ($group->members as $id) {
+                        if ($id === $user->id) {
+                            $enrollment = new \stdClass();
+                            $enrollment->group_id = $group->id;
+                            $member->group_enrollments[] = $enrollment;
+                            break;
+                        }
+                    }
+                }
+            }
+
             $arrusers['members'][] = $member;
         }
         if ($more) {
@@ -474,6 +495,9 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
             $nextpage = "{$resource->get_endpoint()}?limit={$limitnum}&from={$nextlimitfrom}";
             if (!is_null($lti)) {
                 $nextpage .= "&rlid={$lti->id}";
+            }
+            if ($includegroups) {
+                $nextpage .= '&groups=true';
             }
             $response->add_additional_header("Link: <{$nextpage}>; rel=\"next\"");
         }

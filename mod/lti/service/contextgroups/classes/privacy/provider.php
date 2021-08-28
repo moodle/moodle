@@ -15,14 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for ltiservice_memberships.
+ * Privacy Subsystem implementation for ltiservice_contextgroups.
  *
- * @package    ltiservice_memberships
- * @copyright  2018 Mark Nelson <markn@moodle.com>
+ * @package    ltiservice_contextgroups
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @author     Stephen Vickers
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace ltiservice_memberships\privacy;
+namespace ltiservice_coursegroups\privacy;
 
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\contextlist;
@@ -33,9 +34,9 @@ use \core_privacy\local\request\approved_userlist;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for ltiservice_memberships.
+ * Privacy Subsystem for ltiservice_contextgroups.
  *
- * @copyright  2018 Mark Nelson <markn@moodle.com>
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
@@ -51,13 +52,10 @@ class provider implements
      */
     public static function get_metadata(collection $collection) : collection {
         $collection->link_external_location('External LTI provider.', [
-            'userid' => 'privacy:metadata:userid',
-            'useridnumber' => 'privacy:metadata:useridnumber',
-            'fullname' => 'privacy:metadata:fullname',
-            'firstname' => 'privacy:metadata:firstname',
-            'lastname' => 'privacy:metadata:lastname',
-            'email' => 'privacy:metadata:email',
-            'groupsid' => 'privacy:metadata:groupsid'
+            'groupsid' => 'privacy:metadata:groupsid',
+            'groupsname' => 'privacy:metadata:groupsname',
+            'groupingsid' => 'privacy:metadata:groupingsid',
+            'groupingsname' => 'privacy:metadata:groupingsname'
         ], 'privacy:metadata:externalpurpose');
 
         return $collection;
