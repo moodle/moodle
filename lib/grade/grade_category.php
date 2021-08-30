@@ -2309,18 +2309,21 @@ class grade_category extends grade_object {
      * Returns the most descriptive field for this grade category
      *
      * @return string name
+     * @param bool $escape Whether the returned category name is to be HTML escaped or not.
      */
-    public function get_name() {
+    public function get_name($escape = true) {
         global $DB;
         // For a course category, we return the course name if the fullname is set to '?' in the DB (empty in the category edit form)
         if (empty($this->parent) && $this->fullname == '?') {
             $course = $DB->get_record('course', array('id'=> $this->courseid));
-            return format_string($course->fullname, false, array("context" => context_course::instance($this->courseid)));
+            return format_string($course->fullname, false, ['context' => context_course::instance($this->courseid),
+                'escape' => $escape]);
 
         } else {
             // Grade categories can't be set up at system context (unlike scales and outcomes)
             // We therefore must have a courseid, and don't need to handle system contexts when filtering.
-            return format_string($this->fullname, false, array("context" => context_course::instance($this->courseid)));
+            return format_string($this->fullname, false, ['context' => context_course::instance($this->courseid),
+                'escape' => $escape]);
         }
     }
 

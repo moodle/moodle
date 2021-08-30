@@ -1672,9 +1672,10 @@ class grade_report_grader extends grade_report {
         }
 
         $name = $element['object']->get_name();
+        $nameunescaped = $element['object']->get_name(false);
         $describedbyid = uniqid();
         $courseheader = html_writer::tag('span', $name, [
-            'title' => $name,
+            'title' => $nameunescaped,
             'class' => 'gradeitemheader',
             'aria-describedby' => $describedbyid
         ]);

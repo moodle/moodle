@@ -48,7 +48,8 @@ class core_grade_category_testcase extends grade_base_testcase {
         $this->sub_test_grade_category_get_grade_item();
         $this->sub_test_grade_category_load_parent_category();
         $this->sub_test_grade_category_get_parent_category();
-        $this->sub_test_grade_category_get_name();
+        $this->sub_test_grade_category_get_name_escaped();
+        $this->sub_test_grade_category_get_name_unescaped();
         $this->sub_test_grade_category_generate_grades_aggregationweight();
         $this->sub_test_grade_category_set_parent();
         $this->sub_test_grade_category_get_final();
@@ -692,10 +693,24 @@ class core_grade_category_testcase extends grade_base_testcase {
         $this->assertEquals($this->grade_categories[0]->id, $parent_category->id);
     }
 
-    protected function sub_test_grade_category_get_name() {
+    /**
+     * Tests the getter of the category fullname with escaped HTML.
+     */
+    protected function sub_test_grade_category_get_name_escaped() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'get_name'));
-        $this->assertEquals($this->grade_categories[0]->fullname, $category->get_name());
+        $this->assertEquals(format_string($this->grade_categories[0]->fullname, true, ['escape' => true]),
+            $category->get_name(true));
+    }
+
+    /**
+     * Tests the getter of the category fullname with unescaped HTML.
+     */
+    protected function sub_test_grade_category_get_name_unescaped() {
+        $category = new grade_category($this->grade_categories[0]);
+        $this->assertTrue(method_exists($category, 'get_name'));
+        $this->assertEquals(format_string($this->grade_categories[0]->fullname, true, ['escape' => false]),
+            $category->get_name(false));
     }
 
     protected function sub_test_grade_category_set_parent() {
