@@ -109,6 +109,10 @@ $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('nodetitle', 'forumreport_summary'));
 
+// Activate the secondary nav tab.
+navigation_node::override_active_url(new moodle_url('/mod/forum/report/summary/index.php',
+    ['courseid' => $courseid, 'forumid' => $forumid]));
+
 $allowbulkoperations = !$download && !empty($CFG->messaging) && has_capability('moodle/course:bulkmessaging', $context);
 $canseeprivatereplies = false;
 $hasviewall = false;

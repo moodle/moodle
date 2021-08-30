@@ -184,7 +184,9 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_heading($pagetitle);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($pagetitle);
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading($pagetitle);
+}
 
 // It is possible that the following fields have been provided in the URL.
 $form->set_data(['useridsselected' => $userids, 'discussionids' => $discussionids, 'from' => $from, 'to' => $to]);

@@ -320,7 +320,9 @@ if ($isnestedv2displaymode) {
 
 echo $OUTPUT->header();
 if (!$isnestedv2displaymode) {
-    echo $OUTPUT->heading(format_string($forum->get_name()), 2);
+    if (!$PAGE->has_secondary_navigation()) {
+        echo $OUTPUT->heading(format_string($forum->get_name()), 2);
+    }
     echo $OUTPUT->heading(format_string($discussion->get_name()), 3, 'discussionname');
 }
 
