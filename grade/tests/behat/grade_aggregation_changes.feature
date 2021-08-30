@@ -19,17 +19,17 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
       | Cat weighted2 | C1     | 10          |
       | Cat simple    | C1     | 11          |
       | Cat ec        | C1     | 12          |
-      | Cat natural   | C1     | 13          |
+      | Cat natural & | C1     | 13          |
     And the following "grade items" exist:
-      | itemname  | course | category    | aggregationcoef | aggregationcoef2 | weightoverride |
-      | Item a1   | C1     | ?           | 0               | 0                | 0              |
-      | Item a2   | C1     | ?           | 0               | 0.40             | 1              |
-      | Item a3   | C1     | ?           | 1               | 0.10             | 1              |
-      | Item a4   | C1     | ?           | 1               | 0                | 0              |
-      | Item b1   | C1     | Cat natural | 0               | 0                | 0              |
-      | Item b2   | C1     | Cat natural | 0               | 0.40             | 1              |
-      | Item b3   | C1     | Cat natural | 1               | 0.10             | 1              |
-      | Item b4   | C1     | Cat natural | 1               | 0                | 0              |
+      | itemname  | course | category      | aggregationcoef | aggregationcoef2 | weightoverride |
+      | Item a1   | C1     | ?             | 0               | 0                | 0              |
+      | Item a2   | C1     | ?             | 0               | 0.40             | 1              |
+      | Item a3   | C1     | ?             | 1               | 0.10             | 1              |
+      | Item a4   | C1     | ?             | 1               | 0                | 0              |
+      | Item b1   | C1     | Cat natural & | 0               | 0                | 0              |
+      | Item b2   | C1     | Cat natural & | 0               | 0.40             | 1              |
+      | Item b3   | C1     | Cat natural & | 1               | 0.10             | 1              |
+      | Item b4   | C1     | Cat natural & | 1               | 0                | 0              |
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
@@ -133,7 +133,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I should not see "Weight" in the "#id_headerparent" "css_element"
     And I should not see "Extra credit"
     And I press "Cancel"
-    And I follow "Edit   Cat natural"
+    And I follow "Edit   Cat natural &"
     And I set the field "Aggregation" to "Mean of grades"
     And I press "Save changes"
     And I follow "Edit   Item b1"
@@ -191,7 +191,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
     And I press "Cancel"
-    And I follow "Edit   Cat natural"
+    And I follow "Edit   Cat natural &"
     And I set the field "Aggregation" to "Natural"
     And I press "Save changes"
     And I follow "Edit   Item b1"
@@ -253,7 +253,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I should not see "Extra credit"
     And the field "Item weight" matches value "1"
     And I press "Cancel"
-    And I follow "Edit   Cat natural"
+    And I follow "Edit   Cat natural &"
     And I set the field "Aggregation" to "Weighted mean of grades"
     And I press "Save changes"
     And I follow "Edit   Item b1"
@@ -311,7 +311,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
     And I press "Cancel"
-    And I follow "Edit   Cat natural"
+    And I follow "Edit   Cat natural &"
     And I set the field "Aggregation" to "Natural"
     And I press "Save changes"
     And I follow "Edit   Item b1"
@@ -339,7 +339,8 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
     And I set the field "Select Item a4" to "1"
-    When I select "Cat natural" from the "Move selected items to" singleselect
+    And I should not see "Cat natural &amp;" in the "select#menumoveafter" "css_element"
+    When I select "Cat natural &" from the "Move selected items to" singleselect
     And I navigate to "View > Grader report" in the course gradebook
     And I follow "Edit   Item a1"
     Then the field "Weight adjusted" matches value "0"

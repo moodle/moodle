@@ -1021,7 +1021,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         $masterlabel = get_string('all');
         // Use category name if available.
         if ($category->fullname !== '?') {
-            $masterlabel = format_string($category->fullname);
+            $masterlabel = format_string($category->fullname, true, ['escape' => false]);
             // Limit the displayed category name to prevent the Select column from getting too wide.
             if (core_text::strlen($masterlabel) > 20) {
                 $masterlabel = get_string('textellipsis', 'core', core_text::substr($masterlabel, 0, 12));
