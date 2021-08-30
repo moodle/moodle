@@ -63,6 +63,8 @@ information provided here is intended especially for developers.
 * New method \core_user::awaiting_action() has been introduced to check if the user is fully ready to use the site or
   whether there is an action (such as filling the missing profile field, changing password or agreeing to the site
   policy) needed.
+* The signature of the get_name() function for grade_category and grade_item has been extended. The new parameter allows
+  callers to get the name without escaped characters.
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.

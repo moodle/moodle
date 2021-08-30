@@ -42,7 +42,8 @@ class core_grade_item_testcase extends grade_base_testcase {
         $this->sub_test_grade_item_get_sortorder();
         $this->sub_test_grade_item_set_sortorder();
         $this->sub_test_grade_item_move_after_sortorder();
-        $this->sub_test_grade_item_get_name();
+        $this->sub_test_grade_item_get_name_escaped();
+        $this->sub_test_grade_item_get_name_unescaped();
         $this->sub_test_grade_item_set_parent();
         $this->sub_test_grade_item_get_parent_category();
         $this->sub_test_grade_item_load_parent_category();
@@ -271,12 +272,24 @@ class core_grade_item_testcase extends grade_base_testcase {
         $this->assertEquals($after->sortorder, 8);
     }
 
-    protected function sub_test_grade_item_get_name() {
-        $grade_item = new grade_item($this->grade_items[0], false);
-        $this->assertTrue(method_exists($grade_item, 'get_name'));
+    /**
+     * Tests the getter of the item name with escaped HTML.
+     */
+    protected function sub_test_grade_item_get_name_escaped() {
+        $gradeitem = new grade_item($this->grade_items[0], false);
+        $this->assertTrue(method_exists($gradeitem, 'get_name'));
+        $this->assertEquals(format_string($this->grade_items[0]->itemname, true, ['escape' => true]),
+            $gradeitem->get_name(false, true));
+    }
 
-        $name = $grade_item->get_name();
-        $this->assertEquals($this->grade_items[0]->itemname, $name);
+    /**
+     * Tests the getter of the item name with unescaped HTML.
+     */
+    protected function sub_test_grade_item_get_name_unescaped() {
+        $gradeitem = new grade_item($this->grade_items[0], false);
+        $this->assertTrue(method_exists($gradeitem, 'get_name'));
+        $this->assertEquals(format_string($this->grade_items[0]->itemname, true, ['escape' => false]),
+            $gradeitem->get_name(false, false));
     }
 
     protected function sub_test_grade_item_set_parent() {
