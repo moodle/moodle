@@ -182,6 +182,26 @@ if ($hassiteconfig) {
         )
     );
 
+    // Notify level.
+    $temp->add(new admin_setting_configselect('antivirus/notifylevel',
+        get_string('notifylevel', 'antivirus'), '', core\antivirus\scanner::SCAN_RESULT_ERROR, [
+            core\antivirus\scanner::SCAN_RESULT_ERROR => get_string('notifylevelerror', 'antivirus'),
+            core\antivirus\scanner::SCAN_RESULT_FOUND => get_string('notifylevelfound', 'antivirus')
+        ]),
+    );
+
+    // Threshold for check displayed on the /report/status/index.php page.
+    $url = new moodle_url('/report/status/index.php');
+    $link = html_writer::link($url, get_string('pluginname', 'report_status'));
+    $temp->add(
+        new admin_setting_configduration(
+            'antivirus/threshold',
+            new lang_string('threshold', 'antivirus'),
+            get_string('threshold_desc', 'antivirus', $link),
+            20 * MINSECS
+        )
+    );
+
     // Enable quarantine.
     $temp->add(
         new admin_setting_configcheckbox(
