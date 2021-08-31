@@ -189,7 +189,7 @@ class_alias('qbank_viewquestionname\viewquestionname_column_helper', 'question_b
  * @deprecated since Moodle 2.7 MDL-40457
  * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\creator_name_column', 'question_bank_creator_name_column', true);
+class_alias('qbank_viewcreator\creator_name_column', 'question_bank_creator_name_column', true);
 
 
 /**
@@ -200,7 +200,7 @@ class_alias('core_question\bank\creator_name_column', 'question_bank_creator_nam
  * @deprecated since Moodle 2.7 MDL-40457
  * @todo MDl-72004 delete the class alias, not done in MDL-71516 for any potential error from other plugins.
  */
-class_alias('core_question\bank\modifier_name_column', 'question_bank_modifier_name_column', true);
+class_alias('qbank_viewcreator\modifier_name_column', 'question_bank_modifier_name_column', true);
 
 
 /**
