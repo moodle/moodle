@@ -35,6 +35,7 @@ $PAGE->set_url('/admin/qbankplugins.php');
 $PAGE->set_context($syscontext);
 
 require_admin();
+require_sesskey();
 
 $return = new moodle_url('/admin/settings.php', ['section' => 'manageqbanks']);
 
