@@ -498,6 +498,11 @@ class core_external extends external_api {
                 'itemid' => new external_value(PARAM_RAW, 'identifier of the updated item', VALUE_OPTIONAL),
                 'edithint' => new external_value(PARAM_NOTAGS, 'hint for editing element', VALUE_OPTIONAL),
                 'editlabel' => new external_value(PARAM_RAW, 'label for editing element', VALUE_OPTIONAL),
+                'editicon' => new external_single_structure([
+                    'key' => new external_value(PARAM_RAW, 'Edit icon key', VALUE_OPTIONAL),
+                    'component' => new external_value(PARAM_COMPONENT, 'Edit icon component', VALUE_OPTIONAL),
+                    'title' => new external_value(PARAM_NOTAGS, 'Edit icon title', VALUE_OPTIONAL),
+                ]),
                 'type' => new external_value(PARAM_ALPHA, 'type of the element (text, toggle, select)', VALUE_OPTIONAL),
                 'options' => new external_value(PARAM_RAW, 'options of the element, format depends on type', VALUE_OPTIONAL),
                 'linkeverything' => new external_value(PARAM_INT, 'Should everything be wrapped in the edit link or link displayed separately', VALUE_OPTIONAL),
