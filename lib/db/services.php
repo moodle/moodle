@@ -2779,6 +2779,13 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_dynamic_tabs_get_content' => [
+        'classname'   => 'core\external\dynamic_tabs_get_content',
+        'description' => 'Returns the content for a dynamic tab',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+
 );
 
 $services = array(

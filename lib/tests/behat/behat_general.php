@@ -2084,4 +2084,17 @@ EOF;
     public function i_mark_this_test_as_long_running(int $factor = 2): void {
         $this->set_test_timeout_factor($factor);
     }
+
+    /**
+     * Click on a dynamic tab to load its content
+     *
+     * @Given /^I click on the "(?P<tab_string>(?:[^"]|\\")*)" dynamic tab$/
+     *
+     * @param string $tabname
+     */
+    public function i_click_on_the_dynamic_tab(string $tabname): void {
+        $xpath = "//*[@id='dynamictabs-tabs'][descendant::a[contains(text(), '" . $this->escape($tabname) . "')]]";
+        $this->execute('behat_general::i_click_on_in_the',
+            [$tabname, 'link', $xpath, 'xpath_element']);
+    }
 }
