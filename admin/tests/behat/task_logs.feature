@@ -9,23 +9,23 @@ Feature: View task logs report and use its filters
     Given I trigger cron
 
   @javascript
-  Scenario: Filter task logs by name
+  Scenario Outline: Filter task logs by name
     Given I log in as "admin"
     And I change window size to "large"
     And I navigate to "Server > Tasks > Task logs" in site administration
-    And the following should exist in the "reportbuilder-table" table:
-      | Type      | Name                             |
-      | Scheduled | Cleanup event monitor events     |
-      | Scheduled | Synchronise self enrolments task |
     When I click on "Filters" "button"
     And I set the following fields in the "Name" "core_reportbuilder > Filter" to these values:
-      | Name operator | Contains           |
-      | Name value    | task\\clean_events |
+      | Name operator | Contains |
+      | Name value    | <name>   |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     Then I should see "Filters applied"
     And the following should exist in the "reportbuilder-table" table:
-      | Type      | Name                             |
-      | Scheduled | Cleanup event monitor events     |
+      | Type      | Name    |
+      | Scheduled | <match> |
     And the following should not exist in the "reportbuilder-table" table:
-      | Type      | Name                             |
-      | Scheduled | Synchronise self enrolments task |
+      | Type      | Name       |
+      | Scheduled | <nonmatch> |
+    Examples:
+      | name               | match                        | nonmatch                     |
+      | task\\clean_events | Cleanup event monitor events | Incoming email pickup        |
+      | task\\pickup_task  | Incoming email pickup        | Cleanup event monitor events |
