@@ -124,6 +124,7 @@ class task_logs extends system_report {
             'task_log:output',
             'task_log:result',
             'task_log:timestart',
+            'task_log:duration',
         ];
 
         $this->add_filters_from_entities($filters);
