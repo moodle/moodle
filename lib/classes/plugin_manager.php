@@ -1944,6 +1944,7 @@ class core_plugin_manager {
                 'exportquestions',
                 'importquestions',
                 'viewquestionname',
+                'viewquestiontype',
             ],
 
             'qbehaviour' => array(
