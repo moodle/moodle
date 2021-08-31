@@ -312,7 +312,15 @@ Thank you for submitting your answers to \'{$a->quizname}\' in course \'{$a->cou
 This message confirms that your answers have been saved.
 
 You can access this quiz at {$a->quizurl}.';
+$string['emailconfirmbodyautosubmit'] = 'Hi {$a->username},
+
+The time for the quiz \'{$a->quizname}\' in the course \'{$a->coursename}\' expired. Your answers were submitted automatically at {$a->submissiontime}.
+
+This message confirms that your answers have been saved.
+
+You can access this quiz at {$a->quizurl}.';
 $string['emailconfirmsmall'] = 'Thank you for submitting your answers to \'{$a->quizname}\'';
+$string['emailconfirmautosubmitsmall'] = 'Thank you for submitting your answers to \'{$a->quizname}\'';
 $string['emailconfirmsubject'] = 'Submission confirmation: {$a->quizname}';
 $string['emailnotifybody'] = 'Hi {$a->username},
 

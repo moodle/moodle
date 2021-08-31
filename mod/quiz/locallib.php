@@ -1584,10 +1584,11 @@ function quiz_get_combined_reviewoptions($quiz, $attempts) {
  *
  * @param object $a lots of useful information that can be used in the message
  *      subject and body.
+ * @param bool $studentisonline is the student currently interacting with Moodle?
  *
  * @return int|false as for {@link message_send()}.
  */
-function quiz_send_confirmation($recipient, $a) {
+function quiz_send_confirmation($recipient, $a, $studentisonline) {
 
     // Add information about the recipient to $a.
     // Don't do idnumber. we want idnumber to be the submitter's idnumber.
@@ -1604,7 +1605,13 @@ function quiz_send_confirmation($recipient, $a) {
     $eventdata->userfrom          = core_user::get_noreply_user();
     $eventdata->userto            = $recipient;
     $eventdata->subject           = get_string('emailconfirmsubject', 'quiz', $a);
-    $eventdata->fullmessage       = get_string('emailconfirmbody', 'quiz', $a);
+
+    if ($studentisonline) {
+        $eventdata->fullmessage = get_string('emailconfirmbody', 'quiz', $a);
+    } else {
+        $eventdata->fullmessage = get_string('emailconfirmbodyautosubmit', 'quiz', $a);
+    }
+
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
 
@@ -1676,10 +1683,11 @@ function quiz_send_notification($recipient, $submitter, $a) {
  * @param object $attempt this attempt just finished
  * @param object $context the quiz context
  * @param object $cm the coursemodule for this quiz
+ * @param bool $studentisonline is the student currently interacting with Moodle?
  *
  * @return bool true if all necessary messages were sent successfully, else false.
  */
-function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm) {
+function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm, $studentisonline) {
     global $CFG, $DB;
 
     // Do nothing if required objects not present.
@@ -1760,7 +1768,7 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     // some but not all messages, and then try again later, then teachers may get
     // duplicate messages, but the student will always get exactly one.
     if ($sendconfirm) {
-        $allok = $allok && quiz_send_confirmation($submitter, $a);
+        $allok = $allok && quiz_send_confirmation($submitter, $a, $studentisonline);
     }
 
     return $allok;
@@ -1858,6 +1866,7 @@ function quiz_attempt_submitted_handler($event) {
     $attempt = $event->get_record_snapshot('quiz_attempts', $event->objectid);
     $quiz    = $event->get_record_snapshot('quiz', $attempt->quiz);
     $cm      = get_coursemodule_from_id('quiz', $event->get_context()->instanceid, $event->courseid);
+    $eventdata = $event->get_data();
 
     if (!($course && $quiz && $cm && $attempt)) {
         // Something has been deleted since the event was raised. Therefore, the
@@ -1872,7 +1881,7 @@ function quiz_attempt_submitted_handler($event) {
         $completion->update_state($cm, COMPLETION_COMPLETE, $event->userid);
     }
     return quiz_send_notification_messages($course, $quiz, $attempt,
-            context_module::instance($cm->id), $cm);
+            context_module::instance($cm->id), $cm, $eventdata['other']['studentisonline']);
 }
 
 /**

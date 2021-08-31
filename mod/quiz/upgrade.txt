@@ -1,5 +1,12 @@
 This files describes API changes in the quiz code.
 
+=== 4.0 ===
+
+* The following API methods have a new parameter, $studentisonline, to define whether the student is currently interacting:
+  - process_finish() in mod/quiz/attemptlib.php
+  - quiz_send_confirmation() in mod/quiz/locallib.php
+  - quiz_send_notification_messages() in mod/quiz/locallib.php
+
 === 3.11 ===
 
 * External function mod_quiz_external::get_user_best_grade now returns and additional optional field:
