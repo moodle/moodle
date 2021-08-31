@@ -364,4 +364,415 @@ class secondary_test extends \advanced_testcase {
                 ],
         ];
     }
+
+    /**
+     * Recursive call to generate a navigation node given an array definition.
+     *
+     * @param array $structure
+     * @param string $parentkey
+     * @return navigation_node
+     */
+    private function generate_node_tree_construct(array $structure, string $parentkey): navigation_node {
+        $node = navigation_node::create($parentkey, null, navigation_node::TYPE_CUSTOM, '', $parentkey);
+        foreach ($structure as $key => $value) {
+            if (is_array($value)) {
+                $children = $value['children'] ?? $value;
+                $child = $this->generate_node_tree_construct($children, $key);
+                if (isset($value['action'])) {
+                    $child->action = new \moodle_url($value['action']);
+                }
+                $node->add_node($child);
+            } else {
+                $node->add($key, $value, navigation_node::TYPE_CUSTOM, '', $key);
+            }
+        }
+
+        return $node;
+    }
+
+    /**
+     * Test the nodes_match_current_url function.
+     *
+     * @param string $selectedurl
+     * @param string $expectednode
+     * @dataProvider test_nodes_match_current_url_provider
+     */
+    public function test_nodes_match_current_url(string $selectedurl, string $expectednode) {
+        global $PAGE;
+        $structure = [
+            'parentnode1' => [
+                'child1' => '/my',
+                'child2' => [
+                    'child2.1' => '/view/course.php',
+                    'child2.2' => '/view/admin.php',
+                ]
+            ]
+        ];
+        $node = $this->generate_node_tree_construct($structure, 'primarynode');
+        $node->action = new \moodle_url('/');
+
+        $PAGE->set_url($selectedurl);
+        $secondary = new secondary($PAGE);
+        $method = new ReflectionMethod('core\navigation\views\secondary', 'nodes_match_current_url');
+        $method->setAccessible(true);
+        $response = $method->invoke($secondary, $node);
+
+        $this->assertSame($response->key ?? null, $expectednode);
+    }
+
+    /**
+     * Provider for test_nodes_match_current_url
+     *
+     * @return \string[][]
+     */
+    public function test_nodes_match_current_url_provider(): array {
+        return [
+            "Match url to a node that is a deep nested" => [
+                '/view/course.php',
+                'child2.1',
+            ],
+            "Match url to a parent node with children" => [
+                '/', 'primarynode'
+            ],
+            "Match url to a child node" => [
+                '/my', 'child1'
+            ],
+        ];
+    }
+
+    /**
+     * Test the get_menu_array function
+     *
+     * @param string $selected
+     * @param array $expected
+     * @dataProvider test_get_menu_array_provider
+     */
+    public function test_get_menu_array(string $selected, array $expected) {
+        global $PAGE;
+
+        // Custom nodes - mimicing nodes added via 3rd party plugins.
+        $structure = [
+            'parentnode1' => [
+                'child1' => '/my',
+                'child2' => [
+                    'action' => '/test.php',
+                    'children' => [
+                        'child2.1' => '/view/course.php?child=2',
+                        'child2.2' => '/view/admin.php?child=2',
+                        'child2.3' => '/test.php',
+                    ]
+                ],
+                'child3' => [
+                    'child3.1' => '/view/course.php?child=3',
+                    'child3.2' => '/view/admin.php?child=3',
+                ]
+            ],
+            'parentnode2' => "/view/module.php"
+        ];
+
+        $secondary = new secondary($PAGE);
+        $secondary->add_node($this->generate_node_tree_construct($structure, 'primarynode'));
+        $selectednode = $secondary->find($selected, null);
+        $method = new ReflectionMethod('core\navigation\views\secondary', 'get_menu_array');
+        $method->setAccessible(true);
+        $response = $method->invoke($secondary, $selectednode);
+
+        $this->assertSame($expected, $response);
+    }
+
+    /**
+     * Provider for test_get_menu_array
+     *
+     * @return array[]
+     */
+    public function test_get_menu_array_provider(): array {
+        return [
+            "Fetch information from a node with action and no children" => [
+                'child1',
+                [
+                    'https://www.example.com/moodle/my' => 'child1'
+                ],
+            ],
+            "Fetch information from a node with no action and children" => [
+                'child3',
+                [
+                    'https://www.example.com/moodle/view/course.php?child=3' => 'child3.1',
+                    'https://www.example.com/moodle/view/admin.php?child=3' => 'child3.2'
+                ],
+            ],
+            "Fetch information from a node with children" => [
+                'child2',
+                [
+                    'https://www.example.com/moodle/test.php' => 'child2',
+                    'https://www.example.com/moodle/view/course.php?child=2' => 'child2.1',
+                    'https://www.example.com/moodle/view/admin.php?child=2' => 'child2.2'
+                ],
+            ],
+            "Fetch information from a node with an action and no children" => [
+                'parentnode2',
+                ['https://www.example.com/moodle/view/module.php' => 'parentnode2'],
+            ],
+            "Fetch information from a node with an action and multiple nested children" => [
+                'parentnode1',
+                [
+                    [
+                        'child2' => [
+                            'https://www.example.com/moodle/test.php' => 'child2',
+                            'https://www.example.com/moodle/view/course.php?child=2' => 'child2.1',
+                            'https://www.example.com/moodle/view/admin.php?child=2' => 'child2.2',
+                        ]
+                    ],
+                    [
+                        'child3' => [
+                            'https://www.example.com/moodle/view/course.php?child=3' => 'child3.1',
+                            'https://www.example.com/moodle/view/admin.php?child=3' => 'child3.2'
+                        ]
+                    ],
+                    [
+                        'parentnode1' => [
+                            'https://www.example.com/moodle/my' => 'child1'
+                        ]
+                    ]
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test the get_node_with_first_action function
+     *
+     * @param string $selectedkey
+     * @param string|null $expectedkey
+     * @dataProvider test_get_node_with_first_action_provider
+     */
+    public function test_get_node_with_first_action(string $selectedkey, ?string $expectedkey) {
+        global $PAGE;
+        $structure = [
+            'parentnode1' => [
+                'child1' => [
+                    'child1.1' => null
+                ],
+                'child2' => [
+                    'child2.1' => [
+                        'child2.1.1' => [
+                            'action' => '/test.php',
+                            'children' => [
+                                'child2.1.1.1' => '/view/course.php?child=2',
+                                'child2.1.1.2' => '/view/admin.php?child=2',
+                            ]
+                        ]
+                    ]
+                ],
+                'child3' => [
+                    'child3.1' => '/view/course.php?child=3',
+                    'child3.2' => '/view/admin.php?child=3',
+                ]
+            ],
+            'parentnode2' => "/view/module.php"
+        ];
+
+        $nodes = $this->generate_node_tree_construct($structure, 'primarynode');
+        $selectednode = $nodes->find($selectedkey, null);
+
+        $expected = null;
+        // Expected response will be the parent node with the action updated.
+        if ($expectedkey) {
+            $expectedbasenode = clone $selectednode;
+            $actionfromnode = $nodes->find($expectedkey, null);
+            $expectedbasenode->action = $actionfromnode->action;
+            $expected = $expectedbasenode;
+        }
+
+        $secondary = new secondary($PAGE);
+        $method = new ReflectionMethod('core\navigation\views\secondary', 'get_node_with_first_action');
+        $method->setAccessible(true);
+        $response = $method->invoke($secondary, $selectednode, $selectednode);
+        $this->assertEquals($expected, $response);
+    }
+
+    /**
+     * Provider for test_get_node_with_first_action
+     *
+     * @return array
+     */
+    public function test_get_node_with_first_action_provider(): array {
+        return [
+            "Search for action when parent has no action and multiple children with actions" => [
+                "child3",
+                "child3.1",
+            ],
+            "Search for action when parent child is deeply nested." => [
+                "child2",
+                "child2.1.1"
+            ],
+            "No navigation node returned when node has no children" => [
+                "parentnode2",
+                null
+            ],
+            "No navigation node returned when node has children but no actions available." => [
+                "child1",
+                null
+            ],
+        ];
+    }
+
+    /**
+     * Test for get_additional_child_nodes
+     *
+     * @param string $selectedkey
+     * @param array $expected
+     * @dataProvider test_get_additional_child_nodes_provider
+     */
+    public function test_get_additional_child_nodes(string $selectedkey, array $expected) {
+        global $PAGE;
+        $structure = [
+            'parentnode1' => [
+                'child1' => '/my',
+                'child2' => [
+                    'action' => '/test.php',
+                    'children' => [
+                        'child2.1' => '/view/course.php?child=2',
+                        'child2.2' => '/view/admin.php?child=2',
+                    ]
+                ],
+                'child3' => [
+                    'child3.1' => '/view/course.php?child=3',
+                    'child3.2' => '/view/admin.php?child=3',
+                ]
+            ],
+            'parentnode2' => "/view/module.php"
+        ];
+
+        $secondary = new secondary($PAGE);
+        $nodes = $this->generate_node_tree_construct($structure, 'primarynode');
+        $selectednode = $nodes->find($selectedkey, null);
+        $method = new ReflectionMethod('core\navigation\views\secondary', 'get_additional_child_nodes');
+        $method->setAccessible(true);
+        $response = $method->invoke($secondary, $selectednode);
+
+        $this->assertSame($expected, $response);
+    }
+
+    /**
+     * Provider for test_get_additional_child_nodes
+     *
+     * @return array[]
+     */
+    public function test_get_additional_child_nodes_provider(): array {
+        return [
+            "Get nodes with deep nested children" => [
+                "parentnode1",
+                [
+                    'https://www.example.com/moodle/my' => 'child1',
+                    'https://www.example.com/moodle/test.php' => 'child2',
+                    'https://www.example.com/moodle/view/course.php?child=2' => 'child2.1',
+                    'https://www.example.com/moodle/view/admin.php?child=2' => 'child2.2',
+                    'https://www.example.com/moodle/view/course.php?child=3' => 'child3.1',
+                    'https://www.example.com/moodle/view/admin.php?child=3' => 'child3.2',
+                ]
+            ],
+            "Get children from parent without action " => [
+                "child3",
+                [
+                    'https://www.example.com/moodle/view/course.php?child=3' => 'child3.1',
+                    'https://www.example.com/moodle/view/admin.php?child=3' => 'child3.2'
+                ]
+            ],
+            "Get children from parent with action " => [
+                "child2",
+                [
+                    'https://www.example.com/moodle/view/course.php?child=2' => 'child2.1',
+                    'https://www.example.com/moodle/view/admin.php?child=2' => 'child2.2'
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * Test the get_overflow_menu_data function
+     *
+     * @param string $selectedurl
+     * @param bool $expectednull
+     * @param bool $emptynode
+     * @dataProvider test_get_overflow_menu_data_provider
+     */
+    public function test_get_overflow_menu_data(string $selectedurl, bool $expectednull, bool $emptynode = false) {
+        global $PAGE;
+        // Custom nodes - mimicing nodes added via 3rd party plugins.
+        $structure = [
+            'parentnode1' => [
+                'child1' => '/my',
+                'child2' => [
+                    'action' => '/test.php',
+                    'children' => [
+                        'child2.1' => '/view/course.php',
+                        'child2.2' => '/view/admin.php',
+                    ]
+                ]
+            ],
+            'parentnode2' => "/view/module.php"
+        ];
+        $PAGE->set_url($selectedurl);
+        navigation_node::override_active_url(new \moodle_url($selectedurl));
+        $node = $this->generate_node_tree_construct($structure, 'primarynode');
+        $node->action = new \moodle_url('/');
+
+        $secondary = new secondary($PAGE);
+        $secondary->add_node($node);
+        $PAGE->settingsnav->add_node(clone $node);
+        $secondary->add('Course home', '/coursehome.php', navigation_node::TYPE_CUSTOM, '', 'coursehome');
+        $secondary->add('Course settings', '/course/settings.php', navigation_node::TYPE_CUSTOM, '', 'coursesettings');
+
+        // Test for an empty node without children and action.
+        if ($emptynode) {
+            $node = $secondary->add('Course management', null, navigation_node::TYPE_CUSTOM, '', 'course');
+            $node->make_active();
+        } else {
+            // Set the correct node as active.
+            $method = new ReflectionMethod('core\navigation\views\secondary', 'scan_for_active_node');
+            $method->setAccessible(true);
+            $method->invoke($secondary, $secondary);
+        }
+
+        $method = new ReflectionMethod('core\navigation\views\secondary', 'get_overflow_menu_data');
+        $method->setAccessible(true);
+        $response = $method->invoke($secondary);
+        if ($expectednull) {
+            $this->assertNull($response);
+        } else {
+            $this->assertIsObject($response);
+            $this->assertInstanceOf('url_select', $response);
+        }
+    }
+
+    /**
+     * Data provider for test_get_overflow_menu_data
+     *
+     * @return string[]
+     */
+    public function test_get_overflow_menu_data_provider(): array {
+        return [
+            "Active node is the course home node" => [
+                '/coursehome.php',
+                true
+            ],
+            "Active node is one with an action and no children" => [
+                '/view/module.php',
+                false
+            ],
+            "Active node is one with an action and children" => [
+                '/',
+                false
+            ],
+            "Active node is one without an action and children" => [
+                '/',
+                true,
+                true,
+            ],
+            "Active node is one with an action and children but is NOT in settingsnav" => [
+                '/course/settings.php',
+                true
+            ],
+        ];
+    }
 }
