@@ -23,6 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Delete question bank feature';
-$string['privacy:metadata'] = 'Delete question plugin will questions, it does not store any user data.';
+$string['pluginname'] = 'Delete question';
+$string['privacy:metadata'] = 'The Delete question question bank plugin does not store any personal data.';
 $string['deletequestion'] = 'Delete selected question';

@@ -23,5 +23,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Import question bank feature';
-$string['privacy:metadata'] = 'The import question bank will import questions from a file according to the selected file format.';
+$string['pluginname'] = 'Import questions';
+$string['privacy:metadata'] = 'The Import questions question bank plugin imports questions from a file according to the selected file format.';
