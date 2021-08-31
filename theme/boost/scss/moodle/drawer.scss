@@ -249,4 +249,8 @@ $right-drawer-width: 320px;
     flex-wrap: nowrap;
     overflow-y: auto;
     padding: 0.5rem;
+    .dropdown-menu .dropdown-item {
+        width: 220px;
+        white-space: normal;
+    }
 }
