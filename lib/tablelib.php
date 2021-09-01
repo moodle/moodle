@@ -1196,7 +1196,7 @@ class flexible_table {
                                     'data-action' => 'show',
                                     'data-column' => $column);
             return html_writer::link($this->baseurl->out(false, array($this->request[TABLE_VAR_SHOW] => $column)),
-                    $OUTPUT->pix_icon('t/switch_plus', get_string('show')), $linkattributes);
+                    $OUTPUT->pix_icon('t/switch_plus', null), $linkattributes);
 
         } else if ($this->headers[$index] !== NULL) {
             $linkattributes = array('title' => get_string('hide') . ' ' . strip_tags($this->headers[$index]),
@@ -1205,7 +1205,7 @@ class flexible_table {
                                     'data-action' => 'hide',
                                     'data-column' => $column);
             return html_writer::link($this->baseurl->out(false, array($this->request[TABLE_VAR_HIDE] => $column)),
-                    $OUTPUT->pix_icon('t/switch_minus', get_string('hide')), $linkattributes);
+                    $OUTPUT->pix_icon('t/switch_minus', null), $linkattributes);
         }
     }
 
