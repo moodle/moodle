@@ -21,8 +21,11 @@ Feature: Atto accessibility checker
     And I click on ".moodle-dialogue-focused .closebutton" "css_element"
     And I select the text in the "Description" Atto editor
     And I click on "Insert or edit image" "button"
+    And I set the field "Enter URL" to "/decorative-image.png"
     And I set the field "Describe this image for someone who cannot see it" to ""
-    And I set the field "This image is decorative only" to "1"
+    And I set the field "Width" to "1"
+    And I set the field "Height" to "1"
+    And I click on "This image is decorative only" "checkbox"
     And I press "Save image"
     And I press "Accessibility checker"
     And I should see "Congratulations, no accessibility problems found!"
