@@ -1,26 +1,26 @@
 # Spout
 
 [![Latest Stable Version](https://poser.pugx.org/box/spout/v/stable)](https://packagist.org/packages/box/spout)
-[![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
+[![Project Status](https://opensource.box.com/badges/active.svg)](https://opensource.box.com/badges)
 [![Build Status](https://travis-ci.org/box/spout.svg?branch=master)](https://travis-ci.org/box/spout)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/box/spout/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/box/spout/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/box/spout/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/box/spout/?branch=master)
 [![Total Downloads](https://poser.pugx.org/box/spout/downloads)](https://packagist.org/packages/box/spout)
 
 Spout is a PHP library to read and write spreadsheet files (CSV, XLSX and ODS), in a fast and scalable way.
-Contrary to other file readers or writers, it is capable of processing very large files while keeping the memory usage really low (less than 3MB).
+Unlike other file readers or writers, it is capable of processing very large files, while keeping the memory usage really low (less than 3MB).
 
-Join the community and come discuss about Spout: [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/box/spout?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+Join the community and come discuss Spout: [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/box/spout?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 
 ## Documentation
 
-Full documentation can be found at [http://opensource.box.com/spout/](http://opensource.box.com/spout/).
+Full documentation can be found at [https://opensource.box.com/spout/](https://opensource.box.com/spout/).
 
 
 ## Requirements
 
-* PHP version 7.1 or higher
+* PHP version 7.2 or higher
 * PHP extension `php_zip` enabled
 * PHP extension `php_xmlreader` enabled
 
@@ -43,7 +43,7 @@ For information, the performance tests take about 10 minutes to run (processing 
 
 ## Support
 
-You can ask questions, submit new features ideas or discuss about Spout in the chat room:<br>
+You can ask questions, submit new features ideas or discuss Spout in the chat room:<br>
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/box/spout?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Copyright and License

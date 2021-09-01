@@ -4,6 +4,11 @@ Description of Spout library import
 * Only include the src/Spout directory.
 * Update lib/thirdpartylibs.xml with the latest version.
 
+2022/01/05
+----------
+Update to v3.3.0 (MDL-73497)
+by Paul Holden <paulh@moodle.com> (backport from MDL-71707 by stronk7)
+
 2020/12/07
 ----------
 Update to v3.1.0 (MDL-70302)
