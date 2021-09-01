@@ -139,9 +139,7 @@ $string['backpackprovider'] = 'Backpack provider';
 $string['badges'] = 'Badges';
 $string['badgedetails'] = 'Badge details';
 $string['badgeimage'] = 'Image';
-$string['badgeimage_help'] = 'This is an image that will be used when this badge is issued.
-
-To add a new image, browse and select an image (in JPG or PNG format) then click "Save changes". The image will be cropped to a square and resized to match badge image requirements. ';
+$string['badgeimage_help'] = 'The image should be at least 300 x 300 pixels in size. It will be displayed as 300 x 300 pixels on the badge page and 100 x 100 pixels on the user\'s profile page.';
 
 $string['badgeprivacysetting'] = 'Badge privacy settings';
 $string['badgeprivacysetting_help'] = 'Badges you earn can be displayed on your account profile page. This setting allows you to automatically set the visibility of the newly earned badges.
