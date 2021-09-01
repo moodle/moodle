@@ -108,7 +108,7 @@ function resource_display_embed($resource, $cm, $course, $file) {
     $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
     echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
 
-    echo $code;
+    echo format_text($code, FORMAT_HTML, ['noclean' => true]);
 
     resource_print_intro($resource, $cm, $course);
 
