@@ -136,6 +136,7 @@ class send_user_digests extends \core\task\adhoc_task {
 
     /**
      * Send out messages.
+     * @throws \moodle_exception
      */
     public function execute() {
         $starttime = time();
@@ -253,10 +254,14 @@ class send_user_digests extends \core\task\adhoc_task {
                 }
             } else {
                 $this->log_finish("Issue sending digest. Skipping.");
+                throw new \moodle_exception("Issue sending digest. Skipping.");
             }
         } else {
             $this->log_finish("No messages found to send.");
         }
+
+        // Empty the queue only if successful.
+        $this->empty_queue($this->recipient->id, $starttime);
 
         // We have finishied all digest emails, update $CFG->digestmailtimelast.
         set_config('digestmailtimelast', $starttime);
@@ -323,8 +328,6 @@ class send_user_digests extends \core\task\adhoc_task {
         $this->users = $DB->get_records_select('user', "id $in", $params);
 
         $this->fill_digest_cache();
-
-        $this->empty_queue($this->recipient->id, $timenow);
     }
 
     /**
