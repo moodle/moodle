@@ -314,9 +314,14 @@ class page_requirements_manager {
 
             // It is possible that the $page->context is null, so we can't use $page->context->id.
             $contextid = null;
+            $contextinstanceid = null;
             if (!is_null($page->context)) {
                 $contextid = $page->context->id;
+                $contextinstanceid = $page->context->instanceid;
             }
+
+            $courseid = $page->course->id;
+            $coursecontext = context_course::instance($courseid);
 
             $this->M_cfg = array(
                 'wwwroot'               => $CFG->wwwroot,
@@ -331,8 +336,10 @@ class page_requirements_manager {
                 'admin'                 => $CFG->admin,
                 'svgicons'              => $page->theme->use_svg_icons(),
                 'usertimezone'          => usertimezone(),
-                'courseId'              => (int) $page->course->id,
+                'courseId'              => (int) $courseid,
+                'courseContextId'       => $coursecontext->id,
                 'contextid'             => $contextid,
+                'contextInstanceId'     => (int) $contextinstanceid,
                 'langrev'               => get_string_manager()->get_revision(),
                 'templaterev'           => $this->get_templaterev()
             );
