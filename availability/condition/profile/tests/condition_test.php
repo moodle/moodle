@@ -313,6 +313,7 @@ class availability_profile_condition_testcase extends advanced_testcase {
         // Check the message (should be using lang string with capital, which
         // is evidence that it called the right function to get the name).
         $information = $cond->get_description(false, false, $info);
+        $information = \core_availability\info::format_info($information, $info->get_course());
         $this->assertRegExp('~Department~', $information);
 
         // Set the field to true for both users and retry.
@@ -394,6 +395,7 @@ class availability_profile_condition_testcase extends advanced_testcase {
                 'Failed checking normal (positive) result');
         if (!$yes) {
             $information = $cond->get_description(false, false, $info);
+            $information = \core_availability\info::format_info($information, $info->get_course());
             $this->assertRegExp($failpattern, $information);
         }
 
@@ -402,6 +404,7 @@ class availability_profile_condition_testcase extends advanced_testcase {
                 'Failed checking NOT (negative) result');
         if ($yes) {
             $information = $cond->get_description(false, true, $info);
+            $information = \core_availability\info::format_info($information, $info->get_course());
             $this->assertRegExp($failpattern, $information);
         }
     }
