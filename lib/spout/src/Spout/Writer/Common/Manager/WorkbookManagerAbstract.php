@@ -44,7 +44,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     /** @var InternalEntityFactory Factory to create entities */
     protected $entityFactory;
 
-    /** @var ManagerFactoryInterface $managerFactory Factory to create managers */
+    /** @var ManagerFactoryInterface Factory to create managers */
     protected $managerFactory;
 
     /** @var Worksheet The worksheet where data will be written to */

@@ -35,7 +35,7 @@ class RowIterator implements IteratorInterface
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
-    /** @var string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml */
+    /** @var string Path of the sheet data XML file as in [Content_Types].xml */
     protected $sheetDataXMLFilePath;
 
     /** @var \Box\Spout\Reader\Wrapper\XMLReader The XMLReader object that will help read sheet's XML data */

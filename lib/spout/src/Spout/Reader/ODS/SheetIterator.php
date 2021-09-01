@@ -28,13 +28,13 @@ class SheetIterator implements IteratorInterface
     const XML_ATTRIBUTE_TABLE_STYLE_NAME = 'table:style-name';
     const XML_ATTRIBUTE_TABLE_DISPLAY = 'table:display';
 
-    /** @var string $filePath Path of the file to be read */
+    /** @var string Path of the file to be read */
     protected $filePath;
 
     /** @var \Box\Spout\Common\Manager\OptionsManagerInterface Reader's options manager */
     protected $optionsManager;
 
-    /** @var InternalEntityFactory $entityFactory Factory to create entities */
+    /** @var InternalEntityFactory Factory to create entities */
     protected $entityFactory;
 
     /** @var XMLReader The XMLReader object that will help read sheet's XML data */

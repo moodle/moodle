@@ -14,6 +14,7 @@ use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Helper\CellHelper;
+use Box\Spout\Writer\Common\Manager\RegisteredStyle;
 use Box\Spout\Writer\Common\Manager\RowManager;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
@@ -160,7 +161,12 @@ EOD;
         $rowXML = '<row r="' . $rowIndexOneBased . '" spans="1:' . $numCells . '">';
 
         foreach ($row->getCells() as $columnIndexZeroBased => $cell) {
-            $rowXML .= $this->applyStyleAndGetCellXML($cell, $rowStyle, $rowIndexOneBased, $columnIndexZeroBased);
+            $registeredStyle = $this->applyStyleAndRegister($cell, $rowStyle);
+            $cellStyle = $registeredStyle->getStyle();
+            if ($registeredStyle->isMatchingRowStyle()) {
+                $rowStyle = $cellStyle; // Replace actual rowStyle (possibly with null id) by registered style (with id)
+            }
+            $rowXML .= $this->getCellXML($rowIndexOneBased, $columnIndexZeroBased, $cell, $cellStyle->getId());
         }
 
         $rowXML .= '</row>';
@@ -173,26 +179,43 @@ EOD;
 
     /**
      * Applies styles to the given style, merging the cell's style with its row's style
-     * Then builds and returns xml for the cell.
      *
      * @param Cell  $cell
      * @param Style $rowStyle
-     * @param int   $rowIndexOneBased
-     * @param int   $columnIndexZeroBased
      *
      * @throws InvalidArgumentException If the given value cannot be processed
-     * @return string
+     * @return RegisteredStyle
      */
-    private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $rowIndexOneBased, $columnIndexZeroBased)
+    private function applyStyleAndRegister(Cell $cell, Style $rowStyle) : RegisteredStyle
     {
-        // Apply row and extra styles
-        $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
-        $cell->setStyle($mergedCellAndRowStyle);
-        $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+        $isMatchingRowStyle = false;
+        if ($cell->getStyle()->isEmpty()) {
+            $cell->setStyle($rowStyle);
 
-        $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
+            $possiblyUpdatedStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
 
-        return $this->getCellXML($rowIndexOneBased, $columnIndexZeroBased, $cell, $registeredStyle->getId());
+            if ($possiblyUpdatedStyle->isUpdated()) {
+                $registeredStyle = $this->styleManager->registerStyle($possiblyUpdatedStyle->getStyle());
+            } else {
+                $registeredStyle = $this->styleManager->registerStyle($rowStyle);
+                $isMatchingRowStyle = true;
+            }
+        } else {
+            $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
+            $cell->setStyle($mergedCellAndRowStyle);
+
+            $possiblyUpdatedStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+
+            if ($possiblyUpdatedStyle->isUpdated()) {
+                $newCellStyle = $possiblyUpdatedStyle->getStyle();
+            } else {
+                $newCellStyle = $mergedCellAndRowStyle;
+            }
+
+            $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
+        }
+
+        return new RegisteredStyle($registeredStyle, $isMatchingRowStyle);
     }
 
     /**
@@ -217,7 +240,7 @@ EOD;
         } elseif ($cell->isBoolean()) {
             $cellXML .= ' t="b"><v>' . (int) ($cell->getValue()) . '</v></c>';
         } elseif ($cell->isNumeric()) {
-            $cellXML .= '><v>' . $cell->getValue() . '</v></c>';
+            $cellXML .= '><v>' . $this->stringHelper->formatNumericValue($cell->getValue()) . '</v></c>';
         } elseif ($cell->isError() && is_string($cell->getValueEvenIfError())) {
             // only writes the error value if it's a string
             $cellXML .= ' t="e"><v>' . $cell->getValueEvenIfError() . '</v></c>';
