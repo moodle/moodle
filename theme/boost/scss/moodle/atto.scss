@@ -28,6 +28,8 @@ div.editor_atto_toolbar {
     border: 1px solid $input-border-color;
     width: 100%;
     padding: 0 0 9px 0;
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
 }
 
 div.editor_atto_toolbar button {
@@ -218,6 +220,8 @@ div.editor_atto_content:hover .atto_control {
 .editor_atto_content.form-control {
     width: 100%;
     border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 /** Atto fields do not have form-control because that would break the layout of the editor.

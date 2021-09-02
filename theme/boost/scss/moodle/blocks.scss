@@ -165,6 +165,8 @@ $card-gutter : $card-deck-margin * 2;
             height: 7rem;
             background-position: center;
             background-size: cover;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
         }
         .dashboard-card-footer {
             padding: 0.8rem;

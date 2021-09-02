@@ -12920,7 +12920,9 @@ body.dragging .dragging {
   .dashboard-card-deck .dashboard-card .dashboard-card-img {
     height: 7rem;
     background-position: center;
-    background-size: cover; }
+    background-size: cover;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0; }
   .dashboard-card-deck .dashboard-card .dashboard-card-footer {
     padding: 0.8rem; }
 
@@ -14691,7 +14693,9 @@ body.drawer-ease {
 
 .fp-navbar {
   border-color: #8f959e;
-  border-bottom: 0; }
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0; }
 
 .file-picker .fp-content {
   border-top: 0;
@@ -15154,7 +15158,8 @@ a.ygtvspacer:hover {
 .filepicker-filelist,
 .filemanager-container {
   min-height: 140px;
-  border: 1px solid #8f959e; }
+  border: 1px solid #8f959e;
+  border-radius: 0.25rem; }
 
 .filemanager .fp-content {
   overflow: auto;
@@ -15163,7 +15168,9 @@ a.ygtvspacer:hover {
 
 .filemanager-container,
 .filepicker-filelist {
-  overflow: hidden; }
+  overflow: hidden;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0; }
 
 .file-picker .yui3-datatable-header {
   /*rtl:raw:
@@ -15812,13 +15819,15 @@ a.ygtvspacer:hover {
       display: flex; }
   .message-app .view-conversation .content-message-container img {
     max-width: 100%; }
-  .message-app .list-group .list-group-item {
-    border-left: 0;
-    border-right: 0; }
-    .message-app .list-group .list-group-item:first-child {
-      border-top: 0; }
-    .message-app .list-group .list-group-item:last-child {
-      border-bottom: 0; }
+  .message-app .list-group {
+    border-radius: 0; }
+    .message-app .list-group .list-group-item {
+      border-left: 0;
+      border-right: 0; }
+      .message-app .list-group .list-group-item:first-child {
+        border-top: 0; }
+      .message-app .list-group .list-group-item:last-child {
+        border-bottom: 0; }
   .message-app .last-message {
     min-height: 1.5rem; }
   .message-app .section .collapsing {
@@ -16702,6 +16711,10 @@ body.path-question-type .mform fieldset.hidden {
 
 .search-results .result .filename {
   font-style: italic; }
+
+.simplesearchform .input-group input.form-control {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem; }
 
 .simplesearchform .btn {
   padding-left: 0.5rem;
@@ -17872,9 +17885,6 @@ div#dock {
   overflow: hidden;
   width: 0; }
 
-.usermenu .login {
-  line-height: 2.25rem; }
-
 .userloggedinas .usermenu .usertext,
 .userswitchedrole .usermenu .usertext,
 .loginfailures .usermenu .usertext {
@@ -18935,9 +18945,6 @@ p.arrow_button {
 /**
  * Grader report.
  */
-.path-grade-report-grader .gradeparent table {
-  border-radius: 0.25rem; }
-
 .path-grade-report-grader .gradeparent tr .cell,
 .path-grade-report-grader .gradeparent .floater .cell {
   background-color: #fff; }
@@ -19699,8 +19706,8 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   left: 0;
   z-index: 2; }
   .drawer-left-toggle .btn {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
     padding: 0.375rem;
     width: 2.5rem;
     color: #fff;
@@ -19718,8 +19725,8 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   right: 0;
   z-index: 2; }
   .drawer-right-toggle .btn {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
     padding: 0.375rem;
     width: 2.5rem;
     color: #fff;
@@ -19866,7 +19873,9 @@ div.editor_atto_toolbar {
   min-height: 35px;
   border: 1px solid #8f959e;
   width: 100%;
-  padding: 0 0 9px 0; }
+  padding: 0 0 9px 0;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem; }
 
 div.editor_atto_toolbar button {
   padding: 4px 9px;
@@ -20020,7 +20029,9 @@ div.editor_atto_content:hover .atto_control {
 
 .editor_atto_content.form-control {
   width: 100%;
-  border-top: 0; }
+  border-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0; }
 
 /** Atto fields do not have form-control because that would break the layout of the editor.
     So they need these extra styles to highlight the editor when there is a validation error. */
@@ -20238,8 +20249,18 @@ div.editor_atto_toolbar button .icon {
     .navbar.fixed-top .usermenu .action-menu {
       display: flex;
       align-items: center; }
-    .navbar.fixed-top .usermenu .dropdown-toggle::after {
-      display: none; }
+    .navbar.fixed-top .usermenu .dropdown {
+      display: flex;
+      align-items: center; }
+      .navbar.fixed-top .usermenu .dropdown .dropdown-toggle {
+        padding-top: 0;
+        padding-bottom: 0;
+        border-radius: 0;
+        display: flex;
+        align-items: center;
+        height: 100%; }
+      .navbar.fixed-top .usermenu .dropdown .dropdown-toggle::after {
+        display: none; }
     .navbar.fixed-top .usermenu .dropdown-menu {
       min-width: 235px; }
       .navbar.fixed-top .usermenu .dropdown-menu .carousel-navigation-link > * {
@@ -20265,6 +20286,9 @@ div.editor_atto_toolbar button .icon {
         content: "";
         font-size: 0.75rem;
         padding-left: .25rem; }
+    .navbar.fixed-top .usermenu .login {
+      display: flex;
+      align-items: center; }
   .navbar.fixed-top .langmenu .dropdown-menu .dropdown-item[aria-current="true"]::before {
     content: "\f00c";
     font-size: 0.75rem;

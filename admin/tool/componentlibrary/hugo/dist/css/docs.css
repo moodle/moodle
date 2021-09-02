@@ -1089,7 +1089,8 @@
 }
 
 .path-admin-tool-componentlibrary #page-header,
-.path-admin-tool-componentlibrary #maincontent {
+.path-admin-tool-componentlibrary #maincontent,
+.path-admin-tool-componentlibrary .secondarynavigation {
   display: none;
 }
 
