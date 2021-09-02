@@ -24,6 +24,7 @@
  */
 
 import Ajax from 'core/ajax';
+import Config from 'core/config';
 import {eventTypes} from 'core_filters/events';
 import LocalStorage from 'core/localstorage';
 import Notification from 'core/notification';
@@ -87,7 +88,15 @@ const notifyVideoJS = e => {
                 // Add YouTube to the list of modules we require.
                 modulePromises.push(import('media_videojs/Youtube-lazy'));
             }
-
+            if (config.techOrder && config.techOrder.indexOf('OgvJS') !== -1) {
+                config.ogvjs = {
+                    worker: true,
+                    wasm: true,
+                    base: Config.wwwroot + '/media/player/videojs/ogvloader.php/' + Config.jsrev + '/'
+                };
+                // Add Ogv.JS to the list of modules we require.
+                modulePromises.push(import('media_videojs/videojs-ogvjs-lazy'));
+            }
             Promise.all([langStrings, ...modulePromises])
             .then(([langJson, videojs]) => {
                 if (firstLoad) {
