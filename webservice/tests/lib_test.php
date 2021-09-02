@@ -253,6 +253,47 @@ class webservice_test extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_get_active_tokens}
+     *
+     * @return array
+     */
+    public function get_active_tokens_provider(): array {
+        return [
+            'No expiration' => [0, true],
+            'Active' => [time() + DAYSECS, true],
+            'Expired' => [time() - DAYSECS, false],
+        ];
+    }
+
+    /**
+     * Test getting active tokens for a user
+     *
+     * @param int $validuntil
+     * @param bool $expectedactive
+     *
+     * @dataProvider get_active_tokens_provider
+     */
+    public function test_get_active_tokens(int $validuntil, bool $expectedactive): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        /** @var core_webservice_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_webservice');
+
+        $service = $generator->create_service(['name' => 'My test service', 'shortname' => 'mytestservice']);
+        $generator->create_token(['userid' => $user->id, 'service' => $service->shortname, 'validuntil' => $validuntil]);
+
+        $tokens = webservice::get_active_tokens($user->id);
+        if ($expectedactive) {
+            $this->assertCount(1, $tokens);
+            $this->assertEquals($service->id, reset($tokens)->externalserviceid);
+        } else {
+            $this->assertEmpty($tokens);
+        }
+    }
+
+    /**
      * Utility method that tests the parameter type of a method info's input/output parameter.
      *
      * @param string $type The parameter type that is being evaluated.
