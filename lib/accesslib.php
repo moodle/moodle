@@ -6291,7 +6291,8 @@ class context_system extends context {
             debugging('context_system::instance(): invalid $id parameter detected, should be 0');
         }
 
-        if (defined('SYSCONTEXTID') and $cache) { // dangerous: define this in config.php to eliminate 1 query/page
+        // SYSCONTEXTID is cached in local cache to eliminate 1 query per page.
+        if (defined('SYSCONTEXTID') and $cache) {
             if (!isset(context::$systemcontext)) {
                 $record = new stdClass();
                 $record->id           = SYSCONTEXTID;
