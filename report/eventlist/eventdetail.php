@@ -108,7 +108,7 @@ if (!empty($typeparams[2])) {
 }
 
 // Retrieving the 'other' event field information.
-$otherpattern = "/(\*\s{5}-([\w|\s]*\:[\w|\s|\(|\)|.]*))/";
+$otherpattern = "/(\*\s{5,}-([\w|\s]*\:[\w|\s|\(|\)|.]*))/";
 $typeparams = array();
 preg_match_all($otherpattern, $eventcontents, $typeparams);
 if (!empty($typeparams[2])) {
