@@ -23,5 +23,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Export question bank feature';
-$string['privacy:metadata'] = 'The Export Questions plugin does not store any personal data.';
+$string['pluginname'] = 'Export questions';
+$string['privacy:metadata'] = 'The Export questions question bank plugin does not store any personal data.';

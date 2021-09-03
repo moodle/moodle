@@ -23,5 +23,5 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Edit question bank feature';
-$string['privacy:metadata'] = 'Edit question plugin add/edit/copy a question, it does not store any user data.';
+$string['pluginname'] = 'Edit questions';
+$string['privacy:metadata'] = 'The Edit questions question bank plugin does not store any user data.';
