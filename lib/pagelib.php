@@ -404,6 +404,11 @@ class moodle_page {
     protected $_activenodeprimary = null;
 
     /**
+     * @var \core\output\activity_header The default activity header for standardised.
+     */
+    protected $_activityheader;
+
+    /**
      * Force the settings menu to be displayed on this page. This will only force the
      * settings menu on an activity / resource page that is being displayed on a theme that
      * uses a settings menu.
@@ -821,6 +826,24 @@ class moodle_page {
             $this->_flatnav->initialise();
         }
         return $this->_flatnav;
+    }
+
+    /**
+     * Returns the activity header object
+     * @return secondary
+     */
+    protected function magic_get_activityheader() {
+        global $USER;
+        if ($this->_activityheader === null) {
+            $class = 'core\output\activity_header';
+            // Try and load a custom class first.
+            if (class_exists("mod_{$this->activityname}\\output\\activity_header")) {
+                $class = "mod_{$this->activityname}\\output\\activity_header";
+            }
+
+            $this->_activityheader = new $class($this, $USER);
+        }
+        return $this->_activityheader;
     }
 
     /**

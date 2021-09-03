@@ -1402,7 +1402,11 @@ class core_renderer extends renderer_base {
         $this->opencontainers->push('header/footer', $footer);
         $this->page->set_state(moodle_page::STATE_IN_BODY);
 
-        return $header . $this->skip_link_target('maincontent');
+        // If an activity record has been set, activity_header will handle this.
+        if (!$this->page->activityrecord || !empty($this->page->layout_options['noactivityheader'])) {
+            $header .= $this->skip_link_target('maincontent');
+        }
+        return $header;
     }
 
     /**
