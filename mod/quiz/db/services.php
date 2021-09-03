@@ -191,4 +191,12 @@ $functions = array(
         'capabilities'  => 'mod/quiz:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+
+    'mod_quiz_set_question_version' => [
+        'classname'     => 'mod_quiz\external\submit_question_version',
+        'description'   => 'Set the version of question that would be required for a given quiz.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:view',
+        'ajax'          => true,
+    ],
 );

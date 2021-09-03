@@ -15,20 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for usage of tags in quizzes.
- *
- * @package    mod_quiz
- * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Class mod_quiz_tags_testcase
- * Class for tests related to usage of question tags in quizzes.
+ * Test the restore of random question tags.
  *
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
+ * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_quiz_tags_testcase extends advanced_testcase {
@@ -84,17 +74,14 @@ class mod_quiz_tags_testcase extends advanced_testcase {
         $this->assertNotFalse($tag3);
 
         $slottags = quiz_retrieve_slot_tags($question->slotid);
-        $this->assertEqualsCanonicalizing(
-                [
-                    ['tagid' => $tag2->id, 'tagname' => $tag2->name]
-                ],
-                array_map(function($tag) {
-                    return ['tagid' => $tag->tagid, 'tagname' => $tag->tagname];
-                }, $slottags)
-        );
+        $slottags = reset($slottags);
+        $slottags = explode(',', $slottags);
+        $this->assertEquals("{$tag2->id},{$tag2->name}", "{$slottags[0]},{$slottags[1]}");
 
         $defaultcategory = question_get_default_category(context_course::instance($newcourseid)->id);
-        $this->assertEquals($defaultcategory->id, $question->randomfromcategory);
-        $this->assertEquals(0, $question->randomincludingsubcategories);
+        $this->assertEquals($defaultcategory->id, $question->categoryobject->id);
+        $randomincludingsubcategories = $DB->get_record('question_set_references', ['itemid' => reset($slots)->id]);
+        $filtercondition = json_decode($randomincludingsubcategories->filtercondition);
+        $this->assertEquals(0, $filtercondition->includingsubcategories);
     }
 }

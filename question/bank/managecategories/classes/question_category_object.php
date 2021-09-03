@@ -332,7 +332,7 @@ class question_category_object {
         $sql = "SELECT q.id, 1
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                  WHERE qbe.questioncategoryid = ?
                    AND (q.parent = 0 OR q.parent = q.id)";
 
@@ -490,7 +490,7 @@ class question_category_object {
             $sql = "SELECT q.id
                       FROM {question} q
                       JOIN {question_versions} qv ON qv.questionid = q.id
-                      JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                      JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                      WHERE qbe.questioncategoryid = ?";
 
             $questionids = $DB->get_records_sql($sql, [$cat->id]);

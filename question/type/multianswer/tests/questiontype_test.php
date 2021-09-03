@@ -240,6 +240,7 @@ class qtype_multianswer_test extends advanced_testcase {
         $this->setAdminUser();
 
         $questiondata = test_question_maker::get_question_data('multianswer');
+
         $formdata = test_question_maker::get_question_form_data('multianswer');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -253,14 +254,15 @@ class qtype_multianswer_test extends advanced_testcase {
         $this->assertTrue($form->is_validated());
 
         $fromform = $form->get_data();
-
+        // Create a new question version with the form submission.
+        unset($questiondata->id);
         $returnedfromsave = $this->qtype->save_question($questiondata, $fromform);
         $actualquestionsdata = question_load_questions(array($returnedfromsave->id));
         $actualquestiondata = end($actualquestionsdata);
 
         foreach ($questiondata as $property => $value) {
             if (!in_array($property, ['id', 'timemodified', 'timecreated', 'options', 'hints', 'stamp',
-                'idnumber', 'version', 'versionid', 'questionbankentryid'])) {
+                'idnumber', 'version', 'versionid', 'questionbankentryid', 'contextid', 'category', 'status'])) {
                 $this->assertEquals($value, $actualquestiondata->$property);
             }
         }

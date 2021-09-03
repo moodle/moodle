@@ -883,14 +883,14 @@ abstract class question_edit_form extends question_wizard_form {
                 // Get the question bank entry id to not check the idnumber for the same bank entry.
                 $sql = "SELECT DISTINCT qbe.id
                           FROM {question_versions} qv
-                          JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                          JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                          WHERE qv.questionid = ?";
                 $bankentry = $DB->get_record_sql($sql, ['id' => $this->question->id]);
                 $conditions .= ' AND id <> ?';
                 $params[] = $bankentry->id;
             }
 
-            if ($DB->record_exists_select('question_bank_entry', $conditions, $params)) {
+            if ($DB->record_exists_select('question_bank_entries', $conditions, $params)) {
                 $errors['idnumber'] = get_string('idnumbertaken', 'error');
             }
         }

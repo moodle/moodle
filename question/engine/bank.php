@@ -421,7 +421,7 @@ abstract class question_bank {
         $sql = "SELECT DISTINCT q.qtype
                            FROM {question} q
                            JOIN {question_versions} qv ON qv.questionid = q.id
-                           JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                           JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                           WHERE qbe.questioncategoryid $categorysql";
 
         $qtypes = $DB->get_fieldset_sql($sql, $params);
@@ -456,7 +456,7 @@ class question_finder implements cache_data_source {
     }
 
     /**
-     * @return cache_application|cache_session|cache_store the question definition cache we are using.
+     * @return cache_application the question definition cache we are using.
      */
     protected function get_data_cache() {
         // Do not double cache here because it may break cache resetting.
@@ -498,15 +498,14 @@ class question_finder implements cache_data_source {
         if ($extraconditions) {
             $extraconditions = ' AND (' . $extraconditions . ')';
         }
-
-        $readystatus = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qcparams['readystatus'] = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $sql = "SELECT q.id, q.id AS id2
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                  WHERE qbe.questioncategoryid {$qcsql}
                        AND q.parent = 0
-                       AND qv.status = $readystatus
+                       AND qv.status = :readystatus
                        {$extraconditions}";
 
         return $DB->get_records_sql_menu($sql, $qcparams + $extraparams);
@@ -558,7 +557,7 @@ class question_finder implements cache_data_source {
                          ) AS previous_attempts";
         $from   = "{question} q";
         $join   = "JOIN {question_versions} qv ON qv.questionid = q.id
-                   JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid";
+                   JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid";
         $from = $from . " " . $join;
         $where  = "qbe.questioncategoryid {$qcsql}
                AND q.parent = 0
@@ -618,7 +617,7 @@ class question_finder implements cache_data_source {
                        qv.questionbankentryid
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                   JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                  WHERE q.id = :id';
 
@@ -642,7 +641,7 @@ class question_finder implements cache_data_source {
                        qv.questionbankentryid
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                   JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                  WHERE q.id ';
 

@@ -171,7 +171,7 @@ function question_context_has_any_questions($context): bool {
         throw new moodle_exception('invalidcontextinhasanyquestions', 'question');
     }
     $sql = 'SELECT qbe.*
-              FROM {question_bank_entry} qbe
+              FROM {question_bank_entries} qbe
               JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
              WHERE qc.contextid = ?';
     return $DB->record_exists_sql($sql, [$contextid]);
@@ -235,7 +235,7 @@ function question_category_delete_safe($category): void {
     $rescue = null; // See the code around the call to question_save_from_deletion.
 
     // Deal with any questions in the category.
-    if ($questionentries = $DB->get_records('question_bank_entry', $criteria, '', 'id')) {
+    if ($questionentries = $DB->get_records('question_bank_entries', $criteria, '', 'id')) {
 
         foreach ($questionentries as $questionentry) {
             $questionids = $DB->get_records('question_versions',
@@ -349,13 +349,13 @@ function question_delete_question($questionid): void {
                    qc.contextid as contextid
               FROM {question} q
               LEFT JOIN {question_versions} qv ON qv.questionid = q.id
-              LEFT JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+              LEFT JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
               LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
              WHERE q.id = ?';
     $questiondata = $DB->get_record_sql($sql, [$question->id]);
 
     // Do not delete a question if it is used by an activity module
-    if (questions_in_use([$questionid])) {
+    if (questions_in_use([$question->id])) {
         return;
     }
 
@@ -659,12 +659,8 @@ function idnumber_exist_in_question_category($questionidnumber, $categoryid, $li
     $response  = false;
     $record = [];
     // Check if the idnumber exist in the category.
-    $sql = 'SELECT q.id, qbe.idnumber
-              FROM {question} q
-              JOIN {question_versions} qv
-                ON qv.questionid = q.id
-              JOIN {question_bank_entry} qbe
-                ON qbe.id = qv.questionbankentryid
+    $sql = 'SELECT qbe.idnumber
+              FROM {question_bank_entries} qbe
              WHERE qbe.idnumber LIKE ?
                AND qbe.questioncategoryid = ?
           ORDER BY qbe.idnumber DESC';
@@ -706,7 +702,7 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
                    qbe.idnumber
               FROM {question} q
               JOIN {question_versions} qv ON qv.questionid = q.id
-              JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
               JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
              WHERE q.id $questionidcondition
                    OR (q.parent <> 0 AND q.parent $questionidcondition)";
@@ -719,6 +715,9 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
             question_bank::get_qtype($question->qtype)->move_files(
                     $question->id, $question->contextid, $newcategorydata->contextid);
         }
+        // Move set_reference records to new category.
+        move_question_set_references($question->category, $newcategoryid,
+            $question->contextid, $newcategorydata->contextid, true);
         // Check whether there could be a clash of idnumbers in the new category.
         list($idnumberclash, $rec) = idnumber_exist_in_question_category($question->idnumber, $newcategoryid);
         if ($idnumberclash) {
@@ -735,27 +734,14 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
             $qbankentry = new stdClass();
             $qbankentry->id = $question->entryid;
             $qbankentry->idnumber = $question->idnumber . '_' . $unique;
-            $DB->update_record('question_bank_entry', $qbankentry);
+            $DB->update_record('question_bank_entries', $qbankentry);
         }
-
-        // TODO: Now is commented because we are deciding if we should have an area: core_question.
-        // Update the reference to point to the new category context.
-        /*$references = $DB->get_records('question_references',
-            [
-                'questionbankentryid' => $question->entryid,
-                'versionid' => $question->versionid
-            ]
-        );
-        foreach ($references as $reference) {
-            $reference->usingcontextid = $newcategorydata->contextid;
-            $DB->update_record('question_references', $reference);
-        }*/
 
         // Update the entry to the new category id.
         $entry = new stdClass();
         $entry->id = $question->entryid;
         $entry->questioncategoryid = $newcategorydata->id;
-        $DB->update_record('question_bank_entry', $entry);
+        $DB->update_record('question_bank_entries', $entry);
 
         // Log this question move.
         $event = \core\event\question_moved::create_from_question_instance($question, context::instance_by_id($question->contextid),
@@ -777,6 +763,39 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
 }
 
 /**
+ * Update the questioncontextid field for all question_set_references records given a new context id
+ *
+ * @param int $oldcategoryid Old category to be moved.
+ * @param int $newcatgoryid New category that will receive the questions.
+ * @param int $oldcontextid Old context to be moved.
+ * @param int $newcontextid New context that will receive the questions.
+ * @param bool $delete If the action is delete.
+ * @throws dml_exception
+ */
+function move_question_set_references(int $oldcategoryid, int $newcatgoryid,
+                                      int $oldcontextid, int $newcontextid, bool $delete = false): void {
+    global $DB;
+
+    if ($delete || $oldcontextid !== $newcontextid) {
+        $setreferences = $DB->get_recordset('question_set_references', ['questionscontextid' => $oldcontextid]);
+        foreach ($setreferences as $setreference) {
+            $filter = json_decode($setreference->filtercondition);
+            if (isset($filter->questioncategoryid)) {
+                if ((int)$filter->questioncategoryid === $oldcategoryid) {
+                    $setreference->questionscontextid = $newcontextid;
+                    if ($oldcategoryid !== $newcatgoryid) {
+                        $filter->questioncategoryid = $newcatgoryid;
+                        $setreference->filtercondition = json_encode($filter);
+                    }
+                    $DB->update_record('question_set_references', $setreference);
+                }
+            }
+        }
+        $setreferences->close();
+    }
+}
+
+/**
  * This function helps move a question cateogry to a new context by moving all
  * the files belonging to all the questions to the new context.
  * Also moves subcategories.
@@ -791,7 +810,7 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
     $sql = "SELECT q.id, q.qtype
               FROM {question} q
               JOIN {question_versions} qv ON qv.questionid = q.id
-              JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
              WHERE qbe.questioncategoryid = ?";
 
     $questionids = $DB->get_records_sql_menu($sql, [$categoryid]);
@@ -860,10 +879,8 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
         $orderby = 'ORDER BY ' . $orderby;
     }
 
-    $sql = "SELECT q.id, qc.id as category, q.parent, q.name, q.questiontext, q.questiontextformat,
-                   q.generalfeedback, q.generalfeedbackformat, q.defaultmark, q.penalty, q.qtype,
-                   q.length, q.stamp, q.timecreated, q.timemodified,
-                   q.createdby, q.modifiedby, qbe.idnumber,
+    $sql = "SELECT q.*,
+                   qc.id as category,
                    qv.status,
                    qv.id as versionid,
                    qv.version,
@@ -873,7 +890,7 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
               FROM {question} q
               JOIN {question_versions} qv
                 ON qv.questionid = q.id
-              JOIN {question_bank_entry} qbe
+              JOIN {question_bank_entries} qbe
                 ON qbe.id = qv.questionbankentryid
               JOIN {question_categories} qc
                 ON qc.id = qbe.questioncategoryid
@@ -1423,7 +1440,7 @@ function question_has_capability_on($questionorid, $cap, $notused = -1): bool {
                       FROM {question} q
                       JOIN {question_versions} qv
                         ON qv.questionid = q.id
-                      JOIN {question_bank_entry} qbe
+                      JOIN {question_bank_entries} qbe
                         ON qbe.id = qv.questionbankentryid
                       JOIN {question_categories} qc
                         ON qc.id = qbe.questioncategoryid
@@ -1867,7 +1884,7 @@ function core_question_question_preview_pluginfile($previewcontext, $questionid,
               FROM {question} q
               JOIN {question_versions} qv
                 ON qv.questionid = q.id
-              JOIN {question_bank_entry} qbe
+              JOIN {question_bank_entries} qbe
                 ON qbe.id = qv.questionbankentryid
               JOIN {question_categories} qc
                 ON qc.id = qbe.questioncategoryid
@@ -1956,7 +1973,7 @@ function core_question_find_next_unused_idnumber(?string $oldidnumber, int $cate
     }
 
     // Find all used idnumbers in one DB query.
-    $usedidnumbers = $DB->get_records_select_menu('question_bank_entry', 'questioncategoryid = ? AND idnumber IS NOT NULL',
+    $usedidnumbers = $DB->get_records_select_menu('question_bank_entries', 'questioncategoryid = ? AND idnumber IS NOT NULL',
             [$categoryid], '', 'idnumber, 1');
 
     // Find the next unused idnumber.
@@ -1988,7 +2005,7 @@ function get_question_bank_entry(int $questionid): object {
     $sql = "SELECT qbe.*
               FROM {question} q
               JOIN {question_versions} qv ON qv.questionid = q.id
-              JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
              WHERE q.id = :id";
 
     $qbankentry = $DB->get_record_sql($sql, ['id' => $questionid]);
@@ -2024,7 +2041,7 @@ function get_next_version(int $questionbankentryid): int {
 
     $sql = "SELECT MAX(qv.version)
               FROM {question_versions} qv
-              JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
              WHERE qbe.id = :id";
 
     $nextversion = $DB->get_field_sql($sql, ['id' => $questionbankentryid]);
@@ -2036,298 +2053,28 @@ function get_next_version(int $questionbankentryid): int {
     return 1;
 }
 
-// Deprecated classes and functions from Moodle 4.0.
-
 /**
- * Converts contextlevels to strings and back to help with reading/writing contexts to/from import/export files.
+ * Checks if question is the latest version.
  *
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated Since Moodle 4.0
- * @see        \core_question\lib\context_to_string_translator
- * @todo       MDL-72004 delete the class
+ * @param string $version Question version to check.
+ * @param string $questionbankentryid Entry to check against.
+ * @return bool
  */
-class context_to_string_translator {
+function is_latest(string $version, string $questionbankentryid) : bool {
+    global $DB;
 
-    /**
-     * @var array used to translate between contextids and strings for this context.
-     */
-    protected $contexttostringarray = [];
+    $sql = 'SELECT MAX(version) AS max
+                  FROM {question_versions}
+                 WHERE questionbankentryid = ?';
+    $latestversion = $DB->get_record_sql($sql, [$questionbankentryid]);
 
-    /**
-     * context_to_string_translator constructor.
-     *
-     * @param context $contexts
-     */
-    public function __construct($contexts) {
-        debugging('Class context_to_string_translator is deprecated and
-         moved to \core_question\lib\context_to_string_translator,
-         please use new \core_question\lib\context_to_string_translator($contexts) instead.', DEBUG_DEVELOPER);
-        $this->generate_context_to_string_array($contexts);
+    if (isset($latestversion->max)) {
+        return ($version === $latestversion->max) ? true : false;
     }
-
-    /**
-     * Context to string.
-     *
-     * @param int $contextid
-     * @return mixed
-     */
-    public function context_to_string($contextid) {
-        return $this->contexttostringarray[$contextid];
-    }
-
-    /**
-     * String to context.
-     *
-     * @param string $contextname
-     * @return false|int|string
-     */
-    public function string_to_context($contextname) {
-        $contextid = array_search($contextname, $this->contexttostringarray);
-        return $contextid;
-    }
-
-    /**
-     * Generate context to array.
-     *
-     * @param context $contexts
-     */
-    protected function generate_context_to_string_array($contexts) {
-        if (!$this->contexttostringarray) {
-            $catno = 1;
-            foreach ($contexts as $context) {
-                switch ($context->contextlevel) {
-                    case CONTEXT_MODULE :
-                        $contextstring = 'module';
-                        break;
-                    case CONTEXT_COURSE :
-                        $contextstring = 'course';
-                        break;
-                    case CONTEXT_COURSECAT :
-                        $contextstring = "cat$catno";
-                        $catno++;
-                        break;
-                    case CONTEXT_SYSTEM :
-                        $contextstring = 'system';
-                        break;
-                }
-                $this->contexttostringarray[$context->id] = $contextstring;
-            }
-        }
-    }
-
+    return false;
 }
 
-/**
- * Tracks all the contexts related to the one we are currently editing questions and provides helper methods to check permissions.
- *
- * @copyright  2007 Jamie Pratt me@jamiep.org
- * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated Since Moodle 4.0
- * @see        \core_question\lib\context_to_string_translator
- * @todo       MDL-72004 delete the class
- */
-class question_edit_contexts {
-
-    /**
-     * @var \string[][] array of the capabilities.
-     */
-    public static $caps = [
-            'editq' => [
-                    'moodle/question:add',
-                    'moodle/question:editmine',
-                    'moodle/question:editall',
-                    'moodle/question:viewmine',
-                    'moodle/question:viewall',
-                    'moodle/question:usemine',
-                    'moodle/question:useall',
-                    'moodle/question:movemine',
-                    'moodle/question:moveall'],
-            'questions' => [
-                    'moodle/question:add',
-                    'moodle/question:editmine',
-                    'moodle/question:editall',
-                    'moodle/question:viewmine',
-                    'moodle/question:viewall',
-                    'moodle/question:movemine',
-                    'moodle/question:moveall'],
-            'categories' => [
-                    'moodle/question:managecategory'],
-            'import' => [
-                    'moodle/question:add'],
-            'export' => [
-                    'moodle/question:viewall',
-                    'moodle/question:viewmine']];
-
-    /**
-     * @var array of contexts.
-     */
-    protected $allcontexts;
-
-    /**
-     * Constructor
-     * @param \context $thiscontext the current context.
-     */
-    public function __construct(\context $thiscontext) {
-        debugging('Class question_edit_contexts is deprecated and
-         moved to \core_question\lib\question_edit_contexts,
-         please use new \core_question\lib\question_edit_contexts($thiscontext) instead.', DEBUG_DEVELOPER);
-        $this->allcontexts = array_values($thiscontext->get_parent_contexts(true));
-    }
-
-    /**
-     * Get all the contexts.
-     *
-     * @return \context[] all parent contexts
-     */
-    public function all() {
-        return $this->allcontexts;
-    }
-
-    /**
-     * Get the lowest context.
-     *
-     * @return \context lowest context which must be either the module or course context
-     */
-    public function lowest() {
-        return $this->allcontexts[0];
-    }
-
-    /**
-     * Get the contexts having cap.
-     *
-     * @param string $cap capability
-     * @return \context[] parent contexts having capability, zero based index
-     */
-    public function having_cap($cap) {
-        $contextswithcap = [];
-        foreach ($this->allcontexts as $context) {
-            if (has_capability($cap, $context)) {
-                $contextswithcap[] = $context;
-            }
-        }
-        return $contextswithcap;
-    }
-
-    /**
-     * Get the contexts having at least one cap.
-     *
-     * @param array $caps capabilities
-     * @return \context[] parent contexts having at least one of $caps, zero based index
-     */
-    public function having_one_cap($caps) {
-        $contextswithacap = [];
-        foreach ($this->allcontexts as $context) {
-            foreach ($caps as $cap) {
-                if (has_capability($cap, $context)) {
-                    $contextswithacap[] = $context;
-                    break; // Done with caps loop.
-                }
-            }
-        }
-        return $contextswithacap;
-    }
-
-    /**
-     * Context having at least one cap.
-     *
-     * @param string $tabname edit tab name
-     * @return \context[] parent contexts having at least one of $caps, zero based index
-     */
-    public function having_one_edit_tab_cap($tabname) {
-        return $this->having_one_cap(self::$caps[$tabname]);
-    }
-
-    /**
-     * Contexts for adding question and also using it.
-     *
-     * @return \context[] those contexts where a user can add a question and then use it.
-     */
-    public function having_add_and_use() {
-        $contextswithcap = [];
-        foreach ($this->allcontexts as $context) {
-            if (!has_capability('moodle/question:add', $context)) {
-                continue;
-            }
-            if (!has_any_capability(['moodle/question:useall', 'moodle/question:usemine'], $context)) {
-                continue;
-            }
-            $contextswithcap[] = $context;
-        }
-        return $contextswithcap;
-    }
-
-    /**
-     * Has at least one parent context got the cap $cap?
-     *
-     * @param string $cap capability
-     * @return boolean
-     */
-    public function have_cap($cap) {
-        return (count($this->having_cap($cap)));
-    }
-
-    /**
-     * Has at least one parent context got one of the caps $caps?
-     *
-     * @param array $caps capability
-     * @return boolean
-     */
-    public function have_one_cap($caps) {
-        foreach ($caps as $cap) {
-            if ($this->have_cap($cap)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Has at least one parent context got one of the caps for actions on $tabname
-     *
-     * @param string $tabname edit tab name
-     * @return boolean
-     */
-    public function have_one_edit_tab_cap($tabname) {
-        return $this->have_one_cap(self::$caps[$tabname]);
-    }
-
-    /**
-     * Throw error if at least one parent context hasn't got the cap $cap
-     *
-     * @param string $cap capability
-     */
-    public function require_cap($cap) {
-        if (!$this->have_cap($cap)) {
-            throw new \moodle_exception('nopermissions', '', '', $cap);
-        }
-    }
-
-    /**
-     * Throw error if at least one parent context hasn't got one of the caps $caps
-     *
-     * @param array $caps capabilities
-     */
-    public function require_one_cap($caps) {
-        if (!$this->have_one_cap($caps)) {
-            $capsstring = join(', ', $caps);
-            throw new \moodle_exception('nopermissions', '', '', $capsstring);
-        }
-    }
-
-    /**
-     * Throw error if at least one parent context hasn't got one of the caps $caps
-     *
-     * @param string $tabname edit tab name
-     */
-    public function require_one_edit_tab_cap($tabname) {
-        if (!$this->have_one_edit_tab_cap($tabname)) {
-            throw new \moodle_exception('nopermissions', '', '', 'access question edit tab '.$tabname);
-        }
-    }
-}
+// Deprecated functions from Moodle 4.0.
 
 /**
  * Generate the URL for starting a new preview of a given question with the given options.
@@ -2342,13 +2089,14 @@ class question_edit_contexts {
  * @return moodle_url the URL.
  * @deprecated since Moodle 4.0
  * @see qbank_previewquestion\previewquestion_helper::question_preview_url()
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_preview_url($questionid, $preferredbehaviour = null,
                               $maxmark = null, $displayoptions = null, $variant = null, $context = null) {
     debugging('Function question_preview_url() has been deprecated and moved to qbank_previewquestion plugin,
     Please use qbank_previewquestion\previewquestion_helper::question_preview_url() instead.', DEBUG_DEVELOPER);
 
-    return \qbank_previewquestion\previewquestion_helper::question_preview_url($questionid, $preferredbehaviour,
+    return \qbank_previewquestion\helper::question_preview_url($questionid, $preferredbehaviour,
         $maxmark, $displayoptions, $variant, $context);
 }
 
@@ -2356,12 +2104,13 @@ function question_preview_url($questionid, $preferredbehaviour = null,
  * @return array that can be passed as $params to the {@link popup_action} constructor.
  * @deprecated since Moodle 4.0
  * @see qbank_previewquestion\previewquestion_helper::question_preview_popup_params()
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_preview_popup_params() {
     debugging('Function question_preview_popup_params() has been deprecated and moved to qbank_previewquestion plugin,
     Please use qbank_previewquestion\previewquestion_helper::question_preview_popup_params() instead.', DEBUG_DEVELOPER);
 
-    return \qbank_previewquestion\previewquestion_helper::question_preview_popup_params();
+    return \qbank_previewquestion\helper::question_preview_popup_params();
 }
 
 /**
@@ -2373,6 +2122,7 @@ function question_preview_popup_params() {
  * @param object $question
  * @return string A unique version stamp
  * @deprecated since Moodle 4.0
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_hash($question) {
     debugging('Function question_hash() has been deprecated without replacement.', DEBUG_DEVELOPER);
@@ -2391,6 +2141,7 @@ function question_hash($question) {
  * @param moodle_url export file url
  * @deprecated since Moodle 4.0 MDL-71573
  * @see qbank_exportquestions\exportquestions_helper
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_make_export_url($contextid, $categoryid, $format, $withcategories,
                                   $withcontexts, $filename) {

@@ -52,12 +52,39 @@ abstract class backup_question_dbops extends backup_dbops {
         // First, get all the contexts we are going to save their question bank (no matter
         // where they are in the contexts hierarchy, transversals... whatever)
         $contexts = $DB->get_fieldset_sql("SELECT DISTINCT qc2.contextid
-                                             FROM {question_categories} qc2
-                                             JOIN {question} q ON q.category = qc2.id
-                                             JOIN {backup_ids_temp} bi ON bi.itemid = q.id
-                                            WHERE bi.backupid = ?
-                                              AND bi.itemname = 'question'
-                                              AND qc2.contextid != ?", array($backupid, $contextid));
+                                                 FROM {question_categories} qc2
+                                                 JOIN {question_bank_entries} qbe ON qbe.questioncategoryid = qc2.id
+                                                 JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+                                                 JOIN {question} q ON q.id = qv.questionid
+                                                 JOIN {backup_ids_temp} bi ON bi.itemid = q.id
+                                                WHERE bi.backupid = ?
+                                                  AND bi.itemname = 'question'
+                                                  AND qc2.contextid != ?", array($backupid, $contextid));
+
+        // Calculate and get the set reference records.
+        $setreferencecontexts = $DB->get_fieldset_sql("
+        SELECT DISTINCT qc.contextid
+          FROM {question_categories} qc
+          JOIN {question_set_references} qsr ON qsr.questionscontextid = qc.contextid
+         WHERE qsr.usingcontextid = ?", [$contextid]);
+        foreach ($setreferencecontexts as $setreferencecontext) {
+            if (!in_array($setreferencecontext, $contexts) && (int)$setreferencecontext !== $contextid) {
+                $contexts [] = $setreferencecontext;
+            }
+        }
+
+        // Calculate the get the reference records.
+        $referencecontexts = $DB->get_fieldset_sql("
+        SELECT DISTINCT qc.contextid
+         FROM {question_categories} qc
+         JOIN {question_bank_entries} qbe ON qbe.questioncategoryid = qc.id
+         JOIN {question_references} qr ON qr.questionbankentryid = qbe.id
+        WHERE qr.usingcontextid =?", [$contextid]);
+        foreach ($referencecontexts as $referencecontext) {
+            if (!in_array($referencecontext, $contexts) && (int)$referencecontext !== $contextid) {
+                $contexts [] = $referencecontext;
+            }
+        }
         // And now, simply insert all the question categories (complete question bank)
         // for those contexts if we have found any
         if ($contexts) {

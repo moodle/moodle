@@ -106,15 +106,13 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
 
   @javascript
   Scenario: Redoing questions should work with random questions as well
-    Given the following "questions" exist:
-      | questioncategory | qtype  | name                    | questiontext |
-      | Test questions   | random | Random (Test questions) | 0            |
-    And the following "activities" exist:
+    Given the following "activities" exist:
       | activity | name   | intro              | course | idnumber | preferredbehaviour | canredoquestions |
       | quiz     | Quiz 2 | Quiz 2 description | C1     | quiz2    | immediatefeedback  | 1                |
-    And quiz "Quiz 2" contains the following questions:
-      | question                | page |
-      | Random (Test questions) | 1    |
+    And I am on the "Quiz 2" "mod_quiz > Edit" page logged in as "admin"
+    And I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I press "Add random question"
     And user "student" has started an attempt at quiz "Quiz 2" randomised as follows:
       | slot | actualquestion |
       | 1    | TF1            |
@@ -124,7 +122,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I click on "False" "radio"
     And I click on "Check" "button"
     And I press "Try another question like this one"
-    Then I should see "Second question"
+    And I should see "Second question"
     And "Check" "button" should exist
 
   Scenario: Teachers reviewing can see author of action in review attempt

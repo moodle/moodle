@@ -256,7 +256,7 @@ abstract class quiz_attempts_report_table extends table_sql {
 
         $feedbackimg = '';
         $state = $this->slot_state($attempt, $slot);
-        if ($state->is_finished() && $state != question_state::$needsgrading) {
+        if ($state && $state->is_finished() && $state != question_state::$needsgrading) {
             $feedbackimg = $this->icon_for_fraction($this->slot_fraction($attempt, $slot));
         }
 

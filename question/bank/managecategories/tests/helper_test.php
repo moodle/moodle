@@ -80,15 +80,16 @@ class helper_test extends \advanced_testcase {
         $DB->set_field('question_versions', 'status', 1, ['questionid' => $q2a->id]);
         $DB->set_field('question_versions', 'status', 1, ['questionid' => $q2b->id]);
         quiz_add_quiz_question($q2b->id, $this->quiz);
+
+        // Adding a new random question does not add a new question, adds a question_set_references record.
         quiz_add_random_questions($this->quiz, 0, $qcat2->id, 1, false);
 
         // We added one random question to the quiz and we expect the quiz to have only one random question.
-        $q2d = $DB->get_record_sql("SELECT q.*
-                                          FROM {question} q
-                                          JOIN {quiz_slots} s ON s.questionid = q.id
-                                         WHERE q.qtype = :qtype
-                                           AND s.quizid = :quizid",
-            ['qtype' => 'random', 'quizid' => $this->quiz->id], MUST_EXIST);
+        $q2d = $DB->get_record_sql("SELECT qsr.*
+                                      FROM {quiz_slots} qs
+                                      JOIN {question_set_references} qsr ON qsr.itemid = qs.id
+                                     WHERE qs.quizid = ?",
+            ['quizid' => $this->quiz->id], MUST_EXIST);
 
         // The following 2 lines have to be after the quiz_add_random_questions() call above.
         // Otherwise, quiz_add_random_questions() will to be "smart" and use them instead of creating a new "random" question.
@@ -98,30 +99,30 @@ class helper_test extends \advanced_testcase {
         $sql = "SELECT count(q.id)
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                  WHERE qbe.questioncategoryid = ?";
         $this->assertEquals(2, $DB->count_records_sql($sql, [$qcat1->id]));
-        $this->assertEquals(4, $DB->count_records_sql($sql, [$qcat2->id]));
+        $this->assertEquals(3, $DB->count_records_sql($sql, [$qcat2->id]));
 
         // Non-existing category, nothing will happen.
         helper::question_remove_stale_questions_from_category(0);
         $sql = "SELECT count(q.id)
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                  WHERE qbe.questioncategoryid = ?";
         $this->assertEquals(2, $DB->count_records_sql($sql, [$qcat1->id]));
-        $this->assertEquals(4, $DB->count_records_sql($sql, [$qcat2->id]));
+        $this->assertEquals(3, $DB->count_records_sql($sql, [$qcat2->id]));
 
         // First category, should be empty afterwards.
         helper::question_remove_stale_questions_from_category($qcat1->id);
         $sql = "SELECT count(q.id)
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                  WHERE qbe.questioncategoryid = ?";
         $this->assertEquals(0, $DB->count_records_sql($sql, [$qcat1->id]));
-        $this->assertEquals(4, $DB->count_records_sql($sql, [$qcat2->id]));
+        $this->assertEquals(3, $DB->count_records_sql($sql, [$qcat2->id]));
         $this->assertFalse($DB->record_exists('question', ['id' => $q1a->id]));
         $this->assertFalse($DB->record_exists('question', ['id' => $q1b->id]));
 
@@ -130,14 +131,14 @@ class helper_test extends \advanced_testcase {
         $sql = "SELECT count(q.id)
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                  WHERE qbe.questioncategoryid = ?";
         $this->assertEquals(0, $DB->count_records_sql($sql, [$qcat1->id]));
-        $this->assertEquals(2, $DB->count_records_sql($sql, [$qcat2->id]));
+        $this->assertEquals(1, $DB->count_records_sql($sql, [$qcat2->id]));
         $this->assertFalse($DB->record_exists('question', ['id' => $q2a->id]));
         $this->assertTrue($DB->record_exists('question', ['id' => $q2b->id]));
         $this->assertFalse($DB->record_exists('question', ['id' => $q2c->id]));
-        $this->assertTrue($DB->record_exists('question', ['id' => $q2d->id]));
+        $this->assertTrue($DB->record_exists('question_set_references', ['id' => $q2d->id]));
     }
 
     /**
@@ -204,7 +205,7 @@ class helper_test extends \advanced_testcase {
     public function test_question_category_select_menu() {
 
         $this->qgenerator->create_question_category(['contextid' => $this->context->id, 'name' => 'Test this question category']);
-        $contexts = new \question_edit_contexts($this->context);
+        $contexts = new \core_question\lib\question_edit_contexts($this->context);
 
         ob_start();
         helper::question_category_select_menu($contexts->having_cap('moodle/question:add'));
@@ -230,7 +231,7 @@ class helper_test extends \advanced_testcase {
         $qcategory2 = $this->qgenerator->create_question_category(['contextid' => $this->context->id, 'parent' => $qcategory1->id]);
         $qcategory3 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
 
-        $contexts = new \question_edit_contexts($this->context);
+        $contexts = new \core_question\lib\question_edit_contexts($this->context);
 
         // Validate that we have the array with the categories tree.
         $categorycontexts = helper::question_category_options($contexts->having_cap('moodle/question:add'));

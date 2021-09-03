@@ -56,7 +56,7 @@ function qbank_tagquestion_output_fragment_tags_form($args) {
         $sql = "SELECT qc.*
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                   JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                  WHERE q.id = :id";
         $category = $DB->get_record_sql($sql, ['id' => $question->id]);

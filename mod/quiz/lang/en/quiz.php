@@ -1051,6 +1051,10 @@ $string['wronguse'] = 'You can not use this page like that';
 $string['xhtml'] = 'XHTML';
 $string['youneedtoenrol'] = 'You need to enrol in this course before you can attempt this quiz';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is {$a}.';
+$string['questionversion'] = 'v{$a}';
+$string['questionversionlatest'] = 'v{$a} (latest)';
+$string['alwayslatest'] = 'Always latest';
+$string['gobacktoquiz'] = 'Go back';
 
 // Deprecated since Moodle 3.11.
 $string['completionattemptsexhausteddesc'] = 'Complete if all available attempts are exhausted';

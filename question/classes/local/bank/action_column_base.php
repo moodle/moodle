@@ -48,7 +48,7 @@ abstract class action_column_base extends column_base {
 
     public function get_extra_joins(): array {
         return ['qv' => 'JOIN {question_versions} qv ON qv.questionid = q.id',
-                'qbe' => 'JOIN {question_bank_entry} qbe on qbe.id = qv.questionbankentryid',
+                'qbe' => 'JOIN {question_bank_entries} qbe on qbe.id = qv.questionbankentryid',
                 'qc' => 'JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid'];
     }
 

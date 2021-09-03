@@ -14,29 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Defines the \mod_quiz\local\structure\slot_random class.
- *
- * @package    mod_quiz
- * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_quiz\local\structure;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class slot_random, represents a random question slot type.
  *
  * @package    mod_quiz
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
+ * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class slot_random {
 
     /** @var \stdClass Slot's properties. A record retrieved from the quiz_slots table. */
     protected $record;
+
+    /**
+     * @var \stdClass set reference record
+     */
+    protected $referencerecord;
 
     /**
      * @var \stdClass The quiz this question slot belongs to.
@@ -49,20 +45,31 @@ class slot_random {
     protected $tags = [];
 
     /**
+     * @var string filter condition
+     */
+    protected $filtercondition = null;
+
+    /**
      * slot_random constructor.
      *
      * @param \stdClass $slotrecord Represents a record in the quiz_slots table.
      */
     public function __construct($slotrecord = null) {
         $this->record = new \stdClass();
+        $this->referencerecord = new \stdClass();
 
-        $properties = array(
-            'id', 'slot', 'quizid', 'page', 'requireprevious', 'questionid',
-            'questioncategoryid', 'includingsubcategories', 'maxmark');
+        $slotproperties = ['id', 'slot', 'quizid', 'page', 'requireprevious', 'maxmark'];
+        $setreferenceproperties = ['usingcontextid', 'questionscontextid'];
 
-        foreach ($properties as $property) {
+        foreach ($slotproperties as $property) {
             if (isset($slotrecord->$property)) {
                 $this->record->$property = $slotrecord->$property;
+            }
+        }
+
+        foreach ($setreferenceproperties as $referenceproperty) {
+            if (isset($slotrecord->$referenceproperty)) {
+                $this->referencerecord->$referenceproperty = $slotrecord->$referenceproperty;
             }
         }
     }
@@ -123,6 +130,19 @@ class slot_random {
     }
 
     /**
+     * Set filter condition.
+     *
+     * @param \stdClass $filters
+     */
+    public function set_filter_condition($filters) {
+        if (!empty($this->tags)) {
+            $filters->tags = $this->tags;
+        }
+
+        $this->filtercondition = json_encode($filters);
+    }
+
+    /**
      * Inserts the quiz slot at the $page page.
      * It is required to call this function if you are building a quiz slot object from scratch.
      *
@@ -179,17 +199,11 @@ class slot_random {
 
         $this->record->id = $DB->insert_record('quiz_slots', $this->record);
 
-        if (!empty($this->tags)) {
-            $recordstoinsert = [];
-            foreach ($this->tags as $tag) {
-                $recordstoinsert[] = (object)[
-                    'slotid' => $this->record->id,
-                    'tagid' => $tag->id,
-                    'tagname' => $tag->name
-                ];
-            }
-            $DB->insert_records('quiz_slot_tags', $recordstoinsert);
-        }
+        $this->referencerecord->component = 'mod_quiz';
+        $this->referencerecord->questionarea = 'slot';
+        $this->referencerecord->itemid = $this->record->id;
+        $this->referencerecord->filtercondition = $this->filtercondition;
+        $DB->insert_record('question_set_references', $this->referencerecord);
 
         $trans->allow_commit();
 

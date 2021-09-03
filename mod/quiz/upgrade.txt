@@ -12,7 +12,13 @@ This files describes API changes in the quiz code.
   in mod/quiz/renderer.php.
 * The function no_questions_message() in class mod_quiz_renderer is deprecated. Please use generate_no_questions_message()
   in the same class.
-
+* quiz_slots has been updated as a part of https://docs.moodle.org/dev/Question_bank_improvements_for_Moodle_4.0
+  The fields removed will be now manage by a new table in core_question:
+  - question_set_reference -> Records where a specific question is used.
+  - question_set_reference -> Records where groups of questions are used (e.g.: Random questions).
+  The quiz_slots_tags table will be removed entirely.
+* The method get_slot_tags_for_slot_id() from mod/quiz/classes/structure.php has been deprecated and the associated
+  code for this method have been removed to make sure any unnecessary error doesn't happen as a part of any call.
 
 === 3.11 ===
 

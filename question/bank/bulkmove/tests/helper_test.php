@@ -16,6 +16,8 @@
 
 namespace qbank_bulkmove;
 
+use core_question\lib\question_edit_contexts;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -87,7 +89,7 @@ class helper_test extends \advanced_testcase {
         $this->context = \context_course::instance($this->course->id);
 
         // Create a question in the default category.
-        $this->contexts = new \question_edit_contexts($this->context);
+        $this->contexts = new question_edit_contexts($this->context);
         $this->cat = question_make_default_categories($this->contexts->all());
         $this->questiondata1 = $questiongenerator->create_question('numerical', null,
             ['name' => 'Example question', 'category' => $this->cat->id]);

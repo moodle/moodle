@@ -62,7 +62,7 @@ $PAGE->set_heading($COURSE->fullname);
 // Unhide a question.
 if (($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {
     question_require_capability_on($unhide, 'edit');
-    $DB->set_field('question_versions', 'status', 0, ['questionid' => $questionid]);
+    $DB->set_field('question_versions', 'status', 0, ['questionid' => $unhide]);
 
     // Purge these questions from the cache.
     \question_bank::notify_question_edited($unhide);

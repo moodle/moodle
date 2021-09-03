@@ -92,6 +92,8 @@ if ($param->moveupcontext || $param->movedowncontext) {
     $category->contextid = $param->tocontext;
     $event = \core\event\question_category_moved::create_from_question_category_instance($category);
     $event->trigger();
+    // Update the set_reference records when moving a category to a different context.
+    move_question_set_references($catid, $catid, $oldcat->contextid, $category->contextid);
     $qcobject->update_category($catid, "{$newtopcat->id},{$param->tocontext}", $oldcat->name, $oldcat->info);
     // The previous line does a redirect().
 }

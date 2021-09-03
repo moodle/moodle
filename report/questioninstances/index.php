@@ -57,6 +57,7 @@ echo '<p><input type="submit" class="btn btn-secondary" id="settingssubmit" valu
 echo '</div></form>';
 echo $OUTPUT->box_end();
 
+$params[] = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
 // If we have a qtype to report on, generate the report.
 if ($requestedqtype) {
 
@@ -74,14 +75,13 @@ if ($requestedqtype) {
         $title = get_string('reportforallqtypes', 'report_questioninstances');
 
         $sqlqtypetest = '';
-        $params = array();
 
     } else {
         $title = get_string('reportforqtype', 'report_questioninstances',
                 question_bank::get_qtype($requestedqtype)->local_name());
 
         $sqlqtypetest = 'WHERE qtype = ?';
-        $params = array($requestedqtype);
+        $params [] = $requestedqtype;
     }
 
     // Get the question counts, and all the context information, for each
@@ -94,7 +94,7 @@ if ($requestedqtype) {
                            (SELECT COUNT(qv.id)
                               FROM {question_versions} qv
                              WHERE qv.id = data.versionid
-                                   AND qv.status = 1) AS numhidden
+                                   AND qv.status = ?) AS numhidden
                       FROM (SELECT qv.id as versionid, qc.contextid, 1 AS numquestions
                               FROM {question} q
                               JOIN {question_versions} qv ON qv.questionid = q.id

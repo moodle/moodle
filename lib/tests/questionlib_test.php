@@ -234,8 +234,7 @@ class core_questionlib_testcase extends advanced_testcase {
 
         // Create some question categories and questions in this course.
         $coursecontext = context_course::instance($course->id);
-        $questioncat = $questiongenerator->create_question_category(array('contextid' =>
-            $coursecontext->id));
+        $questioncat = $questiongenerator->create_question_category(array('contextid' => $coursecontext->id));
         $question1 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat->id));
         $question2 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat->id));
 
@@ -268,8 +267,11 @@ class core_questionlib_testcase extends advanced_testcase {
                 array(context_course::instance($course2->id)->id), '*', MUST_EXIST);
 
         // Check that there are two questions in the restored to course's context.
-        $this->assertEquals(2, $DB->count_records('question', array('category' => $restoredcategory->id)));
-
+        $this->assertEquals(2, $DB->get_record_sql('SELECT COUNT(q.id) as questioncount
+                                                                  FROM {question} q
+                                                                  JOIN {question_versions} qv ON qv.questionid = q.id
+                                                                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                                                                 WHERE qbe.questioncategoryid = ?', [$restoredcategory->id])->questioncount);
         $rc->destroy();
     }
 
@@ -458,7 +460,7 @@ class core_questionlib_testcase extends advanced_testcase {
         $actualquestionscount = $DB->count_records_sql("SELECT COUNT(*)
                                                               FROM {question} q
                                                               JOIN {question_versions} qv ON qv.questionid = q.id
-                                                              JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                                                              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                                                               JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                                                              WHERE qc.contextid = ?", $params);
         $this->assertEquals($questionsinqcat1 + $questionsinqcat2, $actualquestionscount);
@@ -2085,15 +2087,15 @@ class core_questionlib_testcase extends advanced_testcase {
         $entry = new stdClass();
         $entry->id = $questionbankentry1->id;
         $entry->idnumber = 1;
-        $DB->update_record('question_bank_entry', $entry);
+        $DB->update_record('question_bank_entries', $entry);
 
         $questionbankentry2 = get_question_bank_entry($questions2[0]->id);
         $entry2 = new stdClass();
         $entry2->id = $questionbankentry2->id;
         $entry2->idnumber = 1;
-        $DB->update_record('question_bank_entry', $entry2);
+        $DB->update_record('question_bank_entries', $entry2);
 
-        $questionbe = $DB->get_record('question_bank_entry', ['id' => $questionbankentry1->id]);
+        $questionbe = $DB->get_record('question_bank_entries', ['id' => $questionbankentry1->id]);
 
         // Validate that a first stage of an idnumber exists (this format: xxxx_x).
         list($response, $record) = idnumber_exist_in_question_category($questionbe->idnumber, $questioncat1->id);

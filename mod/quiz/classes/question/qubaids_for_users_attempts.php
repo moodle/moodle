@@ -24,8 +24,10 @@
  */
 
 namespace mod_quiz\question;
+
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/mod/quiz/attemptlib.php');
 
 /**
  * A {@link qubaid_condition} representing all the attempts by one user at a given quiz.

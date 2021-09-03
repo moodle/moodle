@@ -586,7 +586,7 @@ class view {
         // Build the where clause.
         $latestversion = 'qv.version = (SELECT MAX(v.version)
                                           FROM {question_versions} v
-                                          JOIN {question_bank_entry} be
+                                          JOIN {question_bank_entries} be
                                             ON be.id = v.questionbankentryid
                                          WHERE be.id = qbe.id)';
         $tests = ['q.parent = 0', $latestversion];

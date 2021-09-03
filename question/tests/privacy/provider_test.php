@@ -463,9 +463,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         // User1 has created questions and user3 has edited them.
         $this->assertCount(2, $userlist);
-        $this->assertEqualsCanonicalizing(
-                [$user1->id, $user3->id],
-                $userlist->get_userids());
+        $this->assertEqualsCanonicalizing([$user1->id, $user3->id], $userlist->get_userids());
     }
 
     /**
@@ -512,27 +510,25 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         provider::delete_data_for_users($approveduserlist);
 
         // Now, there should be no question related to user1 or user2 in course1.
-        $this->assertEquals(
-                0,
+        $this->assertEquals(0,
                 $DB->count_records_sql("SELECT COUNT(q.id)
-                                              FROM {question} q
-                                              JOIN {question_versions} qv ON qv.questionid = q.id
-                                              JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
-                                              JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
-                                             WHERE qc.contextid = ?
-                                               AND (q.createdby = ? OR q.modifiedby = ? OR q.createdby = ? OR q.modifiedby = ?)",
+                                          FROM {question} q
+                                          JOIN {question_versions} qv ON qv.questionid = q.id
+                                          JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                                          JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                                         WHERE qc.contextid = ?
+                                           AND (q.createdby = ? OR q.modifiedby = ? OR q.createdby = ? OR q.modifiedby = ?)",
                         [$course1context->id, $user1->id, $user1->id, $user2->id, $user2->id])
         );
 
         // User3 data in course1 should not change.
-        $this->assertEquals(
-                2,
+        $this->assertEquals(2,
                 $DB->count_records_sql("SELECT COUNT(q.id)
-                                              FROM {question} q
-                                              JOIN {question_versions} qv ON qv.questionid = q.id
-                                              JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
-                                              JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
-                                             WHERE qc.contextid = ? AND (q.createdby = ? OR q.modifiedby = ?)",
+                                          FROM {question} q
+                                          JOIN {question_versions} qv ON qv.questionid = q.id
+                                          JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                                          JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                                         WHERE qc.contextid = ? AND (q.createdby = ? OR q.modifiedby = ?)",
                         [$course1context->id, $user3->id, $user3->id])
         );
 

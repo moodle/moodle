@@ -136,7 +136,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
         $sql = "SELECT q.*, qbe.questioncategoryid AS category
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                  WHERE q.name = :name";
         $question = $DB->get_record_sql($sql, ['name' => $qname], MUST_EXIST);
         $category = $DB->get_record('question_categories', ['name' => $catname], '*', MUST_EXIST);

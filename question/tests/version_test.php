@@ -19,7 +19,7 @@ namespace core_question;
 use question_bank;
 
 /**
- * Comment lib unit tests.
+ * Question version unit tests.
  *
  * @package    core_question
  * @copyright  2021 Catalyst IT Australia Pty Ltd

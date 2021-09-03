@@ -15,19 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    mod_quiz
- * @subpackage backup-moodle2
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
  * Structure step to restore one quiz activity
  *
+ * @package    mod_quiz
+ * @subpackage backup-moodle2
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -60,10 +51,16 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         // A chance for access subplugings to set up their quiz data.
         $this->add_subplugin_structure('quizaccess', $quiz);
 
-        $paths[] = new restore_path_element('quiz_question_instance',
-                '/activity/quiz/question_instances/question_instance');
-        $paths[] = new restore_path_element('quiz_slot_tags',
+        $quizquestioninstance = new restore_path_element('quiz_question_instance',
+            '/activity/quiz/question_instances/question_instance');
+        $paths[] = $quizquestioninstance;
+        if ($this->task->get_old_moduleversion() < 2021091700) {
+            $paths[] = new restore_path_element('quiz_slot_tags',
                 '/activity/quiz/question_instances/question_instance/tags/tag');
+        } else {
+            $this->add_question_references($quizquestioninstance, $paths);
+            $this->add_question_set_references($quizquestioninstance, $paths);
+        }
         $paths[] = new restore_path_element('quiz_section', '/activity/quiz/sections/section');
         $paths[] = new restore_path_element('quiz_feedback', '/activity/quiz/feedbacks/feedback');
         $paths[] = new restore_path_element('quiz_override', '/activity/quiz/overrides/override');
@@ -99,6 +96,11 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Process the quiz data.
+     *
+     * @param stdClass|array $data
+     */
     protected function process_quiz($data) {
         global $CFG, $DB, $USER;
 
@@ -303,6 +305,64 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         }
     }
 
+    /**
+     * Process the data for pre 4.0 quiz data where the question_references and question_set_references table introduced.
+     *
+     * @param stdClass|array $data
+     */
+    protected function process_quiz_question_legacy_instance($data) {
+        global $DB;
+
+        $questionid = $this->get_mappingid('question', $data->questionid);
+        $sql = 'SELECT qbe.id as questionbankentryid,
+                       qc.contextid as questioncontextid,
+                       qc.id as category,
+                       qv.version,
+                       q.qtype,
+                       q.id as questionid
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                 WHERE q.id = ?';
+        $question = $DB->get_record_sql($sql, [$questionid]);
+        $module = $DB->get_record('quiz', ['id' => $data->quizid]);
+
+        if ($question->qtype === 'random') {
+            // Set reference data.
+            $questionsetreference = new \stdClass();
+            $questionsetreference->usingcontextid = context_module::instance(get_coursemodule_from_instance(
+                "quiz", $module->id, $module->course)->id)->id;
+            $questionsetreference->component = 'mod_quiz';
+            $questionsetreference->questionarea = 'slot';
+            $questionsetreference->itemid = $data->id;
+            $questionsetreference->questionscontextid = $question->questioncontextid;
+            $filtercondition = new stdClass();
+            $filtercondition->questioncategoryid = $question->category;
+            $filtercondition->includingsubcategories = $data->includingsubcategories;
+            $questionsetreference->filtercondition = json_encode($filtercondition);
+            $DB->insert_record('question_set_references', $questionsetreference);
+            // Cleanup leftover random qtype data from question table.
+            question_delete_question($question->questionid);
+        } else {
+            // Reference data.
+            $questionreference = new \stdClass();
+            $questionreference->usingcontextid = context_module::instance(get_coursemodule_from_instance(
+                "quiz", $module->id, $module->course)->id)->id;
+            $questionreference->component = 'mod_quiz';
+            $questionreference->questionarea = 'slot';
+            $questionreference->itemid = $data->id;
+            $questionreference->questionbankentryid = $question->questionbankentryid;
+            $questionreference->version = $question->version;
+            $DB->insert_record('question_references', $questionreference);
+        }
+    }
+
+    /**
+     * Process quiz slots.
+     *
+     * @param stdClass|array $data
+     */
     protected function process_quiz_question_instance($data) {
         global $CFG, $DB;
 
@@ -325,7 +385,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
                     $page += 1;
                     continue;
                 }
-                if ($item == $data->questionid) {
+                if (isset($data->questionid) && $item == $data->questionid) {
                     $data->slot = $slot;
                     $data->page = $page;
                     break;
@@ -344,20 +404,15 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         }
 
         $data->quizid = $this->get_new_parentid('quiz');
-        $questionmapping = $this->get_mapping('question', $data->questionid);
-        $data->questionid = $questionmapping ? $questionmapping->newitemid : false;
-
-        if (isset($data->questioncategoryid)) {
-            $data->questioncategoryid = $this->get_mappingid('question_category', $data->questioncategoryid);
-        } else if ($questionmapping && $questionmapping->info->qtype == 'random') {
-            // Backward compatibility for backups created using Moodle 3.4 or earlier.
-            $data->questioncategoryid = $this->get_mappingid('question_category', $questionmapping->parentitemid);
-            $data->includingsubcategories = $questionmapping->info->questiontext ? 1 : 0;
-        }
 
         $newitemid = $DB->insert_record('quiz_slots', $data);
         // Add mapping, restore of slot tags (for random questions) need it.
         $this->set_mapping('quiz_question_instance', $oldid, $newitemid);
+
+        if ($this->task->get_old_moduleversion() < 2022020300) {
+            $data->id = $newitemid;
+            $this->process_quiz_question_legacy_instance($data);
+        }
     }
 
     /**
@@ -370,7 +425,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $data = (object)$data;
 
-        $data->slotid = $this->get_new_parentid('quiz_question_instance');
+        $slotid = $this->get_new_parentid('quiz_question_instance');
         if ($this->task->is_samesite() && $tag = core_tag_tag::get($data->tagid, 'id, name')) {
             $data->tagname = $tag->name;
         } else if ($tag = core_tag_tag::get_by_name(0, $data->tagname, 'id, name')) {
@@ -379,8 +434,22 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $data->tagid = null;
             $data->tagname = $tag->name;
         }
+        $tagstring = "{$data->tagid},{$data->tagname}";
+        $setreferencedata = $DB->get_record('question_set_references', ['itemid' => $slotid]);
 
-        $DB->insert_record('quiz_slot_tags', $data);
+        $filtercondition = json_decode($setreferencedata->filtercondition);
+        $tagstrings = [];
+        if (isset($filtercondition->tags)) {
+            $tags = explode(',', $filtercondition->tags);
+            foreach ($tags as $tag) {
+                $tagstrings [] = $tag;
+            }
+        }
+        $tagstrings [] = $tagstring;
+        $filtercondition->tags = $tagstrings;
+        $setreferencedata->filtercondition = json_encode($filtercondition);
+
+        $DB->update_record('question_set_references', $setreferencedata);
     }
 
     protected function process_quiz_section($data) {

@@ -292,24 +292,20 @@ class random_question_loader {
 
         // Create the query to get the questions (validate that at least we have a question id. If not, do not execute the sql.)
         $hasquestions = false;
-        $where = 'IN (';
-        foreach ($questionids as $questionid) {
-            $where = $where . $questionid . ',';
-            // Extra validation, we do not want an infinite loop.
-            $hasquestions = (bool)$questionid;
+        if (!empty($questionids)) {
+            $hasquestions = true;
         }
-        $where = rtrim($where,',');
-        $where = $where . ')';
-
         if ($hasquestions) {
+            list($condition, $param) = $DB->get_in_or_equal($questionids,SQL_PARAMS_NAMED, 'questionid');
+            $condition = 'WHERE q.id ' . $condition;
             $sql = "SELECT {$fieldsstring}
                       FROM (SELECT q.*, qbe.questioncategoryid as category
                       FROM {question} q
                       JOIN {question_versions} qv ON qv.questionid = q.id
-                      JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
-                     WHERE q.id {$where}) q";
+                      JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                      {$condition}) q";
 
-            return $DB->get_records_sql($sql, [], $offset, $limit);
+            return $DB->get_records_sql($sql, $param, $offset, $limit);
         } else {
             return [];
         }

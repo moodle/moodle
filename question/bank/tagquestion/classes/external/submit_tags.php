@@ -81,7 +81,7 @@ class submit_tags extends external_api {
                 SELECT q.*, qc.contextid
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                   JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                  WHERE q.id = ?', [$questionid])) {
             throw new \moodle_exception('questiondoesnotexist', 'question');

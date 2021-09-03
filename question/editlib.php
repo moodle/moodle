@@ -50,6 +50,7 @@ function get_module_from_cmid($cmid) {
 
     return array($modrec, $cmrec);
 }
+
 /**
  * Function to read all questions for category into big array
  *
@@ -58,9 +59,9 @@ function get_module_from_cmid($cmid) {
  * @param bool $recurse include subdirectories
  * @param bool $export set true if this is called by questionbank export
  * @return array
-*/
+ */
 function get_questions_category(object $category, bool $noparent, bool $recurse = true, bool $export = true,
-                                bool $latestversion = false): array {
+        bool $latestversion = false): array {
     global $DB;
 
     // Build sql bit for $noparent.
@@ -84,25 +85,24 @@ function get_questions_category(object $category, bool $noparent, bool $recurse 
     if ($latestversion) {
         $version = 'AND (qv.version = (SELECT MAX(v.version)
                                          FROM {question_versions} v
-                                         JOIN {question_bank_entry} be
+                                         JOIN {question_bank_entries} be
                                            ON be.id = v.questionbankentryid
                                         WHERE be.id = qbe.id) OR qv.version is null)';
     }
-    $questions = $DB->get_records_sql(
-        "SELECT q.*, qv.status, qc.id AS category
-               FROM {question} q
-               JOIN {question_versions} qv ON qv.questionid = q.id
-               JOIN {question_bank_entry} qbe ON qbe.id = qv.questionbankentryid
-               JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
-              WHERE qc.id {$usql} {$npsql} {$version}
-           ORDER BY qc.id, q.qtype, q.name", $params);
+    $questions = $DB->get_records_sql("SELECT q.*, qv.status, qc.id AS category
+                                         FROM {question} q
+                                         JOIN {question_versions} qv ON qv.questionid = q.id
+                                         JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                                         JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                                        WHERE qc.id {$usql} {$npsql} {$version}
+                                     ORDER BY qc.id, q.qtype, q.name", $params);
 
     // Iterate through questions, getting stuff we need.
     $qresults = [];
     foreach($questions as $key => $question) {
         $question->export_process = $export;
         $qtype = question_bank::get_qtype($question->qtype, false);
-        if ($export && $qtype->name() == 'missingtype') {
+        if ($export && $qtype->name() === 'missingtype') {
             // Unrecognised question type. Skip this question when exporting.
             continue;
         }

@@ -59,8 +59,10 @@ Feature: Basic use of the Statistics report
       |   1  | False    |
       |   2  | False    |
       |   3  | False    |
+    And I press "Go back"
+    And I navigate to "Results > Statistics" in current page administration
     And I press "Show report"
-    Then I should not see "No attempts have been made at this quiz, or all attempts have questions that need manual grading."
+    Then I should not see "No questions have been attempted yet"
     And "Show chart data" "link" should exist
 
     # Question A statistics breakdown.

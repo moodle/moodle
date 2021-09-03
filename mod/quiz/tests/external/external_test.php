@@ -1941,11 +1941,11 @@ class external_test extends externallib_advanced_testcase {
         $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
 
-        // Add new question types in the category (for the random one).
         $question = $questiongenerator->create_question('truefalse', null, array('category' => $cat->id));
-        $question = $questiongenerator->create_question('essay', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
 
-        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
+        $question = $questiongenerator->create_question('essay', null, array('category' => $cat->id));
+        quiz_add_quiz_question($question->id, $quiz);
 
         $this->setUser($this->student);
 
@@ -1953,7 +1953,7 @@ class external_test extends externallib_advanced_testcase {
         $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_required_qtypes_returns(), $result);
 
         $expected = array(
-            'questiontypes' => ['essay', 'numerical', 'random', 'shortanswer', 'truefalse'],
+            'questiontypes' => ['essay', 'numerical', 'shortanswer', 'truefalse'],
             'warnings' => []
         );
 

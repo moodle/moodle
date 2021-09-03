@@ -188,7 +188,8 @@ class quiz_statistics_table extends flexible_table {
         if ($this->is_calculated_question_summary($questionstat)) {
             return '';
         } else {
-            return print_question_icon($questionstat->question, true);
+            $questionobject = $questionstat->question;
+            return print_question_icon($questionobject);
         }
     }
 

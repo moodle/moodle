@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_quiz/question_slot
+
+    This template renders the question slot content.
+
+    Example context (json):
+    {
+        "checkbox" : "<input id='selectquestion-1' name='selectquestion[]' type='checkbox' class='select-multiple-checkbox'>",
+        "questionnumber" : "<span class='slotnumber'><span class='accesshide'>Question</span> 1</span>",
+        "questionname" : "This is a test question",
+        "questionicons" : "<i class='icon fa fa-search-plus fa-fw' title='Preview question' aria-label='Preview question'></i>",
+        "canbeedited" : false,
+        "questiondependencyicon" : "<span class='question_dependency_wrapper question_dependency_cannot_depend'></span>"
+    }
+}}
+
+<div class="mod-indent-outer" id="mod-indent-outer-slot-{{slotid}}">
+    {{{checkbox}}}
+    {{{questionnumber}}}
+    <div class="mod-indent"></div>
+    <div class="activityinstance">
+        {{{questionname}}}
+    </div>
+    <span class="actions">
+        {{#versionselection}}
+            <label for="version-{{slotid}}"> </label>
+            <select id="version-{{slotid}}" name="version" class="form-control mr-2 h-auto version-selection"
+            data-action="mod_quiz-select_slot" data-slot-id="{{slotid}}">
+                {{#versionoption}}
+                    <option value="{{version}}" {{#selected}}selected="selected"{{/selected}}>{{versionvalue}}</option>
+                {{/versionoption}}
+            </select>
+        {{/versionselection}}
+        {{{questionicons}}}
+    </span>
+    {{#canbeedited}}
+        {{{questiondependencyicon}}}
+    {{/canbeedited}}
+</div>

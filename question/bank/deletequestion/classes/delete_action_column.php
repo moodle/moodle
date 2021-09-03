@@ -83,7 +83,7 @@ class delete_action_column extends menu_action_column_base {
         if (!question_has_capability_on($question, 'edit')) {
             return [null, null, null];
         }
-        if ($question->status === constants::QUESTION_STATUS_HIDDEN) {
+        if ((int) $question->status === constants::QUESTION_STATUS_HIDDEN) {
             $hiddenparams = array(
                     'unhide' => $question->id,
                     'sesskey' => sesskey());

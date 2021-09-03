@@ -30,10 +30,26 @@ Feature: A teacher can preview questions in the question bank
 
   Scenario: Question preview shows the question and other information
     Then the state of "What is pi to two d.p.?" question is shown as "Not yet answered"
+    And I should see "(latest)"
     And I should see "Marked out of 1.00"
     And I should see "Technical information"
-    And I should see "Attempt options"
     And I should see "Display options"
+    And I should see "Preview options"
+    And I should see "Comments"
+    And I click on "Comments" "link"
+    And I should see "Save comment"
+    And I should see "ID number"
+    And "Numerical" "icon" should exist
+    And I should see "Version"
+    And I click on "Preview options" "link"
+    And I should see "Question version"
+    And "action-menu-toggle-0" "link" should exist
+    And I click on "action-menu-toggle-0" "link"
+    And I should see "Edit question"
+    And I should see "Duplicate"
+    And I should see "Manage tags"
+    And I should see "Delete"
+    And I should see "Export as Moodle XML"
 
   Scenario: Preview lets the teacher see what happens when an answer is saved
     When I set the field "Answer:" to "1"
@@ -48,14 +64,18 @@ Feature: A teacher can preview questions in the question bank
   Scenario: Preview lets the teacher see what happens with different review options
     Given I set the field "Answer:" to "3.14"
     And I press "Submit and finish"
+    And I press "Display options"
     When I set the field "Whether correct" to "Not shown"
     And I set the field "Decimal places in grades" to "5"
     And I press "Update display options"
+    And I set the field "Answer:" to "3.14"
+    And I press "Submit and finish"
     Then the state of "What is pi to two d.p.?" question is shown as "Complete"
     And I should see "1.00000"
 
   Scenario: Preview lets the teacher see what happens with different behaviours
-    When I set the field "How questions behave" to "Immediate feedback"
+    When I press "Preview options"
+    And I set the field "How questions behave" to "Immediate feedback"
     And I set the field "Marked out of" to "3"
     And I press "Start again with these options"
     And I set the field "Answer:" to "3.1"
@@ -75,9 +95,43 @@ Feature: A teacher can preview questions in the question bank
     Then the field "Answer:" matches value "3.14"
 
   Scenario: Preview has an option to export the individual quesiton.
-    Then following "Download this question in Moodle XML format" should download between "1000" and "2500" bytes
+    When I open the action menu in "action-menu-0-menubar" "region"
+    Then following "Export as Moodle XML" should download between "1000" and "2500" bytes
 
   Scenario: Preview a question with very small grade
-    When I set the field "Marked out of" to "0.00000123456789"
+    When I press "Preview options"
+    And I set the field "Marked out of" to "0.00000123456789"
     And I press "Start again with these options"
     Then the field "Marked out of" matches value "0.00000123456789"
+
+  Scenario: Question preview has an action menu
+    When I open the action menu in "action-menu-0-menubar" "region"
+    Then I should see "Edit question"
+    And I should see "Duplicate"
+    And I should see "Manage tags"
+    And I should see "Delete"
+    And I should see "Export as Moodle XML"
+
+  Scenario: Question version is updated when edited and teacher can change question version
+    When I open the action menu in "action-menu-0-menubar" "region"
+    And I choose "Edit question" in the open action menu
+    And I set the field "Question name" to "New version"
+    And I set the field "Question text" to "New text version"
+    And I click on "submitbutton" "button"
+    And I press "Preview options"
+    And I set the field "Question version" to "2"
+    And I press "Start again with these options"
+    Then I should see "Version 2"
+    And I should see "(latest)"
+    And I should see "New version"
+    And I should see "New text version"
+    And I should not see "Test question to be previewed"
+    And I should not see "Version 1"
+
+  Scenario: Question preview can be closed
+    When I open the action menu in "action-menu-0-menubar" "region"
+    And I choose "Edit question" in the open action menu
+    And I click on "cancel" "button"
+    And I press "Close preview"
+    Then I should not see "(latest)"
+    And I should see "Course 1"
