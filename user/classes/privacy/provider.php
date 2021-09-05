@@ -44,7 +44,8 @@ use \core_privacy\local\request\approved_userlist;
 class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\core_userlist_provider,
-        \core_privacy\local\request\subsystem\provider {
+        \core_privacy\local\request\subsystem\provider,
+        \core_privacy\local\request\user_preference_provider {
 
     /**
      * Returns information about the user data stored in this component.
@@ -176,6 +177,11 @@ class provider implements
         $collection->add_database_table('my_pages', $mypages, 'privacy:metadata:my_pages');
         $collection->add_database_table('user_preferences', $userpreferences, 'privacy:metadata:user_preferences');
         $collection->add_subsystem_link('core_files', [], 'privacy:metadata:filelink');
+
+        $collection->add_user_preference(
+            'core_user_welcome',
+            'privacy:metadata:core_user:preference:core_user_welcome'
+        );
 
         return $collection;
     }
@@ -537,4 +543,23 @@ class provider implements
             writer::with_context($context)->export_data([get_string('privacy:sessionpath', 'user')], $sessiondata);
         }
     }
+
+    /**
+     * Export all user preferences for the plugin.
+     *
+     * @param   int $userid The userid of the user whose data is to be exported.
+     */
+    public static function export_user_preferences(int $userid) {
+        $userwelcomepreference = get_user_preferences('core_user_welcome', null, $userid);
+
+        if ($userwelcomepreference !== null) {
+            writer::export_user_preference(
+                'core_user',
+                'core_user_welcome',
+                $userwelcomepreference,
+                get_string('privacy:metadata:user_preference:core_user_welcome', 'core_user')
+            );
+        }
+    }
+
 }

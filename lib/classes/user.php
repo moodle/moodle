@@ -1169,4 +1169,28 @@ class core_user {
 
         return false;
     }
+
+    /**
+     * Get welcome message.
+     *
+     * @return lang_string welcome message
+     */
+    public static function welcome_message(): ?lang_string {
+        global $USER;
+
+        $isloggedinas = \core\session\manager::is_loggedinas();
+        if (!isloggedin() || isguestuser() || $isloggedinas) {
+            return null;
+        }
+        if (empty($USER->core_welcome_message)) {
+            $USER->core_welcome_message = true;
+            $messagekey = 'welcomeback';
+            if (empty(get_user_preferences('core_user_welcome', null))) {
+                $messagekey = 'welcometosite';
+                set_user_preference('core_user_welcome', time());
+            }
+            return new lang_string($messagekey, 'core', $USER->firstname);
+        };
+        return null;
+    }
 }

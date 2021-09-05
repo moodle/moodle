@@ -4326,7 +4326,14 @@ EOD;
      * @return string HTML to display the main header.
      */
     public function full_header() {
-
+        $pagetype = $this->page->pagetype;
+        $homepage = get_home_page();
+        $homepagetype = null;
+        if ($homepage == HOMEPAGE_MY) {
+            $homepagetype = 'my-index';
+        } else if ($homepage == HOMEPAGE_SITE) {
+            $homepagetype = 'site-index';
+        }
         if ($this->page->include_region_main_settings_in_header_actions() &&
                 !$this->page->blocks->is_block_present('settings')) {
             // Only include the region main settings if the page has requested it and it doesn't already have
@@ -4347,6 +4354,9 @@ EOD;
         $header->pageheadingbutton = $this->page_heading_button();
         $header->courseheader = $this->course_header();
         $header->headeractions = $this->page->get_header_actions();
+        if (!empty($pagetype) && !empty($homepagetype) && $pagetype == $homepagetype) {
+            $header->welcomemessage = \core_user::welcome_message();
+        }
         return $this->render_from_template('core/full_header', $header);
     }
 
