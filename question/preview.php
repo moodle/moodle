@@ -277,9 +277,9 @@ print_collapsible_region_end();
 
 // Output a link to export this single question.
 if (question_has_capability_on($question, 'view')) {
-    if (class_exists('qbank_exporttoxml\\exporttoxml_helper')) {
+    if (class_exists('qbank_exporttoxml\\helper')) {
         if (\core\plugininfo\qbank::is_plugin_enabled('qbank_exporttoxml')) {
-            $exportfunction = '\\qbank_exporttoxml\\exporttoxml_helper::question_get_export_single_question_url';
+            $exportfunction = '\\qbank_exporttoxml\\helper::question_get_export_single_question_url';
             echo html_writer::link($exportfunction($question),
                     get_string('exportonequestion', 'question'));
         }
