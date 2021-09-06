@@ -121,6 +121,9 @@ class core_question_external extends external_api {
      * Returns description of method parameters.
      *
      * @return external_function_parameters.
+     * @deprecated since Moodle 4.0
+     * @see \qbank_tagquestion\external\qbank_tagquestion_external
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public static function submit_tags_form_parameters() {
         return new external_function_parameters([
@@ -137,6 +140,9 @@ class core_question_external extends external_api {
      * @param int $contextid The editing context id.
      * @param string $formdata The question tag form data in a URI encoded param string
      * @return array The created or modified question tag
+     * @deprecated since Moodle 4.0
+     * @see \qbank_tagquestion\external\qbank_tagquestion_external
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public static function submit_tags_form($questionid, $contextid, $formdata) {
         global $DB, $CFG;
@@ -206,11 +212,25 @@ class core_question_external extends external_api {
 
     /**
      * Returns description of method result value.
+     *
+     * @deprecated since Moodle 4.0
+     * @see \qbank_tagquestion\external\qbank_tagquestion_external
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public static function  submit_tags_form_returns() {
         return new external_single_structure([
                 'status' => new external_value(PARAM_BOOL, 'status: true if success')
         ]);
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
+     */
+    public static function submit_tags_form_is_deprecated() {
+        return true;
     }
 
     /**

@@ -6,6 +6,8 @@ This files describes API changes for code that uses the question API.
    are divided in two different parts, base classes and feature classes. All the base
    classes are moved classes/local/bank and all the feature classes will be moved to
    the plugin for that feature.
+2) submit_tags_form and associated external services for question tag, tags_form in question/type,
+   core_question_output_fragment_tags_form method in lib is deprecated and moved to the tagquestion plugin.
 
 2) Function question_get_export_single_question_url() in questionlib has been deprecated
    and moved to qbank_exporttoxml plugin, the new location is:

@@ -1945,6 +1945,7 @@ class core_plugin_manager {
                 'exportquestions',
                 'importquestions',
                 'managecategories',
+                'tagquestion',
                 'viewcreator',
                 'viewquestionname',
                 'viewquestiontext',

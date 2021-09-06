@@ -16,14 +16,12 @@
 /**
  * The purpose of this module is to centralize selectors related to question.
  *
- * @deprecated since Moodle 4.0
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- * @module     core_question/question_selectors
+ * @module     qbank_tagquestion/question_selectors
+ * @package    qbank_tagquestion
  * @copyright  2018 Simey Lameze <lameze@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([], function() {
-    window.console.warn('warn: The core_question/selectors has been deprecated. Please use qbank_tagquestion/selectors instead.');
     return {
         actions: {
             save: '[data-action="save"]',

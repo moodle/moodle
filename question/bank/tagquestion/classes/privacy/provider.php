@@ -1,3 +1,4 @@
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -13,24 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qbank_tagquestion\privacy;
+
 /**
- * The purpose of this module is to centralize selectors related to question.
+ * Privacy Subsystem for qbank_tagquestion implementing null_provider.
  *
- * @deprecated since Moodle 4.0
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- * @module     core_question/question_selectors
- * @copyright  2018 Simey Lameze <lameze@moodle.com>
+ * @package    qbank_tagquestion
+ * @copyright  2021 Catalyst IT Australia Pty Ltd
+ * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define([], function() {
-    window.console.warn('warn: The core_question/selectors has been deprecated. Please use qbank_tagquestion/selectors instead.');
-    return {
-        actions: {
-            save: '[data-action="save"]',
-            edittags: '[data-action="edittags"]',
-        },
-        containers: {
-            loadingIcon: '[data-region="overlay-icon-container"]',
-        },
-    };
-});
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    public static function get_reason(): string {
+        return 'privacy:metadata';
+    }
+}
