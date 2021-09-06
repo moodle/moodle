@@ -30,11 +30,11 @@ admin_externalpage_setup('reporteventlists');
 $completelist = report_eventlist_list_generator::get_all_events_list();
 
 $tabledata = array();
-$components = array('0' => get_string('all', 'report_eventlist'));
+$components = array();
 $edulevel = array('0' => get_string('all', 'report_eventlist'));
 $crud = array('0' => get_string('all', 'report_eventlist'));
 foreach ($completelist as $value) {
-    $components[] = $value['component'];
+    $components[] = explode('\\', $value['eventname'])[1];
     $edulevel[] = $value['edulevel'];
     $crud[] = $value['crud'];
     $tabledata[] = (object)$value;
