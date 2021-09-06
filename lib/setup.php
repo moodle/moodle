@@ -141,6 +141,16 @@ if (defined('BEHAT_SITE_RUNNING')) {
         $CFG->wwwroot = $CFG->behat_wwwroot;
         $CFG->prefix = $CFG->behat_prefix;
         $CFG->dataroot = $CFG->behat_dataroot;
+
+        // And we do the same with the optional ones.
+        $allowedconfigoverride = ['dbname', 'dbuser', 'dbpass', 'dbhost'];
+        foreach ($allowedconfigoverride as $config) {
+            $behatconfig = 'behat_' . $config;
+            if (!isset($CFG->$behatconfig)) {
+                continue;
+            }
+            $CFG->$config = $CFG->$behatconfig;
+        }
     }
 }
 

@@ -243,18 +243,31 @@ function behat_clean_init_config() {
 function behat_check_config_vars() {
     global $CFG;
 
+    $moodleprefix = empty($CFG->prefix) ? '' : $CFG->prefix;
+    $behatprefix = empty($CFG->behat_prefix) ? '' : $CFG->behat_prefix;
+    $phpunitprefix = empty($CFG->phpunit_prefix) ? '' : $CFG->phpunit_prefix;
+    $behatdbname = empty($CFG->behat_dbname) ? $CFG->dbname : $CFG->behat_dbname;
+    $phpunitdbname = empty($CFG->phpunit_dbname) ? $CFG->dbname : $CFG->phpunit_dbname;
+    $behatdbhost = empty($CFG->behat_dbhost) ? $CFG->dbhost : $CFG->behat_dbhost;
+    $phpunitdbhost = empty($CFG->phpunit_dbhost) ? $CFG->dbhost : $CFG->phpunit_dbhost;
+
     // Verify prefix value.
     if (empty($CFG->behat_prefix)) {
         behat_error(BEHAT_EXITCODE_CONFIG,
             'Define $CFG->behat_prefix in config.php');
     }
-    if (!empty($CFG->prefix) and $CFG->behat_prefix == $CFG->prefix) {
+    if ($behatprefix == $moodleprefix && $behatdbname == $CFG->dbname && $behatdbhost == $CFG->dbhost) {
         behat_error(BEHAT_EXITCODE_CONFIG,
-            '$CFG->behat_prefix in config.php must be different from $CFG->prefix');
+            '$CFG->behat_prefix in config.php must be different from $CFG->prefix' .
+            ' when $CFG->behat_dbname and $CFG->behat_host are not set or when $CFG->behat_dbname equals $CFG->dbname' .
+            ' and $CFG->behat_dbhost equals $CFG->dbhost');
     }
-    if (!empty($CFG->phpunit_prefix) and $CFG->behat_prefix == $CFG->phpunit_prefix) {
+    if ($phpunitprefix !== '' && $behatprefix == $phpunitprefix && $behatdbname == $phpunitdbname &&
+            $behatdbhost == $phpunitdbhost) {
         behat_error(BEHAT_EXITCODE_CONFIG,
-            '$CFG->behat_prefix in config.php must be different from $CFG->phpunit_prefix');
+            '$CFG->behat_prefix in config.php must be different from $CFG->phpunit_prefix' .
+            ' when $CFG->behat_dbname equals $CFG->phpunit_dbname' .
+            ' and $CFG->behat_dbhost equals $CFG->phpunit_dbhost');
     }
 
     // Verify behat wwwroot value.
