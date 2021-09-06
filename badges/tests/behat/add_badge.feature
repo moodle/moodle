@@ -20,20 +20,22 @@ Feature: Add badges to the system
     Then I should see "There are currently no badges available for users to earn."
 
   @javascript @_file_upload
-  Scenario: Add a badge
-    Given I navigate to "Badges > Badges settings" in site administration
-    And I set the field "Badge issuer name" to "Test Badge Site"
-    And I set the field "Badge issuer email address" to "testuser@example.com"
-    And I press "Save changes"
+  Scenario: Add a site badge
+    Given the following config values are set as admin:
+      | badges_defaultissuername    | Test Badge Site      |
+      | badges_defaultissuercontact | testuser@example.com |
     And I navigate to "Badges > Add a new badge" in site administration
+    And the field "Issuer name" matches value "Test Badge Site"
+    And the field "Issuer contact" matches value "testuser@example.com"
     And I set the following fields to these values:
-      | Name | Test badge with 'apostrophe' and other friends (<>&@#) |
-      | Version | v1 |
-      | Language | English |
-      | Description | Test badge description |
-      | Image author | http://author.example.com |
-      | Image caption | Test caption image |
-      | Tags | Math, Physics |
+      | Name           | Test badge with 'apostrophe' and other friends (<>&@#) |
+      | Version        | v1                                                     |
+      | Language       | English                                                |
+      | Description    | Test badge description                                 |
+      | Image author   | http://author.example.com                              |
+      | Image caption  | Test caption image                                     |
+      | Tags           | Math, Physics                                          |
+      | Issuer contact | issuer@example.com                                     |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     When I press "Create badge"
     Then I should see "Edit details"
@@ -42,11 +44,11 @@ Feature: Add badges to the system
     And I should see "Related badges (0)"
     And I should see "Alignments (0)"
     And I should not see "Create badge"
-    And I should not see "Issuer details"
     And I select "Overview" from the "jump" singleselect
     And I should see "Issuer details"
     And I should see "Test Badge Site"
-    And I should see "testuser@example.com"
+    And I should see "issuer@example.com"
+    And I should not see "testuser@example.com"
     And I should see "Tags"
     And I should see "Math"
     And I should see "Physics"
@@ -172,37 +174,49 @@ Feature: Add badges to the system
     And I should see "Add a new badge"
 
   @javascript @_file_upload
-  Scenario: Edit a badge
-    Given I navigate to "Badges > Badges settings" in site administration
-    And I set the field "Badge issuer name" to "Test Badge Site"
-    And I set the field "Badge issuer email address" to "testuser@example.com"
-    And I press "Save changes"
-    And I navigate to "Badges > Add a new badge" in site administration
+  Scenario: Edit a site badge
+    Given the following "core_badges > Badge" exists:
+      | name           | Site badge                     |
+      | status         | inactive                       |
+      | version        | 1                              |
+      | language       | ca                             |
+      | description    | Test badge description         |
+      | image          | badges/tests/behat/badge.png   |
+      | imageauthorurl | http://imtheauthor.example.com |
+      | imagecaption   | My caption image               |
+      | issuercontact  | testuser@example.com           |
+    And the following "core_badges > Criterias" exist:
+      | badge       | role           |
+      | Site badge  | editingteacher |
+    And I navigate to "Badges > Manage badges" in site administration
+    When I press "Edit" action in the "Site badge" report row
+    And I should see "Site badge"
+    And the field "Issuer contact" matches value "testuser@example.com"
     And I set the following fields to these values:
-      | Name | Test badge with 'apostrophe' and other friends (<>&@#) |
-      | Version | firstversion |
-      | Language | English |
-      | Description | Test badge description |
-      | Image author | http://author.example.com |
-      | Image caption | Test caption image |
-      | Tags | Math, Physics |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    When I select "Edit details" from the "jump" singleselect
-    And I should see "Test badge with 'apostrophe' and other friends (&@#)"
-    And I should not see "Issuer details"
-    And I should see "Math"
-    And I should see "Physics"
-    And I set the following fields to these values:
-      | Name | Test badge renamed |
-      | Version | secondversion |
-      | Tags | Math, History |
+      | Name           | Test badge with 'apostrophe' and other friends (<>&@#) |
+      | Version        | secondversion                                          |
+      | Language       | English                                                |
+      | Description    | Modified test badge description                        |
+      | Image author   | http://author.example.com                              |
+      | Image caption  | Test caption image                                     |
+      | Tags           | Math, History                                          |
+      | Issuer contact | issuer@invalid.cat                                     |
     And I press "Save changes"
     And I select "Overview" from the "jump" singleselect
-    Then I should not see "Test badge with 'apostrophe' and other friends (&@#)"
-    And I should not see "firstversion"
-    And I should not see "Math, Physics"
-    And I should see "Test badge renamed"
+    And I expand all fieldsets
+    Then I should see "Test badge with 'apostrophe' and other friends (&@#)"
+    And I should not see "Site badge"
     And I should see "secondversion"
+    And I should not see "firstversion"
     And I should see "Math"
     And I should see "History"
+    And I should see "issuer@invalid.cat"
+    And I should not see "testuser@example.com"
+
+  Scenario: Default value for issuer name
+    When I navigate to "Badges > Add a new badge" in site administration
+    Then the field "Issuer name" matches value "Acceptance test site"
+    But the following config values are set as admin:
+      | badges_defaultissuername    | Test Badge Site      |
+    And I navigate to "Badges > Add a new badge" in site administration
+    And the field "Issuer name" matches value "Test Badge Site"

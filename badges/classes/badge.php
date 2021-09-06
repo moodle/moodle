@@ -168,14 +168,6 @@ class badge {
             }
         }
 
-        if (badges_open_badges_backpack_api() != OPEN_BADGES_V1) {
-            // For Open Badges 2 we need to use a single site issuer with no exceptions.
-            $issuer = badges_get_default_issuer();
-            $this->issuername = $issuer['name'];
-            $this->issuercontact = $issuer['email'];
-            $this->issuerurl = $issuer['url'];
-        }
-
         $this->criteria = self::get_criteria();
     }
 
@@ -1020,17 +1012,9 @@ class badge {
         $fordb->timemodified = $now;
         $fordb->usercreated = $USER->id;
         $fordb->usermodified = $USER->id;
-
-        if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
-            $fordb->issuername = $data->issuername;
-            $fordb->issuerurl = $data->issuerurl;
-            $fordb->issuercontact = $data->issuercontact;
-        } else {
-            $url = parse_url($CFG->wwwroot);
-            $fordb->issuerurl = $url['scheme'] . '://' . $url['host'];
-            $fordb->issuername = $CFG->badges_defaultissuername;
-            $fordb->issuercontact = $CFG->badges_defaultissuercontact;
-        }
+        $fordb->issuername = $data->issuername;
+        $fordb->issuerurl = $data->issuerurl;
+        $fordb->issuercontact = $data->issuercontact;
 
         if (!property_exists($data, 'expiry')) {
             $data->expiry = 0;
@@ -1087,11 +1071,9 @@ class badge {
         $this->imageauthorurl = $data->imageauthorurl;
         $this->imagecaption = $data->imagecaption;
         $this->usermodified = $USER->id;
-        if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
-            $this->issuername = $data->issuername;
-            $this->issuerurl = $data->issuerurl;
-            $this->issuercontact = $data->issuercontact;
-        }
+        $this->issuername = $data->issuername;
+        $this->issuerurl = $data->issuerurl;
+        $this->issuercontact = $data->issuercontact;
         $this->expiredate = ($data->expiry == 1) ? $data->expiredate : null;
         $this->expireperiod = ($data->expiry == 2) ? $data->expireperiod : null;
 
