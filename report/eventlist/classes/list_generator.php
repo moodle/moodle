@@ -40,7 +40,47 @@ class report_eventlist_list_generator {
      * @return array All events.
      */
     public static function get_all_events_list($detail = true) {
-        return array_merge(self::get_core_events_list($detail), self::get_non_core_event_list($detail));
+        global $CFG;
+
+        // Disable developer debugging as deprecated events will fire warnings.
+        // Setup backup variables to restore the following settings back to what they were when we are finished.
+        $debuglevel          = $CFG->debug;
+        $debugdisplay        = $CFG->debugdisplay;
+        $debugdeveloper      = $CFG->debugdeveloper;
+        $CFG->debug          = 0;
+        $CFG->debugdisplay   = false;
+        $CFG->debugdeveloper = false;
+
+        // List of exceptional events that will cause problems if displayed.
+        $eventsignore = [
+            \core\event\unknown_logged::class,
+            \logstore_legacy\event\legacy_logged::class,
+        ];
+
+        $eventinformation = [];
+
+        $events = core_component::get_component_classes_in_namespace(null, 'event');
+        foreach (array_keys($events) as $event) {
+            // We need to filter all classes that extend event base, or the base class itself.
+            if (is_a($event, \core\event\base::class, true) && !in_array($event, $eventsignore)) {
+                if ($detail) {
+                    $reflectionclass = new ReflectionClass($event);
+                    if (!$reflectionclass->isAbstract()) {
+                        $eventinformation = self::format_data($eventinformation, "\\${event}");
+                    }
+                } else {
+                    $parts = explode('\\', $event);
+                    $eventinformation["\\${event}"] = array_shift($parts);
+                }
+            }
+        }
+
+        // Now enable developer debugging as event information has been retrieved.
+        $CFG->debug          = $debuglevel;
+        $CFG->debugdisplay   = $debugdisplay;
+        $CFG->debugdeveloper = $debugdeveloper;
+
+        return $eventinformation;
     }
 
     /**
@@ -48,9 +88,14 @@ class report_eventlist_list_generator {
      *
      * @param bool $detail True will return details, but no abstract classes, False will return all events, but no details.
      * @return array Core events.
+     *
+     * @deprecated since 4.0 use {@see get_all_events_list} instead
      */
     public static function get_core_events_list($detail = true) {
         global $CFG;
+
+        debugging(__FUNCTION__ . '() is deprecated, please use report_eventlist_list_generator::get_all_events_list() instead',
+            DEBUG_DEVELOPER);
 
         // Disable developer debugging as deprecated events will fire warnings.
         // Setup backup variables to restore the following settings back to what they were when we are finished.
@@ -173,9 +218,15 @@ class report_eventlist_list_generator {
      *
      * @param bool $detail True will return details, but no abstract classes, False will return all events, but no details.
      * @return array A list of events from all plug-ins.
+     *
+     * @deprecated since 4.0 use {@see get_all_events_list} instead
      */
     public static function get_non_core_event_list($detail = true) {
         global $CFG;
+
+        debugging(__FUNCTION__ . '() is deprecated, please use report_eventlist_list_generator::get_all_events_list() instead',
+            DEBUG_DEVELOPER);
+
         // Disable developer debugging as deprecated events will fire warnings.
         // Setup backup variables to restore the following settings back to what they were when we are finished.
         $debuglevel          = $CFG->debug;
