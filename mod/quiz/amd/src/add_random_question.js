@@ -38,8 +38,9 @@ define(
          * @param  {string} category Category id and category context id comma separated.
          * @param  {string} returnUrl URL to return to after form submission.
          * @param  {int} cmid Current course module id.
+         * @param  {boolean} showNewCategory Display the New category tab when selecting random questions.
          */
-        init: function(contextId, category, returnUrl, cmid) {
+        init: function(contextId, category, returnUrl, cmid, showNewCategory = true) {
             AddQuestionModalLauncher.init(
                 ModalAddRandomQuestion.TYPE,
                 '.menu [data-action="addarandomquestion"]',
@@ -49,7 +50,8 @@ define(
                     modal.setCategory(category);
                     modal.setReturnUrl(returnUrl);
                     modal.setCMID(cmid);
-                }
+                },
+                showNewCategory
             );
         }
     };

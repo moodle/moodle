@@ -83,7 +83,8 @@ class questions_imported extends question_base {
             }
             return new \moodle_url('/question/edit.php', ['courseid' => $this->courseid, 'cat' => $cat]);
         }
-        return new \moodle_url('/question/category.php', ['courseid' => SITEID, 'edit' => $this->other['categoryid']]);
+        return new \moodle_url('/question/bank/managecategories/category.php',
+                                 ['courseid' => SITEID, 'edit' => $this->other['categoryid']]);
     }
 
     /**

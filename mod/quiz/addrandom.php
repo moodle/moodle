@@ -28,7 +28,8 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/addrandomform.php');
 require_once($CFG->dirroot . '/question/editlib.php');
-require_once($CFG->dirroot . '/question/category_class.php');
+
+use qbank_managecategories\question_category_object;
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/addrandom.php', true);

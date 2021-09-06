@@ -119,7 +119,8 @@ class edit_renderer extends \plugin_renderer_base {
                 $thiscontext->id,
                 $pagevars['cat'],
                 $pageurl->out_as_local_url(true),
-                $pageurl->param('cmid')
+                $pageurl->param('cmid'),
+                \core\plugininfo\qbank::is_plugin_enabled(\qbank_managecategories\helper::PLUGINNAME),
             ]);
 
             // Include the question chooser.
