@@ -1886,6 +1886,9 @@ EOF;
             case 'SPACE':
                 $keys[] = behat_keys::SPACE;
                 break;
+            case 'MULTIPLY':
+                $keys[] = behat_keys::MULTIPLY;
+                break;
             default:
                 // You can enter a single ASCII character (e.g. a letter) to directly type that key.
                 if (strlen($key) === 1) {

@@ -25,6 +25,7 @@
 import {BaseComponent} from 'core/reactive';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 import jQuery from 'jquery';
+import TreeNav from 'core_courseformat/local/courseindex/keyboardnav';
 
 export default class Component extends BaseComponent {
 
@@ -41,6 +42,7 @@ export default class Component extends BaseComponent {
             CM: `[data-for='cm']`,
             TOGGLER: `[data-action="togglecourseindexsection"]`,
             COLLAPSE: `[data-toggle="collapse"]`,
+            DRAWER: `.drawer`,
         };
         // Default classes to toggle on refresh.
         this.classes = {
@@ -48,6 +50,7 @@ export default class Component extends BaseComponent {
             CMHIDDEN: 'dimmed',
             SECTIONCURRENT: 'current',
             COLLAPSED: `collapsed`,
+            SHOW: `show`,
         };
         // Arrays to keep cms and sections elements.
         this.sections = {};
@@ -85,6 +88,9 @@ export default class Component extends BaseComponent {
         cms.forEach((cm) => {
             this.cms[cm.dataset.id] = cm;
         });
+
+        // Configure Aria Tree.
+        this.treeNav = new TreeNav(this);
     }
 
     getWatchers() {
