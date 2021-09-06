@@ -7,6 +7,10 @@ This files describes API changes for code that uses the question API.
    classes are moved classes/local/bank and all the feature classes will be moved to
    the plugin for that feature.
 
+2) Function question_get_export_single_question_url() in questionlib has been deprecated
+   and moved to qbank_exporttoxml plugin, the new location is:
+   qbank_exporttoxml\exporttoxml_helper::question_get_export_single_question_url().
+
 === 3.9 ==
 
 1) For years, the ..._questions_in_use callback has been the right way for plugins to
