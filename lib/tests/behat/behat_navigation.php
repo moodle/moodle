@@ -1115,7 +1115,7 @@ class behat_navigation extends behat_base {
                 "//nav[@aria-label='Navigation bar']/ol/li[last()][contains(normalize-space(.), '" . $pagename . "')]"
         );
         if (!$link) {
-            $this->execute("behat_general::click_link", $pagename);
+            $this->execute("behat_general::i_click_on_in_the", [$pagename, 'link', 'page', 'region']);
         }
     }
 
