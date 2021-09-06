@@ -34,7 +34,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
 
     # Mark the submission.
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "Not marked" in the "I'm the student's first submission" "table_row"
     And I click on "Grade" "link" in the "I'm the student's first submission" "table_row"
     And I set the field "Grade out of 100" to "50"
@@ -44,7 +44,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I press "Save changes"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "In review" in the "I'm the student's first submission" "table_row"
 
   @javascript
@@ -55,14 +55,14 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I press "Save changes"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "Ready for release" in the "I'm the student's first submission" "table_row"
     And I click on "Grade" "link" in the "I'm the student's first submission" "table_row"
     And I set the field "Marking workflow state" to "Released"
     And I press "Save changes"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "Released" in the "I'm the student's first submission" "table_row"
     And I set the field "Grading action" to "Reveal student identities"
     And I press "Continue"
@@ -81,7 +81,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I press "Save changes"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "Ready for release" in the "I'm the student's first submission" "table_row"
     And I set the field "Grading action" to "Reveal student identities"
     And I press "Continue"
@@ -90,7 +90,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I press "Save changes"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "Released" in the "Student 1" "table_row"
     And I log out
 
@@ -102,7 +102,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
   @javascript
   Scenario: Submissions table visible with overrides and blind marking
     When I am on the "Test assignment name" "assign activity" page
-    And I navigate to "User overrides" in current page administration
+    And I navigate to "Overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user | Student              |
@@ -110,5 +110,5 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I am on the "Test assignment name" "assign activity" page
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "In review" in the "I'm the student's first submission" "table_row"

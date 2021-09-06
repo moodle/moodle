@@ -32,7 +32,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
       | assign                | user      | onlinetext                        |
       | Test assignment name  | student2  | I'm the student first submission  |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I set the following fields to these values:
       | Grade | 49 |
@@ -47,7 +47,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I log out
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I click on "View a different attempt" "link"
     And I click on "Attempt 1" "radio" in the "View a different attempt" "dialogue"

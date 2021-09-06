@@ -859,7 +859,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         // Test you can see the submit button for an online text assignment with a submission.
         $this->setUser($student);
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertStringContainsString(get_string('submitassignment', 'assign'),
             $output, 'Can submit non empty onlinetext assignment');
     }
@@ -1990,7 +1990,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         // Check we can see the submit button.
         $this->setUser($student);
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertStringContainsString(get_string('submitassignment', 'assign'), $output);
 
         $submission = $assign->get_group_submission($student->id, 0, true);
@@ -1998,18 +1998,18 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $assign->testable_update_submission($submission, $student->id, true, true);
 
         // Check that the student does not see "Submit" button.
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertStringNotContainsString(get_string('submitassignment', 'assign'), $output);
 
         // Change to another user in the same group.
         $this->setUser($otherstudent);
-        $output = $assign->view_student_summary($otherstudent, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $otherstudent);
         $this->assertStringContainsString(get_string('submitassignment', 'assign'), $output);
 
         $submission = $assign->get_group_submission($otherstudent->id, 0, true);
         $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
         $assign->testable_update_submission($submission, $otherstudent->id, true, true);
-        $output = $assign->view_student_summary($otherstudent, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $otherstudent);
         $this->assertStringNotContainsString(get_string('submitassignment', 'assign'), $output);
     }
 
@@ -2044,8 +2044,9 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->add_submission($student, $assign);
 
         // Check we can see the submit button.
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertStringContainsString(get_string('submitassignment', 'assign'), $output);
+        $output = $assign->view_student_summary($student, true);
         $this->assertStringContainsString(get_string('timeremaining', 'assign'), $output);
         $difftime = time() - $time;
         $this->assertStringContainsString(get_string('overdue', 'assign', format_time((2 * DAYSECS) + $difftime)), $output);
@@ -2055,15 +2056,16 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $assign->testable_update_submission($submission, $student->id, true, true);
 
         // Check that the student does not see "Submit" button.
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertStringNotContainsString(get_string('submitassignment', 'assign'), $output);
 
         // Change to another user in the same group.
         $this->setUser($otherstudent);
-        $output = $assign->view_student_summary($otherstudent, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $otherstudent);
         $this->assertStringNotContainsString(get_string('submitassignment', 'assign'), $output);
 
         // Check that time remaining is not overdue.
+        $output = $assign->view_student_summary($otherstudent, true);
         $this->assertStringContainsString(get_string('timeremaining', 'assign'), $output);
         $difftime = time() - $time;
         $this->assertStringContainsString(get_string('submittedlate', 'assign', format_time((2 * DAYSECS) + $difftime)), $output);
@@ -2071,7 +2073,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $submission = $assign->get_group_submission($otherstudent->id, 0, true);
         $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
         $assign->testable_update_submission($submission, $otherstudent->id, true, true);
-        $output = $assign->view_student_summary($otherstudent, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $otherstudent);
         $this->assertStringNotContainsString(get_string('submitassignment', 'assign'), $output);
     }
 
@@ -2507,7 +2509,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         // Student should be able to see an add submission button.
         $this->setUser($student);
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertNotEquals(false, strpos($output, get_string('addsubmission', 'assign')));
 
         // Add a submission.
@@ -2538,13 +2540,15 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         // Need a better check.
         $this->assertNotEquals(false, strpos($output, 'Submission text'), 'Contains: Submission text');
 
-        // Check that the student now has a button for Add a new attempt".
-        $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
-        // Check that the student now does not have a button for Submit.
-        $this->assertEquals(false, strpos($output, get_string('submitassignment', 'assign')));
-
         // Check that the student now has a submission history.
         $this->assertNotEquals(false, strpos($output, get_string('attempthistory', 'assign')));
+
+        // Check that the student now does not have a button for Submit.
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
+        $this->assertEquals(false, strpos($output, get_string('submitassignment', 'assign')));
+
+        // Check that the student now has a button for Add a new attempt".
+        $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
 
         $this->setUser($teacher);
         // Check that the grading table loads correctly and contains this user.
@@ -2608,7 +2612,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         // Student should be able to see an add submission button.
         $this->setUser($student);
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertNotEquals(false, strpos($output, get_string('addsubmission', 'assign')));
 
         // Add a submission.
@@ -2627,15 +2631,15 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $output = $assign->view_student_summary($student, true);
         $this->assertNotEquals(false, strpos($output, '50.0'));
 
-        // Check that the student now has a button for Add a new attempt.
-        $output = $assign->view_student_summary($student, true);
-        $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
-
-        // Check that the student now does not have a button for Submit.
-        $this->assertEquals(false, strpos($output, get_string('submitassignment', 'assign')));
-
         // Check that the student now has a submission history.
         $this->assertNotEquals(false, strpos($output, get_string('attempthistory', 'assign')));
+
+        // Check that the student now does not have a button for Submit.
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
+        $this->assertEquals(false, strpos($output, get_string('submitassignment', 'assign')));
+
+        // Check that the student now has a button for Add a new attempt.
+        $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
 
         // Add a second submission.
         $this->add_submission($student, $assign);
@@ -2654,7 +2658,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         // Check that the student now has a button for Add a new attempt.
         $this->setUser($student);
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertMatchesRegularExpression('/' . get_string('addnewattempt', 'assign') . '/', $output);
         $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
     }
@@ -2682,7 +2686,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         // Student should be able to see an add submission button.
         $this->setUser($student);
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertNotEquals(false, strpos($output, get_string('addsubmission', 'assign')));
 
         // Add a submission as a student.
@@ -2725,7 +2729,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         // Student should be able to see an add submission button.
         $this->setUser($student);
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertNotEquals(false, strpos($output, get_string('addsubmission', 'assign')));
 
         // Add a submission.
@@ -3012,7 +3016,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
 
         // Student should be able to see an add submission button.
         $this->setUser($student);
-        $output = $assign->view_student_summary($student, true);
+        $output = $assign->view_submission_action_bar($assign->get_instance(), $student);
         $this->assertNotEquals(false, strpos($output, get_string('addsubmission', 'assign')));
 
         // Add a submission but don't submit now.

@@ -26,7 +26,7 @@ Feature: In an assignment, teachers can provide feedback comments on student sub
       | assign                | user      | onlinetext                   |
       | Test assignment name  | student1  | I'm the student1 submission  |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     Then I click on "Quick grading" "checkbox"
     And I set the field "Feedback comments" to "Feedback from teacher."
     And I press "Save all quick grading changes"

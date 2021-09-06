@@ -28,7 +28,7 @@ Feature: Check that the assignment grade can not be input in a wrong format.
       | markingworkflow  | 1                           |
       | submissiondrafts | 0                           |
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50,,6"
     And I press "Save changes"
@@ -58,7 +58,7 @@ Feature: Check that the assignment grade can not be input in a wrong format.
       | markingworkflow  | 1                           |
       | submissiondrafts | 0                           |
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50..6"
     And I press "Save changes"

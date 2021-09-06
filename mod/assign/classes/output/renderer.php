@@ -247,7 +247,9 @@ class renderer extends \plugin_renderer_base {
         $this->page->set_heading($this->page->course->fullname);
 
         $o .= $this->output->header();
-        $o .= $this->output->heading($heading);
+        if (!$this->page->has_secondary_navigation()) {
+            $o .= $this->output->heading($heading);
+        }
 
         // Show the activity information output component.
         $modinfo = get_fast_modinfo($header->assign->course);
@@ -372,21 +374,6 @@ class renderer extends \plugin_renderer_base {
         // All done - write the table.
         $o .= \html_writer::table($t);
         $o .= $this->output->box_end();
-
-        // Link to the grading page.
-        $o .= \html_writer::start_tag('center');
-        $o .= $this->output->container_start('submissionlinks');
-        $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grading');
-        $url = new \moodle_url('/mod/assign/view.php', $urlparams);
-        $o .= \html_writer::link($url, get_string('viewgrading', 'mod_assign'),
-            ['class' => 'btn btn-secondary']);
-        if ($summary->cangrade) {
-            $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
-            $url = new \moodle_url('/mod/assign/view.php', $urlparams);
-            $o .= \html_writer::link($url, get_string('gradeverb'),
-                ['class' => 'btn btn-primary ml-1']);
-        }
-        $o .= $this->output->container_end();
 
         // Close the container and insert a spacer.
         $o .= $this->output->container_end();
@@ -716,7 +703,7 @@ class renderer extends \plugin_renderer_base {
                 if (!$status->submissionsenabled) {
                     $cell2content = get_string('noonlinesubmissions', 'assign');
                 } else {
-                    $cell2content = get_string('noattempt', 'assign');
+                    $cell2content = get_string('nosubmissionyet', 'assign');
                 }
             }
         } else {
@@ -892,65 +879,6 @@ class renderer extends \plugin_renderer_base {
         $o .= $warningmsg;
         $o .= \html_writer::table($t);
         $o .= $this->output->box_end();
-
-        // Links.
-        if ($status->view == assign_submission_status::STUDENT_VIEW) {
-            if ($status->canedit) {
-                if (!$submission || $submission->status == ASSIGN_SUBMISSION_STATUS_NEW) {
-                    $o .= $this->output->box_start('generalbox submissionaction');
-                    $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
-                    $o .= $this->output->single_button(new \moodle_url('/mod/assign/view.php', $urlparams),
-                                                       get_string('addsubmission', 'assign'), 'get');
-                    $o .= $this->output->box_start('boxaligncenter submithelp');
-                    $o .= get_string('addsubmission_help', 'assign');
-                    $o .= $this->output->box_end();
-                    $o .= $this->output->box_end();
-                } else if ($submission->status == ASSIGN_SUBMISSION_STATUS_REOPENED) {
-                    $o .= $this->output->box_start('generalbox submissionaction');
-                    $urlparams = array('id' => $status->coursemoduleid,
-                                       'action' => 'editprevioussubmission',
-                                       'sesskey'=>sesskey());
-                    $o .= $this->output->single_button(new \moodle_url('/mod/assign/view.php', $urlparams),
-                                                       get_string('addnewattemptfromprevious', 'assign'), 'get');
-                    $o .= $this->output->box_start('boxaligncenter submithelp');
-                    $o .= get_string('addnewattemptfromprevious_help', 'assign');
-                    $o .= $this->output->box_end();
-                    $o .= $this->output->box_end();
-                    $o .= $this->output->box_start('generalbox submissionaction');
-                    $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
-                    $o .= $this->output->single_button(new \moodle_url('/mod/assign/view.php', $urlparams),
-                                                       get_string('addnewattempt', 'assign'), 'get');
-                    $o .= $this->output->box_start('boxaligncenter submithelp');
-                    $o .= get_string('addnewattempt_help', 'assign');
-                    $o .= $this->output->box_end();
-                    $o .= $this->output->box_end();
-                } else {
-                    $o .= $this->output->box_start('generalbox submissionaction');
-                    $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
-                    $o .= $this->output->single_button(new \moodle_url('/mod/assign/view.php', $urlparams),
-                                                       get_string('editsubmission', 'assign'), 'get');
-                    $urlparams = array('id' => $status->coursemoduleid, 'action' => 'removesubmissionconfirm');
-                    $o .= $this->output->single_button(new \moodle_url('/mod/assign/view.php', $urlparams),
-                                                       get_string('removesubmission', 'assign'), 'get');
-                    $o .= $this->output->box_start('boxaligncenter submithelp');
-                    $o .= get_string('editsubmission_help', 'assign');
-                    $o .= $this->output->box_end();
-                    $o .= $this->output->box_end();
-                }
-            }
-
-            if ($status->cansubmit) {
-                $urlparams = array('id' => $status->coursemoduleid, 'action'=>'submit');
-                $o .= $this->output->box_start('generalbox submissionaction');
-                $o .= $this->output->single_button(new \moodle_url('/mod/assign/view.php', $urlparams),
-                                                   get_string('submitassignment', 'assign'), 'get');
-                $o .= $this->output->box_start('boxaligncenter submithelp');
-                $o .= get_string('submitassignment_help', 'assign');
-                $o .= $this->output->box_end();
-                $o .= $this->output->box_end();
-            }
-        }
-
         $o .= $this->output->container_end();
         return $o;
     }
@@ -1488,4 +1416,47 @@ class renderer extends \plugin_renderer_base {
         return $this->render_from_template('mod_assign/grading_app', $context);
     }
 
+    /**
+     * Renders the submission action menu.
+     *
+     * @param \mod_assign\output\actionmenu $actionmenu The actionmenu
+     * @return string Rendered action menu.
+     */
+    public function submission_actionmenu(\mod_assign\output\actionmenu $actionmenu): string {
+        $context = $actionmenu->export_for_template($this);
+        return $this->render_from_template('mod_assign/submission_actionmenu', $context);
+    }
+
+    /**
+     * Renders the user submission action menu.
+     *
+     * @param \mod_assign\output\user_submission_actionmenu $actionmenu The actionmenu
+     * @return string The rendered action menu.
+     */
+    public function render_user_submission_actionmenu(\mod_assign\output\user_submission_actionmenu $actionmenu): string {
+        $context = $actionmenu->export_for_template($this);
+        return $this->render_from_template('mod_assign/user_submission_actionmenu', $context);
+    }
+
+    /**
+     * Renders the override action menu.
+     *
+     * @param \mod_assign\output\override_actionmenu $actionmenu The actionmenu
+     * @return string The rendered override action menu.
+     */
+    public function render_override_actionmenu(\mod_assign\output\override_actionmenu $actionmenu): string {
+        $context = $actionmenu->export_for_template($this);
+        return $this->render_from_template('mod_assign/override_actionmenu', $context);
+    }
+
+    /**
+     * Renders the grading action menu.
+     *
+     * @param \mod_assign\output\grading_actionmenu $actionmenu The actionmenu
+     * @return string The rendered grading action menu.
+     */
+    public function render_grading_actionmenu(\mod_assign\output\grading_actionmenu $actionmenu): string {
+        $context = $actionmenu->export_for_template($this);
+        return $this->render_from_template('mod_assign/grading_actionmenu', $context);
+    }
 }

@@ -28,7 +28,7 @@ Feature: In an assignment, page titles are informative
   Scenario: I view an assignment as a teacher and take an action
     When I am on the "History of ants" Activity page logged in as teacher1
     Then "title[text() = 'C1: History of ants']" "xpath_element" should exist in the "head" "css_element"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And "title[text() = 'C1: History of ants - Grading']" "xpath_element" should exist in the "head" "css_element"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And "title[text() = 'C1: History of ants - Grading']" "xpath_element" should exist in the "head" "css_element"

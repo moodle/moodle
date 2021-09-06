@@ -30,15 +30,16 @@ use core\navigation\views\secondary as core_secondary;
  */
 class secondary extends core_secondary {
     protected function get_default_module_mapping(): array {
-        return [
-            self::TYPE_SETTING => [
-                'modedit' => 1,
-                "mod_{$this->page->activityname}_useroverrides" => 2, // Overrides are module specific.
-                "mod_{$this->page->activityname}_groupoverrides" => 3,
-            ],
-            self::TYPE_CUSTOM => [
-                'advgrading' => 4,
-            ],
-        ];
+        $defaultmaping = parent::get_default_module_mapping();
+        $defaultmaping[self::TYPE_SETTING] = array_merge($defaultmaping[self::TYPE_SETTING], [
+            'modedit' => 1,
+            "mod_{$this->page->activityname}_useroverrides" => 2, // Overrides are module specific.
+            "mod_{$this->page->activityname}_groupoverrides" => 3,
+        ]);
+
+        $defaultmaping[self::TYPE_CUSTOM] = array_merge($defaultmaping[self::TYPE_CUSTOM], [
+            'advgrading' => 4,
+        ]);
+        return $defaultmaping;
     }
 }

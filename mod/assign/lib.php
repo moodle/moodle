@@ -432,13 +432,9 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
 
     if (has_capability('mod/assign:manageoverrides', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/assign/overrides.php', array('cmid' => $PAGE->cm->id));
-        $node = navigation_node::create(get_string('groupoverrides', 'assign'),
-            new moodle_url($url, array('mode' => 'group')),
-            navigation_node::TYPE_SETTING, null, 'mod_assign_groupoverrides');
-        $navref->add_node($node, $beforekey);
 
-        $node = navigation_node::create(get_string('useroverrides', 'assign'),
-            new moodle_url($url, array('mode' => 'user')),
+        $node = navigation_node::create(get_string('overrides', 'assign'),
+            $url,
             navigation_node::TYPE_SETTING, null, 'mod_assign_useroverrides');
         $navref->add_node($node, $beforekey);
     }
@@ -449,15 +445,7 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
         $link = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
         $linkname = get_string('viewgradebook', 'assign');
         $node = $navref->add($linkname, $link, navigation_node::TYPE_SETTING);
-    }
-
-    // Link to download all submissions.
-    if (has_any_capability(array('mod/assign:grade', 'mod/assign:viewgrades'), $context)) {
-        $link = new moodle_url('/mod/assign/view.php', array('id' => $cm->id, 'action'=>'grading'));
-        $node = $navref->add(get_string('viewgrading', 'assign'), $link, navigation_node::TYPE_SETTING);
-
-        $link = new moodle_url('/mod/assign/view.php', array('id' => $cm->id, 'action'=>'downloadall'));
-        $node = $navref->add(get_string('downloadall', 'assign'), $link, navigation_node::TYPE_SETTING);
+        $node->set_force_into_more_menu(true);
     }
 
     if (has_capability('mod/assign:revealidentities', $context)) {
