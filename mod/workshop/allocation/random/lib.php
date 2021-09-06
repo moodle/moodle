@@ -263,13 +263,17 @@ class workshop_random_allocator implements workshop_allocator {
      * @return array of integers
      */
     public static function available_numofreviews_list() {
-        $options = array();
-        $options[30] = 30;
-        $options[20] = 20;
-        $options[15] = 15;
-        for ($i = 10; $i >= 0; $i--) {
+
+        $options = [];
+
+        for ($i = 100; $i > 20; $i = $i - 10) {
             $options[$i] = $i;
         }
+
+        for ($i = 20; $i >= 0; $i--) {
+            $options[$i] = $i;
+        }
+
         return $options;
     }
 
