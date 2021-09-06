@@ -190,6 +190,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $dl = array();
         $dl[get_string('issuername', 'badges')] = $badge->issuername;
         $dl[get_string('contact', 'badges')] = html_writer::tag('a', $badge->issuercontact, array('href' => 'mailto:' . $badge->issuercontact));
+        $dl[get_string('issuerurl', 'badges')] = html_writer::tag('a', $badge->issuerurl, array('href' => $badge->issuerurl, 'target' => '_blank'));
         $display .= $this->definition_list($dl);
 
         // Issuance details if any.

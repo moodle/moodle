@@ -94,29 +94,26 @@ class badge extends moodleform {
         $mform->addHelpButton('imagecaption', 'imagecaption', 'badges');
 
 
-        if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
-            $mform->addElement('header', 'issuerdetails', get_string('issuerdetails', 'badges'));
+        $mform->addElement('header', 'issuerdetails', get_string('issuerdetails', 'badges'));
 
-            $mform->addElement('text', 'issuername', get_string('name'), array('size' => '70'));
-            $mform->setType('issuername', PARAM_NOTAGS);
-            $mform->addRule('issuername', null, 'required');
-            if (isset($CFG->badges_defaultissuername)) {
-                $mform->setDefault('issuername', $CFG->badges_defaultissuername);
-            }
-            $mform->addHelpButton('issuername', 'issuername', 'badges');
-
-            $mform->addElement('text', 'issuercontact', get_string('contact', 'badges'), array('size' => '70'));
-            if (isset($CFG->badges_defaultissuercontact)) {
-                $mform->setDefault('issuercontact', $CFG->badges_defaultissuercontact);
-            }
-            $mform->setType('issuercontact', PARAM_RAW);
-            $mform->addHelpButton('issuercontact', 'contact', 'badges');
-            // Set issuer URL.
-            // Have to parse URL because badge issuer origin cannot be a subfolder in wwwroot.
-            $url = parse_url($CFG->wwwroot);
-            $mform->addElement('hidden', 'issuerurl', $url['scheme'] . '://' . $url['host']);
-            $mform->setType('issuerurl', PARAM_URL);
+        $mform->addElement('text', 'issuername', get_string('name'), array('size' => '70'));
+        $mform->setType('issuername', PARAM_NOTAGS);
+        $mform->addRule('issuername', null, 'required');
+        if (isset($CFG->badges_defaultissuername)) {
+            $mform->setDefault('issuername', $CFG->badges_defaultissuername);
         }
+        $mform->addHelpButton('issuername', 'issuername', 'badges');
+
+        $mform->addElement('text', 'issuercontact', get_string('contact', 'badges'), array('size' => '70'));
+        if (isset($CFG->badges_defaultissuercontact)) {
+            $mform->setDefault('issuercontact', $CFG->badges_defaultissuercontact);
+        }
+        $mform->setType('issuercontact', PARAM_RAW);
+        $mform->addHelpButton('issuercontact', 'contact', 'badges');
+
+        $mform->addElement('text', 'issuerurl', get_string('issuerurl', 'badges'), array('size' => '70'));
+        $mform->setType('issuerurl', PARAM_URL);
+        $mform->setDefault('issuerurl', $CFG->wwwroot);
 
         $mform->addElement('header', 'issuancedetails', get_string('issuancedetails', 'badges'));
 
