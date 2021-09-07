@@ -411,6 +411,15 @@ $string['importcsv_help'] = 'Grades can be imported via a CSV file with format a
 A file of the correct format can be obtained by first exporting some grades. The file can then be edited and saved as a CSV file.';
 $string['importcsv_link'] = 'grade/import/csv/index';
 $string['importcustom'] = 'Import as custom outcomes (only this course)';
+$string['importdata'] = 'Data';
+$string['importdata_help'] = 'Grades may be pasted directly from an OpenDocument or Excel spreadsheet with format as follows:
+
+* At least one column should contain user identity data - username, email address or ID number.
+* Other columns should have headings as for existing activities or grade items.
+
+A correctly formatted spreadsheet can be obtained by first exporting some grades. The spreadsheet can then be edited to add more grades and saved.
+
+Select and copy the columns you want to import from the spreadsheet and then paste them into this field.';
 $string['importerror'] = 'An error occurred, this script wasn\'t called with the right parameters.';
 $string['importfailed'] = 'Import failed. No data was imported.';
 $string['importfeedback'] = 'Import feedback';
