@@ -510,6 +510,370 @@ class mod_forum_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the logic in the forum_tp_get_course_unread_posts() function when private replies are present.
+     *
+     * @covers ::forum_tp_get_course_unread_posts
+     */
+    public function test_forum_tp_get_course_unread_posts_with_private_replies() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+
+        // Create 3 students.
+        $s1 = $generator->create_user(['trackforums' => 1]);
+        $s2 = $generator->create_user(['trackforums' => 1]);
+        $s3 = $generator->create_user(['trackforums' => 1]);
+        // Editing teacher.
+        $t1 = $generator->create_user(['trackforums' => 1]);
+        // Non-editing teacher.
+        $t2 = $generator->create_user(['trackforums' => 1]);
+
+        // Create our course.
+        $course = $generator->create_course();
+
+        // Enrol editing and non-editing teachers.
+        $generator->enrol_user($t1->id, $course->id, 'editingteacher');
+        $generator->enrol_user($t2->id, $course->id, 'teacher');
+
+        // Create forums.
+        $forum1 = $generator->create_module('forum', ['course' => $course->id]);
+        $forum2 = $generator->create_module('forum', ['course' => $course->id]);
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+
+        // Prevent the non-editing teacher from reading private replies in forum 2.
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'teacher']);
+        $forum2cm = get_coursemodule_from_instance('forum', $forum2->id);
+        $forum2context = context_module::instance($forum2cm->id);
+        role_change_permission($teacherroleid, $forum2context, 'mod/forum:readprivatereplies', CAP_PREVENT);
+
+        // Create discussion by s1.
+        $discussiondata = (object)[
+            'course' => $course->id,
+            'forum' => $forum1->id,
+            'userid' => $s1->id,
+        ];
+        $discussion1 = $forumgenerator->create_discussion($discussiondata);
+
+        // Create discussion by s2.
+        $discussiondata->userid = $s2->id;
+        $discussion2 = $forumgenerator->create_discussion($discussiondata);
+
+        // Create discussion by s3.
+        $discussiondata->userid = $s3->id;
+        $discussion3 = $forumgenerator->create_discussion($discussiondata);
+
+        // Post a normal reply to s1's discussion in forum 1 as the editing teacher.
+        $replydata = (object)[
+            'course' => $course->id,
+            'forum' => $forum1->id,
+            'discussion' => $discussion1->id,
+            'userid' => $t1->id,
+        ];
+        $forumgenerator->create_post($replydata);
+
+        // Post a normal reply to s2's discussion as the editing teacher.
+        $replydata->discussion = $discussion2->id;
+        $forumgenerator->create_post($replydata);
+
+        // Post a normal reply to s3's discussion as the editing teacher.
+        $replydata->discussion = $discussion3->id;
+        $forumgenerator->create_post($replydata);
+
+        // Post a private reply to s1's discussion in forum 1 as the editing teacher.
+        $replydata->discussion = $discussion1->id;
+        $replydata->userid = $t1->id;
+        $replydata->privatereplyto = $s1->id;
+        $forumgenerator->create_post($replydata);
+        // Post another private reply to s1 as the teacher.
+        $forumgenerator->create_post($replydata);
+
+        // Post a private reply to s2's discussion as the editing teacher.
+        $replydata->discussion = $discussion2->id;
+        $replydata->privatereplyto = $s2->id;
+        $forumgenerator->create_post($replydata);
+
+        // Create discussion by s1 in forum 2.
+        $discussiondata->forum = $forum2->id;
+        $discussiondata->userid = $s1->id;
+        $discussion21 = $forumgenerator->create_discussion($discussiondata);
+
+        // Post a private reply to s1's discussion in forum 2 as the editing teacher.
+        $replydata->discussion = $discussion21->id;
+        $replydata->privatereplyto = $s1->id;
+        $forumgenerator->create_post($replydata);
+
+        // Let's count!
+        // S1 should see 8 unread posts 3 discussions posts + 2 private replies + 3 normal replies.
+        $result = forum_tp_get_course_unread_posts($s1->id, $course->id);
+        $unreadcounts = $result[$forum1->id];
+        $this->assertEquals(8, $unreadcounts->unread);
+
+        // S2 should see 7 unread posts 3 discussions posts + 1 private reply + 3 normal replies.
+        $result = forum_tp_get_course_unread_posts($s2->id, $course->id);
+        $unreadcounts = $result[$forum1->id];
+        $this->assertEquals(7, $unreadcounts->unread);
+
+        // S3 should see 6 unread posts 3 discussions posts + 3 normal replies. No private replies.
+        $result = forum_tp_get_course_unread_posts($s3->id, $course->id);
+        $unreadcounts = $result[$forum1->id];
+        $this->assertEquals(6, $unreadcounts->unread);
+
+        // The editing teacher should see 9 unread posts in forum 1: 3 discussions posts + 3 normal replies + 3 private replies.
+        $result = forum_tp_get_course_unread_posts($t1->id, $course->id);
+        $unreadcounts = $result[$forum1->id];
+        $this->assertEquals(9, $unreadcounts->unread);
+
+        // Same with the non-editing teacher, since they can read private replies by default.
+        $result = forum_tp_get_course_unread_posts($t2->id, $course->id);
+        $unreadcounts = $result[$forum1->id];
+        $this->assertEquals(9, $unreadcounts->unread);
+
+        // But for forum 2, the non-editing teacher should only see 1 unread which is s1's discussion post.
+        $unreadcounts = $result[$forum2->id];
+        $this->assertEquals(1, $unreadcounts->unread);
+    }
+
+    /**
+     * Test the logic in the forum_tp_count_forum_unread_posts() function when private replies are present but without
+     * separate group mode. This should yield the same results returned by forum_tp_get_course_unread_posts().
+     *
+     * @covers ::forum_tp_count_forum_unread_posts
+     */
+    public function test_forum_tp_count_forum_unread_posts_with_private_replies() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+
+        // Create 3 students.
+        $s1 = $generator->create_user(['username' => 's1', 'trackforums' => 1]);
+        $s2 = $generator->create_user(['username' => 's2', 'trackforums' => 1]);
+        $s3 = $generator->create_user(['username' => 's3', 'trackforums' => 1]);
+        // Editing teacher.
+        $t1 = $generator->create_user(['username' => 't1', 'trackforums' => 1]);
+        // Non-editing teacher.
+        $t2 = $generator->create_user(['username' => 't2', 'trackforums' => 1]);
+
+        // Create our course.
+        $course = $generator->create_course();
+
+        // Enrol editing and non-editing teachers.
+        $generator->enrol_user($t1->id, $course->id, 'editingteacher');
+        $generator->enrol_user($t2->id, $course->id, 'teacher');
+
+        // Create forums.
+        $forum1 = $generator->create_module('forum', ['course' => $course->id]);
+        $forum2 = $generator->create_module('forum', ['course' => $course->id]);
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+
+        // Prevent the non-editing teacher from reading private replies in forum 2.
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'teacher']);
+        $forum2cm = get_coursemodule_from_instance('forum', $forum2->id);
+        $forum2context = context_module::instance($forum2cm->id);
+        role_change_permission($teacherroleid, $forum2context, 'mod/forum:readprivatereplies', CAP_PREVENT);
+
+        // Create discussion by s1.
+        $discussiondata = (object)[
+            'course' => $course->id,
+            'forum' => $forum1->id,
+            'userid' => $s1->id,
+        ];
+        $discussion1 = $forumgenerator->create_discussion($discussiondata);
+
+        // Create discussion by s2.
+        $discussiondata->userid = $s2->id;
+        $discussion2 = $forumgenerator->create_discussion($discussiondata);
+
+        // Create discussion by s3.
+        $discussiondata->userid = $s3->id;
+        $discussion3 = $forumgenerator->create_discussion($discussiondata);
+
+        // Post a normal reply to s1's discussion in forum 1 as the editing teacher.
+        $replydata = (object)[
+            'course' => $course->id,
+            'forum' => $forum1->id,
+            'discussion' => $discussion1->id,
+            'userid' => $t1->id,
+        ];
+        $forumgenerator->create_post($replydata);
+
+        // Post a normal reply to s2's discussion as the editing teacher.
+        $replydata->discussion = $discussion2->id;
+        $forumgenerator->create_post($replydata);
+
+        // Post a normal reply to s3's discussion as the editing teacher.
+        $replydata->discussion = $discussion3->id;
+        $forumgenerator->create_post($replydata);
+
+        // Post a private reply to s1's discussion in forum 1 as the editing teacher.
+        $replydata->discussion = $discussion1->id;
+        $replydata->userid = $t1->id;
+        $replydata->privatereplyto = $s1->id;
+        $forumgenerator->create_post($replydata);
+        // Post another private reply to s1 as the teacher.
+        $forumgenerator->create_post($replydata);
+
+        // Post a private reply to s2's discussion as the editing teacher.
+        $replydata->discussion = $discussion2->id;
+        $replydata->privatereplyto = $s2->id;
+        $forumgenerator->create_post($replydata);
+
+        // Create discussion by s1 in forum 2.
+        $discussiondata->forum = $forum2->id;
+        $discussiondata->userid = $s1->id;
+        $discussion11 = $forumgenerator->create_discussion($discussiondata);
+
+        // Post a private reply to s1's discussion in forum 2 as the editing teacher.
+        $replydata->discussion = $discussion11->id;
+        $replydata->privatereplyto = $s1->id;
+        $forumgenerator->create_post($replydata);
+
+        // Let's count!
+        // S1 should see 8 unread posts 3 discussions posts + 2 private replies + 3 normal replies.
+        $this->setUser($s1);
+        $forum1cm = get_coursemodule_from_instance('forum', $forum1->id);
+        $result = forum_tp_count_forum_unread_posts($forum1cm, $course, true);
+        $this->assertEquals(8, $result);
+
+        // S2 should see 7 unread posts 3 discussions posts + 1 private reply + 3 normal replies.
+        $this->setUser($s2);
+        $result = forum_tp_count_forum_unread_posts($forum1cm, $course, true);
+        $this->assertEquals(7, $result);
+
+        // S3 should see 6 unread posts 3 discussions posts + 3 normal replies. No private replies.
+        $this->setUser($s3);
+        $result = forum_tp_count_forum_unread_posts($forum1cm, $course, true);
+        $this->assertEquals(6, $result);
+
+        // The editing teacher should see 9 unread posts in forum 1: 3 discussions posts + 3 normal replies + 3 private replies.
+        $this->setUser($t1);
+        $result = forum_tp_count_forum_unread_posts($forum1cm, $course, true);
+        $this->assertEquals(9, $result);
+
+        // Same with the non-editing teacher, since they can read private replies by default.
+        $this->setUser($t2);
+        $result = forum_tp_count_forum_unread_posts($forum1cm, $course, true);
+        $this->assertEquals(9, $result);
+
+        // But for forum 2, the non-editing teacher should only see 1 unread which is s1's discussion post.
+        $result = forum_tp_count_forum_unread_posts($forum2cm, $course);
+        $this->assertEquals(1, $result);
+    }
+
+    /**
+     * Test the logic in the forum_tp_count_forum_unread_posts() function when private replies are present and group modes are set.
+     *
+     * @covers ::forum_tp_count_forum_unread_posts
+     */
+    public function test_forum_tp_count_forum_unread_posts_with_private_replies_and_separate_groups() {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+
+        // Create 3 students.
+        $s1 = $generator->create_user(['username' => 's1', 'trackforums' => 1]);
+        $s2 = $generator->create_user(['username' => 's2', 'trackforums' => 1]);
+        // Editing teacher.
+        $t1 = $generator->create_user(['username' => 't1', 'trackforums' => 1]);
+
+        // Create our course.
+        $course = $generator->create_course();
+
+        // Enrol students, editing and non-editing teachers.
+        $generator->enrol_user($s1->id, $course->id, 'student');
+        $generator->enrol_user($s2->id, $course->id, 'student');
+        $generator->enrol_user($t1->id, $course->id, 'editingteacher');
+
+        // Create groups.
+        $g1 = $generator->create_group(['courseid' => $course->id]);
+        $g2 = $generator->create_group(['courseid' => $course->id]);
+        $generator->create_group_member(['groupid' => $g1->id, 'userid' => $s1->id]);
+        $generator->create_group_member(['groupid' => $g2->id, 'userid' => $s2->id]);
+
+        // Create forums.
+        $forum1 = $generator->create_module('forum', ['course' => $course->id, 'groupmode' => SEPARATEGROUPS]);
+        $forum2 = $generator->create_module('forum', ['course' => $course->id, 'groupmode' => VISIBLEGROUPS]);
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+
+        // Create discussion by s1.
+        $discussiondata = (object)[
+            'course' => $course->id,
+            'forum' => $forum1->id,
+            'userid' => $s1->id,
+            'groupid' => $g1->id,
+        ];
+        $discussion1 = $forumgenerator->create_discussion($discussiondata);
+
+        // Create discussion by s2.
+        $discussiondata->userid = $s2->id;
+        $discussiondata->groupid = $g2->id;
+        $discussion2 = $forumgenerator->create_discussion($discussiondata);
+
+        // Post a normal reply to s1's discussion in forum 1 as the editing teacher.
+        $replydata = (object)[
+            'course' => $course->id,
+            'forum' => $forum1->id,
+            'discussion' => $discussion1->id,
+            'userid' => $t1->id,
+        ];
+        $forumgenerator->create_post($replydata);
+
+        // Post a normal reply to s2's discussion as the editing teacher.
+        $replydata->discussion = $discussion2->id;
+        $forumgenerator->create_post($replydata);
+
+        // Post a private reply to s1's discussion in forum 1 as the editing teacher.
+        $replydata->discussion = $discussion1->id;
+        $replydata->userid = $t1->id;
+        $replydata->privatereplyto = $s1->id;
+        $forumgenerator->create_post($replydata);
+        // Post another private reply to s1 as the teacher.
+        $forumgenerator->create_post($replydata);
+
+        // Post a private reply to s2's discussion as the editing teacher.
+        $replydata->discussion = $discussion2->id;
+        $replydata->privatereplyto = $s2->id;
+        $forumgenerator->create_post($replydata);
+
+        // Create discussion by s1 in forum 2.
+        $discussiondata->forum = $forum2->id;
+        $discussiondata->userid = $s1->id;
+        $discussiondata->groupid = $g1->id;
+        $discussion21 = $forumgenerator->create_discussion($discussiondata);
+
+        // Post a private reply to s1's discussion in forum 2 as the editing teacher.
+        $replydata->discussion = $discussion21->id;
+        $replydata->privatereplyto = $s1->id;
+        $forumgenerator->create_post($replydata);
+
+        // Let's count!
+        // S1 should see 4 unread posts in forum 1 (1 discussions post + 2 private replies + 1 normal reply).
+        $this->setUser($s1);
+        $forum1cm = get_coursemodule_from_instance('forum', $forum1->id);
+        $result = forum_tp_count_forum_unread_posts($forum1cm, $course, true);
+        $this->assertEquals(4, $result);
+
+        // S2 should see 3 unread posts in forum 1 (1 discussions post + 1 private reply + 1 normal reply).
+        $this->setUser($s2);
+        $result = forum_tp_count_forum_unread_posts($forum1cm, $course, true);
+        $this->assertEquals(3, $result);
+
+        // S2 should see 1 unread posts in forum 2 (visible groups, 1 discussion post from s1).
+        $forum2cm = get_coursemodule_from_instance('forum', $forum2->id);
+        $result = forum_tp_count_forum_unread_posts($forum2cm, $course, true);
+        $this->assertEquals(1, $result);
+
+        // The editing teacher should still see 7 unread posts (2 discussions posts + 2 normal replies + 3 private replies)
+        // in forum 1 since they have the capability to view all groups by default.
+        $this->setUser($t1);
+        $result = forum_tp_count_forum_unread_posts($forum1cm, $course, true);
+        $this->assertEquals(7, $result);
+    }
+
+    /**
      * Test the logic in the test_forum_tp_get_untracked_forums() function.
      */
     public function test_forum_tp_get_untracked_forums() {
