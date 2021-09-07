@@ -31,6 +31,7 @@ use advanced_testcase;
 use core_h5p\local\library\autoloader;
 use MoodleQuickForm;
 use page_requirements_manager;
+use Moodle\H5PCore;
 
 /**
  *
@@ -42,7 +43,7 @@ use page_requirements_manager;
  *
  * @runTestsInSeparateProcesses
  */
-class editor_testcase extends advanced_testcase {
+class editor_test extends advanced_testcase {
 
     /**
      * Form object to be used in test case.
@@ -205,8 +206,8 @@ class editor_testcase extends advanced_testcase {
 
         $h5pcorepath = autoloader::get_h5p_core_library_url()->out();
 
-        $expectedcss = \H5PCore::$styles;
-        $expectedjs = \H5PCore::$scripts;
+        $expectedcss = H5PCore::$styles;
+        $expectedjs = H5PCore::$scripts;
 
         array_walk($expectedcss, function(&$item, $key) use ($h5pcorepath, $cachebuster) {
             $item = $h5pcorepath . $item. $cachebuster;
