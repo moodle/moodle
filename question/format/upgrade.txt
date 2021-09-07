@@ -1,5 +1,10 @@
 This files describes API changes for question import/export format plugins.
 
+=== 4.0 ===
+
+* The WebCT question format has been completely removed (WebCT was acquired by Blackboard in 2006).
+
+
 === 3.6 ===
 
 * Saving question category descriptions (info) is now supported in Moodle XML import/export format.
