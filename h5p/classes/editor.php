@@ -26,8 +26,8 @@ namespace core_h5p;
 
 use core_h5p\local\library\autoloader;
 use core_h5p\output\h5peditor as editor_renderer;
-use H5PCore;
-use H5peditor;
+use Moodle\H5PCore;
+use Moodle\H5peditor;
 use stdClass;
 use coding_exception;
 use MoodleQuickForm;
