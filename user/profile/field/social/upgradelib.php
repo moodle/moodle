@@ -145,8 +145,11 @@ function user_profile_social_create_profilefield($social) {
  */
 function user_profile_social_update_module_availability() {
     global $DB;
-    $modules = $DB->get_records('course_modules');
-    foreach ($modules as $mod) {
+    // Use transaction to improve performance if there are many individual database updates.
+    $transaction = $DB->start_delegated_transaction();
+    // Query all the course_modules entries that have availability set.
+    $rs = $DB->get_recordset_select('course_modules', 'availability IS NOT NULL', [], '', 'id, availability');
+    foreach ($rs as $mod) {
         if (isset($mod->availability)) {
             $availability = json_decode($mod->availability);
             if (!is_null($availability)) {
@@ -159,6 +162,8 @@ function user_profile_social_update_module_availability() {
             }
         }
     }
+    $rs->close();
+    $transaction->allow_commit();
 }
 
 /**
