@@ -51,7 +51,7 @@ class message_user_blocked extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventmessageusersblocked', 'message');
+        return get_string('eventmessageuserblocked', 'message');
     }
 
     /**
