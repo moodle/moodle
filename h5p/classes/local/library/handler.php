@@ -161,19 +161,20 @@ abstract class handler {
      */
     protected static function get_class_list(): array {
         return [
-            'H5PCore' => 'h5p.classes.php',
-            'H5PFrameworkInterface' => 'h5p.classes.php',
-            'H5PContentValidator' => 'h5p.classes.php',
-            'H5PValidator' => 'h5p.classes.php',
-            'H5PStorage' => 'h5p.classes.php',
-            'H5PDevelopment' => 'h5p-development.class.php',
-            'H5PFileStorage' => 'h5p-file-storage.interface.php',
-            'H5PMetadata' => 'h5p-metadata.class.php',
-            'H5peditor' => 'h5peditor.class.php',
-            'H5peditorStorage' => 'h5peditor-storage.interface.php',
-            'H5PEditorAjaxInterface' => 'h5peditor-ajax.interface.php',
-            'H5PEditorAjax' => 'h5peditor-ajax.class.php',
-            'H5peditorFile' => 'h5peditor-file.class.php',
+            'Moodle\H5PCore' => 'h5p.classes.php',
+            'Moodle\H5PFrameworkInterface' => 'h5p.classes.php',
+            'Moodle\H5PContentValidator' => 'h5p.classes.php',
+            'Moodle\H5PValidator' => 'h5p.classes.php',
+            'Moodle\H5PStorage' => 'h5p.classes.php',
+            'Moodle\H5PDevelopment' => 'h5p-development.class.php',
+            'Moodle\H5PFileStorage' => 'h5p-file-storage.interface.php',
+            'Moodle\H5PDefaultStorage' => 'h5p-default-storage.class.php',
+            'Moodle\H5PMetadata' => 'h5p-metadata.class.php',
+            'Moodle\H5peditor' => 'h5peditor.class.php',
+            'Moodle\H5peditorStorage' => 'h5peditor-storage.interface.php',
+            'Moodle\H5PEditorAjaxInterface' => 'h5peditor-ajax.interface.php',
+            'Moodle\H5PEditorAjax' => 'h5peditor-ajax.class.php',
+            'Moodle\H5peditorFile' => 'h5peditor-file.class.php',
         ];
     }
 }
