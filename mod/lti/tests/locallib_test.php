@@ -1741,6 +1741,103 @@ MwIDAQAB
     }
 
     /**
+     * Test the lti_get_ims_role helper function.
+     *
+     * @dataProvider lti_get_ims_role_provider
+     * @covers ::lti_get_ims_role()
+     *
+     * @param bool $islti2 whether the method is called with LTI 2.0 role names or not.
+     * @param string $rolename the name of the role (student, teacher, admin)
+     * @param null|string $switchedto the role to switch to, or false if not using the 'switch to' functionality.
+     * @param string $expected the expected role name.
+     */
+    public function test_lti_get_ims_role(bool $islti2, string $rolename, ?string $switchedto, string $expected) {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $rolename == 'admin' ? get_admin() : $this->getDataGenerator()->create_and_enrol($course, $rolename);
+
+        if ($switchedto) {
+            $this->setUser($user);
+            $role = $DB->get_record('role', array('shortname' => $switchedto));
+            role_switch($role->id, context_course::instance($course->id));
+        }
+
+        $this->assertEquals($expected, lti_get_ims_role($user, 0, $course->id, $islti2));
+    }
+
+    /**
+     * Data provider for testing lti_get_ims_role.
+     *
+     * @return array[] the test case data.
+     */
+    public function lti_get_ims_role_provider() {
+        return [
+            'Student, LTI 1.1, no role switch' => [
+                'islti2' => false,
+                'rolename' => 'student',
+                'switchedto' => null,
+                'expected' => 'Learner'
+            ],
+            'Student, LTI 2.0, no role switch' => [
+                'islti2' => true,
+                'rolename' => 'student',
+                'switchedto' => null,
+                'expected' => 'Learner'
+            ],
+            'Teacher, LTI 1.1, no role switch' => [
+                'islti2' => false,
+                'rolename' => 'editingteacher',
+                'switchedto' => null,
+                'expected' => 'Instructor'
+            ],
+            'Teacher, LTI 2.0, no role switch' => [
+                'islti2' => true,
+                'rolename' => 'editingteacher',
+                'switchedto' => null,
+                'expected' => 'Instructor'
+            ],
+            'Admin, LTI 1.1, no role switch' => [
+                'islti2' => false,
+                'rolename' => 'admin',
+                'switchedto' => null,
+                'expected' => 'Instructor,urn:lti:sysrole:ims/lis/Administrator,urn:lti:instrole:ims/lis/Administrator'
+            ],
+            'Admin, LTI 2.0, no role switch' => [
+                'islti2' => true,
+                'rolename' => 'admin',
+                'switchedto' => null,
+                'expected' => 'Instructor,http://purl.imsglobal.org/vocab/lis/v2/person#Administrator'
+            ],
+            'Admin, LTI 1.1, role switch student' => [
+                'islti2' => false,
+                'rolename' => 'admin',
+                'switchedto' => 'student',
+                'expected' => 'Learner'
+            ],
+            'Admin, LTI 2.0, role switch student' => [
+                'islti2' => true,
+                'rolename' => 'admin',
+                'switchedto' => 'student',
+                'expected' => 'Learner'
+            ],
+            'Admin, LTI 1.1, role switch teacher' => [
+                'islti2' => false,
+                'rolename' => 'admin',
+                'switchedto' => 'editingteacher',
+                'expected' => 'Instructor'
+            ],
+            'Admin, LTI 2.0, role switch teacher' => [
+                'islti2' => true,
+                'rolename' => 'admin',
+                'switchedto' => 'editingteacher',
+                'expected' => 'Instructor'
+            ],
+        ];
+    }
+
+    /**
      * Create an LTI Tool.
      *
      * @param object $config tool config.
