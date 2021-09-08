@@ -394,6 +394,16 @@ class moodle_page {
     protected $_hassecondarynavigation = true;
 
     /**
+     * @var string the key of the secondary node to be activated.
+     */
+    protected $_activekeysecondary = null;
+
+    /**
+     * @var string the key of the primary node to be activated.
+     */
+    protected $_activenodeprimary = null;
+
+    /**
      * Force the settings menu to be displayed on this page. This will only force the
      * settings menu on an activity / resource page that is being displayed on a theme that
      * uses a settings menu.
@@ -2188,5 +2198,41 @@ class moodle_page {
      */
     public function has_secondary_navigation() : bool {
         return $this->_hassecondarynavigation;
+    }
+
+    /**
+     * Set the key of the secondary nav node to be activated.
+     *
+     * @param string $navkey the key of the secondary nav node to be activated.
+     */
+    public function set_secondary_active_tab(string $navkey) : void {
+        $this->_activekeysecondary = $navkey;
+    }
+
+    /**
+     * The key of secondary nav node to activate.
+     *
+     * @return string|null get the key of the secondary node to activate.
+     */
+    public function get_secondary_active_tab(): ?string {
+        return $this->_activekeysecondary;
+    }
+
+    /**
+     * Set the key of the primary nav node to be activated.
+     *
+     * @param string $navkey
+     */
+    public function set_primary_active_tab(string $navkey): void {
+        $this->_activenodeprimary = $navkey;
+    }
+
+    /**
+     * The key of the primary nav node to activate.
+     *
+     * @return string|null get the key of the primary nav node to activate.
+     */
+    public function get_primary_activate_tab(): ?string {
+        return $this->_activenodeprimary;
     }
 }

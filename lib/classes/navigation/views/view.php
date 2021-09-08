@@ -113,31 +113,42 @@ abstract class view extends navigation_node {
      * @param int $strictness How stict to be with the scan for the active node.
      * @return navigation_node|null
      */
-    protected function active_node_scan(navigation_node $node, int $strictness = URL_MATCH_EXACT): ?navigation_node {
+    protected function active_node_scan(navigation_node $node,
+        int $strictness = URL_MATCH_EXACT): ?navigation_node {
 
-        if ($node->check_if_active($strictness)) {
+        $result = null;
+        $activekey = $this->page->get_secondary_active_tab();
+        if ($activekey) {
+            if ($node->key && $activekey === $node->key) {
+                return $node;
+            }
+        } else if ($node->check_if_active($strictness)) {
             return $node; // No need to continue, exit function.
         }
 
-        if ($node->children->count() > 0) {
-            foreach ($node->children as $child) {
-                if ($this->active_node_scan($child, $strictness)) {
-                    // If node is one of the new views then set the active node to the child.
-                    if (!$node instanceof view) {
-                        $node->make_active();
-                        $child->make_inactive();
-                    } else {
-                        $child->make_active();
-                        $this->activenode = $child;
-                    }
-
-                    return $node; // We have found the active node, set the parent status, no need to continue.
-                } else {
-                    // Make sure to reset the active state.
+        foreach ($node->children as $child) {
+            if ($this->active_node_scan($child, $strictness)) {
+                // If node is one of the new views then set the active node to the child.
+                if (!$node instanceof view) {
+                    $node->make_active();
                     $child->make_inactive();
+                    $result = $node;
+                } else {
+                    $child->make_active();
+                    $this->activenode = $child;
+                    $result = $child;
                 }
+
+                // If the secondary active tab not set then just return the result (fallback).
+                if ($activekey === null) {
+                    return $result;
+                }
+            } else {
+                // Make sure to reset the active state.
+                $child->make_inactive();
             }
         }
-        return null;
+
+        return $result;
     }
 }
