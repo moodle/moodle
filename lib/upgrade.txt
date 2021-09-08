@@ -85,6 +85,8 @@ information provided here is intended especially for developers.
   - question_preview_popup_params() is moved to \qbank_previewquestion\helper::question_preview_popup_params()
   Calling these functions in the question will point to the plugin, but the deprecation message will be activated in MDL-72004.
   The deprecated codes are removed from the questionlib for those two methods.
+* The postgres driver now wraps calls to pg_field_type() and caches them in databasemeta to save an invisible internal
+  DB call on every request.
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.

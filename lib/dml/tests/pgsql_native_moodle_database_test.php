@@ -32,7 +32,7 @@
  * @copyright 2020 Ruslan Kabalin
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class pgsql_native_moodle_database_testcase extends advanced_testcase {
+class pgsql_native_moodle_database_test extends advanced_testcase {
 
     /**
      * Setup before class.
