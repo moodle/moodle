@@ -42,6 +42,12 @@ class content extends \core_contentbank\content {
     public function is_view_allowed(): bool {
         // Force H5P content to be deployed.
         $fileurl = $this->get_file_url();
+        if (empty($fileurl)) {
+            // This should never happen because H5P contents should have always a file. However, this extra-checked has been added
+            // to avoid the contentbank stop working if, for any unkonwn/weird reason, the file doesn't exist.
+            return false;
+        }
+
         // Skip capability check when creating the H5P content (because it has been created by trusted users).
         $h5pplayer = new \core_h5p\player($fileurl, new \stdClass(), true, '', true);
         // Flush error messages.
