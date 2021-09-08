@@ -2001,7 +2001,6 @@ class mod_quiz_external extends external_api {
 
         $quizobj = quiz_settings::create($cm->instance, $USER->id);
         $quizobj->preload_questions();
-        $quizobj->load_questions();
 
         // Question types used.
         $result = [];

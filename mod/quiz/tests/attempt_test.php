@@ -494,9 +494,10 @@ class attempt_test extends \advanced_testcase {
         $attempt = quiz_create_attempt($quizobj, 1, false, time(), false, $student1->id);
         $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, 1, time());
         $attempt = quiz_attempt_save_started($quizobj, $quba, $attempt);
-
         $DB->set_field('question_versions', 'status', question_version_status::QUESTION_STATUS_DRAFT,
                 ['questionid' => $question->id]);
+        // We need to reset the cache since the question has been edited by changing its status to draft.
+        \question_bank::notify_question_edited($question->id);
         $quizobj = quiz_settings::create($quiz->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);

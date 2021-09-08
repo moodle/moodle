@@ -1,5 +1,10 @@
 This files describes API changes in the quiz code.
 
+=== 4.3 ===
+
+* The method get_questions() has a new parameter 'requirequestionfullyloaded' which can be used to instruct whether the
+  questions should be fully loaded or not.
+
 === 4.2 ===
 
 * For the three quiz web services: mod_quiz_get_attempt_data, mod_quiz_get_attempt_summary and

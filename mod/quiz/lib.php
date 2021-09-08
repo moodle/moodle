@@ -1943,8 +1943,7 @@ function quiz_check_updates_since(cm_info $cm, $from, $filter = []) {
     $updates->questions = (object) ['updated' => false];
     $quizobj = quiz_settings::create($cm->instance, $USER->id);
     $quizobj->preload_questions();
-    $quizobj->load_questions();
-    $questionids = array_keys($quizobj->get_questions());
+    $questionids = array_keys($quizobj->get_questions(null, false));
     if (!empty($questionids)) {
         list($questionsql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED);
         $select = 'id ' . $questionsql . ' AND (timemodified > :time1 OR timecreated > :time2)';

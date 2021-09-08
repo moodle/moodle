@@ -650,6 +650,7 @@ class question_finder implements cache_data_source {
     /* See cache_data_source::load_many_for_cache. */
     public function load_many_for_cache(array $questionids) {
         global $DB;
+
         list($idcondition, $params) = $DB->get_in_or_equal($questionids);
         $sql = 'SELECT q.id, qc.id as category, q.parent, q.name, q.questiontext, q.questiontextformat,
                        q.generalfeedback, q.generalfeedbackformat, q.defaultmark, q.penalty, q.qtype,
