@@ -80,6 +80,11 @@ information provided here is intended especially for developers.
   - question_category_options() => qbank_managecategories\helper::question_category_options()
   - question_add_context_in_key() => qbank_managecategories\helper::question_add_context_in_key()
   - question_fix_top_names() => qbank_managecategories\helper::question_fix_top_names()
+* Following methods are now deprecated in questionlib and moved to the new qbank_previewquestion plugin:
+  - question_preview_url() is moved to qbank_previewquestion\helper::question_preview_url()
+  - question_preview_popup_params() is moved to \qbank_previewquestion\helper::question_preview_popup_params()
+  Calling these functions in the question will point to the plugin, but the deprecation message will be activated in MDL-72004.
+  The deprecated codes are removed from the questionlib for those two methods.
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.

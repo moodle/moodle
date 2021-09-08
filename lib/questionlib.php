@@ -757,55 +757,34 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
  * @param object $context context to run the preview in (affects things like
  *      filter settings, theme, lang, etc.) Defaults to $PAGE->context.
  * @return moodle_url the URL.
+ * @deprecated since Moodle 4.0
+ * @see qbank_previewquestion\helper::question_preview_url()
+ * @todo MDL-71679 uncomment the debug messages after implementing the changes in mod_quiz.
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_preview_url($questionid, $preferredbehaviour = null,
         $maxmark = null, $displayoptions = null, $variant = null, $context = null) {
+    // Debugging message will be re-added after implementing the changes in mod_quiz.
+    // ...debugging('Function question_preview_url() has been deprecated and moved to qbank_previewquestion plugin,
+    // Please use qbank_previewquestion\helper::question_preview_url() instead.', DEBUG_DEVELOPER);.
 
-    $params = array('id' => $questionid);
-
-    if (is_null($context)) {
-        global $PAGE;
-        $context = $PAGE->context;
-    }
-    if ($context->contextlevel == CONTEXT_MODULE) {
-        $params['cmid'] = $context->instanceid;
-    } else if ($context->contextlevel == CONTEXT_COURSE) {
-        $params['courseid'] = $context->instanceid;
-    }
-
-    if (!is_null($preferredbehaviour)) {
-        $params['behaviour'] = $preferredbehaviour;
-    }
-
-    if (!is_null($maxmark)) {
-        $params['maxmark'] = format_float($maxmark, -1);
-    }
-
-    if (!is_null($displayoptions)) {
-        $params['correctness']     = $displayoptions->correctness;
-        $params['marks']           = $displayoptions->marks;
-        $params['markdp']          = $displayoptions->markdp;
-        $params['feedback']        = (bool) $displayoptions->feedback;
-        $params['generalfeedback'] = (bool) $displayoptions->generalfeedback;
-        $params['rightanswer']     = (bool) $displayoptions->rightanswer;
-        $params['history']         = (bool) $displayoptions->history;
-    }
-
-    if ($variant) {
-        $params['variant'] = $variant;
-    }
-
-    return new moodle_url('/question/preview.php', $params);
+    return \qbank_previewquestion\helper::question_preview_url($questionid, $preferredbehaviour = null,
+            $maxmark = null, $displayoptions = null, $variant = null, $context = null);
 }
 
 /**
  * @return array that can be passed as $params to the {@link popup_action} constructor.
+ * @deprecated since Moodle 4.0
+ * @see qbank_previewquestion\helper::question_preview_popup_params()
+ * @todo MDL-71679 uncomment the debug messages after implementing the changes to mod_quiz.
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_preview_popup_params() {
-    return array(
-        'height' => 600,
-        'width' => 800,
-    );
+    // Debugging message will be re-added after implementing the changes in mod_quiz.
+    // ...debugging('Function question_preview_popup_params() has been deprecated and moved to qbank_previewquestion plugin,
+    // Please use qbank_previewquestion\helper::question_preview_popup_params() instead.', DEBUG_DEVELOPER);.
+
+    return \qbank_previewquestion\helper::question_preview_popup_params();
 }
 
 /**
@@ -2143,8 +2122,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
     }
 
     if ($module === 'core_question_preview') {
-        require_once($CFG->dirroot . '/question/previewlib.php');
-        return question_preview_question_pluginfile($course, $context,
+        return qbank_previewquestion\helper::question_preview_question_pluginfile($course, $context,
                 $component, $filearea, $qubaid, $slot, $args, $forcedownload, $options);
 
     } else {

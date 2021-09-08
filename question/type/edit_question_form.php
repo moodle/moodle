@@ -258,17 +258,11 @@ abstract class question_edit_form extends question_wizard_form {
         $buttonarray[] = $mform->createElement('submit', 'updatebutton',
                 get_string('savechangesandcontinueediting', 'question'));
         if ($this->can_preview()) {
-            // Todo MDL-72004 changes for class renaming and default sort.
-            if (class_exists('qbank_previewquestion\\preview_action_column')) {
-                if (\core\plugininfo\qbank::is_plugin_enabled('qbank_previewquestion')) {
-                    $previewlink = $PAGE->get_renderer('qbank_previewquestion')->question_preview_link(
-                            $this->question->id, $this->context, true);
-                }
-            } else {
-                $previewlink = $PAGE->get_renderer('core_question')->question_preview_link(
+            if (\core\plugininfo\qbank::is_plugin_enabled('qbank_previewquestion')) {
+                $previewlink = $PAGE->get_renderer('qbank_previewquestion')->question_preview_link(
                         $this->question->id, $this->context, true);
+                $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
             }
-            $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
         }
 
         $mform->addGroup($buttonarray, 'updatebuttonar', '', array(' '), false);

@@ -27,7 +27,6 @@ Feature: Preview a drag-drop onto image question
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
     When I choose "Preview" action for "Drag onto image" in the question bank
-    And I switch to "questionpreview" window
     # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
     # Keep window large else drag will scroll the window to find element.
     And I change window size to "medium"
@@ -44,15 +43,12 @@ Feature: Preview a drag-drop onto image question
     And I press "Submit and finish"
     Then the state of "Identify the features" question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript
   Scenario: Preview a question using the keyboard.
     When I choose "Preview" action for "Drag onto image" in the question bank
-    And I switch to "questionpreview" window
     # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
-    And I change window size to "medium"
-    And I wait "2" seconds
     And I type "       " on place "1" in the drag and drop onto image question
     And I type "       " on place "2" in the drag and drop onto image question
     And I type "     " on place "3" in the drag and drop onto image question
@@ -64,4 +60,4 @@ Feature: Preview a drag-drop onto image question
     And I press "Submit and finish"
     Then the state of "Identify the features" question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"
-    And I switch to the main window
+    And I press "Close preview"

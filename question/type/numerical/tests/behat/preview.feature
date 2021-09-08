@@ -31,7 +31,6 @@ Feature: Preview a Numerical question
   @javascript @_switch_window
   Scenario: Preview a Numerical question and submit a correct response.
     When I choose "Preview" action for "Numerical-001" in the question bank
-    And I switch to "questionpreview" window
     Then I should see "What is pi to two d.p.?"
     When I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
@@ -48,4 +47,4 @@ Feature: Preview a Numerical question
     And I press "Check"
     Then I should see "Very good."
     And I should see "Mark 1#00 out of 1#00"
-    And I switch to the main window
+    And I press "Close preview"

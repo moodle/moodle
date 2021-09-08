@@ -27,19 +27,17 @@ Feature: Preview a Trtue/False question
   @javascript @_switch_window
   Scenario: Preview a True/False question and submit a correct response.
     When I choose "Preview" action for "true-false-001" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I click on "True" "radio"
     And I press "Check"
     And I should see "This is the right answer."
     And I should see "The correct answer is 'True'."
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript @_switch_window
   Scenario: Preview a True/False question and submit an incorrect response.
     When I choose "Preview" action for "true-false-001" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I click on "False" "radio"
@@ -47,4 +45,4 @@ Feature: Preview a Trtue/False question
     And I should see "This is the wrong answer."
     And I should see "You should have selected true."
     And I should see "The correct answer is 'True'."
-    And I switch to the main window
+    And I press "Close preview"
