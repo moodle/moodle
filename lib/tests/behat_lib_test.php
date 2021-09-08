@@ -32,6 +32,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_lib_test extends advanced_testcase {
+
+    /**
+     * Setup function
+     *
+     * Skip these tests if behat is not configured.
+     *
+     * @return void
+     */
+    public function setUp(): void {
+        global $CFG;
+
+        if (empty($CFG->behat_wwwroot) || empty($CFG->behat_dataroot) || empty($CFG->behat_prefix)) {
+            $this->markTestSkipped('Behat not configured');
+        }
+    }
+
     /**
      * Tests for behat_is_requested_url() function.
      *
