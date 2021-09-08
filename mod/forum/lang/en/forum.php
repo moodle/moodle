@@ -514,10 +514,9 @@ $string['postbymailsuccess'] = 'Your reply "{$a->subject}" was successfully post
 $string['postbymailsuccess_html'] = 'Your reply <a href="{$a->discussionurl}">{$a->subject}</a> was successfully posted.';
 $string['postbyuser'] = '{$a->post} by {$a->user}';
 $string['postincontext'] = 'See this post in context';
-$string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
-
-To reply click on this link: {$a->replylink}';
+$string['postmailinfo'] = 'This is a copy of a message posted in {$a}.';
 $string['postmailnow'] = '<p>This post will be mailed out immediately to all forum subscribers.</p>';
+$string['postmailreply'] = 'To reply click on this link: {$a}';
 $string['postmailsubject'] = '{$a->courseshortname}: {$a->subject}';
 $string['postrating1'] = 'Mostly separate knowing';
 $string['postrating2'] = 'Separate and connected';
@@ -776,6 +775,11 @@ $string['nousersmatch'] = 'No user(s) found for given criteria';
 $string['showmoreusers'] = 'Show more users';
 $string['viewconversation'] = 'View discussion';
 $string['viewgrades'] = 'View grades';
+
+// Deprecated since Moodle 4.0.
+$string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
+
+To reply click on this link: {$a->replylink}';
 
 // Deprecated since Moodle 3.8.
 $string['cannotdeletediscussioninsinglediscussion'] = 'You cannot delete the first post in a single discussion';
