@@ -105,6 +105,14 @@ $card-gutter : $card-deck-margin * 2;
     height: 5rem;
 }
 
+.block {
+    .searchbar {
+        .icon {
+            margin-right: 0;
+        }
+    }
+}
+
 .block .block-cards {
     .course-info-container {
         padding: 0.8rem;

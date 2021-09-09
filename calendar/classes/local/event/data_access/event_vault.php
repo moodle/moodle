@@ -98,7 +98,8 @@ class event_vault implements event_vault_interface {
         array $categoriesfilter = null,
         $withduration = true,
         $ignorehidden = true,
-        callable $filter = null
+        callable $filter = null,
+        ?string $searchvalue = null
     ) {
 
         $fromquery = function($field, $timefrom, $lastseenmethod, $afterevent, $withduration) {
@@ -137,12 +138,15 @@ class event_vault implements event_vault_interface {
             return [];
         }
 
+        $searchquery = $this->generate_search_subquery($searchvalue);
+
         $params = array_merge(
             $type ? ['type' => $type] : [],
             $timesortfromquery ? $timesortfromquery['params'] : [],
             $timesorttoquery ? $timesorttoquery['params'] : [],
             $timestartfromquery ? $timestartfromquery['params'] : [],
-            $timestarttoquery ? $timestarttoquery['params'] : []
+            $timestarttoquery ? $timestarttoquery['params'] : [],
+            $searchquery ? $searchquery['params'] : [],
         );
 
         $where = array_merge(
@@ -150,7 +154,8 @@ class event_vault implements event_vault_interface {
             $timesortfromquery ? $timesortfromquery['where'] : [],
             $timesorttoquery ? $timesorttoquery['where'] : [],
             $timestartfromquery ? $timestartfromquery['where'] : [],
-            $timestarttoquery ? $timestarttoquery['where'] : []
+            $timestarttoquery ? $timestarttoquery['where'] : [],
+            $searchquery ? [$searchquery['where']] : [],
         );
 
         $offset = 0;
@@ -199,7 +204,8 @@ class event_vault implements event_vault_interface {
         $timesortto = null,
         event_interface $afterevent = null,
         $limitnum = 20,
-        $limittononsuspendedevents = false
+        $limittononsuspendedevents = false,
+        ?string $searchvalue = null
     ) {
         $courseids = array_map(function($course) {
             return $course->id;
@@ -231,7 +237,8 @@ class event_vault implements event_vault_interface {
             true,
             function ($event) {
                 return $event instanceof action_event_interface;
-            }
+            },
+            $searchvalue
         );
     }
 
@@ -241,7 +248,8 @@ class event_vault implements event_vault_interface {
         $timesortfrom = null,
         $timesortto = null,
         event_interface $afterevent = null,
-        $limitnum = 20
+        $limitnum = 20,
+        ?string $searchvalue = null
     ) {
         $groupings = groups_get_user_groups($course->id, $user->id);
         return array_values(
@@ -262,7 +270,8 @@ class event_vault implements event_vault_interface {
                 true,
                 function ($event) use ($course) {
                     return $event instanceof action_event_interface && $event->get_course()->get('id') == $course->id;
-                }
+                },
+                $searchvalue
             )
         );
     }
@@ -392,5 +401,34 @@ class event_vault implements event_vault_interface {
                 $limitnum
             )
         );
+    }
+
+    /**
+     * Generates SQL subquery and parameters for event searching.
+     *
+     * @param string|null $searchvalue Search value.
+     * @return array|null
+     */
+    protected function generate_search_subquery(?string $searchvalue): ?array {
+        global $DB;
+        if (!$searchvalue) {
+            return null;
+        }
+
+        // Course searching.
+        $whereconditions[] = $DB->sql_like('c.fullname', ':cfullname', false);
+        $params['cfullname'] = '%' . $DB->sql_like_escape($searchvalue) . '%';
+
+        // Activity name searching.
+        $whereconditions[] = $DB->sql_like('e.name', ':eventname', false);
+        $params['eventname'] = '%' . $DB->sql_like_escape($searchvalue) . '%';
+
+        // Activity type searching.
+        $whereconditions[] = $DB->sql_like('e.modulename', ':modulename', false);
+        $params['modulename'] = '%' . $DB->sql_like_escape($searchvalue) . '%';
+
+        $whereclause = '(' . implode(' OR ', $whereconditions) . ')';
+
+        return ['where' => $whereclause, 'params' => $params];
     }
 }

@@ -300,7 +300,7 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
                    GROUP BY ev.modulename, ev.instance, ev.eventtype";
 
         // Build the main query.
-        $sql = "SELECT e.*
+        $sql = "SELECT e.*, c.fullname AS coursefullname, c.shortname AS courseshortname
                   FROM {event} e
             INNER JOIN ($subquery) fe
                     ON e.modulename = fe.modulename
@@ -309,6 +309,8 @@ class raw_event_retrieval_strategy implements raw_event_retrieval_strategy_inter
                        AND (e.priority = fe.priority OR (e.priority IS NULL AND fe.priority IS NULL))
              LEFT JOIN {modules} m
                     ON e.modulename = m.name
+             LEFT JOIN {course} c
+                    ON c.id = e.courseid
                  WHERE (m.visible = 1 OR m.visible IS NULL) AND $whereclause
               ORDER BY " . ($ordersql ? $ordersql : "e.timestart");
 
