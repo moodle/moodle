@@ -1240,7 +1240,6 @@ class auth_plugin_ldap extends auth_plugin_base {
                             $ldapvalue = '';
                         }
 
-                        $ldapvalue = $user_entry[$ldapkey][0];
                         if (!$ambiguous) {
                             // Skip update if the values already match
                             if ($nuvalue !== $ldapvalue) {
