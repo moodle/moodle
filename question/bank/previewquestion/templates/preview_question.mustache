@@ -57,15 +57,15 @@
     </div>
     {{{question}}}
     <div id="previewcontrols" class="controls input-group">
-        <input type="submit" name="restart" value="{{#str}} restart, question{{/str}}" class="btn btn-secondary" {{{restartdisabled}}}>
-        <input type="submit" name="save" value="{{#str}} save, question{{/str}}" class="btn btn-secondary" {{{finishdisabled}}}>
-        <input type="submit" name="fill" value="{{#str}} fillincorrect, question{{/str}}" class="btn btn-secondary" {{{filldisabled}}}>
-        <input type="submit" name="finish" value="{{#str}} submitandfinish, question{{/str}}" class="btn btn-secondary" {{{finishdisabled}}}>
+        <input type="submit" name="restart" value="{{#str}} restart, question{{/str}}" class="btn btn-secondary mr-1 mb-1" {{{restartdisabled}}}>
+        <input type="submit" name="save" value="{{#str}} save, question{{/str}}" class="btn btn-secondary mr-1 mb-1" {{{finishdisabled}}}>
+        <input type="submit" name="fill" value="{{#str}} fillincorrect, question{{/str}}" class="btn btn-secondary mr-1 mb-1" {{{filldisabled}}}>
+        <input type="submit" name="finish" value="{{#str}} submitandfinish, question{{/str}}" class="btn btn-secondary mr-1 mb-1" {{{finishdisabled}}}>
         {{^redirect}}
-            <input type="button" name="close" value="{{#str}} closepreview, question{{/str}}" class="btn btn-secondary" id="close-previewquestion-page">
+            <input type="button" name="close" value="{{#str}} closepreview, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="close-previewquestion-page">
         {{/redirect}}
         {{#redirect}}
-            <a href="{{{redirecturl}}}" class="btn btn-secondary" role="button">{{#str}} closepreview, question{{/str}}</a>
+            <a href="{{{redirecturl}}}" class="btn btn-secondary mr-1 mb-1" role="button">{{#str}} closepreview, question{{/str}}</a>
         {{/redirect}}
     </div>
 </form>
