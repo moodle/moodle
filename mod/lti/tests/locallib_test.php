@@ -52,6 +52,7 @@ defined('MOODLE_INTERNAL') || die;
 global $CFG;
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 require_once($CFG->dirroot . '/mod/lti/servicelib.php');
+require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
 
 /**
  * Local library tests
@@ -60,7 +61,7 @@ require_once($CFG->dirroot . '/mod/lti/servicelib.php');
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lti_locallib_testcase extends advanced_testcase {
+class mod_lti_locallib_testcase extends mod_lti_testcase {
 
     public function test_split_custom_parameters() {
         $this->resetAfterTest();
@@ -1838,6 +1839,109 @@ MwIDAQAB
     }
 
     /**
+     * Test lti_get_lti_types_and_proxies with no limit or offset.
+     */
+    public function test_lti_get_lti_types_and_proxies_with_no_limit() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->generate_tool_types_and_proxies(10);
+        list($proxies, $types) = lti_get_lti_types_and_proxies();
+
+        $this->assertCount(10, $proxies);
+        $this->assertCount(10, $types);
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies with limits.
+     */
+    public function test_lti_get_lti_types_and_proxies_with_limit() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->generate_tool_types_and_proxies(10);
+
+        // Get the middle 10 data sets (of 20 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(10, 5);
+
+        $this->assertCount(5, $proxies);
+        $this->assertCount(5, $types);
+
+        // Get the last 5 data sets with large limit (of 20 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(50, 15);
+
+        $this->assertCount(0, $proxies);
+        $this->assertCount(5, $types);
+
+        // Get the last 13 data sets with large limit (of 20 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(50, 7);
+
+        $this->assertCount(3, $proxies);
+        $this->assertCount(10, $types);
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies with limits and only fetching orphaned proxies.
+     */
+    public function test_lti_get_lti_types_and_proxies_with_limit_and_orphaned_proxies() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->generate_tool_types_and_proxies(10, 5);
+
+        // Get the first 10 data sets (of 15 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(10, 0, true);
+
+        $this->assertCount(5, $proxies);
+        $this->assertCount(5, $types);
+
+        // Get the middle 10 data sets with large limit (of 15 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(10, 2, true);
+
+        $this->assertCount(3, $proxies);
+        $this->assertCount(7, $types);
+
+        // Get the last 5 data sets with large limit (of 15 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(50, 10, true);
+
+        $this->assertCount(0, $proxies);
+        $this->assertCount(5, $types);
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies_count.
+     */
+    public function test_lti_get_lti_types_and_proxies_count_with_no_filters() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->generate_tool_types_and_proxies(10, 5);
+
+        $totalcount = lti_get_lti_types_and_proxies_count();
+        $this->assertEquals(25, $totalcount); // 10 types, 15 proxies.
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies_count only counting orphaned proxies.
+     */
+    public function test_lti_get_lti_types_and_proxies_count_with_only_orphaned_proxies() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->generate_tool_types_and_proxies(10, 5);
+
+        $orphanedcount = lti_get_lti_types_and_proxies_count(true);
+        $this->assertEquals(15, $orphanedcount); // 10 types, 5 proxies.
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies_count only matching tool type with toolproxyid.
+     */
+    public function test_lti_get_lti_types_and_proxies_count_type_with_proxyid() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        ['proxies' => $proxies, 'types' => $types] = $this->generate_tool_types_and_proxies(10, 5);
+
+        $countwithproxyid = lti_get_lti_types_and_proxies_count(false, $proxies[0]->id);
+        $this->assertEquals(16, $countwithproxyid); // 1 type, 15 proxies.
+    }
+
+    /**
      * Create an LTI Tool.
      *
      * @param object $config tool config.
@@ -1875,5 +1979,28 @@ MwIDAQAB
                   'toolurl' => $type->baseurl,
                   'typeid' => $type->id
                   ), array());
+    }
+
+    /**
+     * Generate a number of LTI tool types and proxies.
+     *
+     * @param int $toolandproxycount How many tool types and associated proxies to create. E.g. Value of 10 will create 10 types
+     * and 10 proxies.
+     * @param int $orphanproxycount How many orphaned proxies to create.
+     * @return array[]
+     */
+    private function generate_tool_types_and_proxies(int $toolandproxycount = 0, int $orphanproxycount = 0) {
+        $proxies = [];
+        $types = [];
+        for ($i = 0; $i < $toolandproxycount; $i++) {
+            $proxies[$i] = $this->generate_tool_proxy($i);
+            $types[$i] = $this->generate_tool_type($i, $proxies[$i]->id);
+
+        }
+        for ($i = $toolandproxycount; $i < ($toolandproxycount + $orphanproxycount); $i++) {
+            $proxies[$i] = $this->generate_tool_proxy($i);
+        }
+
+        return ['proxies' => $proxies, 'types' => $types];
     }
 }

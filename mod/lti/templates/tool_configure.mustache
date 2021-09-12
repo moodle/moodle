@@ -79,6 +79,10 @@
     </div>
 
     <div id="tool-list-container" class="loading">
+        <h3>{{#str}} tooltypes, mod_lti {{/str}}</h3>
+        <div id="tool-list-loader-container">
+            {{> mod_lti/loader }}
+        </div>
         {{> mod_lti/tool_list }}
     </div>
 </div>
