@@ -5,6 +5,8 @@
 // want white default colour.
 $bg-inverse-link-color: #fff !default;
 
+$dropzone-border: $gray-900 !default;
+
 $font-size-xs: ($font-size-base * .75) !default;
 
 #region-main {
@@ -2783,4 +2785,33 @@ $scrollbar-track: lighten($primary, 40%);
         background-color: $scrollbar-track;
         border-right: $border-width solid $white;
     }
+}
+// Generic dropzones and dragging styles.
+
+body.dragging {
+
+    .drop-zone {
+        border: 2px dashed $dropzone-border;
+    }
+
+    .drop-up {
+        border-top: 2px solid $dropzone-border;
+    }
+
+    .drop-down {
+        border-bottom: 2px solid $dropzone-border;
+    }
+
+    .dragging {
+        opacity: .6;
+    }
+}
+
+.dragicon {
+    visibility: hidden;
+}
+
+.draggable:hover .dragicon {
+    visibility: visible;
+    cursor: move;
 }

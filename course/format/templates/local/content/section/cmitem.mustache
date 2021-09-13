@@ -36,7 +36,12 @@
         "extraclasses": "newmessages"
     }
 }}
-<li class="activity {{module}} modtype_{{module}} {{extraclasses}} {{#hasinfo}}hasinfo{{/hasinfo}}" id="module-{{id}}">
+<li
+    class="activity {{module}} modtype_{{module}} {{extraclasses}} {{#hasinfo}}hasinfo{{/hasinfo}}"
+    id="module-{{id}}"
+    data-for="cmitem"
+    data-id="{{id}}"
+>
 {{#cmformat}}
     {{> core_courseformat/local/content/cm}}
 {{/cmformat}}

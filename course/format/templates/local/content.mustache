@@ -157,25 +157,32 @@
         }
     }
 }}
-<h2 class="accesshide">{{{title}}}</h2>
-{{{completionhelp}}}
-<ul class="{{format}}">
-    {{#initialsection}}
-        {{> core_courseformat/local/content/section }}
-    {{/initialsection}}
-    {{#sections}}
-        {{> core_courseformat/local/content/section }}
-    {{/sections}}
-</ul>
-{{#hasnavigation}}
-<div class="single-section">
-    {{#sectionnavigation}} {{> core_courseformat/local/content/sectionnavigation }} {{/sectionnavigation}}
-    <ul class="{{format}}">
-    {{#singlesection}}
-        {{> core_courseformat/local/content/section }}
-    {{/singlesection}}
+<div id="{{uniqid}}-course-format">
+    <h2 class="accesshide">{{{title}}}</h2>
+    {{{completionhelp}}}
+    <ul class="{{format}}" data-for="course_sectionlist">
+        {{#initialsection}}
+            {{> core_courseformat/local/content/section }}
+        {{/initialsection}}
+        {{#sections}}
+            {{> core_courseformat/local/content/section }}
+        {{/sections}}
     </ul>
-    {{#sectionselector}} {{> core_courseformat/local/content/sectionselector }} {{/sectionselector}}
+    {{#hasnavigation}}
+    <div class="single-section">
+        {{#sectionnavigation}} {{> core_courseformat/local/content/sectionnavigation }} {{/sectionnavigation}}
+        <ul class="{{format}}">
+        {{#singlesection}}
+            {{> core_courseformat/local/content/section }}
+        {{/singlesection}}
+        </ul>
+        {{#sectionselector}} {{> core_courseformat/local/content/sectionselector }} {{/sectionselector}}
+    </div>
+    {{/hasnavigation}}
+    {{#numsections}} {{> core_courseformat/local/content/addsection}} {{/numsections}}
 </div>
-{{/hasnavigation}}
-{{#numsections}} {{> core_courseformat/local/content/addsection}} {{/numsections}}
+{{#js}}
+require(['core_courseformat/local/content'], function(component) {
+    component.init('{{uniqid}}-course-format');
+});
+{{/js}}

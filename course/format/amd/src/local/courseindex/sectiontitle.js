@@ -14,32 +14,42 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course index cm component.
+ * Course index section title component.
  *
- * This component is used to control specific course modules interactions like drag and drop.
+ * This component is used to control specific course section interactions like drag and drop.
  *
- * @module     core_courseformat/local/courseindex/cm
- * @class      core_courseformat/local/courseindex/cm
+ * @module     core_courseformat/local/courseindex/sectiontitle
+ * @class      core_courseformat/local/courseindex/sectiontitle
  * @copyright  2021 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import DndCmItem from 'core_courseformat/local/courseeditor/dndcmitem';
+import DndSectionItem from 'core_courseformat/local/courseeditor/dndsectionitem';
 
-export default class Component extends DndCmItem {
+export default class Component extends DndSectionItem {
 
     /**
      * Constructor hook.
+     *
+     * @param {Object} descriptor
      */
-    create() {
+    create(descriptor) {
         // Optional component name for debugging.
-        this.name = 'courseindex_cm';
-        // We need our id to watch specific events.
-        this.id = this.element.dataset.id;
+        this.name = 'courseindex_sectiontitle';
+
+        this.id = descriptor.id;
+        this.section = descriptor.section;
+        this.course = descriptor.course;
+        this.fullregion = descriptor.fullregion;
+
+        // Prevent topic zero from being draggable.
+        if (this.section.number > 0) {
+            this.getDraggableData = this._getDraggableData;
+        }
     }
 
     /**
-     * Static method to create a component instance form the mustache template.
+     * Static method to create a component instance form the mustahce template.
      *
      * @param {element|string} target the DOM main element or its ID
      * @param {object} selectors optional css selector overrides
@@ -54,20 +64,10 @@ export default class Component extends DndCmItem {
 
     /**
      * Initial state ready method.
-     */
-    stateReady() {
-        this.configDragDrop(this.id);
-    }
-
-    /**
-     * Component watchers.
      *
-     * @returns {Array} of watchers
+     * @param {Object} state the initial state
      */
-    getWatchers() {
-        return [
-            {watch: `cm[${this.id}]:deleted`, handler: this.remove},
-        ];
+    stateReady(state) {
+        this.configDragDrop(this.id, state, this.fullregion);
     }
-
 }

@@ -3308,6 +3308,7 @@ function include_course_editor(course_format $format) {
     // Edition mode and some format specs must be passed to the init method.
     $setup = (object)[
         'editing' => $format->show_editor(),
+        'supportscomponents' => $format->supports_components(),
     ];
     // All the new editor elements will be loaded after the course is presented and
     // the initial course state will be generated using core_course_get_state webservice.
