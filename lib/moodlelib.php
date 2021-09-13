@@ -5247,6 +5247,10 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     // Delete course tags.
     core_tag_tag::remove_all_item_tags('core', 'course', $course->id);
 
+    // Give the course format the opportunity to remove its obscure data.
+    $format = course_get_format($course);
+    $format->delete_format_data();
+
     // Notify the competency subsystem.
     \core_competency\api::hook_course_deleted($course);
 

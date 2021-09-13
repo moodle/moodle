@@ -203,6 +203,57 @@ export default class {
         stateManager.setReadOnly(true);
     }
 
+    /*
+     * Get updated user preferences and state data related to some section ids.
+     *
+     * @param {StateManager} stateManager the current state
+     * @param {array} sectionIds the list of section ids to update
+     * @param {Object} preferences the new preferences values
+     */
+    async sectionPreferences(stateManager, sectionIds, preferences) {
+        stateManager.setReadOnly(false);
+        // Check if we need to update preferences.
+        let updatePreferences = false;
+        sectionIds.forEach(sectionId => {
+            const section = stateManager.get('section', sectionId);
+            if (section === undefined) {
+                return;
+            }
+            let newValue = preferences.contentexpanded ?? section.contentexpanded;
+            if (section.contentexpanded != newValue) {
+                section.contentexpanded = newValue;
+                updatePreferences = true;
+            }
+            newValue = preferences.isactive ?? section.isactive;
+            if (section.isactive != newValue) {
+                section.isactive = newValue;
+                updatePreferences = true;
+            }
+        });
+        stateManager.setReadOnly(true);
+
+        if (updatePreferences) {
+            // Build the preference structures.
+            const course = stateManager.get('course');
+            const state = stateManager.state;
+            const prefKey = `coursesectionspreferences_${course.id}`;
+            const preferences = {
+                contentcollapsed: [],
+                indexcollapsed: [],
+            };
+            state.section.forEach(section => {
+                if (!section.contentexpanded) {
+                    preferences.contentcollapsed.push(section.id);
+                }
+                if (!section.isactive) {
+                    preferences.indexcollapsed.push(section.id);
+                }
+            });
+            const jsonString = JSON.stringify(preferences);
+            M.util.set_user_preference(prefKey, jsonString);
+        }
+    }
+
     /**
      * Get updated state data related to some cm ids.
      *

@@ -161,8 +161,14 @@ class section implements renderable, templatable {
             $data->sitehome = true;
         }
 
-        // For now sections are always expanded. User preferences will be done in MDL-71211.
-        $data->isactive = true;
+        $data->contentexpanded = true;
+        $preferences = $format->get_sections_preferences();
+        if (isset($preferences[$thissection->id])) {
+            $sectionpreferences = $preferences[$thissection->id];
+            if (!empty($sectionpreferences->contentcollapsed)) {
+                $data->contentexpanded = false;
+            }
+        }
 
         if ($thissection->section == 0) {
             // Section zero is always visible only as a cmlist.

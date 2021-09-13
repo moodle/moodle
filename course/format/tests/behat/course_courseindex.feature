@@ -1,4 +1,4 @@
-@core @core_course
+@core @core_course @core_courseformat
 Feature: Course index depending on role
   In order to quickly access the course structure
   As a user
@@ -165,3 +165,43 @@ Feature: Course index depending on role
     And I should see "Activity sample 2" in the "courseindex-content" "region"
     And I should see "Topic 3" in the "courseindex-content" "region"
     And I should see "Activity sample 3" in the "courseindex-content" "region"
+
+  @javascript
+  Scenario: Course index section preferences
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    And I click on "Side panel" "button"
+    When I click on "Open course index drawer" "button"
+    Then I should see "Topic 1" in the "courseindex-content" "region"
+    And I should see "Activity sample 1" in the "courseindex-content" "region"
+    And I should see "Topic 2" in the "courseindex-content" "region"
+    And I should see "Activity sample 2" in the "courseindex-content" "region"
+    And I should see "Topic 3" in the "courseindex-content" "region"
+    And I should see "Activity sample 3" in the "courseindex-content" "region"
+    # Collapse section 1.
+    And I click on "Collapse" "link" in the ".courseindex-section[data-number='1']" "css_element"
+    And I reload the page
+    And I should see "Topic 1" in the "courseindex-content" "region"
+    And I should not see "Activity sample 1" in the "courseindex-content" "region"
+    And I should see "Topic 2" in the "courseindex-content" "region"
+    And I should see "Activity sample 2" in the "courseindex-content" "region"
+    And I should see "Topic 3" in the "courseindex-content" "region"
+    And I should see "Activity sample 3" in the "courseindex-content" "region"
+    # Collapse section 3.
+    And I click on "Collapse" "link" in the ".courseindex-section[data-number='3']" "css_element"
+    And I reload the page
+    And I should see "Topic 1" in the "courseindex-content" "region"
+    And I should not see "Activity sample 1" in the "courseindex-content" "region"
+    And I should see "Topic 2" in the "courseindex-content" "region"
+    And I should see "Activity sample 2" in the "courseindex-content" "region"
+    And I should see "Topic 3" in the "courseindex-content" "region"
+    And I should not see "Activity sample 3" in the "courseindex-content" "region"
+    # Delete section 1
+    And I turn editing mode on
+    And I delete section "1"
+    And I click on "Delete" "button"
+    And I reload the page
+    And I should not see "Activity sample 1" in the "courseindex-content" "region"
+    And I should see "Topic 1" in the "courseindex-content" "region"
+    And I should see "Activity sample 2" in the "courseindex-content" "region"
+    And I should see "Topic 2" in the "courseindex-content" "region"
+    And I should not see "Activity sample 3" in the "courseindex-content" "region"

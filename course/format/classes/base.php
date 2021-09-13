@@ -39,6 +39,7 @@ use lang_string;
 use completion_info;
 use external_api;
 use stdClass;
+use cache;
 use core_courseformat\output\legacy_renderer;
 
 /**
@@ -503,6 +504,50 @@ abstract class base {
      */
     public function get_section_number(): int {
         return $this->singlesection;
+    }
+
+    /**
+     * Return the format section preferences.
+     */
+    public function get_sections_preferences(): array {
+        global $USER;
+
+        $result = [];
+
+        $course = $this->get_course();
+        $coursesectionscache = cache::make('core', 'coursesectionspreferences');
+
+        $coursesections = $coursesectionscache->get($course->id);
+        if ($coursesections) {
+            return $coursesections;
+        }
+
+        // Calculate collapsed preferences.
+        try {
+            $sectionpreferences = (array) json_decode(
+                get_user_preferences('coursesectionspreferences_' . $course->id, null, $USER->id)
+            );
+            if (empty($sectionpreferences)) {
+                $sectionpreferences = [];
+            }
+        } catch (\Throwable $e) {
+            $sectionpreferences = [];
+        }
+
+        foreach ($sectionpreferences as $preference => $sectionids) {
+            if (!empty($sectionids) && is_array($sectionids)) {
+                foreach ($sectionids as $sectionid) {
+                    if (!isset($result[$sectionid])) {
+                        $result[$sectionid] = new stdClass();
+                    }
+                    $result[$sectionid]->$preference = true;
+                }
+            }
+        }
+
+        $coursesectionscache->set($course->id, $result);
+
+        return $result;
     }
 
     /**
@@ -1495,5 +1540,18 @@ abstract class base {
      */
     public function get_config_for_external() {
         return array();
+    }
+
+    /**
+     * Course deletion hook.
+     *
+     * Format plugins can override this method to clean any format specific data and dependencies.
+     *
+     */
+    public function delete_format_data() {
+        global $DB;
+        $course = $this->get_course();
+        // By default, formats store some most display specifics in a user preference.
+        $DB->delete_records('user_preferences', ['name' => 'coursesectionspreferences_' . $course->id]);
     }
 }

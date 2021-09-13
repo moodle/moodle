@@ -1,4 +1,4 @@
-@core @core_course
+@core @core_course @core_courseformat
 Feature: Collapse course sections
   In order to quickly access the course structure
   As a user

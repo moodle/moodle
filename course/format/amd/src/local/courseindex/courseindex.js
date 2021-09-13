@@ -24,6 +24,7 @@
 
 import {BaseComponent} from 'core/reactive';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
+import jQuery from 'jquery';
 
 export default class Component extends BaseComponent {
 
@@ -73,7 +74,7 @@ export default class Component extends BaseComponent {
      */
     stateReady() {
         // Activate section togglers.
-        this.addEventListener(this.element, 'click', this._setupSectionTogglers);
+        this.addEventListener(this.element, 'click', this._sectionTogglers);
 
         // Get cms and sections elements.
         const sections = this.getElements(this.selectors.SECTION);
@@ -88,6 +89,7 @@ export default class Component extends BaseComponent {
 
     getWatchers() {
         return [
+            {watch: `section.isactive:updated`, handler: this._refreshSectionCollapsed},
             {watch: `cm:created`, handler: this._createCm},
             {watch: `cm:deleted`, handler: this._deleteCm},
             // Sections and cm sorting.
@@ -104,14 +106,81 @@ export default class Component extends BaseComponent {
      *
      * @param {Event} event the triggered event
      */
-    _setupSectionTogglers(event) {
+    _sectionTogglers(event) {
         const sectionlink = event.target.closest(this.selectors.TOGGLER);
-        if (sectionlink) {
-            const toggler = sectionlink.parentNode.querySelector(this.selectors.COLLAPSE);
-            if (toggler?.classList.contains(this.classes.COLLAPSED)) {
-                toggler.click();
+        const isChevron = event.target.closest(this.selectors.COLLAPSE);
+
+        if (sectionlink || isChevron) {
+
+            const section = event.target.closest(this.selectors.SECTION);
+            const toggler = section.querySelector(this.selectors.COLLAPSE);
+            const isCollapsed = toggler?.classList.contains(this.classes.COLLAPSED) ?? false;
+
+            if (isChevron || isCollapsed) {
+                // Update the state.
+                const sectionId = section.getAttribute('data-id');
+                this.reactive.dispatch(
+                    'sectionPreferences',
+                    [sectionId],
+                    {
+                        isactive: isCollapsed,
+                    },
+                );
             }
         }
+    }
+
+    /**
+     * Update section collapsed.
+     *
+     * @param {Object} details the update details.
+     */
+    _refreshSectionCollapsed({element}) {
+        const target = this.getElement(this.selectors.SECTION, element.id);
+        if (!target) {
+            throw new Error(`Unkown section with ID ${element.id}`);
+        }
+        // Check if it is already done.
+        const toggler = target.querySelector(this.selectors.COLLAPSE);
+        const isCollapsed = toggler?.classList.contains(this.classes.COLLAPSED) ?? false;
+
+        if (element.isactive === isCollapsed) {
+            this._expandSectionNode(element);
+        }
+    }
+
+    /**
+     * Expand a section node.
+     *
+     * By default the method will use element.isactive to decide if the
+     * section is opened or closed. However, using forceValue it is possible
+     * to open or close a section independant from the isactive attribute.
+     *
+     * @param {Object} element the course module state element
+     * @param {boolean} forceValue optional forced expanded value
+     */
+    _expandSectionNode(element, forceValue) {
+        const target = this.getElement(this.selectors.SECTION, element.id);
+        const toggler = target.querySelector(this.selectors.COLLAPSE);
+        let collapsibleId = toggler.dataset.target ?? toggler.getAttribute("href");
+        if (!collapsibleId) {
+            return;
+        }
+        collapsibleId = collapsibleId.replace('#', '');
+        const collapsible = document.getElementById(collapsibleId);
+        if (!collapsible) {
+            return;
+        }
+
+        if (forceValue === undefined) {
+            forceValue = (element.isactive) ? true : false;
+        }
+
+        // Course index is based on Bootstrap 4 collapsibles. To collapse them we need jQuery to
+        // interact with collapsibles methods. Hopefully, this will change in Bootstrap 5 because
+        // it does not require jQuery anymore.
+        const togglerValue = (forceValue) ? 'show' : 'hide';
+        jQuery(collapsible).collapse(togglerValue);
     }
 
     /**

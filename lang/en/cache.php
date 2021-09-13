@@ -47,6 +47,7 @@ $string['cachedef_contentbank_enabled_extensions'] = 'Allowed extensions and its
 $string['cachedef_contentbank_context_extensions'] = 'Allowed extensions and its supporter plugins in a content bank context';
 $string['cachedef_coursecat'] = 'Course categories lists for particular user';
 $string['cachedef_coursecatrecords'] = 'Course categories records';
+$string['cachedef_coursesectionspreferences'] = 'Course section preferences';
 $string['cachedef_coursecattree'] = 'Course categories tree';
 $string['cachedef_coursecompletion'] = 'Course completion status';
 $string['cachedef_coursecontacts'] = 'List of course contacts';
