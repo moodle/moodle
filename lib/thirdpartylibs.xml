@@ -50,13 +50,6 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
-    <location>jabber</location>
-    <name>XMPPHP</name>
-    <license>GPL</license>
-    <version>2.2</version>
-    <licenseversion>2.0+</licenseversion>
-  </library>
-  <library>
     <location>minify/matthiasmullie-minify</location>
     <name>MatthiasMullie\Minify</name>
     <license>MIT</license>

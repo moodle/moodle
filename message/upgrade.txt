@@ -6,6 +6,8 @@ information provided here is intended especially for developers.
 The following functions have been finally deprecated and can not be used anymore:
   * can_post_message()
   * get_individual_conversations_between_users()
+* The message_jabber notification has been completely removed from core. It has been moved to the plugins database repository, so
+it can still be installed as a third-party plugin.
 
 === 3.11.2 ===
 
