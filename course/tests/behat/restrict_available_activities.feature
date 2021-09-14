@@ -28,7 +28,7 @@ Feature: Restrict activities availability
     Then I should see "Test glossary name"
     And I should see "Test chat name"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Activities can not be added when the admin restricts the permissions
     Given I log in as "admin"
     And I set the following system permissions of "Teacher" role:

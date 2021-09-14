@@ -31,7 +31,7 @@ Feature: Remove a submission
       | student1 | G1 |
       | student2 | G1 |
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Remove a submission should remove the data that was submitted
     Given the following "activity" exists:
       | activity                             | assign                |
@@ -56,7 +56,7 @@ Feature: Remove a submission
     And I am on the "Test assignment name" Activity page logged in as student1
     And I should not see "I'm the student submission"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Remove a group submission should remove the data from all group members
     Given the following "activity" exists:
       | activity                             | assign                |
@@ -82,7 +82,7 @@ Feature: Remove a submission
     And I am on the "Test assignment name" Activity page logged in as student2
     And I should not see "I'm the student submission"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: A student can remove their own submission
     Given the following "activity" exists:
       | activity                             | assign                |
