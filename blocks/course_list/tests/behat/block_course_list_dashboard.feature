@@ -7,15 +7,15 @@ Feature: Enable the course_list block on the dashboard and view it's contents
   Background:
     Given the following "categories" exist:
       | name        | category | idnumber |
-      | Category 1  | 0        | CAT1     |
-      | Category 2  | 0        | CAT2     |
-      | Category 3  | CAT2     | CAT3     |
+      | Category A  | 0        | CATA     |
+      | Category B  | 0        | CATB     |
+      | Category C  | CATB     | CATC     |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
-      | Course 2 | C2        | CAT1     |
-      | Course 3 | C3        | CAT2     |
-      | Course 4 | C4        | CAT3     |
+      | Course 2 | C2        | CATA     |
+      | Course 3 | C3        | CATB     |
+      | Course 4 | C4        | CATC     |
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | First    | teacher1@example.com |
@@ -34,7 +34,7 @@ Feature: Enable the course_list block on the dashboard and view it's contents
     And I should see "Course 3" in the "My courses" "block"
     And I should not see "Course 4" in the "My courses" "block"
     And I follow "All courses"
-    And I should see "Miscellaneous"
+    And I should see "Category 1"
 
   Scenario: Add the course list block on the dashboard and navigate to another course
     Given I log in as "teacher1"
@@ -51,11 +51,11 @@ Feature: Enable the course_list block on the dashboard and view it's contents
     Given I log in as "admin"
     And I press "Customise this page"
     When I add the "Courses" block
-    Then I should see "Miscellaneous" in the "Course categories" "block"
-    And I should see "Category 1" in the "Course categories" "block"
-    And I should see "Category 2" in the "Course categories" "block"
-    And I should not see "Category 3" in the "Course categories" "block"
+    Then I should see "Category 1" in the "Course categories" "block"
+    And I should see "Category A" in the "Course categories" "block"
+    And I should see "Category B" in the "Course categories" "block"
+    And I should not see "Category C" in the "Course categories" "block"
     And I should not see "Course 1" in the "Course categories" "block"
     And I should not see "Course 2" in the "Course categories" "block"
     And I follow "All courses"
-    And I should see "Miscellaneous"
+    And I should see "Category 1"

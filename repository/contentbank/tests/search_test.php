@@ -140,7 +140,7 @@ class repository_contentbank_search_testcase extends advanced_testcase {
     public function test_get_search_contents_user_can_access_all_content() {
         $this->resetAfterTest(true);
 
-        // Create a course in 'Miscellaneous' category by default.
+        // Create a course in default category by default.
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = \context_course::instance($course->id);
         // Create a course category without a course.

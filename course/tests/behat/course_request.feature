@@ -38,7 +38,7 @@ Feature: Users can request and approve courses
     And I log in as "user2"
     And I am on course index
     And I press "Courses pending approval"
-    And I should see "Miscellaneous" in the "My new course" "table_row"
+    And I should see "Category 1" in the "My new course" "table_row"
     And I click on "Approve" "button" in the "My new course" "table_row"
     And I press "Save and return"
     And I should see "There are no courses pending approval"

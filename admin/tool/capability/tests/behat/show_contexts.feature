@@ -22,7 +22,7 @@ Feature: Show capabilities for multiple contexts
       | Roles:      | Student               |
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
-    And I should see "Permissions in Category: Miscellaneous"
+    And I should see "Permissions in Category: Category 1"
     And I should see "Permissions in Course: Course 1"
     And I should not see "Permissions in Course: Course 2"
 
@@ -32,7 +32,7 @@ Feature: Show capabilities for multiple contexts
       | Roles:      | Student               |
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
-    And I should not see "Permissions in Category: Miscellaneous"
+    And I should not see "Permissions in Category: Category 1"
     And I should not see "Permissions in Course: Course 1"
     And I should not see "Permissions in Course: Course 2"
 
@@ -42,7 +42,7 @@ Feature: Show capabilities for multiple contexts
       | Roles:      | Student                                            |
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
-    And I should see "Permissions in Category: Miscellaneous"
+    And I should see "Permissions in Category: Category 1"
     And I should see "Permissions in Course: Course 1"
     And I should not see "Permissions in Course: Course 2"
 
@@ -52,7 +52,7 @@ Feature: Show capabilities for multiple contexts
       | Roles:      | Student                                    |
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
-    And I should see "Permissions in Category: Miscellaneous"
+    And I should see "Permissions in Category: Category 1"
     And I should see "Permissions in Course: Course 1"
     And I should not see "Permissions in Course: Course 2"
 
@@ -62,7 +62,7 @@ Feature: Show capabilities for multiple contexts
       | Roles:      | Student                                          |
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
-    And I should not see "Permissions in Category: Miscellaneous"
+    And I should not see "Permissions in Category: Category 1"
     And I should not see "Permissions in Course: Course 1"
     And I should not see "Permissions in Course: Course 2"
 
@@ -72,7 +72,7 @@ Feature: Show capabilities for multiple contexts
       | Roles:      |                       |
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
-    And I should see "Permissions in Category: Miscellaneous"
+    And I should see "Permissions in Category: Category 1"
     And I should see "Permissions in Course: Course 1"
     And I should not see "Permissions in Course: Course 2"
 
@@ -82,7 +82,7 @@ Feature: Show capabilities for multiple contexts
       | Roles:      |                     |
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
-    And I should not see "Permissions in Category: Miscellaneous"
+    And I should not see "Permissions in Category: Category 1"
     And I should not see "Permissions in Course: Course 1"
     And I should not see "Permissions in Course: Course 2"
 
@@ -92,7 +92,7 @@ Feature: Show capabilities for multiple contexts
       | Roles:      |                                           |
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
-    And I should see "Permissions in Category: Miscellaneous"
+    And I should see "Permissions in Category: Category 1"
     And I should see "Permissions in Course: Course 1"
     And I should see "Permissions in Course: Course 2"
 
@@ -103,7 +103,7 @@ Feature: Show capabilities for multiple contexts
     And I set the field "Show differences only" to "1"
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
-    And I should see "Permissions in Category: Miscellaneous"
+    And I should see "Permissions in Category: Category 1"
     And I should see "There are no differences to show between selected roles in this context"
     And I should see "Permissions in Course: Course 1"
     And I should not see "Permissions in Course: Course 2"
@@ -116,7 +116,7 @@ Feature: Show capabilities for multiple contexts
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
     And I should see "There are no differences to show between selected roles in this context"
-    And I should not see "Permissions in Category: Miscellaneous"
+    And I should not see "Permissions in Category: Category 1"
     And I should not see "Permissions in Course: Course 1"
     And I should not see "Permissions in Course: Course 2"
 
@@ -127,7 +127,7 @@ Feature: Show capabilities for multiple contexts
     And I set the field "Show differences only" to "1"
     And I click on "Get the overview" "button"
     Then I should see "Permissions in System"
-    And I should see "Permissions in Category: Miscellaneous"
+    And I should see "Permissions in Category: Category 1"
     And I should see "There are no differences to show between selected roles in this context"
     And I should see "Permissions in Course: Course 1"
     And I should not see "Permissions in Course: Course 2"
