@@ -27,7 +27,7 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('messages',
         new lang_string('messagingssettings', 'admin'),
         'moodle/site:config',
-        !$CFG->messaging
+        empty($CFG->messaging)
     );
 
     $temp->add(new admin_setting_configcheckbox('messagingallusers',
