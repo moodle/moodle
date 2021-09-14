@@ -107,7 +107,7 @@ class external extends external_api {
             $request = reset($requests);
             $datasubject = $request->get('userid');
 
-            if ($datasubject !== $USER->id) {
+            if ($datasubject !== (int) $USER->id) {
                 // The user is not the subject. Check that they can cancel this request.
                 if (!api::can_create_data_request_for_user($datasubject)) {
                     $forusercontext = \context_user::instance($datasubject);
