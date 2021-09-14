@@ -1952,6 +1952,7 @@ class core_plugin_manager {
             'qbank' => [
                 'bulkmove',
                 'comment',
+                'customfields',
                 'deletequestion',
                 'editquestion',
                 'exporttoxml',

@@ -32,7 +32,8 @@ Feature: The questions in the question bank can be sorted in various ways
 
   @javascript
   Scenario: The questions can be sorted by idnumber
-    When I follow "Sort by ID number ascending"
+    When I change the window size to "large"
+    And I follow "Sort by ID number ascending"
     Then "C question 3 name" "checkbox" should appear after "A question 1 name" "checkbox"
     And I should see "numidnum</c" in the "C question 3 name" "table_row"
     And I follow "Sort by ID number descending"
