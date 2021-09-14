@@ -116,6 +116,8 @@ abstract class user_selector_base {
             $this->accesscontext = context_system::instance();
         }
 
+        $this->viewfullnames = has_capability('moodle/site:viewfullnames', $this->accesscontext);
+
         // Check if some legacy code tries to override $CFG->showuseridentity.
         if (isset($options['extrafields'])) {
             debugging('The user_selector classes do not support custom list of extra identity fields any more. '.
