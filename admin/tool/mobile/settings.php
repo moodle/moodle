@@ -30,20 +30,29 @@ use core_admin\local\settings\autocomplete;
 
 if ($hassiteconfig) {
 
-    $ADMIN->add('root', new admin_category('mobileapp', new lang_string('mobileapp', 'tool_mobile')), 'development');
-
-    $temp = new admin_settingpage('mobilesettings', new lang_string('mobilesettings', 'tool_mobile'), 'moodle/site:config', false);
-
     // We should wait to the installation to finish since we depend on some configuration values that are set once
     // the admin user profile is configured.
     if (!during_initial_install()) {
         $enablemobiledocurl = new moodle_url(get_docs_url('Enable_mobile_web_services'));
         $enablemobiledoclink = html_writer::link($enablemobiledocurl, new lang_string('documentation'));
         $default = is_https() ? 1 : 0;
-        $temp->add(new admin_setting_enablemobileservice('enablemobilewebservice',
+        $optionalsubsystems = $ADMIN->locate('optionalsubsystems');
+        $optionalsubsystems->add(new admin_setting_enablemobileservice('enablemobilewebservice',
                 new lang_string('enablemobilewebservice', 'admin'),
                 new lang_string('configenablemobilewebservice', 'admin', $enablemobiledoclink), $default));
     }
+
+    $ismobilewsdisabled = empty($CFG->enablemobilewebservice);
+    $ADMIN->add('root',
+        new admin_category('mobileapp', new lang_string('mobileapp', 'tool_mobile'), $ismobilewsdisabled),
+        'development'
+    );
+
+    $temp = new admin_settingpage('mobilesettings',
+        new lang_string('mobilesettings', 'tool_mobile'),
+        'moodle/site:config',
+        $ismobilewsdisabled
+    );
 
     $temp->add(new admin_setting_configtext('tool_mobile/apppolicy', new lang_string('apppolicy', 'tool_mobile'),
         new lang_string('apppolicy_help', 'tool_mobile'), '', PARAM_URL));
@@ -60,8 +69,8 @@ if ($hassiteconfig) {
         $featuresnotice = $OUTPUT->render($notify);
     }
 
-    $hideappsubscription = empty($CFG->enablemobilewebservice);
-    $hideappsubscription = $hideappsubscription || (isset($CFG->disablemobileappsubscription) && !empty($CFG->disablemobileappsubscription));
+    $hideappsubscription = (isset($CFG->disablemobileappsubscription) && !empty($CFG->disablemobileappsubscription));
+    $hideappsubscription = $ismobilewsdisabled || $hideappsubscription;
 
     $ADMIN->add(
         'mobileapp',
@@ -79,7 +88,7 @@ if ($hassiteconfig) {
         'mobileauthentication',
         new lang_string('mobileauthentication', 'tool_mobile'),
         'moodle/site:config',
-        empty($CFG->enablemobilewebservice)
+        $ismobilewsdisabled
     );
 
     $temp->add(new admin_setting_heading('tool_mobile/moodleappsportalfeaturesauth', '', $featuresnotice));
@@ -123,7 +132,7 @@ if ($hassiteconfig) {
         'mobileappearance',
         new lang_string('mobileappearance', 'tool_mobile'),
         'moodle/site:config',
-        empty($CFG->enablemobilewebservice)
+        $ismobilewsdisabled
     );
 
     if (!empty($featuresnotice)) {
@@ -164,7 +173,7 @@ if ($hassiteconfig) {
         'mobilefeatures',
         new lang_string('mobilefeatures', 'tool_mobile'),
         'moodle/site:config',
-        empty($CFG->enablemobilewebservice)
+        $ismobilewsdisabled
     );
 
     if (!empty($featuresnotice)) {
