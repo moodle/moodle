@@ -38,6 +38,9 @@ const SELECTORS = {
         filtersForm: '[data-region="filters-form"]',
         sidebarMenu: '[data-region="sidebar-menu"]',
         sidebarCard: '[data-region="sidebar-card"]',
+        settingsConditions: '[data-region="settings-conditions"]',
+        activeConditions: '[data-region="active-conditions"]',
+        activeCondition: '[data-region="active-condition"]',
     },
     actions: {
         reportActionPopup: '[data-action="report-action-popup"]',
@@ -46,6 +49,8 @@ const SELECTORS = {
         reportDelete: '[data-action="report-delete"]',
         reportAddColumn: '[data-action="report-add-column"]',
         reportRemoveColumn: '[data-action="report-remove-column"]',
+        reportAddCondition: '[data-action="report-add-condition"]',
+        reportRemoveCondition: '[data-action="report-remove-condition"]',
         sidebarSearch: '[data-action="sidebar-search"]',
     },
 };

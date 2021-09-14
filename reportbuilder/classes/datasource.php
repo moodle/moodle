@@ -94,4 +94,77 @@ abstract class datasource extends base {
      * @return string[]
      */
     abstract public function get_default_columns(): array;
+
+    /**
+     * Add conditions from the given entity name to be available to use in a custom report
+     *
+     * @param string $entityname
+     * @param array $include Include only these conditions, if omitted then include all
+     * @param array $exclude Exclude these conditions, if omitted then exclude none
+     * @throws coding_exception If both $include and $exclude are non-empty
+     */
+    final protected function add_conditions_from_entity(string $entityname, array $include = [], array $exclude = []): void {
+        if (!empty($include) && !empty($exclude)) {
+            throw new coding_exception('Cannot specify conditions to include and exclude simultaneously');
+        }
+
+        $entity = $this->get_entity($entityname);
+
+        // Retrieve filtered conditions from entity, respecting given $include/$exclude parameters.
+        $conditions = array_filter($entity->get_conditions(), static function(filter $condition) use ($include, $exclude): bool {
+            if (!empty($include)) {
+                return in_array($condition->get_name(), $include);
+            }
+
+            if (!empty($exclude)) {
+                return !in_array($condition->get_name(), $exclude);
+            }
+
+            return true;
+        });
+
+        foreach ($conditions as $condition) {
+            $this->add_condition($condition);
+        }
+    }
+
+    /**
+     * Add default datasource conditions to the report
+     *
+     * This method is optional and can be called when the report is created to add the default conditions defined in the
+     * selected datasource.
+     */
+    public function add_default_conditions(): void {
+        $reportid = $this->get_report_persistent()->get('id');
+        $conditionidentifiers = $this->get_default_conditions();
+        foreach ($conditionidentifiers as $uniqueidentifier) {
+            report::add_report_condition($reportid, $uniqueidentifier);
+        }
+    }
+
+    /**
+     * Return the conditions that will be added to the report once is created
+     *
+     * @return string[]
+     */
+    abstract public function get_default_conditions(): array;
+
+    /**
+     * Return all configured report conditions
+     *
+     * @return filter[]
+     */
+    public function get_active_conditions(): array {
+        $conditions = [];
+
+        $activeconditions = filter_model::get_condition_records($this->get_report_persistent()->get('id'), 'filterorder');
+        foreach ($activeconditions as $condition) {
+            $instance = $this->get_condition($condition->get('uniqueidentifier'));
+            if ($instance !== null && $instance->get_is_available()) {
+                $conditions[$instance->get_unique_identifier()] = $instance;
+            }
+        }
+
+        return $conditions;
+    }
 }

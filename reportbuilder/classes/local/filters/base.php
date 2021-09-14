@@ -72,6 +72,15 @@ abstract class base {
     }
 
     /**
+     * Returns the filter's entity name
+     *
+     * @return string
+     */
+    final public function get_entity_name(): string {
+        return $this->filter->get_entity_name();
+    }
+
+    /**
      * Adds filter-specific form elements
      *
      * @param MoodleQuickForm $mform

@@ -80,6 +80,11 @@ class user extends base {
             $this->add_filter($filter);
         }
 
+        $conditions = array_merge($this->get_all_filters(), $userprofilefields->get_filters());
+        foreach ($conditions as $condition) {
+            $this->add_condition($condition);
+        }
+
         return $this;
     }
 
@@ -333,8 +338,6 @@ class user extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
-        global $DB;
-
         $filters = [];
         $tablealias = $this->get_table_alias('user');
 

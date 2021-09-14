@@ -177,6 +177,86 @@ class report {
     }
 
     /**
+     * Add given condition to report
+     *
+     * @param int $reportid
+     * @param string $uniqueidentifier
+     * @return filter
+     * @throws invalid_parameter_exception
+     */
+    public static function add_report_condition(int $reportid, string $uniqueidentifier): filter {
+        $report = manager::get_report_from_id($reportid);
+
+        if (!array_key_exists($uniqueidentifier, $report->get_conditions())) {
+            throw new invalid_parameter_exception('Invalid condition');
+        }
+
+        $condition = new filter(0, (object) [
+            'reportid' => $reportid,
+            'uniqueidentifier' => $uniqueidentifier,
+            'iscondition' => true,
+            'filterorder' => filter::get_max_filterorder($reportid, true) + 1,
+        ]);
+
+        return $condition->create();
+    }
+
+    /**
+     * Delete given condition from report
+     *
+     * @param int $reportid
+     * @param int $conditionid
+     * @return bool
+     * @throws invalid_parameter_exception
+     */
+    public static function delete_report_condition(int $reportid, int $conditionid): bool {
+        global $DB;
+
+        $condition = filter::get_condition_record($reportid, $conditionid);
+        if ($condition === false) {
+            throw new invalid_parameter_exception('Invalid condition');
+        }
+
+        // After deletion, re-index remaining report conditions.
+        if ($result = $condition->delete()) {
+            $sqlupdateorder = '
+                UPDATE {' . filter::TABLE . '}
+                   SET filterorder = filterorder - 1
+                 WHERE reportid = :reportid
+                   AND filterorder > :filterorder
+                   AND iscondition = 1';
+
+            $DB->execute($sqlupdateorder, ['reportid' => $reportid, 'filterorder' => $condition->get('filterorder')]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Re-order given condition within a report
+     *
+     * @param int $reportid
+     * @param int $conditionid
+     * @param int $position
+     * @return bool
+     * @throws invalid_parameter_exception
+     */
+    public static function reorder_report_condition(int $reportid, int $conditionid, int $position): bool {
+        $condition = filter::get_condition_record($reportid, $conditionid);
+        if ($condition === false) {
+            throw new invalid_parameter_exception('Invalid condition');
+        }
+
+        // Get the rest of the report conditions, excluding the one we are moving.
+        $conditions = filter::get_records_select('reportid = :reportid AND iscondition = 1 AND id <> :id', [
+            'reportid' => $reportid,
+            'id' => $conditionid,
+        ], 'filterorder');
+
+        return static::reorder_persistents_by_field($condition, $conditions, $position, 'filterorder');
+    }
+
+    /**
      * Get available columns for a given report
      *
      * @param report_model $persistent

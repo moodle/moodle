@@ -72,6 +72,9 @@ abstract class base {
     /** @var column[] $columns */
     private $columns = [];
 
+    /** @var filter[] $conditions */
+    private $conditions = [];
+
     /** @var filter[] $filters */
     private $filters = [];
 
@@ -376,6 +379,129 @@ abstract class base {
             return $column->get_is_available();
         });
     }
+
+    /**
+     * Adds a condition to the report
+     *
+     * @param filter $condition
+     * @return filter
+     * @throws coding_exception
+     */
+    final protected function add_condition(filter $condition): filter {
+        if (!array_key_exists($condition->get_entity_name(), $this->entitytitles)) {
+            throw new coding_exception('Invalid entity name', $condition->get_entity_name());
+        }
+
+        $name = $condition->get_name();
+        if (empty($name) || $name !== clean_param($name, PARAM_ALPHANUMEXT)) {
+            throw new coding_exception('Condition name must be comprised of alphanumeric character, underscore or dash');
+        }
+
+        $uniqueidentifier = $condition->get_unique_identifier();
+        if (array_key_exists($uniqueidentifier, $this->conditions)) {
+            throw new coding_exception('Duplicate condition identifier', $uniqueidentifier);
+        }
+
+        $this->conditions[$uniqueidentifier] = $condition;
+
+        return $condition;
+    }
+
+    /**
+     * Add given condition to the report from an entity
+     *
+     * The entity must have already been added to the report before calling this method
+     *
+     * @param string $uniqueidentifier
+     * @return filter
+     */
+    final protected function add_condition_from_entity(string $uniqueidentifier): filter {
+        [$entityname, $conditionname] = explode(':', $uniqueidentifier, 2);
+
+        return $this->add_condition($this->get_entity($entityname)->get_condition($conditionname));
+    }
+
+    /**
+     * Add given conditions to the report from one or more entities
+     *
+     * Each entity must have already been added to the report before calling this method
+     *
+     * @param string[] $conditions Unique identifier of each entity condition
+     */
+    final protected function add_conditions_from_entities(array $conditions): void {
+        foreach ($conditions as $condition) {
+            $this->add_condition_from_entity($condition);
+        }
+    }
+
+    /**
+     * Return report condition by unique identifier
+     *
+     * @param string $uniqueidentifier
+     * @return filter|null
+     */
+    final public function get_condition(string $uniqueidentifier): ?filter {
+        return $this->conditions[$uniqueidentifier] ?? null;
+    }
+
+    /**
+     * Return all available report conditions
+     *
+     * @return filter[]
+     */
+    final public function get_conditions(): array {
+        return array_filter($this->conditions, static function(filter $condition): bool {
+            return $condition->get_is_available();
+        });
+    }
+
+    /**
+     * Return all active report conditions (by default, all available conditions)
+     *
+     * @return filter[]
+     */
+    public function get_active_conditions(): array {
+        return $this->get_conditions();
+    }
+
+    /**
+     * Return all active report condition instances
+     *
+     * @return filter_base[]
+     */
+    final public function get_condition_instances(): array {
+        return array_map(static function(filter $condition): filter_base {
+            /** @var filter_base $conditionclass */
+            $conditionclass = $condition->get_filter_class();
+
+            return $conditionclass::create($condition);
+        }, $this->get_active_conditions());
+    }
+
+    /**
+     * Set the condition values of the report
+     *
+     * @param array $values
+     * @return bool
+     */
+    final public function set_condition_values(array $values): bool {
+        $this->report->set('conditiondata', json_encode($values))
+            ->save();
+
+        return true;
+    }
+
+    /**
+     * Get the condition values of the report
+     *
+     * @return array
+     */
+    final public function get_condition_values(): array {
+        $conditions = (string) $this->report->get('conditiondata');
+
+        return (array) json_decode($conditions);
+    }
+
 
     /**
      * Adds a filter to the report

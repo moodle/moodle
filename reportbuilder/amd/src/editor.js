@@ -30,6 +30,7 @@ import Pending from 'core/pending';
 import Templates from 'core/templates';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {init as columnsEditorInit} from 'core_reportbuilder/local/editor/columns';
+import {init as conditionsEditorInit} from 'core_reportbuilder/local/editor/conditions';
 import {getReport} from 'core_reportbuilder/local/repository/reports';
 
 let initialized = false;
@@ -41,6 +42,7 @@ export const init = () => {
     const reportElement = document.querySelector(reportSelectors.regions.report);
 
     columnsEditorInit(reportElement, initialized);
+    conditionsEditorInit(reportElement, initialized);
 
     // Ensure we only add our listeners once (can be called multiple times by mustache template).
     if (initialized) {

@@ -69,6 +69,17 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
             $wheres[] = $where;
         }
 
+        // For each condition, we need to ensure their values are always accounted for in the report.
+        $conditionvalues = $this->report->get_condition_values();
+        foreach ($this->report->get_active_conditions() as $condition) {
+            [$conditionsql, $conditionparams] = $this->get_filter_sql($condition, $conditionvalues);
+            if ($conditionsql !== '') {
+                $joins = array_merge($joins, $condition->get_joins());
+                $wheres[] = "({$conditionsql})";
+                $params = array_merge($params, $conditionparams);
+            }
+        }
+
         // For each filter, we also need to apply their values (will differ according to user viewing the report).
         $filtervalues = $this->report->get_filter_values();
         foreach ($this->report->get_active_filters() as $filter) {
