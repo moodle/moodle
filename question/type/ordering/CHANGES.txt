@@ -2,6 +2,9 @@
 Change log for qtype_ordering
 ========================================
 
+2021-09-14 (04)
+ - modify markdown syntax for long help messages (for compatability with Moodle 3.11)
+
 2021-06-13 (03)
  - fix Issue #63. Restore missing method 'set_default_value()'
 

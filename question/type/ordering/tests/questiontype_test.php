@@ -41,11 +41,11 @@ class qtype_ordering_test extends advanced_testcase {
     /** @var qtype_ordering instance of the question type class to test. */
     protected $qtype;
 
-    protected function setUp(): void {
+    protected function setUp() {
         $this->qtype = new qtype_ordering();
     }
 
-    protected function tearDown(): void {
+    protected function tearDown() {
         $this->qtype = null;
     }
 

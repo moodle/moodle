@@ -776,7 +776,7 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     /**
-     * Returns availibe values and descriptions for field "selecttype"
+     * Returns available values and descriptions for field "selecttype"
      *
      * @param int $type
      * @return array|string array if $type is not specified and single string if $type is specified
