@@ -38,7 +38,6 @@ $context = context_course::instance($course->id, MUST_EXIST);
 require_login($course);
 $canenrol = has_capability('enrol/manual:enrol', $context);
 $canunenrol = has_capability('enrol/manual:unenrol', $context);
-$viewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
 // Note: manage capability not used here because it is used for editing
 // of existing enrolments which is not possible here.
@@ -76,9 +75,7 @@ navigation_node::override_active_url(new moodle_url('/user/index.php', array('id
 $options = array('enrolid' => $enrolid, 'accesscontext' => $context);
 
 $potentialuserselector = new enrol_manual_potential_participant('addselect', $options);
-$potentialuserselector->viewfullnames = $viewfullnames;
 $currentuserselector = new enrol_manual_current_participant('removeselect', $options);
-$currentuserselector->viewfullnames = $viewfullnames;
 
 // Build the list of options for the enrolment period dropdown.
 $unlimitedperiod = get_string('unlimited');
