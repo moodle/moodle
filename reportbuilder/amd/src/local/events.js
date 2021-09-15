@@ -43,4 +43,7 @@ export default {
      * dispatchEvent(reportEvents.tableReload, {}, document.querySelector(...));
      */
     tableReload: 'core_reportbuilder_table_reload',
+    publish: {
+        reportColumnsUpdated: 'core_reportbuilder_report_columns_updated',
+    },
 };

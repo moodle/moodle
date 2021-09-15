@@ -90,6 +90,7 @@ class custom_report_exporter extends persistent_exporter {
             'sidebarmenucards' => ['type' => custom_report_menu_cards_exporter::read_properties_definition()],
             'conditions' => ['type' => custom_report_conditions_exporter::read_properties_definition()],
             'filters' => ['type' => custom_report_filters_exporter::read_properties_definition()],
+            'sorting' => ['type' => custom_report_columns_sorting_exporter::read_properties_definition()],
             'filtersapplied' => ['type' => PARAM_INT],
             'filtersform' => [
                 'type' => PARAM_RAW,
@@ -122,6 +123,7 @@ class custom_report_exporter extends persistent_exporter {
 
         $conditionsexporter = new custom_report_conditions_exporter(null, ['report' => $report]);
         $filtersexporter = new custom_report_filters_exporter(null, ['report' => $report]);
+        $sortingexporter = new custom_report_columns_sorting_exporter(null, ['report' => $report]);
         if ($this->editmode) {
             $menucardexporter = new custom_report_menu_cards_exporter(null, [
                 'menucards' => report_helper::get_available_columns($report->get_report_persistent())
@@ -134,6 +136,7 @@ class custom_report_exporter extends persistent_exporter {
             'sidebarmenucards' => $menucards,
             'conditions' => (array) $conditionsexporter->export($output),
             'filters' => (array) $filtersexporter->export($output),
+            'sorting' => (array) $sortingexporter->export($output),
             'filtersapplied' => $report->get_applied_filter_count(),
             'filtersform' => $filtersform,
             'editmode' => (int)$this->editmode,

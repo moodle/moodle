@@ -57,6 +57,9 @@ class report {
             $source = $reportpersistent->get('source');
             /** @var datasource $datasource */
             $datasource = new $source($reportpersistent, []);
+            $datasource->add_default_columns();
+            $datasource->add_default_filters();
+            $datasource->add_default_conditions();
         }
 
         return $reportpersistent;
@@ -95,7 +98,6 @@ class report {
 
         return $report->delete();
     }
-
 
     /**
      * Add given column to report
@@ -174,6 +176,54 @@ class report {
         ], 'columnorder');
 
         return static::reorder_persistents_by_field($column, $columns, $position, 'columnorder');
+    }
+
+    /**
+     * Re-order given column sorting within a report
+     *
+     * @param int $reportid
+     * @param int $columnid
+     * @param int $position
+     * @return bool
+     * @throws invalid_parameter_exception
+     */
+    public static function reorder_report_column_sorting(int $reportid, int $columnid, int $position): bool {
+        $column = column::get_record(['id' => $columnid, 'reportid' => $reportid]);
+        if ($column === false) {
+            throw new invalid_parameter_exception('Invalid column');
+        }
+
+        // Get the rest of the report columns, excluding the one we are moving.
+        $columns = column::get_records_select('reportid = :reportid AND id <> :id', [
+            'reportid' => $reportid,
+            'id' => $columnid,
+        ], 'sortorder');
+
+        return static::reorder_persistents_by_field($column, $columns, $position, 'sortorder');
+    }
+
+    /**
+     * Toggle sorting options for given column within a report
+     *
+     * @param int $reportid
+     * @param int $columnid
+     * @param bool $enabled
+     * @param int $direction
+     * @return bool
+     * @throws invalid_parameter_exception
+     */
+    public static function toggle_report_column_sorting(int $reportid, int $columnid, bool $enabled,
+            int $direction = SORT_ASC): bool {
+
+        $column = column::get_record(['id' => $columnid, 'reportid' => $reportid]);
+        if ($column === false) {
+            throw new invalid_parameter_exception('Invalid column');
+        }
+
+        return $column
+            ->set('sortenabled', $enabled)
+            ->set('sortdirection', $direction)
+            ->update();
     }
 
     /**
@@ -375,11 +425,12 @@ class report {
      *
      * @param persistent $persistent The persistent we are moving
      * @param persistent[] $persistents The rest of the persistents
+     * @param int $position
      * @param string $field The field we need to update
      * @return bool
      */
     private static function reorder_persistents_by_field(persistent $persistent, array $persistents, int $position,
-        string $field): bool {
+            string $field): bool {
 
         // Splice into new position.
         array_splice($persistents, $position - 1, 0, [$persistent]);

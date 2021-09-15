@@ -44,6 +44,7 @@ const SELECTORS = {
         settingsFilters: '[data-region="settings-filters"]',
         activeFilters: '[data-region="active-filters"]',
         activeFilter: '[data-region="active-filter"]',
+        settingsSorting: '[data-region="settings-sorting"]',
     },
     actions: {
         reportActionPopup: '[data-action="report-action-popup"]',
@@ -56,6 +57,8 @@ const SELECTORS = {
         reportRemoveCondition: '[data-action="report-remove-condition"]',
         reportAddFilter: '[data-action="report-add-filter"]',
         reportRemoveFilter: '[data-action="report-remove-filter"]',
+        reportToggleColumnSort: '[data-action="report-toggle-column-sorting"]',
+        reportToggleColumnSortDirection: '[data-action="report-toggle-sort-direction"]',
         sidebarSearch: '[data-action="sidebar-search"]',
     },
 };

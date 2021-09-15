@@ -32,6 +32,7 @@ import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {init as columnsEditorInit} from 'core_reportbuilder/local/editor/columns';
 import {init as conditionsEditorInit} from 'core_reportbuilder/local/editor/conditions';
 import {init as filtersEditorInit} from 'core_reportbuilder/local/editor/filters';
+import {init as sortingEditorInit} from 'core_reportbuilder/local/editor/sorting';
 import {getReport} from 'core_reportbuilder/local/repository/reports';
 
 let initialized = false;
@@ -45,6 +46,7 @@ export const init = () => {
     columnsEditorInit(reportElement, initialized);
     conditionsEditorInit(reportElement, initialized);
     filtersEditorInit(reportElement, initialized);
+    sortingEditorInit(reportElement, initialized);
 
     // Ensure we only add our listeners once (can be called multiple times by mustache template).
     if (initialized) {

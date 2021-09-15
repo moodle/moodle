@@ -21,8 +21,54 @@
 
     Example context (json):
     {
-        "id": 3,
-        "filtersform": "form"
+        "conditions": [{
+            "hasavailableconditions": true,
+            "availableconditions": [{
+                "optiongroup": [{
+                    "text": "User",
+                    "values": [{
+                        "value": 1,
+                        "visiblename": "User name"
+                    }]
+                }]
+            }],
+            "hasactiveconditions": true,
+            "activeconditionsform": "form"
+        }],
+        "filters": [{
+            "hasavailablefilters": true,
+            "availablefilters": [{
+                "optiongroup": [{
+                    "text": "User",
+                    "values": [{
+                        "value": 1,
+                        "visiblename": "User name"
+                    }]
+                }]
+            }],
+            "hasactivefilters": true,
+            "activefilters": [{
+                "heading": "Email address",
+                "entityname": "user",
+                "headingeditable": "Email address"
+            }]
+        }],
+        "sorting": [{
+            "hassortablecolumns": true,
+            "sortablecolumns": [{
+                "id": 1,
+                "title": "Email address",
+                "sortdirection": "4",
+                "sortenabled": true,
+                "sortorder": 1,
+                "sorticon": [{
+                    "key": "t/uplong",
+                    "component": "core",
+                    "title": "Sort column 'Email address' ascending"
+                }],
+                "heading": "Email address"
+            }]
+        }]
     }
 }}
 
@@ -47,6 +93,16 @@
                 {{$helpicon}}{{{filters.helpicon}}}{{/helpicon}}
                 {{$body}}
                     {{> core_reportbuilder/local/settings/filters}}
+                {{/body}}
+            {{/ core_reportbuilder/toggle_card }}
+
+            {{< core_reportbuilder/toggle_card }}
+                {{$collapsed}}collapsed{{/collapsed}}
+                {{$id}}settingssorting{{/id}}
+                {{$header}}{{#str}} sorting, core_reportbuilder {{/str}}{{/header}}
+                {{$helpicon}}{{{sorting.helpicon}}}{{/helpicon}}
+                {{$body}}
+                    {{> core_reportbuilder/local/settings/sorting}}
                 {{/body}}
             {{/ core_reportbuilder/toggle_card }}
 
