@@ -925,7 +925,7 @@ class modinfolib_test extends advanced_testcase {
      * Test test_get_section_info_by_id method
      *
      * @dataProvider get_section_info_by_id_provider
-     * @covers ::get_section_info_by_id
+     * @covers \course_modinfo::get_section_info_by_id
      *
      * @param int $sectionnum the section number
      * @param int $strictness the search strict mode
