@@ -64,10 +64,10 @@ Feature: Add and configure blocks throughout the site
     Given I log in as "admin"
     And I am on homepage
     And I press "Customise this page"
-    And I add the "HTML" block
-    And I configure the "(new HTML block)" block
+    And I add the "Text" block
+    And I configure the "(new text block)" block
     And I set the following fields to these values:
-      | HTML block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt=" |
+      | Text block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt=" |
       | Content     | Example |
     When I press "Save changes"
     Then I should see "Course overview"
