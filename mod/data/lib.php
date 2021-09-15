@@ -4799,3 +4799,26 @@ function mod_data_core_calendar_event_timestart_updated(\calendar_event $event, 
         $event->trigger();
     }
 }
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_data_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'data');
+
+    switch ($eventtype) {
+        case DATA_EVENT_TYPE_OPEN:
+            $identifier = 'calendarstart';
+            break;
+        case DATA_EVENT_TYPE_CLOSE:
+            $identifier = 'calendarend';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'data', $modulename);
+}

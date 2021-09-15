@@ -21,7 +21,10 @@
 
     Example context (json):
     {
-        "name": "Assignment due 1",
+        "name": "Assignment 1 is due",
+        "activityname": "Assignment",
+        "activitystr": "Assignment is due",
+        "courseview": true,
         "url": "https://www.google.com",
         "timesort": 1490320388,
         "course": {
@@ -53,12 +56,17 @@
         <div class="event-name-container flex-grow-1 text-truncate line-height-3">
             <a href="{{url}}"
                title={{#quote}}{{{name}}}{{/quote}}
-               aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{name}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'>
-                <h6 class="event-name text-truncate mb-0">{{{name}}}</h6>
+               aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{activityname}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'>
+                <h6 class="event-name text-truncate mb-0">{{{activityname}}}</h6>
             </a>
-            {{#course.fullnamedisplay}}
-            <small class="text-muted text-truncate mb-0">{{{course.fullnamedisplay}}}</small>
-            {{/course.fullnamedisplay}}
+            <small class="text-truncate mb-0">
+                {{#courseview}}
+                    {{activitystr}}
+                {{/courseview}}
+                {{^courseview}}
+                    {{#course.fullnamedisplay}}{{{course.fullnamedisplay}}} &middot; {{/course.fullnamedisplay}}{{activitystr}}
+                {{/courseview}}
+            </small>
         </div>
         {{#action.actionable}}
         <h6 class="event-action">

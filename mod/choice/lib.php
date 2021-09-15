@@ -1348,3 +1348,26 @@ function mod_choice_get_completion_active_rule_descriptions($cm) {
     }
     return $descriptions;
 }
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_choice_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'choice');
+
+    switch ($eventtype) {
+        case CHOICE_EVENT_TYPE_OPEN:
+            $identifier = 'calendarstart';
+            break;
+        case CHOICE_EVENT_TYPE_CLOSE:
+            $identifier = 'calendarend';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'choice', $modulename);
+}

@@ -7016,3 +7016,22 @@ function forum_grading_areas_list() {
         'forum' => get_string('grade_forum_header', 'forum'),
     ];
 }
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_forum_core_calendar_get_event_action_string(string $eventtype): string {
+    global $CFG;
+    require_once($CFG->dirroot . '/mod/forum/locallib.php');
+
+    $modulename = get_string('modulename', 'forum');
+
+    if ($eventtype == FORUM_EVENT_TYPE_DUE) {
+        return get_string('calendardue', 'forum', $modulename);
+    } else {
+        return get_string('requiresaction', 'calendar', $modulename);
+    }
+}

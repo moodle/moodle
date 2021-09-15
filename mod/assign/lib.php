@@ -1826,3 +1826,26 @@ function mod_assign_get_path_from_pluginfile(string $filearea, array $args) : ar
         'filepath' => $filepath,
     ];
 }
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_assign_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'assign');
+
+    switch ($eventtype) {
+        case ASSIGN_EVENT_TYPE_DUE:
+            $identifier = 'calendardue';
+            break;
+        case ASSIGN_EVENT_TYPE_GRADINGDUE:
+            $identifier = 'calendargradingdue';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'assign', $modulename);
+}

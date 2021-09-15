@@ -3251,3 +3251,26 @@ function mod_feedback_core_calendar_event_timestart_updated(\calendar_event $eve
         $event->trigger();
     }
 }
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_feedback_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'feedback');
+
+    switch ($eventtype) {
+        case FEEDBACK_EVENT_TYPE_OPEN:
+            $identifier = 'calendarstart';
+            break;
+        case FEEDBACK_EVENT_TYPE_CLOSE:
+            $identifier = 'calendarend';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'feedback', $modulename);
+}

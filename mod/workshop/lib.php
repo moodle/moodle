@@ -2253,3 +2253,32 @@ function workshop_get_coursemodule_info($coursemodule) {
 
     return $result;
 }
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_workshop_core_calendar_get_event_action_string($eventtype): string {
+    $modulename = get_string('modulename', 'workshop');
+
+    switch ($eventtype) {
+        case WORKSHOP_EVENT_TYPE_SUBMISSION_OPEN:
+            $identifier = 'submissionstartevent';
+            break;
+        case WORKSHOP_EVENT_TYPE_SUBMISSION_CLOSE:
+            $identifier = 'submissionendevent';
+            break;
+        case WORKSHOP_EVENT_TYPE_ASSESSMENT_OPEN:
+            $identifier = 'assessmentstartevent';
+            break;
+        case WORKSHOP_EVENT_TYPE_ASSESSMENT_CLOSE;
+            $identifier = 'assessmentendevent';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'workshop', $modulename);
+}
