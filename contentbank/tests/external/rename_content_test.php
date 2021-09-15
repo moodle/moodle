@@ -41,7 +41,7 @@ use external_api;
  * @package    core_contentbank
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_contentbank\external
+ * @coversDefaultClass \core_contentbank\external\rename_content
  */
 class rename_content_testcase extends \externallib_advanced_testcase {
 

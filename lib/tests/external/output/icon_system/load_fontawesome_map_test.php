@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  *
  * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass core\external\output\icon_system\load_fontawesome_map
+ * @coversDefaultClass \core\external\output\icon_system\load_fontawesome_map
  */
 class load_fontawesome_map_testcase extends externallib_advanced_testcase {
 
