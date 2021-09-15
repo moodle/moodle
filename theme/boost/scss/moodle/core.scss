@@ -2361,7 +2361,8 @@ $footer-link-color: $bg-inverse-link-color !default;
     &:focus,
     &:focus-within {
         outline: 0;
-        background-color: $dropdown-link-hover-bg;
+        background-color: $dropdown-link-active-bg;
+        color: $dropdown-link-active-color;
         a {
             color: $dropdown-link-active-color;
         }
