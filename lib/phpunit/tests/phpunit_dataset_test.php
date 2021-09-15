@@ -30,7 +30,7 @@ use org\bovigo\vfs\vfsStream;
 /**
  * Test phpunit_dataset features.
  *
- * @coversDefaultClass phpunit_dataset
+ * @coversDefaultClass \phpunit_dataset
  */
 class core_phpunit_dataset_testcase extends advanced_testcase {
 
