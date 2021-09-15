@@ -206,6 +206,8 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Renders HTML for displaying the sequence of course module editing buttons
      *
+     * @deprecated since 4.0
+     *
      * @see course_get_cm_edit_actions()
      *
      * @param action_link[] $actions Array of action_link objects
@@ -221,6 +223,11 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function course_section_cm_edit_actions($actions, cm_info $mod = null, $displayoptions = array()) {
         global $CFG;
+
+        debugging(
+            'course_section_cm_edit_actions is deprecated. Use core_courseformat\\output\\local\\content\\cm\\controlmenu instead.',
+            DEBUG_DEVELOPER
+        );
 
         if (empty($actions)) {
             return '';
@@ -560,11 +567,19 @@ class core_course_renderer extends plugin_renderer_base {
      * Checks if course module has any conditions that may make it unavailable for
      * all or some of the students
      *
+     * @deprecated since Moodle 4.0
+     *
      * @param cm_info $mod
      * @return bool
      */
     public function is_cm_conditionally_hidden(cm_info $mod) {
         global $CFG;
+
+        debugging(
+            'is_cm_conditionally_hidden is deprecated. Use \core_availability\info_module::is_available_for_all instead',
+            DEBUG_DEVELOPER
+        );
+
         $conditionalhidden = false;
         if (!empty($CFG->enableavailability)) {
             $info = new \core_availability\info_module($mod);
@@ -582,11 +597,18 @@ class core_course_renderer extends plugin_renderer_base {
      * Note, that for course modules that never have separate pages (i.e. labels)
      * this function return an empty string
      *
+     * @deprecated since 4.0
+     *
      * @param cm_info $mod
      * @param array $displayoptions
      * @return string
      */
     public function course_section_cm_name(cm_info $mod, $displayoptions = array()) {
+        debugging(
+            'course_section_cm_name is deprecated. Use core_courseformat\output\local\content\cm\\cmname class instead.',
+            DEBUG_DEVELOPER
+        );
+
         if (!$mod->is_visible_on_course_page() || !$mod->url) {
             // Nothing to be displayed to the user.
             return '';
@@ -595,15 +617,28 @@ class core_course_renderer extends plugin_renderer_base {
         list($linkclasses, $textclasses) = $this->course_section_cm_classes($mod);
         $groupinglabel = $mod->get_grouping_label($textclasses);
 
-        // Render element that allows to edit activity name inline. It calls {@link course_section_cm_name_title()}
-        // to get the display title of the activity.
-        $tmpl = new \core_course\output\course_module_name($mod, $this->page->user_is_editing(), $displayoptions);
-        return $this->output->render_from_template('core/inplace_editable', $tmpl->export_for_template($this->output)) .
+        // Render element that allows to edit activity name inline.
+        $format = course_get_format($mod->course);
+        $cmnameclass = $format->get_output_classname('content\\cm\\cmname');
+        // Mod inplace name editable.
+        $cmname = new $cmnameclass(
+            $format,
+            $mod->get_section_info(),
+            $mod,
+            $this->page->user_is_editing(),
+            $displayoptions
+        );
+
+        $data = $cmname->export_for_template($this->output);
+
+        return $this->output->render_from_template('core/inplace_editable', $data) .
             $groupinglabel;
     }
 
     /**
      * Returns the CSS classes for the activity name/content
+     *
+     * @deprecated since Moodle 4.0
      *
      * For items which are hidden, unavailable or stealth but should be displayed
      * to current user ($mod->is_visible_on_course_page()), we show those as dimmed.
@@ -614,31 +649,24 @@ class core_course_renderer extends plugin_renderer_base {
      * @return array array of two elements ($linkclasses, $textclasses)
      */
     protected function course_section_cm_classes(cm_info $mod) {
-        $linkclasses = '';
-        $textclasses = '';
-        if ($mod->uservisible) {
-            $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
-            $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
-                has_capability('moodle/course:viewhiddenactivities', $mod->context);
-            if ($accessiblebutdim) {
-                $linkclasses .= ' dimmed';
-                $textclasses .= ' dimmed_text';
-                if ($conditionalhidden) {
-                    $linkclasses .= ' conditionalhidden';
-                    $textclasses .= ' conditionalhidden';
-                }
-            }
-            if ($mod->is_stealth()) {
-                // Stealth activity is the one that is not visible on course page.
-                // It still may be displayed to the users who can manage it.
-                $linkclasses .= ' stealth';
-                $textclasses .= ' stealth';
-            }
-        } else {
-            $linkclasses .= ' dimmed';
-            $textclasses .= ' dimmed dimmed_text';
-        }
-        return array($linkclasses, $textclasses);
+
+        debugging(
+            'course_section_cm_classes is deprecated. Now it is part of core_courseformat\\output\\local\\content\\cm ',
+            DEBUG_DEVELOPER
+        );
+
+        $format = course_get_format($mod->course);
+
+        $cmclass = $format->get_output_classname('content\\cm');
+        $cmoutput = new $cmclass(
+            $format,
+            $mod->get_section_info(),
+            $mod,
+        );
+        return [
+            $cmoutput->get_link_classes(),
+            $cmoutput->get_text_classes(),
+        ];
     }
 
     /**
@@ -650,11 +678,19 @@ class core_course_renderer extends plugin_renderer_base {
      * Note, that for course modules that never have separate pages (i.e. labels)
      * this function return an empty string
      *
+     * @deprecated since Moodle 4.0
+     *
      * @param cm_info $mod
      * @param array $displayoptions
      * @return string
      */
     public function course_section_cm_name_title(cm_info $mod, $displayoptions = array()) {
+
+        debugging(
+            'course_section_cm_name_title is deprecated. Use core_courseformat\\output\\local\\cm\\title classes instead.',
+            DEBUG_DEVELOPER
+        );
+
         $output = '';
         $url = $mod->url;
         if (!$mod->is_visible_on_course_page() || !$url) {
@@ -700,11 +736,19 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Renders html to display the module content on the course page (i.e. text of the labels)
      *
+     * @deprecated since 4.0
+     *
      * @param cm_info $mod
      * @param array $displayoptions
      * @return string
      */
     public function course_section_cm_text(cm_info $mod, $displayoptions = array()) {
+
+        debugging(
+            'course_section_cm_text is deprecated. Now it is part of core_courseformat\\output\\local\\content\\cm ',
+            DEBUG_DEVELOPER
+        );
+
         $output = '';
         if (!$mod->is_visible_on_course_page()) {
             // nothing to be displayed to the user
@@ -731,11 +775,17 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Displays availability info for a course section or course module
      *
+     * @deprecated since Moodle 4.0 MDL-72656 - please do not use this function any more.
      * @param string $text
      * @param string $additionalclasses
      * @return string
      */
     public function availability_info($text, $additionalclasses = '') {
+
+        debugging(
+            'availability_info is deprecated. Use core_courseformat\\output\\local\\content\\section\\availability instead',
+            DEBUG_DEVELOPER
+        );
 
         $data = ['text' => $text, 'classes' => $additionalclasses];
         $additionalclasses = array_filter(explode(' ', $additionalclasses));
@@ -761,59 +811,30 @@ class core_course_renderer extends plugin_renderer_base {
      * Renders HTML to show course module availability information (for someone who isn't allowed
      * to see the activity itself, or for staff)
      *
+     * @deprecated since Moodle 4.0
      * @param cm_info $mod
      * @param array $displayoptions
      * @return string
      */
     public function course_section_cm_availability(cm_info $mod, $displayoptions = array()) {
-        global $CFG;
-        $output = '';
-        if (!$mod->is_visible_on_course_page()) {
-            return $output;
-        }
-        if (!$mod->uservisible) {
-            // this is a student who is not allowed to see the module but might be allowed
-            // to see availability info (i.e. "Available from ...")
-            if (!empty($mod->availableinfo)) {
-                $formattedinfo = \core_availability\info::format_info(
-                        $mod->availableinfo, $mod->get_course());
-                $output = $this->availability_info($formattedinfo, 'isrestricted');
-            }
-            return $output;
-        }
-        // this is a teacher who is allowed to see module but still should see the
-        // information that module is not available to all/some students
-        $modcontext = context_module::instance($mod->id);
-        $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $modcontext);
-        if ($canviewhidden && !$mod->visible) {
-            // This module is hidden but current user has capability to see it.
-            // Do not display the availability info if the whole section is hidden.
-            if ($mod->get_section_info()->visible) {
-                $output .= $this->availability_info(get_string('hiddenfromstudents'), 'ishidden');
-            }
-        } else if ($mod->is_stealth()) {
-            // This module is available but is normally not displayed on the course page
-            // (this user can see it because they can manage it).
-            $output .= $this->availability_info(get_string('hiddenoncoursepage'), 'isstealth');
-        }
-        if ($canviewhidden && !empty($CFG->enableavailability)) {
-            // Display information about conditional availability.
-            // Don't add availability information if user is not editing and activity is hidden.
-            if ($mod->visible || $this->page->user_is_editing()) {
-                $hidinfoclass = 'isrestricted isfullinfo';
-                if (!$mod->visible) {
-                    $hidinfoclass .= ' hide';
-                }
-                $ci = new \core_availability\info_module($mod);
-                $fullinfo = $ci->get_full_information();
-                if ($fullinfo) {
-                    $formattedinfo = \core_availability\info::format_info(
-                            $fullinfo, $mod->get_course());
-                    $output .= $this->availability_info($formattedinfo, $hidinfoclass);
-                }
-            }
-        }
-        return $output;
+
+        debugging(
+            'course_section_cm_availability is deprecated. Use core_courseformat\\output\\local\\content\\cm\\availability instead',
+            DEBUG_DEVELOPER
+        );
+
+        $format = course_get_format($mod->course);
+
+        $availabilityclass = $format->get_output_classname('content\\cm\\availability');
+        $availability = new $availabilityclass(
+            $format,
+            $mod->get_section_info(),
+            $mod,
+        );
+
+        $renderer = $format->get_renderer($this->page);
+        $data = $availability->export_for_template($renderer);
+        return $data->info ?? '';
     }
 
     /**
@@ -880,7 +901,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $section = $modinfo->get_section_info($format->get_section_number());
 
-        $cmclass = $format->get_output_classname('content\\section\\cm');
+        $cmclass = $format->get_output_classname('content\\cm');
         $cm = new $cmclass($format, $section, $mod, $displayoptions);
         // The course outputs works with format renderers, not with course renderers.
         $renderer = $format->get_renderer($this->page);

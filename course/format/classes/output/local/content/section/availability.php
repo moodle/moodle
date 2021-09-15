@@ -62,6 +62,25 @@ class availability implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return stdClass data context for a mustache template
+     */
+    public function export_for_template(\renderer_base $output): stdClass {
+
+        $data = (object)[
+            'info' => $this->get_info($output),
+        ];
+
+        if (!empty($data->info)) {
+            $data->hasavailability = true;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
      * If section is not visible, display the message about that ('Not available
      * until...', that sort of thing). Otherwise, returns blank.
      *
@@ -74,31 +93,29 @@ class availability implements renderable, templatable {
      * @param renderer_base $output typically, the renderer that's calling this function
      * @return stdclass data context for a mustache template
      */
-    public function export_for_template(\renderer_base $output): stdClass {
+    protected function get_info(\renderer_base $output): array {
         global $CFG, $USER;
 
-        $format = $this->format;
         $section = $this->section;
-        $course = $format->get_course();
         $context = context_course::instance($section->course);
 
         $canviewhidden = has_capability('moodle/course:viewhiddensections', $context, $USER);
 
-        $info = '';
+        $info = [];
         if (!$section->visible) {
             if ($canviewhidden) {
-                $info = $output->availability_info(get_string('hiddenfromstudents'), 'ishidden');
+                $info[] = $this->availability_info(get_string('hiddenfromstudents'), 'ishidden');
             } else {
                 // We are here because of the setting "Hidden sections are shown in collapsed form".
                 // Student can not see the section contents but can see its name.
-                $info = $output->availability_info(get_string('notavailable'), 'ishidden');
+                $info[] = $this->availability_info(get_string('notavailable'), 'ishidden');
             }
         } else if (!$section->uservisible) {
             if ($section->availableinfo) {
                 // Note: We only get to this function if availableinfo is non-empty,
                 // so there is definitely something to print.
                 $formattedinfo = info::format_info($section->availableinfo, $section->course);
-                $info = $output->availability_info($formattedinfo, 'isrestricted');
+                $info[] = $this->availability_info($formattedinfo, 'isrestricted');
             }
         } else if ($canviewhidden && !empty($CFG->enableavailability)) {
             // Check if there is an availability restriction.
@@ -106,16 +123,38 @@ class availability implements renderable, templatable {
             $fullinfo = $ci->get_full_information();
             if ($fullinfo) {
                 $formattedinfo = info::format_info($fullinfo, $section->course);
-                $info = $output->availability_info($formattedinfo, 'isrestricted isfullinfo');
+                $info[] = $this->availability_info($formattedinfo, 'isrestricted isfullinfo');
             }
         }
 
-        $data = (object)[
-            'info' => $info,
-        ];
+        return $info;
+    }
 
-        if (!empty($info)) {
-            $data->hasavailability = true;
+    /**
+     * Generate the basic availability information data.
+     *
+     * @param string $text the formatted avalability text
+     * @param string $additionalclasses additional css classes
+     * @return stdClass the availability information data
+     */
+    protected function availability_info($text, $additionalclasses = ''): stdClass {
+
+        $data = (object)[
+            'text' => $text,
+            'classes' => $additionalclasses
+        ];
+        $additionalclasses = array_filter(explode(' ', $additionalclasses));
+
+        if (in_array('ishidden', $additionalclasses)) {
+            $data->ishidden = 1;
+        } else if (in_array('isstealth', $additionalclasses)) {
+            $data->isstealth = 1;
+        } else if (in_array('isrestricted', $additionalclasses)) {
+            $data->isrestricted = 1;
+
+            if (in_array('isfullinfo', $additionalclasses)) {
+                $data->isfullinfo = 1;
+            }
         }
 
         return $data;

@@ -232,7 +232,8 @@ abstract class info {
      * @return bool True if activity is available for all
      */
     public function is_available_for_all() {
-        if (is_null($this->availability)) {
+        global $CFG;
+        if (is_null($this->availability) || !empty($CFG->enableavailability)) {
             return true;
         } else {
             try {

@@ -21,6 +21,7 @@ use section_info;
 use cm_info;
 use renderable;
 use stdClass;
+use core_availability\info_module;
 
 /**
  * Contains the ajax update course module structure.
@@ -80,8 +81,8 @@ class cm implements renderable {
         ];
 
         // Check the user access type to this cm.
-        $conditionalhidden = $output->is_cm_conditionally_hidden($cm);
-        $data->accessvisible = ($data->visible && !$conditionalhidden);
+        $info = new info_module($cm);
+        $data->accessvisible = ($data->visible && $info->is_available_for_all());
 
         // Add url if the activity is compatible.
         $url = $cm->url;

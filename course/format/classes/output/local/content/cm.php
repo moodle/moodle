@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_courseformat\output\local\content\section;
+namespace core_courseformat\output\local\content;
 
 use cm_info;
 use core\activity_dates;
@@ -33,6 +33,7 @@ use renderable;
 use section_info;
 use stdClass;
 use templatable;
+use \core_availability\info_module;
 
 /**
  * Base class to render a course module inside a course format.
@@ -55,6 +56,21 @@ class cm implements renderable, templatable {
     /** @var array optional display options */
     protected $displayoptions;
 
+    /** @var string activity link css classes */
+    protected $linkclasses = null;
+
+    /** @var string text css classes */
+    protected $textclasses = null;
+
+    /** @var string the activity name output class name */
+    protected $cmnameclass;
+
+    /** @var string the activity control menu class name */
+    protected $controlmenuclass;
+
+    /** @var string the activity availability class name */
+    protected $availabilityclass;
+
     /**
      * Constructor.
      *
@@ -68,6 +84,13 @@ class cm implements renderable, templatable {
         $this->section = $section;
         $this->mod = $mod;
         $this->displayoptions = $displayoptions;
+
+        $this->load_classes();
+
+        // Get the necessary classes.
+        $this->cmnameclass = $format->get_output_classname('content\\cm\\cmname');
+        $this->controlmenuclass = $format->get_output_classname('content\\cm\\controlmenu');
+        $this->availabilityclass = $format->get_output_classname('content\\cm\\availability');
     }
 
     /**
@@ -80,6 +103,7 @@ class cm implements renderable, templatable {
         global $USER;
 
         $format = $this->format;
+        $section = $this->section;
         $mod = $this->mod;
         $displayoptions = $this->displayoptions;
         $course = $mod->get_course();
@@ -94,6 +118,12 @@ class cm implements renderable, templatable {
             $activitydates = activity_dates::get_dates_for_module($mod, $USER->id);
         }
 
+        $displayoptions['linkclasses'] = $this->get_link_classes();
+        $displayoptions['textclasses'] = $this->get_text_classes();
+
+        // Grouping activity.
+        $groupinglabel = $mod->get_grouping_label($displayoptions['textclasses']);
+
         $activityinfodata = null;
         // - There are activity dates to be shown; or
         // - Completion info needs to be displayed
@@ -107,13 +137,32 @@ class cm implements renderable, templatable {
             $activityinfodata = $activityinfo->export_for_template($output);
         }
 
+        // Mod inplace name editable.
+        $cmname = new $this->cmnameclass(
+            $format,
+            $this->section,
+            $mod,
+            $format->show_editor(),
+            $this->displayoptions
+        );
+
+        // Mod availability.
+        $availability = new $this->availabilityclass(
+            $format,
+            $this->section,
+            $mod,
+            $this->displayoptions
+        );
+
         $data = (object)[
-            'cmname' => $output->course_section_cm_name($mod, $displayoptions),
+            'cmname' => $cmname->export_for_template($output),
+            'grouping' => $groupinglabel,
             'afterlink' => $mod->afterlink,
-            'altcontent' => $output->course_section_cm_text($mod, $displayoptions),
-            'availability' => $output->course_section_cm_availability($mod, $displayoptions),
+            'altcontent' => $mod->get_formatted_content(['overflowdiv' => true, 'noclean' => true]),
+            'modavailability' => $availability->export_for_template($output),
             'url' => $mod->url,
             'activityinfo' => $activityinfodata,
+            'textclasses' => $displayoptions['textclasses'],
         ];
 
         if (!empty($mod->indent)) {
@@ -131,22 +180,80 @@ class cm implements renderable, templatable {
         }
 
         $returnsection = $format->get_section_number();
-        $data->extras = [];
+
         if ($format->show_editor()) {
             // Edit actions.
-            $editactions = course_get_cm_edit_actions($mod, $mod->indent, $returnsection);
-            $data->extras[] = $output->course_section_cm_edit_actions($editactions, $mod, $displayoptions);
-            if (!empty($mod->afterediticons)) {
-                $data->extras[] = $mod->afterediticons;
-            }
+            $controlmenu = new $this->controlmenuclass(
+                $format,
+                $this->section,
+                $mod,
+                $this->displayoptions
+            );
+            $data->controlmenu = $controlmenu->export_for_template($output);
+
             // Move and select options.
             $data->moveicon = course_get_cm_move($mod, $returnsection);
         }
 
-        if (!empty($data->extras)) {
-            $data->hasextras = true;
-        }
-
         return $data;
+    }
+
+    /**
+     * Returns the CSS classes for the activity name/content
+     *
+     * For items which are hidden, unavailable or stealth but should be displayed
+     * to current user ($mod->is_visible_on_course_page()), we show those as dimmed.
+     * Students will also see as dimmed activities names that are not yet available
+     * but should still be displayed (without link) with availability info.
+     */
+    protected function load_classes() {
+
+        $mod = $this->mod;
+
+        $linkclasses = '';
+        $textclasses = '';
+        if ($mod->uservisible) {
+            $info = new info_module($mod);
+            $conditionalhidden = !$info->is_available_for_all();
+            $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
+                has_capability('moodle/course:viewhiddenactivities', $mod->context);
+            if ($accessiblebutdim) {
+                $linkclasses .= ' dimmed';
+                $textclasses .= ' dimmed_text';
+                if ($conditionalhidden) {
+                    $linkclasses .= ' conditionalhidden';
+                    $textclasses .= ' conditionalhidden';
+                }
+            }
+            if ($mod->is_stealth()) {
+                // Stealth activity is the one that is not visible on course page.
+                // It still may be displayed to the users who can manage it.
+                $linkclasses .= ' stealth';
+                $textclasses .= ' stealth';
+            }
+        } else {
+            $linkclasses .= ' dimmed';
+            $textclasses .= ' dimmed dimmed_text';
+        }
+        $this->linkclasses = $linkclasses;
+        $this->textclasses = $textclasses;
+    }
+
+    /**
+     * Get the activity link classes.
+     *
+     * @return string the activity link classes.
+     */
+    public function get_link_classes(): string {
+        return $this->linkclasses;
+    }
+
+    /**
+     * Get the activity text/description classes.
+     *
+     * @return string the activity text classes.
+     */
+    public function get_text_classes(): string {
+        return $this->textclasses;
     }
 }

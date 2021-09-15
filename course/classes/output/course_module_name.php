@@ -31,6 +31,7 @@ use cm_info;
 /**
  * Class to prepare a course module name for display and in-place editing
  *
+ * @deprecated since Moodle 4.0
  * @package   core_course
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -51,6 +52,10 @@ class course_module_name extends \core\output\inplace_editable {
      * @param array $displayoptions
      */
     public function __construct(cm_info $cm, $editable, $displayoptions = array()) {
+        debugging(
+            'course_section_cm_list is deprecated. Use core_courseformat\\output\\local\\cm\\cmname instead',
+            DEBUG_DEVELOPER
+        );
         $this->cm = $cm;
         $this->displayoptions = $displayoptions;
         $value = $cm->name;
