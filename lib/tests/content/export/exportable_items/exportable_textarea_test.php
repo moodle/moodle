@@ -38,7 +38,7 @@ use stdClass;
 /**
  * Unit tests for the `exportable_textarea` export item class.
  *
- * @coversDefaultClass core\content\exportable_items\exportable_textarea
+ * @coversDefaultClass \core\content\exportable_items\exportable_textarea
  */
 class exportable_textarea_test extends advanced_testcase {
 
