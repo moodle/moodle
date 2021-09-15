@@ -20,7 +20,7 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Custom scoring | No |
     And I press "Save and return to course"

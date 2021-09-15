@@ -1633,11 +1633,11 @@ function workshop_extend_settings_navigation(settings_navigation $settingsnav, n
 
     if (has_capability('mod/workshop:editdimensions', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/workshop/editform.php', array('cmid' => $PAGE->cm->id));
-        $workshopnode->add(get_string('editassessmentform', 'workshop'), $url, settings_navigation::TYPE_SETTING);
+        $workshopnode->add(get_string('assessmentform', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }
     if (has_capability('mod/workshop:allocate', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/workshop/allocation.php', array('cmid' => $PAGE->cm->id));
-        $workshopnode->add(get_string('allocate', 'workshop'), $url, settings_navigation::TYPE_SETTING);
+        $workshopnode->add(get_string('submissionsallocation', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }
 }
 

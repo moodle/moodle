@@ -40,13 +40,13 @@ Feature: In a book, change the navigation options
     And "Next" "link" should not exist
     And I click on "2. Test chapter 2" "link" in the "Table of contents" "block"
     And "Previous" "link" should not exist
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Style of navigation" to "Images"
     And I press "Save and display"
     And "Next:" "icon" should exist
     And I click on "2. Test chapter 2" "link" in the "Table of contents" "block"
     And "Previous:" "icon" should exist
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the field "Style of navigation" to "Text"
     And I press "Save and display"
     Then "Next" "link" should exist

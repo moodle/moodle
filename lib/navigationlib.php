@@ -4494,7 +4494,8 @@ class settings_navigation extends navigation_node {
         if ($adminoptions->update) {
             // Add the course settings link
             $url = new moodle_url('/course/edit.php', array('id'=>$course->id));
-            $coursenode->add(get_string('editsettings'), $url, self::TYPE_SETTING, null, 'editsettings', new pix_icon('i/settings', ''));
+            $coursenode->add(get_string('settings'), $url, self::TYPE_SETTING, null,
+                'editsettings', new pix_icon('i/settings', ''));
         }
 
         if ($adminoptions->editcompletion) {
@@ -4679,7 +4680,7 @@ class settings_navigation extends navigation_node {
         // Settings for the module
         if (has_capability('moodle/course:manageactivities', $this->page->cm->context)) {
             $url = new moodle_url('/course/modedit.php', array('update' => $this->page->cm->id, 'return' => 1));
-            $modulenode->add(get_string('editsettings'), $url, navigation_node::TYPE_SETTING, null, 'modedit');
+            $modulenode->add(get_string('settings'), $url, navigation_node::TYPE_SETTING, null, 'modedit');
         }
         // Assign local roles
         if (count(get_assignable_roles($this->page->cm->context))>0) {

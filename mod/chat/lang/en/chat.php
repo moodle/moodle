@@ -123,6 +123,7 @@ $string['nopermissiontoseethechatlog'] = 'You don\'t have permission to see the 
 $string['oldping'] = 'Disconnect timeout';
 $string['page-mod-chat-x'] = 'Any chat module page';
 $string['pastchats'] = 'Past chat sessions';
+$string['pastsessions'] = 'Past sessions';
 $string['pluginadministration'] = 'Chat administration';
 $string['pluginname'] = 'Chat';
 $string['privacy:metadata:chat_messages_current'] = 'Current chat session. This data is temporary and is deleted after the chat session is deleted';

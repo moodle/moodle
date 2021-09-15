@@ -58,7 +58,7 @@ Feature: Hide grader identities identity from students
   Scenario: Hidden grading is enabled.
     # Enable the hidden grader option
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I follow "Expand all"
     And I set the field "Hide grader identity from students" to "1"
     And I press "Save and return to course"

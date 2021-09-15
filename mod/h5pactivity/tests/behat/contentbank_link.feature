@@ -56,7 +56,7 @@ Feature: Content bank link in the activity settings form
     And I switch to "h5p-iframe" class iframe
     And I should see "Of which countries are Berlin, Washington, Beijing, Canberra and Brasilia the capitals?"
     And I switch to the main frame
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     Then I should not see "Use the content Bank (opens in new window) to manage your H5P files"
     And I should see "Access the H5P file in the content bank (opens in a new window)."
     And I follow "Access the H5P file in the content bank"
@@ -79,7 +79,7 @@ Feature: Content bank link in the activity settings form
     And I switch to "h5p-iframe" class iframe
     And I should see "Of which countries are Berlin,"
     And I switch to the main frame
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     Then I should see "Use the content bank (opens in new window) to manage your H5P files"
 
   @javascript
@@ -103,5 +103,5 @@ Feature: Content bank link in the activity settings form
     And I switch to "h5p-iframe" class iframe
     And I should see "Which fruit is this?"
     And I switch to the main frame
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     Then I should see "Use the content bank (opens in new window) to manage your H5P files"

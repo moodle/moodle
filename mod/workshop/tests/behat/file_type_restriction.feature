@@ -26,7 +26,7 @@ Feature: File types of the submission and feedback attachments can be limitted
   Scenario: Student submission attachments obey the list of allowed file types
     # Define workshop to accept only images as submission attachments.
     Given I am on the TestWorkshop "workshop activity" page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Submission attachment allowed file types" to "image"
     And I press "Save and display"

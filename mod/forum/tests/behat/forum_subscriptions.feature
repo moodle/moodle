@@ -27,7 +27,7 @@ Feature: A user can control their own subscription preferences for a forum
       | section          | 1                      |
     And I am on "Course 1" course homepage
     Given I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Subscription disabled |
     And I press "Save and return to course"
@@ -54,7 +54,7 @@ Feature: A user can control their own subscription preferences for a forum
       | section        | 1                      |
     And I am on "Course 1" course homepage
     Given I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Forced subscription |
     And I press "Save and return to course"
@@ -81,7 +81,7 @@ Feature: A user can control their own subscription preferences for a forum
       | section        | 1                      |
     And I am on "Course 1" course homepage
     Given I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Optional subscription |
     And I press "Save and return to course"
@@ -110,7 +110,7 @@ Feature: A user can control their own subscription preferences for a forum
       | section        | 1                      |
     And I am on "Course 1" course homepage
     Given I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Auto subscription |
     And I press "Save and return to course"

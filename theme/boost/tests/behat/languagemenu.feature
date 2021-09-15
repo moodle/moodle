@@ -43,7 +43,7 @@ Feature: Language selector menu
   Scenario: Logged user is not presented with a language selector in a course if a language is forced in that context
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | id_lang | en |

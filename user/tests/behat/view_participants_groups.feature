@@ -48,7 +48,7 @@ Feature: View course participants groups
   Scenario: User should be able to see other groups in visible group mode
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Group mode" to "Visible groups"
     And I press "Save and display"
@@ -68,7 +68,7 @@ Feature: View course participants groups
   Scenario: User should be able to see all users in no groups mode
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Group mode" to "No groups"
     And I press "Save and display"

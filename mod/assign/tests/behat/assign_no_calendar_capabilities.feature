@@ -25,7 +25,7 @@ Feature: Assignment with no calendar capabilites
       | activity   | name                   | intro                        | course | section |
       | assign     | Test assignment name   | Test assignment description  | C1     | 1       |
     And I am on the "Test assignment name" Activity page
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Allow submissions from | ##1 January 2017##          |
       | Due date               | ##1 February 2017##         |
@@ -35,7 +35,7 @@ Feature: Assignment with no calendar capabilites
     And I log out
 
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Allow submissions from | ##1 January 2018##  |
       | Due date               | ##1 February 2018## |

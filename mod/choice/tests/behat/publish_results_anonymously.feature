@@ -26,7 +26,7 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
       | choice   | Choice 1 | Choice Description | C1     | choice1  | Option 1, Option 2 | 1       |
     And I am on "Course 1" course homepage
     And I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Publish results | Always show results to students |
       | Privacy of results | Publish anonymous results, do not show student names |
@@ -48,7 +48,7 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
       | choice   | Choice 1 | Choice Description | C1     | choice1  | Option 1, Option 2 | 1       |
     And I am on "Course 1" course homepage
     And I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Publish results | Always show results to students |
       | Privacy of results | Publish full results, showing names and their choices |

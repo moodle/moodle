@@ -21,7 +21,7 @@ Feature: Block appearances
     And I log in as "admin"
     And I am on "Course 1" course homepage
     And I follow "Test survey name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Survey type | ATTLS (20 item version) |
     And I press "Save and return to course"

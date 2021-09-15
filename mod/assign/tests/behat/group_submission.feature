@@ -43,7 +43,7 @@ Feature: Group assignment submissions
     And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save and return to course"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save and display"

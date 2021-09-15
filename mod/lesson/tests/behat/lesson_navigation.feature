@@ -93,7 +93,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | lesson     | Test lesson name | Test lesson description | C1     | lesson1     |
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_review | Yes |
       | id_maxattempts | 3 |
@@ -139,7 +139,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | lesson     | Test lesson name | Test lesson description | C1     | lesson1     |
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_review | Yes |
       | id_maxattempts | 0 |

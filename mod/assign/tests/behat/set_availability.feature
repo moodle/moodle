@@ -30,7 +30,7 @@ Feature: Set availability dates for an assignment
 
   Scenario: Student cannot submit an assignment prior to the 'allow submissions from' date
     Given I am on the "Assignment name" Activity page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I follow "Expand all"
     # Set 'Allow submissions from' to tomorrow at noon.
     And I set the field "Allow submissions from" to "##tomorrow noon##"
@@ -44,7 +44,7 @@ Feature: Set availability dates for an assignment
 
   Scenario: Student can see the assignment's due date in the course calendar
     Given I am on the "Assignment name" Activity page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I follow "Expand all"
     # Set 'Allow submissions from' to the first day of this month at noon.
     And I set the field "Allow submissions from" to "##first day of this month noon##"
@@ -63,7 +63,7 @@ Feature: Set availability dates for an assignment
   @_file_upload
   Scenario: Student can submit an assignment before the due date
     Given I am on the "Assignment name" Activity page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I follow "Expand all"
     # Set 'Allow submissions from' to now.
     And I set the field "Allow submissions from" to "##now##"
@@ -91,7 +91,7 @@ Feature: Set availability dates for an assignment
   @_file_upload
   Scenario: Student can submit an assignment after the due date and the submission is marked as late
     Given I am on the "Assignment name" Activity page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I follow "Expand all"
     # Set 'Allow submissions from' to 3 days ago.
     And I set the field "Allow submissions from" to "##3 days ago##"
@@ -122,7 +122,7 @@ Feature: Set availability dates for an assignment
 
   Scenario: Student cannot submit an assignment after the cut-off date
     Given I am on the "Assignment name" Activity page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I follow "Expand all"
     # Set 'Allow submissions from' to 3 days ago.
     And I set the field "Allow submissions from" to "##3 days ago##"

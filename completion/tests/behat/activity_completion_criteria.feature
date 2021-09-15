@@ -25,7 +25,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | description                         | Test assignment description |
     And I log in as "admin"
     And I am on "Completion course" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Enable completion tracking" to "Yes"
     And I click on "Save and display" "button"
