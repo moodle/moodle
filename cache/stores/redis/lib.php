@@ -113,6 +113,13 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
     protected $compressor = self::COMPRESSOR_NONE;
 
     /**
+     * Bytes read or written by last call to set()/get() or set_many()/get_many().
+     *
+     * @var int
+     */
+    protected $lastiobytes = 0;
+
+    /**
      * Determines if the requirements for this type of store are met.
      *
      * @return bool
@@ -290,6 +297,9 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             return $value;
         }
 
+        // When using compression, values are always strings, so strlen will work.
+        $this->lastiobytes = strlen($value);
+
         return $this->uncompress($value);
     }
 
@@ -306,11 +316,32 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             return $values;
         }
 
+        $this->lastiobytes = 0;
         foreach ($values as &$value) {
+            $this->lastiobytes += strlen($value);
             $value = $this->uncompress($value);
         }
 
         return $values;
+    }
+
+    /**
+     * Gets the number of bytes read from or written to cache as a result of the last action.
+     *
+     * If compression is not enabled, this function always returns IO_BYTES_NOT_SUPPORTED. The reason is that
+     * when compression is not enabled, data sent to the cache is not serialized, and we would
+     * need to serialize it to compute the size, which would have a significant performance cost.
+     *
+     * @return int Bytes read or written
+     * @since Moodle 4.0
+     */
+    public function get_last_io_bytes(): int {
+        if ($this->compressor != self::COMPRESSOR_NONE) {
+            return $this->lastiobytes;
+        } else {
+            // Not supported unless compression is on.
+            return parent::get_last_io_bytes();
+        }
     }
 
     /**
@@ -323,6 +354,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
     public function set($key, $value) {
         if ($this->compressor != self::COMPRESSOR_NONE) {
             $value = $this->compress($value);
+            $this->lastiobytes = strlen($value);
         }
 
         if ($this->redis->hSet($this->hash, $key, $value) === false) {
@@ -354,10 +386,12 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             $now = self::get_time();
         }
 
+        $this->lastiobytes = 0;
         foreach ($keyvaluearray as $pair) {
             $key = $pair['key'];
             if ($this->compressor != self::COMPRESSOR_NONE) {
                 $pairs[$key] = $this->compress($pair['value']);
+                $this->lastiobytes += strlen($pairs[$key]);
             } else {
                 $pairs[$key] = $pair['value'];
             }
