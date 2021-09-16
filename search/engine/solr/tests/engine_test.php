@@ -1186,7 +1186,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertCount(2, $orders);
         $this->assertArrayHasKey('relevance', $orders);
         $this->assertArrayHasKey('location', $orders);
-        $this->assertStringContainsString('Block: HTML', $orders['location']);
+        $this->assertStringContainsString('Block: Text', $orders['location']);
     }
 
     /**
