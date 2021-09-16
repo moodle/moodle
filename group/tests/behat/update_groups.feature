@@ -63,7 +63,7 @@ Feature: Automatic updating of groups and groupings
     And I click on "Edit" "link" in the "Grouping (with ID) (updated)" "table_row"
     And the field "idnumber" matches value "An ID (updated)"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Update groups and groupings with ID numbers without the 'moodle/course:changeidnumber' capability
     Given I log out
     And I log in as "admin"
