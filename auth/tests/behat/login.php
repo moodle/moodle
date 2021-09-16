@@ -26,6 +26,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require(__DIR__.'/../../../config.php');
+require_once("{$CFG->dirroot}/login/lib.php");
 
 $behatrunning = defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING;
 if (!$behatrunning) {
@@ -33,14 +34,14 @@ if (!$behatrunning) {
 }
 
 $username = required_param('username', PARAM_ALPHANUMEXT);
-$wantsurl = new moodle_url(optional_param('wantsurl', '/', PARAM_URL));
+$wantsurl = optional_param('wantsurl', null, PARAM_URL);
 
 if (isloggedin()) {
     // If the user is already logged in, log them out and redirect them back to login again.
     require_logout();
     redirect(new moodle_url('/auth/tests/behat/login.php', [
         'username' => $username,
-        'wantsurl' => $wantsurl->out(false),
+        'wantsurl' => (new moodle_url($wantsurl))->out(false),
     ]));
 }
 
@@ -82,4 +83,7 @@ if (!complete_user_login($user)) {
     throw new Exception("Failed to login as behat step for $username");
 }
 
-redirect($wantsurl);
+if (empty($wantsurl)) {
+    $wantsurl = core_login_get_return_url();
+}
+redirect(new moodle_url($wantsurl));
