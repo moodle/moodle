@@ -26,6 +26,6 @@ Feature: Reset dashboard page to default
     Then I should not see "Latest announcements"
     And I should see "Latest badges"
     And I should see "Calendar"
-    And I should see "Upcoming events"
+    And I should not see "Upcoming events"
     And I should not see "Comments"
     And I should not see "Reset page to default"

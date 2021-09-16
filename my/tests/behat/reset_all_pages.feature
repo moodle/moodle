@@ -45,8 +45,8 @@ Feature: Reset all personalised pages to default
     And I navigate to "Appearance > Default Dashboard page" in site administration
     And I press "Blocks editing on"
     And I add the "Latest announcements" block
-    And I open the "Online users" blocks action menu
-    And I follow "Delete Online users"
+    And I open the "Latest badges" blocks action menu
+    And I follow "Delete Latest badges block"
     And I press "Yes"
     And I press "Blocks editing off"
     And I log out
@@ -54,13 +54,13 @@ Feature: Reset all personalised pages to default
     And I log in as "student1"
     And I follow "Dashboard" in the user menu
     And I should not see "Latest announcements"
-    And I should see "Online users"
+    And I should see "Latest badges"
     And I log out
 
     And I log in as "student3"
     And I follow "Dashboard" in the user menu
     And I should not see "Latest announcements"
-    And I should see "Online users"
+    And I should see "Latest badges"
     And I log out
 
     And I log in as "admin"
@@ -73,13 +73,13 @@ Feature: Reset all personalised pages to default
     And I follow "Dashboard" in the user menu
     Then I should see "Latest announcements"
     And I should not see "Comments"
-    And I should not see "Online users"
+    And I should not see "Latest badges"
     And I log out
 
     And I log in as "student3"
     And I follow "Dashboard" in the user menu
     And I should see "Latest announcements"
-    And I should not see "Online users"
+    And I should not see "Latest badges"
     And I log out
 
     # Check that this did not affect the customised profiles.

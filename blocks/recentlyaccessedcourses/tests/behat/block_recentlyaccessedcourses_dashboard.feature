@@ -25,6 +25,9 @@ Feature: The recently accessed courses block allows users to easily access their
       | student1 | C3     | student |
       | student1 | C4     | student |
       | student1 | C5     | student |
+    And the following "blocks" exist:
+      | blockname               | contextlevel | reference | pagetypepattern | defaultregion |
+      | recentlyaccessedcourses | System       | 1         | my-index        | content       |
 
   Scenario: User has not accessed any course
     Given I log in as "student1"

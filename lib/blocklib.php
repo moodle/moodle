@@ -2607,7 +2607,7 @@ function blocks_add_default_system_blocks() {
         $subpagepattern = null;
     }
 
-    $newblocks = array('timeline', 'private_files', 'online_users', 'badges', 'calendar_month', 'calendar_upcoming');
-    $newcontent = array('lp', 'recentlyaccessedcourses', 'myoverview');
+    $newblocks = array('timeline', 'private_files', 'badges', 'calendar_month');
+    $newcontent = array('myoverview');
     $page->blocks->add_blocks(array(BLOCK_POS_RIGHT => $newblocks, 'content' => $newcontent), 'my-index', $subpagepattern);
 }
