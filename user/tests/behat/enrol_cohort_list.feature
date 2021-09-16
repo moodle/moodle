@@ -15,7 +15,7 @@ Feature: Viewing the list of cohorts to enrol in a course
       | user      | course | role           |
       | teacher1  | C1     | editingteacher |
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Check the teacher does not see the cohorts field without the proper capabilities
     Given the following "cohort" exists:
       | name        | Test cohort name        |

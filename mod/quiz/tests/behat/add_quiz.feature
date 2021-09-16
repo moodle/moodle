@@ -39,7 +39,7 @@ Feature: Add a quiz
     And I should see "Answer saved"
     And I press "Submit all and finish"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Add and configure small quiz and perform an attempt as a student with Javascript enabled
     Then I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
     And I should see "So you think it is true"

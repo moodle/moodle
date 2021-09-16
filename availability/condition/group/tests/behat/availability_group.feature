@@ -6,8 +6,8 @@ Feature: availability_group
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | format | enablecompletion |
-      | Course 1 | C1        | topics | 1                |
+      | fullname | shortname | format | enablecompletion | numsections |
+      | Course 1 | C1        | topics | 1                | 3           |
     And the following "users" exist:
       | username |
       | teacher1 |
