@@ -22,7 +22,7 @@ Feature: Bulk remove submissions
       | name    | course | idnumber |
       | Group 1 | C1     | G1       |
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Bulk remove submissions should remove the data that was submitted
     Given the following "activity" exists:
       | activity                            | assign                  |
@@ -81,7 +81,7 @@ Feature: Bulk remove submissions
     And I set the field "selectall" to "1"
     Then I should not see "Remove submission" in the "Choose operation" "select"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Notification should be displayed when non-group users are selected for submission bulk removal
             in separate group mode
     Given the following "activity" exists:
@@ -116,7 +116,7 @@ Feature: Bulk remove submissions
     And I should see "The submission of Student 1 cannot be removed"
     And I should see "The submission of Student 2 cannot be removed"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Bulk remove submission when group users are added to the bulk
     removing submissions process in separate group mode
     Given the following "group members" exist:

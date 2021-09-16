@@ -4,7 +4,7 @@ Feature: Upload users to a cohort
   As an admin
   I need to upload a file with users data containing cohort assigns
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Upload users and assign them to a course with cohort enrolment method enabled
     Given the following "cohorts" exist:
       | name | idnumber |
