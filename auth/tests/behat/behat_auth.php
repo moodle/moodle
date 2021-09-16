@@ -42,6 +42,7 @@ class behat_auth extends behat_base {
      * Logs in the user. There should exist a user with the same value as username and password.
      *
      * @Given /^I log in as "(?P<username_string>(?:[^"]|\\")*)"$/
+     * @Given I am logged in as :username
      * @param string $username the user to log in as.
      * @param moodle_url|null $wantsurl optional, URL to go to after logging in.
      */
@@ -52,33 +53,24 @@ class behat_auth extends behat_base {
             return;
         }
 
-        $loginurl = new moodle_url('/login/index.php');
+        $loginurl = new moodle_url('/auth/tests/behat/login.php', [
+            'username' => $username,
+        ]);
         if ($wantsurl !== null) {
             $loginurl->param('wantsurl', $wantsurl->out_as_local_url());
         }
 
         // Visit login page.
         $this->execute('behat_general::i_visit', [$loginurl]);
-
-        // Enter username and password.
-        $this->execute('behat_forms::i_set_the_field_to', array('Username', $this->escape($username)));
-        $this->execute('behat_forms::i_set_the_field_to', array('Password', $this->escape($username)));
-
-        // Press log in button, no need to check for exceptions as it will checked after this step execution.
-        $this->execute('behat_forms::press_button', get_string('login'));
     }
 
     /**
      * Logs out of the system.
      *
      * @Given /^I log out$/
+     * @Given I am not logged in
      */
     public function i_log_out() {
-
-        // Wait for page to be loaded.
-        $this->wait_for_pending_js();
-
-        // Click on logout link in footer, as it's much faster.
-        $this->execute('behat_general::i_click_on_in_the', array(get_string('logout'), 'link', '#page-footer', "css_element"));
+        $this->execute('behat_general::i_visit', [new moodle_url('/auth/tests/behat/logout.php')]);
     }
 }
