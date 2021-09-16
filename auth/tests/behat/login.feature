@@ -37,7 +37,7 @@ Feature: Authentication
 
   Scenario: Log out using the Log out link
     Given I log in as "admin"
-    When I click on "Logout" "link" in the "#page-footer" "css_element"
+    When I click on "Log out" "link" in the "#page-footer" "css_element"
     Then I should see "You are not logged in" in the "page-footer" "region"
 
   Scenario Outline: Checking the display of the Remember username checkbox
