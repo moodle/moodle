@@ -1063,20 +1063,25 @@ class completion_info {
                                               INNER JOIN {modules} m ON m.id = cm.module
                                                    WHERE m.visible = 1 AND cm.course = ?", [$userid, $this->course->id]);
 
+            $cminfos = get_fast_modinfo($cm->course, $userid)->get_cms();
+
             // Reindex by course module id.
             foreach ($alldatabycmc as $data) {
+
+                // Filter acitivites with no cm_info (missing plugins or other causes).
+                if (!isset($cminfos[$data->cmid])) {
+                    continue;
+                }
+
                 if (empty($data->coursemoduleid)) {
                     $cacheddata[$data->cmid] = $defaultdata;
                     $cacheddata[$data->cmid]['coursemoduleid'] = $data->cmid;
                 } else {
                     $cacheddata[$data->cmid] = (array) $data;
                 }
-                // Make sure we're working on a cm_info object.
-                $cmstd = new stdClass();
-                $cmstd->id = $data->cmid;
-                $cmstd->course = $this->course->id;
-                $othercminfo = cm_info::create($cmstd, $userid);
+
                 // Add the other completion data for this user in this module instance.
+                $othercminfo = $cminfos[$data->cmid];
                 $cacheddata[$othercminfo->id] += $this->get_other_cm_completion_data($othercminfo, $userid);
             }
 
