@@ -1284,6 +1284,12 @@ class block_manager {
             $str = new lang_string('configureblock', 'block', $blocktitle);
             $editactionurl = new moodle_url($actionurl, ['bui_editid' => $block->instance->id]);
             $editactionurl->remove_params(['sesskey']);
+
+            // Handle editing block on admin index page, prevent the page redirecting before block action can begin.
+            if ($editactionurl->compare(new moodle_url('/admin/index.php'), URL_MATCH_BASE)) {
+                $editactionurl->param('cache', 1);
+            }
+
             $controls[] = new action_menu_link_secondary(
                 $editactionurl,
                 new pix_icon('t/edit', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
@@ -1350,6 +1356,12 @@ class block_manager {
             $str = new lang_string('deleteblock', 'block', $blocktitle);
             $deleteactionurl = new moodle_url($actionurl, ['bui_deleteid' => $block->instance->id]);
             $deleteactionurl->remove_params(['sesskey']);
+
+            // Handle deleting block on admin index page, prevent the page redirecting before block action can begin.
+            if ($deleteactionurl->compare(new moodle_url('/admin/index.php'), URL_MATCH_BASE)) {
+                $deleteactionurl->param('cache', 1);
+            }
+
             $controls[] = new action_menu_link_secondary(
                 $deleteactionurl,
                 new pix_icon('t/delete', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
