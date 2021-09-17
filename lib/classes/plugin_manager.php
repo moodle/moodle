@@ -1725,8 +1725,9 @@ class core_plugin_manager {
             'block' => array('course_overview', 'messages', 'community', 'participants'),
             'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
-            'portfolio' => array('picasa'),
+            'filter' => array('censor'),
             'media' => array('swf'),
+            'portfolio' => array('picasa'),
             'qformat' => array('webct'),
             'message' => array('jabber'),
             'quizaccess' => array('safebrowser'),
@@ -1861,7 +1862,7 @@ class core_plugin_manager {
             ),
 
             'filter' => array(
-                'activitynames', 'algebra', 'censor', 'emailprotect',
+                'activitynames', 'algebra', 'emailprotect',
                 'emoticon', 'displayh5p', 'mathjaxloader', 'mediaplugin', 'multilang', 'tex', 'tidy',
                 'urltolink', 'data', 'glossary'
             ),

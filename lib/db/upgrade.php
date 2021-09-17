@@ -2862,5 +2862,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021092400.03);
     }
 
+    if ($oldversion < 2021100300.01) {
+        // Remove filter_censor (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/filter/censor/filter.php')) {
+            unset_all_config_for_plugin('filter_censor');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021100300.01);
+    }
+
     return true;
 }
