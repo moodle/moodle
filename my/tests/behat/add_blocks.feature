@@ -21,6 +21,7 @@ Feature: Add blocks to dashboard page
   Scenario: Add blocks to page
     When I press "Customise this page"
     And I add the "Latest announcements" block
+    And I press "Stop customising this page"
     Then I should see "Latest announcements" in the "Latest announcements" "block"
     And I should see "Latest badges" in the "Latest badges" "block"
     And I should see "Calendar" in the "Calendar" "block"
