@@ -15,16 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Legacy course format renderer file.
+ * Legacy file to aviod exceptions when formats require it.
  *
- * This file exists only for legacy reasons. Most third party format
- * plugins include this file to extend the course format renderer. Now all
- * format renderers are located in core_courseformat\output and uses autoload.
- *
- * @deprecated since Moodle 4.0 MDL-72656
- *
- * @package core_courseformat
- * @copyright 2012 Dan Poltawski
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.3
+ * @deprecated since Moodle 4.0
+ * @package    format_topics
+ * @copyright  2021 Ferran Recio <ferran@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();

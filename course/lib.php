@@ -3873,8 +3873,9 @@ function core_course_drawer(): string {
     $ismod = strpos($PAGE->pagetype, 'mod-') === 0;
     if ($ismod || $PAGE->pagetype == 'course-view-' . $format->get_format()) {
         $renderer = $format->get_renderer($PAGE);
-        $placeholder = $renderer->course_index_drawer($format);
-        return $placeholder;
+        if (method_exists($renderer, 'course_index_drawer')) {
+            return $renderer->course_index_drawer($format);
+        }
     }
 
     return '';
