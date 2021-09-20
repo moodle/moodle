@@ -1958,6 +1958,7 @@ class core_plugin_manager {
                 'importquestions',
                 'managecategories',
                 'previewquestion',
+                'statistics',
                 'tagquestion',
                 'viewcreator',
                 'viewquestionname',
