@@ -2,7 +2,17 @@ This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
 === 4.0 ===
-
+* All activity icons have been replaced with black monochrome icons. The background
+colour for these icons is defined using a new 'FEATURE_MOD_PURPOSE' support variable in the module lib.php file
+Available purpose types are:
+  - MOD_PURPOSE_COMMUNICATION
+  - MOD_PURPOSE_ASSESSMENT
+  - MOD_PURPOSE_COLLABORATION
+  - MOD_PURPOSE_CONTENT
+  - MOD_PURPOSE_ADMINISTRATION
+  - MOD_PURPOSE_INTERFACE
+  - MOD_PURPOSE_OTHER
+The colours for these types are defined in theme/boost/scss/moodle/variables.scss
 * The format_base is now deprecated. Use core_courseformat\base instead.
 * The new course output components deprecate many renderer methods from course
 renderer and course format renderer:

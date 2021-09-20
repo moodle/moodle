@@ -460,6 +460,23 @@ define('MOD_ARCHETYPE_ASSIGNMENT', 2);
 /** System (not user-addable) module archetype */
 define('MOD_ARCHETYPE_SYSTEM', 3);
 
+/** Type of module */
+define('FEATURE_MOD_PURPOSE', 'mod_purpose');
+/** Module purpose administration */
+define('MOD_PURPOSE_ADMINISTRATION', 'administration');
+/** Module purpose assessment */
+define('MOD_PURPOSE_ASSESSMENT', 'assessment');
+/** Module purpose communication */
+define('MOD_PURPOSE_COLLABORATION', 'collaboration');
+/** Module purpose communication */
+define('MOD_PURPOSE_COMMUNICATION', 'communication');
+/** Module purpose content */
+define('MOD_PURPOSE_CONTENT', 'content');
+/** Module purpose interface */
+define('MOD_PURPOSE_INTERFACE', 'interface');
+/** Module purpose other */
+define('MOD_PURPOSE_OTHER', 'other');
+
 /**
  * Security token used for allowing access
  * from external application such as web services.

@@ -85,14 +85,10 @@ body:not(.editing)  .sitetopic ul.section {
         .contentwithoutlink,
         .activityinstance {
             min-width: 40%;
-            display: table-cell;
-            padding-right: 4px;
-            min-height: 2em;
 
             > a {
-                display: inline-block;
-                text-indent: -31px;
-                padding-left: 31px;
+                display: inline-flex;
+                align-items: center;
             }
 
             .dimmed {
@@ -154,14 +150,10 @@ body:not(.editing)  .sitetopic ul.section {
     }
 }
 
-.activity img.activityicon {
-    margin-right: 6px;
-    vertical-align: text-bottom;
-}
-
-.section .activity .activityinstance,
-.section .activity .activityinstance div {
-    display: inline-block;
+.section .activity .activityinstance {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .editing {
@@ -1330,26 +1322,6 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         margin: 3px;
         white-space: nowrap;
         display: inline-block;
-    }
-}
-
-$activity-iconcontainer-width: 50px;
-$activity-iconcontainer-height: 50px;
-
-.activity-item .activityiconcontainer {
-    width: $activity-iconcontainer-width;
-    height: $activity-iconcontainer-height;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    background-color: $gray-100;
-    border-radius: $border-radius;
-    padding: 0.7rem;
-
-    .activityicon {
-        margin: 0;
-        height: 24px;
-        width: 24px;
     }
 }
 

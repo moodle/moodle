@@ -187,7 +187,7 @@ class core_renderer extends \core_renderer {
         // Image data.
         if (isset($contextheader->imagedata)) {
             // Header specific image.
-            $html .= html_writer::div($contextheader->imagedata, 'page-header-image icon-size-6');
+            $html .= html_writer::div($contextheader->imagedata, 'page-header-image mr-2');
         }
 
         // Headings.

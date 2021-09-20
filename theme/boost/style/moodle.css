@@ -11552,12 +11552,8 @@ nav.navbar .logo img {
     float: left;
     display: block;
     position: relative; }
-  .page-context-header .page-header-image {
-    margin-right: 1em;
-    margin-bottom: 0.5em;
-    margin-top: 0.7em; }
-    .page-context-header .page-header-image > a {
-      display: inline-block; }
+  .page-context-header .page-header-image > a {
+    display: inline-block; }
   .page-context-header .page-header-headings,
   .page-context-header .header-button-group {
     position: relative;
@@ -12343,6 +12339,58 @@ body.dragging .dragging {
   .icons-collapse-expand.collapsed .collapsed-icon {
     display: flex;
     align-items: center; }
+
+.activityiconcontainer {
+  width: 50px;
+  height: 50px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 0.7rem; }
+  .activityiconcontainer .activityicon {
+    margin: 0;
+    height: 24px;
+    width: 24px; }
+
+.activityiconcontainer.administration {
+  background-color: #5d63f6; }
+  .activityiconcontainer.administration .activityicon {
+    filter: brightness(0) invert(1); }
+
+.activityiconcontainer.assessment {
+  background-color: #eb66a2; }
+  .activityiconcontainer.assessment .activityicon {
+    filter: brightness(0) invert(1); }
+
+.activityiconcontainer.collaboration {
+  background-color: #f7634d; }
+  .activityiconcontainer.collaboration .activityicon {
+    filter: brightness(0) invert(1); }
+
+.activityiconcontainer.communication {
+  background-color: #11a676; }
+  .activityiconcontainer.communication .activityicon {
+    filter: brightness(0) invert(1); }
+
+.activityiconcontainer.content {
+  background-color: #399be2; }
+  .activityiconcontainer.content .activityicon {
+    filter: brightness(0) invert(1); }
+
+.activityiconcontainer.interface {
+  background-color: #a378ff; }
+  .activityiconcontainer.interface .activityicon {
+    filter: brightness(0) invert(1); }
+
+:root {
+  --activityadministration: #5d63f6;
+  --activityassessment: #eb66a2;
+  --activitycollaboration: #f7634d;
+  --activitycommunication: #11a676;
+  --activitycontent: #399be2;
+  --activityinterface: #a378ff; }
 
 /* admin.less */
 .formtable tbody th {
@@ -13682,15 +13730,11 @@ body:not(.editing) .sitetopic ul.section {
     display: flex; }
   .section .activity .contentwithoutlink,
   .section .activity .activityinstance {
-    min-width: 40%;
-    display: table-cell;
-    padding-right: 4px;
-    min-height: 2em; }
+    min-width: 40%; }
     .section .activity .contentwithoutlink > a,
     .section .activity .activityinstance > a {
-      display: inline-block;
-      text-indent: -31px;
-      padding-left: 31px; }
+      display: inline-flex;
+      align-items: center; }
     .section .activity .contentwithoutlink .dimmed .activityicon,
     .section .activity .activityinstance .dimmed .activityicon {
       opacity: .5; }
@@ -13731,13 +13775,10 @@ body:not(.editing) .sitetopic ul.section {
     padding-bottom: initial;
     vertical-align: text-bottom; }
 
-.activity img.activityicon {
-  margin-right: 6px;
-  vertical-align: text-bottom; }
-
-.section .activity .activityinstance,
-.section .activity .activityinstance div {
-  display: inline-block; }
+.section .activity .activityinstance {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1rem; }
 
 .editing .section .activity .contentwithoutlink,
 .editing .section .activity .activityinstance {
@@ -14595,20 +14636,6 @@ span.editinstructions {
     margin: 3px;
     white-space: nowrap;
     display: inline-block; }
-
-.activity-item .activityiconcontainer {
-  width: 50px;
-  height: 50px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f8f9fa;
-  border-radius: 0.25rem;
-  padding: 0.7rem; }
-  .activity-item .activityiconcontainer .activityicon {
-    margin: 0;
-    height: 24px;
-    width: 24px; }
 
 .description .course-description-item {
   background-color: #f8f9fa;

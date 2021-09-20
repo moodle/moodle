@@ -1672,7 +1672,7 @@ function quiz_attempt_summary_link_to_reports($quiz, $cm, $context, $returnzero 
 
 /**
  * @param string $feature FEATURE_xx constant for requested feature
- * @return bool True if quiz supports feature
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function quiz_supports($feature) {
     switch($feature) {
@@ -1688,6 +1688,7 @@ function quiz_supports($feature) {
         case FEATURE_CONTROLS_GRADE_VISIBILITY: return true;
         case FEATURE_USES_QUESTIONS:            return true;
         case FEATURE_PLAGIARISM:                return true;
+        case FEATURE_MOD_PURPOSE:               return MOD_PURPOSE_ASSESSMENT;
 
         default: return null;
     }

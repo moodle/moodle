@@ -404,7 +404,8 @@ class mod_lti_lib_testcase extends advanced_testcase {
             'icon',
             'Description of the module',
             MOD_ARCHETYPE_OTHER,
-            'mod_lti'
+            'mod_lti',
+            MOD_PURPOSE_CONTENT
         );
 
         // The lti_get_lti_types_by_course method (used by the callbacks) assumes the global user.
