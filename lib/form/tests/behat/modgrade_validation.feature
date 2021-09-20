@@ -6,31 +6,29 @@ Feature: Using the activity grade form element
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@example.com |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | username | firstname | lastname | email                |
+      | student1 | Student   | 1        | student1@example.com |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category | groupmode |
-      | Course 1 | C1 | 0 | 1 |
+      | Course 1 | C1        | 0        | 1         |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+    And the following "scales" exist:
+      | name         | scale                                     |
+      | ABCDEF       | F,E,D,C,B,A                               |
+      | Letter scale | Disappointing, Good, Very good, Excellent |
+    And the following "activity" exists:
+      | activity | assign                      |
+      | course   | C1                          |
+      | section  | 1                           |
+      | name     | Test assignment name        |
+      | intro    | Test assignment description |
 
   Scenario: Being able to change the grade type, scale and maximum grade when there are no grades
     Given I log in as "admin"
-    And I navigate to "Grades > Scales" in site administration
-    And I press "Add a new scale"
-    And I set the following fields to these values:
-      | Name  | ABCDEF |
-      | Scale | F,E,D,C,B,A |
-    And I press "Save changes"
-    And I press "Add a new scale"
-    And I set the following fields to these values:
-      | Name  | Letter scale |
-      | Scale | Disappointing, Good, Very good, Excellent |
-    And I press "Save changes"
-    And I log out
     And the following "activities" exist:
       | activity   | name            | intro                  | course | idnumber    |
       | forum      | Test forum name | Test forum description | C1     | forum1      |
@@ -66,20 +64,7 @@ Feature: Using the activity grade form element
 
   @javascript
   Scenario: Attempting to change the scale when grades already exist in rating activity
-    Given I log in as "admin"
-    And I navigate to "Grades > Scales" in site administration
-    And I press "Add a new scale"
-    And I set the following fields to these values:
-      | Name  | ABCDEF |
-      | Scale | F,E,D,C,B,A |
-    And I press "Save changes"
-    And I press "Add a new scale"
-    And I set the following fields to these values:
-      | Name  | Letter scale |
-      | Scale | Disappointing, Good, Very good, Excellent |
-    And I press "Save changes"
-    And I log out
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
@@ -115,26 +100,12 @@ Feature: Using the activity grade form element
 
   @javascript
   Scenario: Attempting to change the scale when grades already exist in non-rating activity
-    Given I log in as "admin"
-    And I navigate to "Grades > Scales" in site administration
-    And I press "Add a new scale"
+    Given I am on the "Test assignment name" "assign activity" page logged in as "teacher1"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-      | Name  | ABCDEF |
-      | Scale | F,E,D,C,B,A |
-    And I press "Save changes"
-    And I press "Add a new scale"
-    And I set the following fields to these values:
-      | Name  | Letter scale |
-      | Scale | Disappointing, Good, Very good, Excellent |
-    And I press "Save changes"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
       | grade[modgrade_type] | Scale |
       | grade[modgrade_scale] | ABCDEF |
+    And I press "Save and display"
     And I am on the "Test assignment name" "assign activity" page
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
@@ -185,11 +156,7 @@ Feature: Using the activity grade form element
 
   @javascript
   Scenario: Attempting to change the maximum grade when no rescaling option has been chosen
-    Given the following "activity" exists:
-      | course   | C1               |
-      | activity | assign           |
-      | name     | Test assign name |
-    And I am on the "Test assign name" "assign activity" page logged in as teacher1
+    Given I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
