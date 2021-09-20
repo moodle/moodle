@@ -247,12 +247,13 @@ class secondary_test extends \advanced_testcase {
      * @param array $secondarynavnodesdata The array which contains the data used to generate the secondary navigation
      * @param array $defaultmoremenunodes  The array containing the keys of the navigation nodes which should be added
      *                                     to the "more" menu by default
+     * @param int|null $maxdisplayednodes  The maximum limit of navigation nodes displayed in the secondary navigation
      * @param array $expecedmoremenunodes  The array containing the keys of the expected navigation nodes which are
      *                                     forced into the "more" menu
      * @dataProvider test_force_nodes_into_more_menu_provider
      */
     public function test_force_nodes_into_more_menu(array $secondarynavnodesdata, array $defaultmoremenunodes,
-            array $expecedmoremenunodes) {
+            ?int $maxdisplayednodes, array $expecedmoremenunodes) {
         global $PAGE;
 
         // Create a dummy secondary navigation.
@@ -263,7 +264,7 @@ class secondary_test extends \advanced_testcase {
 
         $method = new ReflectionMethod('core\navigation\views\secondary', 'force_nodes_into_more_menu');
         $method->setAccessible(true);
-        $method->invoke($secondary, $defaultmoremenunodes);
+        $method->invoke($secondary, $defaultmoremenunodes, $maxdisplayednodes);
 
         $actualmoremenunodes = [];
         foreach ($secondary->children as $node) {
@@ -300,6 +301,7 @@ class secondary_test extends \advanced_testcase {
                         'navnode2',
                         'navnode4',
                     ],
+                    5,
                     [
                         'navnode2',
                         'navnode4',
@@ -321,6 +323,27 @@ class secondary_test extends \advanced_testcase {
                         'navnode2',
                         'navnode4',
                     ],
+                    5,
+                    [
+                        'navnode2',
+                        'navnode4',
+                    ],
+                ],
+            'The max display limit of navigation nodes is not defined; ' .
+            'navnode2 and navnode4 are forced into "more" menu by default.' =>
+                [
+                    [
+                        [ 'text' => 'Navigation node 1', 'key'  => 'navnode1'],
+                        [ 'text' => 'Navigation node 2', 'key'  => 'navnode2'],
+                        [ 'text' => 'Navigation node 3', 'key'  => 'navnode3'],
+                        [ 'text' => 'Navigation node 4', 'key'  => 'navnode4'],
+                        [ 'text' => 'Navigation node 5', 'key'  => 'navnode5'],
+                    ],
+                    [
+                        'navnode2',
+                        'navnode4',
+                    ],
+                    null,
                     [
                         'navnode2',
                         'navnode4',
@@ -340,6 +363,7 @@ class secondary_test extends \advanced_testcase {
                         [ 'text' => 'Navigation node 8', 'key'  => 'navnode8'],
                     ],
                     [],
+                    5,
                     [
                         'navnode6',
                         'navnode7',
@@ -358,9 +382,25 @@ class secondary_test extends \advanced_testcase {
                         [ 'text' => 'Navigation node 6', 'key'  => 'navnode6'],
                     ],
                     [],
+                    5,
                     [
                         'navnode6',
                     ],
+                ],
+            'The max display limit of navigation nodes is not defined; ' .
+            'no forced navigation nodes into "more" menu by default.' =>
+                [
+                    [
+                        [ 'text' => 'Navigation node 1', 'key'  => 'navnode1'],
+                        [ 'text' => 'Navigation node 2', 'key'  => 'navnode2'],
+                        [ 'text' => 'Navigation node 3', 'key'  => 'navnode3'],
+                        [ 'text' => 'Navigation node 4', 'key'  => 'navnode4'],
+                        [ 'text' => 'Navigation node 5', 'key'  => 'navnode5'],
+                        [ 'text' => 'Navigation node 6', 'key'  => 'navnode6'],
+                    ],
+                    [],
+                    null,
+                    [],
                 ],
         ];
     }
