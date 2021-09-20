@@ -20,16 +20,17 @@ Feature: Bulk released grades should not be sent to gradebook while submissions 
       | student1 | C1 | student |
       | student2 | C1 | student |
     # Add the assignment.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | Online text | 1 |
-      | File submissions | 0 |
-      | Use marking workflow | Yes |
-      | Anonymous submissions | Yes |
-    And I log out
+    And the following "activity" exists:
+      | activity | assign |
+      | course   | C1     |
+      | name     | Test assignment name |
+      | intro    | Test assignment description |
+      | assignsubmission_onlinetext_enabled | 1 |
+      | assignsubmission_file_enabled       | 0   |
+      | markingworkflow                     | 1 |
+      | blindmarking                        | 1 |
+      | assignfeedback_comments_enabled     | 1 |
+      | assignfeedback_editpdf_enabled      | 1 |
     # Add a submission.
     And I am on the "Test assignment name" "assign activity" page logged in as "student1"
     Then I should not see "Feedback"

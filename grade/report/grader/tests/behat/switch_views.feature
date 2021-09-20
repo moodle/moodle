@@ -17,17 +17,20 @@ Feature: We can change what we are viewing on the grader report
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name 1 |
-      | Description | Submit your online text |
+    And the following "activity" exists:
+      | activity | assign |
+      | course   | C1     |
+      | section  | 1      |
+      | name     | Test assignment name 1 |
+      | intro    | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name 2 |
-      | Description | Submit your online text |
+    And the following "activity" exists:
+      | activity | assign |
+      | course   | C1     |
+      | section  | 1      |
+      | name     | Test assignment name 2 |
+      | intro    | submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
-    And I log out
     And I am on the "Test assignment name 1" "assign activity" page logged in as student1
     When I press "Add submission"
     And I set the following fields to these values:

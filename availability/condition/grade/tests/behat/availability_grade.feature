@@ -21,13 +21,17 @@ Feature: availability_grade
   Scenario: Test condition
     # Basic setup.
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
     # Add an assignment.
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name     | A1 |
-      | Description         | x  |
-      | Online text         | 1  |
+    And the following "activity" exists:
+      | activity | assign |
+      | course   | C1     |
+      | section  | 1      |
+      | name     | A1     |
+      | intro    | x      |
+      | assignsubmission_onlinetext_enabled | 1 |
+
+    And I am on "Course 1" course homepage with editing mode on
 
     # Add a Page with a grade condition for 'any grade'.
     And I add a "Page" to section "2"

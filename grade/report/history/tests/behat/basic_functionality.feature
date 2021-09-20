@@ -21,14 +21,20 @@ Feature: A teacher checks the grade history report in a course
       | teacher2 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
+    And the following "activity" exists:
+      | activity | assign |
+      | course   | C1     |
+      | section  | 1      |
+      | name     | The greatest assignment ever |
+      | intro    | Write a behat test for Moodle - it's amazing |
+    And the following "activity" exists:
+      | activity | assign |
+      | course   | C1     |
+      | section  | 1      |
+      | name     | Rewarding assignment |
+      | intro    | After writing your behat test go grab a beer! |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | The greatest assignment ever |
-      | Description | Write a behat test for Moodle - it's amazing! |
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Rewarding assignment |
-      | Description | After writing your behat test go grab a beer! |
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "The greatest assignment ever"
