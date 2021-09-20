@@ -17,12 +17,17 @@ Feature: Rubrics can be created and edited
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity                          | assign                      |
+      | course                            | C1                          |
+      | section                           | 1                           |
+      | name                              | Test assignment 1 name      |
+      | intro                             | Test assignment description |
+      | assignfeedback_comments_enabled   | 1                           |
+      | assignfeedback_editpdf_enabled    | 1                           |
+      | advancedgradingmethod_submissions | rubric                      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment 1 name |
-      | Description | Test assignment description |
-      | Grading method | Rubric |
     When I go to "Test assignment 1 name" advanced grading definition page
     # Defining a rubric.
     And I set the following fields to these values:

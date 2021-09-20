@@ -4,20 +4,25 @@ Feature: Toggle activities visibility from the course page
   As a teacher
   I need to quickly change the visibility of an activity
 
+  Background:
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | format | numsections |
+      | Course 1 | C1        | topics | 2           |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+    And the following "activities" exist:
+      | activity | course | section | idnumber | name                 | intro                       | id_visible |
+      | assign   | C1     | 1       | 1        | Test assignment name | Test assignment description | 1          |
+
   @javascript
   Scenario: Hide/Show toggle with javascript enabled
-    Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
-      | student1 | Student | 1 | student1@example.com |
-    And the following "courses" exist:
-      | fullname | shortname | format |
-      | Course 1 | C1 | topics |
-    And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-    And the following "activity" exists:
+    Given the following "activity" exists:
       | activity | forum                  |
       | course   | C1                     |
       | idnumber | C1F1                   |
@@ -66,18 +71,7 @@ Feature: Toggle activities visibility from the course page
 
   @javascript
   Scenario: Activities can be made available and unavailable inside a hidden section
-    Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
-      | student1 | Student | 1 | student1@example.com |
-    And the following "courses" exist:
-      | fullname | shortname | format | numsections |
-      | Course 1 | C1 | topics | 2 |
-    And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-    And the following "activity" exists:
+    Given the following "activity" exists:
       | activity | forum                  |
       | course   | C1                     |
       | idnumber | C1F1                   |
@@ -125,26 +119,11 @@ Feature: Toggle activities visibility from the course page
 
   @javascript
   Scenario: Activities can be made available but not visible on a course page
-    Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
-      | student1 | Student | 1 | student1@example.com |
-    And the following "courses" exist:
-      | fullname | shortname | format | numsections |
-      | Course 1 | C1        | topics | 2           |
-    And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-    And the following config values are set as admin:
+    Given the following config values are set as admin:
       | allowstealth | 1 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
-    And I add a "Assignment" to section "2" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | Availability | Show on course page |
     When I open "Test assignment name" actions menu
     Then "Test assignment name" actions menu should not have "Show" item
     And "Test assignment name" actions menu should have "Hide" item
