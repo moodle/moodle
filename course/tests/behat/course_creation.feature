@@ -114,3 +114,27 @@ Feature: Managers can create courses
     And I press "Save and display"
     And I click on "Participants" "link"
     Then I should see "Non-editing teacher" in the "Kevin the" "table_row"
+
+  @javascript
+  Scenario: Create a course as admin
+    Given I log in as "admin"
+    And the following config values are set as admin:
+      | enroladminnewcourse | 0 |
+    And I navigate to "Courses > Add a new course" in site administration
+    And I set the following fields to these values:
+      | Course full name  | My first course |
+      | Course short name | myfirstcourse |
+    And I press "Save and display"
+    And I navigate to course participants
+    Then I should not see "Teacher"
+    And I should see "Nothing to display"
+    And the following config values are set as admin:
+      | enroladminnewcourse | 1 |
+    And I navigate to "Courses > Add a new course" in site administration
+    And I set the following fields to these values:
+      | Course full name  | My second course |
+      | Course short name | mysecondcourse |
+    And I press "Save and display"
+    And I navigate to course participants
+    And I should see "Teacher"
+    And I should not see "Nothing to display"
