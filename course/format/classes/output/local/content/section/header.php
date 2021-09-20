@@ -80,9 +80,12 @@ class header implements renderable, templatable {
             // Regular section title.
             $data->title = $output->section_title_without_link($section, $course);
             $data->issinglesection = true;
-        } else {
+        } else if ($section->uservisible) {
             // Regular section title.
             $data->title = $output->section_title($section, $course);
+        } else {
+            // Regular section title without link.
+            $data->title = $output->section_title_without_link($section, $course);
         }
 
         if (!$section->visible) {
@@ -92,7 +95,9 @@ class header implements renderable, templatable {
         $coursedisplay = $course->coursedisplay ?? COURSE_DISPLAY_SINGLEPAGE;
 
         if (!$format->show_editor() && $coursedisplay == COURSE_DISPLAY_MULTIPAGE && empty($data->issinglesection)) {
-            $data->url = course_get_url($course, $section->section);
+            if ($section->uservisible) {
+                $data->url = course_get_url($course, $section->section);
+            }
             $data->name = get_section_name($course, $section);
         }
 

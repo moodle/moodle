@@ -801,8 +801,7 @@ abstract class section_renderer extends core_course_renderer {
         $numsections = course_get_format($course)->get_last_section_number();
         while ($section <= $numsections) {
             $thissection = $modinfo->get_section_info($section);
-            $showsection = $thissection->uservisible or !$course->hiddensections;
-            if (($showsection) && ($section != $displaysection) && ($url = course_get_url($course, $section))) {
+            if (($thissection->uservisible) && ($section != $displaysection) && ($url = course_get_url($course, $section))) {
                 $sectionmenu[$url->out(false)] = get_section_name($course, $section);
             }
             $section++;
