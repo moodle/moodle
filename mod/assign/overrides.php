@@ -82,10 +82,13 @@ if ($action == 'movegroupoverride') {
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('overrides', 'assign'));
 $PAGE->set_heading($course->fullname);
+$activityheader = $PAGE->activityheader;
+$activityheader->set_attrs([
+    'description' => '',
+    'hidecompletion' => true,
+    'title' => $activityheader->is_title_allowed() ? format_string($assign->name, true, ['context' => $context]) : ""
+]);
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($assign->name, true, array('context' => $context)));
-}
 $overridemenu = new \mod_assign\output\override_actionmenu($url, $cm);
 $renderer = $PAGE->get_renderer('mod_assign');
 echo $renderer->render($overridemenu);
