@@ -152,6 +152,7 @@ class secondary extends view {
         $context = $this->context;
         $this->headertitle = get_string('menu');
         $defaultmoremenunodes = [];
+        $maxdisplayednodes = self::MAX_DISPLAYED_NAV_NODES;
 
         switch ($context->contextlevel) {
             case CONTEXT_COURSE:
@@ -173,6 +174,12 @@ class secondary extends view {
             case CONTEXT_SYSTEM:
                 $this->headertitle = get_string('homeheader');
                 $this->load_admin_navigation();
+                // If the site administration navigation was generated after load_admin_navigation().
+                if ($this->has_children()) {
+                    // Do not explicitly limit the number of navigation nodes displayed in the site administration
+                    // navigation menu.
+                    $maxdisplayednodes = null;
+                }
                 $defaultmoremenunodes = $this->get_default_admin_more_menu_nodes();
                 break;
         }
@@ -183,8 +190,8 @@ class secondary extends view {
         if ($this->children->count() == 1) {
             $this->children->remove('modulepage');
         }
-
-        $this->force_nodes_into_more_menu($defaultmoremenunodes);
+        // Force certain navigation nodes to be displayed in the "more" menu.
+        $this->force_nodes_into_more_menu($defaultmoremenunodes, $maxdisplayednodes);
         // Search and set the active node.
         $this->scan_for_active_node($this);
         $this->initialised = true;
