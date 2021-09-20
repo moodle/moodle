@@ -135,9 +135,12 @@ $PAGE->set_heading($course->fullname);
 if ($chapters = book_preload_chapters($book)) {
     book_add_fake_block($chapters, $chapter, $book, $cm);
 }
+$PAGE->activityheader->set_attrs([
+    "description" => '',
+    "hidecompletion" => true
+]);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($book->name));
 
 $mform->display();
 
