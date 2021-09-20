@@ -5,6 +5,8 @@ http://docs.moodle.org/dev/Repository_API
 
 === 4.0 ===
 * The repository_picasa has been completely removed (Picasa is discontinued since 2016).
+* The skydrive repository has been completely removed from core. It has been moved to the plugins database repository, so
+it can still be installed as a third-party plugin.
 
 === 3.11 ===
 * The Google Drive repository now includes a new rest API function 'shared_drives_list', which can be used to fetch
