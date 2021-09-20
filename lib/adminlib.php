@@ -3893,6 +3893,9 @@ class admin_setting_configduration extends admin_setting {
         if ($this->validatefunction) {
             return call_user_func($this->validatefunction, $data);
         } else {
+            if ($data < 0) {
+                return get_string('errorsetting', 'admin');
+            }
             return '';
         }
     }
@@ -3978,9 +3981,6 @@ class admin_setting_configduration extends admin_setting {
         }
 
         $seconds = (int)($data['v']*$data['u']);
-        if ($seconds < 0) {
-            return get_string('errorsetting', 'admin');
-        }
 
         // Validate the new setting.
         $error = $this->validate_setting($seconds);
