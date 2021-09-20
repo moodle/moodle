@@ -413,4 +413,138 @@ class renderer extends \plugin_renderer_base {
         $html .= html_writer::end_div();
         return $html;
     }
+
+    /**
+     * Creates the two tables which display on the usage page.
+     *
+     * @param array $usage Usage information (from cache_helper::usage)
+     * @return array Array of 2 tables (main and summary table)
+     * @throws \coding_exception
+     */
+    public function usage_tables(array $usage): array {
+        $table = new \html_table();
+        $table->id = 'usage_main';
+        $table->head = [
+            get_string('definition', 'cache'),
+            get_string('storename', 'cache'),
+            get_string('plugin', 'cache'),
+            get_string('usage_items', 'cache'),
+            get_string('usage_mean', 'cache'),
+            get_string('usage_sd', 'cache'),
+            get_string('usage_total', 'cache'),
+            get_string('usage_totalmargin', 'cache')];
+        $table->align = [
+            'left', 'left', 'left',
+            'right', 'right', 'right', 'right', 'right'
+        ];
+        $table->data = [];
+
+        $summarytable = new \html_table();
+        $summarytable->id = 'usage_summary';
+        $summarytable->head = [
+            get_string('storename', 'cache'),
+            get_string('plugin', 'cache'),
+            get_string('usage_total', 'cache'),
+            get_string('usage_realtotal', 'cache')
+        ];
+        $summarytable->align = [
+            'left', 'left',
+            'right', 'right',
+        ];
+        $summarytable->data = [];
+        $summarytable->attributes['class'] = 'generaltable w-auto';
+        $storetotals = [];
+
+        // We will highlight all cells that are more than 2% of total size, so work that out first.
+        $total = 0;
+        foreach ($usage as $definition) {
+            foreach ($definition->stores as $storedata) {
+                $total += $storedata->items * $storedata->mean;
+            }
+        }
+        $highlightover = round($total / 50);
+
+        foreach ($usage as $definition) {
+            foreach ($definition->stores as $storedata) {
+                $row = [];
+                $row[] = s($definition->cacheid);
+                $row[] = s($storedata->name);
+                $row[] = s($storedata->class);
+                if (!$storedata->supported) {
+                    // We don't have data for this store because it isn't searchable.
+                    $row[] = '-';
+                } else {
+                    $row[] = $storedata->items;
+                }
+                if ($storedata->items) {
+                    $row[] = display_size(round($storedata->mean));
+                    if ($storedata->items > 1) {
+                        $row[] = display_size(round($storedata->sd));
+                    } else {
+                        $row[] = '';
+                    }
+                    $cellsize = round($storedata->items * $storedata->mean);
+                    $row[] = display_size($cellsize, 1, 'MB');
+
+                    if (!array_key_exists($storedata->name, $storetotals)) {
+                        $storetotals[$storedata->name] = (object)[
+                            'plugin' => $storedata->class,
+                            'total' => 0,
+                            'storetotal' => $storedata->storetotal,
+                        ];
+                    }
+                    $storetotals[$storedata->name]->total += $cellsize;
+                } else {
+                    $row[] = '';
+                    $row[] = '';
+                    $cellsize = 0;
+                    $row[] = '';
+                }
+                if ($storedata->margin) {
+                    // Plus or minus.
+                    $row[] = '&#xb1;' . display_size($storedata->margin * $storedata->items, 1, 'MB');
+                } else {
+                    $row[] = '';
+                }
+                $htmlrow = new \html_table_row($row);
+                if ($cellsize > $highlightover) {
+                    $htmlrow->attributes = ['class' => 'table-warning'];
+                }
+                $table->data[] = $htmlrow;
+            }
+        }
+
+        ksort($storetotals);
+
+        foreach ($storetotals as $storename => $storedetails) {
+            $row = [s($storename), s($storedetails->plugin)];
+            $row[] = display_size($storedetails->total, 1, 'MB');
+            if ($storedetails->storetotal !== null) {
+                $row[] = display_size($storedetails->storetotal, 1, 'MB');
+            } else {
+                $row[] = '-';
+            }
+            $summarytable->data[] = $row;
+        }
+
+        return [$table, $summarytable];
+    }
+
+    /**
+     * Renders the usage page.
+     *
+     * @param \html_table $maintable Main table
+     * @param \html_table $summarytable Summary table
+     * @param \moodleform $samplesform Form to select number of samples
+     * @return string HTML for page
+     */
+    public function usage_page(\html_table $maintable, \html_table $summarytable, \moodleform $samplesform): string {
+        $data = [
+            'maintable' => \html_writer::table($maintable),
+            'summarytable' => \html_writer::table($summarytable),
+            'samplesform' => $samplesform->render()
+        ];
+
+        return $this->render_from_template('core_cache/usage', $data);
+    }
 }

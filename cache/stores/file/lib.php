@@ -784,4 +784,57 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         }
         return $return;
     }
+
+    /**
+     * Gets total size for the directory used by the cache store.
+     *
+     * @return int Total size in bytes
+     */
+    public function store_total_size(): ?int {
+        return get_directory_size($this->filestorepath);
+    }
+
+    /**
+     * Gets total size for a specific cache.
+     *
+     * With the file cache we can just look at the directory listing without having to
+     * actually load any files, so the $samplekeys parameter is ignored.
+     *
+     * @param int $samplekeys Unused
+     * @return stdClass Cache details
+     */
+    public function cache_size_details(int $samplekeys = 50): stdClass {
+        $result = (object)[
+            'supported' => true,
+            'items' => 0,
+            'mean' => 0,
+            'sd' => 0,
+            'margin' => 0
+        ];
+
+        // Find all the files in this cache.
+        $this->ensure_path_exists();
+        $files = glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT);
+        if ($files === false || count($files) === 0) {
+            return $result;
+        }
+
+        // Get the sizes and count of files.
+        $sizes = [];
+        foreach ($files as $file) {
+            $result->items++;
+            $sizes[] = filesize($file);
+        }
+
+        // Work out mean and standard deviation.
+        $total = array_sum($sizes);
+        $result->mean = $total / $result->items;
+        $squarediff = 0;
+        foreach ($sizes as $size) {
+            $squarediff += ($size - $result->mean) ** 2;
+        }
+        $squarediff /= $result->items;
+        $result->sd = sqrt($squarediff);
+        return $result;
+    }
 }
