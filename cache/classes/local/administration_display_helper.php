@@ -31,7 +31,7 @@
 namespace core_cache\local;
 
 defined('MOODLE_INTERNAL') || die();
-use cache_store, cache_factory, cache_config_writer, cache_helper, core_cache_renderer;
+use cache_store, cache_factory, cache_config_writer, cache_helper;
 
 /**
  * A cache helper for administration tasks
@@ -765,10 +765,10 @@ class administration_display_helper extends \core_cache\administration_helper {
     /**
      * Outputs the main admin page by generating it through the renderer.
      *
-     * @param core_cache_renderer $renderer the renderer to use to generate the page.
+     * @param \core_cache\output\renderer $renderer the renderer to use to generate the page.
      * @return string the HTML for the admin page.
      */
-    public function generate_admin_page(core_cache_renderer $renderer): string {
+    public function generate_admin_page(\core_cache\output\renderer $renderer): string {
         $context = \context_system::instance();
         $html = '';
 

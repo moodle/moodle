@@ -14,28 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The Cache renderer.
- *
- * This file is part of Moodle's cache API, affectionately called MUC.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_cache\output;
 
-defined('MOODLE_INTERNAL') || die();
+use cache_factory;
+use cache_store;
+use context;
+use core_collator;
+use html_table;
+use html_table_cell;
+use html_table_row;
+use html_writer;
+use lang_string;
+use moodle_url;
+use single_select;
 
 /**
  * The cache renderer (mainly admin interfaces).
  *
- * @package    core
- * @category   cache
+ * @package    core_cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_cache_renderer extends plugin_renderer_base {
+class renderer extends \plugin_renderer_base {
 
     /**
      * Displays store summaries.

@@ -400,8 +400,8 @@ abstract class administration_helper extends cache_helper {
     /**
      * This function must be implemented to display the cache admin page.
      *
-     * @param core_cache_renderer $renderer the renderer used to generate the page.
+     * @param \core_cache\output\renderer $renderer the renderer used to generate the page.
      * @return string the HTML for the page.
      */
-    public abstract function generate_admin_page(\core_cache_renderer $renderer): string;
+    abstract public function generate_admin_page(\core_cache\output\renderer $renderer): string;
 }
