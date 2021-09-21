@@ -84,6 +84,12 @@ $navlinks = array();
 $canexportsess = has_capability('mod/chat:exportsession', $context);
 $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
+$PAGE->activityheader->set_attrs([
+    'title' => '',
+    'description' => '',
+    'hidecompletion' => true,
+    'hideoverflow' => true,
+]);
 // Print a session if one has been specified.
 
 if ($start and $end and !$confirmdelete) {   // Show a full transcript.

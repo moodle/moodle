@@ -84,9 +84,6 @@ $PAGE->set_url('/mod/chat/view.php', array('id' => $cm->id));
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 
-// Print the page header.
-echo $OUTPUT->header();
-
 // Check to see if groups are being used here.
 $groupmode = groups_get_activity_groupmode($cm);
 $currentgroup = groups_get_activity_group($cm, true);
@@ -102,19 +99,8 @@ if ($currentgroup) {
     $groupparam = "";
 }
 
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($chat->name), 2);
-}
-
-// Render the activity information.
-$cminfo = cm_info::create($cm);
-$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
-
-if ($chat->intro) {
-    echo $OUTPUT->box(format_module_intro('chat', $chat, $cm->id), 'generalbox', 'intro');
-}
+// Print the page header.
+echo $OUTPUT->header();
 
 groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/view.php?id=$cm->id");
 
