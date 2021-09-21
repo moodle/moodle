@@ -85,6 +85,10 @@ $PAGE->set_url($url);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 $actionbar = new \mod_feedback\output\edit_action_bar($cm->id, $url, $lastposition);
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 
 //Adding the javascript module for the items dragdrop.
 if (count($feedbackitems) > 1) {

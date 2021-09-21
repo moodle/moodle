@@ -95,13 +95,14 @@ $strfeedback  = get_string("modulename", "feedback");
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->activityheader->set_attrs([
+    "hidecompletion" => true,
+    "description" => ''
+]);
 echo $OUTPUT->header();
 /** @var \mod_feedback\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_feedback');
 echo $renderer->main_action_bar($actionbar);
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($feedback->name));
-}
 
 /// Print the main part of the page
 ///////////////////////////////////////////////////////////////////////////

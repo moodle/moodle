@@ -63,6 +63,10 @@ if ($mode == 'manage') {
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->activityheader->set_attrs([
+    "hidecompletion" => true,
+    "description" => ''
+]);
 $actionbar = new \mod_feedback\output\edit_template_action_bar($cm->id, $templateid, $mode);
 /** @var \mod_feedback\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_feedback');
