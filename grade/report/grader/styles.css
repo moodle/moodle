@@ -137,14 +137,6 @@
     display: inline-block;
 }
 
-.path-grade-report-grader span.gradepass {
-    color: #298721;
-}
-
-.path-grade-report-grader span.gradefail {
-    color: #890d0d;
-}
-
 .path-grade-report-grader .gradeparent tr:nth-child(n) td.overridden:nth-child(n) {
     /* Made very specific to override the default stripped style of the table. */
     background-color: #efd9a4;
