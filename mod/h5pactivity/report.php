@@ -84,6 +84,7 @@ $event->trigger();
 $shortname = format_string($course->shortname, true, ['context' => $context]);
 $pagetitle = strip_tags($shortname.': '.format_string($moduleinstance->name));
 $PAGE->set_title(format_string($pagetitle));
+$PAGE->activityheader->disable();
 
 $navbar = [];
 if ($manager->can_view_all_attempts()) {
