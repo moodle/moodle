@@ -22,26 +22,32 @@
     Example context (json):
     {
         "sidebarmenucards": [{
-            "name": "General",
-            "items": [{
-                "name": "Manually added users",
-                "identifier": "core_reportbuilder:users"
+            "menucards": [{
+                "name": "General",
+                "items": [{
+                    "name": "Manually added users",
+                    "identifier": "core_reportbuilder:users"
+                }]
             }]
         }]
     }
 }}
 <div class="reportbuilder-sidebar-menu d-flex flex-column mr-md-3" data-region="sidebar-menu" id="region-sidebar-menu">
     <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text pr-0 bg-white">
-                {{#pix}} a/search, core {{/pix}}
-            </span>
-        </div>
-        <input type="text"
-               class="form-control border-left-0"
+        <label for="reportbuilder-sidebar-search">
+            <span class="sr-only">{{#str}} search, core_search {{/str}}</span>
+        </label>
+        <input id="reportbuilder-sidebar-search"
+               type="text"
+               class="form-control  border-right-0"
                placeholder="{{#str}} search, core_search {{/str}}"
                aria-label="{{#str}} search, core_search {{/str}}"
                data-action="sidebar-search">
+        <div class="input-group-append">
+            <span class="input-group-text pl-2 pr-0 bg-white">
+                {{#pix}} a/search, core {{/pix}}
+            </span>
+        </div>
     </div>
     <div class="reportbuilder-sidebar-menu-cards">
         {{#sidebarmenucards}}

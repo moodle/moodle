@@ -21,8 +21,20 @@
 
     Example context (json):
     {
-        "id": 3,
-        "filtersform": "form"
+        "conditions": [{
+            "hasavailableconditions": true,
+            "availableconditions": [{
+                "optiongroup": [{
+                    "text": "User",
+                    "values": [{
+                        "value": 1,
+                        "visiblename": "User name"
+                    }]
+                }]
+            }],
+            "hasactiveconditions": true,
+            "activeconditionsform": "form"
+        }]
     }
 }}
 

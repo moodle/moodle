@@ -24,11 +24,63 @@
         "id": 1,
         "source": "some\\class\\name",
         "table": "table",
+        "editmode": true,
+        "showeditbutton": true,
         "sidebarmenucards": [{
-            "name": "General",
-            "items": [{
-                "name": "Manually added users",
-                "identifier": "core_reportbuilder:users"
+            "menucards": [{
+                "name": "General",
+                "items": [{
+                    "name": "Manually added users",
+                    "identifier": "core_reportbuilder:users"
+                }]
+            }]
+        }],
+        "conditions": [{
+            "hasavailableconditions": true,
+            "availableconditions": [{
+                "optiongroup": [{
+                    "text": "User",
+                    "values": [{
+                        "value": 1,
+                        "visiblename": "User name"
+                    }]
+                }]
+            }],
+            "hasactiveconditions": true,
+            "activeconditionsform": "form"
+        }],
+        "filters": [{
+            "hasavailablefilters": true,
+            "availablefilters": [{
+                "optiongroup": [{
+                    "text": "User",
+                    "values": [{
+                        "value": 1,
+                        "visiblename": "User name"
+                    }]
+                }]
+            }],
+            "hasactivefilters": true,
+            "activefilters": [{
+                "heading": "Email address",
+                "entityname": "user",
+                "headingeditable": "Email address"
+            }]
+        }],
+        "sorting": [{
+            "hassortablecolumns": true,
+            "sortablecolumns": [{
+                "id": 1,
+                "title": "Email address",
+                "sortdirection": "4",
+                "sortenabled": true,
+                "sortorder": 1,
+                "sorticon": [{
+                    "key": "t/uplong",
+                    "component": "core",
+                    "title": "Sort column 'Email address' ascending"
+                }],
+                "heading": "Email address"
             }]
         }]
     }
@@ -36,7 +88,7 @@
 <div data-region="core_reportbuilder/report"
      data-report-id="{{id}}"
      data-source="{{source}}"
-     id="core-reportbuilder-{{uniqid}}">
+     data-parameter="[]">
     <div class="reportbuilder-wrapper d-flex flex-column flex-md-row">
         {{#editmode}}
             <!-- Sidebar -->
@@ -48,7 +100,7 @@
                 <div data-region="core_reportbuilder/report-header" class="dropdown d-flex justify-content-end">
                     <!-- Preview/Edit button -->
                     {{#showeditbutton}}
-                        <button data-action="toggle-edit-preview" data-edit-mode="{{editmode}}" class="btn btn-secondary mr-2"
+                        <button data-action="toggle-edit-preview" data-edit-mode="{{editmode}}" class="btn btn-outline-secondary mr-2"
                                 title="{{#editmode}}{{#str}} switchpreview, core_reportbuilder {{/str}}{{/editmode}}{{^editmode}}{{#str}} switchedit, core_reportbuilder {{/str}}{{/editmode}}">
                             {{#editmode}}
                                 {{#pix}} i/preview, core,  {{/pix}}
@@ -62,7 +114,7 @@
                     {{/showeditbutton}}
                     <!-- Settings/Filters button -->
                     {{#editmode}}
-                        <button id="report-settings-collapse" data-toggle="collapse" data-target="#report-settings" class="btn btn-secondary"
+                        <button id="report-settings-collapse" data-toggle="collapse" data-target="#report-settings" class="btn btn-outline-secondary collapsed"
                                 title="{{#str}} reportsettingstoggle, core_reportbuilder {{/str}}">
                             <i class="icon fa fa-sliders" aria-hidden="true"></i>
                             {{#str}} settings, moodle {{/str}}
@@ -82,7 +134,8 @@
             </div>
         </div>
         <!-- Settings sidebar -->
-        {{> core_reportbuilder/local/settings/area}}    </div>
+        {{> core_reportbuilder/local/settings/area}}
+    </div>
 </div>
 
 {{#js}}

@@ -21,8 +21,24 @@
 
     Example context (json):
     {
-        "id": 3,
-        "filtersform": "form"
+        "filters": [{
+            "hasavailablefilters": true,
+            "availablefilters": [{
+                "optiongroup": [{
+                    "text": "User",
+                    "values": [{
+                        "value": 1,
+                        "visiblename": "User name"
+                    }]
+                }]
+            }],
+            "hasactivefilters": true,
+            "activefilters": [{
+                "heading": "Email address",
+                "entityname": "user",
+                "headingeditable": "Email address"
+            }]
+        }]
     }
 }}
 
