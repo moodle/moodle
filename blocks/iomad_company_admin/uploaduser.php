@@ -778,7 +778,7 @@ if ($mform->is_cancelled()) {
                     \core\event\user_updated::create_from_userid($existinguser->id)->trigger();
      
                     // Is the company department valid?
-                    if (!$passeddepartment && !empty($existinguser->department)) {
+                    if ($passeddepartment && !empty($existinguser->department)) {
                         if (!$department = $DB->get_record('department', array('company' => $company->id,
                                                                                'shortname' => $existinguser->department))) {
                             $upt->track('department', get_string('invaliddepartment', 'block_iomad_company_admin'), 'error');
@@ -977,8 +977,66 @@ if ($mform->is_cancelled()) {
                         $ccache[$shortname] = $course;
                         $ccache[$shortname]->groups = null;
                     }
-                    company_user::enrol($user, $ccache[$shortname], $companyid);
+                    company_user::enrol($user, $ccache[$shortname]->id, $companyid);
+                    $coursecontext = context_course::instance($ccache[$shortname]->id);
+
+                    // find group to add to
+                    if (!empty($user->{'group'.$i})) {
+                        // make sure user is enrolled into course before adding into groups
+                        if (!is_enrolled($coursecontext, $user->id)) {
+                            $upt->track('enrolments', get_string('addedtogroupnotenrolled', '', $user->{'group'.$i}), 'error');
+                            continue;
+                        }
+                        //build group cache
+                        if (is_null($ccache[$shortname]->groups)) {
+                            $ccache[$shortname]->groups = array();
+                            if ($groups = groups_get_all_groups($courseid)) {
+                                foreach ($groups as $gid=>$group) {
+                                    $ccache[$shortname]->groups[$gid] = new stdClass();
+                                    $ccache[$shortname]->groups[$gid]->id   = $gid;
+                                    $ccache[$shortname]->groups[$gid]->name = $group->name;
+                                    if (!is_numeric($group->name)) { // only non-numeric names are supported!!!
+                                        $ccache[$shortname]->groups[$group->name] = new stdClass();
+                                        $ccache[$shortname]->groups[$group->name]->id   = $gid;
+                                        $ccache[$shortname]->groups[$group->name]->name = $group->name;
+                                    }
+                                }
+                            }
+                        }
+                        // group exists?
+                        $addgroup = $user->{'group'.$i};
+                        if (!array_key_exists($addgroup, $ccache[$shortname]->groups)) {
+                            // if group doesn't exist,  create it
+                            $newgroupdata = new stdClass();
+                            $newgroupdata->name = $addgroup;
+                            $newgroupdata->courseid = $ccache[$shortname]->id;
+                            $newgroupdata->description = '';
+                            $gid = groups_create_group($newgroupdata);
+                            if ($gid){
+                                $ccache[$shortname]->groups[$addgroup] = new stdClass();
+                                $ccache[$shortname]->groups[$addgroup]->id   = $gid;
+                                $ccache[$shortname]->groups[$addgroup]->name = $newgroupdata->name;
+                            } else {
+                                $upt->track('enrolments', get_string('unknowngroup', 'error', s($addgroup)), 'error');
+                                continue;
+                            }
+                        }
+                        $gid   = $ccache[$shortname]->groups[$addgroup]->id;
+                        $gname = $ccache[$shortname]->groups[$addgroup]->name;
+
+                        try {
+                            if (groups_add_member($gid, $user->id)) {
+                                $upt->track('enrolments', get_string('addedtogroup', '', s($gname)));
+                            }  else {
+                                $upt->track('enrolments', get_string('addedtogroupnot', '', s($gname)), 'error');
+                            }
+                        } catch (moodle_exception $e) {
+                            $upt->track('enrolments', get_string('addedtogroupnot', '', s($gname)), 'error');
+                            continue;
+                        }
+                    }
                 }
+
                 if (!empty($formdata->selectedcourses)) {
                     // add the user to the courses selected in the upload form.
                     $courseids = array();
