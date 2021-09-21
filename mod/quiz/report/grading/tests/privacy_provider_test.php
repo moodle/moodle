@@ -73,6 +73,31 @@ class quiz_grading_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(42, $preferences->pagesize->value);
 
         $this->assertNotEmpty($preferences->order);
-        $this->assertEquals('Randomly', $preferences->order->value);
+        $this->assertEquals('Random', $preferences->order->value);
+    }
+
+    /**
+     * Preference does exist using user custom fields.
+     */
+    public function test_preference_bool_true_for_user_customfields() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $customfields = ['username', 'idnumber', 'email', 'profile_field_frog'];
+        foreach ($customfields as $customfield) {
+            set_user_preference('quiz_grading_order', $customfield);
+
+            provider::export_user_preferences($USER->id);
+
+            $writer = writer::with_context(\context_system::instance());
+            $this->assertTrue($writer->has_any_data());
+
+            $preferences = $writer->get_user_preferences('quiz_grading');
+
+            $this->assertNotEmpty($preferences->order);
+            $this->assertEquals(\core_user\fields::get_display_name($customfield), $preferences->order->value);
+        }
     }
 }
