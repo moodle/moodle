@@ -83,11 +83,8 @@ if (!empty($id)) {
 $PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab('modulepage');
+$PAGE->activityheader->set_hidecompletion(true);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($glossary->name), 2);
-if ($glossary->intro) {
-    echo $OUTPUT->box(format_module_intro('glossary', $glossary, $cm->id), 'generalbox', 'intro');
-}
 
 $data = new StdClass();
 $data->tags = core_tag_tag::get_item_tags_array('mod_glossary', 'glossary_entries', $id);

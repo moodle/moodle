@@ -50,6 +50,7 @@ $PAGE->navbar->add($strimportentries);
 $PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab('modulepage');
+$PAGE->activityheader->disable();
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strimportentries);

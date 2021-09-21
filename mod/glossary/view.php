@@ -297,23 +297,24 @@ if ($tab == GLOSSARY_APPROVAL_VIEW) {
     require_capability('mod/glossary:approve', $context);
     $PAGE->navbar->add($strwaitingapproval);
 }
-echo $OUTPUT->header();
-$hassecondary = $PAGE->has_secondary_navigation();
 
-if (!$hassecondary) {
-    if ($tab == GLOSSARY_APPROVAL_VIEW) {
-        echo $OUTPUT->heading($strwaitingapproval);
-    }
-    echo $OUTPUT->heading(format_string($glossary->name), 2);
+$hassecondary = $PAGE->has_secondary_navigation();
+if ($tab == GLOSSARY_APPROVAL_VIEW && !$hassecondary &&  $PAGE->activityheader->is_title_allowed()) {
+    $PAGE->activityheader->set_title(
+        $OUTPUT->heading($strwaitingapproval) .
+        $OUTPUT->heading(format_string($glossary->name))
+    );
 }
 
-// Render the activity information.
-$completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
-echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
+if ($tab == GLOSSARY_APPROVAL_VIEW || !($glossary->intro && $showcommonelements)) {
+    $PAGE->activityheader->set_description('');
+}
+
+echo $OUTPUT->header();
 if ($showcommonelements) {
     echo $renderer->main_action_bar($actionbar);
 }
+
 /// All this depends if whe have $showcommonelements
 if ($showcommonelements) {
 /// To calculate available options
@@ -366,11 +367,6 @@ if ($showcommonelements) {
     echo '</div><br />';
 
 //        print_box('&nbsp;', 'clearer');
-}
-
-/// Info box
-if ($glossary->intro && $showcommonelements) {
-    echo $OUTPUT->box(format_module_intro('glossary', $glossary, $cm->id), 'generalbox', 'intro');
 }
 
 require("tabs.php");
