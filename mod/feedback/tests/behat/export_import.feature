@@ -19,6 +19,7 @@ Feature: Exporting and importing feedbacks
     And the following "activities" exist:
       | activity   | name                | course | idnumber    |
       | feedback   | Learning experience | C1     | feedback0   |
+    And I change window size to "large"
 
   Scenario: Export sample feedback and compare with the fixture
     When I am on the "Learning experience" "feedback activity" page logged in as teacher
