@@ -93,6 +93,9 @@ const showModal = (dynamicTable, contextId) => {
         large: true,
         title: Str.get_string('enrolusers', 'enrol_manual'),
         body: getBodyForContext(contextId),
+        buttons: {
+            save: Str.get_string('enrolusers', 'enrol_manual'),
+        }
     })
     .then(modal => {
         modal.getRoot().on(ModalEvents.save, e => {
@@ -114,25 +117,19 @@ const showModal = (dynamicTable, contextId) => {
             modal.destroy();
         });
 
-        return modal;
-    })
-    .then(modal => {
         modal.show();
 
         return modal;
     })
+    .then(modal => Promise.all([modal, modal.getBodyPromise()]))
+    .then(([modal, body]) => {
+        if (body.get(0).querySelector(Selectors.cohortSelector)) {
+            return modal.setSaveButtonText(Str.get_string('enroluserscohorts', 'enrol_manual')).then(() => modal);
+        }
+
+        return modal;
+    })
     .then(modal => {
-        modal.setSaveButtonText(Str.get_string('enrolusers', 'enrol_manual'));
-
-        modal.getBodyPromise().then(body => {
-            if (body.get(0).querySelector(Selectors.cohortSelector)) {
-                modal.setSaveButtonText(Str.get_string('enroluserscohorts', 'enrol_manual'));
-            }
-
-            return body;
-        })
-        .catch();
-
         pendingPromise.resolve();
 
         return modal;
