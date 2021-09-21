@@ -107,6 +107,7 @@ $PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
+$PAGE->activityheader->disable();
 $PAGE->navbar->add(get_string('nodetitle', 'forumreport_summary'));
 
 // Activate the secondary nav tab.
