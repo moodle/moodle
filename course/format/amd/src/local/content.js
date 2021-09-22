@@ -25,6 +25,8 @@
 import {BaseComponent} from 'core/reactive';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 import inplaceeditable from 'core/inplace_editable';
+import Section from 'core_courseformat/local/content/section';
+import CmItem from 'core_courseformat/local/content/section/cmitem';
 // Course actions is needed for actions that are not migrated to components.
 import courseActions from 'core_course/actions';
 
@@ -39,8 +41,7 @@ export default class Component extends BaseComponent {
         // Default query selectors.
         this.selectors = {
             SECTION: `[data-for='section']`,
-            SECTION_ITEM: `[data-for='section_item']`,
-            SECTION_TITLE: `[data-for='section_title']`,
+            SECTION_ITEM: `[data-for='section_title']`,
             SECTION_CMLIST: `[data-for='cmlist']`,
             COURSE_SECTIONLIST: `[data-for='course_sectionlist']`,
             CM: `[data-for='cmitem']`,
@@ -48,6 +49,9 @@ export default class Component extends BaseComponent {
         // Array to save dettached elements during element resorting.
         this.dettachedCms = {};
         this.dettachedSections = {};
+        // Index of sections and cms components.
+        this.sections = {};
+        this.cms = {};
     }
 
     /**
@@ -63,6 +67,19 @@ export default class Component extends BaseComponent {
             reactive: getCurrentCourseEditor(),
             selectors,
         });
+    }
+
+    /**
+     * Initial state ready method.
+     *
+     * Course content elements could not provide JS Components because the elements HTML is applied
+     * directly from the course actions. To keep internal components updated this module keeps
+     * a list of the active components and mark them as "indexed". This way when any action replace
+     * the HTML this component will recreate the components an add any necessary event listener.
+     *
+     */
+    stateReady() {
+        this._indexContents();
     }
 
     /**
@@ -84,6 +101,11 @@ export default class Component extends BaseComponent {
             {watch: `transaction:start`, handler: this._startProcessing},
             {watch: `course.sectionlist:updated`, handler: this._refreshCourseSectionlist},
             {watch: `section.cmlist:updated`, handler: this._refreshSectionCmlist},
+            // Reindex sections and cms.
+            {watch: `state:updated`, handler: this._indexContents},
+            // State changes thaty require to reload course modules.
+            {watch: `cm.visible:updated`, handler: this._reloadCm},
+            {watch: `cm.sectionid:updated`, handler: this._reloadCm},
         ];
     }
 
@@ -144,7 +166,7 @@ export default class Component extends BaseComponent {
         target.dataset.number = element.number;
 
         // Update title and title inplace editable, if any.
-        const inplace = inplaceeditable.getInplaceEditable(target.querySelector(this.selectors.SECTION_TITLE));
+        const inplace = inplaceeditable.getInplaceEditable(target.querySelector(this.selectors.SECTION_ITEM));
         if (inplace) {
             // The course content HTML can be modified at any moment, so the function need to do some checkings
             // to make sure the inplace editable still represents the same itemid.
@@ -188,6 +210,77 @@ export default class Component extends BaseComponent {
     }
 
     /**
+     * Regenerate content indexes.
+     *
+     * This method is used when a legacy action refresh some content element.
+     */
+    _indexContents() {
+        // Find unindexed sections.
+        this._scanIndex(
+            this.selectors.SECTION,
+            this.sections,
+            (item) => {
+                return new Section(item);
+            }
+        );
+
+        // Find unindexed cms.
+        this._scanIndex(
+            this.selectors.CM,
+            this.cms,
+            (item) => {
+                return new CmItem(item);
+            }
+        );
+    }
+
+    /**
+     * Reindex a content (section or cm) of the course content.
+     *
+     * This method is used internally by _indexContents.
+     *
+     * @param {string} selector the DOM selector to scan
+     * @param {*} index the index attribute to update
+     * @param {*} creationhandler method to create a new indexed element
+     */
+    _scanIndex(selector, index, creationhandler) {
+        const items = this.getElements(`${selector}:not([data-indexed])`);
+        items.forEach((item) => {
+            if (!item?.dataset?.id) {
+                return;
+            }
+            // Delete previous item component.
+            if (index[item.dataset.id] !== undefined) {
+                index[item.dataset.id].unregister();
+            }
+            // Create the new component.
+            index[item.dataset.id] = creationhandler({
+                ...this,
+                element: item,
+            });
+            // Mark as indexed.
+            item.dataset.indexed = true;
+        });
+    }
+
+    /**
+     * Reload a course module contents.
+     *
+     * @param {details} param0 the watcher details
+     * @property {object} param0.element the state object
+     */
+    _reloadCm({element}) {
+        const cmitem = this.getElement(this.selectors.CM, element.id);
+        if (cmitem) {
+            const promise = courseActions.refreshModule(cmitem, element.id);
+            promise.then(() => {
+                this._indexContents();
+                return;
+            }).catch();
+        }
+    }
+
+    /**
      * Fix/reorder the section or cms order.
      *
      * @param {Element} container the HTML element to reorder.
@@ -220,11 +313,23 @@ export default class Component extends BaseComponent {
                 container.insertBefore(item, currentitem);
             }
         });
+
+        // Dndupload add a fake element we need to keep.
+        let dndFakeActivity;
+
         // Remove the remaining elements.
         while (container.children.length > neworder.length) {
             const lastchild = container.lastChild;
-            dettachedelements[lastchild?.dataset?.id ?? 0] = lastchild;
+            if (lastchild.classList.contains('dndupload-preview')) {
+                dndFakeActivity = lastchild;
+            } else {
+                dettachedelements[lastchild?.dataset?.id ?? 0] = lastchild;
+            }
             container.removeChild(lastchild);
+        }
+        // Restore dndupload fake element.
+        if (dndFakeActivity) {
+            container.append(dndFakeActivity);
         }
     }
 }

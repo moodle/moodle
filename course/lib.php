@@ -3200,32 +3200,37 @@ function course_ajax_enabled($course) {
 function include_course_ajax($course, $usedmodules = array(), $enabledmodules = null, $config = null) {
     global $CFG, $PAGE, $SITE;
 
+    // Init the course editor module to support UI components.
+    $format = course_get_format($course);
+    include_course_editor($format);
+
     // Ensure that ajax should be included
     if (!course_ajax_enabled($course)) {
         return false;
     }
 
-    if (!$config) {
-        $config = new stdClass();
-    }
+    // Component based formats don't use YUI drag and drop anymore.
+    if (!$format->supports_components() && course_format_uses_sections($course->format)) {
 
-    // The URL to use for resource changes
-    if (!isset($config->resourceurl)) {
-        $config->resourceurl = '/course/rest.php';
-    }
+        if (!$config) {
+            $config = new stdClass();
+        }
 
-    // The URL to use for section changes
-    if (!isset($config->sectionurl)) {
-        $config->sectionurl = '/course/rest.php';
-    }
+        // The URL to use for resource changes
+        if (!isset($config->resourceurl)) {
+            $config->resourceurl = '/course/rest.php';
+        }
 
-    // Any additional parameters which need to be included on page submission
-    if (!isset($config->pageparams)) {
-        $config->pageparams = array();
-    }
+        // The URL to use for section changes
+        if (!isset($config->sectionurl)) {
+            $config->sectionurl = '/course/rest.php';
+        }
 
-    // Include course dragdrop
-    if (course_format_uses_sections($course->format)) {
+        // Any additional parameters which need to be included on page submission
+        if (!isset($config->pageparams)) {
+            $config->pageparams = array();
+        }
+
         $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.course.init_section_dragdrop',
             array(array(
                 'courseid' => $course->id,
@@ -3856,7 +3861,7 @@ function core_course_core_calendar_get_valid_event_timestart_range(\calendar_eve
 }
 
 /**
- * Render the main course drawer to be included in the left part of the page.
+ * Render the message drawer to be included in the top of the body of each page.
  *
  * @return string HTML
  */

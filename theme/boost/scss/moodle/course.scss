@@ -232,6 +232,17 @@ body:not(.editing)  .sitetopic ul.section {
     }
 }
 
+.course-content .section.dropready {
+
+    &.main.drop-down {
+        border-bottom: 2px solid $dropzone-border;
+    }
+
+    li.activity.dropready.drop-down {
+        border-bottom: 2px solid $dropzone-border;
+    }
+}
+
 .section .activity .activityinstance .groupinglabel {
     padding-left: 30px;
 }
@@ -354,7 +365,7 @@ body:not(.editing)  .sitetopic ul.section {
     list-style: none;
 
     li.section {
-        margin-top: $spacer;
+        padding-top: $spacer;
         padding-bottom: $spacer;
         .content {
             margin: 0;
