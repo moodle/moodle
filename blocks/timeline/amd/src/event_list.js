@@ -124,10 +124,9 @@ function(
      * Each day timestamp is the day's midnight in the user's timezone.
      *
      * @param {array} calendarEvents List of calendar events
-     * @param {Number} midnight A timestamp representing midnight in the user's timezone
      * @return {object}
      */
-    var buildTemplateContext = function(calendarEvents, midnight) {
+    var buildTemplateContext = function(calendarEvents) {
         var eventsByDay = {};
         var templateContext = {
             courseview,
@@ -146,7 +145,6 @@ function(
         Object.keys(eventsByDay).forEach(function(dayTimestamp) {
             var events = eventsByDay[dayTimestamp];
             templateContext.eventsbyday.push({
-                past: dayTimestamp < midnight,
                 dayTimestamp: dayTimestamp,
                 events: events
             });
@@ -159,11 +157,10 @@ function(
      * Render the HTML for the given calendar events.
      *
      * @param {array} calendarEvents  A list of calendar events
-     * @param {Number} midnight A timestamp representing midnight for the user
      * @return {promise} Resolved with HTML and JS strings.
      */
-    var render = function(calendarEvents, midnight) {
-        var templateContext = buildTemplateContext(calendarEvents, midnight);
+    var render = function(calendarEvents) {
+        var templateContext = buildTemplateContext(calendarEvents);
         var templateName = TEMPLATES.EVENT_LIST_CONTENT;
 
         return Templates.render(templateName, templateContext);
@@ -378,7 +375,7 @@ function(
                                     // Record the id that the next page will need to start from.
                                     lastIds[pageNumber + 1] = lastEventId;
                                     // Get the HTML and JS for these calendar events.
-                                    return render(calendarEvents, midnight);
+                                    return render(calendarEvents);
                                 } else {
                                     return calendarEvents;
                                 }
