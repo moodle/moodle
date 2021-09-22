@@ -177,20 +177,14 @@ trait core_behat_file_helper {
      * @return void
      */
     protected function open_add_file_window($filemanagernode, $repositoryname) {
-
         $exception = new ExpectationException('No files can be added to the specified filemanager', $this->getSession());
 
         // We should deal with single-file and multiple-file filemanagers,
         // catching the exception thrown by behat_base::find() in case is not multiple
-        try {
-            // Looking for the add button inside the specified filemanager.
-            $add = $this->find('css', 'div.fp-btn-add a', $exception, $filemanagernode);
-        } catch (Exception $e) {
-            // Otherwise should be a single-file filepicker form element.
-            $add = $this->find('css', 'input.fp-btn-choose', $exception, $filemanagernode);
-        }
-        $this->ensure_node_is_visible($add);
-        $add->click();
+        $this->execute('behat_general::i_click_on_in_the', [
+            'div.fp-btn-add a, input.fp-btn-choose', 'css_element',
+            $filemanagernode, 'NodeElement'
+        ]);
 
         // Wait for the default repository (if any) to load. This checks that
         // the relevant div exists and that it does not include the loading image.
@@ -220,7 +214,7 @@ trait core_behat_file_helper {
         if (!$repositorylink->getParent()->getParent()->hasClass('active')) {
             // If the repository link is active, then the repository is already loaded.
             // Clicking it while it's active causes issues, so only click it when it isn't (see MDL-51014).
-            $repositorylink->click();
+            $this->execute('behat_general::i_click_on', [$repositorylink, 'NodeElement']);
         }
     }
 
