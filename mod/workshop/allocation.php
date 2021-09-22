@@ -48,6 +48,10 @@ require_capability('mod/workshop:allocate', $context);
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('allocation', 'workshop'), $workshop->allocation_url($method));
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 
 $allocator  = $workshop->allocator_instance($method);
 $initresult = $allocator->init();
@@ -59,10 +63,6 @@ $actionbar = new \mod_workshop\output\actionbar($url, $workshop);
 
 $output = $PAGE->get_renderer('mod_workshop');
 echo $output->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($workshop->name));
-}
-
 echo $actionbar->get_allocation_menu();
 
 if (is_null($initresult->get_status()) or $initresult->get_status() == workshop_allocation_result::STATUS_VOID) {

@@ -97,20 +97,18 @@ if ($eval) {
     redirect($PAGE->url);
 }
 
+$heading = $OUTPUT->heading_with_help(format_string($workshop->name), 'userplan', 'workshop');
+$heading = preg_replace('/<h2[^>]*>([.\s\S]*)<\/h2>/', '$1', $heading);
+$PAGE->activityheader->set_attrs([
+    'title' => $PAGE->activityheader->is_title_allowed() ? $heading : "",
+    'description' => ''
+]);
+
 $output = $PAGE->get_renderer('mod_workshop');
 
 /// Output starts here
 
 echo $output->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $output->heading_with_help(format_string($workshop->name), 'userplan', 'workshop');
-}
-
-// Display any activity information (eg completion requirements / dates).
-$cminfo = cm_info::create($cm);
-$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-echo $output->activity_information($cminfo, $completiondetails, $activitydates);
 
 // Output action buttons here.
 switch ($workshop->phase) {
