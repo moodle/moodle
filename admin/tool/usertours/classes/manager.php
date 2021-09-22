@@ -370,6 +370,7 @@ class manager {
             $tour->set_description($data->description);
             $tour->set_pathmatch($data->pathmatch);
             $tour->set_enabled(!empty($data->enabled));
+            $tour->set_endtourlabel($data->endtourlabel);
 
             foreach (configuration::get_defaultable_keys() as $key) {
                 $tour->set_config($key, $data->$key);

@@ -60,3 +60,21 @@ Feature: Steps can be navigated within a tour
     And I should see "Next"
     And I click on "Next" "button"
     And I should see "End tour"
+
+  @javascript
+  Scenario: Customised 'end tour' button text for one step tours
+    Given I log in as "admin"
+    And I add a new user tour with:
+      | Name                    | Calendar tour |
+      | Description             | Calendar tour |
+      | Apply to URL match      | /my/%         |
+      | Tour is enabled         | 1             |
+      | End tour button's label | CustomText    |
+    And I add steps to the "Calendar tour" tour:
+      | targettype   | Block        | Title             | Content |
+      | Block        | Calendar     | Calendar events   | This is the calendar block |
+    And I change window size to "large"
+    And I follow "Dashboard" in the user menu
+    And I wait until the page is ready
+    And I should see "This is the calendar block"
+    Then I should see "CustomText"
