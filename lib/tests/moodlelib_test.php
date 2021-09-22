@@ -2743,7 +2743,8 @@ EOF;
         $modulebytes = 10240;
         $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
 
-        $this->assertSame('Activity upload limit (10KB)', $result['0']);
+        $nbsp = "\xc2\xa0";
+        $this->assertSame("Activity upload limit (10{$nbsp}KB)", $result['0']);
         $this->assertCount(2, $result);
 
         // Test course limit smallest.
@@ -2752,7 +2753,7 @@ EOF;
         $modulebytes = 51200;
         $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
 
-        $this->assertSame('Course upload limit (10KB)', $result['0']);
+        $this->assertSame("Course upload limit (10{$nbsp}KB)", $result['0']);
         $this->assertCount(2, $result);
 
         // Test site limit smallest.
@@ -2761,7 +2762,7 @@ EOF;
         $modulebytes = 51200;
         $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
 
-        $this->assertSame('Site upload limit (10KB)', $result['0']);
+        $this->assertSame("Site upload limit (10{$nbsp}KB)", $result['0']);
         $this->assertCount(2, $result);
 
         // Test site limit not set.
@@ -2770,7 +2771,7 @@ EOF;
         $modulebytes = 51200;
         $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
 
-        $this->assertSame('Activity upload limit (50KB)', $result['0']);
+        $this->assertSame("Activity upload limit (50{$nbsp}KB)", $result['0']);
         $this->assertCount(3, $result);
 
         $sitebytes = 0;
@@ -2778,7 +2779,7 @@ EOF;
         $modulebytes = 102400;
         $result = get_max_upload_sizes($sitebytes, $coursebytes, $modulebytes);
 
-        $this->assertSame('Course upload limit (50KB)', $result['0']);
+        $this->assertSame("Course upload limit (50{$nbsp}KB)", $result['0']);
         $this->assertCount(3, $result);
 
         // Test custom bytes in range.
@@ -2821,9 +2822,9 @@ EOF;
         $sitebytes = 51200;
         $result = get_max_upload_sizes($sitebytes);
 
-        $this->assertSame('Site upload limit (50KB)', $result['0']);
-        $this->assertSame('50KB', $result['51200']);
-        $this->assertSame('10KB', $result['10240']);
+        $this->assertSame("Site upload limit (50{$nbsp}KB)", $result['0']);
+        $this->assertSame("50{$nbsp}KB", $result['51200']);
+        $this->assertSame("10{$nbsp}KB", $result['10240']);
         $this->assertCount(3, $result);
 
         // Test no limit.
@@ -4987,25 +4988,25 @@ EOF;
     public function display_size_provider() {
 
         return [
-            [0,     '0 bytes'    ],
-            [1,     '1 bytes'    ],
-            [1023,  '1023 bytes' ],
-            [1024,      '1KB'    ],
-            [2222,      '2.2KB'  ],
-            [33333,     '32.6KB' ],
-            [444444,    '434KB'  ],
-            [5555555,       '5.3MB'  ],
-            [66666666,      '63.6MB' ],
-            [777777777,     '741.7MB'],
-            [8888888888,        '8.3GB'  ],
-            [99999999999,       '93.1GB' ],
-            [111111111111,      '103.5GB'],
-            [2222222222222,         '2TB'    ],
-            [33333333333333,        '30.3TB' ],
-            [444444444444444,       '404.2TB'],
-            [5555555555555555,          '4.9PB'  ],
-            [66666666666666666,         '59.2PB' ],
-            [777777777777777777,        '690.8PB'],
+            [0, '0 bytes'],
+            [1, '1 bytes'],
+            [1023, '1023 bytes'],
+            [1024, '1.0 KB'],
+            [2222, '2.2 KB'],
+            [33333, '32.6 KB'],
+            [444444, '434.0 KB'],
+            [5555555, '5.3 MB'],
+            [66666666, '63.6 MB'],
+            [777777777, '741.7 MB'],
+            [8888888888, '8.3 GB'],
+            [99999999999, '93.1 GB'],
+            [111111111111, '103.5 GB'],
+            [2222222222222, '2.0 TB'],
+            [33333333333333, '30.3 TB'],
+            [444444444444444, '404.2 TB'],
+            [5555555555555555, '4.9 PB'],
+            [66666666666666666, '59.2 PB'],
+            [777777777777777777, '690.8 PB'],
         ];
     }
 
@@ -5017,6 +5018,67 @@ EOF;
      */
     public function test_display_size($size, $expected) {
         $result = display_size($size);
+        $expected = str_replace(' ', "\xc2\xa0", $expected); // Should be non-breaking space.
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Provider for display_size using fixed units.
+     *
+     * @return array of ($size, $units, $expected)
+     */
+    public function display_size_fixed_provider(): array {
+        return [
+            [0, 'KB', '0.0 KB'],
+            [1, 'MB', '0.0 MB'],
+            [777777777, 'GB', '0.7 GB'],
+            [8888888888, 'PB', '0.0 PB'],
+            [99999999999, 'TB', '0.1 TB'],
+            [99999999999, 'B', '99999999999 bytes'],
+        ];
+    }
+
+    /**
+     * Test display_size using fixed units.
+     *
+     * @dataProvider display_size_fixed_provider
+     * @param int $size Size in bytes
+     * @param string $units Fixed units
+     * @param string $expected Expected string.
+     */
+    public function test_display_size_fixed(int $size, string $units, string $expected): void {
+        $result = display_size($size, 1, $units);
+        $expected = str_replace(' ', "\xc2\xa0", $expected); // Should be non-breaking space.
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Provider for display_size using specified decimal places.
+     *
+     * @return array of ($size, $decimalplaces, $units, $expected)
+     */
+    public function display_size_dp_provider(): array {
+        return [
+            [0, 1, 'KB', '0.0 KB'],
+            [1, 6, 'MB', '0.000001 MB'],
+            [777777777, 0, 'GB', '1 GB'],
+            [777777777, 0, '', '742 MB'],
+            [42, 6, '', '42 bytes'],
+        ];
+    }
+
+    /**
+     * Test display_size using specified decimal places.
+     *
+     * @dataProvider display_size_dp_provider
+     * @param int $size Size in bytes
+     * @param int $places Number of decimal places
+     * @param string $units Fixed units
+     * @param string $expected Expected string.
+     */
+    public function test_display_size_dp(int $size, int $places, string $units, string $expected): void {
+        $result = display_size($size, $places, $units);
+        $expected = str_replace(' ', "\xc2\xa0", $expected); // Should be non-breaking space.
         $this->assertEquals($expected, $result);
     }
 

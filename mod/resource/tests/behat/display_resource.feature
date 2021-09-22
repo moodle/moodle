@@ -45,11 +45,11 @@ Feature: Teacher can specify different display options for the resource
       | Show upload/modified date | <showdate> |
     And I upload "mod/resource/tests/fixtures/samplefile.txt" file to "Select files" filemanager
     And I press "Save and display"
-    Then I <seesize> see "6 bytes" in the ".resourcedetails" "css_element"
+    Then I <seesize> see "6 bytes" in the ".resourcedetails" "css_element"
     And I <seetype> see "Text file" in the ".resourcedetails" "css_element"
     And I <seedate> see "Uploaded" in the ".resourcedetails" "css_element"
     And I am on "Course 1" course homepage
-    And I <seesize> see "6 bytes" in the ".activity.resource .resourcelinkdetails" "css_element"
+    And I <seesize> see "6 bytes" in the ".activity.resource .resourcelinkdetails" "css_element"
     And I <seetype> see "Text file" in the ".activity.resource .resourcelinkdetails" "css_element"
     And I <seedate> see "Uploaded" in the ".activity.resource .resourcelinkdetails" "css_element"
     And I log out

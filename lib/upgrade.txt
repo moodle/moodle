@@ -91,6 +91,9 @@ information provided here is intended especially for developers.
 completely removed from Moodle core too.
 * The SWF media player has been completely removed (The Flash Player was deprecated in 2017 and officially discontinued
 on 31 December 2020).
+* The display_size function has been improved to add new optional parameters (decimal places,
+  fixed units), to always include a non-breaking space between the number and unit, and to use
+  consistent rounding (always 1 decimal place by default).
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.
