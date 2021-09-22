@@ -380,8 +380,9 @@ function url_get_final_display_type($url) {
         }
     }
 
-    static $download = array('application/zip', 'application/x-tar', 'application/g-zip',     // binary formats
-                             'application/pdf', 'text/html');  // these are known to cause trouble for external links, sorry
+    // Binaries and other formats that are known to cause trouble for external links.
+    static $download = ['application/zip', 'application/x-tar', 'application/g-zip',
+                        'application/pdf', 'text/html', 'document/unknown'];
     static $embed    = array('image/gif', 'image/jpeg', 'image/png', 'image/svg+xml',         // images
                              'application/x-shockwave-flash', 'video/x-flv', 'video/x-ms-wm', // video formats
                              'video/quicktime', 'video/mpeg', 'video/mp4',
