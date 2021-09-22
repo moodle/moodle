@@ -70,15 +70,12 @@ if ($surveyalreadydone) {
 $strsurvey = get_string("modulename", "survey");
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($survey->name));
+// No need to show the description if the survey is done and a graph page is to be shown.
+if ($surveyalreadydone && $showscales) {
+    $PAGE->activityheader->set_description('');
 }
 
-// Render the activity information.
-$completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
-echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
+echo $OUTPUT->header();
 
 // Check to see if groups are being used in this survey.
 if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used.
@@ -119,7 +116,6 @@ if ($surveyalreadydone) {
 
     } else {
 
-        echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox', 'intro');
         echo $OUTPUT->spacer(array('height' => 30, 'width' => 1), true);  // Should be done with CSS instead.
 
         $questions = survey_get_questions($survey);
@@ -147,7 +143,6 @@ echo '<div>';
 echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
 
-echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox boxaligncenter bowidthnormal', 'intro');
 echo '<div>'. get_string('allquestionrequireanswer', 'survey'). '</div>';
 
 // Get all the major questions in order.
