@@ -102,8 +102,11 @@ $iconsizes: map-merge((
 }
 
 .icons-collapse-expand {
+    display: flex;
+    align-items: center;
     .expanded-icon {
-        display: block;
+        display: flex;
+        align-items: center;
     }
 
     .collapsed-icon {
@@ -116,7 +119,8 @@ $iconsizes: map-merge((
         }
 
         .collapsed-icon {
-            display: block;
+            display: flex;
+            align-items: center;
         }
     }
 }

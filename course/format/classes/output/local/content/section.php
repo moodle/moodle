@@ -152,6 +152,18 @@ class section implements renderable, templatable {
             }
         }
 
+        $coursedisplay = $course->coursedisplay ?? COURSE_DISPLAY_SINGLEPAGE;
+        if ($coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+            $data->iscoursedisplaymultipage = true;
+        }
+
+        if ($course->id == SITEID) {
+            $data->sitehome = true;
+        }
+
+        // For now sections are always expanded. User preferences will be done in MDL-71211.
+        $data->isactive = true;
+
         if ($thissection->section == 0) {
             // Section zero is always visible only as a cmlist.
             $cmlist = new $this->cmlistclass($format, $thissection);
