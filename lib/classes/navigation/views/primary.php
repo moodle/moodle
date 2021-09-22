@@ -35,15 +35,19 @@ class primary extends view {
             return;
         }
         $this->id = 'primary_navigation';
-        if (get_home_page() == HOMEPAGE_SITE && isloggedin() && !isguestuser()) {
-            $this->add(get_string('home'), new \moodle_url('/'), self::TYPE_SYSTEM,
-                null, 'home', new \pix_icon('i/home', ''));
-        }
-
-        // Add the dashboard link.
-        if (isloggedin() && !isguestuser()) {  // Makes no sense if you aren't logged in.
-            $this->rootnodes['home'] = $this->add(get_string('myhome'), new \moodle_url('/my/'),
-                self::TYPE_SETTING, null, 'myhome', new \pix_icon('i/dashboard', ''));
+        if (isloggedin() && !isguestuser()) {
+            $homepage = get_home_page();
+            if ($homepage === HOMEPAGE_SITE) {
+                $this->add(get_string('home'), new \moodle_url('/'), self::TYPE_SYSTEM,
+                        null, 'home', new \pix_icon('i/home', ''));
+                $this->rootnodes['home'] = $this->add(get_string('myhome'), new \moodle_url('/my/'),
+                        self::TYPE_SETTING, null, 'myhome', new \pix_icon('i/dashboard', ''));
+            } else if ($homepage === HOMEPAGE_MY) {
+                $this->add(get_string('myhome'), new \moodle_url('/my/'), self::TYPE_SYSTEM,
+                        null, 'home', new \pix_icon('i/home', ''));
+                $this->rootnodes['home'] = $this->add(get_string('sitehome'), new \moodle_url('/'),
+                        self::TYPE_SETTING, null, 'myhome', new \pix_icon('i/dashboard', ''));
+            }
         }
 
         // Add a dummy mycourse link to a mycourses page.
