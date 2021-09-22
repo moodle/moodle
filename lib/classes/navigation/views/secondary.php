@@ -203,7 +203,7 @@ class secondary extends view {
         $navigation = $this->page->navigation;
 
         $url = new \moodle_url('/course/view.php', ['id' => $course->id, 'sesskey' => sesskey()]);
-        $this->add(get_string('coursepage', 'admin'), $url, self::TYPE_COURSE, null, 'coursehome');
+        $this->add(get_string('course'), $url, self::TYPE_COURSE, null, 'coursehome');
 
         $nodes = $this->get_default_course_mapping();
         $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings'] ?? []);
@@ -234,7 +234,7 @@ class secondary extends view {
         if ($mainnode) {
             $url = new \moodle_url('/mod/' . $this->page->activityname . '/view.php', ['id' => $this->page->cm->id]);
             $setactive = $url->compare($this->page->url, URL_MATCH_BASE);
-            $node = $this->add(get_string('module', 'course'), $url, null, null, 'modulepage');
+            $node = $this->add(get_string('modulename', $this->page->activityname), $url, null, null, 'modulepage');
             if ($setactive) {
                 $node->make_active();
             }

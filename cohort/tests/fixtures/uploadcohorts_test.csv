@@ -1,7 +1,7 @@
 name,idnumber,description,category
 cohort name 1,cid1,first description,
 cohort name 2,cid2,,
-cohort name 3,cid3,,Miscellaneous
+cohort name 3,cid3,,Category 1
 cohort name 4,cid4,,CAT1
 cohort name 5,cid5,,CAT2
 cohort name 6,cid6,,CAT3

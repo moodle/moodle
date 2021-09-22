@@ -38,7 +38,7 @@ Feature: Add text direction and alignment
       | <component> | <stringid>  | <localstring> |
     And I log in as "admin"
     And I am on "Course 1" course homepage
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I press "Show more buttons"
     And I press "HTML"
     Then I should see "<partialtext>"

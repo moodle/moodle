@@ -33,7 +33,7 @@ Feature: Lesson with no calendar capabilites
     Given I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_available_enabled | 1 |
       | id_available_day | 1 |
@@ -48,7 +48,7 @@ Feature: Lesson with no calendar capabilites
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_available_year | 2018 |
       | id_deadline_year | 2018 |

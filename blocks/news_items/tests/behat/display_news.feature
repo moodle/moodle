@@ -33,14 +33,14 @@ Feature: Latest announcements block displays the course latest news
     Then I should see "Discussion One" in the "Latest announcements" "block"
     And I should see "Discussion Two" in the "Latest announcements" "block"
     And I should see "Discussion Three" in the "Latest announcements" "block"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Number of announcements | 2 |
     And I press "Save and display"
     And I should not see "Discussion One" in the "Latest announcements" "block"
     And I should see "Discussion Two" in the "Latest announcements" "block"
     And I should see "Discussion Three" in the "Latest announcements" "block"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Number of announcements | 0 |
     And I press "Save and display"

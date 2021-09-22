@@ -40,10 +40,10 @@ Feature: Courses can be set up to display dates relative to the user's enrolment
       | Course short name   | C2        |
       | Relative dates mode | No        |
     And I am on "Course 1" course homepage
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     Then the "Relative dates mode" "select" should be disabled
     And the field "Relative dates mode" matches value "Yes"
     And I am on "Course 2" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the "Relative dates mode" "select" should be disabled
     And the field "Relative dates mode" matches value "No"

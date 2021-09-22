@@ -24,9 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {BaseComponent} from 'core/reactive';
+import DndCmItem from 'core_courseformat/local/courseeditor/dndcmitem';
 
-export default class Component extends BaseComponent {
+export default class Component extends DndCmItem {
 
     /**
      * Constructor hook.
@@ -34,9 +34,6 @@ export default class Component extends BaseComponent {
     create() {
         // Optional component name for debugging.
         this.name = 'courseindex_cm';
-        // Default query selectors.
-        this.selectors = {
-        };
         // We need our id to watch specific events.
         this.id = this.element.dataset.id;
     }
@@ -59,9 +56,14 @@ export default class Component extends BaseComponent {
      * Initial state ready method.
      */
     stateReady() {
-        // Activate drag and drop soon.
+        this.configDragDrop(this.id);
     }
 
+    /**
+     * Component watchers.
+     *
+     * @returns {Array} of watchers
+     */
     getWatchers() {
         return [
             {watch: `cm[${this.id}]:deleted`, handler: this.remove},

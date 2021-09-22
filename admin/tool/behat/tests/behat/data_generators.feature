@@ -40,7 +40,7 @@ Feature: Set up contextual data for tests
     And I should see "Course 2"
     And I follow "Cat 2"
     And I should see "No courses in this category"
-    And I follow "Miscellaneous"
+    And I follow "Category 1"
     And I should see "Course 3"
 
   @javascript
@@ -223,7 +223,7 @@ Feature: Set up contextual data for tests
     And I should see "Test assignment description"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name with scale"
-    And I follow "Edit settings"
+    And I follow "Settings"
     And the field "Type" matches value "Scale"
 
   @javascript

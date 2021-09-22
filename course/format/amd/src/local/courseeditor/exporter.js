@@ -67,7 +67,7 @@ export default class {
         const section = {
             ...sectioninfo,
             cms: [],
-            isactive: false,
+            isactive: true,
         };
         const cmlist = sectioninfo.cmlist ?? [];
         cmlist.forEach(cmid => {
@@ -93,5 +93,60 @@ export default class {
             isactive: false,
         };
         return cm;
+    }
+
+    /**
+     * Generate a dragable cm data structure.
+     *
+     * This method is used by any draggable course module element to generate drop data
+     * for its reactive/dragdrop instance.
+     *
+     * @param {*} state the state object
+     * @param {*} cmid the cours emodule id
+     * @returns {Object|null}
+     */
+    cmDraggableData(state, cmid) {
+        const cminfo = state.cm.get(cmid);
+        if (!cminfo) {
+            return null;
+        }
+
+        // Drop an activity over the next activity is the same as doing anything.
+        let nextcmid;
+        const section = state.section.get(cminfo.sectionid);
+        const currentindex = section?.cmlist.indexOf(cminfo.id);
+        if (currentindex !== undefined) {
+            nextcmid = section?.cmlist[currentindex + 1];
+        }
+
+        return {
+            type: 'cm',
+            id: cminfo.id,
+            name: cminfo.name,
+            nextcmid,
+        };
+    }
+
+    /**
+     * Generate a dragable cm data structure.
+     *
+     * This method is used by any draggable section element to generate drop data
+     * for its reactive/dragdrop instance.
+     *
+     * @param {*} state the state object
+     * @param {*} sectionid the cours section id
+     * @returns {Object|null}
+     */
+    sectionDraggableData(state, sectionid) {
+        const sectioninfo = state.section.get(sectionid);
+        if (!sectioninfo) {
+            return null;
+        }
+        return {
+            type: 'section',
+            id: sectioninfo.id,
+            name: sectioninfo.name,
+            number: sectioninfo.number,
+        };
     }
 }

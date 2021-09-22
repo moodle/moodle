@@ -32,7 +32,7 @@ Feature: Award badges with separate groups
       | teacher2 | CA |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Group mode" to "Separate groups"
     And I press "Save and display"

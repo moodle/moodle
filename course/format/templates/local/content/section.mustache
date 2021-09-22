@@ -74,13 +74,17 @@
     }
 }}
 <li id="section-{{num}}"
-        class="section main {{#onlysummary}} section-summary {{/onlysummary}} clearfix
-              {{#ishidden}} hidden {{/ishidden}} {{#iscurrent}} current {{/iscurrent}}
-              {{#isstealth}} orphaned {{/isstealth}}"
-        role="region"
-        aria-labelledby="sectionid-{{id}}-title"
-        data-sectionid="{{num}}"
-        data-sectionreturnid="{{sectionreturnid}}">
+    class="section main {{#onlysummary}} section-summary {{/onlysummary}} clearfix
+            {{#ishidden}} hidden {{/ishidden}} {{#iscurrent}} current {{/iscurrent}}
+            {{#isstealth}} orphaned {{/isstealth}}"
+    role="region"
+    aria-labelledby="sectionid-{{id}}-title"
+    data-sectionid="{{num}}"
+    data-sectionreturnid="{{sectionreturnid}}"
+    data-for="section"
+    data-id="{{id}}"
+    data-number="{{num}}"
+>
     {{#singleheader}} {{> core_courseformat/local/content/section/header }} {{/singleheader}}
     <div class="left side">{{#iscurrent}} {{{currentlink}}} {{/iscurrent}}</div>
     <div class="right side">

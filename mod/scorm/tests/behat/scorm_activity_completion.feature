@@ -85,7 +85,7 @@ Feature: View activity completion in the SCORM activity
   @javascript
   Scenario: Use manual completion
     Given I am on the "Music history" "scorm activity" page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and display"

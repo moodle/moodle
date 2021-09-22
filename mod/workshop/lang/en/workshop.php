@@ -335,6 +335,7 @@ $string['showingperpagechange'] = 'Change ...';
 $string['someuserswosubmission'] = 'There is at least one author who has not yet submitted their work';
 $string['sortasc'] = 'Ascending sort';
 $string['sortdesc'] = 'Descending sort';
+$string['submissionsallocation'] = 'Submissions allocation';
 $string['strategy'] = 'Grading strategy';
 $string['strategy_help'] = 'The grading strategy determines the assessment form used and the method of grading submissions. There are 4 options:
 

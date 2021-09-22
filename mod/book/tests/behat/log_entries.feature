@@ -33,7 +33,7 @@ Feature: In a book, verify log entries
     And I click on "Next" "link"
     And I click on "Previous" "link"
     And I navigate to "Print book" in current page administration
-    And I navigate to "Generate IMS CP" in current page administration
+    And I navigate to "Download" in current page administration
     And I navigate to "Logs" in current page administration
     Then I should see "Book exported"
     And I should see "Book printed"

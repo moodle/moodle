@@ -15,15 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Jabber message processor version information
+ * Learning plans block data generator class.
  *
- * @package    message_jabber
- * @copyright  2008 Luis Rodrigues
+ * @package    block_lp
+ * @category   test
+ * @copyright  2021 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2021052500;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2021052500;        // Requires this Moodle version.
-$plugin->component = 'message_jabber';  // Full name of the plugin (used for diagnostics)
+class block_lp_generator extends testing_block_generator {
+}

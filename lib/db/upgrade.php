@@ -2717,5 +2717,66 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021090200.01);
     }
 
+    if ($oldversion < 2021091100.01) {
+        // If message_jabber is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/message/output/jabber/message_output_jabber.php')) {
+            // Remove Jabber from the notification plugins list.
+            $DB->delete_records('message_processors', ['name' => 'jabber']);
+
+            // Remove user preference settings.
+            $DB->delete_records('user_preferences', ['name' => 'message_processor_jabber_jabberid']);
+            $sql = 'SELECT *
+                    FROM {user_preferences} up
+                    WHERE ' . $DB->sql_like('up.name', ':name', false, false) . ' AND ' .
+                        $DB->sql_like('up.value', ':value', false, false);
+            $params = [
+                'name' => 'message_provider_%',
+                'value' => '%jabber%',
+            ];
+            $jabbersettings = $DB->get_recordset_sql($sql, $params);
+            foreach ($jabbersettings as $jabbersetting) {
+                // Remove 'jabber' from the value.
+                $jabbersetting->value = implode(',', array_diff(explode(',', $jabbersetting->value), ['jabber']));
+                $DB->update_record('user_preferences', $jabbersetting);
+            }
+            $jabbersettings->close();
+
+            // Clean config settings.
+            unset_config('jabberhost');
+            unset_config('jabberserver');
+            unset_config('jabberusername');
+            unset_config('jabberpassword');
+            unset_config('jabberport');
+
+            // Remove default notification preferences.
+            $like = $DB->sql_like('name', '?', true, true, false, '|');
+            $params = [$DB->sql_like_escape('jabber_provider_', '|') . '%'];
+            $DB->delete_records_select('config_plugins', $like, $params);
+
+            // Clean config config settings.
+            unset_all_config_for_plugin('message_jabber');
+        }
+
+        upgrade_main_savepoint(true, 2021091100.01);
+    }
+
+    if ($oldversion < 2021091100.02) {
+        // Set the description field to HTML format for the Default course category.
+        $category = $DB->get_record('course_categories', ['id' => 1]);
+
+        if ($category->descriptionformat == FORMAT_MOODLE) {
+            // Format should be changed only if it's still set to FORMAT_MOODLE.
+            if (!is_null($category->description)) {
+                // If description is not empty, format the content to HTML.
+                $category->description = format_text($category->description, FORMAT_MOODLE);
+            }
+            $category->descriptionformat = FORMAT_HTML;
+            $DB->update_record('course_categories', $category);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021091100.02);
+    }
+
     return true;
 }

@@ -13,25 +13,29 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// phpcs:disable moodle.Files.RequireLogin.Missing
+// phpcs:disable moodle.PHP.ForbiddenFunctions.Found
 
 /**
- * Jabber message processor installation code
+ * Login end point for Behat tests only.
  *
- * @package    message_jabber
- * @copyright  2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @package    core_auth
+ * @category   test
+ * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+require(__DIR__.'/../../../config.php');
 
-/**
- * Install the Jabber message processor
- */
-function xmldb_message_jabber_install(){
-    global $DB;
+$behatrunning = defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING;
+if (!$behatrunning) {
+    redirect(new moodle_url('/login/logout.php'));
+}
 
-    $result = true;
+require_logout();
 
-    $provider = new stdClass();
-    $provider->name  = 'jabber';
-    $DB->insert_record('message_processors', $provider);
-    return $result;
+$login = optional_param('loginpage', 0, PARAM_BOOL);
+if ($login) {
+    redirect(get_login_url());
+} else {
+    redirect(new moodle_url('/'));
 }

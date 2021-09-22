@@ -102,7 +102,7 @@ Feature: Access to full profiles of users
   Scenario: View full profiles of someone in the same group in a course with separate groups.
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Group mode | Separate groups |
       | Force group mode | Yes |

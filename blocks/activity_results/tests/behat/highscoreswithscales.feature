@@ -41,7 +41,7 @@ Feature: The activity results block displays students high scores in group as sc
     And I press "Save changes"
     And I am on "Course 1" course homepage
     And I follow "Test assignment"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_grade_modgrade_type | Scale |
       | id_grade_modgrade_scale | My Scale |

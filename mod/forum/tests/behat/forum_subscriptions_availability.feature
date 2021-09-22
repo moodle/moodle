@@ -72,7 +72,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | idnumber    | 0001                           |
       | section     | 1                              |
     And I am on the "Forced Forum 2" "forum activity" page
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Forced subscription |
       | Availability      | Show on course page |

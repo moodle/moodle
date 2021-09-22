@@ -54,7 +54,7 @@ Feature: The activity results block displays student in group high scores as sca
     And I press "Save changes"
     And I am on "Course 1" course homepage
     And I follow "Test assignment"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | assignsubmission_file_enabled | 0 |
       | id_grade_modgrade_type | Scale |

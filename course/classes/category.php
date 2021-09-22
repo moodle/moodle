@@ -823,7 +823,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             // No categories found.
             // This may happen after upgrade of a very old moodle version.
             // In new versions the default category is created on install.
-            $defcoursecat = self::create(array('name' => get_string('miscellaneous')));
+            $defcoursecat = self::create(array('name' => get_string('defaultcategoryname')));
             set_config('defaultrequestcategory', $defcoursecat->id);
             $all[0] = array($defcoursecat->id);
             $all[$defcoursecat->id] = array();
@@ -2552,7 +2552,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * Returns ids of all parents of the category. Last element in the return array is the direct parent
      *
      * For example, if you have a tree of categories like:
-     *   Miscellaneous (id = 1)
+     *   Category (id = 1)
      *      Subcategory (id = 2)
      *         Sub-subcategory (id = 4)
      *   Other category (id = 3)
@@ -2578,14 +2578,14 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * List is cached for 10 minutes
      *
      * For example, if you have a tree of categories like:
-     *   Miscellaneous (id = 1)
+     *   Category (id = 1)
      *      Subcategory (id = 2)
      *         Sub-subcategory (id = 4)
      *   Other category (id = 3)
      * Then after calling this function you will have
-     * array(1 => 'Miscellaneous',
-     *       2 => 'Miscellaneous / Subcategory',
-     *       4 => 'Miscellaneous / Subcategory / Sub-subcategory',
+     * array(1 => 'Category',
+     *       2 => 'Category / Subcategory',
+     *       4 => 'Category / Subcategory / Sub-subcategory',
      *       3 => 'Other category');
      *
      * If you specify $requiredcapability, then only categories where the current

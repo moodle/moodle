@@ -40,23 +40,23 @@ Feature: Submission types
       | submissiontypefilerequired  | 1 |
     And I press "Save and display"
     Then I should see "Setup phase" in the "h3#mod_workshop-userplanheading" "css_element"
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | submissiontypetextrequired | 0 |
     And I press "Save and display"
     Then I should see "Setup phase" in the "h3#mod_workshop-userplanheading" "css_element"
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | submissiontypetextrequired | 1 |
       | submissiontypefilerequired | 0 |
     And I press "Save and display"
     Then I should see "Setup phase" in the "h3#mod_workshop-userplanheading" "css_element"
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | submissiontypefileavailable | 0 |
     And I press "Save and display"
     Then I should see "Setup phase" in the "h3#mod_workshop-userplanheading" "css_element"
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | submissiontypefileavailable | 1 |
       | submissiontypefilerequired  | 1 |

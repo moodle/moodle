@@ -56,8 +56,15 @@ $courseindex-item-current: $primary !default;
         }
     }
 
-    .courseindex-section.current {
-        border-left: solid 3px $courseindex-item-current;
+    .courseindex-section {
+        &.current {
+            border-left: solid 3px $courseindex-item-current;
+        }
+
+        &.dropready .courseindex-item-content {
+            /* Extra dropzone space */
+            padding-bottom: 1em;
+        }
     }
 
     .d-flex-noedit {

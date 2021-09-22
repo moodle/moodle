@@ -1370,7 +1370,7 @@ class moodle_content_writer_test extends advanced_testcase {
             'System _.1' => [
                 'data.json',
                 'paper' => 'data.json',
-                'Category Miscellaneous _.' . $misccoursecxt->id => [
+                'Category Category 1 _.' . $misccoursecxt->id => [
                     'Course Test course 1 _.' . $coursecontext->id => [
                         'Chat Chat 1 _.' . $modulecontext->id => 'data.json',
                         'grades' => 'data.json'
@@ -1390,9 +1390,9 @@ class moodle_content_writer_test extends advanced_testcase {
         $expectedlistoutput = [
             'System _.1/data.json' => 'data_file_1',
             'System _.1/paper/data.json' => 'data_file_2',
-            'System _.1/Category Miscellaneous _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
+            'System _.1/Category Category 1 _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
                     $coursecontext->id . '/Chat Chat 1 _.' . $modulecontext->id . '/data.json'   => 'data_file_3',
-            'System _.1/Category Miscellaneous _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
+            'System _.1/Category Category 1 _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
                     $coursecontext->id . '/grades/data.json'   => 'data_file_4',
             'System _.1/Category Course category 1 _.' . $categorycontext->id . '/data.json' => 'data_file_5',
             'System _.1/_files/tests/a.txt' => 'No var',
@@ -1403,9 +1403,9 @@ class moodle_content_writer_test extends advanced_testcase {
         $expectedindex = [
             'data_file_1' => 'System _.1/data.js',
             'data_file_2' => 'System _.1/paper/data.js',
-            'data_file_3' => 'System _.1/Category Miscellaneous _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
+            'data_file_3' => 'System _.1/Category Category 1 _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
                     $coursecontext->id . '/Chat Chat 1 _.' . $modulecontext->id . '/data.js',
-            'data_file_4' => 'System _.1/Category Miscellaneous _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
+            'data_file_4' => 'System _.1/Category Category 1 _.' . $misccoursecxt->id . '/Course Test course 1 _.' .
                     $coursecontext->id . '/grades/data.js',
             'data_file_5' => 'System _.1/Category Course category 1 _.' . $categorycontext->id . '/data.js',
             'data_file_6' => 'System _.1/Logs/Standard log/data.js'
@@ -1438,9 +1438,9 @@ class moodle_content_writer_test extends advanced_testcase {
                             ]
                         ]
                     ],
-                    'Category Miscellaneous _.' . $misccoursecxt->id => (object) [
+                    'Category Category 1 _.' . $misccoursecxt->id => (object) [
                         'itemtype' => 'treeitem',
-                        'name' => 'Category Miscellaneous ',
+                        'name' => 'Category Category 1 ',
                         'context' => $misccoursecxt,
                         'children' => [
                             'Course Test course 1 _.' . $coursecontext->id => (object) [
@@ -1542,9 +1542,9 @@ class moodle_content_writer_test extends advanced_testcase {
                 'name' => 'System ',
                 'context' => \context_system::instance(),
                 'children' => [
-                    'Category Miscellaneous _.' . $misccoursecxt->id => (object) [
+                    'Category Category 1 _.' . $misccoursecxt->id => (object) [
                         'itemtype' => 'treeitem',
-                        'name' => 'Category Miscellaneous ',
+                        'name' => 'Category Category 1 ',
                         'context' => $misccoursecxt,
                         'children' => [
                             'Course Test course 1 _.' . $coursecontext->id => (object) [

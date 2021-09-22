@@ -495,6 +495,21 @@ abstract class base {
     }
 
     /**
+     * Returns true if this course format is compatible with content components.
+     *
+     * Using components means the content elements can watch the frontend course state and
+     * react to the changes. Formats with component compatibility can have more interactions
+     * without refreshing the page, like having drag and drop from the course index to reorder
+     * sections and activities.
+     *
+     * @return bool if the format is compatible with components.
+     */
+    public function supports_components() {
+        return false;
+    }
+
+
+    /**
      * Custom action after section has been moved in AJAX mode
      *
      * Used in course/rest.php

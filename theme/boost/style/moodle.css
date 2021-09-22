@@ -11560,7 +11560,8 @@ ul {
 
 .dropdown-item:active, .dropdown-item:hover, .dropdown-item:focus, .dropdown-item:focus-within {
   outline: 0;
-  background-color: #0f6fc5; }
+  background-color: #0f6fc5;
+  color: #fff; }
   .dropdown-item:active a, .dropdown-item:hover a, .dropdown-item:focus a, .dropdown-item:focus-within a {
     color: #fff; }
 
@@ -11943,6 +11944,25 @@ input[disabled] {
   .visual-scroll-x::-webkit-scrollbar-track {
     background-color: #a8d2f8;
     border-right: 1px solid #fff; }
+
+body.dragging .drop-zone {
+  border: 2px dashed #212529; }
+
+body.dragging .drop-up {
+  border-top: 2px solid #212529; }
+
+body.dragging .drop-down {
+  border-bottom: 2px solid #212529; }
+
+body.dragging .dragging {
+  opacity: .6; }
+
+.dragicon {
+  visibility: hidden; }
+
+.draggable:hover .dragicon {
+  visibility: visible;
+  cursor: move; }
 
 .icon {
   font-size: 16px;
@@ -20130,6 +20150,10 @@ div.editor_atto_toolbar button .icon {
 
 .courseindex .courseindex-section.current {
   border-left: solid 3px #0f6fc5; }
+
+.courseindex .courseindex-section.dropready .courseindex-item-content {
+  /* Extra dropzone space */
+  padding-bottom: 1em; }
 
 .courseindex .d-flex-noedit {
   display: none; }

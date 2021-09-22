@@ -37,6 +37,9 @@ Feature: Manage plan workflow
       | Test-Plan1 | Test-Comp2 |
       | Test-Plan2 | Test-Comp1 |
       | Test-Plan2 | Test-Comp2 |
+    And the following "blocks" exist:
+      | blockname               | contextlevel | reference | pagetypepattern | defaultregion |
+      | lp                      | System       | 1         | my-index        | content       |
     And I log in as "admin"
     And I set the following system permissions of "User manage own draft plan role" role:
       | capability | permission |

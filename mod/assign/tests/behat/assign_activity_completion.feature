@@ -44,7 +44,7 @@ Feature: View activity completion in the assignment activity
   @javascript
   Scenario: The manual completion button will not be shown on the course page if the Show activity completion conditions is set to No
     Given I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Show activity completion conditions" to "No"
     And I press "Save and display"

@@ -417,7 +417,6 @@ $string['courselistshortnames'] = 'Display extended course names';
 $string['courselistshortnames_desc'] = 'If enabled, course short names will be displayed in addition to full names in course lists. If required, extended course names may be customised by editing the \'courseextendednamedisplay\' language string using the language customisation feature.';
 $string['coursemgmt'] = 'Manage courses and categories';
 $string['courseoverview'] = 'Course overview';
-$string['coursepage'] = 'Course page';
 $string['courserequestnotify'] = 'Course request notification';
 $string['courserequestnotifyemail'] = 'User {$a->user} requested a new course at {$a->link}';
 $string['courserequests'] = 'Course requests';
@@ -1550,3 +1549,6 @@ $string['configenableactivitychooser'] = 'The activity chooser is a dialog box w
 $string['enableactivitychooser'] = 'Enable activity chooser';
 $string['configmodchooserdefault'] = 'Should the activity chooser be presented to users by default?';
 $string['modchooserdefault'] = 'Activity chooser default';
+
+// Deprecated since Moodle 4.0.
+$string['coursepage'] = 'Course page';

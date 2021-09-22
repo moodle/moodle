@@ -123,7 +123,7 @@ Feature: Enable the calendar block in a course and test it's functionality
       | student2 | G2 |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_groupmode | Separate groups |
       | id_groupmodeforce | Yes |
@@ -159,7 +159,7 @@ Feature: Enable the calendar block in a course and test it's functionality
       | student2 | G2 |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_groupmode | Separate groups |
       | id_groupmodeforce | Yes |

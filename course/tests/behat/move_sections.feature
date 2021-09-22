@@ -31,7 +31,7 @@ Feature: Sections can be moved
       | activity | name            | intro                        | course | idnumber | section |
       | forum    | Test forum name | Test forum name description  | C1     | forum1   | 1       |
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
@@ -45,7 +45,7 @@ Feature: Sections can be moved
       | activity | name            | intro                        | course | idnumber | section |
       | forum    | Test forum name | Test forum name description  | C1     | forum1   | 2       |
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"

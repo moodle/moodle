@@ -20,7 +20,7 @@ Feature: View activity completion information for file resources
       | displayoptions | 0,1,2,3,4,5,6 | resource |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
@@ -62,7 +62,7 @@ Feature: View activity completion information for file resources
   @javascript
   Scenario: The manual completion button will be shown on the activity page and course page if Show activity completion conditions is set to Yes
     Given I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Show activity completion conditions" to "Yes"
     And I press "Save and display"
@@ -92,7 +92,7 @@ Feature: View activity completion information for file resources
 
   @javascript
   Scenario: View automatic completion items
-    Given I navigate to "Edit settings" in current page administration
+    Given I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Show activity completion conditions" to "Yes"
     And I press "Save and display"

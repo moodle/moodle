@@ -22,7 +22,7 @@ Feature: In a lesson activity, students can review the answers they gave to ques
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Display ongoing score | Yes |
       | Slideshow | Yes |

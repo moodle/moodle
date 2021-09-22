@@ -36,9 +36,6 @@ Feature: Course index depending on role
     And I am on "Course 1" course homepage
     And I click on "Side panel" "button"
     When I click on "Open course index drawer" "button"
-    And I click on "Topic 1" "link" in the "courseindex-content" "region"
-    And I click on "Topic 2" "link" in the "courseindex-content" "region"
-    And I click on "Topic 3" "link" in the "courseindex-content" "region"
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Topic 2" in the "courseindex-content" "region"
     And I should see "Topic 3" in the "courseindex-content" "region"
@@ -58,9 +55,6 @@ Feature: Course index depending on role
     And I am on "Course 1" course homepage
     And I click on "Side panel" "button"
     When I click on "Open course index drawer" "button"
-    And I click on "Topic 1" "link" in the "courseindex-content" "region"
-    And I click on "Topic 2" "link" in the "courseindex-content" "region"
-    And I click on "Topic 3" "link" in the "courseindex-content" "region"
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Topic 2" in the "courseindex-content" "region"
     And I should see "Topic 3" in the "courseindex-content" "region"
@@ -80,8 +74,6 @@ Feature: Course index depending on role
     And I am on "Course 1" course homepage
     And I click on "Side panel" "button"
     When I click on "Open course index drawer" "button"
-    And I click on "Topic 1" "link" in the "courseindex-content" "region"
-    And I click on "Topic 3" "link" in the "courseindex-content" "region"
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should not see "Topic 2" in the "courseindex-content" "region"
     And I should see "Topic 3" in the "courseindex-content" "region"
@@ -96,8 +88,6 @@ Feature: Course index depending on role
     And I click on "Side panel" "button"
     When I delete "Activity sample 2" activity
     And I click on "Open course index drawer" "button"
-    And I click on "Topic 1" "link" in the "courseindex-content" "region"
-    And I click on "Topic 2" "link" in the "courseindex-content" "region"
     Then I should not see "Activity sample 2" in the "courseindex-content" "region"
 
   @javascript
@@ -112,3 +102,30 @@ Feature: Course index depending on role
     And I click on "Open course index drawer" "button"
     # Current section is only marked visually in the course index.
     Then the "class" attribute of "#courseindex-content [data-for='section'][data-number='1']" "css_element" should contain "current"
+
+  @javascript
+  Scenario: Course index toggling
+    Given the following "activities" exist:
+      | activity | name                         | intro                       | course | idnumber | section |
+      | book     | Second activity in section 1 | Test book description       | C1     | sample4  | 1       |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I click on "Side panel" "button"
+    When I click on "Open course index drawer" "button"
+    Then I should see "Topic 1" in the "courseindex-content" "region"
+    And I should see "Activity sample 1" in the "courseindex-content" "region"
+    And I should see "Second activity in section 1" in the "courseindex-content" "region"
+    And I click on "Topic 1" "link" in the "courseindex-content" "region"
+    And I should not see "Activity sample 1" in the "courseindex-content" "region"
+    And I should not see "Second activity in section 1" in the "courseindex-content" "region"
+    And I should see "Topic 2" in the "courseindex-content" "region"
+    And I should see "Activity sample 2" in the "courseindex-content" "region"
+    And I click on "Topic 2" "link" in the "courseindex-content" "region"
+    And I should not see "Activity sample 2" in the "courseindex-content" "region"
+    And I should see "Topic 3" in the "courseindex-content" "region"
+    And I should see "Activity sample 3" in the "courseindex-content" "region"
+    And I click on "Topic 3" "link" in the "courseindex-content" "region"
+    And I should not see "Activity sample 3" in the "courseindex-content" "region"
+    And I should not see "Activity sample 1" in the "courseindex-content" "region"
+    And I should not see "Second activity in section 1" in the "courseindex-content" "region"
+    And I should not see "Activity sample 2" in the "courseindex-content" "region"

@@ -134,7 +134,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I log out
     And I am on the "Test forum name" "forum activity" page logged in as admin
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Auto subscription |
     And I press "Save and return to course"
@@ -178,7 +178,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log out
     And I log in as "admin"
     And I am on the "Test forum name" "forum activity" page
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Auto subscription |
     And I press "Save and return to course"

@@ -34,7 +34,7 @@ Feature: Display the book description in the book and optionally in the course
   Scenario: Show book description in the course homepage
     Given I am on "Course 1" course homepage
     And I follow "Test book"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the following fields match these values:
       | Display description on course page | |
     And I set the following fields to these values:
@@ -46,7 +46,7 @@ Feature: Display the book description in the book and optionally in the course
   Scenario: Hide book description in the course homepage
     Given I am on "Course 1" course homepage
     And I follow "Test book"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the following fields match these values:
       | Display description on course page | |
     And I press "Save and return to course"

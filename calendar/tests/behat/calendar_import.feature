@@ -66,7 +66,7 @@ Feature: Import and edit calendar events
       | Calendar name  | Test Import |
       | Import from    | Calendar file (.ics) |
       | Type of event  | Category             |
-      | Category       | Miscellaneous   |
+      | Category       | Category 1           |
     And I upload "calendar/tests/fixtures/import.ics" file to "Calendar file (.ics)" filemanager
     And I press "Import calendar"
     And I should see "Category events"
