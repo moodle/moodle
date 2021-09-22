@@ -1726,6 +1726,7 @@ class core_plugin_manager {
             'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
             'portfolio' => array('picasa'),
+            'media' => array('swf'),
             'qformat' => array('webct'),
             'message' => array('jabber'),
             'quizaccess' => array('safebrowser'),
@@ -1909,7 +1910,7 @@ class core_plugin_manager {
             ),
 
             'media' => array(
-                'html5audio', 'html5video', 'swf', 'videojs', 'vimeo', 'youtube'
+                'html5audio', 'html5video', 'videojs', 'vimeo', 'youtube'
             ),
 
             'message' => array(

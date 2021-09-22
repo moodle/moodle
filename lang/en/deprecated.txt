@@ -159,3 +159,5 @@ importfrominstructions,core_calendar
 proceedtocourse,core_enrol
 coursepage,core_admin
 invalidpersistenterror,core_competency
+mediapluginswf,core_admin
+mediapluginswfnote,core_admin

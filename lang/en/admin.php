@@ -828,8 +828,6 @@ $string['mediapluginogv'] = 'Enable .ogv filter';
 $string['mediapluginram'] = 'Enable .ram filter';
 $string['mediapluginrm'] = 'Enable .rm filter';
 $string['mediapluginrpm'] = 'Enable .rpm filter';
-$string['mediapluginswf'] = 'Enable .swf filter';
-$string['mediapluginswfnote'] = 'As a default security measure, normal users should not be allowed to embed swf flash files.';
 $string['mediapluginwmv'] = 'Enable .wmv filter';
 $string['mediapluginyoutube'] = 'Enable YouTube links filter';
 $string['messaging'] = 'Enable messaging system';
@@ -1554,3 +1552,6 @@ $string['modchooserdefault'] = 'Activity chooser default';
 
 // Deprecated since Moodle 4.0.
 $string['coursepage'] = 'Course page';
+$string['mediapluginswf'] = 'Enable .swf filter';
+$string['mediapluginswfnote'] = 'As a default security measure, normal users should not be allowed to embed swf flash files.';
+
