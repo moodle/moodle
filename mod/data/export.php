@@ -77,7 +77,6 @@ foreach ($fieldrecords as $fieldrecord) {
     $fields[]= data_get_field($fieldrecord, $data);
 }
 
-
 $mform = new mod_data_export_form(new moodle_url('/mod/data/export.php', ['d' => $data->id,
     'backto' => $redirectbackto]), $fields, $cm, $data);
 
@@ -118,17 +117,6 @@ $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
 $PAGE->set_secondary_active_tab('modulepage');
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($data->name), 2);
-}
-
-// Render the activity information.
-$cminfo = cm_info::create($cm);
-$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
-
-echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
 
 groups_print_activity_menu($cm, $url);
 
