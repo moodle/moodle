@@ -57,6 +57,7 @@ class course implements renderable {
             'numsections' => $format->get_last_section_number(),
             'sectionlist' => [],
             'editmode' => $format->show_editor(),
+            'highlighted' => $format->get_section_highlighted_name(),
         ];
 
         $sections = $modinfo->get_section_info_all();

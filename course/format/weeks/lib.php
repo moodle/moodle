@@ -99,6 +99,10 @@ class format_weeks extends core_courseformat\base {
         }
     }
 
+    public function get_section_highlighted_name(): string {
+        return get_string('currentsection', 'format_weeks');
+    }
+
     /**
      * The URL to use for the specified course (with section)
      *

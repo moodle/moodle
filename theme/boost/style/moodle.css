@@ -20162,8 +20162,14 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-sectioncontent .courseindex-item {
   padding-left: calc(1rem * 2 + 0.5rem); }
 
+.courseindex .courseindex-section .current-badge {
+  line-height: 1.5;
+  display: none; }
+
 .courseindex .courseindex-section.current {
   border-left: solid 3px #0f6fc5; }
+  .courseindex .courseindex-section.current .current-badge {
+    display: inline-block; }
 
 .courseindex .courseindex-section.dropready .courseindex-item-content {
   /* Extra dropzone space */

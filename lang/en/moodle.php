@@ -1003,6 +1003,7 @@ $string['hidesettings'] = 'Hide settings';
 $string['hideshowblocks'] = 'Hide or show blocks';
 $string['hidepopoverwindow'] = 'Hide popover window';
 $string['highlight'] = 'Highlight';
+$string['highlighted'] = 'Highlighted';
 $string['highlightoff'] = 'Remove highlight';
 $string['hits'] = 'Hits';
 $string['hitsoncourse'] = 'Hits on {$a->coursename} by {$a->username}';
