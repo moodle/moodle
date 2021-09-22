@@ -133,13 +133,16 @@ Feature: Toggle activities visibility from the course page
       | student1 | C1 | student |
     And the following config values are set as admin:
       | allowstealth | 1 |
+    And the following "activity" exists:
+      | activity | assign |
+      | course   | C1     |
+      | section  | 1      |
+      | name     | Test assignment name |
+      | intro    | Test assignment description |
+      | id_visible | 1                         |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
-    And I add a "Assignment" to section "2" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | Availability | Show on course page |
     When I open "Test assignment name" actions menu
     Then "Test assignment name" actions menu should not have "Show" item
     And "Test assignment name" actions menu should have "Hide" item

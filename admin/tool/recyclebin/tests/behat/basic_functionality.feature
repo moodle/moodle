@@ -111,18 +111,10 @@ Feature: Basic recycle bin functionality
   @javascript
   Scenario: Deleting all the items from the recycle bin
     Given I log in as "teacher1"
-    And the following "activity" exists:
-      | activity | assign |
-      | course   | C1     |
-      | section  | 1      |
-      | name     | Test assign 1 |
-      | intro    | Test 1        |
-    And the following "activity" exists:
-      | activity | assign |
-      | course   | C1     |
-      | section  | 1      |
-      | name     | Test assign 2 |
-      | intro    | Test 2        |
+    And the following "activities" exist:
+      | activity | course | section | name | intro |
+      | assign   | C1     | 1       | Test assign 1 | Test 1 |
+      | assign   | C1     | 1       | Test assign 2 | Test 2 |
     And I am on "Course 1" course homepage with editing mode on
     And I delete "Test assign 1" activity
     And I delete "Test assign 2" activity
