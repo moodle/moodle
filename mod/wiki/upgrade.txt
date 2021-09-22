@@ -1,5 +1,7 @@
 This files describes API changes in /mod/wiki/*,
 information provided here is intended especially for developers.
+=== 4.0 ===
+* wiki_info has been deprecated. Output will be handled within the $PAGE->activityheader instead.
 
 === 3.8 ===
 * The following functions have been finally deprecated and can not be used anymore:

@@ -89,19 +89,8 @@ $PAGE->navbar->add(format_string(get_string('wikifiles', 'wiki')));
 $PAGE->set_secondary_active_tab('modulepage');
 
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($wiki->name));
-}
-
-// Render the activity information.
-$cminfo = cm_info::create($cm);
-$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
 
 $renderer = $PAGE->get_renderer('mod_wiki');
-
-echo $OUTPUT->box(format_module_intro('wiki', $wiki, $PAGE->cm->id), 'generalbox', 'intro');
 
 $actionbar = new \mod_wiki\output\action_bar($pageid, $PAGE->url);
 echo $renderer->render_action_bar($actionbar);
