@@ -87,11 +87,12 @@ $PAGE->set_pagelayout('admin');
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
-
+$PAGE->activityheader->set_attrs([
+    "title" => format_string($quiz->name, true, ['context' => $context]),
+    "description" => "",
+    "hidecompletion" => true
+]);
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($quiz->name, true, array('context' => $context)));
-}
 
 if ($override->groupid) {
     $group = $DB->get_record('groups', ['id' => $override->groupid], 'id, name');

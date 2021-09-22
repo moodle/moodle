@@ -68,6 +68,7 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
+$PAGE->activityheader->disable();
 
 // Activate the secondary nav tab.
 $PAGE->set_secondary_active_tab("mod_quiz_useroverrides");
