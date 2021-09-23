@@ -2701,3 +2701,28 @@ function check_max_input_vars(environment_results $result) {
     }
     return null;
 }
+
+/**
+ * Check whether the admin directory has been configured and warn if so.
+ *
+ * The admin directory has been deprecated since Moodle 4.0.
+ *
+ * @param environment_results $result
+ * @return null|environment_results
+ */
+function check_admin_dir_usage(environment_results $result): ?environment_results {
+    global $CFG;
+
+    if (empty($CFG->admin)) {
+        return null;
+    }
+
+    if ($CFG->admin === 'admin') {
+        return null;
+    }
+
+    $result->setInfo('admin_dir_usage');
+    $result->setStatus(false);
+
+    return $result;
+}
