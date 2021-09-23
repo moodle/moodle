@@ -42,6 +42,7 @@ $context = $contexts->lowest();
 $streditingquestions = get_string('editquestions', 'question');
 $PAGE->set_title($streditingquestions);
 $PAGE->set_heading($COURSE->fullname);
+$PAGE->activityheader->disable();
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');

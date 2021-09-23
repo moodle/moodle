@@ -73,6 +73,7 @@ if ($importform->is_cancelled()) {
 // Page header.
 $PAGE->set_title($txt->importquestions);
 $PAGE->set_heading($COURSE->fullname);
+$PAGE->activityheader->disable();
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
