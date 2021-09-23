@@ -57,10 +57,10 @@
     </div>
     {{{question}}}
     <div id="previewcontrols" class="controls input-group">
-        <input type="submit" name="restart" value="{{#str}} restart, question{{/str}}" class="btn btn-secondary mr-1 mb-1" {{{restartdisabled}}}>
-        <input type="submit" name="save" value="{{#str}} save, question{{/str}}" class="btn btn-secondary mr-1 mb-1" {{{finishdisabled}}}>
+        <input type="submit" name="restart" value="{{#str}} restart, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="id_restart_question_preview" {{{restartdisabled}}}>
+        <input type="submit" name="save" value="{{#str}} save, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="id_save_question_preview" {{{finishdisabled}}}>
         <input type="submit" name="fill" value="{{#str}} fillincorrect, question{{/str}}" class="btn btn-secondary mr-1 mb-1" {{{filldisabled}}}>
-        <input type="submit" name="finish" value="{{#str}} submitandfinish, question{{/str}}" class="btn btn-secondary mr-1 mb-1" {{{finishdisabled}}}>
+        <input type="submit" name="finish" value="{{#str}} submitandfinish, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="id_finish_question_preview" {{{finishdisabled}}}>
         {{^redirect}}
             <input type="button" name="close" value="{{#str}} closepreview, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="close-previewquestion-page">
         {{/redirect}}
