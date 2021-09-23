@@ -19069,7 +19069,7 @@ body {
 .count-container {
   padding: 2px;
   border-radius: 2px;
-  background-color: red;
+  background-color: #ca3120;
   color: white;
   font-size: 11px;
   line-height: 11px;
@@ -19157,7 +19157,7 @@ body {
 .navbar .count-container {
   padding: 2px;
   border-radius: 2px;
-  background-color: red;
+  background-color: #ca3120;
   color: white;
   font-size: 11px;
   line-height: 11px;

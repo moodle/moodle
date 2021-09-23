@@ -71,7 +71,7 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
 .count-container {
     padding: 2px;
     border-radius: 2px;
-    background-color: red;
+    background-color: $danger;
     color: white;
     font-size: 11px;
     line-height: 11px;
@@ -189,7 +189,7 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
     .count-container {
         padding: 2px;
         border-radius: 2px;
-        background-color: red;
+        background-color: $danger;
         color: white;
         font-size: 11px;
         line-height: 11px;
