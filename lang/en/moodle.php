@@ -2266,8 +2266,8 @@ $string['weeks'] = 'weeks';
 $string['weekhide'] = 'Hide this week from {$a}';
 $string['weeklyoutline'] = 'Weekly outline';
 $string['weekshow'] = 'Show this week to {$a}';
-$string['welcomeback'] = 'Welcome back, {$a}! 👋';
-$string['welcometosite'] = 'Welcome, {$a}! 👋';
+$string['welcomeback'] = 'Welcome back, {$a->firstname}! 👋';
+$string['welcometosite'] = 'Welcome, {$a->firstname}! 👋';
 $string['welcometocourse'] = 'Welcome to {$a}';
 $string['welcometocoursetext'] = 'Welcome to {$a->coursename}!
 
