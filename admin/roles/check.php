@@ -87,6 +87,7 @@ if ($context->contextlevel == CONTEXT_BLOCK) {
     $PAGE->blocks->show_only_fake_blocks(true);
 }
 $PAGE->set_title($title);
+$PAGE->activityheader->disable();
 
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:

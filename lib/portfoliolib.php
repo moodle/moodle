@@ -1117,7 +1117,10 @@ function portfolio_export_pagesetup($PAGE, $caller) {
 
     // and now we know the course for sure and maybe the cm, call require_login with it
     require_login($PAGE->course, false, $cm);
-
+    $PAGE->activityheader->set_attrs([
+        'description' => '',
+        'hidecompletion' => true
+    ]);
     foreach ($extranav as $navitem) {
         $PAGE->navbar->add($navitem['name']);
     }

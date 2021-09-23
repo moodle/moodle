@@ -2907,6 +2907,8 @@ EOD;
             //$this->page->set_pagelayout('base'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the pagelayout from URL :-(
             $this->page->set_title(get_string('error'));
             $this->page->set_heading($this->page->course->fullname);
+            // No need to display the activity header when encountering an error.
+            $this->page->activityheader->disable();
             $output .= $this->header();
         }
 
