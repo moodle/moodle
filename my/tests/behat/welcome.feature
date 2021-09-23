@@ -6,8 +6,8 @@ Feature: Welcome message
 
   Scenario: Log in and being redirected to course page
     Given the following "users" exist:
-      | username | password | firstname | lastname | email    |
-      | wf       | test     | Fei       | Wang     | wf@z.com |
+      | username | password | firstname | lastname | email            |
+      | wf       | test     | Fei       | Wang     | fei@example.com  |
     And the following "courses" exist:
       | fullname | shortname |
       | Math 101 | M1O1      |
