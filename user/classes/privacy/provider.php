@@ -180,7 +180,7 @@ class provider implements
 
         $collection->add_user_preference(
             'core_user_welcome',
-            'privacy:metadata:core_user:preference:core_user_welcome'
+            'privacy:metadata:user_preference:core_user_welcome'
         );
 
         return $collection;
