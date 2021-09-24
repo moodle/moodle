@@ -2862,5 +2862,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021092400.03);
     }
 
+    if ($oldversion < 2021100500.00) {
+        // Define index itemtype-mod-inst-course (not unique) to be added to grade_items.
+        $table = new xmldb_table('grade_items');
+        $index = new xmldb_index('itemtype-mod-inst-course', XMLDB_INDEX_NOTUNIQUE,
+            ['itemtype', 'itemmodule', 'iteminstance', 'courseid']);
+
+        // Conditionally launch add index itemtype-mod-inst-course.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021100500.00);
+    }
+
     return true;
 }
