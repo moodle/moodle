@@ -11918,9 +11918,9 @@ input[disabled] {
   .link-underline:focus {
     text-decoration: none; }
 
-.alert.cta .icon {
+.alert.cta .cta-icon .icon {
   padding: 0.3rem; }
-  .alert.cta .icon.fa {
+  .alert.cta .cta-icon .icon.fa {
     border-radius: 50%;
     border-style: solid;
     border-width: 0.125rem; }

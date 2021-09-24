@@ -63,6 +63,7 @@ class core_userfeedback {
                     'record' => 1,
                     'hide' => 1,
                 ],
+                'newwindow' => true,
             ],
             [
                 'title' => get_string('calltofeedback_remind'),
