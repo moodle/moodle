@@ -39,7 +39,7 @@ Feature: Exporting and importing feedbacks
       | Label            | multichoice1                |
       | Multiple choice type | Multiple choice - single answer |
       | Multiple choice values | option a\noption b\noption c  |
-    And I select "Add a page break" from the "Add question" singleselect
+    And I select "Add a page break" from the "typ" singleselect
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | this is a multiple choice 2        |
       | Label                          | multichoice2                       |
@@ -66,7 +66,6 @@ Feature: Exporting and importing feedbacks
       | Question               | this is a short text answer |
       | Label                  | shorttext                   |
       | Maximum characters accepted | 200                    |
-    And I follow "Templates"
     Then following "Export questions" should export feedback identical to "mod/feedback/tests/fixtures/testexport.xml"
     And I log out
 
@@ -78,11 +77,10 @@ Feature: Exporting and importing feedbacks
       | Question               | Existing question |
       | Label                  | numeric           |
       | Range to               | 100               |
-    And I follow "Templates"
-    And I follow "Import questions"
+    And I select "Import questions" from the "jump" singleselect
     And I upload "mod/feedback/tests/fixtures/testexport.xml" file to "File" filemanager
-    And I press "Yes"
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I press "Save"
+    And I select "Add question" from the "jump" singleselect
     Then I should not see "Existing question"
     And I should see "this is an information question"
     And I should see "label text"
@@ -102,12 +100,11 @@ Feature: Exporting and importing feedbacks
       | Question               | Existing question |
       | Label                  | numeric           |
       | Range to               | 100               |
-    And I follow "Templates"
-    And I follow "Import questions"
+    And I select "Import questions" from the "jump" singleselect
     And I set the field "Append new items" to "1"
     And I upload "mod/feedback/tests/fixtures/testexport.xml" file to "File" filemanager
-    And I press "Yes"
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I press "Save"
+    And I select "Add question" from the "jump" singleselect
     Then I should see "Existing question"
     And "Existing question" "text" should appear before "this is an information question" "text"
     And I should see "this is an information question"
