@@ -427,6 +427,6 @@ class core_dml_read_slave_testcase extends base_testcase {
             $this->assertTrue($DB->perf_get_reads() > 0);
         });
 
-        \core\session\manager::restart_with_write_lock();
+        \core\session\manager::restart_with_write_lock(false);
     }
 }
