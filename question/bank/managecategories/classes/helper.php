@@ -206,32 +206,34 @@ class helper {
      * @param string $selected optionally, the id of a category to be selected by
      *      default in the dropdown.
      * @param int $nochildrenof
+     * @param bool $return to return the string of the select menu or echo that from the method
      * @throws \coding_exception|\dml_exception
      */
     public static function question_category_select_menu(array $contexts, bool $top = false, int $currentcat = 0,
-                                           string $selected = "", int $nochildrenof = -1): void {
+                                           string $selected = "", int $nochildrenof = -1, bool $return = false) {
         $categoriesarray = self::question_category_options($contexts, $top, $currentcat,
             false, $nochildrenof, false);
-        if ($selected) {
-            $choose = '';
-        } else {
-            $choose = 'choosedots';
-        }
+        $choose = '';
         $options = [];
         foreach ($categoriesarray as $group => $opts) {
             $options[] = [$group => $opts];
         }
-        echo html_writer::label(get_string('questioncategory', 'core_question'),
-                            'id_movetocategory', false, ['class' => 'accesshide']);
+        $outputhtml = html_writer::label(get_string('questioncategory', 'core_question'),
+            'id_movetocategory', false, ['class' => 'accesshide']);
         $attrs = [
             'id' => 'id_movetocategory',
             'class' => 'custom-select',
             'data-action' => 'toggle',
             'data-togglegroup' => 'qbank',
             'data-toggle' => 'action',
-            'disabled' => true,
+            'disabled' => false,
         ];
-        echo html_writer::select($options, 'category', $selected, $choose, $attrs);
+        $outputhtml .= html_writer::select($options, 'category', $selected, $choose, $attrs);
+        if ($return) {
+            return $outputhtml;
+        } else {
+            echo $outputhtml;
+        }
     }
 
     /**

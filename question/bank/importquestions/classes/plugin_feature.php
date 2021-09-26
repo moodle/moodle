@@ -25,6 +25,8 @@
 
 namespace qbank_importquestions;
 
+use core_question\local\bank\navigation_node_base;
+
 /**
  * Class plugin_feature.
  *
@@ -35,7 +37,7 @@ namespace qbank_importquestions;
  */
 class plugin_feature extends \core_question\local\bank\plugin_features_base {
 
-    public function get_navigation_node(): ?object {
+    public function get_navigation_node(): ?navigation_node_base {
         return new navigation();
     }
 }

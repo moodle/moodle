@@ -73,6 +73,12 @@ This files describes API changes for code that uses the question API.
    restart_preview() => qbank_previewquestion\helper::restart_preview(),
    core_question_output_fragment_tags_form() => /question/bank/qbank_tagquestion/lib.php.
 
+10)The qbank api now allows bulk actions from qbank plugins. Its possible to implement a qbank plugin and pass the bulk
+   bulk action object from the plugin feature using the get_bulk_actions(). The base class for this feature is bulk_action_base.
+   The following methods are deprecated as a part of bulk actions ui implementation and its no more required to call these methods
+   anymore as the api is now self sufficient, calling the api will fetch all the features:
+   process_actions(), process_actions_needing_ui().
+
 === 3.9 ==
 
 1) For years, the ..._questions_in_use callback has been the right way for plugins to

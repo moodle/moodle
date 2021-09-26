@@ -1950,6 +1950,7 @@ class core_plugin_manager {
             ),
 
             'qbank' => [
+                'bulkmove',
                 'comment',
                 'deletequestion',
                 'editquestion',

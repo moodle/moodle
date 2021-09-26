@@ -38,7 +38,7 @@ namespace core_question\local\bank;
 class plugin_features_base {
 
     /**
-     * This method will return the array of objects to be rendered as a prt of question bank columns/actions.
+     * This method will return the array of objects to be rendered as a part of question bank columns/actions.
      *
      * @param view $qbank
      * @return array
@@ -50,9 +50,18 @@ class plugin_features_base {
     /**
      * This method will return the object for the navigation node.
      *
-     * @return null|object
+     * @return null|navigation_node_base
      */
-    public function get_navigation_node(): ?object {
+    public function get_navigation_node(): ?navigation_node_base {
+        return null;
+    }
+
+    /**
+     * This method will return the array objects for the bulk actions ui.
+     *
+     * @return null|bulk_action_base
+     */
+    public function get_bulk_actions(): ?bulk_action_base {
         return null;
     }
 

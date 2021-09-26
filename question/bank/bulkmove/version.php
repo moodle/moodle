@@ -14,24 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace qbank_managecategories;
-
-use core_question\local\bank\navigation_node_base;
-
 /**
- * Class plugin_feature.
+ * Version information for qbank_bulkmove.
  *
- * Entry point for qbank plugin.
- * Every qbank plugin must extent this class.
- *
- * @package    qbank_managecategories
+ * @package    qbank_bulkmove
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin_feature extends \core_question\local\bank\plugin_features_base {
 
-    public function get_navigation_node(): ?navigation_node_base {
-        return new navigation();
-    }
-}
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->component = 'qbank_bulkmove';
+$plugin->version   = 2021092600;
+$plugin->requires  = 2021052500;
+$plugin->maturity  = MATURITY_STABLE;
