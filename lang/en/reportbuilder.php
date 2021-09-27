@@ -53,6 +53,7 @@ $string['filterisnotequalto'] = 'Is not equal to';
 $string['filterlessthan'] = 'Less than';
 $string['filterrange'] = 'Range';
 $string['filtersapplied'] = 'Filters applied';
+$string['filtersappliedx'] = 'Filters ({$a})';
 $string['filtersreset'] = 'Filters reset';
 $string['filterstartswith'] = 'Starts with';
 $string['privacy:metadata:preference:reportfilter'] = 'Stored report filter values';

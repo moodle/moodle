@@ -443,6 +443,21 @@ abstract class base {
     }
 
     /**
+     * Return the number of filter instances that are being applied based on the report's filter values (i.e. user has
+     * configured them from their initial "Any value" state)
+     *
+     * @return int
+     */
+    final public function get_applied_filter_count(): int {
+        $values = $this->get_filter_values();
+        $applied = array_filter($this->get_filter_instances(), static function(filter_base $filter) use ($values): bool {
+            return $filter->applies_to_values($values);
+        });
+
+        return count($applied);
+    }
+
+    /**
      * Set if the report can be downloaded.
      *
      * @param bool $downloadable

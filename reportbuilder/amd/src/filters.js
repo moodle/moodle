@@ -34,6 +34,22 @@ import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {reset as resetFilters} from 'core_reportbuilder/local/repository/filters';
 
 /**
+ * Update filter button text to indicate applied filter count
+ *
+ * @param {Element} reportElement
+ * @param {Number} filterCount
+ */
+const setFilterButtonCount = async(reportElement, filterCount) => {
+    const filterButtonLabel = reportElement.querySelector(reportSelectors.regions.filterButtonLabel);
+
+    if (filterCount > 0) {
+        filterButtonLabel.textContent = await getString('filtersappliedx', 'core_reportbuilder', filterCount);
+    } else {
+        filterButtonLabel.textContent = await getString('filters', 'moodle');
+    }
+};
+
+/**
  * Initialise module for given report
  *
  * @method
@@ -51,6 +67,7 @@ export const init = (reportId, contextId) => {
 
         // After the form has been submitted, we should trigger report table reload.
         dispatchEvent(reportEvents.tableReload, {}, reportElement);
+        setFilterButtonCount(reportElement, event.detail);
 
         getString('filtersapplied', 'core_reportbuilder')
             .then(addToast)
@@ -72,7 +89,9 @@ export const init = (reportId, contextId) => {
             }))
             .then((html, js) => {
                 Templates.replaceNodeContents(filterFormContainer, html, js);
+
                 dispatchEvent(reportEvents.tableReload, {}, reportElement);
+                setFilterButtonCount(reportElement, 0);
 
                 return pendingPromise.resolve();
             })

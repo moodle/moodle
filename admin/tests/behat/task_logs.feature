@@ -19,6 +19,7 @@ Feature: View task logs report and use its filters
       | Name value    | <name>   |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     Then I should see "Filters applied"
+    And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And the following should exist in the "reportbuilder-table" table:
       | Type      | Name    |
       | Scheduled | <match> |
@@ -61,9 +62,12 @@ Feature: View task logs report and use its filters
       | Result value    | Fail        |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     Then I should see "Filters applied"
+    And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And I should see "Nothing to display"
     And I click on "Reset" "button" in the "[data-region='report-filters']" "css_element"
     And I should see "Filters reset"
+    And I should not see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
+    And I should see "Filters" in the "#dropdownFiltersButton" "css_element"
     And "[data-region='report-filters']" "css_element" should be visible
     And the following fields in the "Result" "core_reportbuilder > Filter" match these values:
       | Result operator | Is any value |
