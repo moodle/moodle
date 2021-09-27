@@ -118,6 +118,11 @@ class report extends persistent {
         foreach (filter::get_records($reportparams) as $filter) {
             $filter->delete();
         }
+
+        // Audiences.
+        foreach (audience::get_records($reportparams) as $audience) {
+            $audience->delete();
+        }
     }
 
     /**
