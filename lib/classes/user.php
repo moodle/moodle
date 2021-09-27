@@ -1189,7 +1189,17 @@ class core_user {
                 $messagekey = 'welcometosite';
                 set_user_preference('core_user_welcome', time());
             }
-            return new lang_string($messagekey, 'core', $USER->firstname);
+
+            $namefields = [
+                'fullname' => fullname($USER),
+                'alternativefullname' => fullname($USER, true),
+            ];
+
+            foreach (\core_user\fields::get_name_fields() as $namefield) {
+                $namefields[$namefield] = $USER->{$namefield};
+            }
+
+            return new lang_string($messagekey, 'core', $namefields);
         };
         return null;
     }
