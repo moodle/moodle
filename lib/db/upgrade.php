@@ -2842,5 +2842,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021091700.04);
     }
 
+    if ($oldversion < 2021092400.01) {
+        // If tool_health is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/admin/tool/health/version.php')) {
+            // Clean config.
+            unset_all_config_for_plugin('tool_health');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021092400.01);
+    }
+
     return true;
 }

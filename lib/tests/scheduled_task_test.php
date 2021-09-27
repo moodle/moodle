@@ -538,7 +538,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
     }
 
     /**
-     * Data provider for test_tool_health_category_find_missing_parents.
+     * Data provider for test_scheduled_task_override_values.
      */
     public static function provider_schedule_overrides(): array {
         return array(
