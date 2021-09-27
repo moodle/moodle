@@ -116,7 +116,7 @@ if ($errormsg !== '' && get_string_manager()->string_exists($errormsg, 'core_con
 }
 
 // Render the contentbank contents.
-$folder = new \core_contentbank\output\bankcontent($foldercontents, $toolbar, $context);
+$folder = new \core_contentbank\output\bankcontent($foldercontents, $toolbar, $context, $cb);
 echo $OUTPUT->render($folder);
 
 echo $OUTPUT->box_end();

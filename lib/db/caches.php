@@ -493,4 +493,27 @@ $definitions = array(
         'staticacceleration' => true,
         'datasource' => '\core_course\cache\course_image',
     ],
+
+    // Cache the course categories where the user has access the content bank.
+    'contentbank_allowed_categories' => [
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'invalidationevents' => [
+            'changesincoursecat',
+            'changesincategoryenrolment',
+        ],
+    ],
+
+    // Cache the courses where the user has access the content bank.
+    'contentbank_allowed_courses' => [
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'invalidationevents' => [
+            'changesincoursecat',
+            'changesincategoryenrolment',
+            'changesincourse',
+        ],
+    ],
 );
