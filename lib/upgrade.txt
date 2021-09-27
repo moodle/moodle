@@ -153,6 +153,16 @@ such as the title and strings for continue and cancel buttons.
 * The method get_enabled_plugin($pluginname) has been added to the core_plugininfo\base class. It has a default implementation for
 all the plugininfo classes and it can be overwritten when required (like it has been done with filter). This method returns the
 current value for a pluginname depending on its status (enabled, disabled, other...).
+* Unit Test coverage defaults have been updated to include some sensible defaults.
+  The default values now include:
+  * /classes/
+  * /tests/generator/
+  * /externallib.php
+  * /lib.php
+  * /locallib.php
+  * /renderer.php
+  * /rsslib.php
+  This default applies both when there is no supplied coverage.php file, and is used to supplement any existing coverage configuration file if one is found.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.

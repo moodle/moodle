@@ -973,7 +973,7 @@ class phpunit_util extends testing_util {
      * @param   string  $fulldir The directory to find the coverage info file in.
      * @return  phpunit_coverage_info
      */
-    protected static function get_coverage_info(string $fulldir): ?phpunit_coverage_info {
+    protected static function get_coverage_info(string $fulldir): phpunit_coverage_info {
         $coverageconfig = "{$fulldir}/tests/coverage.php";
         if (file_exists($coverageconfig)) {
             $coverageinfo = require($coverageconfig);
@@ -984,7 +984,7 @@ class phpunit_util extends testing_util {
             return $coverageinfo;
         }
 
-        return null;
+        return new phpunit_coverage_info();;
     }
 
     /**
