@@ -66,6 +66,7 @@ $string['deletefilterconfirm'] = 'Are you sure you want to delete the filter \'{
 $string['deletereport'] = 'Delete report';
 $string['deletereportconfirm'] = 'Are you sure you want to delete the report \'{$a}\' and all associated data?';
 $string['editdetails'] = 'Edit details';
+$string['editor'] = 'Editor';
 $string['editreportcontent'] = 'Edit report content';
 $string['editreportdetails'] = 'Edit report details';
 $string['editreportname'] = 'Edit report name';

@@ -69,7 +69,7 @@ class renderer extends plugin_renderer_base {
     protected function render_custom_report(custom_report $report): string {
         $context = $report->export_for_template($this);
 
-        return $this->render_from_template('core_reportbuilder/custom_report', $context);
+        return $this->render_from_template('core_reportbuilder/local/dynamictabs/editor', $context);
     }
 
     /**

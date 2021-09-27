@@ -88,10 +88,9 @@ const updateSorting = (reportElement, element, sortenabled, sortdirection) => {
 /**
  * Initialise module
  *
- * @param {Element} reportElement
  * @param {Boolean} initialized Ensure we only add our listeners once
  */
-export const init = (reportElement, initialized) => {
+export const init = (initialized) => {
     if (initialized) {
         return;
     }
@@ -101,7 +100,7 @@ export const init = (reportElement, initialized) => {
         .catch(Notification.exception)
     );
 
-    reportElement.addEventListener('click', event => {
+    document.addEventListener('click', event => {
 
         // Enable/disable sorting on columns.
         const toggleSorting = event.target.closest(reportSelectors.actions.reportToggleColumnSort);
@@ -109,6 +108,7 @@ export const init = (reportElement, initialized) => {
             event.preventDefault();
 
             const pendingPromise = new Pending('core_reportbuilder/sorting:toggle');
+            const reportElement = toggleSorting.closest(reportSelectors.regions.report);
             const sortdirection = parseInt(toggleSorting.closest('li').dataset.columnSortDirection);
 
             updateSorting(reportElement, toggleSorting, toggleSorting.checked, sortdirection)
@@ -122,6 +122,7 @@ export const init = (reportElement, initialized) => {
             event.preventDefault();
 
             const pendingPromise = new Pending('core_reportbuilder/sorting:direction');
+            const reportElement = toggleSortDirection.closest(reportSelectors.regions.report);
             const listElement = toggleSortDirection.closest('li');
             const sortenabled = listElement.dataset.columnSortEnabled;
 
@@ -142,9 +143,10 @@ export const init = (reportElement, initialized) => {
     var columnsSortingSortableList = new SortableList(`${reportSelectors.regions.settingsSorting} ul`, {isHorizontal: false});
     columnsSortingSortableList.getElementName = element => Promise.resolve(element.data('columnSortName'));
 
-    $(reportElement).on(SortableList.EVENTS.DROP, 'li[data-column-sort-id]', (event, info) => {
+    $(document).on(SortableList.EVENTS.DROP, `${reportSelectors.regions.report} li[data-column-sort-id]`, (event, info) => {
         if (info.positionChanged) {
             const pendingPromise = new Pending('core_reportbuilder/sorting:reorder');
+            const reportElement = event.target.closest(reportSelectors.regions.report);
             const columnId = info.element.data('columnSortId');
             const columnPosition = info.element.data('columnSortPosition');
 

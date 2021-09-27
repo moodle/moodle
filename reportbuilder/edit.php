@@ -24,9 +24,10 @@
 
 declare(strict_types=1);
 
+use core\output\dynamic_tabs;
 use core_reportbuilder\manager;
-use core_reportbuilder\output\custom_report;
 use core_reportbuilder\permission;
+use core_reportbuilder\output\dynamictabs\editor;
 
 require_once(__DIR__ . '/../config.php');
 require_once("{$CFG->libdir}/adminlib.php");
@@ -40,9 +41,6 @@ permission::require_can_edit_report($report->get_report_persistent());
 
 $PAGE->set_context($report->get_context());
 
-/** @var \core_reportbuilder\output\renderer $renderer */
-$renderer = $PAGE->get_renderer('core_reportbuilder');
-
 $reportname = $report->get_report_persistent()->get_formatted_name();
 $PAGE->navbar->add($reportname);
 $PAGE->set_title($reportname);
@@ -50,7 +48,13 @@ $PAGE->set_heading($reportname);
 
 echo $OUTPUT->header();
 
-$customreport = (new custom_report($report->get_report_persistent()));
-echo $renderer->render($customreport);
+// Add dynamic tabs.
+$tabdata = ['reportid' => $reportid];
+$tabs = [
+    new editor($tabdata),
+];
+
+echo $OUTPUT->render_from_template('core/dynamic_tabs',
+    (new dynamic_tabs($tabdata, $tabs))->export_for_template($OUTPUT));
 
 echo $OUTPUT->footer();

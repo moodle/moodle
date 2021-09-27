@@ -58,11 +58,10 @@ const reloadSettingsConditionsRegion = (reportElement, templateContext) => {
 
 /**
  * Initialise conditions form, must be called on each init because the form container is re-created when switching editor modes
- *
- * @param {Element} reportElement
  */
-const initConditionsForm = reportElement => {
+const initConditionsForm = () => {
     // Handle dynamic conditions form.
+    const reportElement = document.querySelector(reportSelectors.regions.report);
     const conditionFormContainer = reportElement.querySelector(reportSelectors.regions.settingsConditions);
     const conditionForm = new DynamicForm(conditionFormContainer, '\\core_reportbuilder\\form\\condition');
 
@@ -99,21 +98,22 @@ const initConditionsForm = reportElement => {
 /**
  * Initialise module
  *
- * @param {Element} reportElement
  * @param {Boolean} initialized Ensure we only add our listeners once
  */
-export const init = (reportElement, initialized) => {
-    initConditionsForm(reportElement);
+export const init = (initialized) => {
+    initConditionsForm();
     if (initialized) {
         return;
     }
 
-    reportElement.addEventListener('click', event => {
+    document.addEventListener('click', event => {
 
         // Add condition to report.
         const reportAddCondition = event.target.closest(reportSelectors.actions.reportAddCondition);
         if (reportAddCondition) {
             event.preventDefault();
+
+            const reportElement = reportAddCondition.closest(reportSelectors.regions.report);
 
             // Check if dropdown is closed with no condition selected.
             if (reportAddCondition.value === '0') {
@@ -139,6 +139,7 @@ export const init = (reportElement, initialized) => {
         if (reportRemoveCondition) {
             event.preventDefault();
 
+            const reportElement = reportRemoveCondition.closest(reportSelectors.regions.report);
             const conditionContainer = reportRemoveCondition.closest(reportSelectors.regions.activeCondition);
             const conditionName = conditionContainer.dataset.conditionName;
 
@@ -170,9 +171,10 @@ export const init = (reportElement, initialized) => {
         {isHorizontal: false});
     activeConditionsSortableList.getElementName = element => Promise.resolve(element.data('conditionName'));
 
-    $(reportElement).on(SortableList.EVENTS.DROP, reportSelectors.regions.activeCondition, (event, info) => {
+    $(document).on(SortableList.EVENTS.DROP, reportSelectors.regions.activeCondition, (event, info) => {
         if (info.positionChanged) {
             const pendingPromise = new Pending('core_reportbuilder/conditions:reorder');
+            const reportElement = event.target.closest(reportSelectors.regions.report);
             const conditionId = info.element.data('conditionId');
             const conditionPosition = info.element.data('conditionPosition');
 

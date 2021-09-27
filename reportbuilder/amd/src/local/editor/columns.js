@@ -40,15 +40,14 @@ import {addColumn, deleteColumn, reorderColumn} from 'core_reportbuilder/local/r
 /**
  * Initialise module
  *
- * @param {Element} reportElement
  * @param {Boolean} initialized Ensure we only add our listeners once
  */
-export const init = (reportElement, initialized) => {
+export const init = (initialized) => {
     if (initialized) {
         return;
     }
 
-    reportElement.addEventListener('click', event => {
+    document.addEventListener('click', event => {
 
         // Add column to report.
         const reportAddColumn = event.target.closest(reportSelectors.actions.reportAddColumn);
@@ -56,6 +55,7 @@ export const init = (reportElement, initialized) => {
             event.preventDefault();
 
             const pendingPromise = new Pending('core_reportbuilder/columns:add');
+            const reportElement = reportAddColumn.closest(reportSelectors.regions.report);
 
             addColumn(reportElement.dataset.reportId, reportAddColumn.dataset.uniqueIdentifier)
                 .then(data => publish(reportEvents.publish.reportColumnsUpdated, data))
@@ -73,6 +73,7 @@ export const init = (reportElement, initialized) => {
         if (reportRemoveColumn) {
             event.preventDefault();
 
+            const reportElement = reportRemoveColumn.closest(reportSelectors.regions.report);
             const columnHeader = reportRemoveColumn.closest(reportSelectors.regions.columnHeader);
             const columnName = columnHeader.dataset.columnName;
 
@@ -103,7 +104,8 @@ export const init = (reportElement, initialized) => {
     var columnSortableList = new SortableList(`${reportSelectors.regions.reportTable} thead tr`, {isHorizontal: true});
     columnSortableList.getElementName = element => Promise.resolve(element.data('columnName'));
 
-    $(reportElement).on(SortableList.EVENTS.DRAG, 'th[data-column-id]', (event, info) => {
+    $(document).on(SortableList.EVENTS.DRAG, `${reportSelectors.regions.report} th[data-column-id]`, (event, info) => {
+        const reportElement = event.target.closest(reportSelectors.regions.report);
         const columnPosition = info.element.data('columnPosition');
         const targetColumnPosition = info.targetNextElement.data('columnPosition');
 
@@ -118,10 +120,10 @@ export const init = (reportElement, initialized) => {
         });
     });
 
-    $(reportElement).on(SortableList.EVENTS.DROP, 'th[data-column-id]', (event, info) => {
+    $(document).on(SortableList.EVENTS.DROP, `${reportSelectors.regions.report} th[data-column-id]`, (event, info) => {
         if (info.positionChanged) {
             const pendingPromise = new Pending('core_reportbuilder/columns:reorder');
-
+            const reportElement = event.target.closest(reportSelectors.regions.report);
             const columnId = info.element.data('columnId');
             const columnName = info.element.data('columnName');
             const columnPosition = info.element.data('columnPosition');
@@ -144,10 +146,11 @@ export const init = (reportElement, initialized) => {
     });
 
     // Initialize inplace editable listeners for column aggregation.
-    reportElement.addEventListener(inplaceEditableEvents.elementUpdated, event => {
+    document.addEventListener(inplaceEditableEvents.elementUpdated, event => {
 
         const columnAggregation = event.target.closest('[data-itemtype="columnaggregation"]');
         if (columnAggregation) {
+            const reportElement = columnAggregation.closest(reportSelectors.regions.report);
             const columnHeader = columnAggregation.closest(reportSelectors.regions.columnHeader);
 
             getString('columnaggregated', 'core_reportbuilder', columnHeader.dataset.columnName)
