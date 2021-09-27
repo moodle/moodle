@@ -1492,6 +1492,12 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_get_unread_notification_count' => [
+        'classname'     => '\core_message\external\get_unread_notification_count',
+        'description'   => 'Get number of unread notifications.',
+        'type'          => 'read',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_notes_create_notes' => array(
         'classname' => 'core_notes_external',
         'methodname' => 'create_notes',
