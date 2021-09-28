@@ -191,7 +191,7 @@ class repository_upload extends repository {
         }
 
         if (($maxbytes!==-1) && (filesize($_FILES[$elname]['tmp_name']) > $maxbytes)) {
-            $maxbytesdisplay = display_size($maxbytes);
+            $maxbytesdisplay = display_size($maxbytes, 0);
             throw new file_exception('maxbytesfile', (object) array('file' => $record->filename,
                                                                     'size' => $maxbytesdisplay));
         }

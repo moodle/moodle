@@ -2699,7 +2699,7 @@ class core_renderer extends renderer_base {
         if ($size == -1) {
             $maxsize = '';
         } else {
-            $maxsize = get_string('maxfilesize', 'moodle', display_size($size));
+            $maxsize = get_string('maxfilesize', 'moodle', display_size($size, 0));
         }
         if ($options->buttonname) {
             $buttonname = ' name="' . $options->buttonname . '"';

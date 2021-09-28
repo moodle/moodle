@@ -6802,7 +6802,7 @@ function get_max_upload_sizes($sitebytes = 0, $coursebytes = 0, $modulebytes = 0
 
     foreach ($sizelist as $sizebytes) {
         if ($sizebytes < $maxsize && $sizebytes > 0) {
-            $filesize[(string)intval($sizebytes)] = display_size($sizebytes);
+            $filesize[(string)intval($sizebytes)] = display_size($sizebytes, 0);
         }
     }
 
@@ -6812,17 +6812,17 @@ function get_max_upload_sizes($sitebytes = 0, $coursebytes = 0, $modulebytes = 0
         (($modulebytes < $coursebytes || $coursebytes == 0) &&
          ($modulebytes < $sitebytes || $sitebytes == 0))) {
         $limitlevel = get_string('activity', 'core');
-        $displaysize = display_size($modulebytes);
+        $displaysize = display_size($modulebytes, 0);
         $filesize[$modulebytes] = $displaysize; // Make sure the limit is also included in the list.
 
     } else if ($coursebytes && ($coursebytes < $sitebytes || $sitebytes == 0)) {
         $limitlevel = get_string('course', 'core');
-        $displaysize = display_size($coursebytes);
+        $displaysize = display_size($coursebytes, 0);
         $filesize[$coursebytes] = $displaysize; // Make sure the limit is also included in the list.
 
     } else if ($sitebytes) {
         $limitlevel = get_string('site', 'core');
-        $displaysize = display_size($sitebytes);
+        $displaysize = display_size($sitebytes, 0);
         $filesize[$sitebytes] = $displaysize; // Make sure the limit is also included in the list.
     }
 
@@ -6954,14 +6954,12 @@ function get_directory_size($rootdir, $excludefile='') {
 /**
  * Converts bytes into display form
  *
- * @static string $gb Localized string for size in gigabytes
- * @static string $mb Localized string for size in megabytes
- * @static string $kb Localized string for size in kilobytes
- * @static string $b Localized string for size in bytes
  * @param int $size  The size to convert to human readable form
- * @return string
+ * @param int $decimalplaces If specified, uses fixed number of decimal places
+ * @param string $fixedunits If specified, uses fixed units (e.g. 'KB')
+ * @return string Display version of size
  */
-function display_size($size) {
+function display_size($size, int $decimalplaces = 1, string $fixedunits = ''): string {
 
     static $units;
 
@@ -6978,20 +6976,44 @@ function display_size($size) {
         $units[] = get_string('sizepb');
     }
 
-    if ($size >= 1024 ** 5) {
-        $size = round($size / 1024 ** 5 * 10) / 10 . $units[5];
-    } else if ($size >= 1024 ** 4) {
-        $size = round($size / 1024 ** 4 * 10) / 10 . $units[4];
-    } else if ($size >= 1024 ** 3) {
-        $size = round($size / 1024 ** 3 * 10) / 10 . $units[3];
-    } else if ($size >= 1024 ** 2) {
-        $size = round($size / 1024 ** 2 * 10) / 10 . $units[2];
-    } else if ($size >= 1024 ** 1) {
-        $size = round($size / 1024 ** 1 * 10) / 10 . $units[1];
-    } else {
-        $size = intval($size) .' '. $units[0]; // File sizes over 2GB can not work in 32bit PHP anyway.
+    switch ($fixedunits) {
+        case 'PB' :
+            $magnitude = 5;
+            break;
+        case 'TB' :
+            $magnitude = 4;
+            break;
+        case 'GB' :
+            $magnitude = 3;
+            break;
+        case 'MB' :
+            $magnitude = 2;
+            break;
+        case 'KB' :
+            $magnitude = 1;
+            break;
+        case 'B' :
+            $magnitude = 0;
+            break;
+        case '':
+            $magnitude = floor(log($size, 1024));
+            $magnitude = max(0, min(5, $magnitude));
+            break;
+        default:
+            throw new coding_exception('Unknown fixed units value: ' . $fixedunits);
     }
-    return $size;
+
+    // Special case for magnitude 0 (bytes) - never use decimal places.
+    $nbsp = "\xc2\xa0";
+    if ($magnitude === 0) {
+        return round($size) . $nbsp . $units[$magnitude];
+    }
+
+    // Convert to specified units.
+    $sizeinunit = $size / 1024 ** $magnitude;
+
+    // Fixed decimal places.
+    return sprintf('%.' . $decimalplaces . 'f', $sizeinunit) . $nbsp . $units[$magnitude];
 }
 
 /**

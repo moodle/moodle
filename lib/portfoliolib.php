@@ -1009,7 +1009,7 @@ function portfolio_filesize_info() {
     $filesizes = array();
     $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152, 5242880, 10485760, 20971520, 52428800);
     foreach ($sizelist as $size) {
-        $filesizes[$size] = display_size($size);
+        $filesizes[$size] = display_size($size, 0);
     }
     return array(
         'options' => $filesizes,
