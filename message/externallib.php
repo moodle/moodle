@@ -1990,7 +1990,7 @@ class core_message_external extends external_api {
      */
     public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = true,
                                         $newestfirst = true, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $USER;
+        global $CFG, $USER, $PAGE;
 
         $warnings = array();
 
@@ -2088,13 +2088,26 @@ class core_message_external extends external_api {
             }
             foreach ($messages as $mid => $message) {
 
-                // Do not return deleted messages.
                 if (!$message->notification) {
+                    // Do not return deleted messages.
                     if (($useridto == $USER->id and $message->timeusertodeleted) or
                         ($useridfrom == $USER->id and $message->timeuserfromdeleted)) {
                         unset($messages[$mid]);
                         continue;
                     }
+                } else {
+                    // Return iconurl for notifications.
+                    if (!isset($output)) {
+                        $output = $PAGE->get_renderer('core');
+                    }
+
+                    if (!empty($message->component) && substr($message->component, 0, 4) == 'mod_') {
+                        $iconurl = $output->image_url('icon', $message->component);
+                    } else {
+                        $iconurl = $output->image_url('i/marker', 'core');
+                    }
+
+                    $message->iconurl = clean_param($iconurl->out(), PARAM_URL);
                 }
 
                 // We need to get the user from the query.
@@ -2167,6 +2180,7 @@ class core_message_external extends external_api {
                             'eventtype' => new external_value(PARAM_TEXT, 'The type of notification', VALUE_OPTIONAL),
                             'customdata' => new external_value(PARAM_RAW, 'Custom data to be passed to the message processor.
                                 The data here is serialised using json_encode().', VALUE_OPTIONAL),
+                            'iconurl' => new external_value(PARAM_URL, 'URL for icon, only for notifications.', VALUE_OPTIONAL),
                         ), 'message'
                     )
                 ),
