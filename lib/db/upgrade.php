@@ -2853,5 +2853,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021092400.01);
     }
 
+    if ($oldversion < 2021092400.03) {
+        // Remove repository_picasa configuration (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/repository/picasa/version.php')) {
+            unset_all_config_for_plugin('repository_picasa');
+        }
+
+        upgrade_main_savepoint(true, 2021092400.03);
+    }
+
     return true;
 }
