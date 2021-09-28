@@ -721,7 +721,7 @@ class gradebookservices extends service_base {
             $gradebookroles = explode(',', $CFG->gradebookroles);
             foreach ($roles as $role) {
                 foreach ($gradebookroles as $gradebookrole) {
-                    if ($role->roleid = $gradebookrole) {
+                    if ($role->roleid === $gradebookrole) {
                         $gradableuser = true;
                     }
                 }
