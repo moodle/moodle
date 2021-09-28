@@ -281,7 +281,13 @@ class task_log extends base {
             $this->get_entity_name(),
             "{$tablealias}.timestart"
         ))
-            ->add_joins($this->get_joins());
+            ->add_joins($this->get_joins())
+            ->set_limited_operators([
+                date::DATE_ANY,
+                date::DATE_RANGE,
+                date::DATE_PREVIOUS,
+                date::DATE_CURRENT,
+            ]);
 
         // Duration filter.
         $filters[] = (new filter(
