@@ -29,5 +29,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
+$string['cliincorrectvalueerror'] = 'ຜິດພາດ, ຄ່າບໍ່ຖືກຕ້ອງ "{$a->value}" ສໍາລັບ "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'ຄ່າບໍ່ຖືກຕ້ອງ, ກະລຸນາລອງໃໝ່';
+$string['clitypevalue'] = 'ປະເພດມູນຄ່າ';
+$string['clitypevaluedefault'] = 'ພິມຄ່າ, ກົດ Enter ເພື່ອໃຊ້ຄ່າເລີ່ມຕົ້ນ ({$a})';
+$string['cliunknowoption'] = 'ຕົວເລືອກທີ່ບໍ່ຮູ້ຈັກ:
+   {$a}
+ກະລຸນາໃຊ້ --ຕົວເລືອກຊ່ວຍເຫຼືອ.';
+$string['cliyesnoprompt'] = 'ປະເພດ y (ໝາຍຄວາມວ່າແມ່ນ) ຫຼື n (ໝາຍຄວາມວ່າບໍ່)';
 $string['environmentrequireinstall'] = 'is required to be installed/enabled.';
 $string['environmentrequireversion'] = 'version {$a->needed} is required and you are running {$a->current}';
