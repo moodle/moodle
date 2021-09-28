@@ -72,6 +72,11 @@ class custom_report_menu_cards_exporter extends exporter {
                             'action' => [
                                 'type' => PARAM_TEXT,
                             ],
+                            'disabled' => [
+                                'type' => PARAM_BOOL,
+                                'optional' => true,
+                                'default' => false,
+                            ],
                         ],
                         'optional' => true,
                         'multiple' => true,

@@ -20,6 +20,7 @@ namespace core_reportbuilder\local\models;
 
 use lang_string;
 use core\persistent;
+use core_reportbuilder\local\helpers\audience as helper;
 
 /**
  * Persistent class to represent a report audience
@@ -73,6 +74,35 @@ class audience extends persistent {
         }
 
         return true;
+    }
+
+    /**
+     * Hook to execute after creation
+     */
+    protected function after_create(): void {
+        helper::purge_caches();
+    }
+
+    /**
+     * Hook to execute after update
+     *
+     * @param bool $result
+     */
+    protected function after_update($result): void {
+        if ($result) {
+            helper::purge_caches();
+        }
+    }
+
+    /**
+     * Hook to execute after deletion
+     *
+     * @param bool $result
+     */
+    protected function after_delete($result): void {
+        if ($result) {
+            helper::purge_caches();
+        }
     }
 
     /**

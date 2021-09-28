@@ -32,7 +32,7 @@
         }]
     }
 }}
-<div class="reportbuilder-sidebar-menu d-flex flex-column mr-md-3" data-region="sidebar-menu" id="region-sidebar-menu">
+<div id="region-sidebar-menu-{{uniqid}}" class="reportbuilder-sidebar-menu d-flex flex-column mr-md-3" data-region="sidebar-menu">
     <div class="input-group mb-3">
         <label for="reportbuilder-sidebar-search">
             <span class="sr-only">{{#str}} search, core_search {{/str}}</span>
@@ -60,6 +60,6 @@
 
 {{#js}}
     require(['core_reportbuilder/sidebar'], function(sidebar) {
-        sidebar.init();
+        sidebar.init('#region-sidebar-menu-{{uniqid}}');
     });
 {{/js}}

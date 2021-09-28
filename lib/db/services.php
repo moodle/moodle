@@ -2888,6 +2888,12 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_reportbuilder_audiences_delete' => [
+        'classname'   => 'core_reportbuilder\external\audiences\delete',
+        'description' => 'Delete audience from report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
 );
 
 $services = array(

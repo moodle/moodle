@@ -27,6 +27,7 @@ declare(strict_types=1);
 use core\output\dynamic_tabs;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
+use core_reportbuilder\output\dynamictabs\audience;
 use core_reportbuilder\output\dynamictabs\editor;
 
 require_once(__DIR__ . '/../config.php');
@@ -52,6 +53,7 @@ echo $OUTPUT->header();
 $tabdata = ['reportid' => $reportid];
 $tabs = [
     new editor($tabdata),
+    new audience($tabdata),
 ];
 
 echo $OUTPUT->render_from_template('core/dynamic_tabs',

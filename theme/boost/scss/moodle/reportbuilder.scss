@@ -210,3 +210,34 @@
         }
     }
 }
+
+/**
+* Audiences.
+*/
+
+.reportbuilder-audiences-container {
+    /* 'OR' separator. */
+    .audience-separator {
+        text-transform: uppercase;
+        &::before,
+        &::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(0, 0, 0, .125);
+        }
+        &:not(:empty)::before {
+            margin-right: 1rem;
+        }
+        &:not(:empty)::after {
+            margin-left: 1rem;
+        }
+    }
+    /* Card action icons. */
+    .instance-card {
+        .card-header {
+            i.icon {
+                margin-right: 0;
+            }
+        }
+    }
+}
