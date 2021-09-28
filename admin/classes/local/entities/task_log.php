@@ -17,6 +17,7 @@
 namespace core_admin\local\entities;
 
 use core_reportbuilder\local\filters\date;
+use core_reportbuilder\local\filters\duration;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\helpers\format;
@@ -279,6 +280,16 @@ class task_log extends base {
             new lang_string('task_starttime', 'admin'),
             $this->get_entity_name(),
             "{$tablealias}.timestart"
+        ))
+            ->add_joins($this->get_joins());
+
+        // Duration filter.
+        $filters[] = (new filter(
+            duration::class,
+            'duration',
+            new lang_string('task_duration', 'admin'),
+            $this->get_entity_name(),
+            "${tablealias}.timeend - {$tablealias}.timestart"
         ))
             ->add_joins($this->get_joins());
 

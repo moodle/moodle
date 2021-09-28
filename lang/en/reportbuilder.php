@@ -37,6 +37,7 @@ $string['filtercontains'] = 'Contains';
 $string['filterdatefrom'] = 'Date from';
 $string['filterdateto'] = 'Date to';
 $string['filterdoesnotcontain'] = 'Does not contain';
+$string['filterdurationunit'] = '{$a} unit';
 $string['filterendswith'] = 'Ends with';
 $string['filterequalorgreaterthan'] = 'Greater than or equal';
 $string['filterequalorlessthan'] = 'Less than or equal';
