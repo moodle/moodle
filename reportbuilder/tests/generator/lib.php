@@ -20,6 +20,7 @@ use core_reportbuilder\local\helpers\report as helper;
 use core_reportbuilder\local\models\column;
 use core_reportbuilder\local\models\filter;
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\audiences\base as audience_base;
 
 /**
  * Report builder test generator
@@ -111,5 +112,31 @@ class core_reportbuilder_generator extends component_generator_base {
         }
 
         return helper::add_report_condition($record['reportid'], $record['uniqueidentifier']);
+    }
+
+    /**
+     * Create report audience
+     *
+     * @param array|stdClass $record
+     * @return audience_base
+     * @throws coding_exception
+     */
+    public function create_audience($record): audience_base {
+        $record = (array) $record;
+
+        // Required properties.
+        if (!array_key_exists('reportid', $record)) {
+            throw new coding_exception('Record must contain \'reportid\' property');
+        }
+        if (!array_key_exists('configdata', $record)) {
+            throw new coding_exception('Record must contain \'configdata\' property');
+        }
+
+        // Default to all users if not specified, for convenience.
+        /** @var audience_base $classname */
+        $classname = $record['classname'] ??
+            \core_reportbuilder\reportbuilder\audience\allusers::class;
+
+        return ($classname)::create($record['reportid'], $record['configdata']);
     }
 }

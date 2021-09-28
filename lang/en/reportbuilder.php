@@ -24,6 +24,7 @@
 
 $string['actions'] = 'Actions';
 $string['addcolumn'] = 'Add column \'{$a}\'';
+$string['addusers'] = 'Add users manually';
 $string['aggregatecolumn'] = 'Aggregate column \'{$a}\'';
 $string['aggregationavg'] = 'Average';
 $string['aggregationcount'] = 'Count';
@@ -35,6 +36,8 @@ $string['aggregationmin'] = 'Minimum';
 $string['aggregationnone'] = 'No aggregation';
 $string['aggregationpercent'] = 'Percentage';
 $string['aggregationsum'] = 'Sum';
+$string['allsiteusers'] = 'All site users';
+$string['allusers'] = 'All users';
 $string['apply'] = 'Apply';
 $string['columnadded'] = 'Added column \'{$a}\'';
 $string['columnaggregated'] = 'Aggregated column \'{$a}\'';
@@ -115,8 +118,10 @@ $string['filters'] = 'Filters';
 $string['filters_help'] = 'Report filters allow users viewing the report to further limit the data being displayed, by selecting their own values for each filter. Filter values are stored on a per-user basis.';
 $string['filtersreset'] = 'Filters reset';
 $string['filterstartswith'] = 'Starts with';
+$string['hassystemrole'] = 'Assigned system role';
 $string['includedefaultsetup'] = 'Include default setup';
 $string['includedefaultsetup_help'] = 'Populate report with default layout as defined by the selected source. These include pre-defined columns, filters and conditions.';
+$string['manuallyaddedusers'] = 'Manually added users';
 $string['movecolumn'] = 'Move column \'{$a}\'';
 $string['movecondition'] = 'Move condition \'{$a}\'';
 $string['movefilter'] = 'Move filter \'{$a}\'';

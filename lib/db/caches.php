@@ -523,4 +523,13 @@ $definitions = array(
             'changesincourse',
         ],
     ],
+
+    // Users allowed reports according to audience.
+    'reportbuilder_allowed_reports' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'ttl' => 1800,
+    ],
 );
