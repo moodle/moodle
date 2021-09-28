@@ -272,12 +272,19 @@ function(
                 return [];
             }
 
+            // Determine if the overdue filter is applied.
+            const overdueFilter = document.querySelector("[data-filtername='overdue']");
+            const filterByOverdue = (overdueFilter && overdueFilter.getAttribute('aria-current'));
+
             var calendarEvents = result.events.filter(function(event) {
                 if (event.eventtype == "open" || event.eventtype == "opensubmission") {
                     var dayTimestamp = UserDate.getUserMidnightForTimestamp(event.timesort, midnight);
                     return dayTimestamp > midnight;
                 }
-                return true;
+
+                // When filtering by overdue, we fetch all events due today, in case any have elapsed already and are overdue.
+                // This means if filtering by overdue, some events fetched might not be required (eg if due later today).
+                return (!filterByOverdue || event.overdue);
             });
             // We expect to receive limit + 1 events back from the server.
             // Any less means there are no more events to load.

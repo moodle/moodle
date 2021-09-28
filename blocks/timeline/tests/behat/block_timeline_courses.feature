@@ -24,9 +24,11 @@ Feature: The timeline block allows users to see upcoming courses
       | feedback | C1     | feedback2 | Test feedback 2 | Test feedback description | ##first day of +10 months## | ##last day of +10 months##  |
       | feedback | C3     | feedback3 | Test feedback 3 | Test feedback description | ##first day of +5 months## | ##last day of +5 months## |
       | feedback | C4     | feedback4 | Test feedback 4 | Test feedback description | ##yesterday## | ##tomorrow## |
+      | feedback | C1     | feedback5 | Test feedback 5 | Test feedback description | ##yesterday## | ##now +1 minute## |
     And the following "activities" exist:
-      | activity | course | idnumber  | name            | intro                   | timeopen        | duedate     |
-      | assign   | C1     | assign1   | Test assign 1   | Test assign description | ##1 month ago## | ##yesterday##  |
+      | activity | course | idnumber  | name            | intro                   | timeopen        | duedate           |
+      | assign   | C1     | assign1   | Test assign 1   | Test assign description | ##1 month ago## | ##yesterday##     |
+      | assign   | C2     | assign2   | Test assign 2   | Test assign description | ##yesterday##   | ##now -1 minute## |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
@@ -36,6 +38,8 @@ Feature: The timeline block allows users to see upcoming courses
 
   Scenario: Next 30 days in course view
     Given I log in as "student1"
+    And I click on "Filter timeline by date" "button" in the "Timeline" "block"
+    And I click on "Next 30 days" "link" in the "Timeline" "block"
     And I click on "Sort timeline items" "button" in the "Timeline" "block"
     When I click on "Sort by courses" "link" in the "Timeline" "block"
     Then I should see "Course 1" in the "Timeline" "block"
@@ -45,13 +49,14 @@ Feature: The timeline block allows users to see upcoming courses
     And I should see "Choice closes" in the "Timeline" "block"
     And "Test feedback 1" "link" should exist in the "Timeline" "block"
     And I should see "Feedback closes" in the "Timeline" "block"
+    And "Test feedback 5" "link" should exist in the "Timeline" "block"
+    And "Test assign 2" "link" should exist in the "Timeline" "block"
     And I should not see "Course 3" in the "Timeline" "block"
     And "Test choice 2" "link" should not exist in the "Timeline" "block"
     And "Test choice 3" "link" should not exist in the "Timeline" "block"
     And "Test feedback 2" "link" should not exist in the "Timeline" "block"
     And "Test feedback 3" "link" should not exist in the "Timeline" "block"
     And "Test assign 1" "link" should not exist in the "Timeline" "block"
-    And I should not see "Assignment is due" in the "Timeline" "block"
 
   Scenario: All in course view
     Given I log in as "student1"
@@ -68,7 +73,9 @@ Feature: The timeline block allows users to see upcoming courses
     And "Test feedback 1" "link" should exist in the "Timeline" "block"
     And "Test feedback 2" "link" should exist in the "Timeline" "block"
     And "Test feedback 3" "link" should exist in the "Timeline" "block"
+    And "Test feedback 5" "link" should exist in the "Timeline" "block"
     And "Test assign 1" "link" should exist in the "Timeline" "block"
+    And "Test assign 2" "link" should exist in the "Timeline" "block"
     And I should see "Assignment is due" in the "Timeline" "block"
     And I should see "Choice closes" in the "Timeline" "block"
     And I should not see "More courses" in the "Timeline" "block"
@@ -88,6 +95,8 @@ Feature: The timeline block allows users to see upcoming courses
     And I should see "More courses" in the "Timeline" "block"
     And "Test choice 1" "link" should exist in the "Timeline" "block"
     And "Test feedback 1" "link" should exist in the "Timeline" "block"
+    And "Test feedback 5" "link" should exist in the "Timeline" "block"
+    And "Test assign 2" "link" should exist in the "Timeline" "block"
     And I should not see "Course 3" in the "Timeline" "block"
     And "Test choice 2" "link" should not exist in the "Timeline" "block"
     And "Test choice 3" "link" should not exist in the "Timeline" "block"
@@ -136,3 +145,38 @@ Feature: The timeline block allows users to see upcoming courses
     And I click on "More courses" "button" in the "Timeline" "block"
     Then "Test assign 1" "link" should exist in the "Timeline" "block"
     And "Test feedback 2" "link" should exist in the "Timeline" "block"
+
+  Scenario: Overdue in course view
+    Given I log in as "student1"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
+    And I click on "Sort by courses" "link" in the "Timeline" "block"
+    And I click on "Filter timeline by date" "button" in the "Timeline" "block"
+    When I click on "Overdue" "link" in the "Timeline" "block"
+    Then "Test assign 1" "link" should exist in the "Timeline" "block"
+    And "Test assign 2" "link" should exist in the "Timeline" "block"
+    And I should not see "Test feedback 1" in the "Timeline" "block"
+    And I should not see "Test feedback 2" in the "Timeline" "block"
+    And I should not see "Test feedback 3" in the "Timeline" "block"
+    And I should not see "Test feedback 4" in the "Timeline" "block"
+    And I should not see "Test feedback 5" in the "Timeline" "block"
+    And I should not see "Test choice 1" in the "Timeline" "block"
+    And I should not see "Test choice 2" in the "Timeline" "block"
+    And I should not see "Test choice 3" in the "Timeline" "block"
+
+  Scenario: Persistent Overdue in course view
+    Given I log in as "student1"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
+    And I click on "Sort by courses" "link" in the "Timeline" "block"
+    And I click on "Filter timeline by date" "button" in the "Timeline" "block"
+    When I click on "Overdue" "link" in the "Timeline" "block"
+    And I reload the page
+    Then "Test assign 1" "link" should exist in the "Timeline" "block"
+    And  "Test assign 2" "link" should exist in the "Timeline" "block"
+    And "Test feedback 1" "link" should not exist in the "Timeline" "block"
+    And "Test feedback 2" "link" should not exist in the "Timeline" "block"
+    And "Test feedback 3" "link" should not exist in the "Timeline" "block"
+    And "Test feedback 4" "link" should not exist in the "Timeline" "block"
+    And "Test feedback 5" "link" should not exist in the "Timeline" "block"
+    And "Test choice 1" "link" should not exist in the "Timeline" "block"
+    And "Test choice 2" "link" should not exist in the "Timeline" "block"
+    And "Test choice 3" "link" should not exist in the "Timeline" "block"
