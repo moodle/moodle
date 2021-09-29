@@ -24,8 +24,10 @@
 
 namespace core_h5p;
 
-use H5peditorFile;
 use stored_file;
+use Moodle\H5PCore;
+use Moodle\H5peditorFile;
+use Moodle\H5PFileStorage;
 
 /**
  * Class to handle storage and export of H5P Content.
@@ -34,7 +36,7 @@ use stored_file;
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class file_storage implements \H5PFileStorage {
+class file_storage implements H5PFileStorage {
 
     /** The component for H5P. */
     public const COMPONENT   = 'core_h5p';
@@ -84,7 +86,7 @@ class file_storage implements \H5PFileStorage {
             'contextid' => $this->context->id,
             'component' => self::COMPONENT,
             'filearea' => self::LIBRARY_FILEAREA,
-            'filepath' => '/' . \H5PCore::libraryToString($library, true) . '/',
+            'filepath' => '/' . H5PCore::libraryToString($library, true) . '/',
             'itemid' => $library['libraryId']
         ];
 
@@ -160,7 +162,7 @@ class file_storage implements \H5PFileStorage {
      * @param string $target Where the library folder will be saved
      */
     public function exportLibrary($library, $target) {
-        $folder = \H5PCore::libraryToString($library, true);
+        $folder = H5PCore::libraryToString($library, true);
         $this->export_file_tree($target . '/' . $folder, $this->context->id, self::LIBRARY_FILEAREA,
                 '/' . $folder . '/', $library['libraryId']);
     }
@@ -507,7 +509,7 @@ class file_storage implements \H5PFileStorage {
      * @return void
      */
     public function removeContentFile($file, $contentid): void {
-        // Although the interface defines $contentid as int, object given in \H5peditor::processParameters.
+        // Although the interface defines $contentid as int, object given in H5peditor::processParameters.
         if (is_object($contentid)) {
             $contentid = $contentid->id;
         }

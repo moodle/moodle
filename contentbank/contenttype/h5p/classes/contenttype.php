@@ -29,7 +29,7 @@ use stdClass;
 use core_h5p\editor_ajax;
 use core_h5p\file_storage;
 use core_h5p\local\library\autoloader;
-use H5PCore;
+use Moodle\H5PCore;
 
 /**
  * H5P content bank manager class

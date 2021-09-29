@@ -26,6 +26,8 @@
 namespace core_h5p;
 
 use core_collator;
+use Moodle\H5PCore;
+use Moodle\H5PDisplayOptionBehaviour;
 
 /**
  *
@@ -36,7 +38,7 @@ use core_collator;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @runTestsInSeparateProcesses
  */
-class framework_testcase extends \advanced_testcase {
+class framework_test extends \advanced_testcase {
 
     /** @var \core_h5p\framework */
     private $framework;
@@ -1653,7 +1655,7 @@ class framework_testcase extends \advanced_testcase {
             'embedType' => 'iframe',
             'disable' => $h5p->displayoptions,
             'title' => $mainlibrary->title,
-            'slug' => \H5PCore::slugify($mainlibrary->title) . '-' . $h5p->id,
+            'slug' => H5PCore::slugify($mainlibrary->title) . '-' . $h5p->id,
             'filtered' => $h5p->filtered,
             'libraryId' => $mainlibrary->id,
             'libraryName' => $mainlibrary->machinename,
@@ -1806,13 +1808,13 @@ class framework_testcase extends \advanced_testcase {
         $this->resetAfterTest();
 
         // Get value for display_option_download.
-        $value = $this->framework->getOption(\H5PCore::DISPLAY_OPTION_DOWNLOAD);
-        $expected = \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
+        $value = $this->framework->getOption(H5PCore::DISPLAY_OPTION_DOWNLOAD);
+        $expected = H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
         $this->assertEquals($expected, $value);
 
         // Get value for display_option_embed using default value (it should be ignored).
-        $value = $this->framework->getOption(\H5PCore::DISPLAY_OPTION_EMBED, \H5PDisplayOptionBehaviour::NEVER_SHOW);
-        $expected = \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
+        $value = $this->framework->getOption(H5PCore::DISPLAY_OPTION_EMBED, H5PDisplayOptionBehaviour::NEVER_SHOW);
+        $expected = H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
         $this->assertEquals($expected, $value);
 
         // Get value for unexisting setting without default.
@@ -1842,11 +1844,11 @@ class framework_testcase extends \advanced_testcase {
         $this->assertEquals($newvalue, $value);
 
         // Set value for display_option_download and then get it again. Check it hasn't changed.
-        $name = \H5PCore::DISPLAY_OPTION_DOWNLOAD;
-        $newvalue = \H5PDisplayOptionBehaviour::NEVER_SHOW;
+        $name = H5PCore::DISPLAY_OPTION_DOWNLOAD;
+        $newvalue = H5PDisplayOptionBehaviour::NEVER_SHOW;
         $this->framework->setOption($name, $newvalue);
         $value = $this->framework->getOption($name);
-        $expected = \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
+        $expected = H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
         $this->assertEquals($expected, $value);
     }
 

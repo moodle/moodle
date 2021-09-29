@@ -24,7 +24,7 @@
 
 namespace core_h5p;
 
-use H5peditorStorage;
+use Moodle\H5peditorStorage;
 use stdClass;
 
 /**
