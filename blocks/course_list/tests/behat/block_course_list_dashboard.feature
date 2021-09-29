@@ -27,7 +27,7 @@ Feature: Enable the course_list block on the dashboard and view it's contents
 
   Scenario: Add the course list block on the dashboard and navigate to the course listing
     Given I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Courses" block
     Then I should see "Course 1" in the "My courses" "block"
     And I should see "Course 2" in the "My courses" "block"
@@ -38,7 +38,7 @@ Feature: Enable the course_list block on the dashboard and view it's contents
 
   Scenario: Add the course list block on the dashboard and navigate to another course
     Given I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Courses" block
     Then I should see "Course 1" in the "My courses" "block"
     And I should see "Course 2" in the "My courses" "block"
@@ -49,7 +49,7 @@ Feature: Enable the course_list block on the dashboard and view it's contents
 
   Scenario: Add the course list block on the dashboard and view as an admin
     Given I log in as "admin"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Courses" block
     Then I should see "Category 1" in the "Course categories" "block"
     And I should see "Category A" in the "Course categories" "block"

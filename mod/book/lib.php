@@ -346,7 +346,9 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         $url = new moodle_url('/mod/book/view.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid'], 'edit'=>$edit, 'sesskey'=>sesskey()));
         $editnode = navigation_node::create($string, $url, navigation_node::TYPE_SETTING);
         $booknode->add_node($editnode, $firstkey);
-        $PAGE->set_button($OUTPUT->single_button($url, $string));
+        if (!$PAGE->theme->haseditswitch) {
+            $PAGE->set_button($OUTPUT->single_button($url, $string));
+        }
     }
 
     $plugins = core_component::get_plugin_list('booktool');

@@ -10,7 +10,7 @@ Feature: Add badges to the system
 
   @javascript
   Scenario: Accessing the badges
-    And I press "Customise this page"
+    And I turn editing mode on
    # TODO MDL-57120 site "Badges" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -133,7 +133,7 @@ Feature: Add badges to the system
 
   @javascript @_file_upload
   Scenario: Add a badge from Site badges section
-    Given I press "Customise this page"
+    Given I turn editing mode on
     # TODO MDL-57120 site "Badges" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     When I click on "Site pages" "list_item" in the "Navigation" "block"

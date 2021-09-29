@@ -231,7 +231,7 @@
     // The code will be much nicer than this eventually.
     $title = $courseshortname.': ' . format_string($data->name);
 
-    if ($PAGE->user_allowed_editing()) {
+    if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
         // Change URL parameter and block display string value depending on whether editing is enabled or not
         if ($PAGE->user_is_editing()) {
             $urlediting = 'off';

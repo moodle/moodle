@@ -75,7 +75,7 @@ if ($PAGE->user_allowed_editing() && $adminediting != -1) {
     $USER->editing = $adminediting;
 }
 $buttons = null;
-if ($PAGE->user_allowed_editing()) {
+if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
     $url = clone($PAGE->url);
     if ($PAGE->user_is_editing()) {
         $caption = get_string('blockseditoff');

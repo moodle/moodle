@@ -16,7 +16,7 @@ Feature: Enable Block Badges on the frontpage and view awarded badges
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Latest badges" block
     And I log out
     And I log in as "teacher1"

@@ -101,7 +101,7 @@ if (empty($SITE->fullname)) {
     echo $OUTPUT->render_from_template('core_admin/settings', $context);
 
 } else {
-    if ($PAGE->user_allowed_editing()) {
+    if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
         $url = clone($PAGE->url);
         if ($PAGE->user_is_editing()) {
             $caption = get_string('blockseditoff');

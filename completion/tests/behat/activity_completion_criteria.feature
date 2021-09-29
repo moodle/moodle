@@ -116,7 +116,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     Given I log in as "teacher1"
     And I am on "Completion course" course homepage
     And I navigate to "View > Grader report" in the course gradebook
-    And I press "Turn editing on"
+    And I turn editing mode on
     And I give the grade "57" to the user "Student First" for the grade item "Test assignment name"
     And I press "Save changes"
     And I log out

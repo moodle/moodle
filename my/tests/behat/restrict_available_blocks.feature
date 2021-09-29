@@ -18,7 +18,7 @@ Feature: Restrict which blocks can be added to Dashboard
 
   Scenario: The comments block can be added to Dashboard by default
     And I log in as "student1"
-    And I press "Customise this page"
+    And I turn editing mode on
     Then the add block selector should contain "Comments" block
     And the add block selector should contain "Courses" block
     And the add block selector should contain "Text" block
@@ -32,7 +32,7 @@ Feature: Restrict which blocks can be added to Dashboard
       | block/html:myaddinstance | Prohibit |
     And I log out
     And I log in as "student1"
-    And I press "Customise this page"
+    And I turn editing mode on
     Then the add block selector should not contain "Comments" block
     And the add block selector should not contain "Courses" block
     And the add block selector should not contain "Text" block

@@ -23,23 +23,23 @@ Feature: Front page topic section
       | assign   | Acceptance test site | 1       | Frontpage assignment | Assignment description | assign0  |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I click on "Edit summary" "link" in the "region-main" "region"
     And I click on "Custom" "checkbox"
     And I set the field "New value for Section name" to "New section name"
     When I press "Save changes"
     And I should see "New section name" in the "region-main" "region"
-    Then I navigate to "Turn editing off" in current page administration
+    Then I turn editing mode off
     And I should see "New section name" in the "region-main" "region"
 
   @javascript
   Scenario: Topic description appears in the frontpage
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I click on "Edit summary" "link" in the "region-main" "region"
     And I set the field "Summary" to "New section description"
     When I press "Save changes"
     And I should see "New section description" in the "region-main" "region"
-    Then I navigate to "Turn editing off" in current page administration
+    Then I turn editing mode off
     And I should see "New section description" in the "region-main" "region"

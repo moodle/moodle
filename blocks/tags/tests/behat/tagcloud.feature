@@ -23,7 +23,7 @@ Feature: Block tags displaying tag cloud
   Scenario: Add Tags block on a front page
     When I log in as "admin"
     And I am on site homepage
-    And I follow "Turn editing on"
+    And I turn editing mode on
     And I add the "Tags" block
     And I log out
     And I am on site homepage

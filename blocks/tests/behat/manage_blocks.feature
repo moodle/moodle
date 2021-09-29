@@ -48,7 +48,7 @@ Feature: Block appearances
     And I set the following fields to these values:
       | Display on page types | Any course page |
     And I press "Save changes"
-    And I press "Turn editing off"
+    And I turn editing mode off
     And I follow "Test survey name"
     And I should not see "Comments"
 
@@ -58,5 +58,5 @@ Feature: Block appearances
     And I set the following fields to these values:
       | Visible | No |
     And I press "Save changes"
-    And I press "Turn editing off"
+    And I turn editing mode off
     Then I should not see "Comments"

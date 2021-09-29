@@ -8836,7 +8836,7 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
 
     $visiblepathtosection = array_reverse($extpage->visiblepath);
 
-    if ($PAGE->user_allowed_editing()) {
+    if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
         if ($PAGE->user_is_editing()) {
             $caption = get_string('blockseditoff');
             $url = new moodle_url($PAGE->url, array('adminedit'=>'0', 'sesskey'=>sesskey()));

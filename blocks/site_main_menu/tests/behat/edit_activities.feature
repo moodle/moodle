@@ -13,7 +13,7 @@ Feature: Edit activities in main menu block
       | idnumber | forum                |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Main menu" block
     When I set the field "Edit title" in the "My forum name" "block_site_main_menu > Activity" to "New forum name"
     Then I should not see "My forum name"
@@ -28,7 +28,7 @@ Feature: Edit activities in main menu block
       | allowstealth | 1 |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Main menu" block
     When I add a "Forum" to section "0" and I fill the form with:
       | Forum name | Visible forum |
@@ -61,7 +61,7 @@ Feature: Edit activities in main menu block
     And the field "Availability" matches value "Make available but not shown on course page"
     And I press "Save and return to course"
     And "My forum name" activity in site main menu block should be available but hidden from course page
-    And I navigate to "Turn editing off" in current page administration
+    And I turn editing mode off
     And "My forum name" activity in site main menu block should be available but hidden from course page
     And I log out
     And I should not see "My forum name" in the "Main menu" "block"
