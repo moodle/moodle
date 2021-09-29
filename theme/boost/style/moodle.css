@@ -7120,7 +7120,7 @@ a.close.disabled {
 .align-top, [data-filterregion="value"] div:first-of-type {
   vertical-align: top !important; }
 
-.align-middle {
+.align-middle, .reportbuilder-table td {
   vertical-align: middle !important; }
 
 .align-bottom {
@@ -20632,6 +20632,7 @@ div.editor_atto_toolbar button .icon {
 /**
 * Reportbuilder table.
 */
+/* Table */
 /* Filters */
 .reportbuilder-wrapper .filters-dropdown {
   width: 27rem;

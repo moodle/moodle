@@ -24,13 +24,12 @@
         "id": 3,
         "contextid": 1,
         "filtersapplied": 3,
-        "showeditbutton": false,
         "filtersform": "form"
     }
 }}
 
 <!-- Filters button -->
-<button class="btn btn-outline-secondary {{^showeditbutton}}btn-sm{{/showeditbutton}}" type="button" id="dropdownFiltersButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{#str}} filters, moodle {{/str}}">
+<button class="btn btn-outline-secondary" type="button" id="dropdownFiltersButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{#str}} filters, moodle {{/str}}">
     {{#pix}} i/filter, core {{/pix}}
     <span data-region="filter-button-label">
         {{#filtersapplied}} {{#str}} filtersappliedx, core_reportbuilder, {{filtersapplied}} {{/str}} {{/filtersapplied}}

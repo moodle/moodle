@@ -42,7 +42,7 @@ class renderer extends plugin_renderer_base {
     protected function render_system_report(system_report $report): string {
         $context = $report->export_for_template($this);
 
-        return $this->render_from_template('core_reportbuilder/system_report', $context);
+        return $this->render_from_template('core_reportbuilder/report', $context);
     }
 
     /**

@@ -53,6 +53,7 @@ class custom_report_filters_exporter extends exporter {
         return [
             'hasavailablefilters' => [
                 'type' => PARAM_BOOL,
+                'optional' => true,
             ],
             'availablefilters' => [
                 'type' => [
@@ -74,6 +75,7 @@ class custom_report_filters_exporter extends exporter {
             ],
             'hasactivefilters' => [
                 'type' => PARAM_BOOL,
+                'optional' => true,
             ],
             'activefilters' => [
                 'type' => [
@@ -89,6 +91,7 @@ class custom_report_filters_exporter extends exporter {
             ],
             'helpicon' => [
                 'type' => PARAM_RAW,
+                'optional' => true,
             ],
         ];
     }

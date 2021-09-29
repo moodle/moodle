@@ -22,10 +22,9 @@
     Example context (json):
     {
         "id": 1,
-        "source": "some\\class\\name",
+        "type": 1,
         "table": "table",
         "editmode": true,
-        "showeditbutton": true,
         "sidebarmenucards": [{
             "menucards": [{
                 "name": "General",
@@ -87,8 +86,9 @@
 }}
 <div data-region="core_reportbuilder/report"
      data-report-id="{{id}}"
-     data-source="{{source}}"
-     data-parameter="[]">
+     data-report-type="{{type}}"
+     data-parameter="[]"
+     {{#editmode}}data-editing{{/editmode}}>
     <div class="reportbuilder-wrapper d-flex flex-column flex-md-row">
         {{#editmode}}
             <!-- Sidebar -->
@@ -99,19 +99,17 @@
             <div class="{{#editmode}}p-2 border{{/editmode}}">
                 <div data-region="core_reportbuilder/report-header" class="dropdown d-flex justify-content-end">
                     <!-- Preview/Edit button -->
-                    {{#showeditbutton}}
-                        <button data-action="toggle-edit-preview" data-edit-mode="{{editmode}}" class="btn btn-outline-secondary mr-2"
-                                title="{{#editmode}}{{#str}} switchpreview, core_reportbuilder {{/str}}{{/editmode}}{{^editmode}}{{#str}} switchedit, core_reportbuilder {{/str}}{{/editmode}}">
-                            {{#editmode}}
-                                {{#pix}} i/preview, core,  {{/pix}}
-                                {{#str}} preview, core {{/str}}
-                            {{/editmode}}
-                            {{^editmode}}
-                                {{#pix}} t/editstring, core {{/pix}}
-                                {{#str}} edit, core {{/str}}
-                            {{/editmode}}
-                        </button>
-                    {{/showeditbutton}}
+                    <button data-action="toggle-edit-preview" data-edit-mode="{{editmode}}" class="btn btn-outline-secondary mr-2"
+                            title="{{#editmode}}{{#str}} switchpreview, core_reportbuilder {{/str}}{{/editmode}}{{^editmode}}{{#str}} switchedit, core_reportbuilder {{/str}}{{/editmode}}">
+                        {{#editmode}}
+                            {{#pix}} i/preview, core {{/pix}}
+                            {{#str}} preview, core {{/str}}
+                        {{/editmode}}
+                        {{^editmode}}
+                            {{#pix}} t/editstring, core {{/pix}}
+                            {{#str}} edit, core {{/str}}
+                        {{/editmode}}
+                    </button>
                     <!-- Settings/Filters button -->
                     {{#editmode}}
                         <button id="report-settings-collapse" data-toggle="collapse" data-target="#report-settings" class="btn btn-outline-secondary collapsed"
@@ -122,9 +120,9 @@
                     {{/editmode}}
                     {{^editmode}}
                         <!-- Filters -->
-                        {{#filtersform}}
+                        {{#filterspresent}}
                             {{>core_reportbuilder/local/filters/area}}
-                        {{/filtersform}}
+                        {{/filterspresent}}
                     {{/editmode}}
                 </div>
                 <div class="mt-2">
@@ -133,9 +131,11 @@
                 </div>
             </div>
         </div>
-        <!-- Settings sidebar -->
-        {{> core_reportbuilder/local/settings/area}}
-    </div>
+        {{#editmode}}
+            <!-- Settings sidebar -->
+            {{> core_reportbuilder/local/settings/area}}
+        {{/editmode}}
+        </div>
 </div>
 
 {{#js}}
