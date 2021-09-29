@@ -15,6 +15,13 @@ all the existing strings from the previous version. As you'll see, all the
 strings in en.js have been converted following these rules:
   * Prefix  "editor:" has been added.
   * Keys have been lowercased.
+- Add namespace to this library to avoid collision. It means:
+  * Add the "namespace Moodle;" line at the top of all the h5peditor*.php files in the root folder.
+  * Replace \H5Pxxx uses to H5Pxxx (for instance, in h5peditor-ajax.class.php there are several references to \H5PCore that
+must be replaced with H5PCore).
+  * Add "use stdClass;" in h5peditor.class.php and h5peditor-file.class.php (check that it's still used before replacing it when upgrading the library).
+
+
 
 Removed:
  * composer.json

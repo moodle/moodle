@@ -25,6 +25,8 @@
 use core_h5p\factory;
 use core_h5p\framework;
 use core_h5p\local\library\autoloader;
+use Moodle\H5PCore;
+use Moodle\H5PEditorEndpoints;
 
 define('AJAX_SCRIPT', true);
 
