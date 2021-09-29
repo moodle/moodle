@@ -76,6 +76,7 @@ class core_adminlib_testcase extends advanced_testcase {
      * Test which tables and column should be replaced.
      *
      * @dataProvider db_should_replace_dataprovider
+     * @covers ::db_should_replace
      * @param string $table name
      * @param string $column name
      * @param bool $expected whether it should be replaced
@@ -88,6 +89,7 @@ class core_adminlib_testcase extends advanced_testcase {
     /**
      * Data provider for additional skip tables.
      *
+     * @covers ::db_should_replace
      * @return array
      */
     public function db_should_replace_additional_skip_tables_dataprovider() {
@@ -119,6 +121,7 @@ class core_adminlib_testcase extends advanced_testcase {
      * Test additional skip tables.
      *
      * @dataProvider db_should_replace_additional_skip_tables_dataprovider
+     * @covers ::db_should_replace
      * @param string $table name
      * @param string $column name
      * @param bool $expected whether it should be replaced
