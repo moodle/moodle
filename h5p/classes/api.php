@@ -24,9 +24,8 @@
 
 namespace core_h5p;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core\lock\lock_config;
+use Moodle\H5PCore;
 
 /**
  * Contains API class for the H5P area.
@@ -714,7 +713,7 @@ class api {
 
         if ($deletefiletree) {
             // Remove temp content folder.
-            \H5PCore::deleteFileTree($path);
+            H5PCore::deleteFileTree($path);
         }
 
         return $isvalid;
