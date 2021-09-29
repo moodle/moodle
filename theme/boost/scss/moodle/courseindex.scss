@@ -48,11 +48,24 @@ $courseindex-item-current: $primary !default;
             opacity: .7;
             font-style: italic;
         }
+
+        .completioninfo {
+            min-width: 24px;
+            transform: scale(0.5);
+
+            &.completion_complete {
+                color: $success;
+            }
+
+            &.completion_fail {
+                color: $danger;
+            }
+        }
     }
 
     .courseindex-sectioncontent {
         .courseindex-item {
-            padding-left: calc(#{$courseindex-item-padding-x} * 2 + 0.5rem);
+            padding-left: $courseindex-item-padding-x;
         }
     }
 

@@ -28,7 +28,7 @@
         "isactive": 1,
         "uniqid": "0",
         "isactive": 1,
-        "accessvisible": 1,
+        "accessvisible": 1
     }
 }}
 <li class="courseindex-item
@@ -39,6 +39,7 @@
     data-for="cm"
     data-id="{{id}}"
 >
+    <span class="completioninfo" data-for="cm_completion" data-value="NaN"></span>
     {{#url}}
         {{#uservisible}}
             <a class="courseindex-link text-truncate" href="{{{url}}}" data-for="cm_name">

@@ -25,6 +25,12 @@
  */
 
 import DndCmItem from 'core_courseformat/local/courseeditor/dndcmitem';
+import Templates from 'core/templates';
+import Prefetch from 'core/prefetch';
+
+// Prefetch the completion icons template.
+const completionTemplate = 'core_courseformat/local/courseindex/cmcompletion';
+Prefetch.prefetchTemplate(completionTemplate);
 
 export default class Component extends DndCmItem {
 
@@ -37,6 +43,7 @@ export default class Component extends DndCmItem {
         // Default query selectors.
         this.selectors = {
             CM_NAME: `[data-for='cm_name']`,
+            CM_COMPLETION: `[data-for='cm_completion']`,
         };
         // Default classes to toggle on refresh.
         this.classes = {
@@ -63,9 +70,16 @@ export default class Component extends DndCmItem {
 
     /**
      * Initial state ready method.
+     *
+     * @param {Object} state the course state.
      */
-    stateReady() {
+    stateReady(state) {
         this.configDragDrop(this.id);
+        // Refresh completion icon.
+        this._refreshCompletion({
+            state,
+            element: state.cm.get(this.id),
+        });
     }
 
     /**
@@ -77,6 +91,7 @@ export default class Component extends DndCmItem {
         return [
             {watch: `cm[${this.id}]:deleted`, handler: this.remove},
             {watch: `cm[${this.id}]:updated`, handler: this._refreshCm},
+            {watch: `cm[${this.id}].completionstate:updated`, handler: this._refreshCompletion},
         ];
     }
 
@@ -93,6 +108,36 @@ export default class Component extends DndCmItem {
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
         this.locked = element.locked;
+    }
+
+    /**
+     * Update the activity completion icon.
+     *
+     * @param {Object} details the update details
+     * @param {Object} details.state the state data
+     * @param {Object} details.element the element data
+     */
+    async _refreshCompletion({state, element}) {
+        // No completion icons are displayed in edit mode.
+        if (this.reactive.isEditing || !element.istrackeduser) {
+            return;
+        }
+        // Check if the completion value has changed.
+        const completionElement = this.getElement(this.selectors.CM_COMPLETION);
+        if (completionElement.dataset.value == element.completionstate) {
+            return;
+        }
+
+        // Collect section information from the state.
+        const exporter = this.reactive.getExporter();
+        const data = exporter.cmCompletion(state, element);
+
+        try {
+            const {html, js} = await Templates.renderForPromise(completionTemplate, data);
+            Templates.replaceNode(completionElement, html, js);
+        } catch (error) {
+            throw error;
+        }
     }
 
 }
