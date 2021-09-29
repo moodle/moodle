@@ -21,9 +21,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// TODO For master this can be changed to `core/event_dispatcher` and the local copy removed.
-// For 3.11 and earlier this line should stay.
-import {dispatchEvent} from './event_dispatcher';
+import {dispatchEvent} from 'core/event_dispatcher';
 
 export const eventTypes = {
     /**
