@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['access'] = 'Access';
 $string['actions'] = 'Actions';
 $string['addaudience'] = 'Add audience \'{$a}\'';
 $string['addaudiences'] = 'Add an audience to this report';

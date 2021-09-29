@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder;
 
 use context_system;
+use core_reportbuilder\local\helpers\audience;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base;
 
@@ -50,7 +51,11 @@ class permission {
      * @return bool
      */
     public static function can_view_reports_list(?int $userid = null): bool {
-        return has_capability('moodle/reportbuilder:view', context_system::instance(), $userid);
+        return has_any_capability([
+            'moodle/reportbuilder:editall',
+            'moodle/reportbuilder:edit',
+            'moodle/reportbuilder:view',
+        ], context_system::instance(), $userid);
     }
 
     /**
@@ -74,11 +79,16 @@ class permission {
      * @return bool
      */
     public static function can_view_report(report $report, ?int $userid = null): bool {
-        if (!static::can_view_reports_list()) {
+        if (!static::can_view_reports_list($userid)) {
             return false;
         }
 
-        return true; // TODO: Audience.
+        if (self::can_edit_report($report, $userid)) {
+            return true;
+        }
+
+        $reports = audience::user_reports_list($userid);
+        return in_array($report->get('id'), $reports);
     }
 
     /**

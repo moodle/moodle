@@ -23,6 +23,7 @@ use context_system;
 use core_reportbuilder_generator;
 use Throwable;
 use core_user\reportbuilder\datasource\users;
+use core_reportbuilder\reportbuilder\audience\manual;
 
 /**
  * Unit tests for the report permission class
@@ -64,8 +65,6 @@ class permission_test extends advanced_testcase {
 
     /**
      * Test whether user can view specific report
-     *
-     * TODO: audiences
      */
     public function test_require_can_view_report(): void {
         global $DB;
@@ -91,6 +90,40 @@ class permission_test extends advanced_testcase {
         $userrole = $DB->get_field('role', 'id', ['shortname' => 'user']);
         unassign_capability('moodle/reportbuilder:view', $userrole, context_system::instance());
 
+        $this->expectException(report_access_exception::class);
+        $this->expectExceptionMessage('You can not view this report');
+        permission::require_can_view_report($report);
+    }
+
+    /**
+     * Test whether user can view specific report when it belongs to an audience
+     */
+    public function test_require_can_view_report_with_audience(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+
+        // User without permission.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $generator->create_audience([
+            'reportid' => $report->get('id'),
+            'classname' => manual::class,
+            'configdata' => ['users' => [$user->id]],
+        ]);
+
+        // User has view capability and belongs to an audience.
+        permission::require_can_view_report($report);
+
+        $userrole = $DB->get_field('role', 'id', ['shortname' => 'user']);
+        unassign_capability('moodle/reportbuilder:view', $userrole, context_system::instance());
+
+        // User does not have view capability and belongs to an audience.
         $this->expectException(report_access_exception::class);
         $this->expectExceptionMessage('You can not view this report');
         permission::require_can_view_report($report);

@@ -131,22 +131,7 @@ Feature: Manage custom reports
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   |
       | My report | core_user\reportbuilder\datasource\users |
-    Given the following "users" exist:
-      | username  | firstname | lastname | email             |
-      | user1     | User      | 1        | user1@example.com |
-    And the following "roles" exist:
-      | shortname       | name      | archetype |
-      | viewreportsrole | Test role |           |
-    And the following "role assigns" exist:
-      | user     | role             | contextlevel | reference |
-      | user1    | viewreportsrole  | System       |           |
-    And the following "permission overrides" exist:
-      | capability                    | permission | role            | contextlevel | reference |
-      | moodle/reportbuilder:editall  | Prohibit   | viewreportsrole | System       |           |
-      | moodle/reportbuilder:edit     | Prohibit   | viewreportsrole | System       |           |
-      | moodle/reportbuilder:view     | Allow      | viewreportsrole | System       |           |
-      | moodle/site:configview        | Allow      | viewreportsrole | System       |           |
-    When I log in as "<user>"
+    When I log in as "admin"
     And I navigate to "Reports > Report builder > Custom reports" in site administration
     And I click on "<link>" "link" in the "My report" "table_row"
     Then <previewvisible> "Preview" in the "[data-region='core_reportbuilder/report-header']" "css_element"
@@ -154,7 +139,6 @@ Feature: Manage custom reports
     And <settingsvisible> "Settings" in the "[data-region='core_reportbuilder/report-header']" "css_element"
     And <filtersvisible> "Filters" in the "[data-region='core_reportbuilder/report-header']" "css_element"
     Examples:
-      | user  | link       | previewvisible    | editvisible       | settingsvisible   | filtersvisible    |
-      | admin | My report  | I should see      | I should not see  | I should see      | I should not see  |
-      | admin | View       | I should not see  | I should not see  | I should not see  | I should see      |
-      | user1 | My report  | I should not see  | I should not see  | I should not see  | I should see      |
+      | link       | previewvisible    | editvisible       | settingsvisible   | filtersvisible    |
+      | My report  | I should see      | I should not see  | I should see      | I should not see  |
+      | View       | I should not see  | I should not see  | I should not see  | I should see      |
