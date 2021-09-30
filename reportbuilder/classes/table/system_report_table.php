@@ -56,8 +56,22 @@ class system_report_table extends base_report_table {
 
         parent::__construct($uniqueid);
 
-        // Load the report persistent, and accompanying system report instance.
-        $this->persistent = new report($matches['id']);
+        // If we are loading via a dynamic table AJAX request, defer the report loading until the filterset is added to
+        // the table, as it is used to populate the report $parameters during construction.
+        $serviceinfo = optional_param('info', null, PARAM_RAW);
+        if ($serviceinfo !== 'core_table_get_dynamic_table_content') {
+            $this->load_report_instance((int) $matches['id'], $parameters);
+        }
+    }
+
+    /**
+     * Load the report persistent, and accompanying system report instance.
+     *
+     * @param int $reportid
+     * @param array $parameters
+     */
+    private function load_report_instance(int $reportid, array $parameters): void {
+        $this->persistent = new report($reportid);
         $this->report = manager::get_report_from_persistent($this->persistent, $parameters);
 
         $fields = $this->report->get_base_fields();
@@ -148,8 +162,10 @@ class system_report_table extends base_report_table {
      * @param filterset $filterset
      */
     public function set_filterset(filterset $filterset): void {
+        $reportid = $filterset->get_filter('reportid')->current();
         $parameters = $filterset->get_filter('parameters')->current();
-        $this->report->set_parameters((array) json_decode($parameters, true));
+
+        $this->load_report_instance($reportid, json_decode($parameters, true));
 
         parent::set_filterset($filterset);
     }

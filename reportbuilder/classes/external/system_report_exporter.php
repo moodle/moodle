@@ -19,12 +19,13 @@ declare(strict_types=1);
 namespace core_reportbuilder\external;
 
 use core\external\persistent_exporter;
+use core_table\local\filter\integer_filter;
+use core_table\local\filter\string_filter;
 use core_reportbuilder\form\filter;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base;
 use core_reportbuilder\table\system_report_table;
 use core_reportbuilder\table\system_report_table_filterset;
-use core_reportbuilder\table\system_report_table_parameters_filter;
 use renderer_base;
 
 /**
@@ -87,20 +88,25 @@ class system_report_exporter extends persistent_exporter {
         /** @var base $source */
         $source = $this->related['source'];
 
-        /** @var array $parameters */
+        /** @var string $parameters */
         $parameters = $this->related['parameters'];
 
-        $filterset = new system_report_table_filterset();
-        $filterset->add_filter(new system_report_table_parameters_filter('parameters', null, [$parameters]));
+        /** @var int $reportid */
+        $reportid = $this->persistent->get('id');
 
-        $table = system_report_table::create($this->persistent->get('id'), (array) json_decode($parameters, true));
+        // We store the report ID and parameters within the table filterset so that they are available between AJAX requests.
+        $filterset = new system_report_table_filterset();
+        $filterset->add_filter(new integer_filter('reportid', null, [$reportid]));
+        $filterset->add_filter(new string_filter('parameters', null, [$parameters]));
+
+        $table = system_report_table::create($reportid, (array) json_decode($parameters, true));
         $table->set_filterset($filterset);
 
         // Generate filters form if report contains any filters.
         $filterspresent = !empty($source->get_filters());
         if ($filterspresent) {
             $filtersform = new filter(null, null, 'post', '', [], true, [
-                'reportid' => $this->persistent->get('id'),
+                'reportid' => $reportid,
                 'parameters' => $parameters,
             ]);
             $filtersform->set_data_for_dynamic_submission();
@@ -108,7 +114,7 @@ class system_report_exporter extends persistent_exporter {
 
         return [
             'table' => $output->render($table),
-            'parameters' => $this->related['parameters'],
+            'parameters' => $parameters,
             'filterspresent' => $filterspresent,
             'filtersapplied' => $source->get_applied_filter_count(),
             'filtersform' => $filterspresent ? $filtersform->render() : '',

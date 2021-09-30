@@ -19,6 +19,8 @@ declare(strict_types=1);
 namespace core_reportbuilder\table;
 
 use core_table\local\filter\filterset;
+use core_table\local\filter\integer_filter;
+use core_table\local\filter\string_filter;
 
 /**
  * System report dynamic table filterset class
@@ -36,7 +38,8 @@ class system_report_table_filterset extends filterset {
      */
     public function get_required_filters(): array {
         return [
-            'parameters' => system_report_table_parameters_filter::class,
+            'reportid' => integer_filter::class,
+            'parameters' => string_filter::class,
         ];
     }
 }
