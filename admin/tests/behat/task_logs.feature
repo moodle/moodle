@@ -44,7 +44,27 @@ Feature: View task logs report and use its filters
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     Then I should see "Filters applied"
     And I <shouldornotsee> "Nothing to display"
+
     Examples:
       | operator     | shouldornotsee |
       | Less than    | should not see |
       | Greater than | should see     |
+
+  @javascript
+  Scenario: Reset task log filters
+    Given I log in as "admin"
+    And I change window size to "large"
+    And I navigate to "Server > Tasks > Task logs" in site administration
+    When I click on "Filters" "button"
+    And I set the following fields in the "Result" "core_reportbuilder > Filter" to these values:
+      | Result operator | Is equal to |
+      | Result value    | Fail        |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "Filters applied"
+    And I should see "Nothing to display"
+    And I click on "Reset" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "Filters reset"
+    And "[data-region='report-filters']" "css_element" should be visible
+    And the following fields in the "Result" "core_reportbuilder > Filter" match these values:
+      | Result operator | Is any value |
+    And I should not see "Nothing to display"

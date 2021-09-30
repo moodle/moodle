@@ -22,9 +22,11 @@
  */
 
 import {dispatchEvent} from 'core/event_dispatcher';
+import {loadFragment} from 'core/fragment';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {get_string as getString} from 'core/str';
+import Templates from 'core/templates';
 import {add as addToast} from 'core/toast';
 import DynamicForm from 'core_form/dynamicform';
 import * as reportEvents from 'core_reportbuilder/local/events';
@@ -36,8 +38,9 @@ import {reset as resetFilters} from 'core_reportbuilder/local/repository/filters
  *
  * @method
  * @param {Number} reportId
+ * @param {Number} contextId
  */
-export const init = reportId => {
+export const init = (reportId, contextId) => {
     const reportElement = document.querySelector(reportSelectors.forSystemReport(reportId));
     const filterFormContainer = reportElement.querySelector(reportSelectors.regions.filtersForm);
     const filterForm = new DynamicForm(filterFormContainer, '\\core_reportbuilder\\form\\filter');
@@ -63,10 +66,15 @@ export const init = reportId => {
         resetFilters(reportId)
             .then(() => getString('filtersreset', 'core_reportbuilder'))
             .then(addToast)
-            .then(() => {
-                pendingPromise.resolve();
-                window.location.reload();
-                return;
+            .then(() => loadFragment('core_reportbuilder', 'filters_form', contextId, {
+                reportid: reportId,
+                parameters: reportElement.dataset.parameter,
+            }))
+            .then((html, js) => {
+                Templates.replaceNodeContents(filterFormContainer, html, js);
+                dispatchEvent(reportEvents.tableReload, {}, reportElement);
+
+                return pendingPromise.resolve();
             })
             .catch(Notification.exception);
     });
