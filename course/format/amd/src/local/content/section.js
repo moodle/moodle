@@ -38,6 +38,11 @@ export default class extends DndSection {
             SECTION_ITEM: `[data-for='section_title']`,
             CM: `[data-for="cmitem"]`,
         };
+        // All classes will be loaded later by DndCmItem.
+        this.classes = {};
+
+        // We need our id to watch specific events.
+        this.id = this.element.dataset.id;
     }
 
     /**
@@ -64,6 +69,17 @@ export default class extends DndSection {
     }
 
     /**
+     * Component watchers.
+     *
+     * @returns {Array} of watchers
+     */
+    getWatchers() {
+        return [
+            {watch: `section[${this.id}]:updated`, handler: this._refreshSection},
+        ];
+    }
+
+    /**
      * Get the last CM element of that section.
      *
      * @returns {element|null}
@@ -75,5 +91,15 @@ export default class extends DndSection {
             return null;
         }
         return cms[cms.length - 1];
+    }
+
+    /**
+     * Update a course index section using the state information.
+     *
+     * @param {Object} details the update details.
+     */
+    _refreshSection({element}) {
+        // Update classes.
+        this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
     }
 }
