@@ -55,7 +55,7 @@ abstract class base_testcase extends PHPUnit\Framework\TestCase {
     public static function assertTag($matcher, $actual, $message = '', $ishtml = true) {
         $dom = PHPUnit\Util\XML::load($actual, $ishtml);
         $tags = self::findNodes($dom, $matcher, $ishtml);
-        $matched = count($tags) > 0 && $tags[0] instanceof DOMNode;
+        $matched = (is_array($tags) && count($tags) > 0) && $tags[0] instanceof DOMNode;
         self::assertTrue($matched, $message);
     }
 
