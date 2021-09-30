@@ -33,6 +33,10 @@ import {prefetchStrings} from 'core/prefetch';
 import {get_string as getString} from 'core/str';
 import {getList} from 'core/normalise';
 import * as CourseEvents from 'core_course/events';
+import Pending from 'core/pending';
+import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
+// The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-79179 is integrated.
+import jQuery from 'jquery';
 
 // Load global strings.
 prefetchStrings('core', ['movecoursesection', 'movecoursemodule', 'confirm', 'delete']);
@@ -48,11 +52,15 @@ export default class extends BaseComponent {
         // Default query selectors.
         this.selectors = {
             ACTIONLINK: `[data-action]`,
+            // Move modal selectors.
             SECTIONLINK: `[data-for='section']`,
             CMLINK: `[data-for='cm']`,
             SECTIONNODE: `[data-for='sectionnode']`,
-            TOGGLER: `[data-toggle='collapse']`,
+            MODALTOGGLER: `[data-toggle='collapse']`,
             ADDSECTION: `[data-action='addSection']`,
+            CONTENTTREE: `#destination-selector`,
+            ACTIONMENU: `.action-menu`,
+            ACTIONMENUTOGGLER: `[data-toggle="dropdown"]`,
         };
         // Component css classes.
         this.classes = {
@@ -145,6 +153,9 @@ export default class extends BaseComponent {
 
         event.preventDefault();
 
+        // The section edit menu to refocus on end.
+        const editTools = this._getClosestActionMenuToogler(target);
+
         // Collect section information from the state.
         const exporter = this.reactive.getExporter();
         const data = exporter.course(this.reactive.state);
@@ -170,6 +181,17 @@ export default class extends BaseComponent {
         const generalSection = modalBody.querySelector(`${this.selectors.SECTIONLINK}[data-number='0']`);
         this._disableLink(generalSection);
 
+        // Setup keyboard navigation.
+        new ContentTree(
+            modalBody.querySelector(this.selectors.CONTENTTREE),
+            {
+                SECTION: this.selectors.SECTIONNODE,
+                TOGGLER: this.selectors.MODALTOGGLER,
+                COLLAPSE: this.selectors.MODALTOGGLER,
+            },
+            true
+        );
+
         // Capture click.
         modalBody.addEventListener('click', (event) => {
             const target = event.target;
@@ -181,7 +203,7 @@ export default class extends BaseComponent {
             }
             event.preventDefault();
             this.reactive.dispatch('sectionMove', [sectionId], target.dataset.id);
-            modal.destroy();
+            this._destroyModal(modal, editTools);
         });
     }
 
@@ -200,6 +222,9 @@ export default class extends BaseComponent {
         const cmInfo = this.reactive.get('cm', cmId);
 
         event.preventDefault();
+
+        // The section edit menu to refocus on end.
+        const editTools = this._getClosestActionMenuToogler(target);
 
         // Collect section information from the state.
         const exporter = this.reactive.getExporter();
@@ -224,8 +249,27 @@ export default class extends BaseComponent {
         let currentElement = modalBody.querySelector(`${this.selectors.CMLINK}[data-id='${cmId}']`);
         this._disableLink(currentElement);
 
-        // Open the cm section node if possible.
-        currentElement.closest(this.selectors.SECTIONNODE)?.querySelector(this.selectors.TOGGLER)?.click();
+        // Setup keyboard navigation.
+        new ContentTree(
+            modalBody.querySelector(this.selectors.CONTENTTREE),
+            {
+                SECTION: this.selectors.SECTIONNODE,
+                TOGGLER: this.selectors.MODALTOGGLER,
+                COLLAPSE: this.selectors.MODALTOGGLER,
+                ENTER: this.selectors.SECTIONLINK,
+            }
+        );
+
+        // Open the cm section node if possible (Bootstrap 4 uses jQuery to interact with collapsibles).
+        // All jQuery int this code can be replaced when MDL-79179 is integrated.
+        const sectionnode = currentElement.closest(this.selectors.SECTIONNODE);
+        const toggler = jQuery(sectionnode).find(this.selectors.MODALTOGGLER);
+        let collapsibleId = toggler.data('target') ?? toggler.attr('href');
+        if (collapsibleId) {
+            // We cannot be sure we have # in the id element name.
+            collapsibleId = collapsibleId.replace('#', '');
+            jQuery(`#${collapsibleId}`).collapse('toggle');
+        }
 
         // Capture click.
         modalBody.addEventListener('click', (event) => {
@@ -252,7 +296,7 @@ export default class extends BaseComponent {
             }
 
             this.reactive.dispatch('cmMove', [cmId], targetSectionId, targetCmId);
-            modal.destroy();
+            this._destroyModal(modal, editTools);
         });
     }
 
@@ -349,6 +393,7 @@ export default class extends BaseComponent {
     _modalBodyRenderedPromise(modalParams) {
         return new Promise((resolve, reject) => {
             ModalFactory.create(modalParams).then((modal) => {
+                modal.setRemoveOnClose(true);
                 // Handle body loading event.
                 modal.getRoot().on(ModalEvents.bodyRendered, () => {
                     resolve(modal);
@@ -363,5 +408,39 @@ export default class extends BaseComponent {
                 reject(`Cannot load modal content`);
             });
         });
+    }
+
+    /**
+     * Hide and later destroy a modal.
+     *
+     * Behat will fail if we remove the modal while some boostrap collapse is executing.
+     *
+     * @param {Modal} modal
+     * @param {HTMLElement} element the dom element to focus on.
+     */
+    _destroyModal(modal, element) {
+        modal.hide();
+        const pendingDestroy = new Pending(`courseformat/actions:destroyModal`);
+        if (element) {
+            element.focus();
+        }
+        setTimeout(() =>{
+            modal.destroy();
+            pendingDestroy.resolve();
+        }, 500);
+    }
+
+    /**
+     * Get the closest actions menu toggler to an action element.
+     *
+     * @param {HTMLElement} element the action link element
+     * @returns {HTMLElement|undefined}
+     */
+    _getClosestActionMenuToogler(element) {
+        const actionMenu = element.closest(this.selectors.ACTIONMENU);
+        if (!actionMenu) {
+            return undefined;
+        }
+        return actionMenu.querySelector(this.selectors.ACTIONMENUTOGGLER);
     }
 }
