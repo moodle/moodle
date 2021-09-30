@@ -3010,5 +3010,35 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021101900.01);
     }
 
+    if ($oldversion < 2021102600.01) {
+        // Remove block_quiz_results (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/blocks/quiz_result/block_quiz_results.php')) {
+            // Delete instances.
+            $instances = $DB->get_records_list('block_instances', 'blockname', ['quiz_results']);
+            $instanceids = array_keys($instances);
+
+            if (!empty($instanceids)) {
+                blocks_delete_instances($instanceids);
+            }
+
+            // Delete the block from the block table.
+            $DB->delete_records('block', array('name' => 'quiz_results'));
+
+            // Remove capabilities.
+            capabilities_cleanup('block_quiz_results');
+            // Clean config.
+            unset_all_config_for_plugin('block_quiz_results');
+
+            // Remove Moodle-level quiz_results based capabilities.
+            $capabilitiestoberemoved = ['block/quiz_results:addinstance'];
+            // Delete any role_capabilities for the old roles.
+            $DB->delete_records_list('role_capabilities', 'capability', $capabilitiestoberemoved);
+            // Delete the capability itself.
+            $DB->delete_records_list('capabilities', 'name', $capabilitiestoberemoved);
+        }
+
+        upgrade_main_savepoint(true, 2021102600.01);
+    }
+
     return true;
 }

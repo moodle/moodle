@@ -1728,7 +1728,7 @@ class core_plugin_manager {
         $plugins = array(
             'qformat' => array('blackboard', 'learnwise', 'examview'),
             'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
-            'block' => array('course_overview', 'messages', 'community', 'participants'),
+            'block' => array('course_overview', 'messages', 'community', 'participants', 'quiz_results'),
             'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
             'filter' => array('censor'),
@@ -1806,7 +1806,7 @@ class core_plugin_manager {
                 'feedback', 'globalsearch', 'glossary_random', 'html',
                 'login', 'lp', 'mentees', 'mnet_hosts', 'myoverview', 'myprofile',
                 'navigation', 'news_items', 'online_users',
-                'private_files', 'quiz_results', 'recent_activity', 'recentlyaccesseditems',
+                'private_files', 'recent_activity', 'recentlyaccesseditems',
                 'recentlyaccessedcourses', 'rss_client', 'search_forums', 'section_links',
                 'selfcompletion', 'settings', 'site_main_menu',
                 'social_activities', 'starredcourses', 'tag_flickr', 'tag_youtube', 'tags', 'timeline'
