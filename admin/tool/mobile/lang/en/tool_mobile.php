@@ -73,7 +73,7 @@ $string['forcelogout_desc'] = 'If enabled, the app option \'Change site\' is rep
 $string['h5poffline'] = 'View H5P content offline';
 $string['httpsrequired'] = 'HTTPS required';
 $string['insecurealgorithmwarning'] = 'It seems that the HTTPS certificate uses an insecure algorithm for signing (SHA-1). Please try updating the certificate.';
-$string['invalidcertificatechainwarning'] = 'It seems that the certificate chain is invalid.';
+$string['invalidcertificatechainwarning'] = 'It seems that the certificate chain is invalid. This certificate might work for a browser but not for a mobile app.';
 $string['invalidcertificateexpiredatewarning'] = 'It seems that the HTTPS certificate for the site has expired.';
 $string['invalidcertificatestartdatewarning'] = 'It seems that the HTTPS certificate for the site is not yet valid (with a start date in the future).';
 $string['invalidprivatetoken'] = 'Invalid private token. Token should not be empty or passed via GET parameter.';
@@ -124,7 +124,7 @@ $string['qrcodetypelogin'] = 'QR code with automatic login';
 $string['readingthisemailgettheapp'] = 'Reading this in an email? <a href="{$a}">Download the mobile app and receive notifications on your mobile device</a>.';
 $string['remoteaddons'] = 'Remote add-ons';
 $string['scanqrcode'] = 'Scan QR code';
-$string['selfsignedoruntrustedcertificatewarning'] = 'It seems that the HTTPS certificate is self-signed or not trusted. The mobile app will only work with trusted sites.';
+$string['selfsignedoruntrustedcertificatewarning'] = 'It seems that the HTTPS certificate is self-signed or not trusted. The mobile app will only work with trusted sites. Please, use any online SSL checker tool to further diagnose the problem. If these tools indicate that you certificate is OK, you can ignore this warning.';
 $string['setuplink'] = 'App download page';
 $string['setuplink_desc'] = 'URL of page with options to download the mobile app from the App Store and Google Play. The app download page link is displayed in the page footer and in a user\'s profile. Leave blank to not display a link.';
 $string['smartappbanners'] = 'App Banners';
