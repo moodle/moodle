@@ -33,6 +33,7 @@ class primary extends view {
      * Initialise the primary navigation node
      */
     public function initialise(): void {
+        global $CFG;
         if (during_initial_install() || $this->initialised) {
             return;
         }
@@ -46,9 +47,13 @@ class primary extends view {
                         self::TYPE_SETTING, null, 'myhome', new \pix_icon('i/dashboard', ''));
             } else if ($homepage === HOMEPAGE_MY) {
                 $this->add(get_string('myhome'), new \moodle_url('/my/'), self::TYPE_SYSTEM,
-                        null, 'home', new \pix_icon('i/home', ''));
+                        null, 'myhome', new \pix_icon('i/dashboard', ''));
                 $this->rootnodes['home'] = $this->add(get_string('sitehome'), new \moodle_url('/'),
-                        self::TYPE_SETTING, null, 'myhome', new \pix_icon('i/dashboard', ''));
+                        self::TYPE_SETTING, null, 'home', new \pix_icon('i/home', ''));
+                if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY)) {
+                    // We need to stop automatic redirection.
+                    $this->rootnodes['home']->action->param('redirect', '0');
+                }
             }
         }
 
