@@ -46,4 +46,28 @@ class behat_theme_classic_behat_course extends behat_course {
         $xpath = "//div[contains(@class,'block')]//li[p/*[string(.)=$coursestr or string(.)=$mycoursestr]]";
         $this->execute('behat_general::i_click_on_in_the', [get_string('participants'), 'link', $xpath, 'xpath_element']);
     }
+
+    /**
+     * Returns whether the user has permission to modify this course.
+     *
+     * @return bool
+     */
+    protected function is_course_editor(): bool {
+        // If the course is already in editing mode then it will have the class 'editing' on the body.
+        // This is a 'cheap' way of telling if the course is in editing mode.
+        $body = $this->find('css', 'body');
+        if ($body->hasClass('editing')) {
+            return true;
+        }
+
+        // If the course is not already in editing mode, then the only real way to find out if the current user may edit
+        // the page is to look for the "Turn editing on" button.
+        // If the button is found then the user is a course editor.
+        try {
+            $this->find('button', get_string('turneditingon'), false, false, 0);
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 }
