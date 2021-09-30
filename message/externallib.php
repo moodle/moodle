@@ -1963,7 +1963,8 @@ class core_message_external extends external_api {
                 'type' => new external_value(
                     PARAM_ALPHA, 'type of message to return, expected values are: notifications, conversations and both',
                     VALUE_DEFAULT, 'both'),
-                'read' => new external_value(PARAM_BOOL, 'true for getting read messages, false for unread', VALUE_DEFAULT, true),
+                'read' => new external_value(PARAM_INT, '1 for getting read messages, 0 for unread, 2 for both',
+                    VALUE_DEFAULT, 1),
                 'newestfirst' => new external_value(
                     PARAM_BOOL, 'true for ordering by newest first, false for oldest first',
                     VALUE_DEFAULT, true),
@@ -1982,13 +1983,13 @@ class core_message_external extends external_api {
      * @param  int      $useridto       the user id who received the message
      * @param  int      $useridfrom     the user id who send the message. -10 or -20 for no-reply or support user
      * @param  string   $type           type of message to return, expected values: notifications, conversations and both
-     * @param  bool     $read           true for retreiving read messages, false for unread
+     * @param  int      $read           1 for getting read messages, 0 for unread, 2 for both
      * @param  bool     $newestfirst    true for ordering by newest first, false for oldest first
      * @param  int      $limitfrom      limit from
      * @param  int      $limitnum       limit num
      * @return external_description
      */
-    public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = true,
+    public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = MESSAGE_GET_READ,
                                         $newestfirst = true, $limitfrom = 0, $limitnum = 0) {
         global $CFG, $USER;
 
