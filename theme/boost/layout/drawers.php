@@ -77,6 +77,8 @@ if (!defined('BEHAT_SITE_RUNNING')) {
         $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs');
         $secondarynavigation = $moremenu->export_for_template($OUTPUT);
     }
+} else {
+    $buildsecondarynavigation = $PAGE->has_secondary_navigation_setter(false);
 }
 
 $primary = new core\navigation\output\primary($PAGE);
