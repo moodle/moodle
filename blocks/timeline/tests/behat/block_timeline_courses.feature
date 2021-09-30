@@ -77,7 +77,7 @@ Feature: The timeline block allows users to see upcoming courses
     And I click on "Sort by dates" "link" in the "Timeline" "block"
     And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by courses" "link" in the "Timeline" "block"
-    And I reload the page
+    When I reload the page
     Then I should see "Course 1" in the "Timeline" "block"
     And I should see "Course 2" in the "Timeline" "block"
     And I should see "More courses" in the "Timeline" "block"
@@ -89,3 +89,45 @@ Feature: The timeline block allows users to see upcoming courses
     And I should not see "Test feedback 2 closes" in the "Timeline" "block"
     And I should not see "Test feedback 3 closes" in the "Timeline" "block"
     And I should not see "Test assign 1 is due" in the "Timeline" "block"
+
+  Scenario: Persistent All in course view
+    Given I log in as "student1"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
+    And I click on "Sort by courses" "link" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
+    And I click on "All" "link" in the "Timeline" "block"
+    When I reload the page
+    And I click on "More courses" "button" in the "Timeline" "block"
+    Then I should see "Course 3" in the "Timeline" "block"
+    And I should see "Course 2" in the "Timeline" "block"
+    And I should see "Course 1" in the "Timeline" "block"
+    And I should see "Test choice 1 closes" in the "Timeline" "block"
+    And I should see "Test choice 3 closes" in the "Timeline" "block"
+    And I should see "Test feedback 1 closes" in the "Timeline" "block"
+    And I should see "Test feedback 2 closes" in the "Timeline" "block"
+    And I should see "Test feedback 3 closes" in the "Timeline" "block"
+    And I should see "Test assign 1 is due" in the "Timeline" "block"
+    And I should not see "More courses" in the "Timeline" "block"
+    And I should not see "Course 4" in the "Timeline" "block"
+    And I should not see "Test choice 2 closes" in the "Timeline" "block"
+    And I should not see "Test feedback 4 closes" in the "Timeline" "block"
+
+  Scenario: Current filtering always applies in courses view
+    Given I log in as "student1"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
+    And I click on "Sort by courses" "link" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
+    And I click on "Overdue" "link" in the "Timeline" "block"
+    And I reload the page
+    And I should see "Test assign 1 is due" in the "Timeline" "block"
+    And I should not see "Test feedback 2 closes" in the "Timeline" "block"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
+    And I click on "Sort by dates" "link" in the "Timeline" "block"
+    And I click on "Filter timeline items" "button" in the "Timeline" "block"
+    # Confirm that when we switch back to courses view, the "All" filer continues to be applied (and not "overdue").
+    When I click on "All" "link" in the "Timeline" "block"
+    And I click on "Sort timeline items" "button" in the "Timeline" "block"
+    And I click on "Sort by courses" "link" in the "Timeline" "block"
+    And I click on "More courses" "button" in the "Timeline" "block"
+    Then I should see "Test assign 1 is due" in the "Timeline" "block"
+    And I should see "Test feedback 2 closes" in the "Timeline" "block"
