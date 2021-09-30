@@ -118,7 +118,7 @@ function(
         root = $(root);
         if (root.hasClass('active')) {
             load(root);
-            root.data('seen', true);
+            root.attr('data-seen', true);
         }
     };
 
@@ -132,7 +132,7 @@ function(
         root.removeAttr('data-seen');
         if (root.hasClass('active')) {
             load(root);
-            root.data('seen', true);
+            root.attr('data-seen', true);
         }
     };
 
@@ -142,9 +142,9 @@ function(
      * @param {object} root The root element for the timeline courses view.
      */
     var shown = function(root) {
-        if (!root.data('seen')) {
+        if (!root.attr('data-seen')) {
             load(root);
-            root.data('seen', true);
+            root.attr('data-seen', true);
         }
     };
 
