@@ -39,5 +39,5 @@ $string['cliunknowoption'] = 'ຕົວເລືອກທີ່ບໍ່ຮູ�
    {$a}
 ກະລຸນາໃຊ້ --ຕົວເລືອກຊ່ວຍເຫຼືອ.';
 $string['cliyesnoprompt'] = 'ປະເພດ y (ໝາຍຄວາມວ່າແມ່ນ) ຫຼື n (ໝາຍຄວາມວ່າບໍ່)';
-$string['environmentrequireinstall'] = 'is required to be installed/enabled.';
-$string['environmentrequireversion'] = 'version {$a->needed} is required and you are running {$a->current}';
+$string['environmentrequireinstall'] = 'ຕ້ອງໄດ້ຕິດຕັ້ງ ແລະ ເປີດໃຊ້ງານ';
+$string['environmentrequireversion'] = 'ຕ້ອງການສະບັບ {$a->needed} ແລະ ທ່ານກຳລັງໃຊ້ງານ {$a->current}';
