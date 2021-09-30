@@ -16,6 +16,8 @@
 
 namespace core\navigation\views;
 
+use navigation_node;
+
 /**
  * Class primary.
  *
@@ -67,7 +69,61 @@ class primary extends view {
         }
 
         // Search and set the active node.
-        $this->search_for_active_node();
+        $this->search_and_set_active_node($this);
         $this->initialised = true;
+    }
+
+    /**
+     * Searches all children for the matching active node
+     *
+     * This method recursively traverse through the node tree to
+     * find the node to activate/highlight:
+     * 1. If the user had set primary node key to highlight, it
+     *    tries to match this key with the node(s). Hence it would
+     *    travel all the nodes.
+     * 2. If no primary key is provided by the dev, then it would
+     *    check for the active node set in the tree.
+     *
+     * @param navigation_node $node
+     * @param array $actionnodes navigation nodes array to set active and inactive.
+     * @return navigation_node|null
+     */
+    private function search_and_set_active_node(navigation_node $node,
+        array &$actionnodes = []): ?navigation_node {
+        global $PAGE;
+
+        $activekey = $PAGE->get_primary_activate_tab();
+        if ($activekey) {
+            if ($node->key && ($activekey === $node->key)) {
+                return $node;
+            }
+        } else if ($node->check_if_active(URL_MATCH_BASE)) {
+            return $node;
+        }
+
+        foreach ($node->children as $child) {
+            $outcome = $this->search_and_set_active_node($child, $actionnodes);
+            if ($outcome !== null) {
+                $outcome->make_active();
+                $actionnodes['active'] = $outcome;
+                if ($activekey === null) {
+                    return $actionnodes['active'];
+                }
+            } else {
+                // If the child is active then make it inactive.
+                if ($child->isactive) {
+                    $actionnodes['set_inactive'][] = $child;
+                }
+            }
+        }
+
+        // If we have successfully found an active node then reset any other nodes to inactive.
+        if (isset($actionnodes['set_inactive']) && isset($actionnodes['active'])) {
+            foreach ($actionnodes['set_inactive'] as $inactivenode) {
+                $inactivenode->make_inactive();
+            }
+            $actionnodes['set_inactive'] = [];
+        }
+        return ($actionnodes['active'] ?? null);
     }
 }

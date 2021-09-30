@@ -47,6 +47,7 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->action) and 
 }
 
 $PAGE->has_secondary_navigation_setter(false);
+$PAGE->set_primary_active_tab('siteadminnode');
 
 // and finally, if we get here, then there are matching settings and we have to print a form
 // to modify them

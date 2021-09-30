@@ -86,10 +86,11 @@ class secondary_test extends \advanced_testcase {
      * @param string $expectedfirstnode The expected first node
      * @param string $header The expected string
      * @param string $activenode The expected active node
+     * @return void
      * @dataProvider test_setting_initialise_provider
      */
     public function test_setting_initialise(string $context, string $expectedfirstnode,
-            string $header, string $activenode) {
+            string $header, string $activenode): void {
         global $PAGE, $SITE;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -137,6 +138,106 @@ class secondary_test extends \advanced_testcase {
             'Testing in a course context' => ['course', 'coursehome', 'courseheader', 'Course'],
             'Testing in a module context' => ['module', 'modulepage', 'activityheader', 'Assignment'],
             'Testing in a site admin' => ['system', 'siteadminnode', 'homeheader', 'Site administration'],
+        ];
+    }
+
+    /**
+     * Get the nav tree initialised to test active_node_scan.
+     *
+     * This is to test the secondary nav with navigation_node instance.
+     *
+     * @param string|null $seturl The url set for $PAGE.
+     * @return navigation_node The initialised nav tree.
+     */
+    private function get_tree_initilised_to_set_activate(?string $seturl = null): navigation_node {
+        global $PAGE;
+
+        $node = new secondary($PAGE);
+
+        $node->key = 'mytestnode';
+        $node->type = navigation_node::TYPE_SYSTEM;
+        $node->add('first child', null, navigation_node::TYPE_CUSTOM, 'firstchld', 'firstchild');
+        $child2 = $node->add('second child', null, navigation_node::TYPE_COURSE, 'secondchld', 'secondchild');
+        $child3 = $node->add('third child', null, navigation_node::TYPE_CONTAINER, 'thirdchld', 'thirdchild');
+        $node->add('fourth child', null, navigation_node::TYPE_ACTIVITY, 'fourthchld', 'fourthchld');
+        $node->add('fifth child', '/my', navigation_node::TYPE_CATEGORY, 'fifthchld', 'fifthchild');
+
+        // If seturl is null then set actionurl of child6 to '/'.
+        if ($seturl === null) {
+            $child6actionurl = new \moodle_url('/');
+        } else {
+            // If seturl is provided then set actionurl of child6 to '/foo'.
+            $child6actionurl = new \moodle_url('/foo');
+        }
+        $child6 = $child2->add('sixth child', $child6actionurl, navigation_node::TYPE_COURSE, 'sixthchld', 'sixthchild');
+        // Activate the sixthchild node.
+        $child6->make_active();
+        $child2->add('seventh child', null, navigation_node::TYPE_COURSE, 'seventhchld', 'seventhchild');
+        $child8 = $child2->add('eighth child', null, navigation_node::TYPE_CUSTOM, 'eighthchld', 'eighthchild');
+        $child8->add('nineth child', null, navigation_node::TYPE_CUSTOM, 'ninethchld', 'ninethchild');
+        $child3->add('tenth child', null, navigation_node::TYPE_CUSTOM, 'tenthchld', 'tenthchild');
+
+        return $node;
+    }
+
+    /**
+     * Testing active_node_scan on navigation_node instance.
+     *
+     * @param string $expectedkey The expected node key.
+     * @param string|null $key The key set by user using set_secondary_active_tab.
+     * @param string|null $seturl The url set by user.
+     * @return void
+     * @dataProvider test_active_node_scan_provider
+     */
+    public function test_active_node_scan(string $expectedkey, ?string $key = null, ?string $seturl = null): void {
+        global $PAGE;
+
+        if ($seturl !== null) {
+            navigation_node::override_active_url(new \moodle_url($seturl));
+        } else {
+            $PAGE->set_url('/');
+            navigation_node::override_active_url(new \moodle_url('/'));
+        }
+        if ($key !== null) {
+            $PAGE->set_secondary_active_tab($key);
+        }
+
+        $node = $this->get_tree_initilised_to_set_activate($seturl);
+        $secondary = new secondary($PAGE);
+        $method = new ReflectionMethod('core\navigation\views\secondary', 'active_node_scan');
+        $method->setAccessible(true);
+
+        $result = $method->invoke($secondary, $node);
+
+        if ($expectedkey !== '') {
+            $this->assertInstanceOf('navigation_node', $result);
+            $this->assertEquals($expectedkey, $result->key);
+        } else {
+            $this->assertNull($result);
+        }
+    }
+
+    /**
+     * Data provider for the active_node_scan_provider
+     *
+     * @return array
+     */
+    public function test_active_node_scan_provider(): array {
+        return [
+            'Test by activating node adjacent to root node'
+                => ['firstchild', 'firstchild'],
+            'Activate a grand child node of the root'
+                => ['thirdchild', 'tenthchild'],
+            'When child node is activated the parent node is activated and returned'
+                => ['secondchild', null],
+            'Test by setting an empty string as node key to activate' => ['secondchild', ''],
+            'Activate a node which does not exist in the tree'
+                => ['', 'foobar'],
+            'Activate the leaf node of the tree' => ['secondchild', 'ninethchild', null, true],
+            'Changing the $PAGE url which is different from action url of child6 and not setting active tab manually'
+                => ['', null, '/foobar'],
+            'Having $PAGE url and child6 action url same and not setting active tab manually'
+                => ['secondchild', null, '/foo'],
         ];
     }
 
