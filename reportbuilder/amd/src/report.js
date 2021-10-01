@@ -46,4 +46,15 @@ export const init = reportId => {
         await setPageNumber(tableRoot, pageNumber, false)
             .then(refreshTableContent);
     });
+
+    // Listen for trigger popup events.
+    document.addEventListener('click', event => {
+        const reportActionPopup = event.target.closest(reportSelectors.actions.reportActionPopup);
+        if (reportActionPopup === null) {
+            return;
+        }
+        event.preventDefault();
+        const popupAction = JSON.parse(reportActionPopup.dataset.popupAction);
+        window.openpopup(event, popupAction.jsfunctionargs);
+    });
 };

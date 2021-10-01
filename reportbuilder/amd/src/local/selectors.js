@@ -33,6 +33,9 @@ const SELECTORS = {
         systemReport: '[data-region="core_reportbuilder/system-report"]',
         filtersForm: '[data-region="filters-form"]',
     },
+    actions: {
+        reportActionPopup: '[data-action="report-action-popup"]',
+    }
 };
 
 /**
