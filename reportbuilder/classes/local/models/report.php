@@ -82,15 +82,6 @@ class report extends persistent {
     }
 
     /**
-     * Return report ID
-     *
-     * @return int
-     */
-    protected function get_id(): int {
-        return (int) $this->raw_get('id');
-    }
-
-    /**
      * Return report context, used by exporters
      *
      * @return context

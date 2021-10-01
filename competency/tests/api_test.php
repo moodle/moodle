@@ -185,7 +185,7 @@ class core_competency_api_testcase extends advanced_testcase {
 
         // Trying to change the context.
         $this->expectException(coding_exception::class);
-        api::update_template((object) array('id' => $template->get('id'), 'contextid' => context_coursecat::instance($cat->id)));
+        api::update_template((object) ['id' => $template->get('id'), 'contextid' => context_coursecat::instance($cat->id)->id]);
     }
 
     /**

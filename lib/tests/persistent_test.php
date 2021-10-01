@@ -36,6 +36,7 @@ class core_persistent_testcase extends advanced_testcase {
 
     public function setUp(): void {
         $this->make_persistent_table();
+        $this->make_second_persistent_table();
         $this->resetAfterTest();
     }
 
@@ -56,6 +57,35 @@ class core_persistent_testcase extends advanced_testcase {
         $table->add_field('path', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('scaleid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        $dbman->create_table($table);
+    }
+
+    /**
+     * Make the second table for the persistent.
+     */
+    protected function make_second_persistent_table() {
+        global $DB;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table(core_testable_second_persistent::TABLE);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('int', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('intnull', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('float', XMLDB_TYPE_FLOAT, '10', null, null, null, null);
+        $table->add_field('text', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('raw', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('booltrue', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('boolfalse', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
@@ -442,6 +472,39 @@ class core_persistent_testcase extends advanced_testcase {
         $this->expectExceptionMessageMatches('/The alias .+ exceeds 30 characters/');
         core_testable_persistent::get_sql_fields('c');
     }
+
+    public function test_get(): void {
+        $data = [
+            'int' => 123,
+            'intnull' => null,
+            'float' => 33.44,
+            'text' => 'Hello',
+            'raw' => '/dev/hello',
+            'booltrue' => true,
+            'boolfalse' => false,
+        ];
+        $p = new core_testable_second_persistent(0, (object)$data);
+        $p->create();
+
+        $this->assertSame($data['intnull'], $p->get('intnull'));
+        $this->assertSame($data['int'], $p->get('int'));
+        $this->assertSame($data['float'], $p->get('float'));
+        $this->assertSame($data['text'], $p->get('text'));
+        $this->assertSame($data['raw'], $p->get('raw'));
+        $this->assertSame($data['booltrue'], $p->get('booltrue'));
+        $this->assertSame($data['boolfalse'], $p->get('boolfalse'));
+
+        // Ensure that types are correct after reloading data from database.
+        $p->read();
+
+        $this->assertSame($data['int'], $p->get('int'));
+        $this->assertSame($data['intnull'], $p->get('intnull'));
+        $this->assertSame($data['float'], $p->get('float'));
+        $this->assertSame($data['text'], $p->get('text'));
+        $this->assertSame($data['raw'], $p->get('raw'));
+        $this->assertSame($data['booltrue'], $p->get('booltrue'));
+        $this->assertSame($data['boolfalse'], $p->get('boolfalse'));
+    }
 }
 
 /**
@@ -543,4 +606,52 @@ class core_testable_persistent extends \core\persistent {
         return true;
     }
 
+}
+
+/**
+ * Example persistent class to test types.
+ *
+ * @package    core
+ * @copyright  2021 David Matamoros <davidmc@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class core_testable_second_persistent extends \core\persistent {
+
+    /** Table name for the persistent. */
+    const TABLE = 'phpunit_second_persistent';
+
+    /**
+     * Return the list of properties.
+     *
+     * @return array
+     */
+    protected static function define_properties(): array {
+        return [
+            'int' => [
+                'type' => PARAM_INT,
+            ],
+            'intnull' => [
+                'type' => PARAM_INT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ],
+            'float' => [
+                'type' => PARAM_FLOAT,
+            ],
+            'text' => [
+                'type' => PARAM_TEXT,
+                'default' => ''
+            ],
+            'raw' => [
+                'type' => PARAM_RAW,
+                'default' => ''
+            ],
+            'booltrue' => [
+                'type' => PARAM_BOOL,
+            ],
+            'boolfalse' => [
+                'type' => PARAM_BOOL,
+            ]
+        ];
+    }
 }
