@@ -48,14 +48,14 @@ if (!isset($plugins[$name])) {
 switch ($action) {
     case 'disable':
         if ($plugins[$name]->is_enabled()) {
-            set_config('disabled', 1, 'dataformat_'. $name);
-            core_plugin_manager::reset_caches();
+            $class = \core_plugin_manager::resolve_plugininfo_class('dataformat');
+            $class::enable_plugin($name, false);
         }
         break;
     case 'enable':
         if (!$plugins[$name]->is_enabled()) {
-            unset_config('disabled', 'dataformat_'. $name);
-            core_plugin_manager::reset_caches();
+            $class = \core_plugin_manager::resolve_plugininfo_class('dataformat');
+            $class::enable_plugin($name, true);
         }
         break;
     case 'up':
@@ -78,4 +78,3 @@ switch ($action) {
         break;
 }
 redirect($return);
-
