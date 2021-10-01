@@ -1,6 +1,11 @@
 This file describes API changes in /grade/* ;
 Information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+* There is a new callback inside of grade_get_plugin_info called extend_gradebook_plugininfo
+  which allows for new tabs to be added to the gradebook.
+
 === 3.7 ===
 
 * The grade_cron() function has been removed. Please use grade_history_cleanup_task and grade_cron_task scheduled tasks instead.
