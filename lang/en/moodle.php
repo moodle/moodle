@@ -2128,6 +2128,7 @@ $string['therearecourses'] = 'There are {$a} courses';
 $string['thiscategory'] = 'This category';
 $string['thiscategorycontains'] = 'This category contains';
 $string['time'] = 'Time';
+$string['timecreated'] = 'Time created';
 $string['timecreatedcourse'] = 'Course time created';
 $string['timezone'] = 'Timezone';
 $string['to'] = 'To';
