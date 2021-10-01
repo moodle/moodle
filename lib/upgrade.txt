@@ -87,6 +87,7 @@ information provided here is intended especially for developers.
   The deprecated codes are removed from the questionlib for those two methods.
 * The postgres driver now wraps calls to pg_field_type() and caches them in databasemeta to save an invisible internal
   DB call on every request.
+* The default type of 'core/toast' messages has been changed to 'information' (callers can still explicitely set the type)
 * As the message_jabber notification plugin has been moved to the plugins database, the XMPPHP library (aka Jabber) has been
 completely removed from Moodle core too.
 * The SWF media player has been completely removed (The Flash Player was deprecated in 2017 and officially discontinued

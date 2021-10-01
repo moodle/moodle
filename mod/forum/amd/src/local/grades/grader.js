@@ -379,7 +379,7 @@ const displayGradingError = async(root, user, err) => {
     ]);
 
     Templates.replaceNodeContents(root.querySelector(Selectors.regions.gradingPanelErrors), html, js);
-    addToast(errorString);
+    addToast(errorString, {type: 'warning'});
 };
 
 /**
