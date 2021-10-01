@@ -259,7 +259,7 @@ function email_reports_cron() {
                                               JOIN {company} c ON (lit.companyid = c.id)
                                               JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
                                               JOIN {user} u ON (lit.userid = u.id)
-                                              JOIN {course} co ON (lit.courseid = co.id AND it.courseid = co.id)
+                                              JOIN {course} co ON (lit.courseid = co.id AND ic.courseid = co.id)
                                               WHERE co.visible = 1
                                               AND lit.companyid = :companyid
                                               AND lit.userid IN (" . $departmentids . ")
