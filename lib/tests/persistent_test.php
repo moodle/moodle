@@ -83,7 +83,7 @@ class core_persistent_testcase extends advanced_testcase {
         $table->add_field('intnull', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('somefloat', XMLDB_TYPE_FLOAT, '10,5', null, null, null, null);
         $table->add_field('sometext', XMLDB_TYPE_TEXT, null, null, null, null, null);
-        $table->add_field('raw', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('someraw', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('booltrue', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('boolfalse', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
@@ -479,7 +479,7 @@ class core_persistent_testcase extends advanced_testcase {
             'intnull' => null,
             'somefloat' => 33.44,
             'sometext' => 'Hello',
-            'raw' => '/dev/hello',
+            'someraw' => '/dev/hello',
             'booltrue' => true,
             'boolfalse' => false,
         ];
@@ -488,9 +488,10 @@ class core_persistent_testcase extends advanced_testcase {
 
         $this->assertSame($data['intnull'], $p->get('intnull'));
         $this->assertSame($data['someint'], $p->get('someint'));
-        $this->assertSame($data['somefloat'], $p->get('somefloat'));
+        $this->assertIsFloat($p->get('somefloat')); // Avoid === comparisons on floats, verify type and value separated.
+        $this->assertEqualsWithDelta($data['somefloat'], $p->get('somefloat'), 0.00001);
         $this->assertSame($data['sometext'], $p->get('sometext'));
-        $this->assertSame($data['raw'], $p->get('raw'));
+        $this->assertSame($data['someraw'], $p->get('someraw'));
         $this->assertSame($data['booltrue'], $p->get('booltrue'));
         $this->assertSame($data['boolfalse'], $p->get('boolfalse'));
 
@@ -499,9 +500,10 @@ class core_persistent_testcase extends advanced_testcase {
 
         $this->assertSame($data['someint'], $p->get('someint'));
         $this->assertSame($data['intnull'], $p->get('intnull'));
-        $this->assertSame($data['somefloat'], $p->get('somefloat'));
+        $this->assertIsFloat($p->get('somefloat')); // Avoid === comparisons on floats, verify type and value separated.
+        $this->assertEqualsWithDelta($data['somefloat'], $p->get('somefloat'), 0.00001);
         $this->assertSame($data['sometext'], $p->get('sometext'));
-        $this->assertSame($data['raw'], $p->get('raw'));
+        $this->assertSame($data['someraw'], $p->get('someraw'));
         $this->assertSame($data['booltrue'], $p->get('booltrue'));
         $this->assertSame($data['boolfalse'], $p->get('boolfalse'));
     }
@@ -642,7 +644,7 @@ class core_testable_second_persistent extends \core\persistent {
                 'type' => PARAM_TEXT,
                 'default' => ''
             ],
-            'raw' => [
+            'someraw' => [
                 'type' => PARAM_RAW,
                 'default' => ''
             ],
