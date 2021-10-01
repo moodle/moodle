@@ -56,6 +56,29 @@ class availability extends base {
         return $enabled;
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        $haschanged = false;
+
+        $plugin = 'availability_' . $pluginname;
+        $oldvalue = get_config($plugin, 'disabled');
+        $disabled = !$enabled;
+        // Only set value if there is no config setting or if the value is different from the previous one.
+        if ($oldvalue == false && $disabled) {
+            set_config('disabled', $disabled, $plugin);
+            $haschanged = true;
+        } else if ($oldvalue != false && !$disabled) {
+            unset_config('disabled', $plugin);
+            $haschanged = true;
+        }
+
+        if ($haschanged) {
+            add_to_config_log('disabled', $oldvalue, $disabled, $plugin);
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
     /**
      * Defines if there should be a way to uninstall the plugin via the administration UI.
      *
