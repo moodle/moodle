@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['ariadayfilter'] = 'Filter timeline items';
+$string['ariadayfilter'] = 'Filter timeline by date';
 $string['ariadayfilteroption'] = '{$a} filter option';
 $string['ariaeventlistitem'] = '{$a->name} activity in {$a->course} is due on {$a->date}';
 $string['ariaeventlistpagelimit'] = 'Show {$a} activities per page';
