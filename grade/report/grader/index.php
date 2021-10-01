@@ -45,6 +45,7 @@ $graderreportsilast   = optional_param('silast', null, PARAM_NOTAGS);
 
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 $PAGE->requires->yui_module('moodle-gradereport_grader-gradereporttable', 'Y.M.gradereport_grader.init', null, null, true);
+$PAGE->set_pagelayout('report');
 
 // basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {

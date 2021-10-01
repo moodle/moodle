@@ -139,19 +139,19 @@ Feature: Set up contextual data for tests
       | user5 | custom2        | System       |           |
     When I log in as "user1"
     And I am on site homepage
-    Then I should see "Edit mode"
+    Then edit mode should be available on the current page
     And I log out
     And I log in as "user2"
     And I am on "Course 1" course homepage
-    Then I should see "Edit mode"
+    Then edit mode should be available on the current page
     And I log out
     And I log in as "user3"
     And I am on "Course 1" course homepage
-    Then I should see "Edit mode"
+    Then edit mode should be available on the current page
     And I log out
     And I log in as "user4"
     And I am on "Course 1" course homepage
-    Then I should see "Edit mode"
+    Then edit mode should be available on the current page
     And I log out
     And I log in as "user5"
     And I should see "You are logged in as"

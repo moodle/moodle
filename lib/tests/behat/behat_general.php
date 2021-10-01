@@ -1011,6 +1011,45 @@ EOF;
     }
 
     /**
+     * Ensure that edit mode is (not) available on the current page.
+     *
+     * @Then edit mode should be available on the current page
+     * @Then edit mode should :not be available on the current page
+     * @param bool $not
+     */
+    public function edit_mode_should_be_available(bool $not = false): void {
+        $isavailable = $this->is_edit_mode_available();
+        $shouldbeavailable = empty($not);
+
+        if ($isavailable && !$shouldbeavailable) {
+            throw new ExpectationException("Edit mode is available and should not be", $this->getSession());
+        } else if ($shouldbeavailable && !$isavailable) {
+            throw new ExpectationException("Edit mode is not available and should be", $this->getSession());
+        }
+    }
+
+    /**
+     * Check whether edit mode is available on the current page.
+     *
+     * @return bool
+     */
+    public function is_edit_mode_available(): bool {
+        // If the course is already in editing mode then it will have the class 'editing' on the body.
+        // This is a 'cheap' way of telling if the course is in editing mode and therefore if edit mode is available.
+        $body = $this->find('css', 'body');
+        if ($body->hasClass('editing')) {
+            return true;
+        }
+
+        try {
+            $this->find('field', get_string('editmode'), false, false, 0);
+            return true;
+        } catch (ElementNotFoundException $e) {
+            return false;
+        }
+    }
+
+    /**
      * This step triggers cron like a user would do going to admin/cron.php.
      *
      * @Given /^I trigger cron$/
