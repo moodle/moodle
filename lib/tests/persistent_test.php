@@ -79,10 +79,10 @@ class core_persistent_testcase extends advanced_testcase {
 
         $table = new xmldb_table(core_testable_second_persistent::TABLE);
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('int', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('someint', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('intnull', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-        $table->add_field('float', XMLDB_TYPE_FLOAT, '10', null, null, null, null);
-        $table->add_field('text', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('somefloat', XMLDB_TYPE_FLOAT, '10,5', null, null, null, null);
+        $table->add_field('sometext', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('raw', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('booltrue', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('boolfalse', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
@@ -475,10 +475,10 @@ class core_persistent_testcase extends advanced_testcase {
 
     public function test_get(): void {
         $data = [
-            'int' => 123,
+            'someint' => 123,
             'intnull' => null,
-            'float' => 33.44,
-            'text' => 'Hello',
+            'somefloat' => 33.44,
+            'sometext' => 'Hello',
             'raw' => '/dev/hello',
             'booltrue' => true,
             'boolfalse' => false,
@@ -487,9 +487,9 @@ class core_persistent_testcase extends advanced_testcase {
         $p->create();
 
         $this->assertSame($data['intnull'], $p->get('intnull'));
-        $this->assertSame($data['int'], $p->get('int'));
-        $this->assertSame($data['float'], $p->get('float'));
-        $this->assertSame($data['text'], $p->get('text'));
+        $this->assertSame($data['someint'], $p->get('someint'));
+        $this->assertSame($data['somefloat'], $p->get('somefloat'));
+        $this->assertSame($data['sometext'], $p->get('sometext'));
         $this->assertSame($data['raw'], $p->get('raw'));
         $this->assertSame($data['booltrue'], $p->get('booltrue'));
         $this->assertSame($data['boolfalse'], $p->get('boolfalse'));
@@ -497,10 +497,10 @@ class core_persistent_testcase extends advanced_testcase {
         // Ensure that types are correct after reloading data from database.
         $p->read();
 
-        $this->assertSame($data['int'], $p->get('int'));
+        $this->assertSame($data['someint'], $p->get('someint'));
         $this->assertSame($data['intnull'], $p->get('intnull'));
-        $this->assertSame($data['float'], $p->get('float'));
-        $this->assertSame($data['text'], $p->get('text'));
+        $this->assertSame($data['somefloat'], $p->get('somefloat'));
+        $this->assertSame($data['sometext'], $p->get('sometext'));
         $this->assertSame($data['raw'], $p->get('raw'));
         $this->assertSame($data['booltrue'], $p->get('booltrue'));
         $this->assertSame($data['boolfalse'], $p->get('boolfalse'));
@@ -627,7 +627,7 @@ class core_testable_second_persistent extends \core\persistent {
      */
     protected static function define_properties(): array {
         return [
-            'int' => [
+            'someint' => [
                 'type' => PARAM_INT,
             ],
             'intnull' => [
@@ -635,10 +635,10 @@ class core_testable_second_persistent extends \core\persistent {
                 'null' => NULL_ALLOWED,
                 'default' => null,
             ],
-            'float' => [
+            'somefloat' => [
                 'type' => PARAM_FLOAT,
             ],
-            'text' => [
+            'sometext' => [
                 'type' => PARAM_TEXT,
                 'default' => ''
             ],
