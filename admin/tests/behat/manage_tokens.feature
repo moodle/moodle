@@ -30,7 +30,7 @@ Feature: Manage external services tokens
     And I press "Delete"
     And "Firstname1 Lastname1" "table_row" should not exist
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Tokens can be filtered by user and by service
     Given the following "core_webservice > Service" exists:
       | name      | Site information              |
