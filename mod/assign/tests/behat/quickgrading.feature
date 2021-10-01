@@ -36,6 +36,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I follow "Test assignment name"
     Then I should see "1" in the "Needs grading" "table_row"
 
+  @skip_chrome_zerosize
   Scenario: Grade multiple students on one page
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
