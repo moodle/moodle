@@ -40,6 +40,57 @@ class mod extends base {
         return $DB->get_records_menu('modules', array('visible'=>1), 'name ASC', 'name, name AS val');
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $DB;
+
+        if (!$module = $DB->get_record('modules', ['name' => $pluginname])) {
+            throw new \moodle_exception('moduledoesnotexist', 'error');
+        }
+
+        $haschanged = false;
+
+        // Only set visibility if it's different from the current value.
+        if ($module->visible != $enabled) {
+            // Set module visibility.
+            $DB->set_field('modules', 'visible', $enabled, ['id' => $module->id]);
+            $haschanged = true;
+
+            if ($enabled) {
+                // Revert the previous saved visible state for the course module.
+                $DB->set_field('course_modules', 'visible', '1', ['visibleold' => 1, 'module' => $module->id]);
+
+                // Increment course.cacherev for courses where we just made something visible.
+                // This will force cache rebuilding on the next request.
+                increment_revision_number('course', 'cacherev',
+                    "id IN (SELECT DISTINCT course
+                                       FROM {course_modules}
+                                      WHERE visible = 1 AND module = ?)",
+                    [$module->id]
+                );
+            } else {
+                // Remember the visibility status in visibleold and hide.
+                $sql = "UPDATE {course_modules}
+                           SET visibleold = visible, visible = 0
+                         WHERE module = ?";
+                $DB->execute($sql, [$module->id]);
+                // Increment course.cacherev for courses where we just made something invisible.
+                // This will force cache rebuilding on the next request.
+                increment_revision_number('course', 'cacherev',
+                    'id IN (SELECT DISTINCT course
+                                       FROM {course_modules}
+                                      WHERE visibleold = 1 AND module = ?)',
+                    [$module->id]
+                );
+            }
+
+            // Include this information into config changes table.
+            add_to_config_log('mod_visibility', $module->visible, $enabled, $pluginname);
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
     /**
      * Magic method getter, redirects to read only values.
      *
