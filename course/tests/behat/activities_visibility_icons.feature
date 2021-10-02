@@ -162,6 +162,7 @@ Feature: Toggle activities visibility from the course page
     And the field "Availability" matches value "Make available but not shown on course page"
     And I press "Save and return to course"
     And "Test assignment name" activity should be available but hidden from course page
+    And I change window size to "large"
     And I turn editing mode off
     And "Test assignment name" activity should be available but hidden from course page
     And I log out
