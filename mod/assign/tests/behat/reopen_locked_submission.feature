@@ -17,7 +17,7 @@ Feature: Submissions are unlocked when a new attempt is given
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: A locked submission should unlock when a new attempt is automatically given.
     Given the following "activity" exists:
       | activity                             | assign                |
@@ -45,7 +45,7 @@ Feature: Submissions are unlocked when a new attempt is given
     Then I should see "Reopened"
     And I should not see "Submission changes not allowed"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: A locked submission should unlock when a new attempt is manually given.
     Given the following "activity" exists:
       | activity                            | assign                  |
