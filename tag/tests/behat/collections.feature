@@ -96,6 +96,7 @@ Feature: Managers can create and manage tag collections
     And I should see "Tag1"
     And I should see "Tag2"
 
+  @skip_chrome_zerosize
   Scenario: Creating searchable and non-searchable tag collections
     And I follow "Add tag collection"
     And I set the following fields to these values:
