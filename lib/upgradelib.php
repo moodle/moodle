@@ -452,10 +452,16 @@ function upgrade_plugin_savepoint($result, $version, $type, $plugin, $allowabort
  *
  * @return bool true means borked upgrade, false means previous PHP files were properly removed
  */
-function upgrade_stale_php_files_present() {
+function upgrade_stale_php_files_present(): bool {
     global $CFG;
 
-    $someexamplesofremovedfiles = array(
+    $someexamplesofremovedfiles = [
+        // Removed in 4.0.
+        '/admin/classes/task_log_table.php',
+        '/admin/cli/mysql_engine.php',
+        '/lib/babel-polyfill/polyfill.js',
+        '/lib/typo3/class.t3lib_cs.php',
+        '/question/tests/category_class_test.php',
         // Removed in 3.11.
         '/customfield/edit.php',
         '/lib/phpunit/classes/autoloader.php',
@@ -552,7 +558,7 @@ function upgrade_stale_php_files_present() {
         // Removed in 2.0.
         '/blocks/admin/block_admin.php',
         '/blocks/admin_tree/block_admin_tree.php',
-    );
+    ];
 
     foreach ($someexamplesofremovedfiles as $file) {
         if (file_exists($CFG->dirroot.$file)) {
