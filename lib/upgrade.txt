@@ -67,6 +67,8 @@ information provided here is intended especially for developers.
   callers to get the name without escaped characters.
 * The inplace_editable element constructor now accepts an optional pix_icon parameter to use as it's editing icon when
   rendered. The default icon for "select" types has also changed to a dropdown caret ("t/expanded").
+* The inplace_editable Javascript module now emits native events, removing the jQuery dependency from calling code
+  that wants to listen for the events. Backwards compatibility with existing code using jQuery is preserved.
 * The function message_send() in messagelib.php now returns false if there is an error sending the message to the
   message processor (MDL-70046).
 * The following functions are deprecated in questionlib.php and moved to the new location.
