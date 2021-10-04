@@ -177,11 +177,26 @@ class core_persistent_testcase extends advanced_testcase {
     public function test_from_record_invalid_param() {
         $p = new core_testable_persistent();
         $data = (object) array(
+            'shortname' => 'ddd',
+            'idnumber' => 'abc',
+            'description' => 'xyz',
+            'descriptionformat' => FORMAT_PLAIN,
+            'parentid' => 999,
+            'path' => '/a/b/c',
+            'sortorder' => 12,
+            'id' => 1,
+            'timecreated' => 2,
+            'timemodified' => 3,
+            'usermodified' => 4,
+            'scaleid' => null,
             'invalidparam' => 'abc'
         );
 
-        $this->expectException(coding_exception::class);
         $p->from_record($data);
+
+        // Previous call should succeed, assert we get back all data except invalid param.
+        unset($data->invalidparam);
+        $this->assertEquals($data, $p->to_record());
     }
 
     public function test_validate() {

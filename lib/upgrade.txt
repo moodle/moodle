@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.11.6 ===
+* The persistent method from_record() now only attempts to load record properties defined in the persistent class.
+
 === 3.11.5 ===
 * Two new helper functions have been added to lib/datalib.php, for safely preparing SQL ORDER BY statements where user
   interactions define sort parameters (see the respective docblocks for full details and examples):

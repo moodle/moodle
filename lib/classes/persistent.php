@@ -393,7 +393,8 @@ abstract class persistent {
      * @return static
      */
     final public function from_record(stdClass $record) {
-        $record = (array) $record;
+        $properties = static::properties_definition();
+        $record = array_intersect_key((array) $record, $properties);
         foreach ($record as $property => $value) {
             $this->raw_set($property, $value);
         }
