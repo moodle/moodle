@@ -64,7 +64,6 @@ class block_calendar_month extends block_base {
         }
 
         $options = [
-            'showexportlink' => false,
             'showfullcalendarlink' => true
         ];
         list($footerdata, $footertemplate) = calendar_get_footer_options($calendar, $options);

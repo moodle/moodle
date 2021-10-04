@@ -327,7 +327,11 @@ class core_calendar_renderer extends plugin_renderer_base {
         $exportcalendarbutton->class .= ' float-sm-right float-right';
         $output = $this->output->heading(get_string('managesubscriptions', 'calendar'));
         $output .= html_writer::start_div('header d-flex flex-wrap mt-5');
-        $output .= html_writer::tag('h3', get_string('yoursubscriptions', 'calendar'), ['class' => 'mr-auto']);
+        $headerattr = [
+            'class' => 'mr-auto',
+            'aria-describedby' => 'subscription_details_table',
+        ];
+        $output .= html_writer::tag('h3', get_string('yoursubscriptions', 'calendar'), $headerattr);
         $output .= $this->output->render($importcalendarbutton);
         $output .= $this->output->render($exportcalendarbutton);
         $output .= html_writer::end_div();
