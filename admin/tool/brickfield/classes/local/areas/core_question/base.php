@@ -137,7 +137,7 @@ abstract class base extends area_base {
         }
         // Default to SITEID if courseid is null, i.e. system or category level questions.
         $thiscourseid = ($componentinfo->courseid !== null) ? $componentinfo->courseid : SITEID;
-        return new \moodle_url('/question/question.php', ['courseid' => $thiscourseid, 'id' => $questionid]);
+        return new \moodle_url('/question/bank/editquestion/question.php', ['courseid' => $thiscourseid, 'id' => $questionid]);
     }
 
     /**

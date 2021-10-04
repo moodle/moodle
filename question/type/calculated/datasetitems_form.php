@@ -337,16 +337,9 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             $buttonarray = [];
             $buttonarray[] = $mform->createElement(
                     'submit', 'savechanges', get_string('savechanges'));
-
-            // Todo MDL-72004 changes for class renaming and default sort.
-            if (class_exists('qbank_previewquestion\\preview_action_column')) {
-                if (\core\plugininfo\qbank::is_plugin_enabled('qbank_previewquestion')) {
-                    $previewlink = $PAGE->get_renderer('qbank_previewquestion')->question_preview_link(
-                            $this->question->id, $this->categorycontext, true);
-                }
-            } else {
-                $previewlink = $PAGE->get_renderer('core_question')->question_preview_link(
-                        $this->question->id, $this->categorycontext, true);
+            if (\core\plugininfo\qbank::is_plugin_enabled('qbank_previewquestion')) {
+                $previewlink = $PAGE->get_renderer('qbank_previewquestion')->question_preview_link($this->question->id,
+                        $this->categorycontext, true);
             }
             $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
 

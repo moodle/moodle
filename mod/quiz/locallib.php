@@ -199,7 +199,7 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
                 $usedquestionids[$question->id] = 1;
             }
         }
-        $randomloader = new \core_question\bank\random_question_loader($qubaids, $usedquestionids);
+        $randomloader = new \core_question\local\bank\random_question_loader($qubaids, $usedquestionids);
 
         foreach ($quizobj->get_questions() as $questiondata) {
             $slot += 1;
@@ -1401,7 +1401,7 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
             $returnurl = $returnurl->out_as_local_url(false);
         }
         $questionparams = array('returnurl' => $returnurl, 'cmid' => $cmid, 'id' => $question->id);
-        $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
+        $questionurl = new moodle_url("$CFG->wwwroot/question/bank/editquestion/question.php", $questionparams);
         return '<a title="' . $action . '" href="' . $questionurl->out() . '" class="questioneditbutton">' .
                 $OUTPUT->pix_icon($icon, $action) . $contentaftericon .
                 '</a>';
@@ -1429,7 +1429,7 @@ function quiz_question_preview_url($quiz, $question, $variant = null) {
     }
 
     // Work out the correcte preview URL.
-    return question_preview_url($question->id, $quiz->preferredbehaviour,
+    return \qbank_previewquestion\helper::question_preview_url($question->id, $quiz->preferredbehaviour,
             $maxmark, $displayoptions, $variant);
 }
 

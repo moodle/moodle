@@ -429,8 +429,7 @@ class behat_mod_quiz extends behat_question_base {
      */
     public function i_should_see_on_quiz_page($questionname, $pagenumber) {
         $xpath = "//li[contains(., '" . $this->escape($questionname) .
-                "')][./preceding-sibling::li[contains(@class, 'pagenumber')][1][contains(., 'Page " .
-                $pagenumber . "')]]";
+                "')][./preceding-sibling::li[contains(., 'Page " . $pagenumber . "')]]";
 
         $this->execute('behat_general::should_exist', array($xpath, 'xpath_element'));
     }
@@ -457,8 +456,8 @@ class behat_mod_quiz extends behat_question_base {
      * @param string $secondquestionname the name of the question that should come immediately after it in order.
      */
     public function i_should_see_before_on_the_edit_quiz_page($firstquestionname, $secondquestionname) {
-        $xpath = "//li[contains(@class, ' slot ') and contains(., '" . $this->escape($firstquestionname) .
-                "')]/following-sibling::li[contains(@class, ' slot ')][1]" .
+        $xpath = "//li[contains(., '" . $this->escape($firstquestionname) .
+                "')]/following-sibling::li" .
                 "[contains(., '" . $this->escape($secondquestionname) . "')]";
 
         $this->execute('behat_general::should_exist', array($xpath, 'xpath_element'));

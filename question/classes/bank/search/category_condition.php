@@ -122,7 +122,10 @@ class category_condition extends condition {
                 true, -1, false);
         $displaydata['categoryselect'] = \html_writer::select($catmenu, 'category', $this->cat, [],
                 array('class' => 'searchoptions custom-select', 'id' => 'id_selectacategory'));
-        $displaydata['categorydesc'] = $this->print_category_info($this->category);
+        $displaydata['categorydesc'] = '';
+        if ($this->category) {
+            $displaydata['categorydesc'] = $this->print_category_info($this->category);
+        }
         return $PAGE->get_renderer('core_question', 'bank')->render_category_condition($displaydata);
     }
 

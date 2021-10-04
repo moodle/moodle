@@ -170,7 +170,6 @@ class core_question_external extends external_api {
         }
 
         require_once($CFG->libdir . '/questionlib.php');
-        require_once($CFG->dirroot . '/question/type/tags_form.php');
 
         $cantag = question_has_capability_on($question, 'tag');
         $questioncontext = \context::instance_by_id($question->contextid);
@@ -182,7 +181,7 @@ class core_question_external extends external_api {
             'contexts' => $contexts->all()
         ];
 
-        $mform = new \core_question\form\tags(null, $formoptions, 'post', '', null, $cantag, $data);
+        $mform = new \qbank_tagquestion\form\tags_form(null, $formoptions, 'post', '', null, $cantag, $data);
 
         if ($validateddata = $mform->get_data()) {
             if ($cantag) {

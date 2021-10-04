@@ -51,12 +51,11 @@ class edit_menu_column extends column_base {
      *
      * @param column_base[] $allcolumns a set of columns.
      * @return column_base[] the non-action columns from the set.
-     * @todo MDL-72004 changes for class renaming.
      */
     public function claim_menuable_columns($allcolumns): array {
         $remainingcolumns = [];
         foreach ($allcolumns as $key => $column) {
-            if ($column instanceof menuable_action || $column instanceof \core_question\bank\menuable_action) {
+            if ($column instanceof menuable_action) {
                 $this->actions[$key] = $column;
             } else {
                 $remainingcolumns[$key] = $column;

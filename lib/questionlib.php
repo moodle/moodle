@@ -759,14 +759,12 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
  * @return moodle_url the URL.
  * @deprecated since Moodle 4.0
  * @see qbank_previewquestion\helper::question_preview_url()
- * @todo MDL-71679 uncomment the debug messages after implementing the changes in mod_quiz.
  * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_preview_url($questionid, $preferredbehaviour = null,
         $maxmark = null, $displayoptions = null, $variant = null, $context = null) {
-    // Debugging message will be re-added after implementing the changes in mod_quiz.
-    // ...debugging('Function question_preview_url() has been deprecated and moved to qbank_previewquestion plugin,
-    // Please use qbank_previewquestion\helper::question_preview_url() instead.', DEBUG_DEVELOPER);.
+     debugging('Function question_preview_url() has been deprecated and moved to qbank_previewquestion plugin,
+     Please use qbank_previewquestion\helper::question_preview_url() instead.', DEBUG_DEVELOPER);
 
     return \qbank_previewquestion\helper::question_preview_url($questionid, $preferredbehaviour = null,
             $maxmark = null, $displayoptions = null, $variant = null, $context = null);
@@ -776,13 +774,11 @@ function question_preview_url($questionid, $preferredbehaviour = null,
  * @return array that can be passed as $params to the {@link popup_action} constructor.
  * @deprecated since Moodle 4.0
  * @see qbank_previewquestion\helper::question_preview_popup_params()
- * @todo MDL-71679 uncomment the debug messages after implementing the changes to mod_quiz.
  * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_preview_popup_params() {
-    // Debugging message will be re-added after implementing the changes in mod_quiz.
-    // ...debugging('Function question_preview_popup_params() has been deprecated and moved to qbank_previewquestion plugin,
-    // Please use qbank_previewquestion\helper::question_preview_popup_params() instead.', DEBUG_DEVELOPER);.
+    debugging('Function question_preview_popup_params() has been deprecated and moved to qbank_previewquestion plugin,
+    Please use qbank_previewquestion\helper::question_preview_popup_params() instead.', DEBUG_DEVELOPER);
 
     return \qbank_previewquestion\helper::question_preview_popup_params();
 }
@@ -1656,18 +1652,9 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
                     'title' => get_string('questions', 'question'),
                     'url' => new moodle_url($baseurl)
             ],
-            'categories' => [
-                    'title' => get_string('categories', 'question'),
-                    'url' => new moodle_url('/question/category.php')
-            ],
-            'import' => [
-                    'title' => get_string('import', 'question'),
-                    'url' => new moodle_url('/question/import.php')
-            ],
-            'export' => [
-                    'title' => get_string('export', 'question'),
-                    'url' => new moodle_url('/question/export.php')
-            ]
+            'categories' => [],
+            'import' => [],
+            'export' => []
     ];
 
     $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
@@ -1692,16 +1679,23 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
                 ];
             }
         }
+    }
 
+    // Mitigate the risk of regression.
+    foreach ($corenavigations as $node => $corenavigation) {
+        if (empty($corenavigation)) {
+            unset($corenavigations[$node]);
+        }
     }
 
     // Community/additional plugins have navigation node.
     $pluginnavigations = [];
     foreach ($plugins as $componentname => $plugin) {
-        $pluginentrypoin = new $plugin();
-        $pluginentrypointobject = $pluginentrypoin->get_navigation_node();
-        if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
-            unset($corenavigations[$key]);
+        $pluginentrypoint = new $plugin();
+        $pluginentrypointobject = $pluginentrypoint->get_navigation_node();
+        // Don't need the plugins without navigation node.
+        if ($pluginentrypointobject === null || !\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
+            unset($plugins[$componentname]);
             continue;
         }
         $pluginnavigations[$pluginentrypointobject->get_navigation_key()] = [

@@ -43,7 +43,6 @@ function core_question_output_fragment_tags_form($args) {
 
     if (!empty($args['id'])) {
         global $CFG, $DB;
-        require_once($CFG->dirroot . '/question/type/tags_form.php');
         require_once($CFG->libdir . '/questionlib.php');
         $id = clean_param($args['id'], PARAM_INT);
         $editingcontext = $args['context'];
@@ -88,7 +87,7 @@ function core_question_output_fragment_tags_form($args) {
         ];
 
         $cantag = question_has_capability_on($question, 'tag');
-        $mform = new \core_question\form\tags(null, $formoptions, 'post', '', null, $cantag, $data);
+        $mform = new \qbank_tagquestion\form\tags_form(null, $formoptions, 'post', '', null, $cantag, $data);
         $mform->set_data($data);
 
         return $mform->render();

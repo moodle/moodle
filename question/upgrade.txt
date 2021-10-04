@@ -6,6 +6,7 @@ This files describes API changes for code that uses the question API.
    are divided in two different parts, base classes and feature classes. All the base
    classes are moved classes/local/bank and all the feature classes will be moved to
    the plugin for that feature.
+
 2) submit_tags_form and associated external services for question tag, tags_form in question/type,
    core_question_output_fragment_tags_form method in lib is deprecated and moved to the tagquestion plugin.
 
@@ -18,6 +19,59 @@ This files describes API changes for code that uses the question API.
    question_preview_question_pluginfile()
    The following classes are deprecated in previewlib and moves the previewquestion plugin:
    question_preview_options, preview_options_form.
+
+5) submit_tags_form and associated external services for question tag, tags_form in question/type,
+   core_question_output_fragment_tags_form method in lib is deprecated and moved to the tagquestion plugin.
+
+6) Function question_get_export_single_question_url() in questionlib has been deprecated
+   and moved to qbank_exporttoxml plugin, the new location is:
+   qbank_exporttoxml\exporttoxml_helper::question_get_export_single_question_url().
+
+7) The following classes are deleted and available in the new location:
+   'core_question\bank\action_column_base' => 'core_question\local\bank\action_column_base',
+   'core_question\bank\checkbox_column' => 'core_question\local\bank\checkbox_column',
+   'core_question\bank\column_base' => 'core_question\local\bank\column_base',
+   'core_question\bank\edit_menu_column' => 'core_question\local\bank\edit_menu_column',
+   'core_question\bank\menu_action_column_base' => 'core_question\local\bank\menu_action_column_base',
+   'core_question\bank\menuable_action' => 'core_question\local\bank\menuable_action',
+   'core_question\bank\random_question_loader' => 'core_question\local\bank\random_question_loader',
+   'core_question\bank\row_base' => 'core_question\local\bank\row_base',
+   'core_question\bank\view' => 'core_question\local\bank\view',
+   'core_question\bank\copy_action_column' => 'qbank_editquestion\copy_action_column',
+   'core_question\bank\edit_action_column' => 'qbank_editquestion\edit_action_column',
+   'core_question\bank\creator_name_column' => 'qbank_viewcreator\creator_name_column',
+   'core_question\bank\modifier_name_column' => 'qbank_viewcreator\modifier_name_column',
+   'core_question\bank\question_name_column' => 'qbank_viewquestionname\viewquestionname_column_helper',
+   'core_question\bank\question_name_idnumber_tags_column' => 'qbank_viewquestionname\question_name_idnumber_tags_column',
+   'core_question\bank\delete_action_column' => 'qbank_deletequestion\delete_action_column',
+   'core_question\bank\export_xml_action_column' => 'qbank_exporttoxml\export_xml_action_column',
+   'core_question\bank\preview_action_column' => 'qbank_previewquestion\preview_action_column',
+   'core_question\bank\question_text_row' => 'qbank_viewquestiontext\question_text_row',
+   'core_question\bank\question_type_column' => 'qbank_viewquestiontype\question_type_column',
+   'core_question\bank\tags_action_column' => 'qbank_tagquestion\tags_action_column',
+   'core_question\form\tags' => '\qbank_tagquestion\form\tags_form',
+   'core_question\output\qbank_chooser' => 'qbank_editquestion\qbank_chooser',
+   'core_question\output\qbank_chooser_item' => 'qbank_editquestion\qbank_chooser_item',
+
+8) The following classes are deprecated and moved to a new location. These are marked for final deprecation on 4.4:
+   'question_category_list' => 'qbank_managecategories\question_category_list',
+   'question_category_list_item' => 'qbank_managecategories\question_category_list_item',
+   'question_category_object' => 'qbank_managecategories\question_category_object',
+   'question_category_edit_form' => 'qbank_managecategories\form\category_form',
+   'question_export_form' => 'qbank_exportquestions\form\export_form',
+   'question_import_form' => 'qbank_importquestions\form\question_import_form',
+   'question_move_form' => 'qbank_managecategories\form\question_move_form',
+   'preview_options_form' => 'qbank_previewquestion\form\preview_options_form',
+   'question_preview_options' => 'qbank_previewquestion\output\question_preview_options',
+   'category_form' => 'qbank_managecategories\form\category_form',
+   'export_form' => 'qbank_exportquestions\form\export_form'.
+
+9) The following functions are deprecated and moved to the new location:
+   question_preview_question_pluginfile() => qbank_previewquestion\helper::question_preview_question_pluginfile(),
+   question_preview_action_url() => qbank_previewquestion\helper::question_preview_action_url(),
+   question_preview_form_url() => qbank_previewquestion\helper::question_preview_form_url(),
+   restart_preview() => qbank_previewquestion\helper::restart_preview(),
+   core_question_output_fragment_tags_form() => /question/bank/qbank_tagquestion/lib.php.
 
 === 3.9 ==
 

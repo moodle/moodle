@@ -50,13 +50,11 @@ class core_question_renderer extends plugin_renderer_base {
      *      If false, just show the icon.
      * @deprecated since Moodle 4.0
      * @see qbank_previewquestion\output\renderer
-     * @todo MDL-71679 uncomment the debugging message after implementing the changes in mod_quiz
      * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public function question_preview_link($questionid, context $context, $showlabel) {
-        // Debugging message will be re-added after implementing the changes in mod_quiz.
-        // ...debugging('Function question_preview_link() has been deprecated and moved to qbank_previewquestion plugin,
-        // Please use qbank_previewquestion renderer.', DEBUG_DEVELOPER);.
+         debugging('Function question_preview_link() has been deprecated and moved to qbank_previewquestion plugin,
+         Please use qbank_previewquestion renderer.', DEBUG_DEVELOPER);
 
         return $this->page->get_renderer('qbank_previewquestion')->question_preview_link(
                 $questionid, $context, $showlabel
@@ -351,7 +349,7 @@ class core_question_renderer extends plugin_renderer_base {
             $params['returnurl'] = $params['returnurl']->out_as_local_url(false);
         }
         $params['id'] = $qa->get_question_id();
-        $editurl = new moodle_url('/question/question.php', $params);
+        $editurl = new moodle_url('/question/bank/editquestion/question.php', $params);
 
         return html_writer::tag('div', html_writer::link(
                 $editurl, $this->pix_icon('t/edit', get_string('edit'), '', array('class' => 'iconsmall')) .

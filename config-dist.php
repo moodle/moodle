@@ -692,23 +692,6 @@ $CFG->admin = 'admin';
 //      $CFG->uninstallclionly = true;
 //
 //
-// Customise question bank display
-//
-// The display of Moodle's question bank is made up of a number of columns.
-// You can customise this display by giving a comma-separated list of column class
-// names here. Each class must be a subclass of \core_question\bank\column_base.
-// For example you might define a class like
-//      class \local_qbank_extensions\my_column extends \core_question\bank\column_base
-// in a local plugin, then add it to the list here. At the time of writing,
-// the default question bank display is equivalent to the following, but you  might like
-// to check the latest default in question/classes/bank/view.php before setting this.
-//
-//      $CFG->questionbankcolumns = 'checkbox_column,question_type_column,'
-//              . 'question_name_idnumber_tags_column,edit_menu_column,'
-//              . 'tags_action_column,edit_action_column,copy_action_column,'
-//              . 'preview_action_column,delete_action_column,export_xml_action_column,'
-//              . 'creator_name_column,modifier_name_column';
-//
 // Forum summary report
 //
 // In order for the forum summary report to calculate word count and character count data, those details are now stored
