@@ -120,7 +120,7 @@ class MoodleQuickForm_cohort extends MoodleQuickForm_autocomplete {
         $cohortstofetch = array();
 
         foreach ($values as $onevalue) {
-            if ((!$this->optionExists($onevalue)) &&
+            if ($onevalue && !$this->optionExists($onevalue) &&
                     ($onevalue !== '_qf__force_multiselect_submission')) {
                 array_push($cohortstofetch, $onevalue);
             }
