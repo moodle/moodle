@@ -206,7 +206,7 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Renders HTML for displaying the sequence of course module editing buttons
      *
-     * @deprecated since 4.0
+     * @deprecated since Moodle 4.0 MDL-72656 - please do not use this function any more.
      *
      * @see course_get_cm_edit_actions()
      *
@@ -567,7 +567,7 @@ class core_course_renderer extends plugin_renderer_base {
      * Checks if course module has any conditions that may make it unavailable for
      * all or some of the students
      *
-     * @deprecated since Moodle 4.0
+     * @deprecated since Moodle 4.0 MDL-72656 - please do not use this function any more.
      *
      * @param cm_info $mod
      * @return bool
@@ -597,7 +597,7 @@ class core_course_renderer extends plugin_renderer_base {
      * Note, that for course modules that never have separate pages (i.e. labels)
      * this function return an empty string
      *
-     * @deprecated since 4.0
+     * @deprecated since Moodle 4.0 MDL-72656 - please do not use this function any more.
      *
      * @param cm_info $mod
      * @param array $displayoptions
@@ -638,7 +638,7 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Returns the CSS classes for the activity name/content
      *
-     * @deprecated since Moodle 4.0
+     * @deprecated since Moodle 4.0 MDL-72656 - please do not use this function any more.
      *
      * For items which are hidden, unavailable or stealth but should be displayed
      * to current user ($mod->is_visible_on_course_page()), we show those as dimmed.
@@ -678,7 +678,7 @@ class core_course_renderer extends plugin_renderer_base {
      * Note, that for course modules that never have separate pages (i.e. labels)
      * this function return an empty string
      *
-     * @deprecated since Moodle 4.0
+     * @deprecated since Moodle 4.0 MDL-72656 - please do not use this function any more.
      *
      * @param cm_info $mod
      * @param array $displayoptions
@@ -736,7 +736,7 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Renders html to display the module content on the course page (i.e. text of the labels)
      *
-     * @deprecated since 4.0
+     * @deprecated since Moodle 4.0 MDL-72656 - please do not use this function any more.
      *
      * @param cm_info $mod
      * @param array $displayoptions
@@ -811,7 +811,7 @@ class core_course_renderer extends plugin_renderer_base {
      * Renders HTML to show course module availability information (for someone who isn't allowed
      * to see the activity itself, or for staff)
      *
-     * @deprecated since Moodle 4.0
+     * @deprecated since Moodle 4.0 MDL-72656 - please do not use this function any more.
      * @param cm_info $mod
      * @param array $displayoptions
      * @return string
@@ -873,7 +873,7 @@ class core_course_renderer extends plugin_renderer_base {
      * This includes link, content, availability, completion info and additional information
      * that module type wants to display (i.e. number of unread forum posts)
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * @param stdClass $course
      * @param completion_info $completioninfo
@@ -941,7 +941,7 @@ class core_course_renderer extends plugin_renderer_base {
      * Renders HTML to display a list of course modules in a course section
      * Also displays "move here" controls in Javascript-disabled mode.
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This function calls {@link core_course_renderer::course_section_cm()}
      *

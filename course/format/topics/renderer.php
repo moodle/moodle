@@ -17,7 +17,7 @@
 /**
  * Legacy file to aviod exceptions when formats require it.
  *
- * @deprecated since Moodle 4.0
+ * @deprecated since Moodle 4.0 MDL-72656
  * @package    format_topics
  * @copyright  2021 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

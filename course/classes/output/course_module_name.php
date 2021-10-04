@@ -31,7 +31,7 @@ use cm_info;
 /**
  * Class to prepare a course module name for display and in-place editing
  *
- * @deprecated since Moodle 4.0
+ * @deprecated since Moodle 4.0 MDL-72656 - please do not use this class any more.
  * @package   core_course
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
