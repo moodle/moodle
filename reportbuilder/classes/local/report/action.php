@@ -109,9 +109,12 @@ final class action {
             self::replace_placeholders($this->url->params(), $row)
         );
 
-        $popupaction = $this->popup ? new popup_action('click', $url) : null;
+        if ($this->popup) {
+            $this->attributes['data-action'] = 'report-action-popup';
+            $this->attributes['data-popup-action'] = json_encode(new popup_action('click', $url));
+        }
 
-        return $OUTPUT->action_icon($url, $this->icon, $popupaction, self::replace_placeholders($this->attributes, $row));
+        return $OUTPUT->action_icon($url, $this->icon, null, self::replace_placeholders($this->attributes, $row));
     }
 
     /**
