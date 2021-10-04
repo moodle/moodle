@@ -1294,13 +1294,13 @@ class core_badges_renderer extends plugin_renderer_base {
             );
             if (!$currentbadge->is_active() && !$currentbadge->is_locked()) {
                 $action = $this->output->action_icon(
-                    new moodle_url('related_action.php',
-                        array(
-                            'badgeid' => $related->currentbadgeid,
-                            'relatedid' => $badge->id,
-                            'action' => 'remove'
-                        )
-                    ), new pix_icon('t/delete', get_string('delete')));
+                    new moodle_url('/badges/related_action.php', [
+                        'badgeid' => $related->currentbadgeid,
+                        'relatedid' => $badge->id,
+                        'sesskey' => sesskey(),
+                        'action' => 'remove'
+                    ]),
+                    new pix_icon('t/delete', get_string('delete')));
                 $actions = html_writer::tag('div', $action, array('class' => 'badge-actions'));
                 array_push($row, $actions);
             }
