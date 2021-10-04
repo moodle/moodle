@@ -52,7 +52,7 @@ Feature: The timeline block allows users to see upcoming courses
 
   Scenario: All in course view
     Given I log in as "student1"
-    And I click on "Filter timeline items" "button" in the "Timeline" "block"
+    And I click on "Filter timeline by date" "button" in the "Timeline" "block"
     And I click on "All" "link" in the "Timeline" "block"
     And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by courses" "link" in the "Timeline" "block"
@@ -94,7 +94,7 @@ Feature: The timeline block allows users to see upcoming courses
     Given I log in as "student1"
     And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by courses" "link" in the "Timeline" "block"
-    And I click on "Filter timeline items" "button" in the "Timeline" "block"
+    And I click on "Filter timeline by date" "button" in the "Timeline" "block"
     And I click on "All" "link" in the "Timeline" "block"
     When I reload the page
     And I click on "More courses" "button" in the "Timeline" "block"
@@ -116,14 +116,14 @@ Feature: The timeline block allows users to see upcoming courses
     Given I log in as "student1"
     And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by courses" "link" in the "Timeline" "block"
-    And I click on "Filter timeline items" "button" in the "Timeline" "block"
+    And I click on "Filter timeline by date" "button" in the "Timeline" "block"
     And I click on "Overdue" "link" in the "Timeline" "block"
     And I reload the page
     And I should see "Test assign 1 is due" in the "Timeline" "block"
     And I should not see "Test feedback 2 closes" in the "Timeline" "block"
     And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by dates" "link" in the "Timeline" "block"
-    And I click on "Filter timeline items" "button" in the "Timeline" "block"
+    And I click on "Filter timeline by date" "button" in the "Timeline" "block"
     # Confirm that when we switch back to courses view, the "All" filer continues to be applied (and not "overdue").
     When I click on "All" "link" in the "Timeline" "block"
     And I click on "Sort timeline items" "button" in the "Timeline" "block"
