@@ -49,6 +49,7 @@ $PAGE->set_url('/contentbank/index.php');
 $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('contentbank');
 
 // Get all contents managed by active plugins where the user has permission to render them.

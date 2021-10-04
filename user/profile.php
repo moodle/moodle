@@ -83,6 +83,7 @@ if (!user_can_view_profile($user, null, $context)) {
     $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name.
     $PAGE->set_heading($struser);
     $PAGE->set_pagelayout('mypublic');
+    $PAGE->add_body_class('limitedwidth');
     $PAGE->set_url('/user/profile.php', array('id' => $userid));
     $PAGE->navbar->add($struser);
     echo $OUTPUT->header();
@@ -98,6 +99,7 @@ if (!$currentpage = my_get_page($userid, MY_PAGE_PUBLIC)) {
 
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('mypublic');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('user-profile');
 
 // Set up block editing capabilities.

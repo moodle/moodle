@@ -48,6 +48,7 @@ if (!$feedbackstructure->can_view_analysis()) {
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->add_body_class('limitedwidth');
 echo $OUTPUT->header();
 if (!$PAGE->has_secondary_navigation()) {
     echo $OUTPUT->heading(format_string($feedback->name));
@@ -96,4 +97,3 @@ if ($check_anonymously) {
 echo '</div>';
 
 echo $OUTPUT->footer();
-

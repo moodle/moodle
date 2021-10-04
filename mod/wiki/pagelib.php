@@ -114,6 +114,7 @@ abstract class page_wiki {
         if ($activesecondarytab) {
             $PAGE->set_secondary_active_tab($activesecondarytab);
         }
+        $PAGE->add_body_class('limitedwidth');
         // the search box
         if (!empty($subwiki->id)) {
             $search = optional_param('searchstring', null, PARAM_TEXT);

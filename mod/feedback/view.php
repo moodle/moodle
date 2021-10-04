@@ -43,6 +43,7 @@ if ($course->id == SITEID) {
 $PAGE->set_url('/mod/feedback/view.php', array('id' => $cm->id));
 $PAGE->set_title($feedback->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->add_body_class('limitedwidth');
 
 // Check access to the given courseid.
 if ($courseid AND $courseid != SITEID) {
@@ -152,4 +153,3 @@ if ($feedbackcompletion->can_complete()) {
 }
 
 echo $OUTPUT->footer();
-

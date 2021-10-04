@@ -94,6 +94,7 @@
 
     // Must set layout before gettting section info. See MDL-47555.
     $PAGE->set_pagelayout('course');
+    $PAGE->add_body_class('limitedwidth');
 
     if ($section and $section > 0) {
 

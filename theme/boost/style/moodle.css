@@ -11768,7 +11768,9 @@ ul {
     display: none; }
   .jsenabled .btn-footer-popover {
     display: block;
-    z-index: 1000; } }
+    z-index: 1000; }
+  .jsenabled .drawers.show-drawer-right .btn-footer-popover {
+    display: none; } }
 
 .bg-inverse a {
   color: #fff;
@@ -12971,50 +12973,6 @@ body.dragging .dragging {
 
 @media (min-width: 840px) {
   .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(33.33% - 0.5rem); } }
-
-@media (min-width: 1100px) {
-  .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(25% - 0.5rem); } }
-
-@media (min-width: 1360px) {
-  .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(20% - 0.5rem); } }
-
-@media (min-width: 1200px) {
-  #region-main.has-blocks .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(33.33% - 0.5rem); } }
-
-@media (min-width: 1470px) {
-  #region-main.has-blocks .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(25% - 0.5rem); } }
-
-@media (min-width: 768px) {
-  body.drawer-open-left .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(100% - 0.5rem); } }
-
-@media (min-width: 861px) {
-  body.drawer-open-left .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(50% - 0.5rem); } }
-
-@media (min-width: 1122px) {
-  body.drawer-open-left .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(33.33% - 0.5rem); } }
-
-@media (min-width: 1381px) {
-  body.drawer-open-left .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(25% - 0.5rem); } }
-
-@media (min-width: 1200px) {
-  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(100% - 0.5rem); } }
-
-@media (min-width: 1236px) {
-  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(50% - 0.5rem); } }
-
-@media (min-width: 1497px) {
-  body.drawer-open-left #region-main.has-blocks .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
     width: calc(33.33% - 0.5rem); } }
 
 @media (min-width: 1200px) {
@@ -16710,7 +16668,8 @@ body.path-question-type .mform fieldset.hidden {
   margin: 10px; }
 
 .userprofile .page-context-header {
-  margin-bottom: 10px; }
+  margin-bottom: 10px;
+  column-count: 1; }
 
 .userprofile .description {
   margin-top: 10px;
@@ -17045,6 +17004,9 @@ body.path-question-type .mform fieldset.hidden {
 .mform .form-inline .form-control,
 .mform .form-inline .custom-select {
   max-width: 100%; }
+
+.mform .form-inline textarea.form-control {
+  width: 100%; }
 
 .mform .form-inline .form-group {
   margin: 0.1rem 0.25rem 0.1rem 0; }
@@ -20056,11 +20018,29 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   #page.drawers .main-inner {
     max-width: 100%;
     width: 100%;
-    margin: 0 auto; }
+    margin: 0 auto;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    padding: 1.5rem;
+    margin-top: 3rem;
+    margin-bottom: 3rem; }
 
-@media (min-width: 1200px) {
-  .pagelayout-course #page.drawers .main-inner {
-    max-width: 800px; } }
+@media (min-width: 768px) {
+  .pagelayout-standard #page.drawers .main-inner,
+  body.limitedwidth #page.drawers .main-inner {
+    max-width: 800px; }
+  .pagelayout-standard #page.drawers .footer-popover,
+  body.limitedwidth #page.drawers .footer-popover {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 0.25rem; }
+  .header-maxwidth {
+    max-width: 800px;
+    margin: 0 auto; }
+    .header-maxwidth .header-inner {
+      padding-left: 0;
+      padding-right: 0; } }
 
 .drawer-toggles .drawer-toggler {
   position: fixed;
@@ -21172,7 +21152,9 @@ div.editor_atto_toolbar button .icon {
 
 .secondary-navigation {
   border-top: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6; }
+  border-bottom: 1px solid #dee2e6;
+  max-width: 800px;
+  margin: 0 auto; }
   .secondary-navigation .navigation {
     height: 60px;
     background-color: #fff; }

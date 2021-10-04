@@ -79,6 +79,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(format_string(get_string('wikifiles', 'wiki')), $CFG->wwwroot . '/mod/wiki/files.php?pageid=' . $pageid);
 $PAGE->navbar->add(format_string($title));
 $PAGE->set_secondary_active_tab('modulepage');
+$PAGE->add_body_class('limitedwidth');
 
 $data = new stdClass();
 $data->returnurl = $returnurl;

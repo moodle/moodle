@@ -42,6 +42,7 @@ require_capability('mod/book:edit', $context);
 
 $PAGE->set_url('/mod/book/edit.php', array('cmid'=>$cmid, 'id'=>$chapterid, 'pagenum'=>$pagenum, 'subchapter'=>$subchapter));
 $PAGE->set_pagelayout('admin'); // TODO: Something. This is a bloody hack!
+$PAGE->add_body_class('limitedwidth');
 
 if ($chapterid) {
     $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);

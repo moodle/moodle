@@ -41,13 +41,36 @@
         max-width: 100%;
         width: 100%;
         margin: 0 auto;
+        @include border-radius();
+        background-color: $white;
+        padding: 1.5rem;
+        margin-top: 3rem;
+        margin-bottom: 3rem;
     }
 }
 
-@include media-breakpoint-up(xl) {
-    .pagelayout-course {
-        #page.drawers .main-inner {
-            max-width: $course-content-maxwidth;
+@include media-breakpoint-up(md) {
+    .pagelayout-standard,
+    body.limitedwidth {
+        #page.drawers {
+            .main-inner {
+                max-width: $course-content-maxwidth;
+            }
+            .footer-popover {
+                max-width: $course-content-maxwidth;
+                width: 100%;
+                margin: 0 auto;
+                @include border-radius();
+            }
+        }
+    }
+    .header-maxwidth {
+        max-width: $course-content-maxwidth;
+        margin: 0 auto;
+
+        .header-inner {
+            padding-left: 0;
+            padding-right: 0;
         }
     }
 }

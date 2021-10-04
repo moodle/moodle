@@ -43,6 +43,7 @@ $PAGE->set_title($course->shortname.': '.$folder->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($folder);
 $PAGE->set_secondary_active_tab('modulepage');
+$PAGE->add_body_class('limitedwidth');
 
 $data = new stdClass();
 $data->id = $cm->id;

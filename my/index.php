@@ -84,6 +84,7 @@ $params = array();
 $PAGE->set_context($context);
 $PAGE->set_url('/my/index.php', $params);
 $PAGE->set_pagelayout('mydashboard');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('my-index');
 $PAGE->blocks->add_region('content');
 $PAGE->set_subpage($currentpage->id);

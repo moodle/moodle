@@ -53,6 +53,7 @@ if (!empty($USER->newadminuser)) {
         require_login($course);
     }
     $PAGE->set_pagelayout('admin');
+    $PAGE->add_body_class('limitedwidth');
 }
 
 if ($course->id == SITEID) {
@@ -358,4 +359,3 @@ $userform->display();
 
 // And proper footer.
 echo $OUTPUT->footer();
-

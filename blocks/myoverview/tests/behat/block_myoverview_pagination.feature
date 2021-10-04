@@ -81,7 +81,7 @@ Feature: My overview block pagination
       | student1 | C12 | student |
       | student1 | C13 | student |
     When I am on the "My courses" page logged in as "student1"
-    Then I should see "12" in the "[data-action='limit-toggle']" "css_element"
+    Then I should see "12" in the ".block_myoverview [data-action='limit-toggle']" "css_element"
     And I log out
 
   Scenario: I should only see pagination limit options less than total number of enrolled courses

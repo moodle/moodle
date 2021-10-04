@@ -85,6 +85,7 @@ if (!wiki_user_can_view($subwiki, $wiki)) {
 
 $PAGE->set_title(get_string('wikifiles', 'wiki'));
 $PAGE->set_heading($course->fullname);
+$PAGE->add_body_class('limitedwidth');
 $PAGE->navbar->add(format_string(get_string('wikifiles', 'wiki')));
 $PAGE->set_secondary_active_tab('modulepage');
 

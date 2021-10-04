@@ -120,6 +120,7 @@ $strtoc   = get_string('toc', 'mod_book');
 $pagetitle = $book->name . ": " . $chapter->title;
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
+$PAGE->add_body_class('limitedwidth');
 
 book_add_fake_block($chapters, $chapter, $book, $cm, $edit);
 

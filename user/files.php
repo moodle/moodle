@@ -40,6 +40,7 @@ $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading(fullname($USER));
 $PAGE->set_pagelayout('standard');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('user-files');
 
 echo $OUTPUT->header();
