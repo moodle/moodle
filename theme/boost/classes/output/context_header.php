@@ -211,7 +211,7 @@ class context_header implements \renderable, \templatable {
 
         $prefix = null;
         if ($context->contextlevel == CONTEXT_MODULE) {
-            $heading = $page->cm->name;
+            $heading = $page->cm->get_formatted_name();
             $imagedata = $output->pix_icon('icon', '', $page->activityname);
             $prefix = get_string('modulename', $page->activityname);
         }

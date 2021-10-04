@@ -150,7 +150,7 @@ class core_renderer extends \core_renderer {
 
         $prefix = null;
         if ($context->contextlevel == CONTEXT_MODULE) {
-            $heading = $this->page->cm->name;
+            $heading = $this->page->cm->get_formatted_name();
             $imagedata = $this->pix_icon('icon', '', $this->page->activityname);
             $prefix = get_string('modulename', $this->page->activityname);
         }
