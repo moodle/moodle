@@ -57,6 +57,16 @@ abstract class base {
     abstract public static function compatible(int $columntype): bool;
 
     /**
+     * Whether the aggregation is sortable, by default return the sortable status of the column itself
+     *
+     * @param bool $columnsortable
+     * @return bool
+     */
+    public static function sortable(bool $columnsortable): bool {
+        return $columnsortable;
+    }
+
+    /**
      * Return the aggregated field SQL
      *
      * @param string $field

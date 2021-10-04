@@ -155,7 +155,7 @@ class custom_report_table extends base_report_table {
 
             foreach ($instances as $instance) {
                 $column = $columns[$instance->get('id')] ?? null;
-                if ($column !== null && $column->get_is_available()) {
+                if ($column !== null && $column->get_is_sortable()) {
                     $sortcolumns[$column->get_column_alias()] = $instance->get('sortdirection');
                 }
             }

@@ -265,6 +265,39 @@ class column_test extends advanced_testcase {
     }
 
     /**
+     * Test setting column group by SQL
+     */
+    public function test_set_groupby_sql(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_field('COALESCE(t.foo, t.bar)', 'lionel')
+            ->set_groupby_sql('t.id');
+
+        $this->assertEquals(['t.id'], $column->get_groupby_sql());
+    }
+
+    /**
+     * Test getting default column group by SQL
+     */
+    public function test_get_groupby_sql(): void {
+        global $DB;
+
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_fields('t.foo, t.bar');
+
+        // The behaviour of this method differs due to DB limitations.
+        $usealias = in_array($DB->get_dbfamily(), ['mysql', 'postgres']);
+        if ($usealias) {
+            $expected = ['c1_foo', 'c1_bar'];
+        } else {
+            $expected = ['t.foo', 't.bar'];
+        }
+
+        $this->assertEquals($expected, $column->get_groupby_sql());
+    }
+
+    /**
      * Data provider for {@see test_format_value}
      *
      * @return array[]
