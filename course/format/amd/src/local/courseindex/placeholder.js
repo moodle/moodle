@@ -25,6 +25,7 @@
 import {BaseComponent} from 'core/reactive';
 import Templates from 'core/templates';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
+import Pending from 'core/pending';
 
 export default class Component extends BaseComponent {
 
@@ -44,6 +45,14 @@ export default class Component extends BaseComponent {
     }
 
     /**
+     * Component creation hook.
+     */
+    create() {
+        // Add a pending operation waiting for the initial content.
+        this.pendingContent = new Pending(`core_courseformat/placeholder:loadcourseindex`);
+    }
+
+    /**
      * Initial state ready method.
      *
      * This stateReady to be async because it loads the real courseindex.
@@ -51,10 +60,38 @@ export default class Component extends BaseComponent {
      * @param {object} state the initial state
      */
     async stateReady(state) {
+
+        // Check if we have a static course index already loded from a previous page.
+        if (!this.loadStaticContent()) {
+            await this.loadTemplateContent(state);
+        }
+    }
+
+    /**
+     * Load the course index from the session storage if any.
+     *
+     * @return {boolean} true if the static version is loaded form the session
+     */
+    loadStaticContent() {
+        // Load the previous static course index from the session cache.
+        const index = this.reactive.getStorageValue(`courseIndex`);
+        if (index.html && index.js) {
+            Templates.replaceNode(this.element, index.html, index.js);
+            this.pendingContent.resolve();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Load the course index template.
+     *
+     * @param {Object} state the initial state
+     */
+    async loadTemplateContent(state) {
         // Collect section information from the state.
         const exporter = this.reactive.getExporter();
         const data = exporter.course(state);
-
         try {
             // To render an HTML into our component we just use the regular Templates module.
             const {html, js} = await Templates.renderForPromise(
@@ -62,7 +99,12 @@ export default class Component extends BaseComponent {
                 data,
             );
             Templates.replaceNode(this.element, html, js);
+            this.pendingContent.resolve();
+
+            // Save the rendered template into the session cache.
+            this.reactive.setStorageValue(`courseIndex`, {html, js});
         } catch (error) {
+            this.pendingContent.resolve(error);
             throw error;
         }
     }

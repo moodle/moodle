@@ -25,10 +25,15 @@ Feature: Course index depending on role
       | student1 | C1     | student        |
       | teacher1 | C1     | editingteacher |
 
+  @javascript
   Scenario: Course index is present on course and activities.
-    Given I log in as "teacher1"
-    When I am on "Course 1" course homepage
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    When I click on "Side panel" "button"
     Then I should see "Open course index drawer"
+    And I am on the "Activity sample 1" "assign activity" page
+    And I should see "Open course index drawer"
+    And I click on "Open course index drawer" "button"
+    And I should see "Activity sample 1" in the "courseindex-content" "region"
 
   @javascript
   Scenario: Course index as a teacher

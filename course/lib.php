@@ -3867,15 +3867,17 @@ function core_course_core_calendar_get_valid_event_timestart_range(\calendar_eve
  */
 function core_course_drawer(): string {
     global $PAGE;
-    // Only course are able to render course index.
-    if (!preg_match('/^(course).*/', $PAGE->pagetype)) {
-        return '';
+    $format = course_get_format($PAGE->course);
+
+    // Only course and modules are able to render course index.
+    $ismod = strpos($PAGE->pagetype, 'mod-') === 0;
+    if ($ismod || $PAGE->pagetype == 'course-view-' . $format->get_format()) {
+        $renderer = $format->get_renderer($PAGE);
+        $placeholder = $renderer->course_index_drawer($format);
+        return $placeholder;
     }
 
-    $format = course_get_format($PAGE->course);
-    $renderer = $format->get_renderer($PAGE);
-    $placeholder = $renderer->course_index_drawer($format);
-    return $placeholder;
+    return '';
 }
 
 /**
