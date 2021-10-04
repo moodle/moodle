@@ -33,7 +33,7 @@ Feature: Course activity controls works as expected
     And I add the "Recent activity" block
     And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
-    And I press "Yes"
+    And I click on "Delete" "button" in the "Delete block?" "dialogue"
     And <belowpage> "section" <should_see_other_sections> exist
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name 1 |
