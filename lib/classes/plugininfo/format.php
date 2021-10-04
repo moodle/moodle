@@ -65,6 +65,33 @@ class format extends base {
         return $enabled;
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        $haschanged = false;
+
+        $plugin = 'format_' . $pluginname;
+        $oldvalue = get_config($plugin, 'disabled');
+        $disabled = !$enabled;
+        // Only set value if there is no config setting or if the value is different from the previous one.
+        if ($oldvalue == false && $disabled) {
+            if (get_config('moodlecourse', 'format') === $pluginname) {
+                // The default course format can't be disabled.
+                throw new \moodle_exception('cannotdisableformat', 'error');
+            }
+            set_config('disabled', $disabled, $plugin);
+            $haschanged = true;
+        } else if ($oldvalue != false && !$disabled) {
+            unset_config('disabled', $plugin);
+            $haschanged = true;
+        }
+
+        if ($haschanged) {
+            add_to_config_log('disabled', $oldvalue, $disabled, $plugin);
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
     /**
      * Gathers and returns the information about all plugins of the given type
      *
