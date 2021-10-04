@@ -82,6 +82,31 @@ class paygw extends base {
         return array_combine($order, $order);
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $CFG;
+
+        $haschanged = false;
+        $plugins = [];
+        if (!empty($CFG->paygw_plugins_sortorder)) {
+            $plugins = array_flip(explode(',', $CFG->paygw_plugins_sortorder));
+        }
+        // Only set visibility if it's different from the current value.
+        if ($enabled && !array_key_exists($pluginname, $plugins)) {
+            $plugins[$pluginname] = $pluginname;
+            $haschanged = true;
+        } else if (!$enabled && array_key_exists($pluginname, $plugins)) {
+            unset($plugins[$pluginname]);
+            $haschanged = true;
+        }
+
+        if ($haschanged) {
+            add_to_config_log('paygw_plugins_sortorder', !$enabled, $enabled, $pluginname);
+            self::set_enabled_plugins(array_flip($plugins));
+        }
+
+        return $haschanged;
+    }
+
     /**
      * Sets the current plugin as enabled or disabled
      * When enabling tries to guess the sortorder based on default rank returned by the plugin.
@@ -89,25 +114,7 @@ class paygw extends base {
      * @param bool $newstate
      */
     public function set_enabled(bool $newstate = true) {
-        $enabled = self::get_enabled_plugins();
-        if (array_key_exists($this->name, $enabled) == $newstate) {
-            // Nothing to do.
-            return;
-        }
-        if ($newstate) {
-            // Enable gateway plugin.
-            $plugins = \core_plugin_manager::instance()->get_plugins_of_type('paygw');
-            if (!array_key_exists($this->name, $plugins)) {
-                // Can not be enabled.
-                return;
-            }
-            $enabled[$this->name] = $this->name;
-            self::set_enabled_plugins($enabled);
-        } else {
-            // Disable gateway plugin.
-            unset($enabled[$this->name]);
-            self::set_enabled_plugins($enabled);
-        }
+        self::enable_plugin($this->name, $newstate);
     }
 
     /**
