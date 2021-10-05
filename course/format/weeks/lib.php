@@ -99,6 +99,11 @@ class format_weeks extends core_courseformat\base {
         }
     }
 
+    /**
+     * Returns the name for the highlighted section.
+     *
+     * @return string The name for the highlighted section based on the given course format.
+     */
     public function get_section_highlighted_name(): string {
         return get_string('currentsection', 'format_weeks');
     }
