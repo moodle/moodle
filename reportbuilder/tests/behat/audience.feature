@@ -31,14 +31,14 @@ Feature: Configure access to reports based on intended audience
     Then I click on "Add audience 'Manually added users'" "link"
     And I should see "Added audience 'Manually added users'"
     And I set the field "Add users manually" to "User 1,User 3"
-    And I press "Save changes"
+    # It would be better to reference the report table directly, but we can't because of MDL-73011.
+    And I click on "Save changes" "button" in the "[role=tabpanel].active" "css_element"
     And I should see "Audience saved"
     And I should see "User 1"
     And I should not see "User 2"
     And I should see "User 3"
     And I should not see "Add an audience to this report"
     And I click on the "Access" dynamic tab
-    # It would be better to reference the report table directly, but we can't because of MDL-73011.
     And I should see "User 1" in the "[role=tabpanel].active" "css_element"
     And I should not see "User 2" in the "[role=tabpanel].active" "css_element"
     And I should see "User 3" in the "[role=tabpanel].active" "css_element"
@@ -55,12 +55,12 @@ Feature: Configure access to reports based on intended audience
     When I click on "Add audience 'Assigned system role'" "link"
     And I should see "Added audience 'Assigned system role'"
     And I set the field "Select a role" to "Test role"
-    And I press "Save changes"
+    # It would be better to reference the report table directly, but we can't because of MDL-73011.
+    And I click on "Save changes" "button" in the "[role=tabpanel].active" "css_element"
     Then I should see "Audience saved"
     And I should see "Test role"
     And I should not see "Add an audience to this report"
     And I click on the "Access" dynamic tab
-    # It would be better to reference the report table directly, but we can't because of MDL-73011.
     And I should not see "User 1" in the "[role=tabpanel].active" "css_element"
     And I should see "User 2" in the "[role=tabpanel].active" "css_element"
     And I should not see "User 3" in the "[role=tabpanel].active" "css_element"
@@ -77,12 +77,12 @@ Feature: Configure access to reports based on intended audience
     When I click on "Add audience 'Member of cohort'" "link"
     And I should see "Added audience 'Member of cohort'"
     And I set the field "Select members from cohort" to "Cohort1"
-    And I press "Save changes"
+    # It would be better to reference the report table directly, but we can't because of MDL-73011.
+    And I click on "Save changes" "button" in the "[role=tabpanel].active" "css_element"
     Then I should see "Audience saved"
     And I should see "Cohort1"
     And I should not see "Add an audience to this report"
     And I click on the "Access" dynamic tab
-    # It would be better to reference the report table directly, but we can't because of MDL-73011.
     And I should not see "User 1" in the "[role=tabpanel].active" "css_element"
     And I should not see "User 2" in the "[role=tabpanel].active" "css_element"
     And I should see "User 3" in the "[role=tabpanel].active" "css_element"
@@ -98,7 +98,8 @@ Feature: Configure access to reports based on intended audience
     Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Audience" dynamic tab
     And I click on "Add audience 'All users'" "link"
-    And I press "Save changes"
+    # It would be better to reference the report table directly, but we can't because of MDL-73011.
+    And I click on "Save changes" "button" in the "[role=tabpanel].active" "css_element"
     When I click on "Delete audience 'All users'" "button"
     And I click on "Delete" "button" in the "Delete audience 'All users'" "dialogue"
     Then I should see "Deleted audience 'All users'"
@@ -112,12 +113,12 @@ Feature: Configure access to reports based on intended audience
     And I should see "Add an audience to this report"
     Then I click on "Add audience 'Manually added users'" "link"
     And I set the field "Add users manually" to "User 1,User 3"
-    And I press "Save changes"
+    # It would be better to reference the report table directly, but we can't because of MDL-73011.
+    And I click on "Save changes" "button" in the "[role=tabpanel].active" "css_element"
     And I press "Edit audience 'Manually added users'"
     And I set the field "Add users manually" to "User 2"
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "[role=tabpanel].active" "css_element"
     And I should see "Audience saved"
-    # It would be better to reference the report table directly, but we can't because of MDL-73011.
     And I should not see "User 1" in the "[role=tabpanel].active" "css_element"
     And I should see "User 2" in the "[role=tabpanel].active" "css_element"
     And I should not see "User 3" in the "[role=tabpanel].active" "css_element"
@@ -155,7 +156,8 @@ Feature: Configure access to reports based on intended audience
     And I should see "Add an audience to this report"
     Then I click on "Add audience 'Manually added users'" "link"
     And I set the field "Add users manually" to "User 1"
-    And I press "Save changes"
+    # It would be better to reference the report table directly, but we can't because of MDL-73011.
+    And I click on "Save changes" "button" in the "[role=tabpanel].active" "css_element"
     And I log out
     And I log in as "user1"
     And I navigate to "Reports > Report builder > Custom reports" in site administration
@@ -199,7 +201,8 @@ Feature: Configure access to reports based on intended audience
     And I should see "Add an audience to this report"
     Then I click on "Add audience 'Manually added users'" "link"
     And I set the field "Add users manually" to "User 1"
-    And I press "Save changes"
+    # It would be better to reference the report table directly, but we can't because of MDL-73011.
+    And I click on "Save changes" "button" in the "[role=tabpanel].active" "css_element"
     And I log out
     And I log in as "user1"
     And I navigate to "Reports > Report builder > Custom reports" in site administration

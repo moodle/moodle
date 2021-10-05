@@ -106,6 +106,16 @@
                 {{/body}}
             {{/ core_reportbuilder/toggle_card }}
 
+            {{< core_reportbuilder/toggle_card }}
+                {{$collapsed}}collapsed{{/collapsed}}
+                {{$id}}settingscardview{{/id}}
+                {{$header}}{{#str}} cardview, core_reportbuilder {{/str}}{{/header}}
+                {{$helpicon}}{{{cardview.helpicon}}}{{/helpicon}}
+                {{$body}}
+                    {{> core_reportbuilder/local/settings/card_view}}
+                {{/body}}
+            {{/ core_reportbuilder/toggle_card }}
+
         </div>
     </div>
 </div>

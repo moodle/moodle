@@ -52,6 +52,7 @@ const SELECTORS = {
         audienceEmptyMessage: '[data-region=no-instances-message]',
         audienceDescription: '[data-region=audience-description]',
         audienceNotSavedLabel: '[data-region=audience-not-saved]',
+        settingsCardView: '[data-region="settings-cardview"]',
     },
     actions: {
         reportActionPopup: '[data-action="report-action-popup"]',

@@ -156,6 +156,16 @@
     div[data-region="settings-sorting"] .list-group-item span[data-drag-type="move"] .icon {
         vertical-align: middle;
     }
+    div[data-region="settings-cardview"] form {
+        .col-md-3,
+        .col-md-9 {
+            flex: 1 1;
+            max-width: initial;
+        }
+        div[data-fieldtype="submit"] {
+            flex-basis: auto;
+        }
+    }
 }
 
 /* Add button styles when a toggle button is active. */

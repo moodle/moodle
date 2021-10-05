@@ -65,6 +65,11 @@ class report extends persistent {
                 'null' => NULL_ALLOWED,
                 'default' => null,
             ],
+            'settingsdata' => [
+                'type' => PARAM_RAW,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ],
             'contextid' => [
                 'type' => PARAM_INT,
                 'default' => static function(): int {

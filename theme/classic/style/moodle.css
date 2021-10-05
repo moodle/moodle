@@ -20692,6 +20692,14 @@ div.editor_atto_toolbar button .icon {
 .reportbuilder-sidebar-settings div[data-region="settings-sorting"] .list-group-item span[data-drag-type="move"] .icon {
   vertical-align: middle; }
 
+.reportbuilder-sidebar-settings div[data-region="settings-cardview"] form .col-md-3,
+.reportbuilder-sidebar-settings div[data-region="settings-cardview"] form .col-md-9 {
+  flex: 1 1;
+  max-width: initial; }
+
+.reportbuilder-sidebar-settings div[data-region="settings-cardview"] form div[data-fieldtype="submit"] {
+  flex-basis: auto; }
+
 /* Add button styles when a toggle button is active. */
 .reportbuilder-wrapper button.btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
 .reportbuilder-wrapper .dropdown.show button.btn-outline-secondary[data-toggle="dropdown"] {

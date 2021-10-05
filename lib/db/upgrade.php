@@ -3130,5 +3130,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021110800.02);
     }
 
+    if ($oldversion < 2021110800.03) {
+
+        // Define field settingsdata to be added to reportbuilder_report.
+        $table = new xmldb_table('reportbuilder_report');
+        $field = new xmldb_field('settingsdata', XMLDB_TYPE_TEXT, null, null, null, null, null, 'conditiondata');
+
+        // Conditionally launch add field settingsdata.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021110800.03);
+    }
+
     return true;
 }
