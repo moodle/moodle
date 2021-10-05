@@ -49,16 +49,16 @@ if (!isset($plugins[$name])) {
 switch ($action) {
     case 'disable':
         if ($plugins[$name]->is_enabled()) {
-            set_config('disabled', 1, 'qbank_'. $name);
+            $class = \core_plugin_manager::resolve_plugininfo_class('qbank');
+            $class::enable_plugin($name, false);
         }
         break;
     case 'enable':
         if (!$plugins[$name]->is_enabled()) {
-            unset_config('disabled', 'qbank_'. $name);
+            $class = \core_plugin_manager::resolve_plugininfo_class('qbank');
+            $class::enable_plugin($name, true);
         }
         break;
 }
-
-core_plugin_manager::reset_caches();
 
 redirect($return);
