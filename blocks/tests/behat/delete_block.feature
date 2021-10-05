@@ -11,7 +11,7 @@ Feature: Block removal via modal
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Search forums" block
-    And I should see "Search forums"
+    And "Search forums" "block" should exist
 
   @javascript
   Scenario: Removing a block via modal should remove the block on the page
@@ -20,7 +20,7 @@ Feature: Block removal via modal
     Then "Delete block?" "dialogue" should exist
     And I click on "Delete" "button" in the "Delete block?" "dialogue"
     And I wait to be redirected
-    And I should not see "Search forums"
+    And "Search forums" "block" should not exist
 
   @javascript
   Scenario: Cancel removing a block via modal should retain the block on the page
@@ -29,4 +29,4 @@ Feature: Block removal via modal
     Then "Delete block?" "dialogue" should exist
     And I click on "Cancel" "button" in the "Delete block?" "dialogue"
     And I should not see "Delete block?"
-    And I should see "Search forums"
+    And "Search forums" "block" should exist
