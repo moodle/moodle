@@ -36,7 +36,6 @@ class filter_mediaplugin_testcase extends advanced_testcase {
 
         // We need to enable the media plugins.
         \core\plugininfo\media::set_enabled_plugins('vimeo,youtube,videojs,html5video,html5audio');
-        set_config('useflash', true, 'media_videojs');
 
         $filterplugin = new filter_mediaplugin(null, array());
 
@@ -59,7 +58,6 @@ class filter_mediaplugin_testcase extends advanced_testcase {
             '<a href="http://youtu.be/JghQgA2HMX8" class="href=css">test file</a>',
             '<a href="http://y2u.be/JghQgA2HMX8" class="href=css">test file</a>',
             '<a class="youtube" href="http://www.youtube.com/watch?v=JghQgA2HMX8">test file</a>',
-            '<a class="_blanktarget" href="http://moodle.org/testfile/test.flv?d=100x100">test flv</a>',
             '<a class="hrefcss" href="http://www.youtube.com/watch?v=JghQgA2HMX8">test file</a>',
             '<a  class="content"     href="http://moodle.org/testfile/test.ogg">test ogg</a>',
             '<a     id="audio"      href="http://moodle.org/testfile/test.mp3">test mp3</a>',

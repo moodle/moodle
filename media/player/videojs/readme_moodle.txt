@@ -26,14 +26,3 @@ Import plugins:
      define(['videojs']
    with
      define(['media_videojs/video-lazy']
-
-2. Download the latest release from https://github.com/videojs/videojs-flash
-   Run "npm install"
-   Copy 'dist/videojs-flash.js' into 'amd/src/videojs-flash-lazy.js'
-   In the beginning of the js file replace
-     define(['videojs']
-   with
-     define(['media_videojs/video-lazy']
-
-3. Download https://github.com/videojs/video-js-swf/blob/master/dist/video-js.swf
-   and place it into 'videojs/video-js.swf'

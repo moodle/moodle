@@ -24,7 +24,6 @@
  */
 
 import Ajax from 'core/ajax';
-import Config from 'core/config';
 import {eventTypes} from 'core_filters/events';
 import LocalStorage from 'core/localstorage';
 import Notification from 'core/notification';
@@ -88,14 +87,10 @@ const notifyVideoJS = e => {
                 // Add YouTube to the list of modules we require.
                 modulePromises.push(import('media_videojs/Youtube-lazy'));
             }
-            if (config.techOrder && config.techOrder.indexOf('flash') !== -1) {
-                // Add Flash to the list of modules we require.
-                modulePromises.push(import('media_videojs/videojs-flash-lazy'));
-            }
+
             Promise.all([langStrings, ...modulePromises])
             .then(([langJson, videojs]) => {
                 if (firstLoad) {
-                    videojs.options.flash.swf = `${Config.wwwroot}/media/player/videojs/videojs/video-js.swf`;
                     videojs.options.playbackRates = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
                     videojs.options.userActions = {
                         hotkeys: true,

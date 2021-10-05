@@ -21,18 +21,4 @@
         <version>7.10.0</version>
         <licenseversion>2.0</licenseversion>
     </library>
-    <library>
-        <location>amd/src/videojs-flash-lazy.js</location>
-        <name>The Flash tech for video.js </name>
-        <license>Apache</license>
-        <version>2.2.1</version>
-        <licenseversion>2.0</licenseversion>
-    </library>
-    <library>
-        <location>videojs/video-js.swf</location>
-        <name>Custom Flash Player for VideoJS</name>
-        <license>Apache</license>
-        <version>5.4.2</version>
-        <licenseversion>2.0</licenseversion>
-    </library>
 </libraries>
