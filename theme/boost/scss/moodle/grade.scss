@@ -402,10 +402,6 @@
  */
 .path-grade-report-grader {
     .gradeparent {
-        table {
-            @include border-radius($border-radius);
-        }
-
         tr .cell,
         .floater .cell {
             background-color: $pagination-bg;
