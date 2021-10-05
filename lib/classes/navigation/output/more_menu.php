@@ -64,6 +64,7 @@ class more_menu implements renderable, templatable {
         } else {
             $data['nodearray'] = (array) $this->content;
         }
+        $data['moremenuid'] = uniqid();
 
         return $data;
     }

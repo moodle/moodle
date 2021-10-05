@@ -41,11 +41,12 @@
                     "action": "/admin/search.php"
                 }
             ]
-        }
+        },
+        "moremenuid": "614c104dbacfa"
     }
 }}
 <nav class="moremenu">
-    <ul id="moremenu-{{ uniqid }}-{{navbarstyle}}" role="menubar" class="nav more-nav {{navbarstyle}}">
+    <ul id="moremenu-{{moremenuid}}-{{navbarstyle}}" role="menubar" class="nav more-nav {{navbarstyle}}">
         {{#nodecollection}}
             {{#children}}
                 {{> core/moremenu_children}}
@@ -55,16 +56,16 @@
             {{> core/moremenu_children}}
         {{/nodearray}}
         <li role="none" class="nav-item dropdown dropdownmoremenu d-none" data-region="morebutton">
-            <a class="dropdown-toggle nav-link" href="#" id="moremenu-dropdown{{ uniqid }}" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="-1">
+            <a class="dropdown-toggle nav-link" href="#" id="moremenu-dropdown-{{moremenuid}}" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="-1">
                 {{#str}}moremenu, core{{/str}}
             </a>
-            <ul class="dropdown-menu dropdown-menu-right" data-region="moredropdown" aria-labelledby="moremenu-dropdown{{ uniqid }}" role="menu">
+            <ul class="dropdown-menu dropdown-menu-right" data-region="moredropdown" aria-labelledby="moremenu-dropdown-{{moremenuid}}" role="menu">
             </ul>
         </li>
     </ul>
 </nav>
 {{#js}}
 require(['core/moremenu'], function(moremenu) {
-    moremenu(document.querySelector('#moremenu-{{ uniqid }}-{{navbarstyle}}'));
+    moremenu(document.querySelector('#moremenu-{{moremenuid}}-{{navbarstyle}}'));
 });
 {{/js}}
