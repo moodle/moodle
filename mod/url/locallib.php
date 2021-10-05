@@ -562,6 +562,8 @@ function url_guess_icon($fullurl, $size = null) {
         return null;
     }
 
+    $moodleurl = new moodle_url($fullurl);
+    $fullurl = $moodleurl->out_omit_querystring();
     $icon = file_extension_icon($fullurl, $size);
     $htmlicon = file_extension_icon('.htm', $size);
     $unknownicon = file_extension_icon('', $size);
