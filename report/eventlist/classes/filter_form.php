@@ -43,7 +43,8 @@ class report_eventlist_filter_form extends moodleform {
         $mform->addElement('text', 'eventname', get_string('name', 'report_eventlist'));
         $mform->setType('eventname', PARAM_RAW);
 
-        $mform->addElement('select', 'eventcomponent', get_string('component', 'report_eventlist'), $componentarray);
+        $mform->addElement('selectgroups', 'eventcomponent', get_string('component', 'report_eventlist'),
+            self::group_components_by_type($componentarray));
         $mform->addElement('select', 'eventedulevel', get_string('edulevel', 'report_eventlist'), $edulevelarray);
         $mform->addElement('select', 'eventcrud', get_string('crud', 'report_eventlist'), $crudarray);
 
@@ -51,5 +52,40 @@ class report_eventlist_filter_form extends moodleform {
         $buttonarray[] = $mform->createElement('button', 'filterbutton', get_string('filter', 'report_eventlist'));
         $buttonarray[] = $mform->createElement('button', 'clearbutton', get_string('clear', 'report_eventlist'));
         $mform->addGroup($buttonarray, 'filterbuttons', '', array(' '), false);
+    }
+
+    /**
+     * Group list of component names by type for use in grouped select element
+     *
+     * @param string[] $components
+     * @return array[] Component type => [...Components]
+     */
+    private static function group_components_by_type(array $components): array {
+        $pluginmanager = core_plugin_manager::instance();
+
+        $result = [];
+        foreach ($components as $component) {
+            // Core sub-systems are grouped together and are denoted by a distinct lang string.
+            if (strpos($component, 'core') === 0) {
+                $componenttype = get_string('core', 'report_eventlist');
+                $componentname = get_string('coresubsystem', 'report_eventlist', $component);
+            } else {
+                [$type] = core_component::normalize_component($component);
+                $componenttype = $pluginmanager->plugintype_name_plural($type);
+                $componentname = $pluginmanager->plugin_name($component);
+            }
+
+            $result[$componenttype][$component] = $componentname;
+        }
+
+        // Sort returned components according to their type, followed by name.
+        core_collator::ksort($result);
+        array_walk($result, function(array &$componenttype) {
+            core_collator::asort($componenttype);
+        });
+
+        // Prepend "All" option.
+        array_unshift($result, [0 => get_string('all', 'report_eventlist')]);
+        return $result;
     }
 }
