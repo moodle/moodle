@@ -48,6 +48,41 @@ class portfolio extends base {
         return $enabled;
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $DB, $CFG;
+
+        require_once($CFG->libdir . '/portfoliolib.php');
+
+        $haschanged = false;
+        $oldvalue = null;
+        $data = ['visible' => $enabled];
+        if ($plugin = $DB->get_record('portfolio_instance', ['plugin' => $pluginname])) {
+            $instance = portfolio_instance($plugin->id);
+            $oldvalue = $instance->get('visible');
+            if (empty($oldvalue) && $instance->instance_sanity_check()) {
+                throw new \moodle_exception('cannotsetvisible', 'portfolio');
+            }
+
+            // Only set visibility if it's different from the current value.
+            if ($oldvalue != $enabled) {
+                $haschanged = true;
+                $instance->set('visible', $enabled);
+                $instance->save();
+            }
+        } else {
+            $haschanged = true;
+            portfolio_static_function($pluginname, 'create_instance', $pluginname, $pluginname, $data);
+        }
+
+        if ($haschanged) {
+            // Include this information into config changes table.
+            add_to_config_log('portfolio_visibility', $oldvalue, $enabled, $pluginname);
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
     /**
      * Return URL used for management of plugins of this type.
      * @return moodle_url
