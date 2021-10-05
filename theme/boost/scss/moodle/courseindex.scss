@@ -57,8 +57,18 @@ $courseindex-item-current: $primary !default;
     }
 
     .courseindex-section {
+
+        .current-badge {
+            line-height: $line-height-base;
+            display: none;
+        }
+
         &.current {
             border-left: solid 3px $courseindex-item-current;
+
+            .current-badge {
+                display: inline-block;
+            }
         }
 
         &.dropready .courseindex-item-content {

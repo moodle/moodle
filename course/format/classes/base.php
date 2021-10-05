@@ -455,6 +455,15 @@ abstract class base {
     }
 
     /**
+     * Returns the name for the highlighted section.
+     *
+     * @return string The name for the highlighted section based on the given course format.
+     */
+    public function get_section_highlighted_name(): string {
+        return get_string('highlighted');
+    }
+
+    /**
      * Set if the current format instance will show multiple sections or an individual one.
      *
      * Some formats has the hability to swith from one section to multiple sections per page,

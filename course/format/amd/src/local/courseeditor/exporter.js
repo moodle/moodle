@@ -44,6 +44,7 @@ export default class {
         const data = {
             sections: [],
             editmode: this.reactive.isEditing,
+            highlighted: state.course.highlighted ?? '',
         };
         const sectionlist = state.course.sectionlist ?? [];
         sectionlist.forEach(sectionid => {

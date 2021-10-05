@@ -101,12 +101,16 @@ Feature: Course index depending on role
     And I am on "Course 1" course homepage with editing mode on
     And I click on "Side panel" "button"
     And I turn section "2" highlighting on
-    # Current section is only marked visually in the course index.
-    And the "class" attribute of "#courseindex-content [data-for='section'][data-number='2']" "css_element" should contain "current"
-    When I turn section "1" highlighting on
     And I click on "Open course index drawer" "button"
     # Current section is only marked visually in the course index.
+    And the "class" attribute of "#courseindex-content [data-for='section'][data-number='2']" "css_element" should contain "current"
+    And I should not see "Highlighted" in the "#courseindex-content [data-for='section'][data-number='1']" "css_element"
+    And I should see "Highlighted" in the "#courseindex-content [data-for='section'][data-number='2']" "css_element"
+    When I turn section "1" highlighting on
+    # Current section is only marked visually in the course index.
     Then the "class" attribute of "#courseindex-content [data-for='section'][data-number='1']" "css_element" should contain "current"
+    And I should see "Highlighted" in the "#courseindex-content [data-for='section'][data-number='1']" "css_element"
+    And I should not see "Highlighted" in the "#courseindex-content [data-for='section'][data-number='2']" "css_element"
 
   @javascript
   Scenario: Course index toggling
