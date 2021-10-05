@@ -183,23 +183,15 @@ if (($action == 'edit') || ($action == 'new')) {
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
-    $repositorytype = repository::get_type_by_typename($repository);
-    if (empty($repositorytype)) {
-        print_error('invalidplugin', 'repository', '', $repository);
-    }
-    $repositorytype->update_visibility(true);
-    core_plugin_manager::reset_caches();
+    $class = \core_plugin_manager::resolve_plugininfo_class('repository');
+    $class::enable_plugin($repository, true);
     $return = true;
 } else if ($action == 'hide') {
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
-    $repositorytype = repository::get_type_by_typename($repository);
-    if (empty($repositorytype)) {
-        print_error('invalidplugin', 'repository', '', $repository);
-    }
-    $repositorytype->update_visibility(false);
-    core_plugin_manager::reset_caches();
+    $class = \core_plugin_manager::resolve_plugininfo_class('repository');
+    $class::enable_plugin($repository, false);
     $return = true;
 } else if ($action == 'delete') {
     $repositorytype = repository::get_type_by_typename($repository);
