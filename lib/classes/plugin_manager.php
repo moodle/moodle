@@ -1002,9 +1002,10 @@ class core_plugin_manager {
      * @param string $component
      * @param int $version version number
      * @param string $reason returned code of the reason why it is not
+     * @param bool $checkremote check this version availability on moodle server
      * @return boolean
      */
-    public function is_remote_plugin_installable($component, $version, &$reason=null) {
+    public function is_remote_plugin_installable($component, $version, &$reason = null, $checkremote = true) {
         global $CFG;
 
         // Make sure the feature is not disabled.
@@ -1014,7 +1015,7 @@ class core_plugin_manager {
         }
 
         // Make sure the version is available.
-        if (!$this->is_remote_plugin_available($component, $version, true)) {
+        if ($checkremote && !$this->is_remote_plugin_available($component, $version, true)) {
             $reason = 'remoteunavailable';
             return false;
         }
@@ -1026,12 +1027,17 @@ class core_plugin_manager {
             return false;
         }
 
-        $remoteinfo = $this->get_remote_plugin_info($component, $version, true);
+        if (!$checkremote) {
+            $remoteversion = $version;
+        } else {
+            $remoteinfo = $this->get_remote_plugin_info($component, $version, true);
+            $remoteversion = $remoteinfo->version->version;
+        }
         $localinfo = $this->get_plugin_info($component);
 
         if ($localinfo) {
             // If the plugin is already present, prevent downgrade.
-            if ($localinfo->versiondb > $remoteinfo->version->version) {
+            if ($localinfo->versiondb > $remoteversion) {
                 $reason = 'cannotdowngrade';
                 return false;
             }
