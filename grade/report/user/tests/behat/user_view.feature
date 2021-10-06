@@ -21,11 +21,11 @@ Feature: View the user report as the student will see it
       | Sub category 1 | C1 |
       | Sub category 2 | C1 |
     And the following "activities" exist:
-      | activity | course | idnumber | name | intro | gradecategory| grade |
-      | assign | C1 | a1 | Test assignment one | Submit something! | Sub category 1 | 100 |
-      | assign | C1 | a2 | Test assignment two | Submit something! | Sub category 1 | 100 |
-      | assign | C1 | a3 | Test assignment three | Submit something! | Sub category 2 | 100 |
-      | assign | C1 | a4 | Test assignment four | Submit something! | Sub category 2 | 100 |
+      | activity | course | idnumber | name                  | intro             | gradecategory  | grade | gradepass |
+      | assign   | C1     | a1       | Test assignment one   | Submit something! | Sub category 1 | 100   | 50        |
+      | assign   | C1     | a2       | Test assignment two   | Submit something! | Sub category 1 | 100   | 50        |
+      | assign   | C1     | a3       | Test assignment three | Submit something! | Sub category 2 | 100   |           |
+      | assign   | C1     | a4       | Test assignment four  | Submit something! | Sub category 2 | 100   |           |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | grade |
       | assign | C1 | a5 | Test assignment five | Submit something! | 100 |
@@ -74,6 +74,8 @@ Feature: View the user report as the student will see it
       | Sub category 1 total    | 33.33 %           | -      | 0–200 | -          | -                            |
       | Test assignment five    | -                 | 21.00  | 0–100 | 21.00 %    | -                            |
       | Course total            | -                 | -      | 0–600 | -          | -                            |
+    And "//i[@aria-label='Pass']" "xpath_element" should exist in the "Test assignment one" "table_row"
+    And "//i[@aria-label='Fail']" "xpath_element" should exist in the "Test assignment two" "table_row"
     And the following should not exist in the "user-grade" table:
       | Grade item              |
       | Test assignment three   |
@@ -91,6 +93,8 @@ Feature: View the user report as the student will see it
       | Sub category 1 total    | 33.33 %           | -      | 0–200 | -          | -                            |
       | Test assignment five    | -                 | 21.00  | 0–100 | 21.00 %    | -                            |
       | Course total            | -                 | -      | 0–600 | -          | -                            |
+    And "//i[@aria-label='Pass']" "xpath_element" should exist in the "Test assignment one" "table_row"
+    And "//i[@aria-label='Fail']" "xpath_element" should exist in the "Test assignment two" "table_row"
     And the following should not exist in the "user-grade" table:
       | Grade item              |
       | Test assignment three   |
