@@ -115,8 +115,6 @@ foreach ($completion->get_criteria() as $criterion) {
     }
 }
 
-report_helper::save_selected_report($courseid, $url);
-
 // Can logged in user mark users as complete?
 // (if the logged in user has a role defined in the role criteria)
 $allow_marking = false;

@@ -49,9 +49,6 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('report/outline:view', $context);
 
-$url = new moodle_url('/report/outline/index.php', ['id' => $id]);
-report_helper::save_selected_report($id, $url);
-
 // Handle form to filter access logs by date.
 $filterform = new \report_outline\filter_form();
 $filterform->set_data(['id' => $course->id, 'filterstartdate' => $startdate, 'filterenddate' => $enddate]);

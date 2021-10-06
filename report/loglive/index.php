@@ -61,8 +61,6 @@ $url = new moodle_url("/report/loglive/index.php", $params);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
-report_helper::save_selected_report($id, $url);
-
 $renderable = new report_loglive_renderable($logreader, $id, $url, 0, $page);
 $refresh = $renderable->get_refresh_rate();
 $logreader = $renderable->selectedlogreader;

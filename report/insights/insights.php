@@ -158,7 +158,6 @@ if ($model->get_analyser()::one_sample_per_analysable()) {
 echo $OUTPUT->header();
 
 if ($course) {
-    report_helper::save_selected_report($course->id, $url);
     // Print selected drop down.
     $pluginname = get_string('pluginname', 'report_insights');
     report_helper::print_report_selector($pluginname);

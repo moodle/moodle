@@ -62,12 +62,16 @@ class report_helper_test extends \advanced_testcase {
         $url1 = new moodle_url($courseurlid[0]['url']);
         $courseid1 = $courseurlid[0]['id'];
         report_helper::save_selected_report($courseid1, $url1);
+        $this->assertDebuggingCalled('save_selected_report() has been deprecated because it is no ' .
+            'longer used and will be removed in future versions of Moodle');
 
         $this->assertEquals($USER->course_last_report[$courseid1], $url1);
 
         $url2 = new moodle_url($courseurlid[1]['url']);
         $courseid2 = $courseurlid[1]['id'];
         report_helper::save_selected_report($courseid2, $url2);
+        $this->assertDebuggingCalled('save_selected_report() has been deprecated because it is no ' .
+            'longer used and will be removed in future versions of Moodle');
 
         $this->assertEquals($USER->course_last_report[$courseid2], $url2);
     }
