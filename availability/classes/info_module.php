@@ -51,7 +51,7 @@ class info_module extends info {
         // We cannot access $cm->name as a property at this point, because this
         // code may itself run in response to the $cm->name property access, and
         // PHP magic function properties do not allow recursion (because PHP).
-        return '<AVAILABILITY_CMNAME_' . $this->cm->id . '/>';
+        return condition::description_cm_name($this->cm->id);
     }
 
     protected function set_in_database($availability) {
