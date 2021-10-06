@@ -124,9 +124,9 @@ $gradebookfeedback = '';
 
 $item = null;
 
-$grading_info = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $USER->id);
-if (!empty($grading_info->items)) {
-    $item = $grading_info->items[0];
+$gradinginfo = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $USER->id);
+if (!empty($gradinginfo->items)) {
+    $item = $gradinginfo->items[0];
     if (isset($item->grades[$USER->id])) {
         $grade = $item->grades[$USER->id];
 
@@ -249,6 +249,13 @@ $viewobj->showbacktocourse = ($viewobj->buttontext === '' &&
         course_get_format($course)->has_view_page());
 
 echo $OUTPUT->header();
+
+if (!empty($gradinginfo->errors)) {
+    foreach ($gradinginfo->errors as $error) {
+        $errortext = new \core\output\notification($error, \core\output\notification::NOTIFY_ERROR);
+        echo $OUTPUT->render($errortext);
+    }
+}
 
 if (isguestuser()) {
     // Guests can't do a quiz, so offer them a choice of logging in or going back.
