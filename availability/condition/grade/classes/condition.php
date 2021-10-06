@@ -142,8 +142,27 @@ class condition extends \core_availability\condition {
                 $string = 'notgeneral';
             }
         }
-        $name = self::get_cached_grade_name($course->id, $this->gradeitemid);
+        // We cannot get the name at this point because it requires format_string which is not
+        // allowed here. Instead, get it later with the callback function below.
+        $name = $this->description_callback([$this->gradeitemid]);
         return get_string('requires_' . $string, 'availability_grade', $name);
+    }
+
+    /**
+     * Gets the grade name at display time.
+     *
+     * @param \course_modinfo $modinfo Modinfo
+     * @param \context $context Context
+     * @param string[] $params Parameters (just grade item id)
+     * @return string Text value
+     */
+    public static function get_description_callback_value(
+            \course_modinfo $modinfo, \context $context, array $params): string {
+        if (count($params) !== 1 || !is_number($params[0])) {
+            return '<!-- Invalid grade description callback -->';
+        }
+        $gradeitemid = (int)$params[0];
+        return self::get_cached_grade_name($modinfo->get_course_id(), $gradeitemid);
     }
 
     protected function get_debug_string() {

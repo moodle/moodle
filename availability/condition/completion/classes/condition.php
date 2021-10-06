@@ -354,7 +354,7 @@ class condition extends \core_availability\condition {
             if (!array_key_exists($cmid, $modinfo->cms) || $modinfo->cms[$cmid]->deletioninprogress) {
                 $modname = get_string('missing', 'availability_completion');
             } else {
-                $modname = '<AVAILABILITY_CMNAME_' . $modinfo->cms[$cmid]->id . '/>';
+                $modname = self::description_cm_name($modinfo->cms[$cmid]->id);
             }
         }
 
