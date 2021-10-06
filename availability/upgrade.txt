@@ -2,6 +2,13 @@ This files describes API changes in /availability/*.
 
 The information here is intended only for developers.
 
+=== 3.11.4 ===
+
+* There were existing restrictions on what condition plugins can do in the get_description
+  method (for example they mustn't call format_string), which were not well documented.
+  New functions description_cm_name(), description_format_string(), description_callback()
+  can be used so that condition plugins to behave correctly in all situations.
+
 === 3.2 ===
 
 * Condition plugins must replace the CSS selector "#fitem_id_availabilityconditionsjson" with ".availability-field".
