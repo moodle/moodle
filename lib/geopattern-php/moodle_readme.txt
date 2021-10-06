@@ -1,9 +1,7 @@
-scssphp
+GeoPattern-PHP
 -------
 
 Downloaded from: https://github.com/RedeyeGroup/geopattern-php
-
-Last commit on download: 26d9f8aa7a8b00c8afc120d706f6bdd7a9965b87
 
 Import procedure:
 
