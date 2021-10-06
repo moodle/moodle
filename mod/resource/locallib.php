@@ -102,7 +102,7 @@ function resource_display_embed($resource, $cm, $course, $file) {
     resource_print_header($resource, $cm, $course);
     resource_print_heading($resource, $cm, $course);
 
-    echo $code;
+    echo format_text($code, FORMAT_HTML, ['noclean' => true]);
 
     resource_print_intro($resource, $cm, $course);
 
