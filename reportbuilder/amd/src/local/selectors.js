@@ -26,11 +26,13 @@
  *
  * @property {Object} regions
  * @property {String} regions.systemReport System report page region
+ * @property {String} regions.filterButtonLabel Filters form toggle region
  * @property {String} regions.filtersForm Filters form page region
  */
 const SELECTORS = {
     regions: {
         systemReport: '[data-region="core_reportbuilder/system-report"]',
+        filterButtonLabel: '[data-region="filter-button-label"]',
         filtersForm: '[data-region="filters-form"]',
     },
     actions: {

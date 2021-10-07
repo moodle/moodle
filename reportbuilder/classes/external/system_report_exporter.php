@@ -67,6 +67,7 @@ class system_report_exporter extends persistent_exporter {
             'table' => ['type' => PARAM_RAW],
             'parameters' => ['type' => PARAM_RAW],
             'filterspresent' => ['type' => PARAM_BOOL],
+            'filtersapplied' => ['type' => PARAM_INT],
             'filtersform' => [
                 'type' => PARAM_RAW,
                 'optional' => true,
@@ -109,6 +110,7 @@ class system_report_exporter extends persistent_exporter {
             'table' => $output->render($table),
             'parameters' => $this->related['parameters'],
             'filterspresent' => $filterspresent,
+            'filtersapplied' => $source->get_applied_filter_count(),
             'filtersform' => $filterspresent ? $filtersform->render() : '',
         ];
     }

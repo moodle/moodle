@@ -70,15 +70,16 @@ class filter extends dynamic_form {
     /**
      * Process the form submission
      *
-     * @return bool
+     * @return int Number of applied filter instances
      */
     public function process_dynamic_submission() {
         $values = $this->get_data();
 
-        // Remove some unneeded fields.
+        // Remove some unneeded fields, apply filters.
         unset($values->reportid, $values->parameters);
+        $this->get_system_report()->set_filter_values((array) $values);
 
-        return $this->get_system_report()->set_filter_values((array) $values);
+        return $this->get_system_report()->get_applied_filter_count();
     }
 
     /**
