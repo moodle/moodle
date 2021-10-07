@@ -1,6 +1,10 @@
 This files describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
 
+=== 3.10.8 ===
+* The method \completion_criteria_completion::mark_complete() now has the optional $timecompleted parameter to specify when the
+  criteria was completed.
+
 === 3.7 ===
  * External function core_completion_external::get_activities_completion_status new returns the following additional field:
    - valueused (indicates whether the completion state affects the availability of other content)
