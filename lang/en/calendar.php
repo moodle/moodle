@@ -228,6 +228,7 @@ $string['repeatevent'] = 'Repeat this event';
 $string['repeatnone'] = 'No repeats';
 $string['repeatweeksl'] = 'Repeat weekly, creating altogether';
 $string['repeatweeksr'] = 'events';
+$string['requiresaction'] = '{$a} requires action';
 $string['sat'] = 'Sat';
 $string['saturday'] = 'Saturday';
 $string['shown'] = 'shown';

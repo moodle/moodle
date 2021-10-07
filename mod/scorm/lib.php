@@ -1802,3 +1802,26 @@ function mod_scorm_get_path_from_pluginfile(string $filearea, array $args) : arr
         'filepath' => $filepath,
     ];
 }
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_scorm_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'scorm');
+
+    switch ($eventtype) {
+        case SCORM_EVENT_TYPE_OPEN:
+            $identifier = 'calendarstart';
+            break;
+        case SCORM_EVENT_TYPE_CLOSE:
+            $identifier = 'calendarend';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'scorm', $modulename);
+}
