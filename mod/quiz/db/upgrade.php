@@ -65,7 +65,7 @@ function xmldb_quiz_upgrade($oldversion) {
         $field = new xmldb_field('completionpass');
 
         if ($dbman->field_exists($table, $field)) {
-            $sql = "SELECT q.id " .
+            $sql = "SELECT q.id, m.id as quizid " .
                      "FROM {quiz} q " .
                "INNER JOIN {course_modules} cm ON cm.instance = q.id " .
                "INNER JOIN {modules} m ON m.id = cm.module " .
@@ -74,13 +74,16 @@ function xmldb_quiz_upgrade($oldversion) {
             /** @var moodle_recordset $records */
             $records = $DB->get_recordset_sql($sql, ['name' => 'quiz', 'completionpass' => 1], 0, 1000);
             while ($records->valid()) {
+                $quizmodule = null;
                 foreach ($records as $record) {
                     $ids[] = $record->id;
+                    $quizmodule = $record->quizid;
                 }
 
                 if ($ids) {
                     list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
-                    $DB->set_field_select('course_modules', 'completionpassgrade', 1, "instance $insql", $params);
+                    $DB->set_field_select('course_modules', 'completionpassgrade', 1,
+                        "module = :quiz AND instance $insql", $params + ['quiz' => $quizmodule]);
 
                     // Reset the value so it doesn't get picked on the next run. The field will be dropped later.
                     $DB->set_field_select('quiz', 'completionpass', 0, "id $insql", $params);
