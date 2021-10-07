@@ -166,8 +166,11 @@ $CFG->directorypermissions = 02777;
 
 
 //=========================================================================
-// 5. DIRECTORY LOCATION  (most people can just ignore this setting)
+// 5. ADMIN DIRECTORY LOCATION  (deprecated)
 //=========================================================================
+// Please note: Support from this feature has been deprecated and it will be
+// removed after Moodle 4.2.
+//
 // A very few webhosts use /admin as a special URL for you to access a
 // control panel or something.  Unfortunately this conflicts with the
 // standard location for the Moodle admin pages.  You can work around this

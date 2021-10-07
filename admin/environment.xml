@@ -3724,6 +3724,11 @@
       </CUSTOM_CHECK>
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_max_input_vars" level="optional">
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_admin_dir_usage" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="iscustomadminwarnings" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
