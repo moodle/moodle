@@ -263,6 +263,26 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
     }
 
     /**
+     * Get whether events are present for the given select clause.
+     *
+     * @param string $selectwhere select conditions.
+     * @param array $params params.
+     *
+     * @return bool Whether events available for the given conditions
+     */
+    public function get_events_select_exists(string $selectwhere, array $params): bool {
+        if (!$this->init()) {
+            return false;
+        }
+
+        if (!$dbtable = $this->get_config('dbtable')) {
+            return false;
+        }
+
+        return $this->extdb->record_exists_select($dbtable, $selectwhere, $params);
+    }
+
+    /**
      * Get a config value for the store.
      *
      * @param string $name Config name

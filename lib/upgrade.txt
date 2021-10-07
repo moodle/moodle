@@ -1,6 +1,12 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+
+* For performance reasons, sql_reader interface has a new function get_events_select_exists() which determines whether
+  an event exists with the given criteria (see MDL-72723 for details).
+   - Breaking: 3rd party log readers implementing interface sql_reader will need to implement get_events_select_exists()
+
 === 4.0 ===
 
 * To better detect wrong floats (like, for example, unformatted, using local-dependent separators ones) a number of
