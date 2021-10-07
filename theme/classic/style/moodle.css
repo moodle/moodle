@@ -15969,6 +15969,8 @@ a.ygtvspacer:hover {
     display: block; }
     .message-app .view-overview-body .section.expanded {
       display: flex; }
+    .message-app .view-overview-body .section div[data-region="toggle"] {
+      padding: 0.1rem; }
   .message-app .view-conversation .content-message-container img {
     max-width: 100%; }
   .message-app .list-group {
@@ -15976,10 +15978,20 @@ a.ygtvspacer:hover {
     .message-app .list-group .list-group-item {
       border-left: 0;
       border-right: 0; }
+      .message-app .list-group .list-group-item:hover {
+        color: #fff;
+        background-color: #0f6fc5; }
+        .message-app .list-group .list-group-item:hover .badge-primary {
+          background-color: #fff;
+          color: #0f6fc5; }
       .message-app .list-group .list-group-item:first-child {
         border-top: 0; }
       .message-app .list-group .list-group-item:last-child {
         border-bottom: 0; }
+      .message-app .list-group .list-group-item.list-group-item-action {
+        margin: 0.1rem;
+        width: auto;
+        text-align: inherit; }
   .message-app .last-message {
     min-height: 1.5rem; }
   .message-app .section .collapsing {

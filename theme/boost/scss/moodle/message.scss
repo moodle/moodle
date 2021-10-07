@@ -526,6 +526,10 @@ $message-day-color: color-yiq($message-app-bg) !default;
             &.expanded {
                 display: flex;
             }
+
+            div[data-region="toggle"] {
+                padding: 0.1rem;
+            }
         }
     }
 
@@ -541,11 +545,24 @@ $message-day-color: color-yiq($message-app-bg) !default;
         .list-group-item {
             border-left: 0;
             border-right: 0;
+            &:hover {
+                color: $white;
+                background-color: $primary;
+                .badge-primary {
+                    background-color: $white;
+                    color: $primary;
+                }
+            }
             &:first-child {
                 border-top: 0;
             }
             &:last-child {
                 border-bottom: 0;
+            }
+            &.list-group-item-action {
+                margin: 0.1rem;
+                width: auto;
+                text-align: inherit;
             }
         }
     }
