@@ -13,6 +13,8 @@ information provided here is intended especially for developers.
   need to override the core completion criteria in cases where it may be dependent on them. In these cases, the 'source of truth' would be the response
   from the plugin's 'get_completion_state' function. e.g. Quiz's completion defines a criteria of 'requires passing grade OR all attempts AND min attempts
   reached.' In these cases, even if a passing grade has not been achieved, the activity should be marked as completed if the no.of attempts have been reached.
+* The method \completion_criteria_completion::mark_complete() now has the optional $timecompleted parameter to specify when the
+  criteria was completed.
 
 === 3.11 ===
 * New Behat steps for activity completion in the behat_completion class:
