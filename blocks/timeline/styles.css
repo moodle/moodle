@@ -1,0 +1,9 @@
+#block-region-side-pre .block_timeline h6.event-action {
+    flex-basis: 100%;
+}
+#block-region-side-pre .block_timeline .event-name-container {
+    flex-basis: 50%;
+}
+#block-region-side-pre .block_timeline h6.event-action a.btn {
+    width: auto;
+}
