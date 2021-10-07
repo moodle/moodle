@@ -2721,12 +2721,14 @@ $picker-emojis-per-row: 7 !default;
 }
 
 .alert.cta {
-    .icon {
-        padding: 0.3rem;
-        &.fa {
-            border-radius: 50%;
-            border-style: solid;
-            border-width: 0.125rem;
+    .cta-icon {
+        .icon {
+            padding: 0.3rem;
+            &.fa {
+                border-radius: 50%;
+                border-style: solid;
+                border-width: 0.125rem;
+            }
         }
     }
 }
