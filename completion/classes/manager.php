@@ -176,7 +176,13 @@ class manager {
             }
             if ($moduledata instanceof cm_info && !is_null($moduledata->completiongradeitemnumber) ||
                 ($moduledata instanceof stdClass && !empty($moduledata->completionusegrade))) {
-                $activeruledescriptions[] = get_string('completionusegrade_desc', 'completion');
+
+                $description = 'completionusegrade_desc';
+                if (!empty($moduledata->completionpassgrade)) {
+                    $description = 'completionpassgrade_desc';
+                }
+
+                $activeruledescriptions[] = get_string($description, 'completion');
             }
 
             // Now, ask the module to provide descriptions for its custom conditional completion rules.
@@ -351,8 +357,11 @@ class manager {
     protected function apply_completion_cm(\cm_info $cm, $data, $updateinstance) {
         global $DB;
 
-        $defaults = ['completion' => COMPLETION_DISABLED, 'completionview' => COMPLETION_VIEW_NOT_REQUIRED,
-            'completionexpected' => 0, 'completiongradeitemnumber' => null];
+        $defaults = [
+            'completion' => COMPLETION_DISABLED, 'completionview' => COMPLETION_VIEW_NOT_REQUIRED,
+            'completionexpected' => 0, 'completiongradeitemnumber' => null,
+            'completionpassgrade' => 0
+        ];
 
         $data += ['completion' => $cm->completion,
             'completionexpected' => $cm->completionexpected,
@@ -374,6 +383,8 @@ class manager {
             $data['completiongradeitemnumber'] = !empty($data['completionusegrade']) ? 0 : null;
             unset($data['completionusegrade']);
         } else {
+            // Completion grade item number is classified in mod_edit forms as 'use grade'.
+            $data['completionusegrade'] = is_null($cm->completiongradeitemnumber) ? 0 : 1;
             $data['completiongradeitemnumber'] = $cm->completiongradeitemnumber;
         }
 
@@ -413,7 +424,8 @@ class manager {
             'completion' => COMPLETION_DISABLED,
             'completionview' => COMPLETION_VIEW_NOT_REQUIRED,
             'completionexpected' => 0,
-            'completionusegrade' => 0
+            'completionusegrade' => 0,
+            'completionpassgrade' => 0
         ];
 
         $data = (array)$data;
@@ -470,7 +482,7 @@ class manager {
     public static function get_default_completion($course, $module, $flatten = true) {
         global $DB, $CFG;
         if ($data = $DB->get_record('course_completion_defaults', ['course' => $course->id, 'module' => $module->id],
-            'completion, completionview, completionexpected, completionusegrade, customrules')) {
+            'completion, completionview, completionexpected, completionusegrade, completionpassgrade, customrules')) {
             if ($data->customrules && ($customrules = @json_decode($data->customrules, true))) {
                 if ($flatten) {
                     foreach ($customrules as $key => $value) {

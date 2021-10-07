@@ -25,8 +25,8 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
     And the following "activities" exist:
-      | activity | name           | course | idnumber | attempts | gradepass | completion | completionusegrade | completionpass | completionattemptsexhausted |
-      | quiz     | Test quiz name | C1     | quiz1    | 2        | 5.00      | 2          | 1                  | 1              | 1                           |
+      | activity | name           | course | idnumber | attempts | gradepass | completion | completionusegrade | completionpassgrade | completionattemptsexhausted |
+      | quiz     | Test quiz name | C1     | quiz1    | 2        | 5.00      | 2          | 1                  | 1                   | 1                           |
     And quiz "Test quiz name" contains the following questions:
       | question       | page |
       | First question | 1    |
@@ -37,7 +37,8 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
   Scenario: student1 uses up both attempts without passing
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
     And I follow "Test quiz name"
     And I press "Re-attempt quiz"
@@ -45,10 +46,12 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I am on "Course 1" course homepage
-    Then the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
+    Then the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"
     And I follow "Test quiz name"
-    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"
     And I log out
     And I log in as "teacher1"

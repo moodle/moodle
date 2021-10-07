@@ -2306,14 +2306,17 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $this->setAdminUser();
-        $course = self::getDataGenerator()->create_course();
+        $course = self::getDataGenerator()->create_course(['enablecompletion' => 1]);
         $record = array(
             'course' => $course->id,
             'name' => 'First Assignment'
         );
         $options = array(
             'idnumber' => 'ABC',
-            'visible' => 0
+            'visible' => 0,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
+            'completiongradeitemnumber' => 0,
+            'completionpassgrade' => 1,
         );
         // Hidden activity.
         $assign = self::getDataGenerator()->create_module('assign', $record, $options);
@@ -2370,7 +2373,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve all the fields.
-        $this->assertCount(28, $result['cm']);
+        $this->assertCount(29, $result['cm']);
         $this->assertEquals($record['name'], $result['cm']['name']);
         $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);
         $this->assertEquals(100, $result['cm']['grade']);
@@ -2438,7 +2441,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve all the fields.
-        $this->assertCount(26, $result['cm']);
+        $this->assertCount(27, $result['cm']);
         $this->assertEquals($record['name'], $result['cm']['name']);
         $this->assertEquals($record['grade'], $result['cm']['grade']);
         $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);

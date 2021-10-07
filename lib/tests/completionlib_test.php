@@ -725,6 +725,7 @@ class core_completionlib_testcase extends advanced_testcase {
             'completion' => COMPLETION_TRACKING_AUTOMATIC,
             // Submission grade required.
             'completiongradeitemnumber' => 0,
+            'completionpassgrade' => 1,
         ]);
 
         $cmworkshop = cm_info::create(get_coursemodule_from_instance('workshop', $workshop->id));
@@ -756,8 +757,10 @@ class core_completionlib_testcase extends advanced_testcase {
         $workshopcompletiondata = $method->invoke($completioninfo, $cmworkshop, $user->id);
 
         $this->assertArrayHasKey('completiongrade', $workshopcompletiondata);
+        $this->assertArrayHasKey('passgrade', $workshopcompletiondata);
         $this->assertArrayNotHasKey('customcompletion', $workshopcompletiondata);
         $this->assertEquals(COMPLETION_INCOMPLETE, $workshopcompletiondata['completiongrade']);
+        $this->assertEquals(COMPLETION_INCOMPLETE, $workshopcompletiondata['passgrade']);
 
         // Check that fetching data for a module with no completion conditions does not provide any data.
         $choice2completiondata = $method->invoke($completioninfo, $cmchoice2, $user->id);

@@ -199,10 +199,19 @@ abstract class core_completion_edit_base_form extends moodleform {
 
         // Automatic completion once it's graded.
         if ($this->support_grades()) {
-            $mform->addElement('advcheckbox', 'completionusegrade', get_string('completionusegrade', 'completion'),
+            $group = [];
+            $group[] = $mform->createElement('advcheckbox', 'completionusegrade', get_string('completionusegrade', 'completion'),
                 get_string('completionusegrade_desc', 'completion'));
-            $mform->disabledIf('completionusegrade', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
-            $mform->addHelpButton('completionusegrade', 'completionusegrade', 'completion');
+            $mform->addHelpButton('completionusegrade', 'completionusegrade', 'completion', '', true);
+
+            $group[] = $mform->createElement('advcheckbox', 'completionpassgrade', get_string('completionpassgrade', 'completion'),
+                get_string('completionpassgrade_desc', 'completion'));
+            $mform->addHelpButton('completionpassgrade', 'completionpassgrade', 'completion', '', true);
+            $mform->disabledIf('completionpassgrade', 'completionusegrade', 'notchecked');
+
+            $mform->addGroup($group, 'completionpassgroup', get_string('completionpassgrade', 'completion'), ' &nbsp; ', false);
+            $mform->disabledIf('completionpassgroup', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
+
             $autocompletionpossible = true;
         }
 
@@ -247,7 +256,7 @@ abstract class core_completion_edit_base_form extends moodleform {
         // on some conditions.
         if (array_key_exists('completion', $data) &&
             $data['completion'] == COMPLETION_TRACKING_AUTOMATIC) {
-            if (empty($data['completionview']) && empty($data['completionusegrade']) &&
+            if (empty($data['completionview']) && empty($data['completionusegrade']) && empty($data['completionpassgrade']) &&
                 !$this->completion_rule_enabled($data)) {
                 $errors['completion'] = get_string('badautocompletion', 'completion');
             }

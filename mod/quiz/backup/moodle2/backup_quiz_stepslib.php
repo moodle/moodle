@@ -49,7 +49,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
             'questionsperpage', 'navmethod', 'shuffleanswers',
             'sumgrades', 'grade', 'timecreated',
             'timemodified', 'password', 'subnet', 'browsersecurity',
-            'delay1', 'delay2', 'showuserpicture', 'showblocks', 'completionattemptsexhausted', 'completionpass',
+            'delay1', 'delay2', 'showuserpicture', 'showblocks', 'completionattemptsexhausted',
             'completionminattempts', 'allowofflineattempts'));
 
         // Define elements for access rule subplugin settings.

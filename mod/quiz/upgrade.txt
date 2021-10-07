@@ -6,6 +6,8 @@ This files describes API changes in the quiz code.
   - process_finish() in mod/quiz/attemptlib.php
   - quiz_send_confirmation() in mod/quiz/locallib.php
   - quiz_send_notification_messages() in mod/quiz/locallib.php
+* The completionpass criteria has been moved to core as 'completionpassgrade'. Refer to completion/upgrade.txt for
+  further information.
 
 === 3.11 ===
 

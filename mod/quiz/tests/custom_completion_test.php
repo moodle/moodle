@@ -20,6 +20,7 @@ namespace mod_quiz;
 
 use advanced_testcase;
 use cm_info;
+use core_completion\cm_completion_details;
 use grade_item;
 use mod_quiz\completion\custom_completion;
 use question_engine;
@@ -127,11 +128,8 @@ class custom_completion_test extends advanced_testcase {
     }
 
     /**
-     * Test checking the completion state of a quiz.
+     * Test checking the completion state of a quiz base on core's completionpassgrade criteria.
      * The quiz requires a passing grade to be completed.
-     *
-     * @covers ::get_state
-     * @covers ::get_custom_rule_descriptions
      */
     public function test_completionpass() {
         list($students, $quiz, $cm) = $this->setup_quiz_for_testing_completion([
@@ -139,7 +137,7 @@ class custom_completion_test extends advanced_testcase {
             'qtype' => 'numerical',
             'quizoptions' => [
                 'completionusegrade' => 1,
-                'completionpass' => 1
+                'completionpassgrade' => 1
             ]
         ]);
 
@@ -153,13 +151,14 @@ class custom_completion_test extends advanced_testcase {
             'tosubmit' => [1 => ['answer' => '3.14']]
         ]);
 
+        $completioninfo = new \completion_info($cm->get_course());
+        $completiondetails = new cm_completion_details($completioninfo, $cm, (int) $passstudent->id);
+
         // Check the results.
-        $customcompletion = new custom_completion($cm, (int) $passstudent->id);
-        $this->assertArrayHasKey('completionpassorattemptsexhausted', $cm->customdata['customcompletionrules']);
-        $this->assertEquals(COMPLETION_COMPLETE, $customcompletion->get_state('completionpassorattemptsexhausted'));
+        $this->assertEquals(COMPLETION_COMPLETE_PASS, $completiondetails->get_details()['completionpassgrade']->status);
         $this->assertEquals(
-            'Receive a pass grade',
-            $customcompletion->get_custom_rule_descriptions()['completionpassorattemptsexhausted']
+            'Receive a passing grade',
+            $completiondetails->get_details()['completionpassgrade']->description
         );
 
         // Do a failing attempt.
@@ -170,13 +169,13 @@ class custom_completion_test extends advanced_testcase {
             'tosubmit' => [1 => ['answer' => '0']]
         ]);
 
+        $completiondetails = new cm_completion_details($completioninfo, $cm, (int) $failstudent->id);
+
         // Check the results.
-        $customcompletion = new custom_completion($cm, (int) $failstudent->id);
-        $this->assertArrayHasKey('completionpassorattemptsexhausted', $cm->customdata['customcompletionrules']);
-        $this->assertEquals(COMPLETION_INCOMPLETE, $customcompletion->get_state('completionpassorattemptsexhausted'));
+        $this->assertEquals(COMPLETION_COMPLETE_FAIL, $completiondetails->get_details()['completionpassgrade']->status);
         $this->assertEquals(
-            'Receive a pass grade',
-            $customcompletion->get_custom_rule_descriptions()['completionpassorattemptsexhausted']
+            'Receive a passing grade',
+            $completiondetails->get_details()['completionpassgrade']->description
         );
     }
 
@@ -194,7 +193,7 @@ class custom_completion_test extends advanced_testcase {
             'quizoptions' => [
                 'attempts' => 2,
                 'completionusegrade' => 1,
-                'completionpass' => 1,
+                'completionpassgrade' => 1,
                 'completionattemptsexhausted' => 1
             ]
         ]);
@@ -209,8 +208,11 @@ class custom_completion_test extends advanced_testcase {
             'tosubmit' => [1 => ['answer' => '3.14']]
         ]);
 
+        $completioninfo = new \completion_info($cm->get_course());
+
         // Check the results. Quiz is completed by $passstudent because of passing grade.
-        $customcompletion = new custom_completion($cm, (int) $passstudent->id);
+        $studentid = (int) $passstudent->id;
+        $customcompletion = new custom_completion($cm, $studentid, $completioninfo->get_core_completion_state($cm, $studentid));
         $this->assertArrayHasKey('completionpassorattemptsexhausted', $cm->customdata['customcompletionrules']);
         $this->assertEquals(COMPLETION_COMPLETE, $customcompletion->get_state('completionpassorattemptsexhausted'));
         $this->assertEquals(
@@ -227,7 +229,8 @@ class custom_completion_test extends advanced_testcase {
         ]);
 
         // Check the results. Quiz is not completed by $exhauststudent yet because of failing grade and of remaining attempts.
-        $customcompletion = new custom_completion($cm, (int) $exhauststudent->id);
+        $studentid = (int) $exhauststudent->id;
+        $customcompletion = new custom_completion($cm, $studentid, $completioninfo->get_core_completion_state($cm, $studentid));
         $this->assertArrayHasKey('completionpassorattemptsexhausted', $cm->customdata['customcompletionrules']);
         $this->assertEquals(COMPLETION_INCOMPLETE, $customcompletion->get_state('completionpassorattemptsexhausted'));
         $this->assertEquals(
@@ -244,7 +247,7 @@ class custom_completion_test extends advanced_testcase {
         ]);
 
         // Check the results. Quiz is completed by $exhauststudent because there are no remaining attempts.
-        $customcompletion = new custom_completion($cm, (int) $exhauststudent->id);
+        $customcompletion = new custom_completion($cm, $studentid, $completioninfo->get_core_completion_state($cm, $studentid));
         $this->assertArrayHasKey('completionpassorattemptsexhausted', $cm->customdata['customcompletionrules']);
         $this->assertEquals(COMPLETION_COMPLETE, $customcompletion->get_state('completionpassorattemptsexhausted'));
         $this->assertEquals(

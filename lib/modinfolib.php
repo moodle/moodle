@@ -971,6 +971,12 @@ class cm_info implements IteratorAggregate {
     private $completiongradeitemnumber;
 
     /**
+     * 1 if pass grade completion is enabled, 0 otherwise - from course_modules table
+     * @var int
+     */
+    private $completionpassgrade;
+
+    /**
      * 1 if 'on view' completion is enabled, 0 otherwise - from course_modules table
      * @var int
      */
@@ -1173,6 +1179,7 @@ class cm_info implements IteratorAggregate {
         'completion' => false,
         'completionexpected' => false,
         'completiongradeitemnumber' => false,
+        'completionpassgrade' => false,
         'completionview' => false,
         'conditionscompletion' => false,
         'conditionsfield' => false,
@@ -1648,7 +1655,7 @@ class cm_info implements IteratorAggregate {
         // Standard fields from table course_modules.
         static $cmfields = array('id', 'course', 'module', 'instance', 'section', 'idnumber', 'added',
             'score', 'indent', 'visible', 'visibleoncoursepage', 'visibleold', 'groupmode', 'groupingid',
-            'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
+            'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected', 'completionpassgrade',
             'showdescription', 'availability', 'deletioninprogress');
         foreach ($cmfields as $key) {
             $cmrecord->$key = $this->$key;
@@ -1867,6 +1874,7 @@ class cm_info implements IteratorAggregate {
         // availability and completion fields, even if availability or completion
         // are actually disabled
         $this->completion = isset($mod->completion) ? $mod->completion : 0;
+        $this->completionpassgrade = isset($mod->completionpassgrade) ? $mod->completionpassgrade : 0;
         $this->completiongradeitemnumber = isset($mod->completiongradeitemnumber)
                 ? $mod->completiongradeitemnumber : null;
         $this->completionview = isset($mod->completionview)
