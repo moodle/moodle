@@ -164,7 +164,7 @@ class controlmenu implements renderable, templatable {
         $format = $this->format;
         $mod = $this->mod;
         $sectionreturn = $format->get_section_number();
-        if (!empty($this->displayoptions['disableindentation'])) {
+        if (!empty($this->displayoptions['disableindentation']) || !$format->uses_indentation()) {
             $indent = -1;
         } else {
             $indent = $mod->indent;

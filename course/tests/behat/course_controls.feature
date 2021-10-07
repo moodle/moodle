@@ -2,7 +2,7 @@
 Feature: Course activity controls works as expected
   In order to manage my course's activities
   As a teacher
-  I need to edit, hide, show and indent activities inside course sections
+  I need to edit, hide and show activities inside course sections
 
   # The difference between these two scenario outlines is that one is with
   # JS enabled and the other one with JS disabled; we can not use Background
@@ -41,10 +41,6 @@ Feature: Course activity controls works as expected
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name 2 |
       | Description | Test forum description 2 |
-    And <belowpage> "section" <should_see_other_sections> exist
-    And I indent right "Test forum name 1" activity
-    And <belowpage> "section" <should_see_other_sections> exist
-    And I indent left "Test forum name 1" activity
     And <belowpage> "section" <should_see_other_sections> exist
     And I open "Test forum name 1" actions menu
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
@@ -110,11 +106,6 @@ Feature: Course activity controls works as expected
     And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
     And I press "Yes"
-    And <belowpage> "section" <should_see_other_sections> exist
-    And <belowpage> "section" <should_see_other_sections> exist
-    And I indent right "Test forum name 1" activity
-    And <belowpage> "section" <should_see_other_sections> exist
-    And I indent left "Test forum name 1" activity
     And <belowpage> "section" <should_see_other_sections> exist
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
     And I should see "Updating Forum"
