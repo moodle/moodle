@@ -2882,5 +2882,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021100300.02);
     }
 
+    if ($oldversion < 2021100600.01) {
+        // Remove qformat_examview (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/question/format/examview/format.php')) {
+            unset_all_config_for_plugin('qformat_examview');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021100600.01);
+    }
+
     return true;
 }
