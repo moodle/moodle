@@ -26,6 +26,8 @@ import * as Aria from 'core/aria';
 import Popper from 'core/popper';
 import {dispatchEvent} from 'core/event_dispatcher';
 import {eventTypes} from './events';
+import {get_string as getString} from 'core/str';
+import {prefetchStrings} from 'core/prefetch';
 
 /**
  * A user tour.
@@ -71,6 +73,10 @@ const Tour = class {
             this.storage = false;
             this.storageKey = '';
         }
+
+        prefetchStrings('tool_usertours', [
+            'nextstep_sequence'
+        ]);
 
         return this;
     }
@@ -350,6 +356,27 @@ const Tour = class {
 
         // Not theoretically, or actually visible.
         return false;
+    }
+
+    /**
+     * Get potentially visible steps in a tour.
+     *
+     * @return {{stepId: number, position: number}[]} An associative array with stepNumber as keys
+     *                                                and an object of stepId and position as values.
+     */
+    getPotentiallyVisibleSteps() {
+        let position = 1;
+        let result = [];
+        // Checking the total steps.
+        for (let stepNumber = 0; stepNumber < this.steps.length; stepNumber++) {
+            const stepConfig = this.getStepConfig(stepNumber);
+            if (this.isStepPotentiallyVisible(stepConfig)) {
+                result[stepNumber] = {stepId: stepConfig.stepid, position: position};
+                position++;
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -659,24 +686,43 @@ const Tour = class {
         template.find('[data-placeholder="body"]')
             .html(stepConfig.body);
 
+        // Buttons.
+        const nextBtn = template.find('[data-role="next"]');
+        const previousBtn = template.find('[data-role="previous"]');
+        const endBtn = template.find('[data-role="end"]');
+
         // Is this the first step?
         if (this.isFirstStep(stepConfig.stepNumber)) {
-            template.find('[data-role="previous"]').hide();
+            previousBtn.hide();
         } else {
-            template.find('[data-role="previous"]').prop('disabled', false);
+            previousBtn.prop('disabled', false);
         }
 
         // Is this the final step?
         if (this.isLastStep(stepConfig.stepNumber)) {
-            template.find('[data-role="next"]').hide();
-            template.find('[data-role="end"]').removeClass("btn-secondary").addClass("btn-primary");
+            nextBtn.hide();
+            endBtn.removeClass("btn-secondary").addClass("btn-primary");
         } else {
-            template.find('[data-role="next"]').prop('disabled', false);
+            nextBtn.prop('disabled', false);
         }
 
-        template.find('[data-role="previous"]').attr('role', 'button');
-        template.find('[data-role="next"]').attr('role', 'button');
-        template.find('[data-role="end"]').attr('role', 'button');
+        previousBtn.attr('role', 'button');
+        nextBtn.attr('role', 'button');
+        endBtn.attr('role', 'button');
+
+        if (this.originalConfiguration.displaystepnumbers) {
+            const stepsPotentiallyVisible = this.getPotentiallyVisibleSteps();
+            const totalStepsPotentiallyVisible = stepsPotentiallyVisible.length;
+            const position = stepsPotentiallyVisible[stepConfig.stepNumber].position;
+            if (totalStepsPotentiallyVisible > 1) {
+                // Change the label of the Next button to include the sequence.
+                getString('nextstep_sequence', 'tool_usertours',
+                    {position: position, total: totalStepsPotentiallyVisible}).then(value => {
+                    nextBtn.html(value);
+                    return;
+                }).catch();
+            }
+        }
 
         // Replace the template with the updated version.
         stepConfig.template = template;

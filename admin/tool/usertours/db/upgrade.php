@@ -99,5 +99,20 @@ function xmldb_tool_usertours_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021092300, 'tool', 'usertours');
     }
 
+    if ($oldversion < 2021100700) {
+
+        // Define field displaystepnumbers to be added to tool_usertours_tours.
+        $table = new xmldb_table('tool_usertours_tours');
+        $field = new xmldb_field('displaystepnumbers', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'configdata');
+
+        // Conditionally launch add field displaystepnumbers.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Usertours savepoint reached.
+        upgrade_plugin_savepoint(true, 2021100700, 'tool', 'usertours');
+    }
+
     return true;
 }
