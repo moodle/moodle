@@ -1,6 +1,10 @@
 This files describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
 
+=== 3.11.4 ===
+* The method \completion_criteria_completion::mark_complete() now has the optional $timecompleted parameter to specify when the
+  criteria was completed.
+
 === 3.11 ===
 * New Behat steps for activity completion in the behat_completion class:
   - activity_completion_condition_displayed_as()
