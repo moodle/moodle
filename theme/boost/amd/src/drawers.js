@@ -156,6 +156,10 @@ export default class Drawers {
 
         if (this.drawerNode.classList.contains('show')) {
             this.openDrawer();
+        } else if (this.drawerNode.dataset.forceopen == 1) {
+            if (!isSmall()) {
+                this.openDrawer();
+            }
         } else {
             Aria.hide(this.drawerNode);
         }
@@ -276,7 +280,7 @@ export default class Drawers {
         this.drawerNode.classList.add('show');
 
         const preference = this.drawerNode.dataset.preference;
-        if (preference) {
+        if (preference && !isSmall() && (this.drawerNode.dataset.forceopen != 1)) {
             M.util.set_user_preference(preference, true);
         }
 
