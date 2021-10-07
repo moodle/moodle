@@ -66,7 +66,7 @@ Feature: Workshop submission and assessment with pass grade activity completion
       | Sam2 Student2 | Sam1 Student1 |
       | Sam3 Student3 | Sam1 Student1 |
       | Sam2 Student2 | Sam4 Student4 |
-    And I follow "TestWorkshop"
+    And I am on the "TestWorkshop" "workshop activity" page
     And I change phase in workshop "TestWorkshop" to "Assessment phase"
     And I log out
     # student1 assesses work of student2 and student3
