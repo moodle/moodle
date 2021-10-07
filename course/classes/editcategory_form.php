@@ -64,6 +64,7 @@ class core_course_editcategory_form extends moodleform {
         }
 
         $mform->addElement('autocomplete', 'parent', get_string('parentcategory'), $options);
+        $mform->addRule('parent', null, 'required', null, 'client');
 
         $mform->addElement('text', 'name', get_string('categoryname'), array('size' => '30'));
         $mform->addRule('name', get_string('required'), 'required', null);
