@@ -318,10 +318,9 @@ class page_requirements_manager {
             if (!is_null($page->context)) {
                 $contextid = $page->context->id;
                 $contextinstanceid = $page->context->instanceid;
+                $courseid = $page->course->id;
+                $coursecontext = context_course::instance($courseid);
             }
-
-            $courseid = $page->course->id;
-            $coursecontext = context_course::instance($courseid);
 
             $this->M_cfg = array(
                 'wwwroot'               => $CFG->wwwroot,
@@ -336,8 +335,8 @@ class page_requirements_manager {
                 'admin'                 => $CFG->admin,
                 'svgicons'              => $page->theme->use_svg_icons(),
                 'usertimezone'          => usertimezone(),
-                'courseId'              => (int) $courseid,
-                'courseContextId'       => $coursecontext->id,
+                'courseId'              => isset($courseid) ? (int) $courseid : 0,
+                'courseContextId'       => isset($coursecontext) ? $coursecontext->id : 0,
                 'contextid'             => $contextid,
                 'contextInstanceId'     => (int) $contextinstanceid,
                 'langrev'               => get_string_manager()->get_revision(),
