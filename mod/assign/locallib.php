@@ -92,6 +92,8 @@ require_once($CFG->dirroot . '/mod/assign/gradingtable.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 
 use \mod_assign\output\grading_app;
+use \mod_assign\output\assign_header;
+use \mod_assign\output\assign_submission_status;
 
 /**
  * Standard base class for mod_assign (assignment types).

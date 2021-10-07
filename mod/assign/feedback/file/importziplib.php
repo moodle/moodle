@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_assign\output\assign_header;
+
 /**
  * library class for importing feedback files from a zip
  *
