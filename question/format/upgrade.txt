@@ -3,8 +3,8 @@ This files describes API changes for question import/export format plugins.
 === 4.0 ===
 
 * The ExamView question format has been completely removed.
-The last posts in http://forum.examview.com/index.php? 
-are from over 10 years ago and there are no moodle.org 
+The last posts in http://forum.examview.com/index.php?
+are from over 10 years ago and there are no moodle.org
 discussions about Examview in the last 10 years.
 
 * The WebCT question format has been completely removed (WebCT was acquired by Blackboard in 2006).
