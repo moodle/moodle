@@ -71,6 +71,7 @@ class course_request_form extends moodleform {
         if (empty($CFG->lockrequestcategory)) {
             $displaylist = core_course_category::make_categories_list('moodle/course:request');
             $mform->addElement('autocomplete', 'category', get_string('coursecategory'), $displaylist);
+            $mform->addRule('category', null, 'required', null, 'client');
             $mform->setDefault('category', $CFG->defaultrequestcategory);
             $mform->addHelpButton('category', 'coursecategory');
         }
