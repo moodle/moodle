@@ -50,4 +50,6 @@ $string['region-side-pre'] = 'Right';
 $string['privacy:metadata:preference:draweropennav'] = 'The user\'s preference for hiding or showing the drawer menu navigation.';
 $string['privacy:drawernavclosed'] = 'The current preference for the navigation drawer is closed.';
 $string['privacy:drawernavopen'] = 'The current preference for the navigation drawer is open.';
+
+// Deprecated since Moodle 4.0.
 $string['totop'] = 'Go to top';
