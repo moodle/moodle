@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/calendar/tests/helpers.php');
 /**
  * Tests various classes and functions in upgradelib.php library.
  */
-class core_upgradelib_testcase extends advanced_testcase {
+class upgradelib_test extends advanced_testcase {
 
     /**
      * Test the {@link upgrade_stale_php_files_present() function
@@ -1489,5 +1489,41 @@ class core_upgradelib_testcase extends advanced_testcase {
 
         // Since group override events do not set userid, these events should not be flagged to be fixed.
         $this->assertEquals(0, $groupoverrideinfo->bad);
+    }
+
+    /**
+     * Test the admin_dir_usage check with no admin setting specified.
+     */
+    public function test_admin_dir_usage_not_set(): void {
+        $result = new environment_results("custom_checks");
+
+        $this->assertNull(check_admin_dir_usage($result));
+    }
+
+    /**
+     * Test the admin_dir_usage check with the default admin setting specified.
+     */
+    public function test_admin_dir_usage_is_default(): void {
+        global $CFG;
+
+        $CFG->admin = 'admin';
+
+        $result = new environment_results("custom_checks");
+        $this->assertNull(check_admin_dir_usage($result));
+    }
+
+    /**
+     * Test the admin_dir_usage check with a custom admin setting specified.
+     */
+    public function test_admin_dir_usage_non_standard(): void {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $CFG->admin = 'notadmin';
+
+        $result = new environment_results("custom_checks");
+        $this->assertInstanceOf(environment_results::class, check_admin_dir_usage($result));
+        $this->assertEquals('admin_dir_usage', $result->getInfo());
+        $this->assertFalse($result->getStatus());
     }
 }
