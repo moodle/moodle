@@ -39,6 +39,13 @@ renderer and course format renderer:
   - stealth_section_header (replaced by output\section_format\header)
   - stealth_section_footer (integrated in by output\section_format)
   - section_nav_selection (replaced by output\course_format\sectionselector)
+  - course_section_cm_edit_actions (replaced by core_courseformat\output\local\content\cm\\controlmenu)
+  - is_cm_conditionally_hidden (incorporated in core_availability\info_module::is_available_for_all)
+  - course_section_cm_name (replaced by core_courseformat\output\local\content\cm\\cmname)
+  - course_section_cm_classes (integrated in core_courseformat\output\local\content\cm)
+  - course_section_cm_name_title (replaced by core_courseformat\\output\\local\\cm\\title)
+  - course_section_cm_text (integrated in core_courseformat\\output\\local\\content\\cm)
+  - course_section_cm_availability (replaced by core_courseformat\\output\\local\\content\\cm\\availability))
 * The following abstract methods are deleted:
   - start_section_list (integrated in output\course_format)
   - end_section_list (integrated in output\course_format)
@@ -56,6 +63,7 @@ course formats don't have their own renderer.
 * New core_course_drawer() function to render the message drawer in the top of the body of each page.
 * New course_get_enrolled_courses_for_logged_in_user_from_search which hooks in with external\get_enrolled_courses_by_timeline_classification
   given COURSE_TIMELINE_SEARCH is set then get_enrolled_courses_by_timeline_classification will deviate to use a string search of enrolled courses.
+* Class core_course\output\course_module_name is deprecated. Now core_courseformat\output\local\cm\cmname controls inline edit.
 
 === 3.11 ===
 * A new callback xxx_coursemodule_definition_after_data that allows plugins to extend activity forms after the data is set.

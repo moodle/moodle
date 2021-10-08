@@ -51,7 +51,9 @@
             {{! Display the link to the module (or do nothing if module has no url). }}
             {{#hasname}}
             <div class="activityinstance">
-                {{{cmname}}} {{{afterlink}}}
+                {{#cmname}} {{> core/inplace_editable }} {{/cmname}}
+                {{{grouping}}}
+                {{{afterlink}}}
             </div>
             {{/hasname}}
             {{! If there is content but NO link (eg label), then display the
@@ -60,20 +62,27 @@
             and for accessibility reasons, e.g. if you have a one-line label
             it should work similarly (at least in terms of ordering) to an
             activity. }}
-            {{^hasurl}} {{{altcontent}}} {{/hasurl}}
+            {{^hasurl}}
+                <div class="contentwithoutlink {{textclasses}}"> {{{altcontent}}} </div>
+            {{/hasurl}}
 
-            {{#hasextras}}
-            <div class="actions">
-                {{#extras}} {{{.}}} {{/extras}}
-            </div>
-            {{/hasextras}}
+            {{#controlmenu}}
+                {{> core_courseformat/local/content/cm/controlmenu }}
+            {{/controlmenu}}
 
             {{#activityinfo}}
                 {{> core_course/activity_info}}
             {{/activityinfo}}
-            {{{availability}}}
+            {{#modavailability}}
+                {{> core_courseformat/local/content/cm/availability }}
+            {{/modavailability}}
 
-            {{#hasurl}} {{{altcontent}}} {{/hasurl}}
+            {{#hasurl}}
+                <div class="contentafterlink {{textclasses}}">
+                    {{{altcontent}}}
+                    {{^hasname}} {{{grouping}}} {{/hasname}}
+                </div>
+            {{/hasurl}}
         </div>
     </div>
 </div>

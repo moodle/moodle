@@ -1109,7 +1109,7 @@ abstract class base {
     }
 
     /**
-     * Returns instance of output compornent used by this plugin
+     * Returns instance of output component used by this plugin
      *
      * @throws coding_exception if the format class does not extends the original core one.
      * @param string $outputname the element to render (section, activity...)

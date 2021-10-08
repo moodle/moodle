@@ -15,11 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_courseformat/local/content/section/availability
+    @template core_courseformat/local/content/cm/availability
 
-    Displays a section availability.
-
-    The 3.x version course edition requires an existing section_availability div.
+    Displays a activity availability.
 
     Example context (json):
     {
@@ -33,11 +31,10 @@
                 "isfullinfo": 1
             }
         ],
-        "hasavailability": true
+        "hasmodavailability": true
     }
 }}
-<div class="section_availability">
-{{#hasavailability}}
+{{#hasmodavailability}}
     {{#info}}
         <div class="availabilityinfo {{classes}}">
         {{^isrestricted}}
@@ -48,5 +45,4 @@
         {{/isrestricted}}
         </div>
     {{/info}}
-{{/hasavailability}}
-</div>
+{{/hasmodavailability}}

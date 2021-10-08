@@ -48,7 +48,8 @@ class block_social_activities extends block_list {
         }
 
         $course = $this->page->course;
-        $courserenderer = $this->page->get_renderer('core', 'course');
+        $format = course_get_format($course);
+        $courserenderer = $format->get_renderer($this->page);
 
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -56,7 +57,11 @@ class block_social_activities extends block_list {
         $isediting = $this->page->user_is_editing() && has_capability('moodle/course:manageactivities', $context);
         $modinfo = get_fast_modinfo($course);
 
-/// extra fast view mode
+        // Output classes.
+        $cmnameclass = $format->get_output_classname('content\\cm\\cmname');
+        $controlmenuclass = $format->get_output_classname('content\\cm\\controlmenu');
+
+        // Extra fast view mode.
         if (!$isediting) {
             if (!empty($modinfo->sections[0])) {
                 foreach($modinfo->sections[0] as $cmid) {
@@ -66,17 +71,20 @@ class block_social_activities extends block_list {
                     }
 
                     if (!$cm->url) {
-                        $content = $courserenderer->course_section_cm_text($cm);
+                        $content = html_writer::div(
+                            $cm->get_formatted_content(['overflowdiv' => true, 'noclean' => true]),
+                            'contentwithoutlink'
+                        );
                         $this->content->items[] = $content;
                         $this->content->icons[] = '';
                     } else {
-                        $this->content->items[] = html_writer::div($courserenderer->course_section_cm_name($cm), 'activity');
+                        $cmname = new $cmnameclass($format, $cm->get_section_info(), $cm, $isediting);
+                        $this->content->items[] = html_writer::div($courserenderer->render($cmname), 'activity');
                     }
                 }
             }
             return $this->content;
         }
-
 
         // Slow & hacky editing mode.
         $ismoving = ismoving($course->id);
@@ -102,18 +110,28 @@ class block_social_activities extends block_list {
                     continue;
                 }
                 if (!$ismoving) {
-                    $actions = course_get_cm_edit_actions($mod, -1);
 
-                    // Prepend list of actions with the 'move' action.
-                    $actions = array('move' => new action_menu_link_primary(
-                        new moodle_url('/course/mod.php', array('sesskey' => sesskey(), 'copy' => $mod->id)),
-                        new pix_icon('t/move', $strmove, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-                        $strmove
-                    )) + $actions;
+                    $controlmenu = new $controlmenuclass(
+                        $format,
+                        $mod->get_section_info(),
+                        $mod,
+                        ['disableindentation' => true]
+                    );
+
+                    $menu = $controlmenu->get_action_menu();
+
+                    // Add a move primary action.
+                    $menu->add(
+                        new action_menu_link_primary(
+                            new moodle_url('/course/mod.php', ['sesskey' => sesskey(), 'copy' => $mod->id]),
+                            new pix_icon('t/move', $strmove, 'moodle', ['class' => 'iconsmall', 'title' => '']),
+                            $strmove
+                        )
+                    );
 
                     $editbuttons = html_writer::tag('div',
-                        $courserenderer->course_section_cm_edit_actions($actions, $mod, array('donotenhance' => true)),
-                        array('class' => 'buttons')
+                        $courserenderer->render($controlmenu),
+                        ['class' => 'buttons']
                     );
                 } else {
                     $editbuttons = '';
@@ -129,12 +147,15 @@ class block_social_activities extends block_list {
                         $this->content->icons[] = '';
                     }
                     if (!$mod->url) {
-                        $content = $courserenderer->course_section_cm_text($mod);
+                        $content = html_writer::div(
+                            $mod->get_formatted_content(['overflowdiv' => true, 'noclean' => true]),
+                            'contentwithoutlink'
+                        );
                         $this->content->items[] = $content . $editbuttons;
                         $this->content->icons[] = '';
                     } else {
-                        $this->content->items[] = html_writer::div($courserenderer->course_section_cm_name($mod), 'activity') .
-                            $editbuttons;
+                        $cmname = new $cmnameclass($format, $mod->get_section_info(), $mod, $isediting);
+                        $this->content->items[] = html_writer::div($courserenderer->render($cmname), 'activity') . $editbuttons;
                     }
                 }
             }

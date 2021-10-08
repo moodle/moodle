@@ -3822,7 +3822,7 @@ function course_get_tagged_courses($tag, $exclusivemode = false, $fromctx = 0, $
  */
 function core_course_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'activityname') {
-        return \core_course\output\course_module_name::update($itemid, $newvalue);
+        return \core_courseformat\output\local\content\cm\cmname::update($itemid, $newvalue);
     }
 }
 
@@ -3874,8 +3874,9 @@ function core_course_drawer(): string {
     $ismod = strpos($PAGE->pagetype, 'mod-') === 0;
     if ($ismod || $PAGE->pagetype == 'course-view-' . $format->get_format()) {
         $renderer = $format->get_renderer($PAGE);
-        $placeholder = $renderer->course_index_drawer($format);
-        return $placeholder;
+        if (method_exists($renderer, 'course_index_drawer')) {
+            return $renderer->course_index_drawer($format);
+        }
     }
 
     return '';

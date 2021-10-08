@@ -119,7 +119,8 @@
     }
 
     // Fix course format if it is no longer installed
-    $course->format = course_get_format($course)->get_format();
+    $format = course_get_format($course);
+    $course->format = $format->get_format();
 
     $PAGE->set_pagetype('course-view-' . $course->format);
     $PAGE->set_other_editing_capability('moodle/course:update');
@@ -133,14 +134,7 @@
     // Preload course format renderer before output starts.
     // This is a little hacky but necessary since
     // format.php is not included until after output starts
-    if (file_exists($CFG->dirroot.'/course/format/'.$course->format.'/renderer.php')) {
-        require_once($CFG->dirroot.'/course/format/'.$course->format.'/renderer.php');
-        if (class_exists('format_'.$course->format.'_renderer')) {
-            // call get_renderer only if renderer is defined in format plugin
-            // otherwise an exception would be thrown
-            $PAGE->get_renderer('format_'. $course->format);
-        }
-    }
+    $format->get_renderer($PAGE);
 
     if ($reset_user_allowed_editing) {
         // ugly hack

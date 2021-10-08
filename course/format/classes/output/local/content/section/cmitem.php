@@ -72,7 +72,7 @@ class cmitem implements renderable, templatable {
         $this->displayoptions = $displayoptions;
 
         // Get the necessary classes.
-        $this->cmclass = $format->get_output_classname('content\\section\\cm');
+        $this->cmclass = $format->get_output_classname('content\\cm');
     }
 
     /**

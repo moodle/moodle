@@ -201,7 +201,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Generate the edit control action menu
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * The section edit controls are now part of the main section_format output and does
      * not use renderer methods anymore.
@@ -250,7 +250,7 @@ abstract class section_renderer extends core_course_renderer {
      * Generate the content to displayed on the right part of a section
      * before course modules are included
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * Spatial references like "left" or "right" are limiting the way formats and themes can
      * extend courses. The elements from this method are now included in the section_format
@@ -278,7 +278,7 @@ abstract class section_renderer extends core_course_renderer {
      * Generate the content to displayed on the left part of a section
      * before course modules are included
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * Spatial references like "left" or "right" are limiting the way formats and themes can
      * extend courses. The elements from this method are now included in the section_format
@@ -310,7 +310,7 @@ abstract class section_renderer extends core_course_renderer {
      * Generate the display of the header part of a section before
      * course modules are included
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is now a section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -385,7 +385,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Generate the display of the footer part of a section.
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is integrated into section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -416,7 +416,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Generate the edit control items of a section
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is now a section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -448,7 +448,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Generate a summary of a section for display on the 'course index page'
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is now a section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -518,7 +518,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Generate a summary of the activites in a section
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is now a section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -550,7 +550,7 @@ abstract class section_renderer extends core_course_renderer {
      * are going to be unavailable etc). This logic is the same as for
      * activities.
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is now a section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -576,7 +576,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Displays availability information for the section (hidden, not available unles, etc.)
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is now a section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -597,7 +597,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Show if something is on on the course clipboard (moving around)
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * While the non ajax course eidtion is still supported, the old clipboard will be
      * emulated by core_courseformat\output\local\content\section\cmlist.
@@ -634,7 +634,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Generate next/previous section links for naviation.
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is now a section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -691,7 +691,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Generate the header html of a stealth section
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is now a section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -726,7 +726,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Generate footer html of a stealth section
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is now a section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -775,7 +775,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Generate the html for the 'Jump to' menu on a single section page.
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * This element is now a section_format output component and it is displayed using
      * mustache templates instead of a renderer method.
@@ -1053,7 +1053,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Returns controls in the bottom of the page to increase/decrease number of sections
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * @param stdClass $course
      * @param int|null $sectionreturn
@@ -1074,7 +1074,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Generate html for a section summary text
      *
-     * @deprecated since 4.0 - use core_course output components instead.
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
      *
      * @param stdClass $section The course_section entry from DB
      * @return string HTML to output.
