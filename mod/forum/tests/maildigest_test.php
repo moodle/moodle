@@ -655,7 +655,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
     }
 
     /**
-     * The digest being in the past is queued til the next day.
+     * The digest being in the future is queued for today.
      */
     public function test_cron_digest_same_day() {
         global $DB, $CFG;
