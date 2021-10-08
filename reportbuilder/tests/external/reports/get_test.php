@@ -112,6 +112,7 @@ class get_test extends externallib_advanced_testcase {
         $this->assertEmpty($result['filters']);
         $this->assertEmpty($result['conditions']);
         $this->assertEmpty($result['sorting']);
+        $this->assertEmpty($result['cardview']);
     }
 
     /**

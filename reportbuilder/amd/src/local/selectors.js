@@ -72,6 +72,7 @@ const SELECTORS = {
         audienceAdd: '[data-action="add-audience"]',
         audienceEdit: '[data-action="edit-audience"]',
         audienceDelete: '[data-action="delete-audience"]',
+        toggleCardView: '[data-action="toggle-card"]',
     },
 };
 

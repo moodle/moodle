@@ -93,6 +93,7 @@ class custom_report_table extends base_report_table {
         $hasaggregatedcolumns = !empty($aggregatedcolumns);
 
         $columnheaders = [];
+        $columnsattributes = [];
         foreach ($columns as $column) {
             $columnheading = $column->get_persistent()->get_formatted_heading($this->report->get_context());
             $columnheaders[$column->get_column_alias()] = $columnheading !== '' ? $columnheading : $column->get_title();
@@ -111,10 +112,27 @@ class custom_report_table extends base_report_table {
             if (!$column->get_is_sortable()) {
                 $this->no_sorting($column->get_column_alias());
             }
+
+            // Add column attributes needed for card view.
+            $settings = $this->report->get_settings_values();
+            $showfirsttitle = $settings['cardview_showfirsttitle'] ?? false;
+            $visiblecolumns = max($settings['cardview_visiblecolumns'] ?? 1, count($this->columns));
+            if ($showfirsttitle || $column->get_persistent()->get('columnorder') > 1) {
+                $column->add_attributes(['data-cardtitle' => $columnheaders[$column->get_column_alias()]]);
+            }
+            if ($column->get_persistent()->get('columnorder') > $visiblecolumns) {
+                $column->add_attributes(['data-cardviewhidden' => '']);
+            }
+
+            // Generate row attributes to be included in each cell.
+            $columnsattributes[$column->get_column_alias()] = $column->get_attributes();
         }
 
         $this->define_columns(array_keys($columnheaders));
         $this->define_headers(array_values($columnheaders));
+
+        // Add column attributes to the table.
+        $this->set_columnsattributes($columnsattributes);
 
         // Table configuration.
         $this->initialbars(false);
@@ -277,5 +295,33 @@ class custom_report_table extends base_report_table {
         echo $OUTPUT->render($notification);
 
         echo $this->get_dynamic_table_html_end();
+    }
+
+    /**
+     * Override get_row_cells_html to add an extra cell with the toggle button for card view.
+     *
+     * @param string $rowid
+     * @param array $row
+     * @param array|null $suppresslastrow
+     * @return string
+     */
+    public function get_row_cells_html(string $rowid, array $row, ?array $suppresslastrow): string {
+        $html = parent::get_row_cells_html($rowid, $row, $suppresslastrow);
+
+        // Add extra 'td' in the row with card toggle button (only visible in card view).
+        $visiblecolumns = $this->report->get_settings_values()['cardview_visiblecolumns'] ?? 1;
+        if ($visiblecolumns < count($this->columns)) {
+            $buttonicon = html_writer::tag('i', '', ['class' => 'fa fa-angle-down']);
+            $buttonatttributes = [
+                'type' => 'button',
+                'class' => 'btn collapsed',
+                'title' => get_string('showhide', 'core_reportbuilder', reset($row)),
+                'data-toggle' => 'collapse',
+                'data-action' => 'toggle-card'
+            ];
+            $button = html_writer::tag('button', $buttonicon, $buttonatttributes);
+            $html .= html_writer::tag('td', $button, ['class' => 'card-toggle d-none']);
+        }
+        return $html;
     }
 }

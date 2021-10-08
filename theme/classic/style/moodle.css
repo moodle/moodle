@@ -20762,6 +20762,58 @@ div.editor_atto_toolbar button .icon {
   .reportbuilder-audiences-container .instance-card .card-header i.icon {
     margin-right: 0; }
 
+/* Report table card view styles */
+/* Report table card view for small screens */
+@media (max-width: 575.98px) {
+  .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table thead {
+    display: none; }
+  .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr {
+    display: flex;
+    flex-direction: column;
+    margin: .5rem 0;
+    padding: .25rem .5rem 0 .5rem;
+    background-color: #fff !important;
+    /* stylelint-disable-line declaration-no-important */
+    word-wrap: break-word;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem; }
+    .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr:hover {
+      background-color: #fff !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr.emptyrow {
+      display: none; }
+    .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr:not(.show) td[data-cardviewhidden] {
+      display: none; }
+    .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td {
+      display: block;
+      min-height: 3.6rem;
+      padding: .5rem .25rem;
+      border: none; }
+      .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td::before {
+        content: attr(data-cardtitle);
+        display: block;
+        text-transform: uppercase;
+        font-size: 70%;
+        color: #343a40; }
+      .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td:not([data-cardtitle]) {
+        min-height: 3rem; }
+      .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td:not(:first-child):not(.card-toggle) {
+        border-top: 1px solid rgba(0, 0, 0, 0.125); }
+      .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td:first-child {
+        padding-right: 2rem; }
+    .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td.card-toggle {
+      display: block !important;
+      /* stylelint-disable-line declaration-no-important */
+      position: absolute;
+      right: 10px; }
+      .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td.card-toggle button {
+        padding: 0 .5rem;
+        color: #6a737b; }
+        .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td.card-toggle button i {
+          font-size: 1.5em;
+          font-weight: bold; } }
+
 .courseindex .courseindex-heading {
   padding: 0.5rem 1rem; }
 

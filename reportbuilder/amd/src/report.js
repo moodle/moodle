@@ -26,6 +26,13 @@ import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {setPageNumber, refreshTableContent} from 'core_table/dynamic';
 import * as tableSelectors from 'core_table/local/dynamic/selectors';
 
+const CLASSES = {
+    COLLAPSED: 'collapsed',
+    EXPANDED: 'show',
+    ICONUP: 'fa-angle-up',
+    ICONDOWN: 'fa-angle-down'
+};
+
 let initialized = false;
 
 /**
@@ -63,6 +70,27 @@ export const init = () => {
         event.preventDefault();
         const popupAction = JSON.parse(reportActionPopup.dataset.popupAction);
         window.openpopup(event, popupAction.jsfunctionargs);
+    });
+
+    // Listen for card view toggle events.
+    document.addEventListener('click', (event) => {
+        const toggleCard = event.target.closest(reportSelectors.actions.toggleCardView);
+        if (toggleCard) {
+            const tableCard = toggleCard.closest('tr');
+            const toggleIcon = toggleCard.querySelector('i');
+            event.preventDefault();
+            if (toggleCard.classList.contains(CLASSES.COLLAPSED)) {
+                tableCard.classList.add(CLASSES.EXPANDED);
+                toggleIcon.classList.replace(CLASSES.ICONDOWN, CLASSES.ICONUP);
+                toggleCard.classList.remove(CLASSES.COLLAPSED);
+                toggleCard.setAttribute('aria-expanded', "true");
+            } else {
+                tableCard.classList.remove(CLASSES.EXPANDED);
+                toggleIcon.classList.replace(CLASSES.ICONUP, CLASSES.ICONDOWN);
+                toggleCard.classList.add(CLASSES.COLLAPSED);
+                toggleCard.removeAttribute('aria-expanded');
+            }
+        }
     });
 
     initialized = true;
