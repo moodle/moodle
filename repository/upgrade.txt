@@ -4,6 +4,7 @@ details of the repository API are available on Moodle docs:
 http://docs.moodle.org/dev/Repository_API
 
 === 4.0 ===
+* The repository_boxnet has been completely removed.
 * The repository_picasa has been completely removed (Picasa is discontinued since 2016).
 * The skydrive repository has been completely removed from core. It has been moved to the plugins database repository, so
 it can still be installed as a third-party plugin.

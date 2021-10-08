@@ -1733,12 +1733,12 @@ class core_plugin_manager {
             'enrol' => array('authorize'),
             'filter' => array('censor'),
             'media' => array('swf'),
-            'portfolio' => array('picasa'),
+            'portfolio' => array('picasa', 'boxnet'),
             'qformat' => array('webct'),
             'message' => array('jabber'),
             'quizaccess' => array('safebrowser'),
             'report' => array('search'),
-            'repository' => array('alfresco', 'picasa', 'skydrive'),
+            'repository' => array('alfresco', 'picasa', 'skydrive', 'boxnet'),
             'tinymce' => array('dragmath'),
             'tool' => array('bloglevelupgrade', 'qeupgradehelper', 'timezoneimport', 'assignmentupgrade', 'health'),
             'theme' => array('bootstrapbase', 'clean', 'more', 'afterburner', 'anomaly', 'arialist', 'base',
@@ -1942,7 +1942,7 @@ class core_plugin_manager {
             ),
 
             'portfolio' => array(
-                'boxnet', 'download', 'flickr', 'googledocs', 'mahara'
+                'download', 'flickr', 'googledocs', 'mahara'
             ),
 
             'profilefield' => array(
@@ -2002,7 +2002,7 @@ class core_plugin_manager {
             ),
 
             'repository' => array(
-                'areafiles', 'boxnet', 'contentbank', 'coursefiles', 'dropbox', 'equella', 'filesystem',
+                'areafiles', 'contentbank', 'coursefiles', 'dropbox', 'equella', 'filesystem',
                 'flickr', 'flickr_public', 'googledocs', 'local', 'merlot', 'nextcloud',
                 'onedrive', 'recent', 's3', 'upload', 'url', 'user', 'webdav',
                 'wikimedia', 'youtube'

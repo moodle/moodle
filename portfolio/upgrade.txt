@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 4.0 ===
 
+* The portfolio_boxnet has been completely removed.
 * The portfolio_picasa has been completely removed (Picasa is discontinued since 2016).
 
 === 3.7 ===
