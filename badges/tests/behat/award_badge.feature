@@ -60,14 +60,16 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Manage badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 1"
     And I follow "Recipients (0)"
     And I press "Award badge"
     # Award course badge 1 to student 1.
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     When I press "Award badge"
-    And I follow "Manage badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 1"
     And I follow "Recipients (1)"
     Then I should see "Recipients (1)"
@@ -185,7 +187,8 @@ Feature: Award badges
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     When I press "Award badge"
-    And I follow "Manage badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge"
     Then I should see "Recipients (2)"
     And I log out
@@ -286,7 +289,8 @@ Feature: Award badges
     # Award course badge 1 to student 1.
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     When I press "Award badge"
-    And I follow "Manage badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 1"
     And I follow "Recipients (1)"
     Then I should see "Recipients (1)"
@@ -311,7 +315,8 @@ Feature: Award badges
     # Award course badge 2 to student 2.
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
     When I press "Award badge"
-    And I follow "Manage badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 2"
     And I follow "Recipients (1)"
     Then I should see "Recipients (1)"
@@ -352,7 +357,8 @@ Feature: Award badges
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
     When I press "Award badge"
-    And I follow "Manage badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge"
     Then I should see "Recipients (2)"
     And I follow "Recipients (2)"
@@ -361,6 +367,7 @@ Feature: Award badges
     And I press "Revoke badge"
     And I set the field "existingrecipients[]" to "Student 1 (student1@example.com)"
     When I press "Revoke badge"
-    And I follow "Manage badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge"
     Then I should see "Recipients (0)"
