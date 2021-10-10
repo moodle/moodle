@@ -109,7 +109,7 @@ class date extends base {
         $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_NOT_EMPTY);
         $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_EMPTY);
         $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_RANGE);
-        $mform->disabledIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_CURRENT);
+        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_CURRENT);
 
         // Unit selector for previous and next operators.
         $unitlabel = get_string('filterdurationunit', 'core_reportbuilder', $this->get_header());
@@ -129,7 +129,7 @@ class date extends base {
         $mform->hideIf("{$this->name}_unit", "{$this->name}_operator", 'eq', self::DATE_RANGE);
 
         // Add operator/value/unit group.
-        $mform->addGroup($elements, "{$this->name}_group", '', null, false);
+        $mform->addGroup($elements, "{$this->name}_group", '', '', false);
 
         // Date selectors for range operator.
         $mform->addElement('date_selector', "{$this->name}_from", get_string('filterdatefrom', 'core_reportbuilder'),

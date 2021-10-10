@@ -84,10 +84,10 @@ class duration extends base {
         // Unit.
         $unitlabel = get_string('filterdurationunit', 'core_reportbuilder', $this->get_header());
         $units = [
-            1 => get_string('seconds'),
-            MINSECS => get_string('minutes'),
-            HOURSECS => get_string('hours'),
-            DAYSECS => get_string('days'),
+            1 => get_string('filterdateseconds', 'core_reportbuilder'),
+            MINSECS => get_string('filterdateminutes', 'core_reportbuilder'),
+            HOURSECS => get_string('filterdatehours', 'core_reportbuilder'),
+            DAYSECS => get_string('filterdatedays', 'core_reportbuilder'),
         ];
 
         $elements[] = $mform->createElement('select', "{$this->name}_unit", $unitlabel, $units);
@@ -95,7 +95,7 @@ class duration extends base {
         $mform->setDefault("{$this->name}_unit", 1);
         $mform->hideIf("{$this->name}_unit", "{$this->name}_operator", 'eq', self::DURATION_ANY);
 
-        $mform->addGroup($elements, "{$this->name}_group", '', null, false);
+        $mform->addGroup($elements, "{$this->name}_group", '', '', false);
     }
 
     /**
