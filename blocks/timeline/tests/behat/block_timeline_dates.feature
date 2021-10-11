@@ -30,6 +30,7 @@ Feature: The timeline block allows users to see upcoming activities
       | student1 | C1 | student |
       | student1 | C2 | student |
       | student1 | C3 | student |
+    And I change window size to "large"
 
   Scenario: Next 7 days in date view
     Given I log in as "student1"

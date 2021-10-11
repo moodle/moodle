@@ -21,13 +21,15 @@ Feature: Within a moodle instance, an administrator should be able to modify lan
   @javascript
   Scenario: Edit an string but don't save it to lang pack.
     When I press "Apply changes and continue editing"
-    Then I should see "Help and documentation" in the ".helplink" "css_element"
-    And I should not see "moodle documents" in the ".helplink" "css_element"
+    And I click on "Show footer" "button"
+    Then I should not see "moodle documents" in the "page-footer" "region"
+    And I should see "Help and documentation" in the "page-footer" "region"
 
   @javascript
   Scenario: Customize an string as admin and save it to lang pack.
     Given I press "Save changes to the language pack"
     And I should see "There are 1 modified strings."
     When I click on "Continue" "button"
-    Then I should see "moodle documents" in the ".helplink" "css_element"
-    And I should not see "Help and documentation" in the ".helplink" "css_element"
+    And I click on "Show footer" "button"
+    Then I should not see "Help and documentation" in the "page-footer" "region"
+    And I should see "moodle documents" in the "page-footer" "region"
