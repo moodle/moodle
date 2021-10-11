@@ -193,7 +193,7 @@ $rm = new rating_manager();
 
 $PAGE->set_title($strsearchresults);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_button($searchform);
+$PAGE->add_header_action($searchform);
 echo $OUTPUT->header();
 echo '<div class="reportlink">';
 

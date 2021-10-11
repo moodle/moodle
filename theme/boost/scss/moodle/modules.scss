@@ -105,17 +105,6 @@ select {
             font-weight: inherit;
         }
     }
-
-    // Style for the forum subscription mode node.
-    .subscriptionmode {
-        color: $body-color;
-    }
-
-    // Style for the currently selected subscription mode.
-    .activesetting {
-        color: $body-color;
-        font-weight: bold;
-    }
 }
 
 .discussion-settings-container {
@@ -1063,6 +1052,7 @@ div#dock {
     }
 }
 
+// Usermenu
 .userloggedinas,
 .userswitchedrole,
 .loginfailures {
@@ -1073,8 +1063,8 @@ div#dock {
             margin-right: $spacer / 2;
             height: 35px;
             .meta {
-                display: block;
                 font-size: $font-size-sm;
+                align-items: center;
             }
         }
         .avatar {

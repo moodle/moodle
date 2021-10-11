@@ -22,6 +22,19 @@ if ($hassiteconfig && moodle_needs_upgrading()) {
 \core\hub\registration::registration_reminder('/admin/search.php');
 
 admin_externalpage_setup('search', '', array('query' => $query)); // now hidden page
+$PAGE->set_heading(get_string('administrationsite')); // Has to be after setup since it has its' own heading set_heading.
+
+if ($hassiteconfig) {
+    $data = [
+        'action' => new moodle_url('/admin/search.php'),
+        'btnclass' => 'btn-primary',
+        'inputname' => 'query',
+        'searchstring' => get_string('search'),
+        'query' => $query,
+        'extraclasses' => 'd-flex justify-content-end'
+    ];
+    $PAGE->add_header_action($OUTPUT->render_from_template('core/search_input', $data));
+}
 
 $adminroot = admin_get_root(); // need all settings here
 $adminroot->search = $query; // So we can reference it in search boxes later in this invocation
@@ -59,8 +72,6 @@ if (empty($query)) {
     echo $adminrenderer->warn_if_not_registered();
 }
 
-echo $OUTPUT->heading(get_string('administrationsite'));
-
 if ($errormsg !== '') {
     echo $OUTPUT->notification($errormsg);
 
@@ -70,22 +81,10 @@ if ($errormsg !== '') {
 
 $showsettingslinks = true;
 
-if ($hassiteconfig) {
-    $data = [
-        'action' => new moodle_url('/admin/search.php'),
-        'btnclass' => 'btn-primary',
-        'inputname' => 'query',
-        'searchstring' => get_string('search'),
-        'query' => $query,
-        'extraclasses' => 'd-flex justify-content-center'
-    ];
-    echo $OUTPUT->render_from_template('core/search_input', $data);
-
+if ($query && $hassiteconfig) {
     echo '<hr>';
-    if ($query) {
-        echo admin_search_settings_html($query);
-        $showsettingslinks = false;
-    }
+    echo admin_search_settings_html($query);
+    $showsettingslinks = false;
 }
 
 if ($showsettingslinks) {

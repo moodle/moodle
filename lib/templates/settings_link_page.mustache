@@ -37,7 +37,9 @@
     }
 }}
 {{#secondarynavigation}}
-    {{> core/moremenu}}
+    <div class="secondary-navigation">
+        {{> core/moremenu}}
+    </div>
 {{/secondarynavigation}}
 {{^secondarynavigation}}
     <ul class="nav nav-tabs" role="tablist">
@@ -59,10 +61,9 @@
         {{/node.children}}
     </ul>
 {{/secondarynavigation}}
-
 <div class="tab-content mt-3">
     <div class="tab-pane active" id="link{{node.key}}" {{^secondarynavigation}}role="tabpanel"{{/secondarynavigation}}>
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-3">
                 </div>
@@ -106,7 +107,7 @@
     {{#node.children}}
         {{#children.count}}
             <div class="tab-pane" id="link{{key}}" {{^secondarynavigation}}role="tabpanel"{{/secondarynavigation}}>
-                <div class="container">
+                <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-3">
                             {{#action}}<h4><a href="{{action}}">{{text}}</a></h4>{{/action}}

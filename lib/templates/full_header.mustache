@@ -30,12 +30,12 @@
     }
 }}
 <header id="page-header" class="row">
-    <div class="col-12 pt-3 pb-3">
-        <div class="card {{^contextheader}}border-0 bg-transparent{{/contextheader}}">
-            <div class="card-body {{^contextheader}}p-2{{/contextheader}}">
+    <div class="col-12 pt-3">
+        <div class="card border-0">
+            <div class="card-body p-2 navigation-card">
                 <div class="d-flex flex-wrap">
                     {{#hasnavbar}}
-                    <div id="page-navbar">
+                    <div id="page-navbar" class="p-1">
                         {{{navbar}}}
                     </div>
                     {{/hasnavbar}}

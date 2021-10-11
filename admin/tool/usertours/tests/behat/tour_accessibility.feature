@@ -58,14 +58,14 @@ Feature: Apply accessibility to a tour
     When I press tab
     Then the focused element is ".usermenu" "css_element"
     When I press tab
-    Then the focused element is "Admin User" "link_or_button" in the ".usermenu" "css_element"
+    Then the focused element is "User menu" "button" in the ".usermenu" "css_element"
     When I press tab
     And I press tab
     Then the focused element is ".close" "css_element" in the "User menu" "dialogue"
-    # Press shift-tab twice should lead us back to "Admin user" link.
+    # Press shift-tab twice should lead us back to the user menu button.
     When I press shift tab
     And I press shift tab
-    Then the focused element is "Admin User" "link_or_button" in the ".usermenu" "css_element"
+    Then the focused element is "User menu" "button" in the ".usermenu" "css_element"
 
   @javascript
   Scenario: Aria tags should not exist

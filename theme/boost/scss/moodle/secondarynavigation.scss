@@ -1,6 +1,9 @@
-.secondarynavigation {
-    z-index: 1;
-    .moremenu {
-        margin-bottom: -1px;
+.secondary-navigation {
+    border-top: 1px solid $gray-300;
+    border-bottom: 1px solid $gray-300;
+    .navigation {
+        border-color: $gray-300;
+        height: $moremenu-height;
+        margin-bottom: map-get($spacers, 3);
     }
 }

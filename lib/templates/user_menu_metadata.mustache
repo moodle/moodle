@@ -46,18 +46,17 @@
         "userfullname": "Admin User"
     }
 }}
-<span class="usertext mr-1">
-    {{userfullname}}
-    {{#metadata}}
-        <span class="meta {{classes}}">
+{{#metadata}}
+    <span class="usertext d-flex mr-1">
+        <span class="meta d-flex {{classes}}">
             {{{content}}}
         </span>
-    {{/metadata}}
-</span>
-<span class="avatars">
-{{#avatardata}}
-    <span class="avatar {{classes}}">
-        {{{content}}}
     </span>
-{{/avatardata}}
+{{/metadata}}
+<span class="avatars">
+    {{#avatardata}}
+        <span class="avatar {{classes}}">
+            {{{content}}}
+        </span>
+    {{/avatardata}}
 </span>

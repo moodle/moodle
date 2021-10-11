@@ -11525,6 +11525,9 @@ img#persona_signin {
   border-width: 0; }
 
 /** Page header */
+#page-header h1.h2 {
+  font-weight: bold; }
+
 #page-header .logo {
   margin: 1rem 0; }
   #page-header .logo img {
@@ -17242,13 +17245,6 @@ select {
 .path-mod-forum .discussion-list .topic {
   font-weight: inherit; }
 
-.path-mod-forum .subscriptionmode {
-  color: #212529; }
-
-.path-mod-forum .activesetting {
-  color: #212529;
-  font-weight: bold; }
-
 .discussion-settings-container .custom-select {
   width: 100%; }
 
@@ -17912,8 +17908,8 @@ div#dock {
   .userloggedinas .usermenu .usertext .meta,
   .userswitchedrole .usermenu .usertext .meta,
   .loginfailures .usermenu .usertext .meta {
-    display: block;
-    font-size: 0.8203125rem; }
+    font-size: 0.8203125rem;
+    align-items: center; }
 
 .userloggedinas .usermenu .avatar img,
 .userswitchedrole .usermenu .avatar img,
@@ -19390,6 +19386,9 @@ body {
   .popover-region-content-container.loading .empty-message {
     display: none; }
 
+.navbar-nav .popover-region .icon {
+  font-weight: bolder; }
+
 .navbar .popover-region.collapsed .popover-region-container {
   opacity: 0;
   visibility: hidden;
@@ -20277,7 +20276,8 @@ div.editor_atto_toolbar button .icon {
 .navbar.fixed-top {
   padding-top: 0;
   padding-bottom: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: none;
+  border-bottom: #dee2e6 1px solid;
   align-items: stretch;
   height: 50px; }
   .navbar.fixed-top .navbar-brand .logo {
@@ -20292,6 +20292,9 @@ div.editor_atto_toolbar button .icon {
     background-color: #dee2e6; }
   .navbar.fixed-top #usernavigation .nav-link {
     padding: 0 0.5rem; }
+  .navbar.fixed-top .login {
+    display: flex;
+    align-items: center; }
   .navbar.fixed-top .usermenu {
     display: flex; }
     .navbar.fixed-top .usermenu .action-menu {
@@ -20307,8 +20310,6 @@ div.editor_atto_toolbar button .icon {
         display: flex;
         align-items: center;
         height: 100%; }
-      .navbar.fixed-top .usermenu .dropdown .dropdown-toggle::after {
-        display: none; }
     .navbar.fixed-top .usermenu .dropdown-menu {
       min-width: 235px; }
       .navbar.fixed-top .usermenu .dropdown-menu .carousel-navigation-link > * {
@@ -20337,6 +20338,19 @@ div.editor_atto_toolbar button .icon {
     .navbar.fixed-top .usermenu .login {
       display: flex;
       align-items: center; }
+  .navbar.fixed-top .usermenu .dropdown,
+  .navbar.fixed-top .langmenu .dropdown {
+    display: flex;
+    align-items: center;
+    height: 100%; }
+    .navbar.fixed-top .usermenu .dropdown .dropdown-toggle,
+    .navbar.fixed-top .langmenu .dropdown .dropdown-toggle {
+      padding-top: 0;
+      padding-bottom: 0;
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      height: 100%; }
   .navbar.fixed-top .langmenu .dropdown-menu .dropdown-item[aria-current="true"]::before {
     content: "\f00c";
     font-size: 0.75rem;
@@ -20455,15 +20469,46 @@ div.editor_atto_toolbar button .icon {
 
 .moremenu {
   opacity: 0;
-  height: 40px; }
+  height: 50px; }
   .moremenu.observed {
     opacity: 1; }
   .moremenu .nav-link {
-    height: 40px;
+    height: 50px;
     display: flex;
-    align-items: center; }
+    align-items: center;
+    border-right: none;
+    border-bottom: solid 3px transparent;
+    border-left: none;
+    border-top: none; }
+    .moremenu .nav-link:hover, .moremenu .nav-link:focus {
+      background-color: #e9ecef; }
+    .moremenu .nav-link.active {
+      font-weight: bold;
+      border-bottom: solid 3px #0f6fc5; }
+    .moremenu .nav-link[data-toggle="tab"] {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; }
+      .moremenu .nav-link[data-toggle="tab"]::after {
+        content: attr(data-text)/"";
+        height: 0;
+        visibility: hidden;
+        overflow: hidden;
+        user-select: none;
+        pointer-events: none;
+        font-weight: bold; }
+        @media speech {
+          .moremenu .nav-link[data-toggle="tab"]::after {
+            display: none; } }
   .moremenu .nav-tabs {
-    margin-left: 0; }
+    margin-left: 0;
+    background-color: #fff; }
+  .moremenu .show > .nav-link,
+  .moremenu .active > .nav-link,
+  .moremenu .nav-link.show,
+  .moremenu .nav-link.active {
+    background: transparent; }
   .moremenu .dropdownmoremenu > .dropdown-menu > .dropdown-item {
     padding: 0; }
   .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu {
@@ -20480,15 +20525,19 @@ div.editor_atto_toolbar button .icon {
     .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu .dropdown-divider {
       display: none; }
 
-.navbar.fixed-top .moremenu {
+.primary-navigation .navigation {
   height: 50px; }
-  .navbar.fixed-top .moremenu .nav-link {
-    height: 50px; }
+  .primary-navigation .navigation .nav-link {
+    height: 50px;
+    color: #212529; }
 
-.secondarynavigation {
-  z-index: 1; }
-  .secondarynavigation .moremenu {
-    margin-bottom: -1px; }
+.secondary-navigation {
+  border-top: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6; }
+  .secondary-navigation .navigation {
+    border-color: #dee2e6;
+    height: 50px;
+    margin-bottom: 1rem; }
 
 body {
   -webkit-font-smoothing: antialiased;

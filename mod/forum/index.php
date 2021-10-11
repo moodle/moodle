@@ -454,7 +454,7 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
 $PAGE->navbar->add($strforums);
 $PAGE->set_title("$course->shortname: $strforums");
 $PAGE->set_heading($course->fullname);
-$PAGE->set_button($searchform);
+$PAGE->add_header_action($searchform);
 echo $OUTPUT->header();
 
 if (!isguestuser() && isloggedin() && $showsubscriptioncolumns) {
