@@ -79,6 +79,7 @@ class content implements renderable, templatable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
+        global $PAGE;
         $format = $this->format;
 
         // Most formats uses section 0 as a separate section so we remove from the list.
@@ -99,12 +100,13 @@ class content implements renderable, templatable {
         // The single section format has extra navigation.
         $singlesection = $this->format->get_section_number();
         if ($singlesection) {
-            $sectionnavigation = new $this->sectionnavigationclass($format, $singlesection);
-            $data->sectionnavigation = $sectionnavigation->export_for_template($output);
+            if (!$PAGE->theme->usescourseindex) {
+                $sectionnavigation = new $this->sectionnavigationclass($format, $singlesection);
+                $data->sectionnavigation = $sectionnavigation->export_for_template($output);
 
-            $sectionselector = new $this->sectionselectorclass($format, $sectionnavigation);
-            $data->sectionselector = $sectionselector->export_for_template($output);
-
+                $sectionselector = new $this->sectionselectorclass($format, $sectionnavigation);
+                $data->sectionselector = $sectionselector->export_for_template($output);
+            }
             $data->hasnavigation = true;
             $data->singlesection = array_shift($data->sections);
             $data->sectionreturn = $singlesection;
