@@ -10172,7 +10172,8 @@ a.autolink.glossary:hover {
 .pagingbar .thispage {
   font-weight: bold; }
 
-img.userpicture {
+img.userpicture,
+.userinitials {
   margin-right: 0.5rem; }
 
 img.resize {
@@ -17914,6 +17915,12 @@ div#dock {
     border-radius: 50%; }
     .userloggedinas .usermenu .userbutton .avatars .avatar.current img {
       vertical-align: baseline; }
+    .userloggedinas .usermenu .userbutton .avatars .avatar.current .userinitials.size-35 {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #dee2e6;
+      background-color: #fff;
+      font-size: 0.5625rem; }
   .userloggedinas .usermenu .userbutton .avatars .avatar img {
     width: inherit;
     height: inherit; }
@@ -17921,6 +17928,26 @@ div#dock {
     width: 35px;
     height: 35px;
     display: inline-block; }
+
+.userinitials {
+  background-color: #e9ecef;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #343a40;
+  font-weight: normal; }
+  .userinitials.size-16 {
+    width: 30px;
+    height: 30px; }
+  .userinitials.size-35 {
+    width: 35px;
+    height: 35px; }
+  .userinitials.size-100 {
+    width: 100px;
+    height: 100px;
+    font-size: 1.875rem; }
 
 @media (max-width: 767.98px) {
   .usertext {

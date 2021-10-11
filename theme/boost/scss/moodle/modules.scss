@@ -1101,6 +1101,13 @@ div#dock {
                 img {
                     vertical-align: baseline;
                 }
+                .userinitials.size-35 {
+                    width: 20px;
+                    height: 20px;
+                    border: $border-width solid $border-color;
+                    background-color: $white;
+                    font-size: $font-size-base * .6;
+                }
             }
             img {
                 width: inherit;
@@ -1112,6 +1119,30 @@ div#dock {
             height: 35px;
             display: inline-block;
         }
+    }
+}
+
+.userinitials {
+    background-color: $gray-200;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: $gray-800;
+    font-weight: normal;
+    &.size-16 {
+        width: 30px;
+        height: 30px;
+    }
+    &.size-35 {
+        width: 35px;
+        height: 35px;
+    }
+    &.size-100 {
+        width: 100px;
+        height: 100px;
+        font-size: $h2-font-size;
     }
 }
 

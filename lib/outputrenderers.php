@@ -2593,8 +2593,13 @@ class core_renderer extends renderer_base {
             $attributes['title'] = $alt;
         }
 
-        // get the image html output fisrt
-        $output = html_writer::empty_tag('img', $attributes);
+        // get the image html output first
+        if ($user->picture == 0 && !defined('BEHAT_SITE_RUNNING')) {
+            $output = html_writer::tag('span', mb_substr($user->firstname, 0, 1) . mb_substr($user->lastname, 0, 1),
+                ['class' => 'userinitials size-' . $size]);
+        } else {
+            $output = html_writer::empty_tag('img', $attributes);
+        }
 
         // Show fullname together with the picture when desired.
         if ($userpicture->includefullname) {
