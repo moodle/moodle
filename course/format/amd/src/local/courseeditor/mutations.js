@@ -56,6 +56,37 @@ export default class {
         return JSON.parse(ajaxresult);
     }
 
+
+    /**
+     * Mutation module initialize.
+     *
+     * The reactive instance will execute this method when addMutations or setMutation is invoked.
+     *
+     * @param {StateManager} stateManager the state manager
+     */
+    init(stateManager) {
+        // Add a method to prepare the fields when some update is comming from the server.
+        stateManager.addUpdateTypes({
+            prepareFields: this._prepareFields,
+        });
+    }
+
+    /**
+     * Add default values to state elements.
+     *
+     * This method is called every time a webservice returns a update state message.
+     *
+     * @param {Object} stateManager the state manager
+     * @param {String} updateName the state element to update
+     * @param {Object} fields the new data
+     * @returns {Object} final fields data
+     */
+    _prepareFields(stateManager, updateName, fields) {
+        // Any update should unlock the element.
+        fields.locked = false;
+        return fields;
+    }
+
     /**
      * Move course modules to specific course location.
      *
@@ -76,8 +107,10 @@ export default class {
             throw new Error(`Mutation cmMove requires targetSectionId or targetCmId`);
         }
         const course = stateManager.get('course');
+        this.cmLock(stateManager, cmids, true);
         const updates = await this._callEditWebservice('cm_move', course.id, cmids, targetSectionId, targetCmId);
         stateManager.processUpdates(updates);
+        this.cmLock(stateManager, cmids, false);
     }
 
     /**
@@ -92,8 +125,10 @@ export default class {
             throw new Error(`Mutation sectionMove requires targetSectionId`);
         }
         const course = stateManager.get('course');
+        this.sectionLock(stateManager, sectionIds, true);
         const updates = await this._callEditWebservice('section_move', course.id, sectionIds, targetSectionId);
         stateManager.processUpdates(updates);
+        this.sectionLock(stateManager, sectionIds, false);
     }
 
     /**
@@ -118,6 +153,28 @@ export default class {
         this._setElementsValue(stateManager, 'section', sectionIds, 'dragging', dragValue);
     }
 
+    /**
+     * Lock or unlock course modules.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of course modules ids
+     * @param {bool} lockValue the new locked value
+     */
+    cmLock(stateManager, cmIds, lockValue) {
+        this._setElementsValue(stateManager, 'cm', cmIds, 'locked', lockValue);
+    }
+
+    /**
+     * Lock or unlock course sections.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of section ids
+     * @param {bool} lockValue the new locked value
+     */
+    sectionLock(stateManager, sectionIds, lockValue) {
+        this._setElementsValue(stateManager, 'section', sectionIds, 'locked', lockValue);
+    }
+
     _setElementsValue(stateManager, name, ids, fieldName, newValue) {
         stateManager.setReadOnly(false);
         ids.forEach((id) => {
@@ -130,6 +187,23 @@ export default class {
     }
 
     /**
+     * Unlock all course elements.
+     *
+     * @param {StateManager} stateManager the current state manager
+     */
+    unlockAll(stateManager) {
+        const state = stateManager.state;
+        stateManager.setReadOnly(false);
+        state.section.forEach((section) => {
+            section.locked = false;
+        });
+        state.cm.forEach((cm) => {
+            cm.locked = false;
+        });
+        stateManager.setReadOnly(true);
+    }
+
+    /**
      * Get updated state data related to some cm ids.
      *
      * @method cmState
@@ -137,9 +211,11 @@ export default class {
      * @param {array} cmids the list of cm ids to update
      */
     async cmState(stateManager, cmids) {
+        this.cmLock(stateManager, cmids, true);
         const course = stateManager.get('course');
         const updates = await this._callEditWebservice('cm_state', course.id, cmids);
         stateManager.processUpdates(updates);
+        this.cmLock(stateManager, cmids, false);
     }
 
     /**
@@ -150,9 +226,11 @@ export default class {
      * @param {array} sectionIds the list of section ids to update
      */
     async sectionState(stateManager, sectionIds) {
+        this.sectionLock(stateManager, sectionIds, true);
         const course = stateManager.get('course');
         const updates = await this._callEditWebservice('section_state', course.id, sectionIds);
         stateManager.processUpdates(updates);
+        this.sectionLock(stateManager, sectionIds, false);
     }
 
     /**

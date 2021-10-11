@@ -102,6 +102,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             if (actionarea) {
                 var spinner = M.util.add_spinner(Y, Y.Node(actionarea));
                 spinner.show();
+                // Lock the activity state element.
+                if (activity.data('id') !== undefined) {
+                    courseeditor.dispatch('cmLock', [activity.data('id')], true);
+                }
                 return spinner;
             }
             return null;
@@ -119,6 +123,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             if (actionarea) {
                 var spinner = M.util.add_spinner(Y, Y.Node(actionarea));
                 spinner.show();
+                // Lock the section state element.
+                if (sectionelement.data('id') !== undefined) {
+                    courseeditor.dispatch('sectionLock', [sectionelement.data('id')], true);
+                }
                 return spinner;
             }
             return null;
@@ -148,6 +156,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 element.removeClass(CSS.EDITINPROGRESS);
                 if (spinner) {
                     spinner.hide();
+                }
+                // Unlock the state element.
+                if (element.data('id') !== undefined) {
+                    const mutation = (element.data('for') === 'section') ? 'sectionLock' : 'cmLock';
+                    courseeditor.dispatch(mutation, [element.data('id')], false);
                 }
             }, delay);
         };
@@ -579,7 +592,19 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                     return;
                 }
 
+                // Send the element is locked. Reactive events are only triggered when the state
+                // read only mode is restored. We want to notify the interface the element is
+                // locked so we need to do a quick lock operation before performing the rest
+                // of the mutation.
                 statemanager.setReadOnly(false);
+                cm.locked = true;
+                statemanager.setReadOnly(true);
+
+                // Now we do the real mutation.
+                statemanager.setReadOnly(false);
+
+                // This locked will take effect when the read only is restored.
+                cm.locked = false;
 
                 switch (action) {
                     case 'delete':
@@ -617,7 +642,19 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                     return;
                 }
 
+                // Send the element is locked. Reactive events are only triggered when the state
+                // read only mode is restored. We want to notify the interface the element is
+                // locked so we need to do a quick lock operation before performing the rest
+                // of the mutation.
                 statemanager.setReadOnly(false);
+                section.locked = true;
+                statemanager.setReadOnly(true);
+
+                // Now we do the real mutation.
+                statemanager.setReadOnly(false);
+
+                // This locked will take effect when the read only is restored.
+                section.locked = false;
 
                 switch (action) {
                     case 'setmarker':

@@ -1,4 +1,7 @@
 /* course.less */
+
+$course-editinprogress-bg: $gray-100 !default;
+
 /* COURSE CONTENT */
 
 .section_add_menus {
@@ -185,6 +188,25 @@ body:not(.editing)  .sitetopic ul.section {
                 padding-left: 2rem;
             }
         }
+    }
+    .editinprogress {
+        opacity: .7;
+        animation: editinprogress-pulse 2s infinite linear;
+    }
+}
+
+@keyframes editinprogress-pulse {
+    0% {
+        background-color: $course-editinprogress-bg;
+        filter: grayscale(60%);
+    }
+    50% {
+        background-color: darken($course-editinprogress-bg, 5%);
+        filter: grayscale(40%);
+    }
+    100% {
+        background-color: $course-editinprogress-bg;
+        filter: grayscale(60%);
     }
 }
 
