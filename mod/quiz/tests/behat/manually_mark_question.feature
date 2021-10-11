@@ -29,7 +29,7 @@ Feature: Teachers can override the grade for any question
       | question | page |
       | TF1      | 1    |
     And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
-    And I press "Attempt quiz now"
+    And I follow "Attempt quiz"
     And I follow "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"

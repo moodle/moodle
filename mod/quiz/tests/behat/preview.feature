@@ -44,6 +44,6 @@ Feature: Preview a quiz as a teacher
   @javascript
   Scenario: Preview the quiz
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
-    When I press "Preview quiz now"
+    When I follow "Preview quiz"
     Then I should see "Question 1"
     And "Start a new preview" "button" should exist
