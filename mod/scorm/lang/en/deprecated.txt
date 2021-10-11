@@ -1,1 +1,2 @@
 duedate,mod_scorm
+info,mod_scorm
