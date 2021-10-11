@@ -25,7 +25,7 @@ Feature: Manage plearning plan
     Given the following lp "templates" exist:
       | shortname | description |
       | Science template | science template description |
-    And I follow "Home"
+    And I am on homepage
     And I navigate to "Competencies > Learning plan templates" in site administration
     And I click on ".template-userplans" "css_element" in the "Science template" "table_row"
     And I open the autocomplete suggestions list
@@ -50,7 +50,7 @@ Feature: Manage plearning plan
       | user     | cohort |
       | student-plan1 | COHORTPLAN |
       | student-plan2 | COHORTPLAN |
-    And I follow "Home"
+    And I am on homepage
     And I navigate to "Competencies > Learning plan templates" in site administration
     And I click on ".template-cohorts" "css_element" in the "Science template cohort" "table_row"
     And I set the field "Select cohorts to sync" to "cohort plan"

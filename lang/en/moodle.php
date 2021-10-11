@@ -1623,6 +1623,7 @@ $string['potentialadmins'] = 'Potential admins';
 $string['potentialcreators'] = 'Potential course creators';
 $string['potentialstudents'] = 'Potential students';
 $string['potentialteachers'] = 'Potential teachers';
+$string['poweredbymoodle'] = 'Powered by <a href="https://moodle.com">Moodle</a>';
 $string['preferences'] = 'Preferences';
 $string['preferredlanguage'] = 'Preferred language';
 $string['preferredtheme'] = 'Preferred theme';

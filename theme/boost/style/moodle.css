@@ -6800,7 +6800,7 @@ a.close.disabled {
   top: 0;
   z-index: 1060;
   display: block;
-  max-width: 276px;
+  max-width: 300px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-style: normal;
   font-weight: 400;
@@ -11731,13 +11731,34 @@ ul {
       margin-top: 30px;
       margin-right: 0; } }
 
-#page-footer a {
+.footer-dark a {
   color: #fff;
   text-decoration: underline; }
-  #page-footer a .icon {
+  .footer-dark a .icon {
     color: #fff; }
-  #page-footer a:focus .icon {
+  .footer-dark a:focus .icon {
     color: #212529; }
+
+.btn-footer-popover {
+  display: none;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem; }
+
+.popover.footer .popover-body {
+  padding: 0; }
+  .popover.footer .popover-body .footer-section a {
+    color: #212529;
+    text-decoration: underline; }
+    .popover.footer .popover-body .footer-section a:focus {
+      text-decoration: none; }
+
+@media (min-width: 576px) {
+  .jsenabled #page-footer .footer-content-popover {
+    display: none; }
+  .jsenabled .btn-footer-popover {
+    display: block;
+    z-index: 1000; } }
 
 .bg-inverse a {
   color: #fff;
@@ -19218,6 +19239,9 @@ body.behat-site .custom-control-label::before, body.behat-site .custom-control-l
 
 body.behat-site [data-region="message-drawer"] {
   padding-right: 10px; }
+
+body.behat-site.jsenabled #page-footer .footer-content-popover {
+  display: block; }
 
 .phpinfo table,
 .phpinfo th,

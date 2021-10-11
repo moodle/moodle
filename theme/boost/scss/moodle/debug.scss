@@ -47,6 +47,9 @@ body.behat-site {
     [data-region="message-drawer"] {
         padding-right: 10px;
     }
+    &.jsenabled #page-footer .footer-content-popover {
+        display: block;
+    }
 }
 
 .phpinfo table,
@@ -74,4 +77,3 @@ body.behat-site {
     background-color: #99c;
     font-weight: bold;
 }
-

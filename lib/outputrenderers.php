@@ -813,8 +813,7 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * The standard tags (typically performance information and validation links,
-     * if we are in developer debug mode) that should be output in the footer area
+     * content that should be output in the footer area
      * of the page. Designed to be called in theme layout.php files.
      *
      * @return string HTML fragment.
@@ -844,10 +843,6 @@ class core_renderer extends renderer_base {
             );
         }
 
-        // This function is normally called from a layout.php file in {@link core_renderer::header()}
-        // but some of the content won't be known until later, so we return a placeholder
-        // for now. This will be replaced with the real content in {@link core_renderer::footer()}.
-        $output .= $this->unique_performance_info_token;
         if ($this->page->devicetypeinuse == 'legacy') {
             // The legacy theme is in use print the notification
             $output .= html_writer::tag('div', get_string('legacythemeinuse'), array('class'=>'legacythemeinuse'));
@@ -855,6 +850,23 @@ class core_renderer extends renderer_base {
 
         // Get links to switch device types (only shown for users not on a default device)
         $output .= $this->theme_switch_links();
+
+        return $output;
+    }
+
+    /**
+     * Performance information and validation links for debugging.
+     *
+     * @return string HTML fragment.
+     */
+    public function debug_footer_html() {
+        global $CFG;
+        $output = '';
+
+        // This function is normally called from a layout.php file
+        // but some of the content won't be known until later, so we return a placeholder
+        // for now. This will be replaced with the real content in the footer.
+        $output .= $this->unique_performance_info_token;
 
         if (!empty($CFG->debugpageinfo)) {
             $output .= '<div class="performanceinfo pageinfo">' . get_string('pageinfodebugsummary', 'core_admin',
@@ -2194,7 +2206,7 @@ class core_renderer extends renderer_base {
     public function doc_link($path, $text = '', $forcepopup = false, array $attributes = []) {
         global $CFG;
 
-        $icon = $this->pix_icon('docs', '', 'moodle', array('class'=>'iconhelp icon-pre', 'role'=>'presentation'));
+        $icon = $this->pix_icon('book', '', 'moodle', array('class' => 'iconhelp icon-pre', 'role' => 'presentation'));
 
         $attributes['href'] = new moodle_url(get_docs_url($path));
         if (!empty($CFG->doctonewwindow) || $forcepopup) {
@@ -4856,6 +4868,17 @@ EOD;
      */
     public function render_checkbox_toggleall(\core\output\checkbox_toggleall $element) {
         return $this->render_from_template($element->get_template(), $element->export_for_template($this));
+    }
+
+    /**
+     * Renders release information in the footer popup
+     * @return string Moodle release info.
+     */
+    public function moodle_release() {
+        global $CFG;
+        if (is_siteadmin()) {
+            return $CFG->release;
+        }
     }
 }
 

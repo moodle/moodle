@@ -53,6 +53,7 @@ class icon_system_fontawesome extends icon_system_font {
     public function get_core_icon_map() {
         return [
             'core:docs' => 'fa-info-circle',
+            'core:book' => 'fa-book',
             'core:help' => 'fa-question-circle text-info',
             'core:req' => 'fa-exclamation-circle text-danger',
             'core:a/add_file' => 'fa-file-o',

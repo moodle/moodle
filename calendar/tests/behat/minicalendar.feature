@@ -30,7 +30,7 @@ Feature: Open calendar popup
     When I reload the page
     Then I should see "Event 1:1"
     And I should see "Event 1:2"
-    And I follow "Home"
+    And I am on homepage
     And I should see "Event 1:1"
     And I should see "Event 1:2"
 
@@ -58,5 +58,5 @@ Feature: Open calendar popup
       | Type of event     | site |
       | Event title       | Today's event |
     Then I should see "Today's event"
-    And I follow "Home"
+    And I am on homepage
     And I should see "Today's event"
