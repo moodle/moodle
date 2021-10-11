@@ -5931,7 +5931,7 @@ class assign {
         $allsubmitted = true;
         $anysubmitted = false;
         $result = true;
-        if ($submission->status != ASSIGN_SUBMISSION_STATUS_REOPENED) {
+        if (!in_array($submission->status, [ASSIGN_SUBMISSION_STATUS_NEW, ASSIGN_SUBMISSION_STATUS_REOPENED])) {
             foreach ($team as $member) {
                 $membersubmission = $this->get_user_submission($member->id, false, $submission->attemptnumber);
 
@@ -5965,7 +5965,7 @@ class assign {
             // Set the group submission to reopened.
             foreach ($team as $member) {
                 $membersubmission = $this->get_user_submission($member->id, true, $submission->attemptnumber);
-                $membersubmission->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+                $membersubmission->status = $submission->status;
                 $result = $DB->update_record('assign_submission', $membersubmission) && $result;
             }
             $result = $DB->update_record('assign_submission', $submission) && $result;
@@ -8067,6 +8067,8 @@ class assign {
         if (!$submission) {
             return false;
         }
+        $submission->status = $submission->attemptnumber ? ASSIGN_SUBMISSION_STATUS_REOPENED : ASSIGN_SUBMISSION_STATUS_NEW;
+        $this->update_submission($submission, $userid, false, $this->get_instance()->teamsubmission);
 
         // Tell each submission plugin we were saved with no data.
         $plugins = $this->get_submission_plugins();
@@ -8074,6 +8076,12 @@ class assign {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 $plugin->remove($submission);
             }
+        }
+
+        $completion = new completion_info($this->get_course());
+        if ($completion->is_enabled($this->get_course_module()) &&
+                $this->get_instance()->completionsubmit) {
+            $completion->update_state($this->get_course_module(), COMPLETION_INCOMPLETE, $userid);
         }
 
         if ($submission->userid != 0) {
