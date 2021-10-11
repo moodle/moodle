@@ -12868,6 +12868,9 @@ body.dragging .dragging {
 .block .empty-placeholder-image-lg {
   height: 5rem; }
 
+.block .searchbar .icon {
+  margin-right: 0; }
+
 .block .block-cards .course-info-container {
   padding: 0.8rem; }
 

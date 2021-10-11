@@ -49,6 +49,8 @@ function(
         ROOT: '[data-region="event-list-container"]',
         EVENT_LIST_CONTENT: '[data-region="event-list-content"]',
         EVENT_LIST_LOADING_PLACEHOLDER: '[data-region="event-list-loading-placeholder"]',
+        TIMELINE_BLOCK: '[data-region="timeline"]',
+        TIMELINE_SEARCH: '[data-region="search-input"]'
     };
 
     var TEMPLATES = {
@@ -177,9 +179,10 @@ function(
      * @param {int|undefined} daysLimit How many dates (from midnight) to limit the result to
      * @param {int|false} lastId The ID of the last seen event (if any)
      * @param {int|undefined} courseId Course ID to restrict events to
+     * @param {string|undefined} searchValue Search value
      * @return {Promise} A jquery promise
      */
-    var load = function(midnight, limit, daysOffset, daysLimit, lastId, courseId) {
+    var load = function(midnight, limit, daysOffset, daysLimit, lastId, courseId, searchValue) {
         var startTime = midnight + (daysOffset * SECONDS_IN_DAY);
         var endTime = daysLimit != undefined ? midnight + (daysLimit * SECONDS_IN_DAY) : false;
 
@@ -194,6 +197,10 @@ function(
 
         if (endTime) {
             args.endtime = endTime;
+        }
+
+        if (searchValue) {
+            args.searchvalue = searchValue;
         }
 
         if (courseId) {
@@ -221,6 +228,7 @@ function(
      * @param {int|undefined} courseId Course ID to restrict events to
      * @param {Number} daysOffset How many days (from midnight) to offset the results from
      * @param {int|undefined} daysLimit How many dates (from midnight) to limit the result to
+     * @param {string|undefined} searchValue Search value
      * @return {object} jQuery promise resolved with calendar events.
      */
     var loadEventsFromPageData = function(
@@ -231,7 +239,8 @@ function(
         preloadedPages,
         courseId,
         daysOffset,
-        daysLimit
+        daysLimit,
+        searchValue
     ) {
         var pageNumber = pageData.pageNumber;
         var limit = pageData.limit;
@@ -255,7 +264,7 @@ function(
         } else {
             // Load one more than the given limit so that we can tell if there
             // is more content to load after this.
-            eventsPromise = load(midnight, limit + 1, daysOffset, daysLimit, lastId, courseId);
+            eventsPromise = load(midnight, limit + 1, daysOffset, daysLimit, lastId, courseId, searchValue);
         }
 
         return eventsPromise.then(function(result) {
@@ -308,6 +317,7 @@ function(
      * @param {int|undefined} daysLimit How many dates (from midnight) to limit the result to
      * @param {string} paginationAriaLabel String to set as the aria label for the pagination bar.
      * @param {object} additionalConfig Additional config options to pass to pagedContentFactory
+     * @param {string|undefined} searchValue Search value
      * @return {object} jQuery promise.
      */
     var createPagedContent = function(
@@ -319,7 +329,8 @@ function(
         daysOffset,
         daysLimit,
         paginationAriaLabel,
-        additionalConfig
+        additionalConfig,
+        searchValue
     ) {
         // Remember the last event id we loaded on each page because we can't
         // use the offset value since the backend can skip events if the user doesn't
@@ -356,7 +367,8 @@ function(
                                 preloadedPages,
                                 courseId,
                                 daysOffset,
-                                daysLimit
+                                daysLimit,
+                                searchValue
                             ).then(function(calendarEvents) {
                                 if (calendarEvents.length) {
                                     // Remember that we've loaded content.
@@ -423,6 +435,7 @@ function(
         var daysOffset = parseInt(root.attr('data-days-offset'), 10);
         var daysLimit = root.attr('data-days-limit');
         var midnight = parseInt(root.attr('data-midnight'), 10);
+        const searchValue = root.closest(SELECTORS.TIMELINE_BLOCK).find(SELECTORS.TIMELINE_SEARCH).val();
 
         // Make sure the content area and loading placeholder is visible.
         // This is because the init function can be called to re-initialise
@@ -438,7 +451,7 @@ function(
 
         // Created the paged content element.
         return createPagedContent(pageLimit, preloadedPages, midnight, firstLoad, courseId, daysOffset, daysLimit,
-                paginationAriaLabel, additionalConfig)
+                paginationAriaLabel, additionalConfig, searchValue)
             .then(function(html, js) {
                 html = $(html);
                 // Hide the content for now.

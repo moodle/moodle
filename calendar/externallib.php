@@ -408,6 +408,7 @@ class core_calendar_external extends external_api {
                 'limittononsuspendedevents' => new external_value(PARAM_BOOL,
                         'Limit the events to courses the user is not suspended in', VALUE_DEFAULT, false),
                 'userid' => new external_value(PARAM_INT, 'The user id', VALUE_DEFAULT, null),
+                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against', VALUE_DEFAULT, null)
             )
         );
     }
@@ -421,11 +422,12 @@ class core_calendar_external extends external_api {
      * @param null|int $aftereventid Get events with ids greater than this one
      * @param int $limitnum Limit the number of results to this value
      * @param null|int $userid The user id
+     * @param string|null $searchvalue The value a user wishes to search against
      * @return array
      */
     public static function get_calendar_action_events_by_timesort($timesortfrom = 0, $timesortto = null,
                                                        $aftereventid = 0, $limitnum = 20, $limittononsuspendedevents = false,
-                                                       $userid = null) {
+                                                       $userid = null, ?string $searchvalue = null) {
         global $PAGE, $USER;
 
         $params = self::validate_parameters(
@@ -437,6 +439,7 @@ class core_calendar_external extends external_api {
                 'limitnum' => $limitnum,
                 'limittononsuspendedevents' => $limittononsuspendedevents,
                 'userid' => $userid,
+                'searchvalue' => $searchvalue
             ]
         );
         if ($params['userid']) {
@@ -459,7 +462,8 @@ class core_calendar_external extends external_api {
             $params['aftereventid'],
             $params['limitnum'],
             $params['limittononsuspendedevents'],
-            $user
+            $user,
+            $params['searchvalue']
         );
 
         $exportercache = new events_related_objects_cache($events);
@@ -574,7 +578,8 @@ class core_calendar_external extends external_api {
                 ),
                 'timesortfrom' => new external_value(PARAM_INT, 'Time sort from', VALUE_DEFAULT, null),
                 'timesortto' => new external_value(PARAM_INT, 'Time sort to', VALUE_DEFAULT, null),
-                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 10)
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 10),
+                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against', VALUE_DEFAULT, null)
             )
         );
     }
@@ -587,10 +592,11 @@ class core_calendar_external extends external_api {
      * @param null|int $timesortfrom Events after this time (inclusive)
      * @param null|int $timesortto Events before this time (inclusive)
      * @param int $limitnum Limit the number of results per course to this value
+     * @param string|null $searchvalue The value a user wishes to search against
      * @return array
      */
     public static function get_calendar_action_events_by_courses(
-        array $courseids, $timesortfrom = null, $timesortto = null, $limitnum = 10) {
+        array $courseids, $timesortfrom = null, $timesortto = null, $limitnum = 10, ?string $searchvalue = null) {
 
         global $PAGE, $USER;
 
@@ -602,6 +608,7 @@ class core_calendar_external extends external_api {
                 'timesortfrom' => $timesortfrom,
                 'timesortto' => $timesortto,
                 'limitnum' => $limitnum,
+                'searchvalue' => $searchvalue
             ]
         );
         $context = \context_user::instance($USER->id);
@@ -623,7 +630,8 @@ class core_calendar_external extends external_api {
             $courses,
             $params['timesortfrom'],
             $params['timesortto'],
-            $params['limitnum']
+            $params['limitnum'],
+            $params['searchvalue']
         );
 
         if (empty($events)) {

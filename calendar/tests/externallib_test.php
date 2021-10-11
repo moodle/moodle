@@ -1439,6 +1439,112 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_action_events_by_courses with search feature
+     */
+    public function test_get_action_events_by_courses_with_search() {
+        // Generate data.
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $instance1 = $generator->create_instance(['course' => $course1->id]);
+        $instance2 = $generator->create_instance(['course' => $course2->id]);
+        $instance3 = $generator->create_instance(['course' => $course3->id]);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+        $this->resetAfterTest(true);
+        $this->setUser($user);
+
+        $mapresult = function($result) {
+            $groupedbycourse = [];
+            foreach ($result['groupedbycourse'] as $group) {
+                $events = $group['events'];
+                $courseid = $group['courseid'];
+                $groupedbycourse[$courseid] = $events;
+            }
+
+            return $groupedbycourse;
+        };
+
+        for ($i = 1; $i < 10; $i++) {
+            if ($i < 3) {
+                $courseid = $course1->id;
+                $instance = $instance1->id;
+            } else if ($i < 6) {
+                $courseid = $course2->id;
+                $instance = $instance2->id;
+            } else {
+                $courseid = $course3->id;
+                $instance = $instance3->id;
+            }
+
+            $records[] = $this->create_calendar_event(
+                sprintf('Event %d', $i),
+                $user->id,
+                'user',
+                0,
+                1,
+                [
+                    'type' => CALENDAR_EVENT_TYPE_ACTION,
+                    'courseid' => $courseid,
+                    'timesort' => $i,
+                    'modulename' => 'assign',
+                    'instance' => $instance,
+                ]
+            );
+        }
+
+        // No result found for fake search.
+        $result = core_calendar_external::get_calendar_action_events_by_courses([$course1->id, $course2->id, $course3->id],
+            1, null, 20, 'Fake search');
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_action_events_by_courses_returns(),
+            $result
+        );
+        $groupedbycourse = $mapresult($result);
+
+        $this->assertEmpty($groupedbycourse[$course1->id]);
+        $this->assertEmpty($groupedbycourse[$course2->id]);
+        $this->assertArrayNotHasKey($course3->id, $groupedbycourse);
+
+        // Search for event name called 'Event 1'.
+        $result = core_calendar_external::get_calendar_action_events_by_courses([$course1->id, $course2->id, $course3->id],
+            1, null, 20, 'Event 1');
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_action_events_by_courses_returns(),
+            $result
+        );
+        $groupedbycourse = $mapresult($result);
+
+        $this->assertArrayNotHasKey($course3->id, $groupedbycourse);
+        $this->assertCount(2, $groupedbycourse);
+        $this->assertCount(1, $groupedbycourse[$course1->id]);
+        $this->assertCount(0, $groupedbycourse[$course2->id]);
+        $this->assertEquals('Event 1', $groupedbycourse[$course1->id][0]['name']);
+
+        // Search for activity type called 'assign'.
+        $result = core_calendar_external::get_calendar_action_events_by_courses([$course1->id, $course2->id, $course3->id],
+            1, null, 20, 'assign');
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_action_events_by_courses_returns(),
+            $result
+        );
+        $groupedbycourse = $mapresult($result);
+
+        $this->assertArrayNotHasKey($course3->id, $groupedbycourse);
+        $this->assertCount(2, $groupedbycourse);
+        $this->assertCount(2, $groupedbycourse[$course1->id]);
+        $this->assertCount(3, $groupedbycourse[$course2->id]);
+        $this->assertEquals('Event 1', $groupedbycourse[$course1->id][0]['name']);
+        $this->assertEquals('Event 2', $groupedbycourse[$course1->id][1]['name']);
+        $this->assertEquals('Event 3', $groupedbycourse[$course2->id][0]['name']);
+        $this->assertEquals('Event 4', $groupedbycourse[$course2->id][1]['name']);
+        $this->assertEquals('Event 5', $groupedbycourse[$course2->id][2]['name']);
+    }
+
+    /**
      * Test for deleting module events.
      */
     public function test_delete_calendar_events_for_modules() {

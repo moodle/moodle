@@ -50,7 +50,9 @@ function(
         COURSE_ITEMS_LOADING_PLACEHOLDER: '[data-region="course-items-loading-placeholder"]',
         COURSE_EVENTS_CONTAINER: '[data-region="course-events-container"]',
         COURSE_NAME: '[data-region="course-name"]',
-        LOADING_ICON: '.loading-icon'
+        LOADING_ICON: '.loading-icon',
+        TIMELINE_BLOCK: '[data-region="timeline"]',
+        TIMELINE_SEARCH: '[data-region="search-input"]'
     };
 
     var TEMPLATES = {
@@ -250,9 +252,10 @@ function(
      * @param {Number} startTime Timestamp to fetch events from.
      * @param {Number} limit Limit to the number of events (this applies per course, not total)
      * @param {Number} endTime Timestamp to fetch events to.
+     * @param {string|undefined} searchValue Search value
      * @return {object} jQuery promise.
      */
-    var getEventsForCourseIds = function(courseIds, startTime, limit, endTime) {
+    var getEventsForCourseIds = function(courseIds, startTime, limit, endTime, searchValue) {
         var args = {
             courseids: courseIds,
             starttime: startTime,
@@ -261,6 +264,10 @@ function(
 
         if (endTime) {
             args.endtime = endTime;
+        }
+
+        if (searchValue) {
+            args.searchvalue = searchValue;
         }
 
         return EventsRepository.queryByCourses(args);
@@ -304,14 +311,15 @@ function(
      * @param {array} courses List of course objects.
      * @param {Number} startTime Timestamp to load events after.
      * @param {int|undefined} endTime Timestamp to load events up until.
+     * @param {string|undefined} searchValue Search value
      * @return {object} jQuery promise resolved with the events.
      */
-    var loadEventsForCourses = function(courses, startTime, endTime) {
+    var loadEventsForCourses = function(courses, startTime, endTime, searchValue) {
         var courseIds = courses.map(function(course) {
             return course.id;
         });
 
-        return getEventsForCourseIds(courseIds, startTime, COURSE_EVENT_LIMIT + 1, endTime);
+        return getEventsForCourseIds(courseIds, startTime, COURSE_EVENT_LIMIT + 1, endTime, searchValue);
     };
 
     /**
@@ -394,11 +402,12 @@ function(
             var midnight = getMidnight(root);
             var startTime = getStartTime(root);
             var endTime = getEndTime(root);
+            const searchValue = root.closest(SELECTORS.TIMELINE_BLOCK).find(SELECTORS.TIMELINE_SEARCH).val();
 
             // Record the next offset if we want to request more courses.
             setOffset(root, nextOffset);
             // Load the events for these courses.
-            var eventsPromise = loadEventsForCourses(courses, startTime, endTime);
+            var eventsPromise = loadEventsForCourses(courses, startTime, endTime, searchValue);
             // Render the courses in the DOM.
             var renderPromise = updateDisplayFromCourses(courses, root, midnight, daysOffset, daysLimit);
 
@@ -461,12 +470,13 @@ function(
         var courseIds = courseEventsContainers.map(function() {
             return $(this).attr('data-course-id');
         }).get();
+        const searchValue = root.closest(SELECTORS.TIMELINE_BLOCK).find(SELECTORS.TIMELINE_SEARCH).val();
 
         // Record when we started our request.
         setEventReloadTime(root, startReloadTime);
 
         // Load all of the events for the given courses.
-        return getEventsForCourseIds(courseIds, startTime, COURSE_EVENT_LIMIT + 1, endTime)
+        return getEventsForCourseIds(courseIds, startTime, COURSE_EVENT_LIMIT + 1, endTime, searchValue)
             .then(function(eventsByCourse) {
                 if (hasReloadedEventsSince(root, startReloadTime)) {
                     // A new reload has begun so ignore our results.
