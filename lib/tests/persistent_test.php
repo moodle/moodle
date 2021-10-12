@@ -353,6 +353,29 @@ class core_persistent_testcase extends advanced_testcase {
         $this->assertTrue($p->is_valid()); // Should always be valid after an update.
     }
 
+    /**
+     * Test set_many prior to updating the persistent
+     */
+    public function test_set_many_update(): void {
+        global $DB;
+
+        $persistent = (new core_testable_persistent(0, (object) [
+            'idnumber' => 'test',
+            'sortorder' => 2
+        ]))->create();
+
+        // Set multiple properties, and update.
+        $persistent->set_many([
+            'idnumber' => 'test2',
+            'sortorder' => 1,
+        ])->update();
+
+        // Confirm our persistent was updated.
+        $record = $DB->get_record(core_testable_persistent::TABLE, ['id' => $persistent->get('id')], '*', MUST_EXIST);
+        $this->assertEquals('test2', $record->idnumber);
+        $this->assertEquals(1, $record->sortorder);
+    }
+
     public function test_save() {
         global $DB;
         $p = new core_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
@@ -382,6 +405,77 @@ class core_persistent_testcase extends advanced_testcase {
         $this->assertEquals($expected->idnumber, $record->idnumber);
         $this->assertEquals($expected->id, $record->id);
         $this->assertTrue($p->is_valid()); // Should always be valid after a save/update.
+    }
+
+    /**
+     * Test set_many prior to saving the persistent
+     */
+    public function test_set_many_save(): void {
+        global $DB;
+
+        $persistent = (new core_testable_persistent(0, (object) [
+            'idnumber' => 'test',
+            'sortorder' => 2
+        ]));
+
+        // Set multiple properties, and save.
+        $persistent->set_many([
+            'idnumber' => 'test2',
+            'sortorder' => 1,
+        ])->save();
+
+        // Confirm our persistent was saved.
+        $record = $DB->get_record(core_testable_persistent::TABLE, ['id' => $persistent->get('id')], '*', MUST_EXIST);
+        $this->assertEquals('test2', $record->idnumber);
+        $this->assertEquals(1, $record->sortorder);
+    }
+
+    /**
+     * Test set_many with empty array should not modify the persistent
+     */
+    public function test_set_many_empty(): void {
+        global $DB;
+
+        $persistent = (new core_testable_persistent(0, (object) [
+            'idnumber' => 'test',
+            'sortorder' => 2
+        ]))->create();
+
+        // Set empty properties, and update.
+        $persistent->set_many([])->update();
+
+        // Confirm our persistent was not updated.
+        $record = $DB->get_record(core_testable_persistent::TABLE, ['id' => $persistent->get('id')], '*', MUST_EXIST);
+        $this->assertEquals('test', $record->idnumber);
+        $this->assertEquals(2, $record->sortorder);
+    }
+
+    /**
+     * Test set with invalid property
+     */
+    public function test_set_invalid_property(): void {
+        $persistent = (new core_testable_persistent(0, (object) [
+            'idnumber' => 'test',
+            'sortorder' => 2
+        ]));
+
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Unexpected property \'invalid\' requested');
+        $persistent->set('invalid', 'stuff');
+    }
+
+    /**
+     * Test set_many with invalid property
+     */
+    public function test_set_many_invalid_property(): void {
+        $persistent = (new core_testable_persistent(0, (object) [
+            'idnumber' => 'test',
+            'sortorder' => 2
+        ]));
+
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Unexpected property \'invalid\' requested');
+        $persistent->set_many(['invalid' => 'stuff']);
     }
 
     public function test_read() {
