@@ -197,7 +197,7 @@ Y.extend(EventFilter, Y.Base, {
             // These variables will either be false or true depending on the statement outcome.
             var fullEventText = Y.Node.create(this.get('tabledata')[i].fulleventname).get('text'),
                 eventNameValue = fullEventText.toLowerCase().indexOf(eventNameFilter) >= 0,
-                componentFilterValue = fullEventText.toLowerCase().indexOf('\\' + componentValue + '\\event\\') >= 0,
+                componentFilterValue = this.get('tabledata')[i].eventname.indexOf('\\' + componentValue + '\\event\\') >= 0,
                 eduLevelFilterValue = this.get('tabledata')[i].edulevel.toLowerCase().indexOf(eduLevelFilter) >= 0,
                 crudFilterValue = this.get('tabledata')[i].crud.toLowerCase().indexOf(crudFilter) >= 0;
             // If the name field is empty then add to the filter.
