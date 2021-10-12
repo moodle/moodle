@@ -25,7 +25,6 @@ define(
     'jquery',
     'core/notification',
     'core/custom_interaction_events',
-    'core/str',
     'core/templates',
     'block_timeline/event_list',
     'core_course/repository',
@@ -35,7 +34,6 @@ function(
     $,
     Notification,
     CustomEvents,
-    Str,
     Templates,
     EventList,
     CourseRepository,
@@ -424,33 +422,11 @@ function(
                     // correct course event list.
                     courses.forEach(function(course) {
                         var courseId = course.id;
-                        var events = [];
                         var containerSelector = '[data-region="course-events-container"][data-course-id="' + courseId + '"]';
                         var courseEventsContainer = root.find(containerSelector);
                         var eventListRoot = courseEventsContainer.find(EventList.rootSelector);
-                        var courseGroups = eventsByCourse.groupedbycourse.filter(function(group) {
-                            return group.courseid == courseId;
-                        });
 
-                        if (courseGroups.length) {
-                            // Get the events for this course.
-                            events = courseGroups[0].events;
-                        }
-
-                        // Create a preloaded page to pass to the event list because we've already
-                        // loaded the first page of events.
-                        var pageOnePreload = $.Deferred().resolve({events: events}).promise();
-                        // Initialise the event list pagination area for this course.
-                        Str.get_string('ariaeventlistpaginationnavcourses', 'block_timeline', course.fullnamedisplay)
-                            .then(function(string) {
-                                EventList.init(eventListRoot, COURSE_EVENT_LIMIT, {'1': pageOnePreload}, string, additionalConfig);
-                                return string;
-                            })
-                            .catch(function() {
-                                // An error is ok, just render with the default string.
-                                EventList.init(eventListRoot, COURSE_EVENT_LIMIT, {'1': pageOnePreload}, undefined,
-                                    additionalConfig);
-                            });
+                        EventList.init(eventListRoot, additionalConfig);
                     });
 
                     return eventsByCourse;
@@ -488,35 +464,9 @@ function(
 
                 courseEventsContainers.each(function(index, container) {
                     container = $(container);
-                    var courseId = container.attr('data-course-id');
-                    var courseName = container.find(SELECTORS.COURSE_NAME).text();
                     var eventListContainer = container.find(EventList.rootSelector);
-                    var pageDeferred = $.Deferred();
-                    var events = [];
-                    var courseGroups = eventsByCourse.groupedbycourse.filter(function(group) {
-                        return group.courseid == courseId;
-                    });
 
-                    if (courseGroups.length) {
-                        // Get the events just for this course.
-                        events = courseGroups[0].events;
-                    }
-
-                    pageDeferred.resolve({events: events});
-
-                    // Re-initialise the events list with the preloaded events we just got from
-                    // the server.
-                    Str.get_string('ariaeventlistpaginationnavcourses', 'block_timeline', courseName)
-                        .then(function(string) {
-                            EventList.init(eventListContainer, COURSE_EVENT_LIMIT, {'1': pageDeferred.promise()},
-                                string, additionalConfig);
-                            return string;
-                        })
-                        .catch(function() {
-                            // Ignore a failure to load the string. Just render with the default string.
-                            EventList.init(eventListContainer, COURSE_EVENT_LIMIT, {'1': pageDeferred.promise()},
-                                undefined, additionalConfig);
-                        });
+                    EventList.init(eventListContainer, additionalConfig);
                 });
 
                 return eventsByCourse;
