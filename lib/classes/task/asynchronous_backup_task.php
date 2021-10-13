@@ -48,12 +48,16 @@ class asynchronous_backup_task extends adhoc_task {
         $started = time();
 
         $backupid = $this->get_custom_data()->backupid;
-        $backuprecordid = $DB->get_field('backup_controllers', 'id', array('backupid' => $backupid), MUST_EXIST);
+        $backuprecord = $DB->get_record('backup_controllers', array('backupid' => $backupid), 'id, controller', MUST_EXIST);
         mtrace('Processing asynchronous backup for backup: ' . $backupid);
 
-        // Get the backup controller by backup id.
+        // Get the backup controller by backup id. If controller is invalid, this task can never complete.
+        if ($backuprecord->controller === '') {
+            mtrace('Bad backup controller status, invalid controller, ending backup execution.');
+            return;
+        }
         $bc = \backup_controller::load_controller($backupid);
-        $bc->set_progress(new \core\progress\db_updater($backuprecordid, 'backup_controllers', 'progress'));
+        $bc->set_progress(new \core\progress\db_updater($backuprecord->id, 'backup_controllers', 'progress'));
 
         // Do some preflight checks on the backup.
         $status = $bc->get_status();
@@ -87,4 +91,3 @@ class asynchronous_backup_task extends adhoc_task {
         mtrace('Backup completed in: ' . $duration . ' seconds');
     }
 }
-

@@ -47,12 +47,22 @@ class asynchronous_restore_task extends adhoc_task {
         $started = time();
 
         $restoreid = $this->get_custom_data()->backupid;
-        $restorerecordid = $DB->get_field('backup_controllers', 'id', array('backupid' => $restoreid), MUST_EXIST);
+        $restorerecord = $DB->get_record('backup_controllers', array('backupid' => $restoreid), 'id, controller', IGNORE_MISSING);
+        // If the record doesn't exist, the backup controller failed to create. Unable to proceed.
+        if (empty($restorerecord)) {
+            mtrace('Unable to find restore controller, ending restore execution.');
+            return;
+        }
+
         mtrace('Processing asynchronous restore for id: ' . $restoreid);
 
-        // Get the restore controller by backup id.
+        // Get the backup controller by backup id. If controller is invalid, this task can never complete.
+        if ($restorerecord->controller === '') {
+            mtrace('Bad restore controller status, invalid controller, ending restore execution.');
+            return;
+        }
         $rc = \restore_controller::load_controller($restoreid);
-        $rc->set_progress(new \core\progress\db_updater($restorerecordid, 'backup_controllers', 'progress'));
+        $rc->set_progress(new \core\progress\db_updater($restorerecord->id, 'backup_controllers', 'progress'));
 
         // Do some preflight checks on the restore.
         $status = $rc->get_status();
@@ -86,4 +96,3 @@ class asynchronous_restore_task extends adhoc_task {
         mtrace('Restore completed in: ' . $duration . ' seconds');
     }
 }
-
