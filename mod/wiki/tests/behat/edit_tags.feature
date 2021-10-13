@@ -33,7 +33,7 @@ Feature: Edited wiki pages handle tags correctly
     Then I should see "Example" in the ".wiki-tags" "css_element"
     And I should see "Page" in the ".wiki-tags" "css_element"
     And I should see "Cool" in the ".wiki-tags" "css_element"
-    And I follow "Edit"
+    And I select "Edit" from the "jump" singleselect
     Then I should see "Example" in the ".form-autocomplete-selection" "css_element"
     Then I should see "Page" in the ".form-autocomplete-selection" "css_element"
     Then I should see "Cool" in the ".form-autocomplete-selection" "css_element"
@@ -62,7 +62,7 @@ Feature: Edited wiki pages handle tags correctly
     Then I should see "OT1" in the ".wiki-tags" "css_element"
     And I should see "OT3" in the ".wiki-tags" "css_element"
     And I should not see "OT2" in the ".wiki-tags" "css_element"
-    And I follow "Edit"
+    And I select "Edit" from the "jump" singleselect
     And I should see "OT1" in the ".form-autocomplete-selection" "css_element"
     And I should see "OT3" in the ".form-autocomplete-selection" "css_element"
     And I should not see "OT2" in the ".form-autocomplete-selection" "css_element"

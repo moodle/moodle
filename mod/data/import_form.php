@@ -12,6 +12,7 @@ class mod_data_import_form extends moodleform {
         $mform =& $this->_form;
 
         $dataid = $this->_customdata['dataid'];
+        $backtourl = $this->_customdata['backtourl'];
 
         $mform->addElement('filepicker', 'recordsfile', get_string('csvfile', 'data'));
 
@@ -31,6 +32,11 @@ class mod_data_import_form extends moodleform {
         $mform->setType('d', PARAM_INT);
         $mform->setDefault('d', $dataid);
 
-        $this->add_action_buttons(false, get_string('submit'));
+        // Back to URL.
+        $mform->addElement('hidden', 'backto');
+        $mform->setType('backto', PARAM_LOCALURL);
+        $mform->setDefault('backto', $backtourl);
+
+        $this->add_action_buttons(true, get_string('submit'));
     }
 }

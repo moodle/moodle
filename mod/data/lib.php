@@ -353,10 +353,12 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
 
-        echo '<div class="mdl-align">';
-        echo '<input type="submit" class="btn btn-primary" value="'.$savebutton.'" />'."\n";
-        echo '<input type="submit" class="btn btn-secondary" name="cancel" value="'.get_string('cancel').'" />'."\n";
-        echo '</div>';
+        echo html_writer::start_div('mt-3');
+        echo html_writer::tag('input', null, array('type' => 'submit', 'value' => $savebutton,
+            'class' => 'btn btn-primary'));
+        echo html_writer::tag('input', null, array('type' => 'submit', 'name' => 'cancel',
+            'value' => get_string('cancel'), 'class' => 'btn btn-secondary ml-2'));
+        echo html_writer::end_div();
 
         echo '</form>';
 
@@ -1420,8 +1422,16 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         $patterns[]='##edit##';
         $patterns[]='##delete##';
         if (data_user_can_manage_entry($record, $data, $context)) {
+            $backtourlparams = [
+                'd' => $data->id,
+            ];
+            if ($template === 'singletemplate') {
+                $backtourlparams['mode'] = 'single';
+            }
+            $backtourl = new \moodle_url('/mod/data/view.php', $backtourlparams);
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
-                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'">' .
+                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'&amp;backto='
+                             . urlencode($backtourl->out(false)) .'">' .
                              $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
                              .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'">' .
@@ -2302,14 +2312,18 @@ function data_delete_site_preset($name) {
  * @param stdClass $cm
  * @param stdClass $data
  * @param string $currenttab
+ * @param string $actionbar
  */
-function data_print_header($course, $cm, $data, $currenttab='') {
+function data_print_header($course, $cm, $data, $currenttab='', string $actionbar = '') {
 
     global $CFG, $displaynoticegood, $displaynoticebad, $OUTPUT, $PAGE, $USER;
 
     $PAGE->set_title($data->name);
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($data->name), 2);
+
+    if (!$PAGE->has_secondary_navigation()) {
+        echo $OUTPUT->heading(format_string($data->name), 2);
+    }
 
     // Render the activity information.
     $cminfo = cm_info::create($cm);
@@ -2319,15 +2333,7 @@ function data_print_header($course, $cm, $data, $currenttab='') {
 
     echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
 
-    // Groups needed for Add entry tab
-    $currentgroup = groups_get_activity_group($cm);
-    $groupmode = groups_get_activity_groupmode($cm);
-
-    // Print the tabs
-
-    if ($currenttab) {
-        include('tabs.php');
-    }
+    echo $actionbar;
 
     // Print any notices
 
@@ -2524,7 +2530,8 @@ abstract class data_preset_importer {
      * @return stdClass
      */
     public function get_preset_settings() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->libdir.'/xmlize.php');
 
         $fs = $fileobj = null;
         if (!is_directory_a_preset($this->directory)) {
@@ -3605,16 +3612,22 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
         } else {
             $addstring = get_string('editentry', 'data');
         }
-        $datanode->add($addstring, new moodle_url('/mod/data/edit.php', array('d'=>$PAGE->cm->instance)));
+        $addentrynode = $datanode->add($addstring,
+            new moodle_url('/mod/data/edit.php', array('d' => $PAGE->cm->instance)));
+        $addentrynode->set_show_in_secondary_navigation(false);
     }
 
     if (has_capability(DATA_CAP_EXPORT, $PAGE->cm->context)) {
         // The capability required to Export database records is centrally defined in 'lib.php'
         // and should be weaker than those required to edit Templates, Fields and Presets.
-        $datanode->add(get_string('exportentries', 'data'), new moodle_url('/mod/data/export.php', array('d'=>$data->id)));
+        $exportentriesnode = $datanode->add(get_string('exportentries', 'data'),
+            new moodle_url('/mod/data/export.php', array('d' => $data->id)));
+        $exportentriesnode->set_show_in_secondary_navigation(false);
     }
     if (has_capability('mod/data:manageentries', $PAGE->cm->context)) {
-        $datanode->add(get_string('importentries', 'data'), new moodle_url('/mod/data/import.php', array('d'=>$data->id)));
+        $importentriesnode = $datanode->add(get_string('importentries', 'data'),
+            new moodle_url('/mod/data/import.php', array('d' => $data->id)));
+        $importentriesnode->set_show_in_secondary_navigation(false);
     }
 
     if (has_capability('mod/data:managetemplates', $PAGE->cm->context)) {
@@ -3629,15 +3642,17 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
             $defaultemplate = 'singletemplate';
         }
 
-        $templates = $datanode->add(get_string('templates', 'data'));
+        $datanode->add(get_string('fields', 'data'),
+            new moodle_url('/mod/data/field.php', array('d' => $data->id)));
+        $templates = $datanode->add(get_string('templates', 'data'),
+            new moodle_url('/mod/data/templates.php', array('d' => $data->id)));
 
         $templatelist = array ('listtemplate', 'singletemplate', 'asearchtemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
         foreach ($templatelist as $template) {
             $templates->add(get_string($template, 'data'), new moodle_url('/mod/data/templates.php', array('d'=>$data->id,'mode'=>$template)));
         }
 
-        $datanode->add(get_string('fields', 'data'), new moodle_url('/mod/data/field.php', array('d'=>$data->id)));
-        $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d'=>$data->id)));
+        $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d' => $data->id)));
     }
 
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {

@@ -25,12 +25,15 @@
 
 require_once('../../config.php');
 require_once('lib.php');
+require_once($CFG->dirroot.'/mod/data/preset_form.php');
 
 $id             = optional_param('id', 0, PARAM_INT);            // course module id
 $d              = optional_param('d', 0, PARAM_INT);             // database id
 $fid            = optional_param('fid', 0 , PARAM_INT);          // update field id
 $newtype        = optional_param('newtype','',PARAM_ALPHA);      // type of the new field
 $mode           = optional_param('mode','',PARAM_ALPHA);
+$action         = optional_param('action', '', PARAM_ALPHA);
+$fullname       = optional_param('fullname', '', PARAM_PATH);    // Directory the preset is in.
 $defaultsort    = optional_param('defaultsort', 0, PARAM_INT);
 $defaultsortdir = optional_param('defaultsortdir', 0, PARAM_INT);
 $cancel         = optional_param('cancel', 0, PARAM_BOOL);
@@ -57,6 +60,9 @@ if ($defaultsortdir !== 0) {
 }
 if ($cancel !== 0) {
     $url->param('cancel', $cancel);
+}
+if ($action !== '') {
+    $url->param('action', $action);
 }
 
 if ($id) {
@@ -91,9 +97,69 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/data:managetemplates', $context);
 
+$formimportzip = new data_import_preset_zip_form();
+$formimportzip->set_data(array('d' => $data->id));
+
+$actionbar = new \mod_data\output\action_bar($data->id, $PAGE->url);
+
+$PAGE->set_title(get_string('course') . ': ' . $course->fullname);
+$PAGE->set_heading($course->fullname);
+
+// Fill in missing properties needed for updating of instance.
+$data->course     = $cm->course;
+$data->cmidnumber = $cm->idnumber;
+$data->instance   = $cm->instance;
+
 /************************************
  *        Data Processing           *
  ***********************************/
+$renderer = $PAGE->get_renderer('mod_data');
+
+if ($formimportzip->is_cancelled()) {
+    redirect(new moodle_url('/mod/data/field.php', ['d' => $data->id]));
+} else if ($formdata = $formimportzip->get_data()) {
+    $fieldactionbar = $actionbar->get_fields_action_bar();
+    data_print_header($course, $cm, $data, false, $fieldactionbar);
+    $file = new stdClass;
+    $file->name = $formimportzip->get_new_filename('importfile');
+    $file->path = $formimportzip->save_temp_file('importfile');
+    $importer = new data_preset_upload_importer($course, $cm, $data, $file->path);
+    echo $renderer->import_setting_mappings($data, $importer);
+    echo $OUTPUT->footer();
+    exit(0);
+}
+
+if ($action == 'finishimport' && confirm_sesskey()) {
+    data_print_header($course, $cm, $data, false);
+    $overwritesettings = optional_param('overwritesettings', false, PARAM_BOOL);
+
+    if (!$fullname) {
+        $presetdir = $CFG->tempdir . '/forms/' . required_param('directory', PARAM_FILE);
+        if (!file_exists($presetdir) || !is_dir($presetdir)) {
+            throw new moodle_exception('cannotimport', 'error');
+        }
+        $importer = new data_preset_upload_importer($course, $cm, $data, $presetdir);
+    } else {
+        $importer = new data_preset_existing_importer($course, $cm, $data, $fullname);
+    }
+
+    $importer->import($overwritesettings);
+    $strimportsuccess = get_string('importsuccess', 'data');
+    $straddentries = get_string('addentries', 'data');
+    $strtodatabase = get_string('todatabase', 'data');
+
+    if (!$DB->get_records('data_records', array('dataid' => $data->id))) {
+        echo $OUTPUT->notification("$strimportsuccess <a href='edit.php?d=$data->id'>$straddentries</a> $strtodatabase",
+            'notifysuccess');
+    } else {
+        echo $OUTPUT->notification("$strimportsuccess", 'notifysuccess');
+    }
+
+    echo $OUTPUT->continue_button(new moodle_url('/mod/data/field.php', ['d' => $data->id]));
+    echo $OUTPUT->footer();
+    exit;
+}
+
 switch ($mode) {
 
     case 'add':    ///add a new field
@@ -223,6 +289,32 @@ switch ($mode) {
         }
         break;
 
+    case 'import':
+        $fieldactionbar = $actionbar->get_fields_action_bar();
+        data_print_header($course, $cm, $data, false, $fieldactionbar);
+
+        echo $formimportzip->display();
+        echo $OUTPUT->footer();
+        exit;
+
+    case 'usepreset':
+        $fieldactionbar = $actionbar->get_fields_action_bar();
+        data_print_header($course, $cm, $data, false, $fieldactionbar);
+
+        if ($action === 'select') {
+            if (!empty($fullname)) {
+                $importer = new data_preset_existing_importer($course, $cm, $data, $fullname);
+                echo $renderer->import_setting_mappings($data, $importer);
+            }
+        } else {
+            $presets = data_get_available_presets($context);
+            $presetstable = new \mod_data\output\presets($data->id, $presets,
+                new \moodle_url('/mod/data/field.php'));
+            echo $renderer->render_presets($presetstable, false);
+        }
+        echo $OUTPUT->footer();
+        exit;
+
     default:
         break;
 }
@@ -239,12 +331,10 @@ foreach ($plugins as $plugin=>$fulldir){
     $menufield[$plugin] = get_string('pluginname', 'datafield_'.$plugin);    //get from language files
 }
 asort($menufield);    //sort in alphabetical order
-$PAGE->set_title(get_string('course') . ': ' . $course->fullname);
-$PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
 
 $PAGE->set_pagetype('mod-data-field-' . $newtype);
-if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          ///  Adding a new field
+if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
     data_print_header($course, $cm, $data,'fields');
 
     $field = data_get_field_new($newtype, $data);
@@ -257,7 +347,8 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
     $field->display_edit_field();
 
 } else {                                              /// Display the main listing of all fields
-    data_print_header($course, $cm, $data,'fields');
+    $fieldactionbar = $actionbar->get_fields_action_bar(true, true, true);
+    data_print_header($course, $cm, $data, 'fields', $fieldactionbar);
 
     if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {
         echo $OUTPUT->notification(get_string('nofieldindatabase','data'));  // nothing in database
@@ -308,14 +399,6 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
         }
         echo html_writer::table($table);
     }
-
-
-    echo '<div class="fieldadd">';
-    $popupurl = $CFG->wwwroot.'/mod/data/field.php?d='.$data->id.'&mode=new&sesskey='.  sesskey();
-    echo $OUTPUT->single_select(new moodle_url($popupurl), 'newtype', $menufield, null, array('' => 'choosedots'),
-        'fieldform', array('label' => get_string('newfield', 'data')));
-    echo $OUTPUT->help_icon('newfield', 'data');
-    echo '</div>';
 
     echo '<div class="sortdefault">';
     echo '<form id="sortdefault" action="'.$CFG->wwwroot.'/mod/data/field.php" method="get">';

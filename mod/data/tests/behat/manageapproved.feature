@@ -31,13 +31,13 @@ Feature: Users can edit approved entries in database activities
       | Field name | Test field name |
       | Field description | Test field description |
     # To generate the default templates.
-    And I follow "Templates"
+    And I navigate to "Templates" in current page administration
     And I log out
     # Add an entry as a student.
     And I am on the "Test database name" "data activity" page logged in as student1
     And I add an entry to "Test database name" database with:
       | Test field name | Student entry |
-    And I press "Save and view"
+    And I press "Save"
     And I log out
     # Approve the student's entry as a teacher.
     And I am on the "Test database name" "data activity" page logged in as teacher1
@@ -63,13 +63,13 @@ Feature: Users can edit approved entries in database activities
       | Field name | Test field name |
       | Field description | Test field description |
     # To generate the default templates.
-    And I follow "Templates"
+    And I navigate to "Templates" in current page administration
     And I log out
     # Add an entry as a student.
     And I am on the "Test database name" "data activity" page logged in as student1
     And I add an entry to "Test database name" database with:
       | Test field name | Student entry |
-    And I press "Save and view"
+    And I press "Save"
     And I log out
     # Approve the student's entry as a teacher.
     And I am on the "Test database name" "data activity" page logged in as teacher1

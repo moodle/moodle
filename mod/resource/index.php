@@ -51,7 +51,9 @@ $PAGE->set_title($course->shortname.': '.$strresources);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strresources);
 echo $OUTPUT->header();
-echo $OUTPUT->heading($strresources);
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading($strresources);
+}
 
 if (!$resources = get_all_instances_in_course('resource', $course)) {
     notice(get_string('thereareno', 'moodle', $strresources), "$CFG->wwwroot/course/view.php?id=$course->id");

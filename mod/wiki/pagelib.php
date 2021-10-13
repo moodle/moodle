@@ -93,13 +93,14 @@ abstract class page_wiki {
     protected $cm;
 
     /**
-     * page_wiki constructor
+     * The page_wiki constructor.
      *
-     * @param $wiki. Current wiki
-     * @param $subwiki. Current subwiki.
-     * @param $cm. Current course_module.
+     * @param stdClass $wiki Current wiki
+     * @param stdClass $subwiki Current subwiki.
+     * @param stdClass $cm Current course_module.
+     * @param string|null $activesecondarytab Secondary navigation node to be activated on the page, if required
      */
-    function __construct($wiki, $subwiki, $cm) {
+    public function __construct($wiki, $subwiki, $cm, ?string $activesecondarytab = null) {
         global $PAGE, $CFG;
         $this->subwiki = $subwiki;
         $this->cm = $cm;
@@ -110,6 +111,9 @@ abstract class page_wiki {
         $PAGE->set_cacheable(true);
         $PAGE->set_cm($cm);
         $PAGE->set_activity_record($wiki);
+        if ($activesecondarytab) {
+            $PAGE->set_secondary_active_tab($activesecondarytab);
+        }
         // the search box
         if (!empty($subwiki->id)) {
             $search = optional_param('searchstring', null, PARAM_TEXT);
@@ -126,25 +130,36 @@ abstract class page_wiki {
         $PAGE->set_heading($PAGE->course->fullname);
 
         $this->set_url();
-
         if (isset($SESSION->wikipreviousurl) && is_array($SESSION->wikipreviousurl)) {
             $this->process_session_url();
         }
         $this->set_session_url();
 
         $this->create_navbar();
-        $this->setup_tabs();
 
         echo $OUTPUT->header();
         $wiki = $PAGE->activityrecord;
-        echo $OUTPUT->heading(format_string($wiki->name));
+        if (!$PAGE->has_secondary_navigation()) {
+            echo $OUTPUT->heading(format_string($wiki->name));
+        }
 
         echo $this->wikioutput->wiki_info();
 
-        // tabs are associated with pageid, so if page is empty, tabs should be disabled
-        if (!empty($this->page) && !empty($this->tabs)) {
-            echo $this->wikioutput->tabs($this->page, $this->tabs, $this->tabs_options);
+        if (!empty($this->page)) {
+            echo $this->action_bar($this->page->id, $PAGE->url);
         }
+    }
+
+    /**
+     * This method returns the action bar.
+     *
+     * @param int $pageid The page id.
+     * @param moodle_url $pageurl The page url.
+     * @return string The HTML for the action bar.
+     */
+    protected function action_bar(int $pageid, moodle_url $pageurl): string {
+        $actionbar = new \mod_wiki\output\action_bar($pageid, $pageurl);
+        return $this->wikioutput->render_action_bar($actionbar);
     }
 
     /**
@@ -302,13 +317,21 @@ class page_wiki_view extends page_wiki {
 
         $this->wikioutput->wiki_print_subwiki_selector($PAGE->activityrecord, $this->subwiki, $this->page, 'view');
 
-        if (!empty($this->page)) {
-            echo $this->wikioutput->prettyview_link($this->page);
-        }
-
         //echo $this->wikioutput->page_index();
 
         $this->print_pagetitle();
+    }
+
+    /**
+     * This method returns the action bar.
+     *
+     * @param int $pageid The page id.
+     * @param moodle_url $pageurl The page url.
+     * @return string The HTML for the action bar.
+     */
+    protected function action_bar(int $pageid, moodle_url $pageurl): string {
+        $actionbar = new \mod_wiki\output\action_bar($pageid, $pageurl, true);
+        return $this->wikioutput->render_action_bar($actionbar);
     }
 
     function print_content() {
@@ -379,9 +402,17 @@ class page_wiki_edit extends page_wiki {
     protected $deleteuploads = array();
     protected $format;
 
-    function __construct($wiki, $subwiki, $cm) {
+    /**
+     * The page_wiki_edit constructor.
+     *
+     * @param stdClass $wiki Current wiki
+     * @param stdClass $subwiki Current subwiki.
+     * @param stdClass $cm Current course_module.
+     * @param string|null $activesecondarytab Secondary navigation node to be activated on the page, if required
+     */
+    public function __construct($wiki, $subwiki, $cm, ?string $activesecondarytab = null) {
         global $CFG, $PAGE;
-        parent::__construct($wiki, $subwiki, $cm);
+        parent::__construct($wiki, $subwiki, $cm, $activesecondarytab);
         $showfilemanager = false;
         if (has_capability('mod/wiki:managefiles', context_module::instance($cm->id))) {
             $showfilemanager = true;
@@ -773,6 +804,18 @@ class page_wiki_editcomment extends page_wiki {
         parent::setup_tabs(array('linkedwhenactive' => 'comments', 'activetab' => 'comments'));
     }
 
+    /**
+     * This method returns the action bar.
+     *
+     * @param int $pageid The page id.
+     * @param moodle_url $pageurl The page url.
+     * @return string The HTML for the action bar.
+     */
+    protected function action_bar(int $pageid, moodle_url $pageurl): string {
+        // The given page does not require an action bar.
+        return '';
+    }
+
     private function add_comment_form() {
         global $CFG;
         require_once($CFG->dirroot . '/mod/wiki/editors/wiki_editor.php');
@@ -1127,6 +1170,18 @@ class page_wiki_diff extends page_wiki {
     }
 
     /**
+     * This method returns the action bar.
+     *
+     * @param int $pageid The page id.
+     * @param moodle_url $pageurl The page url.
+     * @return string The HTML for the action bar.
+     */
+    protected function action_bar(int $pageid, moodle_url $pageurl): string {
+        $backlink = new moodle_url('/mod/wiki/history.php', ['pageid' => $pageid]);
+        return html_writer::link($backlink, get_string('back'), ['class' => 'btn btn-secondary mb-4']);
+    }
+
+    /**
      * Given two versions of a page, prints a page displaying the differences between them.
      *
      * @global object $CFG
@@ -1181,9 +1236,17 @@ class page_wiki_history extends page_wiki {
      */
     private $allversion;
 
-    function __construct($wiki, $subwiki, $cm) {
+    /**
+     * The page_wiki_history constructor.
+     *
+     * @param stdClass $wiki Current wiki.
+     * @param stdClass $subwiki Current subwiki.
+     * @param stdClass $cm Current course_module.
+     * @param string|null $activesecondarytab Secondary navigation node to be activated on the page, if required
+     */
+    public function __construct($wiki, $subwiki, $cm, ?string $activesecondarytab = null) {
         global $PAGE;
-        parent::__construct($wiki, $subwiki, $cm);
+        parent::__construct($wiki, $subwiki, $cm, $activesecondarytab);
         $PAGE->requires->js_init_call('M.mod_wiki.history', null, true);
     }
 
@@ -1872,6 +1935,18 @@ class page_wiki_restoreversion extends page_wiki {
     }
 
     /**
+     * This method returns the action bar.
+     *
+     * @param int $pageid The page id.
+     * @param moodle_url $pageurl The page url.
+     * @return string The HTML for the action bar.
+     */
+    protected function action_bar(int $pageid, moodle_url $pageurl): string {
+        // The given page does not require an action bar.
+        return '';
+    }
+
+    /**
      * Prints the restore version content
      *
      * @uses $CFG
@@ -1892,13 +1967,12 @@ class page_wiki_restoreversion extends page_wiki {
 
         echo $OUTPUT->container_start();
         echo html_writer::tag('div', get_string('restoreconfirm', 'wiki', $version->version));
-        echo $OUTPUT->container_start(false, 'wiki_restoreform');
-        echo '<form class="wiki_restore_yes" action="' . $restoreurl . '" method="post" id="restoreversion">';
-        echo '<div><input type="submit" class="btn btn-secondary" name="confirm" value="' . get_string('yes') . '" /></div>';
-        echo '</form>';
-        echo '<form class="wiki_restore_no" action="' . $return . '" method="post">';
-        echo '<div><input type="submit" class="btn btn-secondary" name="norestore" value="' . get_string('no') . '" /></div>';
-        echo '</form>';
+        echo $OUTPUT->container_start('mt-2', 'wiki_restoreform');
+        $yesbutton = new single_button($restoreurl, get_string('yes'), 'post');
+        $nobutton = new single_button($return, get_string('no'), 'post');
+        $nobutton->class .= ' ml-2';
+        echo $OUTPUT->render($yesbutton);
+        echo $OUTPUT->render($nobutton);
         echo $OUTPUT->container_end();
         echo $OUTPUT->container_end();
     }
@@ -1939,6 +2013,18 @@ class page_wiki_deletecomment extends page_wiki {
 
     protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'comments', 'activetab' => 'comments'));
+    }
+
+    /**
+     * This method returns the action bar.
+     *
+     * @param int $pageid The page id.
+     * @param moodle_url $pageurl The page url.
+     * @return string The HTML for the action bar.
+     */
+    protected function action_bar(int $pageid, moodle_url $pageurl): string {
+        // The given page does not require an action bar.
+        return '';
     }
 
     /**
@@ -2094,6 +2180,18 @@ class page_wiki_viewversion extends page_wiki {
 
     protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'history', 'activetab' => 'history', 'inactivetabs' => array('edit')));
+    }
+
+    /**
+     * This method returns the action bar.
+     *
+     * @param int $pageid The page id.
+     * @param moodle_url $pageurl The page url.
+     * @return string The HTML for the action bar.
+     */
+    protected function action_bar(int $pageid, moodle_url $pageurl): string {
+        $backlink = new moodle_url('/mod/wiki/history.php', ['pageid' => $pageid]);
+        return html_writer::link($backlink, get_string('back'), ['class' => 'btn btn-secondary mb-4']);
     }
 
     /**
@@ -2400,10 +2498,11 @@ class page_wiki_admin extends page_wiki {
      * @param mixed $wiki instance of wiki
      * @param mixed $subwiki instance of subwiki
      * @param stdClass $cm course module
+     * @param string|null $activesecondarytab Secondary navigation node to be activated on the page, if required
      */
-    function __construct($wiki, $subwiki, $cm) {
+    public function __construct($wiki, $subwiki, $cm, ?string $activesecondarytab = null) {
         global $PAGE;
-        parent::__construct($wiki, $subwiki, $cm);
+        parent::__construct($wiki, $subwiki, $cm, $activesecondarytab);
         $PAGE->requires->js_init_call('M.mod_wiki.deleteversion', null, true);
     }
 

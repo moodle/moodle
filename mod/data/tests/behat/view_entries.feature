@@ -33,13 +33,12 @@ Feature: Users can view and search database entries
       | Field name        | Test field 2 name        |
       | Field description | Test field 2 description |
     # To generate the default templates.
-    And I follow "Templates"
+    And I navigate to "Templates" in current page administration
     And I log out
 
+  @javascript
   Scenario: Students can add view, list and search entries
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test database name"
+    Given I am on the "Test database name" "data activity" page logged in as student1
     And I add an entry to "Test database name" database with:
       | Test field name | Student entry 1 |
     And I press "Save and add another"
@@ -48,12 +47,12 @@ Feature: Users can view and search database entries
     And I press "Save and add another"
     And I add an entry to "Test database name" database with:
       | Test field name | Student entry 3 |
-    And I press "Save and view"
-    And I follow "Test database name"
+    And I press "Save"
+    And I am on the "Test database name" "data activity" page
     Then I should see "Student entry 1"
     And I should see "Student entry 2"
     And I should see "Student entry 3"
-    And I follow "View single"
+    And I select "Single view" from the "jump" singleselect
     And I should see "Student entry 1"
     And I should not see "Student entry 2"
     And "2" "link" should exist
@@ -68,13 +67,13 @@ Feature: Users can view and search database entries
     And I should see "Student entry 2"
     And I should not see "Student entry 1"
     And I should not see "Student entry 3"
-    And I follow "Search"
+    And I select "List view" from the "jump" singleselect
+    And I click on "Advanced search" "checkbox"
     And I set the field "Test field name" to "Student entry 1"
     And I press "Save settings"
     And I should see "Student entry 1"
     And I should not see "Student entry 2"
     And I should not see "Student entry 3"
-    And I follow "Search"
     And I set the field "Test field name" to "Student entry"
     And I set the field "Order" to "Descending"
     And I press "Save settings"
@@ -94,14 +93,15 @@ Feature: Users can view and search database entries
       | Test field name   | Student original entry tagged   |
       | Test field 2 name | Student original entry tagged 2 |
     And I set the field with xpath "//div[@class='datatagcontrol']//input[@type='text']" to "Tag1"
-    And I press "Save and view"
+    And I press "Save"
     And I should see "Student original entry"
     And I should see "Tag1" in the "div.tag_list" "css_element"
     And I follow "Edit"
     And I should see "Tag1" in the ".form-autocomplete-selection" "css_element"
-    And I follow "View list"
+    And I follow "Cancel"
+    And I select "List view" from the "jump" singleselect
     And I should see "Tag1" in the "div.tag_list" "css_element"
-    And I follow "Search"
+    And I click on "Advanced search" "checkbox"
     And I set the field with xpath "//div[@class='datatagcontrol']//input[@type='text']" to "Tag1"
     And I click on "[data-value='Tag1']" "css_element"
     When I press "Save settings"
@@ -110,23 +110,22 @@ Feature: Users can view and search database entries
     And I should not see "Student original entry untagged"
     And I should not see "Student original entry untagged 2"
 
+  @javascript
   Scenario: Check that searching by first and last name works as expected
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
       | Test field name | Student entry 1 |
-    And I press "Save and view"
+    And I press "Save"
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
       | Test field name | Student entry 2 |
-    And I press "Save and view"
+    And I press "Save"
     And I log out
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test database name"
-    And I follow "Search"
+    When I am on the "Test database name" "data activity" page logged in as teacher1
+    And I click on "Advanced search" "checkbox"
     And I set the field "Author first name" to "Bob"
     And I press "Save settings"
     Then I should see "Student entry 1"

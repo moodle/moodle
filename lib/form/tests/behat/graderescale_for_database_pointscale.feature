@@ -26,7 +26,7 @@ Feature: Using the database activities which support point scale
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
-    And I follow "Templates"
+    And I navigate to "Templates" in current page administration
     And I wait until the page is ready
     And I am on the "Test database name" "data activity editing" page
     And I expand all fieldsets
@@ -39,10 +39,10 @@ Feature: Using the database activities which support point scale
     And I add an entry to "Test database name" database with:
       | Test field name | Student original entry |
       | Test field name | Student original entry 2 |
-    And I press "Save and view"
+    And I press "Save"
     And I log out
     And I am on the "Test database name" "data activity" page logged in as teacher1
-    And I follow "View single"
+    And I select "Single view" from the "jump" singleselect
     And I set the field "rating" to "51"
     And I am on the "Test database name" "data activity editing" page
     And I expand all fieldsets

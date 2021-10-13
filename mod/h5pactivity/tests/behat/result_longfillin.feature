@@ -39,7 +39,7 @@ Feature: View essay attempt report
     And I switch to the main frame
     And I reload the page
     # Check attempt.
-    When I follow "View my attempts"
+    When I navigate to "Attempts report" in current page administration
     And I follow "View report"
     Then I should see "This is a smurfing smurf"
     And I should not see "<strong>smurf</strong>"

@@ -279,8 +279,11 @@ function resource_print_header($resource, $cm, $course) {
  * @return void
  */
 function resource_print_heading($resource, $cm, $course, $notused = false) {
-    global $OUTPUT;
-    echo $OUTPUT->heading(format_string($resource->name), 2);
+    global $OUTPUT, $PAGE;
+
+    if (!$PAGE->has_secondary_navigation()) {
+        echo $OUTPUT->heading(format_string($resource->name), 2);
+    }
 }
 
 

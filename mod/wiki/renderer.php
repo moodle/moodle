@@ -542,6 +542,17 @@ class mod_wiki_renderer extends plugin_renderer_base {
 
         return $result;
     }
+
+    /**
+     * Renders the action bar.
+     *
+     * @param \mod_wiki\output\action_bar $actionbar
+     * @return string The HTML output
+     */
+    public function render_action_bar(\mod_wiki\output\action_bar $actionbar): string {
+        $data = $actionbar->export_for_template($this);
+        return $this->render_from_template('mod_wiki/action_bar', $data);
+    }
 }
 
 class wiki_files_tree implements renderable {

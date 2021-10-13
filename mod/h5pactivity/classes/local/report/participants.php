@@ -124,8 +124,6 @@ class participants extends table_sql implements report {
 
         $this->define_baseurl($PAGE->url);
 
-        echo $OUTPUT->heading(get_string('attempts_report', 'mod_h5pactivity'));
-
         $this->out($this->get_page_size(), true);
     }
 

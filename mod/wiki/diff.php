@@ -72,7 +72,7 @@ if (!wiki_user_can_view($subwiki, $wiki)) {
     print_error('cannotviewpage', 'wiki');
 }
 
-$wikipage = new page_wiki_diff($wiki, $subwiki, $cm);
+$wikipage = new page_wiki_diff($wiki, $subwiki, $cm, 'modulepage');
 
 $wikipage->set_page($page);
 $wikipage->set_comparison($compare, $comparewith);
