@@ -21,7 +21,6 @@ Feature: Within a moodle instance, an administrator should be able to modify lan
   @javascript
   Scenario: Edit an string but don't save it to lang pack.
     When I press "Apply changes and continue editing"
-    And I click on "Show footer" "button"
     Then I should not see "moodle documents" in the "page-footer" "region"
     And I should see "Help and documentation" in the "page-footer" "region"
 
@@ -30,6 +29,5 @@ Feature: Within a moodle instance, an administrator should be able to modify lan
     Given I press "Save changes to the language pack"
     And I should see "There are 1 modified strings."
     When I click on "Continue" "button"
-    And I click on "Show footer" "button"
     Then I should not see "Help and documentation" in the "page-footer" "region"
     And I should see "moodle documents" in the "page-footer" "region"
