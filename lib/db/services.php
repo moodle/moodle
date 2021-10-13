@@ -900,16 +900,6 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
-    'core_grades_get_grades' => array(
-        'classname' => 'core_grades_external',
-        'methodname' => 'get_grades',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                                     Returns student course total grade and grades for activities.
-                                     This function does not return category or manual items.
-                                     This function is suitable for managers or teachers not students.',
-        'type' => 'read',
-        'capabilities' => 'moodle/grade:view, moodle/grade:viewall, moodle/grade:viewhidden'
-    ),
     'core_grades_update_grades' => array(
         'classname' => 'core_grades_external',
         'methodname' => 'update_grades',
