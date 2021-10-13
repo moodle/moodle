@@ -140,6 +140,7 @@ $string['cliupgradefinished'] = 'Command line upgrade from {$a->oldversion} to {
 $string['cliupgradenoneed'] = 'No upgrade needed for the installed version {$a}. Thanks for coming anyway!';
 $string['cliupgradepending'] = 'An upgrade is pending';
 $string['cliyesnoprompt'] = 'type y (means yes) or n (means no)';
+$string['close'] = 'Close';
 $string['commentsperpage'] = 'Comments displayed per page';
 $string['commonactivitysettings'] = 'Common activity settings';
 $string['commonfiltersettings'] = 'Common filter settings';
