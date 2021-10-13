@@ -18,7 +18,7 @@
 
         &.active {
             font-weight: bold;
-            border-bottom: solid 3px $blue;
+            border-bottom: solid 3px $primary;
         }
         &[data-toggle="tab"] {
             display: inline-flex;
