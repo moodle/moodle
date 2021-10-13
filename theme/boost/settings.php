@@ -65,6 +65,14 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
+    // Login Background image setting.
+    $name = 'theme_boost/loginbackgroundimage';
+    $title = get_string('loginbackgroundimage', 'theme_boost');
+    $description = get_string('loginbackgroundimage_desc', 'theme_boost');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'loginbackgroundimage');
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
     // Variable $body-color.
     // We use an empty default value because the default colour should come from the preset.
     $name = 'theme_boost/brandcolor';
