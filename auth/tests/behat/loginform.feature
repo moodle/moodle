@@ -25,8 +25,9 @@ Feature: Test if the login form provides the correct feedback
     And I am on homepage
     And I log out
     And I follow "Log in"
-    And I click on "//a[@id='action-menu-toggle-0']" "xpath_element"
-    And I click on "//a[@data-lang='nl']" "xpath_element"
+    And I open the action menu in "region-main" "region"
+    # The line below contains the unicode character U+200E before and after the brackets, please be very careful editing this line.
+    And I choose "Nederlands ‎(nl)‎" in the open action menu
     Then I should see "Gebruikersnaam"
 
   @_file_upload
