@@ -5,6 +5,24 @@ information provided here is intended especially for developers.
 
 * The forum_count_replies() function has been removed from core.
 * The mod_forum_get_forum_discussion_posts web service has been removed from core.
+* Final deprecations of the following functions:
+    * forum_make_mail_text
+    * forum_make_mail_html
+    * forum_make_mail_post
+    * forum_cron_minimise_user_record
+    * forum_cron
+    * forum_print_discussion
+    * forum_post_nesting_cache
+    * forum_should_start_post_nesting
+    * forum_should_end_post_nesting
+    * forum_print_post_start
+    * forum_print_post_end
+    * forum_print_post
+    * forum_print_posts_flat
+    * forum_print_posts_threaded
+    * forum_print_posts_nested
+    * forum_print_latest_discussions
+    * forum_get_user_grades
 
 === 3.11 ===
 
