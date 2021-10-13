@@ -662,15 +662,13 @@ abstract class format_base {
                               'format' => $this->format,
                               'sectionid' => $sectionid
                             ), '', 'id,name,value');
+
+                $indexedrecords = [];
                 foreach ($records as $record) {
-                    if (array_key_exists($record->name, $this->formatoptions[$sectionid])) {
-                        $value = $record->value;
-                        if ($value !== null && isset($options[$record->name]['type'])) {
-                            // this will convert string value to number if needed
-                            $value = clean_param($value, $options[$record->name]['type']);
-                        }
-                        $this->formatoptions[$sectionid][$record->name] = $value;
-                    }
+                    $indexedrecords[$record->name] = $record->value;
+                }
+                foreach ($options as $optionname => $option) {
+                    contract_value($this->formatoptions[$sectionid], $indexedrecords, $option, $optionname);
                 }
             }
         }
@@ -765,7 +763,7 @@ abstract class format_base {
         $data = array_intersect_key($rawdata, $allformatoptions);
         foreach ($data as $key => $value) {
             $option = $allformatoptions[$key] + ['type' => PARAM_RAW, 'element_type' => null, 'element_attributes' => [[]]];
-            $data[$key] = clean_param($value, $option['type']);
+            expand_value($data, $data, $option, $key);
             if ($option['element_type'] === 'select' && !array_key_exists($data[$key], $option['element_attributes'][0])) {
                 // Value invalid for select element, skip.
                 unset($data[$key]);
@@ -814,6 +812,7 @@ abstract class format_base {
             if (array_key_exists('default', $option)) {
                 $defaultoptions[$key] = $option['default'];
             }
+            expand_value($defaultoptions, $defaultoptions, $option, $key);
             $cached[$key] = ($sectionid === 0 || !empty($option['cache']));
         }
         $records = $DB->get_records('course_format_options',
@@ -1398,5 +1397,72 @@ class format_site extends format_base {
      */
     public function allow_stealth_module_visibility($cm, $section) {
         return true;
+    }
+}
+
+/**
+ * 'Converts' a value from what is stored in the database into what is used by edit forms.
+ *
+ * @param array $dest The destination array
+ * @param array $source The source array
+ * @param array $option The definition structure of the option.
+ * @param string $optionname The name of the option, as provided in the definition.
+ * @author Jason den Dulk
+ */
+function contract_value(array &$dest, array $source, array $option, string $optionname) : void {
+    if (substr($optionname, -7) == '_editor') { // Suffix '_editor' indicates that the element is an editor.
+        $name = substr($optionname, 0, -7);
+        if (isset($source[$name])) {
+            $dest[$optionname] = [
+                'text' => clean_param_if_not_null($source[$name], $option['type'] ?? PARAM_RAW),
+                'format' => clean_param_if_not_null($source[$name . 'format'], PARAM_INT),
+            ];
+        }
+    } else {
+        if (isset($source[$optionname])) {
+            $dest[$optionname] = clean_param_if_not_null($source[$optionname], $option['type'] ?? PARAM_RAW);
+        }
+    }
+}
+
+/**
+ * Cleans the given param, unless it is null.
+ *
+ * @param mixed $param The variable we are cleaning.
+ * @param string $type Expected format of param after cleaning.
+ * @return mixed Null if $param is null, otherwise the cleaned value.
+ * @throws coding_exception
+ * @author Jason den Dulk
+ */
+function clean_param_if_not_null($param, string $type = PARAM_RAW) {
+    if ($param === null) {
+        return null;
+    } else {
+        return clean_param($param, $type);
+    }
+}
+
+/**
+ * 'Converts' a value from what is used in edit forms into a value(s) to be stored in the database.
+ *
+ * @param array $dest The destination array
+ * @param array $source The source array
+ * @param array $option The definition structure of the option.
+ * @param string $optionname The name of the option, as provided in the definition.
+ * @author Jason den Dulk
+ */
+function expand_value(array &$dest, array $source, array $option, string $optionname) : void {
+    if (substr($optionname, -7) == '_editor') { // Suffix '_editor' indicates that the element is an editor.
+        $name = substr($optionname, 0, -7);
+        if (is_string($source[$optionname])) {
+            $dest[$name]          = clean_param($source[$optionname], $option['type'] ?? PARAM_RAW);
+            $dest[$name.'format'] = 1;
+        } else {
+            $dest[$name]          = clean_param($source[$optionname]['text'], $option['type'] ?? PARAM_RAW);
+            $dest[$name.'format'] = clean_param($source[$optionname]['format'], PARAM_INT);
+        }
+        unset($dest[$optionname]);
+    } else {
+        $dest[$optionname] = clean_param($source[$optionname], $option['type'] ?? PARAM_RAW);
     }
 }
