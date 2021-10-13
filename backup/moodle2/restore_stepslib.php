@@ -1806,7 +1806,8 @@ class restore_course_structure_step extends restore_structure_step {
         $category = new restore_path_element('category', '/course/category');
         $tag = new restore_path_element('tag', '/course/tags/tag');
         $customfield = new restore_path_element('customfield', '/course/customfields/customfield');
-        $allowed_module = new restore_path_element('allowed_module', '/course/allowed_modules/module');
+        $courseformatoptions = new restore_path_element('course_format_option', '/course/courseformatoptions/courseformatoption');
+        $allowedmodule = new restore_path_element('allowed_module', '/course/allowed_modules/module');
 
         // Apply for 'format' plugins optional paths at course level
         $this->add_plugin_structure('format', $course);
@@ -1829,7 +1830,7 @@ class restore_course_structure_step extends restore_structure_step {
         // Apply for admin tool plugins optional paths at course level.
         $this->add_plugin_structure('tool', $course);
 
-        return array($course, $category, $tag, $customfield, $allowed_module);
+        return array($course, $category, $tag, $customfield, $allowedmodule, $courseformatoptions);
     }
 
     /**
@@ -1951,8 +1952,6 @@ class restore_course_structure_step extends restore_structure_step {
         // Course record ready, update it
         $DB->update_record('course', $data);
 
-        course_get_format($data)->update_course_format_options($data);
-
         // Role name aliases
         restore_dbops::set_course_role_names($this->get_restoreid(), $this->get_courseid());
     }
@@ -1978,6 +1977,26 @@ class restore_course_structure_step extends restore_structure_step {
     public function process_customfield($data) {
         $handler = core_course\customfield\course_handler::create();
         $handler->restore_instance_data_from_backup($this->task, $data);
+    }
+
+    /**
+     * Processes a course format option.
+     *
+     * @param array $data The record being restored.
+     * @throws base_step_exception
+     * @throws dml_exception
+     */
+    public function process_course_format_option(array $data) : void {
+        global $DB;
+
+        $courseid = $this->get_courseid();
+        $record = $DB->get_record('course_format_options', [ 'courseid' => $courseid, 'name' => $data['name'] ], 'id');
+        if ($record !== false) {
+            $DB->update_record('course_format_options', (object) [ 'id' => $record->id, 'value' => $data['value'] ]);
+        } else {
+            $data['courseid'] = $courseid;
+            $DB->insert_record('course_format_options', (object) $data);
+        }
     }
 
     public function process_allowed_module($data) {
