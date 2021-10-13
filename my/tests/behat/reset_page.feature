@@ -24,7 +24,7 @@ Feature: Reset dashboard page to default
     And I add the "Comments" block
     And I press "Reset page to default"
     Then I should not see "Latest announcements"
-    And I should see "Latest badges"
+    And I should see "Timeline"
     And I should see "Calendar"
     And I should not see "Upcoming events"
     And I should not see "Comments"

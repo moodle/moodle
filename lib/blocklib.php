@@ -2686,8 +2686,7 @@ function blocks_add_default_system_blocks() {
 
     $page->blocks->add_blocks([
         BLOCK_POS_RIGHT => [
-            'private_files',
-            'badges',
+            'recentlyaccesseditems',
         ],
         'content' => [
             'timeline',
