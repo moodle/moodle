@@ -2761,7 +2761,8 @@ function get_courses_page() {
  */
 function report_insights_context_insights(\context $context) {
     throw new coding_exception(
-        'Function report_insights_context_insights() has been removed. \core_analytics\manager::cached_models_with_insights instead'
+        'Function report_insights_context_insights() ' .
+        'has been removed. Please use \core_analytics\manager::cached_models_with_insights instead'
     );
 }
 
