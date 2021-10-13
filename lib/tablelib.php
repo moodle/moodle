@@ -87,6 +87,9 @@ class flexible_table {
     /** @var string[] Columns that are expected to contain a users fullname.  */
     protected $userfullnamecolumns = ['fullname'];
 
+    /** @var array[] Attributes for each column  */
+    private $columnsattributes = [];
+
     /**
      * @var bool Whether or not to store table properties in the user_preferences table.
      */
@@ -427,6 +430,16 @@ class flexible_table {
     }
 
     /**
+     * Sets the given $attributes to $this->columnsattributes.
+     * Column attributes will be added to every cell in the column.
+     *
+     * @param array[] $attributes e.g. ['c0_firstname' => ['data-foo' => 'bar']]
+     */
+    public function set_columnsattributes(array $attributes): void {
+        $this->columnsattributes = $attributes;
+    }
+
+    /**
      * Sets all columns' $propertys to the given $value in $this->column_style.
      * @param int $property
      * @param string $value
@@ -454,12 +467,14 @@ class flexible_table {
         $this->columns = array();
         $this->column_style = array();
         $this->column_class = array();
+        $this->columnsattributes = [];
         $colnum = 0;
 
         foreach ($columns as $column) {
             $this->columns[$column]         = $colnum++;
             $this->column_style[$column]    = array();
             $this->column_class[$column]    = '';
+            $this->columnsattributes[$column] = [];
             $this->column_suppress[$column] = false;
         }
     }
@@ -1101,34 +1116,7 @@ class flexible_table {
                     array('class' => 'tabledivider')), array('colspan' => $colcount));
 
         } else {
-            $colbyindex = array_flip($this->columns);
-            foreach ($row as $index => $data) {
-                $column = $colbyindex[$index];
-
-                $attributes = [
-                    'class' => "cell c{$index}" . $this->column_class[$column],
-                    'id' => "{$rowid}_c{$index}",
-                    'style' => $this->make_styles_string($this->column_style[$column]),
-                ];
-
-                $celltype = 'td';
-                if ($this->headercolumn && $column == $this->headercolumn) {
-                    $celltype = 'th';
-                    $attributes['scope'] = 'row';
-                }
-
-                if (empty($this->prefs['collapse'][$column])) {
-                    if ($this->column_suppress[$column] && $suppress_lastrow !== NULL && $suppress_lastrow[$index] === $data) {
-                        $content = '&nbsp;';
-                    } else {
-                        $content = $data;
-                    }
-                } else {
-                    $content = '&nbsp;';
-                }
-
-                $html .= html_writer::tag($celltype, $content, $attributes);
-            }
+            $html .= $this->get_row_cells_html($rowid, $row, $suppress_lastrow);
         }
 
         $html .= html_writer::end_tag('tr');
@@ -1138,6 +1126,49 @@ class flexible_table {
             $suppress_lastrow = $row;
         }
         $this->currentrow++;
+        return $html;
+    }
+
+    /**
+     * Generate html code for the row cells.
+     *
+     * @param string $rowid
+     * @param array $row
+     * @param array|null $suppresslastrow
+     * @return string
+     */
+    public function get_row_cells_html(string $rowid, array $row, ?array $suppresslastrow): string {
+        $html = '';
+        $colbyindex = array_flip($this->columns);
+        foreach ($row as $index => $data) {
+            $column = $colbyindex[$index];
+
+            $attributes = [
+                'class' => "cell c{$index}" . $this->column_class[$column],
+                'id' => "{$rowid}_c{$index}",
+                'style' => $this->make_styles_string($this->column_style[$column]),
+            ];
+
+            $celltype = 'td';
+            if ($this->headercolumn && $column == $this->headercolumn) {
+                $celltype = 'th';
+                $attributes['scope'] = 'row';
+            }
+
+            $attributes += $this->columnsattributes[$column] ?? [];
+
+            if (empty($this->prefs['collapse'][$column])) {
+                if ($this->column_suppress[$column] && $suppresslastrow !== null && $suppresslastrow[$index] === $data) {
+                    $content = '&nbsp;';
+                } else {
+                    $content = $data;
+                }
+            } else {
+                $content = '&nbsp;';
+            }
+
+            $html .= html_writer::tag($celltype, $content, $attributes);
+        }
         return $html;
     }
 
