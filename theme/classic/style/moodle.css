@@ -13046,6 +13046,9 @@ body.dragging .dragging {
 .block_myoverview .paged-content-page-container {
   min-height: 13rem; }
 
+.block_timeline .paged-content-page-container {
+  background-color: #fff; }
+
 .block_settings .block_tree [aria-expanded="true"],
 .block_settings .block_tree [aria-expanded="true"].emptybranch,
 .block_settings .block_tree [aria-expanded="false"],

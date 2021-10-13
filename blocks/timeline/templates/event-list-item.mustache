@@ -45,9 +45,9 @@
         "overdue": false
     }
 }}
-<div class="list-group-item timeline-event-list-item flex-column py-2 pl-0 pr-0 border-bottom"
+<div class="list-group-item timeline-event-list-item flex-column pt-2 pb-0 border-0 {{#courseview}}px-0{{/courseview}}{{^courseview}}px-2{{/courseview}}"
         data-region="event-list-item">
-    <div class="d-flex justify-content-between flex-wrap">
+    <div class="d-flex justify-content-between flex-wrap pb-1">
         <small class="text-right text-nowrap align-self-center ml-1">
             {{#userdate}} {{timesort}}, {{#str}} strftimetime24, core_langconfig {{/str}} {{/userdate}}
         </small>
@@ -85,4 +85,5 @@
         </h6>
         {{/action.actionable}}
     </div>
+    <div class="pt-2 border-bottom"></div>
 </div>

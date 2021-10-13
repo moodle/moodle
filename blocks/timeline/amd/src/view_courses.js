@@ -342,6 +342,7 @@ function(
             daysoffset: daysOffset,
             dayslimit: daysLimit,
             nodayslimit: daysLimit == undefined,
+            courseview: true,
         }).then(function(html) {
             hideLoadingPlaceholder(root);
 
