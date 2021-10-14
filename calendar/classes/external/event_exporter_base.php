@@ -91,6 +91,7 @@ class event_exporter_base extends exporter {
         $data->visible = $event->is_visible() ? 1 : 0;
         $data->timemodified = $event->get_times()->get_modified_time()->getTimestamp();
         $data->component = $event->get_component();
+        $data->overdue = $data->timesort < time();
 
         if ($repeats = $event->get_repeats()) {
             $data->repeatid = $repeats->get_id();
@@ -212,6 +213,12 @@ class event_exporter_base extends exporter {
             'timeusermidnight' => ['type' => PARAM_INT],
             'visible' => ['type' => PARAM_INT],
             'timemodified' => ['type' => PARAM_INT],
+            'overdue' => [
+                'type' => PARAM_BOOL,
+                'optional' => true,
+                'default' => false,
+                'null' => NULL_ALLOWED
+            ],
         ];
     }
 

@@ -67,7 +67,6 @@
     {{#eventsbyday}}
         <div class="mt-3">
             <h5 class="h6 d-inline {{^courseview}}font-weight-bold{{/courseview}}">{{#userdate}} {{dayTimestamp}}, {{#str}} strftimedaydate, core_langconfig {{/str}}  {{/userdate}}</h5>
-            {{#past}}<span class="badge badge-pill badge-danger">{{#str}} overdue, block_timeline {{/str}}</span>{{/past}}
         </div>
         {{> block_timeline/event-list-items }}
     {{/eventsbyday}}

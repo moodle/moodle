@@ -124,10 +124,9 @@ function(
      * Each day timestamp is the day's midnight in the user's timezone.
      *
      * @param {array} calendarEvents List of calendar events
-     * @param {Number} midnight A timestamp representing midnight in the user's timezone
      * @return {object}
      */
-    var buildTemplateContext = function(calendarEvents, midnight) {
+    var buildTemplateContext = function(calendarEvents) {
         var eventsByDay = {};
         var templateContext = {
             courseview,
@@ -146,7 +145,6 @@ function(
         Object.keys(eventsByDay).forEach(function(dayTimestamp) {
             var events = eventsByDay[dayTimestamp];
             templateContext.eventsbyday.push({
-                past: dayTimestamp < midnight,
                 dayTimestamp: dayTimestamp,
                 events: events
             });
@@ -159,11 +157,10 @@ function(
      * Render the HTML for the given calendar events.
      *
      * @param {array} calendarEvents  A list of calendar events
-     * @param {Number} midnight A timestamp representing midnight for the user
      * @return {promise} Resolved with HTML and JS strings.
      */
-    var render = function(calendarEvents, midnight) {
-        var templateContext = buildTemplateContext(calendarEvents, midnight);
+    var render = function(calendarEvents) {
+        var templateContext = buildTemplateContext(calendarEvents);
         var templateName = TEMPLATES.EVENT_LIST_CONTENT;
 
         return Templates.render(templateName, templateContext);
@@ -275,12 +272,19 @@ function(
                 return [];
             }
 
+            // Determine if the overdue filter is applied.
+            const overdueFilter = document.querySelector("[data-filtername='overdue']");
+            const filterByOverdue = (overdueFilter && overdueFilter.getAttribute('aria-current'));
+
             var calendarEvents = result.events.filter(function(event) {
                 if (event.eventtype == "open" || event.eventtype == "opensubmission") {
                     var dayTimestamp = UserDate.getUserMidnightForTimestamp(event.timesort, midnight);
                     return dayTimestamp > midnight;
                 }
-                return true;
+
+                // When filtering by overdue, we fetch all events due today, in case any have elapsed already and are overdue.
+                // This means if filtering by overdue, some events fetched might not be required (eg if due later today).
+                return (!filterByOverdue || event.overdue);
             });
             // We expect to receive limit + 1 events back from the server.
             // Any less means there are no more events to load.
@@ -378,7 +382,7 @@ function(
                                     // Record the id that the next page will need to start from.
                                     lastIds[pageNumber + 1] = lastEventId;
                                     // Get the HTML and JS for these calendar events.
-                                    return render(calendarEvents, midnight);
+                                    return render(calendarEvents);
                                 } else {
                                     return calendarEvents;
                                 }
