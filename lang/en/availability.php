@@ -65,4 +65,5 @@ $string['privacy:metadata'] = 'The Access restriction subsystem does not store a
 $string['restrictaccess'] = 'Restrict access';
 $string['restrictbygroup'] = 'Add group/grouping access restriction';
 $string['setheading'] = '{$a->number} Set of {$a->count} restriction(s)';
+$string['showmore'] = 'Show more';
 $string['unknowncondition'] = 'Unknown condition (deleted condition plugin)';

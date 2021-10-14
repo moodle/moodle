@@ -1,0 +1,98 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_availability/availability_info
+
+    Renders the availability tree for course activties
+
+    Example context (json):
+    {
+        "id" : "123456",
+        "header": "Not available unless:",
+        "items" : [
+            {
+                "showmorelink": 0,
+                "abbreviate" : 0,
+                "hidden" : 0,
+                "hasitems": 0,
+                "header": "You belong to Green Group"
+            },
+            {
+                "showmorelink": 0,
+                "abbreviate" : 0,
+                "hidden" : 0,
+                "hasitems": 0,
+                "header": "You belong to Red Group"
+            },
+            {
+                "showmorelink": 0,
+                "abbreviate" : 1,
+                "hidden" : 0,
+                "hasitems": 0,
+                "header": "You belong to Orange Group"
+            },
+            {
+                "showmorelink": 0,
+                "abbreviate" : 0,
+                "hidden" : 1,
+                "hasitems": 0,
+                "header": "You belong to Pink Group"
+            },
+            {
+                "showmorelink": 0,
+                "abbreviate" : 0,
+                "hidden" : 1,
+                "hasitems": 0,
+                "header": "You belong to Red Group"
+            }
+        ],
+        "hasitems": 1,
+        "showmorelink": 1
+    }
+}}
+{{{header}}}
+{{#hasitems}}
+<ul {{#id}} id="availability-tree-{{id}}" {{/id}} data-region="availability-multiple">
+    {{#items}}
+        <li class="{{#hidden}}d-none{{/hidden}}">
+            {{#abbreviate}}
+                <span class="d-none">
+                    {{> core_availability/availability_info }}
+                </span><span class="d-block">...</span>
+            {{/abbreviate}}
+            {{^abbreviate}}
+                {{> core_availability/availability_info }}
+            {{/abbreviate}}
+        </li>
+    {{/items}}
+    {{#showmorelink}}
+        <li data-action="showmore" class="d-block showmore">
+            <a role="button" aria-expanded="false" aria-controls="availability-tree-{{id}}" href="#" >
+                {{#str}}showmore, availability{{/str}}
+            </a>
+        </li>
+    {{/showmorelink}}
+</ul>
+{{/hasitems}}
+
+{{#showmorelink}}
+{{#js}}
+require(['core_availability/availability_more'], function(availabilityMore) {
+        availabilityMore.init();
+});
+{{/js}}
+{{/showmorelink}}

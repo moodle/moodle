@@ -104,7 +104,7 @@ Feature: display_availability
 
     # Page 1 display still there but should be dimmed and not a link.
     Then I should see "Page 1" in the "#section-1 .dimmed_text" "css_element"
-    And ".activityinstance a" "css_element" should not exist in the "Topic 1" "section"
+    And ".activity-instance a" "css_element" should not exist in the "Topic 1" "section"
 
     # Date display should be present.
     And I should see "Available until" in the "Topic 1" "section"
@@ -114,7 +114,7 @@ Feature: display_availability
 
     # Page 3 display and link
     And I should see "Page 3" in the "region-main" "region"
-    And ".activityinstance a" "css_element" should exist in the "Topic 3" "section"
+    And ".activity-instance a" "css_element" should exist in the "Topic 3" "section"
 
   @javascript
   Scenario: Section availability display
