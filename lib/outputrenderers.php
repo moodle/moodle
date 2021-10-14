@@ -1644,28 +1644,9 @@ class core_renderer extends renderer_base {
      * @return string The lang menu HTML or empty string
      */
     public function lang_menu() {
-        global $CFG;
-
-        if (empty($CFG->langmenu)) {
-            return '';
-        }
-
-        if ($this->page->course != SITEID and !empty($this->page->course->lang)) {
-            // do not show lang menu if language forced
-            return '';
-        }
-
-        $currlang = current_language();
-        $langs = get_string_manager()->get_list_of_translations();
-
-        if (count($langs) < 2) {
-            return '';
-        }
-
-        $s = new single_select($this->page->url, 'lang', $langs, $currlang, null);
-        $s->label = get_accesshide(get_string('language'));
-        $s->class = 'langmenu';
-        return $this->render($s);
+        $languagemenu = new \core\output\language_menu($this->page);
+        $data = $languagemenu->export_for_single_select($this);
+        return $this->render_from_template('core/single_select', $data);
     }
 
     /**
@@ -3718,44 +3699,6 @@ EOD;
         }
         $custommenu = new custom_menu($custommenuitems, current_language());
         return $this->render_custom_menu($custommenu);
-    }
-
-    /**
-     * Returns the language menu if multiple languages are installed.
-     *
-     * @return object lang menu object for rendering.
-     */
-    public function language_menu() {
-        global $CFG;
-
-        if ($CFG->langmenu) {
-            $langs = get_string_manager()->get_list_of_translations();
-
-            if (count($langs) < 2) {
-                return '';
-            }
-
-            $langmenu = new action_menu();
-            $menuname = get_string('language');
-
-            $currentlang = current_language();
-            if (isset($langs[$currentlang])) {
-                $menuname = $langs[$currentlang];
-            }
-            $langmenu->set_menu_trigger($menuname);
-
-            foreach ($langs as $langtype => $langname) {
-                $lang = new action_menu_link_secondary(
-                    new moodle_url($this->page->url, ['lang' => $langtype]),
-                    null,
-                    $langname,
-                    ['data-lang' => $langtype]
-                );
-                $langmenu->add($lang);
-            }
-
-            return $this->render($langmenu);
-        }
     }
 
     /**

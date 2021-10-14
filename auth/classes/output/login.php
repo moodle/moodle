@@ -84,11 +84,13 @@ class login implements renderable, templatable {
      * @param string $username The username to display.
      */
     public function __construct(array $authsequence, $username = '') {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $PAGE;
 
         $this->username = $username;
 
-        $this->languagemenu = $OUTPUT->language_menu();
+        $languagedata = new \core\output\language_menu($PAGE);
+
+        $this->languagemenu = $languagedata->export_for_action_menu($OUTPUT);
         $this->canloginasguest = $CFG->guestloginbutton and !isguestuser();
         $this->canloginbyemail = !empty($CFG->authloginviaemail);
         $this->cansignup = $CFG->registerauth == 'email' || !empty($CFG->registerauth);
