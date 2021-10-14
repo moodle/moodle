@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\helpers;
 
 use coding_exception;
+use core_text;
 
 /**
  * Helper functions for DB manipulations
@@ -73,5 +74,44 @@ class database {
         }
 
         return true;
+    }
+
+    /**
+     * Generate SQL expression for sorting group concatenated fields
+     *
+     * @param string $field The original field or SQL expression
+     * @param string|null $sort A valid SQL ORDER BY to sort the concatenated fields, if omitted then $field will be used
+     * @return string
+     */
+    public static function sql_group_concat_sort(string $field, string $sort = null): string {
+        global $DB;
+
+        // Fallback to sorting by the specified field, unless it contains parameters which would be duplicated.
+        if ($sort === null && !preg_match('/[:?$]/', $field)) {
+            $fieldsort = $field;
+        } else {
+            $fieldsort = $sort;
+        }
+
+        // Nothing to sort by.
+        if ($fieldsort === null) {
+            return '';
+        }
+
+        // If the sort specifies a direction, we need to handle that differently in Postgres.
+        if ($DB->get_dbfamily() === 'postgres') {
+            $fieldsortdirection = '';
+
+            preg_match('/(?<direction>ASC|DESC)?$/i', $fieldsort, $matches);
+            if (array_key_exists('direction', $matches)) {
+                $fieldsortdirection = $matches['direction'];
+                $fieldsort = core_text::substr($fieldsort, 0, -(core_text::strlen($fieldsortdirection)));
+            }
+
+            // Cast sort, stick the direction on the end.
+            $fieldsort = "CAST({$fieldsort} AS VARCHAR) {$fieldsortdirection}";
+        }
+
+        return $fieldsort;
     }
 }

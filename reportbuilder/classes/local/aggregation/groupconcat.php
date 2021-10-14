@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\aggregation;
 
 use lang_string;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\column;
 
 /**
@@ -29,6 +30,9 @@ use core_reportbuilder\local\report\column;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class groupconcat extends base {
+
+    /** @var string Character to use as a delimeter between column fields */
+    private const DELIMETER = '|';
 
     /**
      * Return aggregation name
@@ -52,6 +56,51 @@ class groupconcat extends base {
     }
 
     /**
+     * We cannot sort this aggregation type
+     *
+     * @param bool $columnsortable
+     * @return bool
+     */
+    public static function sortable(bool $columnsortable): bool {
+        return false;
+    }
+
+    /**
+     * Override base method to ensure all SQL fields are concatenated together if there are multiple
+     *
+     * @param array $sqlfields
+     * @return string
+     */
+    public static function get_column_field_sql(array $sqlfields): string {
+        global $DB;
+
+        if (count($sqlfields) === 1) {
+            return parent::get_column_field_sql($sqlfields);
+        }
+
+        // Coalesce all the SQL fields, to remove all nulls.
+        $concatfields = [];
+        foreach ($sqlfields as $sqlfield) {
+
+            // We need to ensure all values are char (this ought to be done in the DML drivers, see MDL-72184).
+            switch ($DB->get_dbfamily()) {
+                case 'postgres' :
+                    $sqlfield = "CAST({$sqlfield} AS VARCHAR)";
+                break;
+                case 'oracle' :
+                    $sqlfield = "TO_CHAR({$sqlfield})";
+                break;
+            }
+
+            $concatfields[] = "COALESCE({$sqlfield}, ' ')";
+            $concatfields[] = "'" . self::DELIMETER . "'";
+        }
+
+        // Slice off the last delimeter.
+        return $DB->sql_concat(...array_slice($concatfields, 0, -1));
+    }
+
+    /**
      * Return the aggregated field SQL
      *
      * @param string $field
@@ -61,11 +110,14 @@ class groupconcat extends base {
     public static function get_field_sql(string $field, int $columntype): string {
         global $DB;
 
-        return $DB->sql_group_concat($field);
+        $fieldsort = database::sql_group_concat_sort($field);
+
+        return $DB->sql_group_concat($field, ', ', $fieldsort);
     }
 
     /**
-     * Return formatted value for column when applying aggregation
+     * Return formatted value for column when applying aggregation, note we need to split apart the concatenated string
+     * and apply callbacks to each concatenated value separately
      *
      * @param mixed $value
      * @param array $values
@@ -73,6 +125,21 @@ class groupconcat extends base {
      * @return mixed
      */
     public static function format_value($value, array $values, array $callbacks) {
-        return $value;
+        $formattedvalues = [];
+
+        // Store original names of all values that would be present without aggregation.
+        $valuenames = array_keys($values);
+        $values = explode(', ', (string) reset($values));
+
+        // Loop over each extracted value from the concatenated string.
+        foreach ($values as $value) {
+            $originalvalue = array_combine($valuenames, explode(self::DELIMETER, $value));
+            $originalfirstvalue = reset($originalvalue);
+
+            // Once we've re-constructed each value, we can apply callbacks to it.
+            $formattedvalues[] = parent::format_value($originalfirstvalue, $originalvalue, $callbacks);
+        }
+
+        return implode(', ', $formattedvalues);
     }
 }

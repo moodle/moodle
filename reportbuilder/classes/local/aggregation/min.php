@@ -64,20 +64,4 @@ class min extends base {
     public static function get_field_sql(string $field, int $columntype): string {
         return "MIN({$field})";
     }
-
-    /**
-     * Return formatted value for column when applying aggregation
-     *
-     * @param mixed $value
-     * @param array $values
-     * @param array $callbacks
-     * @return mixed
-     */
-    public static function format_value($value, array $values, array $callbacks) {
-        foreach ($callbacks as $callback) {
-            $value = ($callback[0])($value, (object) $values, $callback[1]);
-        }
-
-        return $value;
-    }
 }

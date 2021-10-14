@@ -375,10 +375,15 @@ final class column {
     public function get_fields(): array {
         $fieldsalias = $this->get_fields_sql_alias();
 
-        // We aggregate the first field only.
         if (!empty($this->aggregation)) {
+            $fieldsaliassql = array_column($fieldsalias, 'sql');
             $field = reset($fieldsalias);
-            $fields = [$this->aggregation::get_field_sql($field['sql'], $this->get_type()) . " AS {$field['alias']}"];
+
+            // If aggregating the column, generate SQL from column fields and use it to generate aggregation SQL.
+            $columnfieldsql = $this->aggregation::get_column_field_sql($fieldsaliassql);
+            $aggregationfieldsql = $this->aggregation::get_field_sql($columnfieldsql, $this->get_type());
+
+            $fields = ["{$aggregationfieldsql} AS {$field['alias']}"];
         } else {
             $fields = array_map(static function(array $field): string {
                 return "{$field['sql']} AS {$field['alias']}";

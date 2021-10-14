@@ -57,8 +57,8 @@ class groupconcatdistinct_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         // Test subjects.
-        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'lastname' => 'Apple']);
         $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'lastname' => 'Banana']);
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'lastname' => 'Apple']);
         $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'lastname' => 'Banana']);
 
         /** @var core_reportbuilder_generator $generator */
@@ -75,17 +75,56 @@ class groupconcatdistinct_test extends core_reportbuilder_testcase {
             ->set('aggregation', groupconcatdistinct::get_class_name())
             ->update();
 
-        [$firstrow, $secondrow] = $this->get_custom_report_content($report->get('id'));
+        // Assert lastname column was aggregated, and sorted predictably.
+        $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
-            'c0_firstname' => 'Admin',
-            'c1_lastname' => 'User',
-        ], $firstrow);
+            [
+                'c0_firstname' => 'Admin',
+                'c1_lastname' => 'User',
+            ],
+            [
+                'c0_firstname' => 'Bob',
+                'c1_lastname' => 'Apple, Banana',
+            ],
+        ], $content);
+    }
 
-        // Currently the aggregated field sort order is undefined.
-        $this->assertEquals('Bob', $secondrow['c0_firstname']);
-        $this->assertEqualsCanonicalizing([
-            'Apple',
-            'Banana',
-        ], explode(', ', $secondrow['c1_lastname']));
+    /**
+     * Test aggregation when applied to column with callback
+     */
+    public function test_column_aggregation_with_callback(): void {
+        $this->resetAfterTest();
+
+        // Test subjects.
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'confirmed' => 1]);
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'confirmed' => 0]);
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'confirmed' => 1]);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
+
+        // First column, sorted.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname'])
+            ->set('sortenabled', true)
+            ->update();
+
+        // This is the column we'll aggregate.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:confirmed'])
+            ->set('aggregation', groupconcatdistinct::get_class_name())
+            ->update();
+
+        // Assert confirmed column was aggregated, and sorted predictably with callback applied.
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertEquals([
+            [
+                'c0_firstname' => 'Admin',
+                'c1_confirmed' => 'Yes',
+            ],
+            [
+                'c0_firstname' => 'Bob',
+                'c1_confirmed' => 'No, Yes',
+            ],
+        ], $content);
     }
 }

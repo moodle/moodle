@@ -67,6 +67,16 @@ abstract class base {
     }
 
     /**
+     * Return SQL suitable for using within {@see get_field_sql} for column fields, by default just the first one
+     *
+     * @param string[] $sqlfields
+     * @return string
+     */
+    public static function get_column_field_sql(array $sqlfields): string {
+        return reset($sqlfields);
+    }
+
+    /**
      * Return the aggregated field SQL
      *
      * @param string $field
@@ -76,12 +86,22 @@ abstract class base {
     abstract public static function get_field_sql(string $field, int $columntype): string;
 
     /**
-     * Return formatted value for column when applying aggregation
+     * Return formatted value for column when applying aggregation, by default executing all callbacks on the value
+     *
+     * Should be overridden in child classes that need to format the column value differently (e.g. 'sum' would just show
+     * a numeric count value)
      *
      * @param mixed $value
      * @param array $values
-     * @param array $callbacks
+     * @param array $callbacks Array of column callbacks, {@see column::add_callback} for definition
      * @return mixed
      */
-    abstract public static function format_value($value, array $values, array $callbacks);
+    public static function format_value($value, array $values, array $callbacks) {
+        foreach ($callbacks as $callback) {
+            [$callable, $arguments] = $callback;
+            $value = ($callable)($value, (object) $values, $arguments);
+        }
+
+        return $value;
+    }
 }

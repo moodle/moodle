@@ -21,7 +21,10 @@ namespace core_reportbuilder\local\helpers;
 use stdClass;
 
 /**
- * Class containing helper methods for format columns data as callbacks.
+ * Class containing helper methods for formatting column data via callbacks
+ *
+ * Note that type hints for each $value argument are avoided to allow for these callbacks to be executed when columns are
+ * aggregated using one of the "Group concatenation" methods, where the value is typically stringified
  *
  * @package     core_reportbuilder
  * @copyright   2021 Sara Arjona <sara@moodle.com> based on Alberto Lara Hernández <albertolara@moodle.com> code.
@@ -37,8 +40,8 @@ class format {
      * @param string|null $format Format string for strftime
      * @return string
      */
-    public static function userdate(int $value, stdClass $row, ?string $format = null): string {
-        return $value ? userdate($value, $format) : '';
+    public static function userdate($value, stdClass $row, ?string $format = null): string {
+        return $value ? userdate((int) $value, $format) : '';
     }
 
     /**
@@ -47,8 +50,8 @@ class format {
      * @param bool $value
      * @return string
      */
-    public static function boolean_as_text(bool $value): string {
-        return $value ? get_string('yes') : get_string('no');
+    public static function boolean_as_text($value): string {
+        return (bool) $value ? get_string('yes') : get_string('no');
     }
 
     /**
@@ -57,7 +60,7 @@ class format {
      * @param float $value
      * @return string
      */
-    public static function percent(float $value): string {
-        return sprintf('%.1f', $value) . '%';
+    public static function percent($value): string {
+        return sprintf('%.1f%%', (float) $value);
     }
 }
