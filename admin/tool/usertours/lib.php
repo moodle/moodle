@@ -85,3 +85,30 @@ function tool_usertours_get_fontawesome_icon_map() {
         'tool_usertours:t/filler' => 'fa-spacer',
     ];
 }
+
+
+/**
+ * Serves any files associated with the user tour content.
+ *
+ * @param stdClass $course Course object
+ * @param stdClass $cm Course module object
+ * @param context $context Context
+ * @param string $filearea File area for data privacy
+ * @param array $args Arguments
+ * @param bool $forcedownload If we are forcing the download
+ * @param array $options More options
+ * @return bool Returns false if we don't find a file.
+ */
+function tool_usertours_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []): bool {
+    if ($context->contextlevel != CONTEXT_SYSTEM) {
+        return false;
+    }
+
+    $fs = get_file_storage();
+    $file = $fs->get_file($context->id, 'tool_usertours', $filearea, $args[0], '/', $args[1]);
+    if (!$file) {
+        return false; // No such file.
+    }
+    send_stored_file($file, null, 0, $forcedownload, $options);
+    return true;
+}
