@@ -2231,6 +2231,89 @@ class core_accesslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests get_user_capability_contexts() which checks a capability across all courses and categories.
+     * Testing for categories only because courses results are covered by test_get_user_capability_course.
+     */
+    public function test_get_user_capability_contexts() {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $cap = 'moodle/contentbank:access';
+        $defaultcategoryid = 1;
+
+//         The structure being created here is this:
+//
+//         All tests work with the single capability 'moodle/contentbank:access'.
+//         ROLE DEF/OVERRIDE                                                    .
+//         Role:                Allow       Prohibit        Empty               .
+//                  System      ALLOW       PROHIBIT                            .
+//                  cat1        PREVENT     ALLOW           ALLOW               .
+//                      cat3    ALLOW       PROHIBIT                            .
+//                 cat2        PROHIBIT    PROHIBIT        PROHIBIT             .
+
+        // Create a role which allows contentbank:access and one that prohibits it, and one neither.
+        $allowroleid = $generator->create_role();
+        $prohibitroleid = $generator->create_role();
+        $emptyroleid = $generator->create_role();
+        $systemcontext = context_system::instance();
+        assign_capability($cap, CAP_ALLOW, $allowroleid, $systemcontext->id);
+        assign_capability($cap, CAP_PROHIBIT, $prohibitroleid, $systemcontext->id);
+
+        // Create three categories (two of them nested).
+        $cat1 = $generator->create_category();
+        $cat2 = $generator->create_category();
+        $cat3 = $generator->create_category(['parent' => $cat1->id]);
+
+        // Category overrides: in cat 1, empty role is allowed; in cat 2, empty role is prevented.
+        assign_capability($cap, CAP_ALLOW, $emptyroleid,
+            context_coursecat::instance($cat1->id)->id);
+        assign_capability($cap, CAP_PREVENT, $emptyroleid,
+            context_coursecat::instance($cat2->id)->id);
+
+        // Course category overrides: in cat1, allow role is prevented and prohibit role is allowed;
+        // in Cat2, allow role is prohibited.
+        assign_capability($cap, CAP_PREVENT, $allowroleid,
+            context_coursecat::instance($cat1->id)->id);
+        assign_capability($cap, CAP_ALLOW, $prohibitroleid,
+            context_coursecat::instance($cat1->id)->id);
+        assign_capability($cap, CAP_PROHIBIT, $allowroleid,
+            context_coursecat::instance($cat2->id)->id);
+
+        // User 1 has no roles except default user role.
+        $u1 = $generator->create_user();
+
+        // It returns false (annoyingly) if there are no course categories.
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u1->id, true, '', '', '', 'id');
+        $this->assertFalse($categories);
+
+        // User 2 has allow role (system wide).
+        $u2 = $generator->create_user();
+        role_assign($allowroleid, $u2->id, $systemcontext->id);
+
+        // Should get $defaultcategory only. cat2 is prohibited; cat1 is prevented, so cat3 is not allowed.
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u2->id, true, '', '', '', 'id');
+        // Using same assert_course_ids helper even when we are checking course category ids.
+        $this->assert_course_ids([$defaultcategoryid], $categories);
+
+        // User 3 has empty role (system wide).
+        $u3 = $generator->create_user();
+        role_assign($emptyroleid, $u3->id, $systemcontext->id);
+
+        // Should get cat1 and cat3. cat2 is prohibited; no access to system level.
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u3->id, true, '', '', '', 'id');
+        $this->assert_course_ids([$cat1->id, $cat3->id], $categories);
+
+        // User 4 has prohibit role (system wide).
+        $u4 = $generator->create_user();
+        role_assign($prohibitroleid, $u4->id, $systemcontext->id);
+
+        // Should not get any, because all of them are prohibited at system level.
+        // Even if we try to allow an specific category.
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u4->id, true, '', '', '', 'id');
+        $this->assertFalse($categories);
+    }
+
+    /**
      * Extracts an array of course ids to make the above test script shorter.
      *
      * @param int[] $expected Array of expected course ids
