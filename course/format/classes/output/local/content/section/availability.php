@@ -106,7 +106,7 @@ class availability implements renderable, templatable {
             if ($canviewhidden) {
                 $info[] = $this->availability_info(get_string('hiddenfromstudents'), 'ishidden');
             } else {
-                // We are here because of the setting "Hidden sections are shown in collapsed form".
+                // We are here because of the setting "Hidden sections are shown as not available".
                 // Student can not see the section contents but can see its name.
                 $info[] = $this->availability_info(get_string('notavailable'), 'ishidden');
             }

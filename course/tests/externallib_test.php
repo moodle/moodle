@@ -2651,7 +2651,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(2, $result['courses'][0]['courseformatoptions']);
         foreach ($result['courses'][0]['courseformatoptions'] as $option) {
             if ($option['name'] == 'hiddensections') {
-                $this->assertEquals(0, $option['value']);
+                $this->assertEquals(1, $option['value']);
             } else {
                 $this->assertEquals('coursedisplay', $option['name']);
                 $this->assertEquals(0, $option['value']);

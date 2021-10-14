@@ -17,6 +17,7 @@ Feature: Collapse course sections
       | numsections      | 5         |
       | startdate        | 957139200 |
       | enablecompletion | 1         |
+      | hiddensections   | 0         |
     And the following "activities" exist:
       | activity | name         | intro                        | course | idnumber | section | completion |
       | assign   | Assignment 1 | Test assignment description1 | C1     | assign1  | 1       | 1          |

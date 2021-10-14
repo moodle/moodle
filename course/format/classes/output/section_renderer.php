@@ -374,7 +374,7 @@ abstract class section_renderer extends core_course_renderer {
         if ($section->uservisible || $section->visible) {
             // Show summary if section is available or has availability restriction information.
             // Do not show summary if section is hidden but we still display it because of course setting
-            // "Hidden sections are shown in collapsed form".
+            // "Hidden sections are shown as not available".
             $o .= $this->format_summary_text($section);
         }
         $o .= html_writer::end_tag('div');
@@ -503,7 +503,7 @@ abstract class section_renderer extends core_course_renderer {
         if ($section->uservisible || $section->visible) {
             // Show summary if section is available or has availability restriction information.
             // Do not show summary if section is hidden but we still display it because of course setting
-            // "Hidden sections are shown in collapsed form".
+            // "Hidden sections are shown as not available".
             $o .= $this->format_summary_text($section);
         }
         $o .= html_writer::end_tag('div');
