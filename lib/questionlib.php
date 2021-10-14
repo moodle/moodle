@@ -1117,7 +1117,15 @@ function question_sort_tags($tagobjects, $categorycontext, $filtercourses = null
  */
 function print_question_icon($question): string {
     global $PAGE;
-    return $PAGE->get_renderer('question', 'bank')->qtype_icon($question->qtype);
+
+    if (gettype($question->qtype) == 'object') {
+        $qtype = $question->qtype->name();
+    } else {
+        // Assume string.
+        $qtype = $question->qtype;
+    }
+
+    return $PAGE->get_renderer('question', 'bank')->qtype_icon($qtype);
 }
 
 // CATEGORY FUNCTIONS.

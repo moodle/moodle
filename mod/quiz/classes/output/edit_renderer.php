@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 use mod_quiz\question\bank\qbank_helper;
 use \mod_quiz\structure;
 use \html_writer;
+use \qbank_previewquestion\helper;
 use renderable;
 
 /**

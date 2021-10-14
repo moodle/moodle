@@ -59,7 +59,7 @@ Feature: Basic use of the Statistics report
       |   1  | False    |
       |   2  | False    |
       |   3  | False    |
-    And I press "Go back"
+    And I am on the "Quiz 1" "quiz activity" page logged in as teacher1
     And I navigate to "Results > Statistics" in current page administration
     And I press "Show report"
     Then I should not see "No questions have been attempted yet"

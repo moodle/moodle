@@ -43,13 +43,6 @@ Feature: A teacher can preview questions in the question bank
     And I should see "Version"
     And I click on "Preview options" "link"
     And I should see "Question version"
-    And "action-menu-toggle-0" "link" should exist
-    And I click on "action-menu-toggle-0" "link"
-    And I should see "Edit question"
-    And I should see "Duplicate"
-    And I should see "Manage tags"
-    And I should see "Delete"
-    And I should see "Export as Moodle XML"
 
   Scenario: Preview lets the teacher see what happens when an answer is saved
     When I set the field "Answer:" to "1"
@@ -94,33 +87,20 @@ Feature: A teacher can preview questions in the question bank
     When I press "Fill in correct responses"
     Then the field "Answer:" matches value "3.14"
 
-  Scenario: Preview has an option to export the individual quesiton.
-    When I open the action menu in "action-menu-0-menubar" "region"
-    Then following "Export as Moodle XML" should download between "1000" and "2500" bytes
-
   Scenario: Preview a question with very small grade
     When I press "Preview options"
     And I set the field "Marked out of" to "0.00000123456789"
     And I press "Start again with these options"
     Then the field "Marked out of" matches value "0.00000123456789"
 
-  Scenario: Question preview has an action menu
-    When I open the action menu in "action-menu-0-menubar" "region"
-    Then I should see "Edit question"
-    And I should see "Duplicate"
-    And I should see "Manage tags"
-    And I should see "Delete"
-    And I should see "Export as Moodle XML"
-
   Scenario: Question version is updated when edited and teacher can change question version
-    When I open the action menu in "action-menu-0-menubar" "region"
-    And I choose "Edit question" in the open action menu
+    And I should see "Version 1"
+    And I press "Close preview"
+    And I choose "Edit question" action for "Test question to be previewed" in the question bank
     And I set the field "Question name" to "New version"
     And I set the field "Question text" to "New text version"
     And I click on "submitbutton" "button"
-    And I press "Preview options"
-    And I set the field "Question version" to "2"
-    And I press "Start again with these options"
+    And I choose "Preview" action for "New version" in the question bank
     Then I should see "Version 2"
     And I should see "(latest)"
     And I should see "New version"
@@ -129,9 +109,6 @@ Feature: A teacher can preview questions in the question bank
     And I should not see "Version 1"
 
   Scenario: Question preview can be closed
-    When I open the action menu in "action-menu-0-menubar" "region"
-    And I choose "Edit question" in the open action menu
-    And I click on "cancel" "button"
     And I press "Close preview"
     Then I should not see "(latest)"
     And I should see "Course 1"

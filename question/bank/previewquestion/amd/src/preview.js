@@ -29,12 +29,17 @@ import $ from 'jquery';
  *
  * @method init
  * @param {bool} redirect Redirect.
+ * @param {string} url url to redirect.
  */
-export const init = (redirect) => {
+export const init = (redirect, url) => {
     if (!redirect) {
         let closeButton = document.getElementById('close-previewquestion-page');
         closeButton.onclick = () => {
-            window.close();
+            if (window.opener === null) {
+                location.href = url;
+            } else {
+                window.close();
+            }
         };
     }
     // Set up the form to be displayed.
