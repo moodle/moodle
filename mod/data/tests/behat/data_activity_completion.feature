@@ -37,6 +37,7 @@ Feature: View activity completion in the database activity
     And I add a "Text input" field to "Music history" database and I fill the form with:
       | Field name | Instrument types |
     And I navigate to "Templates" in current page administration
+    And I press "Save template"
     And I log out
 
   Scenario: View automatic completion items as a teacher and confirm all tabs display conditions
