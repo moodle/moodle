@@ -67,8 +67,8 @@ class workshop_random_allocator_form extends moodleform {
             workshop_random_allocator_setting::NUMPER_REVIEWER   => get_string('numperreviewer', 'workshopallocation_random')
         );
         $grpnumofreviews = array();
-        $grpnumofreviews[] = $mform->createElement('select', 'numofreviews', '',
-                workshop_random_allocator::available_numofreviews_list());
+        $grpnumofreviews[] = $mform->createElement('text', 'numofreviews', '', array('size' => 5, 'maxlength' => 20));
+        $mform->setType('numofreviews', PARAM_INT);
         $mform->setDefault('numofreviews', $plugindefaults->numofreviews);
         $grpnumofreviews[] = $mform->createElement('select', 'numper', '', $options_numper);
         $mform->setDefault('numper', workshop_random_allocator_setting::NUMPER_SUBMISSION);
@@ -97,5 +97,23 @@ class workshop_random_allocator_form extends moodleform {
         }
 
         $this->add_action_buttons();
+    }
+
+    /**
+     * Validate the allocation settings.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    public function validation($data, $files): array {
+
+        $errors = parent::validation($data, $files);
+
+        if ($data['numofreviews'] < 0) {
+            $errors['grpnumofreviews'] = get_string('invalidnum', 'core_error');
+        }
+
+        return $errors;
     }
 }
