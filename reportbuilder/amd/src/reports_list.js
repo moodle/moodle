@@ -17,7 +17,6 @@
  * Report builder reports list management
  *
  * @module      core_reportbuilder/reports_list
- * @package     core_reportbuilder
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

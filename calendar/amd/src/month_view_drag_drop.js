@@ -137,9 +137,9 @@ define([
      * The current drag target and the 2 days following it (including
      * wrapping to the next week if necessary).
      *
-     * @param {string|object} target The drag target element
+     * @param {string|object} dropZone The drag target element
      * @param {bool} hovered If the target is hovered or not
-     * @param {int} count How many days to highlight (default to duration)
+     * @param {Number} count How many days to highlight (default to duration)
      */
     var updateHoverState = function(dropZone, hovered, count) {
         if (typeof count === 'undefined') {

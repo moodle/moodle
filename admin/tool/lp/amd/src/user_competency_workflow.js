@@ -31,8 +31,6 @@ define(['jquery',
 
     /**
      * UserCompetencyWorkflow class.
-     *
-     * @param {String} selector The node containing the buttons to switch mode.
      */
     var UserCompetencyWorkflow = function() {
         EventBase.prototype.constructor.apply(this, []);

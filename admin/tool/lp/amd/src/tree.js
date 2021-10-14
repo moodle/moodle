@@ -574,8 +574,6 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
      * Handle a blur event
      *
      * @method handleBlur
-     * @param {Object} item item is the jquery id of the parent item of the group
-     * @param {Event} e The event.
      * @return {Boolean}
      */
     Tree.prototype.handleBlur = function() {
@@ -587,7 +585,6 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
      *
      * @method handleFocus
      * @param {Object} item item is the jquery id of the parent item of the group
-     * @param {Event} e The event.
      * @return {Boolean}
      */
     Tree.prototype.handleFocus = function(item) {

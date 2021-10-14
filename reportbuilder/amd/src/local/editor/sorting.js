@@ -17,7 +17,6 @@
  * Report builder columns sorting editor
  *
  * @module      core_reportbuilder/local/editor/sorting
- * @package     core_reportbuilder
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

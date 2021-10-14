@@ -30,12 +30,13 @@ import {invalidResult} from './normalise';
 /**
  * Fetch the current grade for a user.
  *
- * @param {String} component
- * @param {Number} context
- * @param {String} itemname
- * @param {Number} userId
- * @param {Element} rootNode
- * @return {Object}
+ * @param {object} args
+ * @param {String} args.component
+ * @param {Number} args.context
+ * @param {String} args.itemname
+ * @param {Number} args.userId
+ * @param {Element} args.rootNode
+ * @returns {Object}
  */
 export const fetchCurrentGrade = (...args) => fetchGrade('point')(...args);
 
@@ -48,8 +49,7 @@ export const fetchCurrentGrade = (...args) => fetchGrade('point')(...args);
  * @param {Number} userId
  * @param {Boolean} notifyUser
  * @param {Element} rootNode
- *
- * @return {Object}
+ * @returns {Object}
  */
 export const storeCurrentGrade = async(component, context, itemname, userId, notifyUser, rootNode) => {
     const form = rootNode.querySelector('form');

@@ -53,8 +53,8 @@ function dispatchStateChangedEvent(detail, target) {
  *
  * @param {number} courseId the course id
  * @param {setup} setup format, page and course settings
- * @property {boolean} setup.editing if the page is in edit mode
- * @property {boolean} setup.supportscomponents if the format supports components for content
+ * @param {boolean} setup.editing if the page is in edit mode
+ * @param {boolean} setup.supportscomponents if the format supports components for content
  */
 export const setViewFormat = (courseId, setup) => {
     const editor = getCourseEditor(courseId);

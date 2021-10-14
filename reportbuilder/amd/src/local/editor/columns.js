@@ -17,7 +17,6 @@
  * Report builder columns editor
  *
  * @module      core_reportbuilder/local/editor/columns
- * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

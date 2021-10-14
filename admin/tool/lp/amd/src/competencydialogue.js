@@ -37,9 +37,6 @@ define(['jquery',
 
     /**
      * Constructor for CompetencyDialogue.
-     *
-     * @param {Object} options
-     *
      */
     var Competencydialogue = function() {
       // Intentionally left empty.

@@ -27,7 +27,6 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
      * GradingReviewPanel class.
      *
      * @class mod_assign/grading_review_panel
-     * @param {String} selector The selector for the page region containing the user navigation.
      */
     var GradingReviewPanel = function() {
         this._region = $('[data-region="review-panel-content"]');

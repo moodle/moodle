@@ -119,8 +119,6 @@ export default class extends BaseComponent {
 
     /**
      * Display the component dropzone.
-     *
-     * @param {Object} dropdata the accepted drop data
      */
     showDropZone() {
         this.element.classList.add(this.classes.DROPZONE);

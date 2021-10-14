@@ -98,7 +98,8 @@ export default class extends DndSection {
     /**
      * Update a course index section using the state information.
      *
-     * @param {Object} details the update details.
+     * @param {object} param
+     * @param {Object} param.element details the update details.
      */
     _refreshSection({element}) {
         // Update classes.

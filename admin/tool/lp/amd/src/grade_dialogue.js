@@ -99,7 +99,6 @@ define(['jquery',
     /**
      * Opens the picker.
      *
-     * @param {Number} competencyId The competency ID of the competency to work on.
      * @method display
      * @return {Promise}
      */

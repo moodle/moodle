@@ -96,8 +96,8 @@ export default class extends Reactive {
      * Setup the current view settings
      *
      * @param {Object} setup format, page and course settings
-     * @property {boolean} setup.editing if the page is in edit mode
-     * @property {boolean} setup.supportscomponents if the format supports components for content
+     * @param {boolean} setup.editing if the page is in edit mode
+     * @param {boolean} setup.supportscomponents if the format supports components for content
      */
     setViewFormat(setup) {
         this._editing = setup.editing ?? false;
@@ -213,8 +213,7 @@ export default class extends Reactive {
      * goes wrong. However, course editor can directly display a notification.
      *
      * @method dispatch
-     * @param {string} actionName the action name (usually the mutation name)
-     * @param {*} param any number of params the mutation needs.
+     * @param {mixed} args any number of params the mutation needs.
      */
     async dispatch(...args) {
         try {
