@@ -21,6 +21,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * A list of steps.
+ *
+ * @typedef {Object[]} StepList
+ * @property {Number} stepId The id of the step in the database
+ * @property {Number} position The position of the step within the tour (zero-indexed)
+ */
+
 import $ from 'jquery';
 import * as Aria from 'core/aria';
 import Popper from 'core/popper';
@@ -361,8 +369,7 @@ const Tour = class {
     /**
      * Get potentially visible steps in a tour.
      *
-     * @return {{stepId: number, position: number}[]} An associative array with stepNumber as keys
-     *                                                and an object of stepId and position as values.
+     * @returns {StepList} A list of ordered steps
      */
     getPotentiallyVisibleSteps() {
         let position = 1;
@@ -1219,11 +1226,11 @@ const Tour = class {
         let viewportHeight = $(window).height();
         let targetNode = this.getStepTarget(stepConfig);
 
-        parent = $(window);
+        let scrollParent = $(window);
         if (targetNode.parents('[data-usertour="scroller"]').length) {
-            parent = targetNode.parents('[data-usertour="scroller"]');
+            scrollParent = targetNode.parents('[data-usertour="scroller"]');
         }
-        let scrollTop = parent.scrollTop();
+        let scrollTop = scrollParent.scrollTop();
 
         if (stepConfig.placement === 'top') {
             // If the placement is top, center scroll at the top of the target.
@@ -1447,7 +1454,8 @@ const Tour = class {
 
                 let drawertop = 0;
                 if (targetNode.parents('[data-usertour="scroller"]').length) {
-                    drawertop = targetNode.parents('[data-usertour="scroller"]').scrollTop();                background.css({
+                    drawertop = targetNode.parents('[data-usertour="scroller"]').scrollTop();
+                    background.css({
                        position: 'fixed'
                     });
                 }
@@ -1467,7 +1475,7 @@ const Tour = class {
                     });
                 }
 
-                if ((targetNode.offset().top  + drawertop) < buffer) {
+                if ((targetNode.offset().top + drawertop) < buffer) {
                     background.css({
                         height: targetNode.outerHeight() + targetNode.offset().top + buffer,
                         top: targetNode.offset().top,
