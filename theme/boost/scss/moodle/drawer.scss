@@ -5,6 +5,9 @@ $drawer-width: 285px !default;
 $drawer-padding-x: 20px !default;
 $drawer-padding-y: 20px !default;
 $drawer-offscreen-gutter: 20px !default;
+$drawer-bg-color: $gray-100 !default;
+$drawer-scroll-bg-track: $gray-100 !default;
+$drawer-shadow-color: rgba(0, 0, 0, .25) !default;
 
 :target {
     scroll-margin-top: $fixed-header-y + 10px;
@@ -161,7 +164,7 @@ $right-drawer-width: 320px;
 
 @mixin drawer() {
     transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease;
-    background-color: $body-bg;
+    background-color: $drawer-bg-color;
     z-index: $zindex-modal;
     position: fixed;
     height: 100vh;
@@ -175,19 +178,29 @@ $right-drawer-width: 320px;
         max-width: $drawer-width;
     }
     &.drawer-right {
-        border-left: $border-width solid $border-color;
         right: calc(-#{$drawer-width} + -10px);
         @include box-shadow($box-shadow-drawer-right);
+
         &.show {
             right: 0;
         }
+
+        .drawertoggle {
+            margin-left: auto;
+            margin-right: 5px;
+        }
     }
     &.drawer-left {
-        border-right: $border-width solid $border-color;
         left: calc(-#{$drawer-width} + -10px);
         @include box-shadow($box-shadow-drawer-left);
+
         &.show {
             left: 0;
+        }
+
+        .drawertoggle {
+            margin-right: auto;
+            margin-left: 5px;
         }
     }
     &.drawer-bottom {
@@ -214,6 +227,13 @@ $right-drawer-width: 320px;
     display: none;
 }
 
+.drawerheader {
+    padding: 0;
+    height: $navbar-height;
+    display: flex;
+    align-items: center;
+}
+
 @include media-breakpoint-down(md) {
     .drawer-md {
         display: block;
@@ -230,17 +250,6 @@ $right-drawer-width: 320px;
     }
 }
 
-.drawerheader {
-    padding: 0 0.75rem;
-    height: $navbar-height;
-    display: flex;
-    align-items: center;
-    border-bottom: $border-width solid $border-color;
-    .drawertoggle {
-        margin-left: auto;
-    }
-}
-
 .drawercontent {
     position: relative;
     height: calc(100% - #{$navbar-height});
@@ -248,9 +257,12 @@ $right-drawer-width: 320px;
     flex-direction: column;
     flex-wrap: nowrap;
     overflow-y: auto;
-    padding: 0.5rem;
+    padding: 0.4rem;
+
     .dropdown-menu .dropdown-item {
         width: 220px;
         white-space: normal;
     }
+
+    @include thin-scrolls($drawer-scroll-bg-track);
 }

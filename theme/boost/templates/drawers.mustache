@@ -94,18 +94,28 @@
         <div id="topofscroll" class="main-inner">
             <div class="drawer-toggles d-flex">
                 {{#courseindex}}
-                    <div class="drawer-left-toggle open-nav">
-                        <button class="btn icon-no-margin" data-toggle="drawers" data-action="toggle" data-target="theme_boost-drawers-courseindex">
+                    <div class="drawer-toggler drawer-left-toggle open-nav">
+                        <button
+                            class="shadow-sm btn icon-no-margin"
+                            data-toggle="drawers"
+                            data-action="toggle"
+                            data-target="theme_boost-drawers-courseindex"
+                        >
                             <span class="sr-only">{{#str}}opendrawerindex, core{{/str}}</span>
-                            {{#pix}}e/align_left, moodle, {{#str}}opendrawerindex, core{{/str}}{{/pix}}
+                            {{#pix}} t/index_drawer, moodle {{/pix}}
                         </button>
                     </div>
                 {{/courseindex}}
                 {{#hasblocks}}
-                    <div class="drawer-right-toggle ml-auto">
-                        <button class="btn icon-no-margin" data-toggle="drawers" data-action="toggle" data-target="theme_boost-drawers-blocks">
+                    <div class="drawer-toggler drawer-right-toggle ml-auto">
+                        <button
+                            class="shadow-sm btn icon-no-margin"
+                            data-toggle="drawers"
+                            data-action="toggle"
+                            data-target="theme_boost-drawers-blocks"
+                        >
                             <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
-                            {{#pix}}i/categoryevent, moodle, {{#str}}opendrawerblocks, core{{/str}}{{/pix}}
+                            {{#pix}}t/blocks_drawer, core, {{#str}}opendrawerblocks, core{{/str}}{{/pix}}
                         </button>
                     </div>
                 {{/hasblocks}}

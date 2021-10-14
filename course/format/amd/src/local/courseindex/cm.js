@@ -49,6 +49,7 @@ export default class Component extends DndCmItem {
         this.classes = {
             CMHIDDEN: 'dimmed',
             LOCKED: 'editinprogress',
+            RESTRICTIONS: 'rectrictions',
         };
         // We need our id to watch specific events.
         this.id = this.element.dataset.id;
@@ -107,6 +108,7 @@ export default class Component extends DndCmItem {
         this.getElement(this.selectors.CM_NAME).innerHTML = element.name;
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
+        this.element.classList.toggle(this.classes.RESTRICTIONS, element.hascmrectrictions ?? false);
         this.locked = element.locked;
     }
 

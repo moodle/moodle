@@ -72,6 +72,7 @@ export default class {
     section(state, sectioninfo) {
         const section = {
             ...sectioninfo,
+            highlighted: state.course.highlighted ?? '',
             cms: [],
         };
         const cmlist = sectioninfo.cmlist ?? [];
