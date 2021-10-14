@@ -37,8 +37,6 @@ define(['jquery', 'core/custom_interaction_events', 'core/log', 'core/pubsub', '
 
     /**
      * Constructor for the Drawer.
-     *
-     * @param {object} root The root jQuery element for the modal
      */
     var Drawer = function() {
 

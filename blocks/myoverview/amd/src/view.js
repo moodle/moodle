@@ -522,7 +522,6 @@ function(
      * Intialise the courses list and cards views on page load.
      *
      * @param {object} root The root element for the courses view.
-     * @param {object} content The content element for the courses view.
      */
     var initializePagedContent = function(root) {
         namespace = "block_myoverview_" + root.attr('id') + "_" + Math.random();
@@ -708,8 +707,8 @@ function(
     };
 
     /**
-
      * Reset the courses views to their original
+     *
      * state on first page load.courseOffset
      *
      * This is called when configuration has changed for the event lists

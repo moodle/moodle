@@ -137,7 +137,6 @@ define(['jquery',
     /**
      * Refresh the course competencies page.
      *
-     * @param {Event} e
      * @method saveSettings
      */
     settingsMod.prototype.refreshCourseCompetenciesPage = function() {

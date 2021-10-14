@@ -763,6 +763,7 @@ define(
      * @param {int} limit Limit for results
      * @param {int} offset Offset for results
      * @param {bool|null} favourites If favourites should be included or not
+     * @param {bool} mergeself
      * @return {object} jQuery promise
      */
     var getConversations = function(

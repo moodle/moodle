@@ -351,9 +351,9 @@ function(
     /**
      * Build a patch for this conversation.
      *
-     * @param  {Object} state, The current state of this conversation.
-     * @param  {Object} newState, The new state of this conversation.
-     * @return {Object} Patch with days and messsages for each day.
+     * @param  {Object} state The current state of this conversation.
+     * @param  {Object} newState The new state of this conversation.
+     * @returns {Object} Patch with days and messsages for each day.
      */
     var buildConversationPatch = function(state, newState) {
         var diff = diffArrays(state.messages, newState.messages, isMessageEqual);
