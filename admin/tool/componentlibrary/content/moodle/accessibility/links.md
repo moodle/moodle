@@ -15,7 +15,7 @@ There are several techniques that we can use when creating links that open in a 
 
 {{< example >}}
 <a href="https://moodle.org" target="_blank">
-    Moodle.org <i class="fa fa-external-link" aria-label="Opens in new window" title="Opens in new window"></i>
+    Moodle.org <i class="fa fa-external-link" role="img" aria-label="Opens in new window" title="Opens in new window"></i>
 </a>
 {{< /example  >}}
 
@@ -48,7 +48,7 @@ A link to a file such as a PDF file or Word document will usually open the relev
 ### File type indicated via an icon/image's alt text
 {{< example >}}
 <a href="https://www.w3.org/WAI/WCAG20/versions/guidelines/wcag20-guidelines-20081211-a4.pdf">
-    Web Content Accessibility Guidelines (WCAG) 2.0 <i class="fa fa-file-pdf-o" aria-label="PDF document" title="PDF document"></i>
+    Web Content Accessibility Guidelines (WCAG) 2.0 <i class="fa fa-file-pdf-o" role="img" aria-label="PDF document" title="PDF document"></i>
 </a>
 {{< /example  >}}
 
@@ -60,7 +60,7 @@ The example link below opens in the same browser window and lets the user know t
 
 {{< example >}}
 <a href="https://moodle.org">
-    Moodle.org <i class="fa fa-external-link" aria-label="Link leads to external site" title="Link leads to external site"></i>
+    Moodle.org <i class="fa fa-external-link" role="img" aria-label="Link leads to external site" title="Link leads to external site"></i>
 </a>
 {{< /example  >}}
 
