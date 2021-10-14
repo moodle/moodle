@@ -18,6 +18,7 @@
     "docdash": "^1.2.0",
     "eslint": "6.8.0",
     "eslint-plugin-babel": "5.3.0",
+    "eslint-plugin-jsdoc": "^36.1.1",
     "eslint-plugin-promise": "4.2.1",
     "fb-watchman": "2.0.1",
     "gherkin-lint": "^4.2.2",
