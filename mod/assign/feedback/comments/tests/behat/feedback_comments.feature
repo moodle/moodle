@@ -17,7 +17,7 @@ Feature: In an assignment, teachers can provide feedback comments on student sub
       | teacher1 | C1 | teacher |
       | student1 | C1 | student |
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Teachers should be able to add and remove feedback comments via the quick grading interface
     Given the following "activities" exist:
       | activity  | course  | name                  | assignsubmission_onlinetext_enabled  | assignfeedback_comments_enabled  |
