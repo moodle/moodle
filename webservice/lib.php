@@ -866,7 +866,7 @@ class webservice {
 
         $sql = 'SELECT t.*, s.name as servicename FROM {external_tokens} t JOIN
                 {external_services} s ON t.externalserviceid = s.id WHERE
-                t.userid = :userid AND (t.validuntil IS NULL OR t.validuntil > :now)';
+                t.userid = :userid AND (COALESCE(t.validuntil, 0) = 0 OR t.validuntil > :now)';
         $params = array('userid' => $userid, 'now' => time());
         return $DB->get_records_sql($sql, $params);
     }
