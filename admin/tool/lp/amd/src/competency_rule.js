@@ -98,8 +98,7 @@ define(['jquery'], function($) {
     /**
      * Callback to inject the template.
      *
-     * @param  {Node} container Node to inject in.
-     * @return {Promise} Resolved when done.
+     * @returns {Promise} Resolved when done.
      * @method injectTemplate
      */
     Rule.prototype.injectTemplate = function() {

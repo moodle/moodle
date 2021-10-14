@@ -40,7 +40,7 @@ function(
     /**
      * Toggle the message drawer visibility.
      *
-     * @param {String} button The button id for the popover.
+     * @param {String} buttonid The button id for the popover.
      */
     var toggleMessageDrawerVisibility = function(buttonid) {
         PubSub.publish(MessageDrawerEvents.TOGGLE_VISIBILITY, buttonid);
