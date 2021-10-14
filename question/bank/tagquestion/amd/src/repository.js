@@ -18,7 +18,6 @@
  *
  * @module     qbank_tagquestion/repository
  * @class      repository
- * @package    qbank_tagquestion
  * @copyright  2017 Simey Lameze <lameze@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,8 +27,8 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
      * Submit the form data for the question tags form.
      *
      * @method submitTagCreateUpdateForm
-     * @param {int} questionId
-     * @param {int} contextId
+     * @param {Number} questionId
+     * @param {Number} contextId
      * @param {string} formdata The URL encoded values from the form
      * @return {promise}
      */
