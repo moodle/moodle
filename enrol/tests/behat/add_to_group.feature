@@ -22,7 +22,7 @@ Feature: Users can be added to multiple groups at once
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | editingteacher |
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Adding a user to multiple groups
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
