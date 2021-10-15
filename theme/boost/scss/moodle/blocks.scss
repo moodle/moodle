@@ -328,6 +328,12 @@ body.drawer-open-left #region-main.has-blocks {
     }
 }
 
+.block_timeline {
+    .event-action {
+        padding-left: 5.55em;
+    }
+}
+
 // Show expand collapse with font-awesome.
 .block_settings .block_tree [aria-expanded="true"],
 .block_settings .block_tree [aria-expanded="true"].emptybranch,

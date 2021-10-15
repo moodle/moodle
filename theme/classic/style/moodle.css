@@ -13049,6 +13049,9 @@ body.dragging .dragging {
 .block_timeline .paged-content-page-container {
   background-color: #fff; }
 
+.block_timeline .event-action {
+  padding-left: 5.55em; }
+
 .block_settings .block_tree [aria-expanded="true"],
 .block_settings .block_tree [aria-expanded="true"].emptybranch,
 .block_settings .block_tree [aria-expanded="false"],
