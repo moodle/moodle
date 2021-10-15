@@ -41,11 +41,10 @@ Feature: View task logs report and use its filters
     And I set the following fields in the "Duration" "core_reportbuilder > Filter" to these values:
       | Duration operator | <operator> |
       | Duration value    | 2          |
-      | Duration unit     | minutes    |
+      | Duration unit     | minute(s)  |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     Then I should see "Filters applied"
     And I <shouldornotsee> "Nothing to display"
-
     Examples:
       | operator     | shouldornotsee |
       | Less than    | should not see |
