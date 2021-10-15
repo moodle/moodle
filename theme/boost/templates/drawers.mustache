@@ -62,23 +62,18 @@
         {{< theme_boost/drawer }}
             {{$id}}theme_boost-drawers-courseindex{{/id}}
             {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
-            {{$drawerheading}}
-                {{#str}}courseindex, core_courseformat{{/str}}
-            {{/drawerheading}}
             {{$drawercontent}}
                 {{{courseindex}}}
             {{/drawercontent}}
             {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
             {{$drawerstate}}show-drawer-left{{/drawerstate}}
+            {{$tooltipplacement}}right{{/tooltipplacement}}
         {{/ theme_boost/drawer}}
     {{/courseindex}}
     {{#hasblocks}}
         {{< theme_boost/drawer }}
             {{$id}}theme_boost-drawers-blocks{{/id}}
             {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
-            {{$drawerheading}}
-                {{#str}} blocks {{/str}}
-            {{/drawerheading}}
             {{$drawercontent}}
                 <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
                     {{{ sidepreblocks }}}
@@ -87,6 +82,7 @@
             {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
             {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
             {{$drawerstate}}show-drawer-right{{/drawerstate}}
+            {{$tooltipplacement}}left{{/tooltipplacement}}
             {{$drawercloseonresize}}1{{/drawercloseonresize}}
         {{/ theme_boost/drawer}}
     {{/hasblocks}}
@@ -97,9 +93,12 @@
                     <div class="drawer-toggler drawer-left-toggle open-nav">
                         <button
                             class="shadow-sm btn icon-no-margin"
-                            data-toggle="drawers"
+                            data-toggler="drawers"
                             data-action="toggle"
                             data-target="theme_boost-drawers-courseindex"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="{{#str}}opendrawerindex, core{{/str}}"
                         >
                             <span class="sr-only">{{#str}}opendrawerindex, core{{/str}}</span>
                             {{#pix}} t/index_drawer, moodle {{/pix}}
@@ -110,9 +109,12 @@
                     <div class="drawer-toggler drawer-right-toggle ml-auto">
                         <button
                             class="shadow-sm btn icon-no-margin"
-                            data-toggle="drawers"
+                            data-toggler="drawers"
                             data-action="toggle"
                             data-target="theme_boost-drawers-blocks"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="{{#str}}opendrawerblocks, core{{/str}}"
                         >
                             <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
                             {{#pix}}t/blocks_drawer, core, {{#str}}opendrawerblocks, core{{/str}}{{/pix}}

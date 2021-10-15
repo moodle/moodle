@@ -25,10 +25,22 @@ import Templates from 'core/templates';
 import * as Aria from 'core/aria';
 import {dispatchEvent} from 'core/event_dispatcher';
 import {debounce} from 'core/utils';
+import Pending from 'core/pending';
+// The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-71979 is integrated.
+import jQuery from 'jquery';
 
 let backdropPromise = null;
 
 const drawerMap = new Map();
+
+const SELECTORS = {
+    BUTTONS: '[data-toggler="drawers"]',
+    CLOSEBTN: '[data-toggler="drawers"][data-action="closedrawer"]',
+    OPENBTN: '[data-toggler="drawers"][data-action="opendrawer"]',
+    TOGGLEBTN: '[data-toggler="drawers"][data-action="toggle"]',
+    DRAWERS: '[data-region="fixed-drawer"]',
+    CONTAINER: '#page.drawers',
+};
 
 /**
  * Maximum sizes for breakpoints. This needs to correspond with Bootstrap
@@ -97,6 +109,71 @@ const getBackdrop = () => {
 };
 
 /**
+ * Get the button element to open a specific drawer.
+ *
+ * @param {String} drawerId the drawer element Id
+ * @return {HTMLElement|undefined} the open button element
+ * @private
+ */
+const getDrawerOpenButton = (drawerId) => {
+    let openButton = document.querySelector(`${SELECTORS.OPENBTN}[data-target="${drawerId}"]`);
+    if (!openButton) {
+        openButton = document.querySelector(`${SELECTORS.TOGGLEBTN}[data-target="${drawerId}"]`);
+    }
+    return openButton;
+};
+
+/**
+ * Disable drawer tooltips.
+ *
+ * @param {HTMLElement} drawerNode the drawer main node
+ * @private
+ */
+const disableDrawerTooltips = (drawerNode) => {
+    const buttons = [
+        drawerNode.querySelector(SELECTORS.CLOSEBTN),
+        getDrawerOpenButton(drawerNode.id),
+    ];
+    buttons.forEach(button => {
+        if (!button) {
+            return;
+        }
+        if (button.hasAttribute('data-original-title')) {
+            // The jQuery is still used in Boostrap 4. It can we removed when MDL-71979 is integrated.
+            jQuery(button).tooltip('disable');
+        } else {
+            button.dataset.disabledToggle = button.dataset.toggle;
+            button.removeAttribute('data-toggle');
+        }
+    });
+};
+
+/**
+ * Enable drawer tooltips.
+ *
+ * @param {HTMLElement} drawerNode the drawer main node
+ * @private
+ */
+const enableDrawerTooltips = (drawerNode) => {
+    const buttons = [
+        drawerNode.querySelector(SELECTORS.CLOSEBTN),
+        getDrawerOpenButton(drawerNode.id),
+    ];
+    buttons.forEach(button => {
+        if (!button) {
+            return;
+        }
+        // The jQuery is still used in Boostrap 4. It can we removed when MDL-71979 is integrated.
+        if (button.hasAttribute('data-original-title')) {
+            jQuery(button).tooltip('enable');
+        } else if (button.dataset.disabledToggle) {
+            button.dataset.toggle = button.dataset.disabledToggle;
+            jQuery(button).tooltip();
+        }
+    });
+};
+
+/**
  * The Drawers class is used to control on-screen drawer elements.
  *
  * It handles opening, and closing of drawer elements, as well as more detailed behaviours such as closing a drawer when
@@ -162,6 +239,11 @@ export default class Drawers {
             }
         } else {
             Aria.hide(this.drawerNode);
+        }
+
+        // Disable tooltips in small screens.
+        if (isSmall()) {
+            disableDrawerTooltips(this.drawerNode);
         }
 
         drawerMap.set(drawerNode, this);
@@ -278,9 +360,21 @@ export default class Drawers {
      * @param {boolean} [args.focusOnCloseButton=true] Whether to alter page focus when opening the drawer
      */
     openDrawer({focusOnCloseButton = true} = {}) {
+
+        const pendingPromise = new Pending('theme_boost/drawers:open');
         const showEvent = this.dispatchEvent(Drawers.eventTypes.drawerShow, true);
         if (showEvent.defaultPrevented) {
             return;
+        }
+
+        // Hide close button while the drawer is showing to prevent glitchy effects.
+        this.drawerNode.querySelector(SELECTORS.CLOSEBTN)?.classList.toggle('hidden', true);
+
+        // Remove open tooltip if still visible.
+        let openButton = getDrawerOpenButton(this.drawerNode.id);
+        if (openButton && openButton.hasAttribute('data-original-title')) {
+            // The jQuery is still used in Boostrap 4. It can we removed when MDL-71979 is integrated.
+            jQuery(openButton)?.tooltip('hide');
         }
 
         Aria.unhide(this.drawerNode);
@@ -308,10 +402,15 @@ export default class Drawers {
             .catch();
         }
 
-        if (focusOnCloseButton) {
-            const closeButton = this.drawerNode.querySelector('[data-toggle="drawers"][data-action="closedrawer"]');
-            closeButton.focus();
-        }
+        // Show close button once the drawer is fully opened.
+        setTimeout(() => {
+            const closeButton = this.drawerNode.querySelector(SELECTORS.CLOSEBTN);
+            closeButton.classList.toggle('hidden', false);
+            if (focusOnCloseButton) {
+                closeButton.focus();
+            }
+            pendingPromise.resolve();
+        }, 300);
 
         this.dispatchEvent(Drawers.eventTypes.drawerShown);
     }
@@ -320,9 +419,21 @@ export default class Drawers {
      * Close the drawer.
      */
     closeDrawer() {
+
+        const pendingPromise = new Pending('theme_boost/drawers:close');
+
         const hideEvent = this.dispatchEvent(Drawers.eventTypes.drawerHide, true);
         if (hideEvent.defaultPrevented) {
             return;
+        }
+
+        // Hide close button while the drawer is hiding to prevent glitchy effects.
+        const closeButton = this.drawerNode.querySelector(SELECTORS.CLOSEBTN);
+        closeButton?.classList.toggle('hidden', true);
+        // Remove the close button tooltip if visible.
+        if (closeButton.hasAttribute('data-original-title')) {
+            // The jQuery is still used in Boostrap 4. It can we removed when MDL-71979 is integrated.
+            jQuery(closeButton)?.tooltip('hide');
         }
 
         const preference = this.drawerNode.dataset.preference;
@@ -349,6 +460,15 @@ export default class Drawers {
             return backdrop;
         })
         .catch();
+
+        // Move focus to the open drawer (or toggler) button once the drawer is hidden.
+        setTimeout(() => {
+            let openButton = getDrawerOpenButton(this.drawerNode.id);
+            if (openButton) {
+                openButton.focus();
+            }
+            pendingPromise.resolve();
+        }, 300);
 
         this.dispatchEvent(Drawers.eventTypes.drawerHidden);
     }
@@ -396,7 +516,7 @@ export default class Drawers {
  */
 const scroller = () => {
     const body = document.querySelector('body');
-    const drawerLayout = document.querySelector('#page.drawers');
+    const drawerLayout = document.querySelector(SELECTORS.CONTAINER);
     if (drawerLayout) {
         drawerLayout.addEventListener("scroll", () => {
             if (drawerLayout.scrollTop >= window.innerHeight) {
@@ -415,7 +535,7 @@ const scroller = () => {
  */
 const setLastUsedToggle = (toggleButton) => {
     if (toggleButton.dataset.target) {
-        document.querySelectorAll('[data-toggle="drawers"][data-target="' + toggleButton.dataset.target + '"]')
+        document.querySelectorAll(`${SELECTORS.BUTTONS}[data-target="${toggleButton.dataset.target}"]`)
         .forEach(btn => {
             btn.dataset.lastused = false;
         });
@@ -428,7 +548,7 @@ const setLastUsedToggle = (toggleButton) => {
  * @param {string} target The drawer target.
  */
 const focusLastUsedToggle = (target) => {
-    const lastUsedButton = document.querySelector('[data-toggle="drawers"][data-target="' + target + '"][data-lastused="true"');
+    const lastUsedButton = document.querySelector(`${SELECTORS.BUTTONS}[data-target="${target}"][data-lastused="true"`);
     if (lastUsedButton) {
         lastUsedButton.focus();
     }
@@ -442,7 +562,7 @@ const focusLastUsedToggle = (target) => {
 const registerListeners = () => {
     // Listen for show/hide events.
     document.addEventListener('click', e => {
-        const toggleButton = e.target.closest('[data-toggle="drawers"][data-action="toggle"]');
+        const toggleButton = e.target.closest(SELECTORS.TOGGLEBTN);
         if (toggleButton && toggleButton.dataset.target) {
             e.preventDefault();
             const targetDrawer = document.getElementById(toggleButton.dataset.target);
@@ -452,7 +572,7 @@ const registerListeners = () => {
             drawerInstance.toggleVisibility();
         }
 
-        const openDrawerButton = e.target.closest('[data-toggle="drawers"][data-action="opendrawer"]');
+        const openDrawerButton = e.target.closest(SELECTORS.OPENBTN);
         if (openDrawerButton && openDrawerButton.dataset.target) {
             e.preventDefault();
             const targetDrawer = document.getElementById(openDrawerButton.dataset.target);
@@ -462,7 +582,7 @@ const registerListeners = () => {
             drawerInstance.openDrawer();
         }
 
-        const closeDrawerButton = e.target.closest('[data-toggle="drawers"][data-action="closedrawer"]');
+        const closeDrawerButton = e.target.closest(SELECTORS.CLOSEBTN);
         if (closeDrawerButton && closeDrawerButton.dataset.target) {
             e.preventDefault();
             const targetDrawer = document.getElementById(closeDrawerButton.dataset.target);
@@ -485,6 +605,7 @@ const registerListeners = () => {
         if (isSmall()) {
             let anyOpen = false;
             drawerMap.forEach(drawerInstance => {
+                disableDrawerTooltips(drawerInstance.drawerNode);
                 if (drawerInstance.isOpen) {
                     if (drawerInstance.closeOnResize) {
                         drawerInstance.closeDrawer();
@@ -498,6 +619,9 @@ const registerListeners = () => {
                 getBackdrop().then(backdrop => backdrop.show()).catch();
             }
         } else {
+            drawerMap.forEach(drawerInstance => {
+                enableDrawerTooltips(drawerInstance.drawerNode);
+            });
             getBackdrop().then(backdrop => backdrop.hide()).catch();
         }
     };
@@ -508,5 +632,5 @@ const registerListeners = () => {
 scroller();
 registerListeners();
 
-const drawers = document.querySelectorAll('[data-region="fixed-drawer"]');
+const drawers = document.querySelectorAll(SELECTORS.DRAWERS);
 drawers.forEach(drawerNode => Drawers.getDrawerInstanceForNode(drawerNode));
