@@ -19,7 +19,7 @@ Feature: Add URL to main menu block
     And "Add an activity or resource" "button" should exist in the "Main menu" "block"
 
   @javascript
-  Scenario: Add a URL in menu block can appear in all pages
+  Scenario: Add a URL in menu block can appear in the entire site
     Given the following "course" exists:
       | fullname         | Course 1 |
       | shortname        | C1       |
@@ -38,15 +38,15 @@ Feature: Add URL to main menu block
       | Description  | gooooooooogle         |
       | External URL | http://www.google.com |
       | id_display   | Embed                 |
-    Then I follow "reference link"
+    Then I click on "reference link" "link" in the "Main menu" "block"
     And "reference link" "link" should exist in the "Main menu" "block"
     And I am on the "C1" "Course" page
     And "reference link" "link" should exist in the "Main menu" "block"
-    And I navigate to "Site administration > Badges > Add a new badge" in site administration
+    And I navigate to "Badges > Add a new badge" in site administration
     And "reference link" "link" should exist in the "Main menu" "block"
 
   @javascript
-  Scenario: Add a URL in menu block can appear in all pages
+  Scenario: Add a URL in menu block can appear in any front page
     Given the following "course" exists:
       | fullname         | Course 1 |
       | shortname        | C1       |
@@ -65,9 +65,9 @@ Feature: Add URL to main menu block
       | Description  | gooooooooogle         |
       | External URL | http://www.google.com |
       | id_display   | Embed                 |
-    Then I follow "reference link"
+    Then I click on "reference link" "link" in the "Main menu" "block"
     And "reference link" "link" should exist in the "Main menu" "block"
     And I am on the "C1" "Course" page
     And "Main menu" "block" should not exist
-    And I navigate to "Site administration > Badges > Add a new badge" in site administration
+    And I navigate to "Badges > Add a new badge" in site administration
     And "Main menu" "block" should not exist
