@@ -14549,6 +14549,7 @@ span.editinstructions {
   font-size: 100%; }
 
 .activity-add {
+  border-radius: 0.25rem;
   color: #3586ce;
   background-color: #f5f9fd;
   border-color: #3586ce;
