@@ -58,7 +58,7 @@ class get_unread_notification_count extends external_api {
      * @throws \moodle_exception
      */
     public static function execute(int $useridto): int {
-        global $USER;
+        global $USER, $DB;
 
         $params = self::validate_parameters(
             self::execute_parameters(),
@@ -83,9 +83,14 @@ class get_unread_notification_count extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        $messages = message_get_messages($useridto, 0, 1, MESSAGE_GET_UNREAD);
-
-        return count($messages);
+        return $DB->count_records_sql(
+            "SELECT COUNT(n.id)
+               FROM {notifications} n
+          LEFT JOIN {user} u ON (u.id = n.useridfrom AND u.deleted = 0)
+              WHERE n.useridto = ?
+                    AND n.timeread IS NULL",
+            [$useridto],
+        );
     }
 
     /**
