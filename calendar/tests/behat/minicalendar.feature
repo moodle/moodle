@@ -31,6 +31,7 @@ Feature: Open calendar popup
     Then I should see "Event 1:1"
     And I should see "Event 1:2"
     And I am on homepage
+    When I hover over day "1" of this month in the mini-calendar block
     And I should see "Event 1:1"
     And I should see "Event 1:2"
 
@@ -59,4 +60,5 @@ Feature: Open calendar popup
       | Event title       | Today's event |
     Then I should see "Today's event"
     And I am on homepage
+    And I hover over today in the mini-calendar block
     And I should see "Today's event"

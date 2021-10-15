@@ -16,4 +16,5 @@ Feature: View a upcoming site event on the dashboard
       | id_name | My Site Event |
     And I log out
     When I log in as "student1"
+    And I hover over today in the mini-calendar block
     Then I should see "My Site Event"

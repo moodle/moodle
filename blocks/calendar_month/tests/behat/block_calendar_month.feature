@@ -35,6 +35,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Calendar" block
+    And I hover over today in the mini-calendar block
     Then I should see "Site Event"
 
   @javascript
@@ -53,6 +54,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I am on "Course 1" course homepage
     And I follow "Hide site events"
     Then I should not see "Site Event"
+    And I hover over today in the mini-calendar block
     And I should see "Course Event"
 
   @javascript
@@ -64,6 +66,7 @@ Feature: Enable the calendar block in a course and test it's functionality
       | id_eventtype | Course |
       | id_name | Course Event |
     When I am on "Course 1" course homepage
+    And I hover over today in the mini-calendar block
     Then I should see "Course Event"
 
   @javascript
@@ -81,6 +84,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I am on "Course 1" course homepage
     And I follow "Hide course events"
     Then I should not see "Course Event"
+    And I hover over today in the mini-calendar block
     And I should see "User Event"
 
   @javascript
@@ -92,6 +96,7 @@ Feature: Enable the calendar block in a course and test it's functionality
       | id_eventtype | User |
       | id_name | User Event |
     When I am on "Course 1" course homepage
+    And I hover over today in the mini-calendar block
     Then I should see "User Event"
 
   @javascript
@@ -109,6 +114,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     When I am on "Course 1" course homepage
     And I follow "Hide user events"
     Then I should not see "User Event"
+    And I hover over today in the mini-calendar block
     And I should see "Course Event"
 
   @javascript
@@ -141,6 +147,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage
+    And I hover over today in the mini-calendar block
     And I should see "Group Event"
     And I log out
     And I log in as "student2"
@@ -183,4 +190,5 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I am on "Course 1" course homepage
     And I follow "Hide group events"
     And I should not see "Group Event 1"
+    And I hover over today in the mini-calendar block
     And I should see "Course Event 1"
