@@ -14548,6 +14548,24 @@ span.editinstructions {
 .automatic-completion-conditions .badge {
   font-size: 100%; }
 
+.activity-add {
+  color: #3586ce;
+  background-color: #f5f9fd;
+  border-color: #3586ce;
+  border-width: 1px;
+  border-style: dashed;
+  width: 100%;
+  border-radius: 4px; }
+  .activity-add hr {
+    border-top-color: #2e79bc; }
+  .activity-add .alert-link {
+    color: #296ca7; }
+  .activity-add .pluscontainer {
+    border: 1px solid #3586ce; }
+  .activity-add:hover {
+    cursor: pointer;
+    background-color: #cfe2f3; }
+
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target {
   scroll-margin-top: 70px; }
