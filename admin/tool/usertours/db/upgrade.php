@@ -47,13 +47,6 @@ function xmldb_tool_usertours_upgrade($oldversion) {
     // Automatically generated Moodle v3.8.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2020061501) {
-        // Updating shipped tours will fix broken sortorder records in existing tours.
-        manager::update_shipped_tours();
-
-        upgrade_plugin_savepoint(true, 2020061501, 'tool', 'usertours');
-    }
-
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -76,13 +69,6 @@ function xmldb_tool_usertours_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2021052501, 'tool', 'usertours');
-    }
-
-    if ($oldversion < 2021052508) {
-        // Updating shipped tours.
-        manager::update_shipped_tours();
-
-        upgrade_plugin_savepoint(true, 2021052508, 'tool', 'usertours');
     }
 
     if ($oldversion < 2021092300) {
@@ -126,6 +112,13 @@ function xmldb_tool_usertours_upgrade($oldversion) {
 
         // Usertours savepoint reached.
         upgrade_plugin_savepoint(true, 2021101300, 'tool', 'usertours');
+    }
+
+    if ($oldversion < 2021101301) {
+        // Update shipped tours.
+        manager::update_shipped_tours();
+
+        upgrade_plugin_savepoint(true, 2021101301, 'tool', 'usertours');
     }
 
     return true;
