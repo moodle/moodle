@@ -40,6 +40,15 @@ class media_videojs_plugin extends core_media_player_native {
     protected $extensions = null;
     /** @var bool is this a youtube link */
     protected $youtube = false;
+    /** @var bool Need to use Ogv.JS Tech plugin or not. */
+    protected $ogvtech = false;
+    /** @var array Ogv.JS supported extensions */
+    protected $ogvsupportedextensions = [
+        '.ogv',
+        '.webm',
+        '.oga',
+        '.ogg'
+    ];
 
     /**
      * Generates code required to embed the player.
@@ -125,6 +134,10 @@ class media_videojs_plugin extends core_media_player_native {
             $isaudio = false; // Just in case.
         } else if ($flashtech) {
             $datasetup[] = '"techOrder": ["flash", "html5"]';
+        }
+
+        if ($this->ogvtech) {
+            $datasetup[] = '"techOrder": ["OgvJS"]';
         }
 
         // Add a language.
@@ -301,6 +314,15 @@ class media_videojs_plugin extends core_media_player_native {
             // Handle HLS and MPEG-DASH if supported.
             $isstream = in_array($ext, file_get_typegroup('extension', 'media_source'));
             if ($isstream && in_array($ext, $extensions) && core_useragent::supports_media_source_extensions($ext)) {
+                $result[] = $url;
+                continue;
+            }
+
+            // Ogv.JS Tech.
+            $this->ogvtech = false;
+            if (in_array($ext, $this->ogvsupportedextensions) &&
+                    (core_useragent::is_safari() || core_useragent::is_ios())) {
+                $this->ogvtech = true;
                 $result[] = $url;
                 continue;
             }
