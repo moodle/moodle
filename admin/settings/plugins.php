@@ -641,6 +641,24 @@ if ($hassiteconfig) {
         new lang_string('searchhideallcategory_desc', 'admin'),
         0));
 
+    // Top result options.
+    $temp->add(new admin_setting_heading('searchtopresults', new lang_string('searchtopresults', 'admin'), ''));
+    // Max Top results.
+    $options = range(0, 10);
+    $temp->add(new admin_setting_configselect('searchmaxtopresults',
+        new lang_string('searchmaxtopresults', 'admin'),
+        new lang_string('searchmaxtopresults_desc', 'admin'),
+        3, $options));
+    // Teacher roles.
+    $options = [];
+    foreach (get_all_roles() as $role) {
+        $options[$role->id] = $role->shortname;
+    }
+    $temp->add(new admin_setting_configmultiselect('searchteacherroles',
+        new lang_string('searchteacherroles', 'admin'),
+        new lang_string('searchteacherroles_desc', 'admin'),
+        [], $options));
+
     $temp->add(new admin_setting_heading('searchmanagement', new lang_string('searchmanagement', 'admin'),
             new lang_string('searchmanagement_desc', 'admin')));
 
