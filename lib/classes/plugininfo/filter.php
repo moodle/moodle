@@ -58,6 +58,32 @@ class filter extends base {
         return $enabled;
     }
 
+    /**
+     * Enable or disable a plugin.
+     * When possible, the change will be stored into the config_log table, to let admins check when/who has modified it.
+     *
+     * @param string $pluginname The plugin name to enable/disable.
+     * @param int $enabled Whether the pluginname should be TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
+     *
+     * @return bool It always return true because we don't know if the value has changed or not. That way, we guarantee any action
+     * required if it's changed will be executed.
+     */
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $CFG;
+        require_once("$CFG->libdir/filterlib.php");
+        require_once("$CFG->libdir/weblib.php");
+
+        filter_set_global_state($pluginname, $enabled);
+        if ($enabled == TEXTFILTER_DISABLED) {
+            filter_set_applies_to_strings($filterpath, false);
+        }
+
+        reset_text_filters_cache();
+        \core_plugin_manager::reset_caches();
+
+        return true;
+    }
+
     public function get_settings_section_name() {
         return 'filtersetting' . $this->name;
     }

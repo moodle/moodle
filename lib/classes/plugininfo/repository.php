@@ -40,6 +40,32 @@ class repository extends base {
         return $DB->get_records_menu('repository', null, 'type ASC', 'type, type AS val');
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $DB;
+
+        $haschanged = false;
+        $repositorytype = \repository::get_type_by_typename($pluginname);
+        if (empty($repositorytype)) {
+            throw new \moodle_exception('invalidplugin', 'repository', '', $pluginname);
+        }
+
+        // The visibility will be only changed if the repository exists in database. Otherwise, this method won't do anything.
+        if ($plugin = $DB->get_record('repository', ['type' => $pluginname])) {
+            $oldvalue = $plugin->visible;
+            // Only set visibility if it's different from the current value.
+            if ($oldvalue != $enabled) {
+                $haschanged = true;
+                $repositorytype->update_visibility($enabled);
+
+                // Include this information into config changes table.
+                add_to_config_log('repository_visibility', $oldvalue, $enabled, $pluginname);
+                \core_plugin_manager::reset_caches();
+            }
+        }
+
+        return $haschanged;
+    }
+
     public function get_settings_section_name() {
         return 'repositorysettings'.$this->name;
     }

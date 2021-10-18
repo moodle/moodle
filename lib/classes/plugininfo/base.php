@@ -80,6 +80,20 @@ abstract class base {
     }
 
     /**
+     * Enable or disable a plugin.
+     * When possible, the change will be stored into the config_log table, to let admins check when/who has modified it.
+     *
+     * @param string $pluginname The plugin name to enable/disable.
+     * @param int $enabled Whether the pluginname should be enabled (1) or not (0). This is an integer because some plugins, such
+     * as filters or repositories, might support more statuses than just enabled/disabled.
+     *
+     * @return bool Whether $pluginname has been updated or not.
+     */
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        return false;
+    }
+
+    /**
      * Gathers and returns the information about all plugins of the given type,
      * either on disk or previously installed.
      *

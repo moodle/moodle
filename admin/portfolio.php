@@ -102,20 +102,15 @@ if (($action == 'edit') || ($action == 'new')) {
     require_sesskey();
 
     $instance = portfolio_instance($portfolio);
-    $current = $instance->get('visible');
-    if (empty($current) && $instance->instance_sanity_check()) {
-        print_error('cannotsetvisible', 'portfolio', $baseurl);
-    }
-
+    $plugin = $instance->get('plugin');
     if ($action == 'show') {
         $visible = 1;
     } else {
         $visible = 0;
     }
 
-    $instance->set('visible', $visible);
-    $instance->save();
-    core_plugin_manager::reset_caches();
+    $class = \core_plugin_manager::resolve_plugininfo_class('portfolio');
+    $class::enable_plugin($plugin, $visible);
     $return = true;
 } else if ($action == 'delete') {
     $instance = portfolio_instance($portfolio);
@@ -246,4 +241,3 @@ if ($return) {
 }
 
 echo $OUTPUT->footer();
-

@@ -43,25 +43,18 @@ $all     = enrol_get_plugins(false);
 
 $return = new moodle_url('/admin/settings.php', array('section'=>'manageenrols'));
 
-$syscontext = context_system::instance();
-
 switch ($action) {
     case 'disable':
-        unset($enabled[$enrol]);
-        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
-        core_plugin_manager::reset_caches();
-        $syscontext->mark_dirty(); // resets all enrol caches
+        $class = \core_plugin_manager::resolve_plugininfo_class('enrol');
+        $class::enable_plugin($enrol, false);
         break;
 
     case 'enable':
         if (!isset($all[$enrol])) {
             break;
         }
-        $enabled = array_keys($enabled);
-        $enabled[] = $enrol;
-        set_config('enrol_plugins_enabled', implode(',', $enabled));
-        core_plugin_manager::reset_caches();
-        $syscontext->mark_dirty(); // resets all enrol caches
+        $class = \core_plugin_manager::resolve_plugininfo_class('enrol');
+        $class::enable_plugin($enrol, true);
         break;
 
     case 'up':

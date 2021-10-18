@@ -106,6 +106,9 @@ completely removed from Moodle core too.
 * Require pass grade criteria is now part of core.
   Refer to upgrade.php to see transitioning from similar plugin criteria to core
   Refer to completion/upgrade.txt for additional information.
+* The method enable_plugin() has been added to the core_plugininfo\base class and it has been implemented by all the plugininfo
+classes extending it. When possible, the enable_plugin() method will store these changes into the config_log table, to let admins
+check when and who has enabled/disabled plugins.
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.
