@@ -34,7 +34,7 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
       | slot | response |
       |   1  | False    |
 
-  Scenario: student1 uses up both attempts without passing
+  Scenario Outline: Student attempts the quiz - pass and fails
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
@@ -42,16 +42,16 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
     And I follow "Test quiz name"
     And I press "Re-attempt quiz"
-    And I set the field "False" to "1"
+    And I set the field "<answer>" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I am on "Course 1" course homepage
     Then the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
-    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "<passcompletionexpected>"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"
     And I follow "Test quiz name"
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
-    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "<passcompletionexpected>"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"
     And I log out
     And I log in as "teacher1"
@@ -60,4 +60,9 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
     And "Test quiz name" should have the "Receive a pass grade or complete all available attempts" completion condition
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Activity completion" in current page administration
-    And "Completed" "icon" should exist in the "Student 1" "table_row"
+    And "<expectedactivitycompletion>" "icon" should exist in the "Student 1" "table_row"
+
+    Examples:
+      | answer | passcompletionexpected | expectedactivitycompletion                 |
+      | False  | failed                 | Completed (did not achieve pass grade)     |
+      | True   | done                   | Completed (achieved pass grade)            |
