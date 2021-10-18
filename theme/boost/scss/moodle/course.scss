@@ -469,7 +469,7 @@ body:not(.editing)  .sitetopic ul.section {
 }
 
 .course-content li {
-    &.section {
+    &.section:not(.course-section) {
         @include media-breakpoint-down(sm) {
             ul {
                 padding-left: 0;
@@ -1328,6 +1328,112 @@ span.editinstructions {
 
         .expandall {
             display: block;
+        }
+    }
+}
+
+// These are the new styles for the renewed course UI in isssue MDL-71691
+// once the old course renderers are removed in MDL-72656, all css related
+// to activities and sections above this commend needs to be reviewed an
+// possibly removed.
+.course-section {
+    list-style: none;
+    padding-left: 0;
+    border-bottom: $border-width solid $border-color;
+
+    &:last-child {
+        border-bottom: 0;
+    }
+
+    .sectionbadges .badge {
+        margin-left: 0.5rem;
+    }
+
+    .course-section-header.draggable {
+        cursor: move;
+    }
+
+    .section_action_menu {
+        .dropdown-toggle::after {
+            display: none;
+        }
+    }
+
+    .inplaceeditable {
+        display: flex;
+        align-items: center;
+    }
+
+    &.section-summary {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        margin-bottom: 0.5rem;
+        margin-top: 0.5rem;
+        @if $enable-rounded {
+            @include border-radius($border-radius-lg);
+        }
+    }
+
+    .section-summary-activities .activity-count {
+        color: $text-muted;
+        font-size: $font-size-sm;
+        margin: 3px;
+        white-space: nowrap;
+        display: inline-block;
+    }
+}
+
+$activity-iconcontainer-width: 50px;
+$activity-iconcontainer-height: 50px;
+
+.activity-item .activityiconcontainer {
+    width: $activity-iconcontainer-width;
+    height: $activity-iconcontainer-height;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $gray-100;
+    border-radius: 4px;
+    padding: 0.7rem;
+
+    .activityicon {
+        margin: 0;
+        height: 24px;
+        width: 24px;
+    }
+}
+
+.description .course-description-item {
+    background-color: $gray-100;
+    padding-left: map-get($spacers, 3);
+    padding-right: map-get($spacers, 3);
+
+    .description-inner {
+        padding-bottom: map-get($spacers, 2);
+        padding-top: map-get($spacers, 2);
+        border-bottom: $border-width solid $border-color;
+
+        p:last-child {
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+    }
+
+    &:first-child {
+        margin-top: map-get($spacers, 3);
+        padding-top: map-get($spacers, 3);
+
+        .description-inner {
+            padding-top: 0;
+        }
+    }
+
+    &:last-child {
+        padding-bottom: map-get($spacers, 3);
+
+        .description-inner {
+            padding-bottom: 0;
+            border-bottom: 0;
         }
     }
 }

@@ -25,10 +25,7 @@
     {
         "info": [
             {
-                "classes": "",
                 "text": "Not available unless: <ul><li>It is on or after <strong>8 June 2012</strong></li></ul>",
-                "ishidden": 0,
-                "isstealth": 0,
                 "isrestricted": 1,
                 "isfullinfo": 1
             }
@@ -36,15 +33,15 @@
         "hasavailability": true
     }
 }}
-<div class="section_availability">
+<div class="section_availability course-description-item">
 {{#hasavailability}}
     {{#info}}
         <div class="availabilityinfo {{classes}}">
         {{^isrestricted}}
-            <span class="badge badge-info">{{{text}}}</span>
+            <span class="badge badge-pill badge-warning">{{{text}}}</span>
         {{/isrestricted}}
         {{#isrestricted}}
-            <span class="badge badge-info">{{#str}}restricted, core{{/str}}</span> {{{text}}}
+            {{#pix}}t/unlock, core{{/pix}}</span> {{{text}}}
         {{/isrestricted}}
         </div>
     {{/info}}

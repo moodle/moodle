@@ -25,54 +25,42 @@
         "name": "Section title",
         "title": "<a href=\"http://moodle/course/view.php?id=5#section-0\">Section title</a>",
         "url": "#",
-        "iscoursedisplaymultipage": true
+        "headerdisplaymultipage": true,
+        "editing": 0
     }
 }}
 
-{{#iscoursedisplaymultipage}}
-    <h3 class="sectionid-{{id}}-title sectionname flex-fill"
-        data-for="section_title" data-id="{{id}}" data-number="{{num}}">
-        {{#url}}
-            <a href="{{{url}}}" class="{{#ishidden}} dimmed_text {{/ishidden}}">{{name}}</a>
-        {{/url}}
-        {{^url}}
-            <span>{{{title}}}</span>
-        {{/url}}
+{{#headerdisplaymultipage}}
+    <h3 class="sectionid-{{id}}-title sectionname">
+        {{{title}}}
     </h3>
-{{/iscoursedisplaymultipage}}
-{{^iscoursedisplaymultipage}}
+{{/headerdisplaymultipage}}
+{{^headerdisplaymultipage}}
     {{#sitehome}}
-        <h2 class="sectionid-{{id}}-title sectionname flex-fill"
-            data-for="section_title" data-id="{{id}}" data-number="{{num}}">
-            {{#url}}
-                <a href="{{{url}}}" class="{{#ishidden}} dimmed_text {{/ishidden}}">{{name}}</a>
-            {{/url}}
-            {{^url}}
-                <span>{{{title}}}</span>
-            {{/url}}
+        <h2 class="sectionid-{{id}}-title sectionname">
+            {{{title}}}
         </h2>
     {{/sitehome}}
     {{^sitehome}}
-        <div class="d-flex">
+        <div class="d-flex align-items-center position-relative">
             <a role="button" data-toggle="collapse"
                href="#coursecontentcollapse{{num}}"
                id="collapssesection{{num}}"
                aria-expanded="{{#contentexpanded}}true{{/contentexpanded}}{{^contentexpanded}}false{{/contentexpanded}}"
                aria-controls="coursecontentcollapse{{num}}"
-               class="btn btn-icon mr-1 icons-collapse-expand {{^contentexpanded}}collapsed{{/contentexpanded}}"
+               class="btn btn-icon mr-1 icons-collapse-expand {{^editing}}stretched-link {{/editing}}{{^contentexpanded}}collapsed{{/contentexpanded}}"
                aria-label="{{name}}">
-            <span class="expanded-icon icon-no-margin p-2" data-toggle="tooltip" title="{{#str}} collapse, core {{/str}}">
+            <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, core {{/str}}">
                 {{#pix}} t/expandedchevron, core {{/pix}}
             </span>
-                <span class="collapsed-icon icon-no-margin p-2" data-toggle="tooltip" title="{{#str}} expand, core {{/str}}">
-                    {{#pix}} t/collapsedchevron, core {{/pix}}
-                </span>
+            <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, core {{/str}}">
+                {{#pix}} t/collapsedchevron, core {{/pix}}
+            </span>
             </a>
-            <h3 class="sectionid-{{id}}-title sectionname course-content-item {{^visible}}dimmed{{/visible}} flex-fill"
-                id="coursecontentsection{{num}}" data-for="section_title" data-id="{{id}}" data-number="{{num}}"
-                data-action="togglecoursecontentsection">
+            <h3 class="sectionid-{{id}}-title sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
+                id="coursecontentsection{{num}}" data-for="section_title" data-id="{{id}}" data-number="{{num}}">
                 {{{title}}}
             </h3>
         </div>
     {{/sitehome}}
-{{/iscoursedisplaymultipage}}
+{{/headerdisplaymultipage}}

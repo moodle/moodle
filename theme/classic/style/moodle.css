@@ -13994,24 +13994,24 @@ body:not(.editing) .sitetopic ul.section {
   display: none; }
 
 @media (max-width: 767.98px) {
-  .course-content li.section ul {
+  .course-content li.section:not(.course-section) ul {
     padding-left: 0; } }
 
-.course-content li.section ul {
+.course-content li.section:not(.course-section) ul {
   list-style: disc; }
-  .course-content li.section ul ul {
+  .course-content li.section:not(.course-section) ul ul {
     list-style: circle; }
-    .course-content li.section ul ul ul {
+    .course-content li.section:not(.course-section) ul ul ul {
       list-style: square; }
 
-.course-content li.section li.activity ul {
+.course-content li.section:not(.course-section) li.activity ul {
   list-style: disc; }
-  .course-content li.section li.activity ul ul {
+  .course-content li.section:not(.course-section) li.activity ul ul {
     list-style: circle; }
-    .course-content li.section li.activity ul ul ul {
+    .course-content li.section:not(.course-section) li.activity ul ul ul {
       list-style: square; }
 
-.course-content li.section .right > .icon:first-child {
+.course-content li.section:not(.course-section) .right > .icon:first-child {
   /* Remove the spacer icon. */
   display: none; }
 
@@ -14647,6 +14647,70 @@ span.editinstructions {
 
 .section-collapsemenu.collapsed .expandall {
   display: block; }
+
+.course-section {
+  list-style: none;
+  padding-left: 0;
+  border-bottom: 1px solid #dee2e6; }
+  .course-section:last-child {
+    border-bottom: 0; }
+  .course-section .sectionbadges .badge {
+    margin-left: 0.5rem; }
+  .course-section .course-section-header.draggable {
+    cursor: move; }
+  .course-section .section_action_menu .dropdown-toggle::after {
+    display: none; }
+  .course-section .inplaceeditable {
+    display: flex;
+    align-items: center; }
+  .course-section.section-summary {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    border-radius: 0.3rem; }
+  .course-section .section-summary-activities .activity-count {
+    color: #6a737b;
+    font-size: 0.8203125rem;
+    margin: 3px;
+    white-space: nowrap;
+    display: inline-block; }
+
+.activity-item .activityiconcontainer {
+  width: 50px;
+  height: 50px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 0.7rem; }
+  .activity-item .activityiconcontainer .activityicon {
+    margin: 0;
+    height: 24px;
+    width: 24px; }
+
+.description .course-description-item {
+  background-color: #f8f9fa;
+  padding-left: 1rem;
+  padding-right: 1rem; }
+  .description .course-description-item .description-inner {
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    border-bottom: 1px solid #dee2e6; }
+    .description .course-description-item .description-inner p:last-child {
+      padding-bottom: 0;
+      margin-bottom: 0; }
+  .description .course-description-item:first-child {
+    margin-top: 1rem;
+    padding-top: 1rem; }
+    .description .course-description-item:first-child .description-inner {
+      padding-top: 0; }
+  .description .course-description-item:last-child {
+    padding-bottom: 1rem; }
+    .description .course-description-item:last-child .description-inner {
+      padding-bottom: 0;
+      border-bottom: 0; }
 
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target {

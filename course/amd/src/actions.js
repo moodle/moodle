@@ -79,7 +79,8 @@ define(
             TOGGLE: '.toggle-display,.dropdown-toggle',
             SECTIONLI: 'li.section',
             SECTIONACTIONMENU: '.section_action_menu',
-            ADDSECTIONS: '.changenumsections [data-add-sections]'
+            ADDSECTIONS: '.changenumsections [data-add-sections]',
+            SECTIONBADGES: '[data-region="sectionbadges"]',
         };
 
         Y.use('moodle-course-coursebase', function() {
@@ -581,9 +582,11 @@ define(
             if (action === 'hide' || action === 'show') {
                 if (action === 'hide') {
                     sectionElement.addClass('hidden');
+                    setSectionBadge(sectionElement[0], 'hiddenfromstudents', true);
                     replaceActionItem(actionItem, 'i/show',
                         'showfromothers', 'format_' + courseformat, 'show');
                 } else {
+                    setSectionBadge(sectionElement[0], 'hiddenfromstudents', false);
                     sectionElement.removeClass('hidden');
                     replaceActionItem(actionItem, 'i/hide',
                         'hidefromothers', 'format_' + courseformat, 'hide');
@@ -613,11 +616,13 @@ define(
                 replaceActionItem(actionItem, 'i/marked',
                     'highlightoff', 'core', 'removemarker');
                 courseeditor.dispatch('legacySectionAction', action, sectionid);
+                setSectionBadge(sectionElement[0], 'highlighted', true);
             } else if (action === 'removemarker') {
                 sectionElement.removeClass('current');
                 replaceActionItem(actionItem, 'i/marker',
                     'highlight', 'core', 'setmarker');
                 courseeditor.dispatch('legacySectionAction', action, sectionid);
+                setSectionBadge(sectionElement[0], 'highlighted', false);
             }
         };
 
@@ -720,6 +725,30 @@ define(
                     }
                 });
             return true;
+        };
+
+        /**
+         * Sets the section badge in the section header.
+         *
+         * @param {JQuery} sectionElement section element we perform action on
+         * @param {String} badgetype the type of badge this is for
+         * @param {bool} add true to add, false to remove
+         */
+        var setSectionBadge = function(sectionElement, badgetype, add) {
+            const sectionbadges = sectionElement.querySelector(SELECTOR.SECTIONBADGES);
+            if (!sectionbadges) {
+                return;
+            }
+            if (add) {
+                templates.render('core_courseformat/local/content/section/badges', {[badgetype]: 1})
+                .then(function(html, js) {
+                    templates.prependNodeContents(sectionbadges, html, js);
+                    return true;
+                }).catch(notification.exception);
+            } else {
+                const badge = sectionbadges.querySelector('[data-type="' + badgetype + '"]');
+                badge.remove();
+            }
         };
 
         // Register a function to be executed after D&D of an activity.
