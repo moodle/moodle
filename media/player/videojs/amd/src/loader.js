@@ -85,6 +85,15 @@ const notifyVideoJS = (e, nodes) => {
                 // Add Flash to the list of modules we require.
                 modulePromises.push(import('media_videojs/videojs-flash-lazy'));
             }
+            if (config.techOrder && config.techOrder.indexOf('OgvJS') !== -1) {
+                config.ogvjs = {
+                    worker: true,
+                    wasm: true,
+                    base: Config.wwwroot + '/media/player/videojs/ogvloader.php/' + Config.jsrev + '/'
+                };
+                // Add Ogv.JS to the list of modules we require.
+                modulePromises.push(import('media_videojs/videojs-ogvjs-lazy'));
+            }
             Promise.all([langStrings, ...modulePromises])
             .then(([langJson, videojs]) => {
                 if (firstLoad) {
