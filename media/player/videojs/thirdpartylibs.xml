@@ -35,4 +35,24 @@
         <version>5.4.2</version>
         <licenseversion>2.0</licenseversion>
     </library>
+    <library>
+        <location>amd/src/local/ogv/ogv.js</location>
+        <name>ogv.js</name>
+        <license>MIT</license>
+        <version>1.8.4</version>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>ogvjs</location>
+        <name>ogv.js support files</name>
+        <license>MIT</license>
+        <version>1.8.4</version>
+    </library>
+    <library>
+        <location>amd/src/videojs-ogvjs-lazy.js</location>
+        <name>ogv.js Tech plugin for Video.JS</name>
+        <license>MIT</license>
+        <version>0.1.2</version>
+        <licenseversion></licenseversion>
+    </library>
 </libraries>
