@@ -458,6 +458,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
             $addpageurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'sesskey'=>sesskey()));
             $addpageselect = new single_select($addpageurl, 'qtype', $options, null, array(''=>get_string('addanewpage', 'lesson').'...'), 'addpageafter'.$page->id);
+            $addpageselect->attributes = ['aria-label' => get_string('actions', 'lesson')];
             $addpageselector = $this->output->render($addpageselect);
         }
 
