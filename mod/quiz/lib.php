@@ -1909,15 +1909,6 @@ function quiz_get_navigation_options() {
 }
 
 /**
- * Get the aggregation state for the module.
- *
- * @return bool
- */
-function quiz_get_completion_aggregation_state() {
-    return COMPLETION_CUSTOM_MODULE_FLOW;
-}
-
-/**
  * Check if the module has any update that affects the current user since a given time.
  *
  * @param  cm_info $cm course module data

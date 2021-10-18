@@ -4,15 +4,8 @@ information provided here is intended especially for developers.
 === 4.0 ===
 * New method mark_course_completions_activity_criteria() has been added to mark course completions instantly. It is
   based on cron for completion_criteria_activity.php which is refactored to use it as well.
-* Modified completion criteria to allow plugins to override core completion logic.
 * Core now passes an additional parameter to '_get_completion_state'. This is an array representation of the completion results that have already been
   tested. Currently contains - viewed, usegrade, passgrade. Any plugin that are dependent on these criteria can now check this array instead of retesting it.
-* Introduced a new plugin function - '_get_completion_aggregation_state', that would indicate the aggregation type/relationship between the plugin and core
-  completion criteria. This callback should either return a COMPLETION_STANDARD_FLOW / COMPLETION_CUSTOM_MODULE_FLOW. The former for default existing core
-  behaviour while the latter enforces the override logic from the plugin. Defaults to COMPLETION_STANDARD_FLOW if not defined. This is useful when plugins
-  need to override the core completion criteria in cases where it may be dependent on them. In these cases, the 'source of truth' would be the response
-  from the plugin's 'get_completion_state' function. e.g. Quiz's completion defines a criteria of 'requires passing grade OR all attempts AND min attempts
-  reached.' In these cases, even if a passing grade has not been achieved, the activity should be marked as completed if the no.of attempts have been reached.
 * The method \completion_criteria_completion::mark_complete() now has the optional $timecompleted parameter to specify when the
   criteria was completed.
 
