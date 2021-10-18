@@ -10,8 +10,8 @@ Feature: Show/hide course sections
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | format |
-      | Course 1 | C1 | topics |
+      | fullname | shortname | format | hiddensections |
+      | Course 1 | C1 | topics | 0                     |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
