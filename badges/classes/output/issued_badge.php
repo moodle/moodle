@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/badgeslib.php');
 
+use context_course;
 use context_system;
 use stdClass;
 use renderable;
@@ -117,12 +118,12 @@ class issued_badge implements renderable {
         $data = new stdClass();
         $badge = new badge($this->badgeid);
         if ($badge->type == BADGE_TYPE_COURSE && isset($badge->courseid)) {
-            $coursename = $DB->get_field('course', 'fullname', ['id' => $badge->courseid]);
-            $data->coursefullname = $coursename;
-            $context = \context_course::instance($badge->courseid);
+            $context = context_course::instance($badge->courseid);
+            $data->coursefullname = format_string($DB->get_field('course', 'fullname', ['id' => $badge->courseid]),
+                true, ['context' => $context]);
         } else {
-            $data->sitefullname = $SITE->fullname;
-            $context = \context_system::instance();
+            $context = context_system::instance();
+            $data->sitefullname = format_string($SITE->fullname, true, ['context' => $context]);
         }
 
         // Field: Image.
@@ -158,9 +159,9 @@ class issued_badge implements renderable {
         $data->criteria = $output->print_badge_criteria($badge);
 
         // Field: Issuer.
-        $data->issuedby = $badge->issuername;
+        $data->issuedby = format_string($badge->issuername, true, ['context' => $context]);
         if (isset($badge->issuercontact) && !empty($badge->issuercontact)) {
-            $data->issuedbyemailobfuscated = obfuscate_mailto($badge->issuercontact, $badge->issuername);
+            $data->issuedbyemailobfuscated = obfuscate_mailto($badge->issuercontact, $data->issuedby);
         }
 
         // Fields: Other details, such as language or version.
