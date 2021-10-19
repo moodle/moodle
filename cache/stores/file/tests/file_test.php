@@ -74,4 +74,31 @@ class cachestore_file_test extends cachestore_tests {
 
         $cache->get('testing');
     }
+
+    /**
+     * Tests the get_last_read byte count.
+     */
+    public function test_get_last_io_bytes(): void {
+        $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, 'cachestore_file', 'phpunit_test');
+        $store = new \cachestore_file('Test');
+        $store->initialise($definition);
+
+        $store->set('foo', 'bar');
+        $store->set('frog', 'ribbit');
+        $store->get('foo');
+        // It's not 3 bytes, because the data is stored serialized.
+        $this->assertEquals(10, $store->get_last_io_bytes());
+        $store->get('frog');
+        $this->assertEquals(13, $store->get_last_io_bytes());
+        $store->get_many(['foo', 'frog']);
+        $this->assertEquals(23, $store->get_last_io_bytes());
+
+        $store->set('foo', 'goo');
+        $this->assertEquals(10, $store->get_last_io_bytes());
+        $store->set_many([
+                ['key' => 'foo', 'value' => 'bar'],
+                ['key' => 'frog', 'value' => 'jump']
+        ]);
+        $this->assertEquals(21, $store->get_last_io_bytes());
+    }
 }

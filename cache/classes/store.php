@@ -150,6 +150,11 @@ abstract class cache_store implements cache_store_interface {
     const STATIC_ACCEL = '** static accel. **';
 
     /**
+     * Returned from get_last_io_bytes if this cache store doesn't support counting bytes read/sent.
+     */
+    const IO_BYTES_NOT_SUPPORTED = -1;
+
+    /**
      * Constructs an instance of the cache store.
      *
      * The constructor should be responsible for creating anything needed by the store that is not
@@ -391,5 +396,24 @@ abstract class cache_store implements cache_store_interface {
      */
     public static function ready_to_be_used_for_testing() {
         return false;
+    }
+
+    /**
+     * Gets the number of bytes read from or written to cache as a result of the last action.
+     *
+     * This includes calls to the functions get(), get_many(), set(), and set_many(). The number
+     * is reset by calling any of these functions.
+     *
+     * This should be the actual number of bytes of the value read from or written to cache,
+     * giving an impression of the network or other load. It will not be exactly the same amount
+     * as netowrk traffic because of protocol overhead, key text, etc.
+     *
+     * If not supported, returns IO_BYTES_NOT_SUPPORTED.
+     *
+     * @return int Bytes read (or 0 if none/not supported)
+     * @since Moodle 4.0
+     */
+    public function get_last_io_bytes(): int {
+        return self::IO_BYTES_NOT_SUPPORTED;
     }
 }

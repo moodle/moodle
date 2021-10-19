@@ -9562,9 +9562,9 @@ function get_performance_info() {
 
         $table = new html_table();
         $table->attributes['class'] = 'cachesused table table-dark table-sm w-auto table-bordered';
-        $table->head = ['Mode', 'Cache item', 'Static', 'H', 'M', get_string('mappingprimary', 'cache'), 'H', 'M', 'S'];
+        $table->head = ['Mode', 'Cache item', 'Static', 'H', 'M', get_string('mappingprimary', 'cache'), 'H', 'M', 'S', 'I/O'];
         $table->data = [];
-        $table->align = ['left', 'left', 'left', 'right', 'right', 'left', 'right', 'right', 'right'];
+        $table->align = ['left', 'left', 'left', 'right', 'right', 'left', 'right', 'right', 'right', 'right'];
 
         $text = 'Caches used (hits/misses/sets): ';
         $hits = 0;
@@ -9595,9 +9595,11 @@ function get_performance_info() {
             $table->align[] = 'right';
             $table->align[] = 'right';
             $table->align[] = 'right';
+            $table->align[] = 'right';
             $table->head[] = 'H';
             $table->head[] = 'M';
             $table->head[] = 'S';
+            $table->head[] = 'I/O';
         }
 
         ksort($stats);
@@ -9657,10 +9659,27 @@ function get_performance_info() {
                     $cell = new html_table_cell($data['sets']);
                     $cell->attributes = ['class' => $cachestoreclass];
                     $row[] = $cell;
+
+                    if ($data['hits'] || $data['sets']) {
+                        if ($data['iobytes'] === cache_store::IO_BYTES_NOT_SUPPORTED) {
+                            $size = '-';
+                        } else {
+                            $size = display_size($data['iobytes'], 1, 'KB');
+                            if ($data['iobytes'] >= 10 * 1024) {
+                                $cachestoreclass = ' bg-warning text-dark';
+                            }
+                        }
+                    } else {
+                        $size = '';
+                    }
+                    $cell = new html_table_cell($size);
+                    $cell->attributes = ['class' => $cachestoreclass];
+                    $row[] = $cell;
                 }
                 $storec++;
             }
             while ($storec++ < $maxstores) {
+                $row[] = '';
                 $row[] = '';
                 $row[] = '';
                 $row[] = '';
@@ -9675,11 +9694,11 @@ function get_performance_info() {
 
         // Now lets also show sub totals for each cache store.
         $storetotals = [];
-        $storetotal = ['hits' => 0, 'misses' => 0, 'sets' => 0];
+        $storetotal = ['hits' => 0, 'misses' => 0, 'sets' => 0, 'iobytes' => 0];
         foreach ($stats as $definition => $details) {
             foreach ($details['stores'] as $store => $data) {
                 if (!array_key_exists($store, $storetotals)) {
-                    $storetotals[$store] = ['hits' => 0, 'misses' => 0, 'sets' => 0];
+                    $storetotals[$store] = ['hits' => 0, 'misses' => 0, 'sets' => 0, 'iobytes' => 0];
                 }
                 $storetotals[$store]['class']   = $data['class'];
                 $storetotals[$store]['hits']   += $data['hits'];
@@ -9688,14 +9707,18 @@ function get_performance_info() {
                 $storetotal['hits']   += $data['hits'];
                 $storetotal['misses'] += $data['misses'];
                 $storetotal['sets']   += $data['sets'];
+                if ($data['iobytes'] !== cache_store::IO_BYTES_NOT_SUPPORTED) {
+                    $storetotals[$store]['iobytes'] += $data['iobytes'];
+                    $storetotal['iobytes'] += $data['iobytes'];
+                }
             }
         }
 
         $table = new html_table();
         $table->attributes['class'] = 'cachesused table table-dark table-sm w-auto table-bordered';
-        $table->head = [get_string('storename', 'cache'), get_string('type_cachestore', 'plugin'), 'H', 'M', 'S'];
+        $table->head = [get_string('storename', 'cache'), get_string('type_cachestore', 'plugin'), 'H', 'M', 'S', 'I/O'];
         $table->data = [];
-        $table->align = ['left', 'left', 'right', 'right', 'right'];
+        $table->align = ['left', 'left', 'right', 'right', 'right', 'right'];
 
         ksort($storetotals);
 
@@ -9723,7 +9746,26 @@ function get_performance_info() {
             $cell = new html_table_cell($data['sets']);
             $cell->attributes = ['class' => $cachestoreclass];
             $row[] = $cell;
+            if ($data['hits'] || $data['sets']) {
+                if ($data['iobytes']) {
+                    $size = display_size($data['iobytes'], 1, 'KB');
+                } else {
+                    $size = '-';
+                }
+            } else {
+                $size = '';
+            }
+            $cell = new html_table_cell($size);
+            $cell->attributes = ['class' => $cachestoreclass];
+            $row[] = $cell;
             $table->data[] = $row;
+        }
+        if (!empty($storetotal['iobytes'])) {
+            $size = display_size($storetotal['iobytes'], 1, 'KB');
+        } else if (!empty($storetotal['hits']) || !empty($storetotal['sets'])) {
+            $size = '-';
+        } else {
+            $size = '';
         }
         $row = [
             get_string('total'),
@@ -9731,6 +9773,7 @@ function get_performance_info() {
             $storetotal['hits'],
             $storetotal['misses'],
             $storetotal['sets'],
+            $size,
         ];
         $table->data[] = $row;
 
