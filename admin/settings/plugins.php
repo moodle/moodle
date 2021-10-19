@@ -651,8 +651,8 @@ if ($hassiteconfig) {
         3, $options));
     // Teacher roles.
     $options = [];
-    foreach (get_all_roles() as $role) {
-        $options[$role->id] = $role->shortname;
+    foreach (role_get_names() as $role) {
+        $options[$role->id] = $role->localname;
     }
     $temp->add(new admin_setting_configmultiselect('searchteacherroles',
         new lang_string('searchteacherroles', 'admin'),
