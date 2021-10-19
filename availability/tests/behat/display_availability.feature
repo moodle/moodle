@@ -102,8 +102,8 @@ Feature: display_availability
     And I log in as "student1"
     And I am on "Course 1" course homepage
 
-    # Page 1 display still there but should be dimmed and not a link.
-    Then I should see "Page 1" in the "#section-1 .dimmed_text" "css_element"
+    # Page 1 display still there but should not be a link.
+    Then I should see "Page 1" in the "#section-1" "css_element"
     And ".activity-instance a" "css_element" should not exist in the "Topic 1" "section"
 
     # Date display should be present.
