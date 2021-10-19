@@ -165,7 +165,7 @@ class cm implements renderable, templatable {
             'textclasses' => $displayoptions['textclasses'],
         ];
 
-        if (!empty($mod->indent)) {
+        if (!empty($mod->indent) && $format->uses_indentation()) {
             $data->indent = $mod->indent;
             if ($mod->indent > 15) {
                 $data->hugeindent = true;
