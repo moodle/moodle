@@ -39,7 +39,7 @@ class behat_exact_named_selector extends \Behat\Mink\Selector\ExactNamedSelector
      * Creates selector instance.
      */
     public function __construct() {
-        $this->registerReplacement('%iconMatch%', "(contains(concat(' ', @class, ' '), ' icon ') or name() = 'img')");
+        $this->registerReplacement('%iconMatch%', "(contains(concat(' ', @class, ' '), ' icon ') or self::img)");
         $this->registerReplacement('%imgAltMatch%', './/*[%iconMatch% and (%altMatch% or %titleMatch%)]');
         parent::__construct();
     }
