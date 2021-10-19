@@ -19,7 +19,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
-
+require_once($CFG->dirroot. '/comment/lib.php');
 
 /**
  * Question comment backup and restore unit tests.
@@ -138,7 +138,6 @@ class qbank_comment_backup_restore_test extends \advanced_testcase {
      */
     public function test_backup_restore() {
         global $DB;
-
         $this->resetAfterTest();
         $this->setAdminUser();
 
