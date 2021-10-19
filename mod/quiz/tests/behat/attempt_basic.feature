@@ -79,7 +79,7 @@ Feature: Attempt a quiz
     And I should see question "1" in section "Section 1" in the quiz navigation
     And I should see question "2" in section "Section 1" in the quiz navigation
     And I should see question "3" in section "Section 2" in the quiz navigation
-    And I should see question "4" in section "(Untitled section)" in the quiz navigation
+    And I should see question "4" in section "Untitled section" in the quiz navigation
     And I should see question "5" in section "Section 3" in the quiz navigation
     And I should see question "6" in section "Section 3" in the quiz navigation
 
@@ -87,12 +87,12 @@ Feature: Attempt a quiz
     And I should see question "1" in section "Section 1" in the quiz navigation
     And I should see question "2" in section "Section 1" in the quiz navigation
     And I should see question "3" in section "Section 2" in the quiz navigation
-    And I should see question "4" in section "(Untitled section)" in the quiz navigation
+    And I should see question "4" in section "Untitled section" in the quiz navigation
     And I should see question "5" in section "Section 3" in the quiz navigation
     And I should see question "6" in section "Section 3" in the quiz navigation
     And I should see "Section 1" in the "quizsummaryofattempt" "table"
     And I should see "Section 2" in the "quizsummaryofattempt" "table"
-    And I should see "(Untitled section)" in the "quizsummaryofattempt" "table"
+    And I should see "Untitled section" in the "quizsummaryofattempt" "table"
     And I should see "Section 3" in the "quizsummaryofattempt" "table"
 
     And I press "Submit all and finish"
@@ -100,7 +100,7 @@ Feature: Attempt a quiz
     And I should see question "1" in section "Section 1" in the quiz navigation
     And I should see question "2" in section "Section 1" in the quiz navigation
     And I should see question "3" in section "Section 2" in the quiz navigation
-    And I should see question "4" in section "(Untitled section)" in the quiz navigation
+    And I should see question "4" in section "Untitled section" in the quiz navigation
     And I should see question "5" in section "Section 3" in the quiz navigation
     And I should see question "6" in section "Section 3" in the quiz navigation
 
