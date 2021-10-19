@@ -22,6 +22,7 @@ use core\output\dynamic_tabs\base;
 use core_reportbuilder\external\custom_report_menu_cards_exporter;
 use core_reportbuilder\local\helpers\audience as audience_helper;
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\output\audience_heading_editable;
 use core_reportbuilder\permission;
 use renderer_base;
 
@@ -96,6 +97,10 @@ class audience extends base {
      * @return array
      */
     private function get_all_report_audiences(): array {
+        global $PAGE;
+
+        $renderer = $PAGE->get_renderer('core');
+
         $audienceinstances = [];
         $reportaudiences = audience_helper::get_base_records((int)$this->data['reportid']);
         $showormessage = false;
@@ -103,11 +108,14 @@ class audience extends base {
             $persistent = $reportaudience->get_persistent();
             $canedit = $reportaudience->user_can_edit();
 
+            $editable = new audience_heading_editable($persistent->get('id'));
+
             $params = [
                 'identifier' => $persistent->get('classname'),
                 'instanceid' => $persistent->get('id'),
                 'description' => $reportaudience->get_description(),
-                'title' => $reportaudience->get_name(),
+                'heading' => $reportaudience->get_name(),
+                'headingeditable' => $editable->render($renderer),
                 'canedit' => $canedit,
                 'candelete' => $canedit,
                 'showormessage' => $showormessage,
