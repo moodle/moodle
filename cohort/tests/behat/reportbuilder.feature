@@ -43,8 +43,7 @@ Feature: Manage custom reports for cohorts
   Scenario: Add condition to cohorts report
     Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I change window size to "large"
-    When I click on "Show/hide settings sidebar" "button"
-    And I click on "Show/hide 'Conditions'" "button"
+    When I click on "Show/hide 'Conditions'" "button"
     Then I should see "There are no conditions selected" in the "[data-region='settings-conditions']" "css_element"
     And I set the field "Select a condition" to "Category"
     And I should see "Added condition 'Category'"
@@ -60,8 +59,7 @@ Feature: Manage custom reports for cohorts
   Scenario: Use filters in cohorts report
     Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I change window size to "large"
-    When I click on "Show/hide settings sidebar" "button"
-    And I click on "Show/hide 'Filters'" "button"
+    When I click on "Show/hide 'Filters'" "button"
     Then I should see "There are no filters selected" in the "[data-region='settings-filters']" "css_element"
     And I set the field "Select a filter" to "Name"
     And I should see "Other cohort" in the ".reportbuilder-table" "css_element"
@@ -87,7 +85,6 @@ Feature: Manage custom reports for cohorts
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I set the field "Rename column 'Surname'" to "Member count"
     And I set the "Surname" column aggregation to "Count"
-    And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Sorting'" "button"
     And I click on "Move sorting for column 'Surname'" "button"
     And I click on "To the top of the list" "link" in the "Move sorting for column 'Surname'" "dialogue"

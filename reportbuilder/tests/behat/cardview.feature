@@ -20,7 +20,6 @@ Feature: Manage card view settings in the report editor
   Scenario: Edit card view settings form
     When I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     Then I change window size to "large"
-    And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Card view'" "button"
     # Check default values.
     And the following fields match these values:
@@ -34,7 +33,6 @@ Feature: Manage card view settings in the report editor
     # Let's check that after switching to preview mode card view form gets rendered again.
     And I click on "Switch to preview mode" "button"
     And I click on "Switch to edit mode" "button"
-    And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Card view'" "button"
     And the following fields match these values:
       | Columns visible       | 3     |
@@ -63,7 +61,6 @@ Feature: Manage card view settings in the report editor
     # Change 'Columns visible' to 3 and 'First column title' to yes.
     And I change window size to "large"
     And I press "Switch to edit mode"
-    And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Card view'" "button"
     And I set the following fields to these values:
       | Columns visible       | 3     |

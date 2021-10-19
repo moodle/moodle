@@ -44,12 +44,17 @@ permission::require_can_edit_report($report->get_report_persistent());
 
 $PAGE->set_context($report->get_context());
 $PAGE->navbar->add(get_string('editreportcontent', 'core_reportbuilder'), $PAGE->url);
+$PAGE->set_pagelayout('popup');
+
+/** @var \core_reportbuilder\output\renderer $renderer */
+$renderer = $PAGE->get_renderer('core_reportbuilder');
 
 $reportname = $report->get_report_persistent()->get_formatted_name();
 $PAGE->set_title($reportname);
-$PAGE->set_heading($reportname);
 
 echo $OUTPUT->header();
+
+echo $renderer->render_fullpage_editor_header($report->get_report_persistent());
 
 // Add dynamic tabs.
 $tabdata = ['reportid' => $reportid];

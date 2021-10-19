@@ -94,7 +94,7 @@
      data-report-type="{{type}}"
      data-parameter="[]"
      {{#editmode}}data-editing{{/editmode}}>
-    <div class="reportbuilder-wrapper d-flex flex-column flex-md-row">
+    <div class="reportbuilder-wrapper d-flex flex-column flex-lg-row">
         {{#editmode}}
             {{! Menu sidebar }}
             {{> core_reportbuilder/local/sidebar-menu/area}}
@@ -104,7 +104,7 @@
             <div class="{{#editmode}}p-2 border{{/editmode}}">
                 <div data-region="core_reportbuilder/report-header" class="dropdown d-flex justify-content-end">
                     {{! Preview/Edit button }}
-                    <button data-action="toggle-edit-preview" data-edit-mode="{{editmode}}" class="btn btn-outline-secondary mr-2"
+                    <button data-action="toggle-edit-preview" data-edit-mode="{{editmode}}" class="btn btn-outline-secondary"
                             title="{{#editmode}}{{#str}} switchpreview, core_reportbuilder {{/str}}{{/editmode}}{{^editmode}}{{#str}} switchedit, core_reportbuilder {{/str}}{{/editmode}}">
                         {{#editmode}}
                             {{#pix}} i/preview, core {{/pix}}
@@ -115,14 +115,6 @@
                             {{#str}} edit, core {{/str}}
                         {{/editmode}}
                     </button>
-                    {{! Settings/Filters button }}
-                    {{#editmode}}
-                        <button id="report-settings-collapse" data-toggle="collapse" data-target="#report-settings" class="btn btn-outline-secondary collapsed"
-                                title="{{#str}} reportsettingstoggle, core_reportbuilder {{/str}}">
-                            <i class="icon fa fa-sliders" aria-hidden="true"></i>
-                            {{#str}} settings, moodle {{/str}}
-                        </button>
-                    {{/editmode}}
                     {{^editmode}}
                         {{! Filters }}
                         {{#filterspresent}}
@@ -140,7 +132,7 @@
             {{! Settings sidebar }}
             {{> core_reportbuilder/local/settings/area}}
         {{/editmode}}
-        </div>
+    </div>
 </div>
 
 {{#js}}

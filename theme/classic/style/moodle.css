@@ -20629,7 +20629,7 @@ div.editor_atto_toolbar button .icon {
   margin-top: 50px; }
 
 /**
-* Reportbuilder table.
+* Reportbuilder.
 */
 /* Table */
 /* Filters */
@@ -20697,7 +20697,7 @@ div.editor_atto_toolbar button .icon {
   margin-right: 0; }
 
 /* Sidebar menu */
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .reportbuilder-sidebar-menu {
     width: 250px;
     flex-shrink: 0; } }
@@ -20710,7 +20710,6 @@ div.editor_atto_toolbar button .icon {
     font-size: 12px; }
 
 .reportbuilder-sidebar-menu-cards {
-  max-height: 60vh;
   overflow-y: auto; }
   .reportbuilder-sidebar-menu-cards::-webkit-scrollbar {
     -webkit-appearance: none;
@@ -20722,36 +20721,43 @@ div.editor_atto_toolbar button .icon {
     background-color: white;
     border-left: 5px solid #fff; }
 
-/* Customreport settings */
-@media (min-width: 768px) {
-  .reportbuilder-sidebar-settings {
-    width: 350px;
-    flex-shrink: 0; } }
-
-.reportbuilder-sidebar-settings .list-group-item {
-  padding: .75rem; }
-  .reportbuilder-sidebar-settings .list-group-item .icon {
-    width: 12px;
-    height: 12px;
-    font-size: 12px;
-    color: #1d2125; }
-  .reportbuilder-sidebar-settings .list-group-item button[data-action="report-remove-filter"] .icon,
-  .reportbuilder-sidebar-settings .list-group-item button[data-action="report-remove-condition"] .icon {
-    margin-right: 0;
-    vertical-align: text-top; }
-  .reportbuilder-sidebar-settings .list-group-item span[data-drag-type="move"] .icon {
-    vertical-align: text-top; }
-
-.reportbuilder-sidebar-settings div[data-region="settings-sorting"] .list-group-item span[data-drag-type="move"] .icon {
-  vertical-align: middle; }
-
-.reportbuilder-sidebar-settings div[data-region="settings-cardview"] form .col-md-3,
-.reportbuilder-sidebar-settings div[data-region="settings-cardview"] form .col-md-9 {
-  flex: 1 1;
-  max-width: initial; }
-
-.reportbuilder-sidebar-settings div[data-region="settings-cardview"] form div[data-fieldtype="submit"] {
-  flex-basis: auto; }
+/* Settings sidebar */
+.reportbuilder-sidebar-settings {
+  overflow-y: auto; }
+  .reportbuilder-sidebar-settings::-webkit-scrollbar {
+    -webkit-appearance: none;
+    appearance: none; }
+  .reportbuilder-sidebar-settings::-webkit-scrollbar-thumb {
+    background-color: #ced4da;
+    border-left: 5px solid #fff; }
+  .reportbuilder-sidebar-settings::-webkit-scrollbar-track {
+    background-color: white;
+    border-left: 5px solid #fff; }
+  @media (min-width: 992px) {
+    .reportbuilder-sidebar-settings {
+      width: 350px;
+      flex-shrink: 0; } }
+  .reportbuilder-sidebar-settings .list-group-item {
+    padding: .75rem; }
+    .reportbuilder-sidebar-settings .list-group-item .icon {
+      width: 12px;
+      height: 12px;
+      font-size: 12px;
+      color: #1d2125; }
+    .reportbuilder-sidebar-settings .list-group-item button[data-action="report-remove-filter"] .icon,
+    .reportbuilder-sidebar-settings .list-group-item button[data-action="report-remove-condition"] .icon {
+      margin-right: 0;
+      vertical-align: text-top; }
+    .reportbuilder-sidebar-settings .list-group-item span[data-drag-type="move"] .icon {
+      vertical-align: text-top; }
+  .reportbuilder-sidebar-settings div[data-region="settings-sorting"] .list-group-item span[data-drag-type="move"] .icon {
+    vertical-align: middle; }
+  .reportbuilder-sidebar-settings div[data-region="settings-cardview"] form .col-md-3,
+  .reportbuilder-sidebar-settings div[data-region="settings-cardview"] form .col-md-9 {
+    flex: 1 1;
+    max-width: initial; }
+  .reportbuilder-sidebar-settings div[data-region="settings-cardview"] form div[data-fieldtype="submit"] {
+    flex-basis: auto; }
 
 /* Add button styles when a toggle button is active. */
 .reportbuilder-wrapper button.btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
@@ -20771,6 +20777,49 @@ div.editor_atto_toolbar button .icon {
 .reportbuilder-conditions-list .condition.sortable-list-is-dragged {
   background-color: #fff;
   opacity: 0.85; }
+
+/* Reportbuilder full page styles. */
+@media (min-width: 992px) {
+  .path-admin-reportbuilder.pagelayout-popup.behat-site .fixed-top {
+    position: fixed; }
+  .path-admin-reportbuilder.pagelayout-popup #region-main {
+    border: none;
+    padding: 0; }
+  .path-admin-reportbuilder.pagelayout-popup #maincontent {
+    visibility: hidden; }
+  .path-admin-reportbuilder.pagelayout-popup .dynamictabs .nav-tabs {
+    position: fixed;
+    z-index: 1030;
+    width: calc(100% - 35px);
+    padding-top: 1.25rem;
+    background-color: #fff;
+    box-shadow: 0 1.25rem 0 #fff; }
+  .path-admin-reportbuilder.pagelayout-popup .dynamictabs .tab-content {
+    padding-top: 83px; }
+  .path-admin-reportbuilder.pagelayout-popup .reportbuilder-sidebar-menu {
+    position: fixed; }
+    .path-admin-reportbuilder.pagelayout-popup .reportbuilder-sidebar-menu .reportbuilder-sidebar-menu-cards {
+      max-height: calc(100vh - 153px - 52px); }
+  .path-admin-reportbuilder.pagelayout-popup .reportbuilder-sidebar-settings {
+    position: fixed;
+    right: 30px;
+    max-height: calc(100vh - 153px); }
+  .path-admin-reportbuilder.pagelayout-popup .reportbuilder-report[data-editing] .reportbuilder-report-container {
+    max-height: calc(100vh - 153px);
+    overflow-y: auto;
+    margin-left: calc(250px + 1rem);
+    margin-right: calc(350px + 1rem); }
+    .path-admin-reportbuilder.pagelayout-popup .reportbuilder-report[data-editing] .reportbuilder-report-container::-webkit-scrollbar {
+      -webkit-appearance: none;
+      appearance: none; }
+    .path-admin-reportbuilder.pagelayout-popup .reportbuilder-report[data-editing] .reportbuilder-report-container::-webkit-scrollbar-thumb {
+      background-color: #ced4da;
+      border-left: 5px solid #fff; }
+    .path-admin-reportbuilder.pagelayout-popup .reportbuilder-report[data-editing] .reportbuilder-report-container::-webkit-scrollbar-track {
+      background-color: white;
+      border-left: 5px solid #fff; }
+  .path-admin-reportbuilder.pagelayout-popup .reportbuilder-audiences-container {
+    margin-left: calc(250px + 1rem); } }
 
 /* Toggle cards. */
 .reportbuilder-toggle-card .card-header {

@@ -20,8 +20,7 @@ Feature: Manage custom report columns sorting
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
 
   Scenario: Toggle column sorting in report
-    Given I click on "Show/hide settings sidebar" "button"
-    And I change window size to "large"
+    Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
     # This will be the fallback sort after toggling lastname sorting.
     And I click on "Enable sorting for column 'First name'" "checkbox"
@@ -33,8 +32,7 @@ Feature: Manage custom report columns sorting
     And "user01" "table_row" should appear before "user02" "table_row"
 
   Scenario: Change column sort direction in report
-    Given I click on "Show/hide settings sidebar" "button"
-    And I change window size to "large"
+    Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
     When I click on "Enable sorting for column 'Surname'" "checkbox"
     And I click on "Sort column 'Surname' descending" "button"
@@ -45,8 +43,7 @@ Feature: Manage custom report columns sorting
     And "user02" "table_row" should appear before "user01" "table_row"
 
   Scenario: Change column sort order in report
-    Given I click on "Show/hide settings sidebar" "button"
-    And I change window size to "large"
+    Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
     When I click on "Enable sorting for column 'Surname'" "checkbox"
     And I click on "Enable sorting for column 'First name'" "checkbox"
@@ -57,15 +54,13 @@ Feature: Manage custom report columns sorting
     And "user01" "table_row" should appear before "user02" "table_row"
 
   Scenario: Sortable columns are updated when column is added to report
-    Given I click on "Show/hide settings sidebar" "button"
-    And I change window size to "large"
+    Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
     When I click on "Add column 'Full name'" "link"
     Then I should see "Full name" in the "#settingssorting" "css_element"
 
   Scenario: Sortable columns are updated when column is deleted from report
-    Given I click on "Show/hide settings sidebar" "button"
-    And I change window size to "large"
+    Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
     When I click on "Delete column 'Username'" "button"
     And I click on "Delete" "button" in the "Delete column 'Username'" "dialogue"

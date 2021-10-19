@@ -20,7 +20,6 @@ Feature: Manage custom reports
     And I should see "Username" in the "reportbuilder-table" "table"
     And I should see "Email address" in the "reportbuilder-table" "table"
     # Confirm we see the default conditions in the report.
-    And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Conditions'" "button"
     Then I should see "Full name" in the "[data-region='settings-conditions']" "css_element"
     Then I should see "Username" in the "[data-region='settings-conditions']" "css_element"
@@ -31,7 +30,7 @@ Feature: Manage custom reports
     Then I should see "Full name" in the "[data-region='report-filters']" "css_element"
     Then I should see "Username" in the "[data-region='report-filters']" "css_element"
     Then I should see "Email address" in the "[data-region='report-filters']" "css_element"
-    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I click on "Close 'My report' editor" "button"
     And the following should exist in the "reportbuilder-table" table:
       | Name      | Report source | Modified by |
       | My report | Users         | Admin User  |
@@ -51,7 +50,7 @@ Feature: Manage custom reports
     And I click on "Save" "button" in the "New report" "dialogue"
     Then I should see "My report"
     And I should see "Nothing to display"
-    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I click on "Close 'My report' editor" "button"
     And the following should exist in the "reportbuilder-table" table:
       | Name      | Report source |
       | My report | Users         |
@@ -121,13 +120,11 @@ Feature: Manage custom reports
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     Then I should see "Preview" in the "[data-region='core_reportbuilder/report-header']" "css_element"
     And I should not see "Edit" in the "[data-region='core_reportbuilder/report-header']" "css_element"
-    And I should see "Settings" in the "[data-region='core_reportbuilder/report-header']" "css_element"
     And I should not see "Filters" in the "[data-region='core_reportbuilder/report-header']" "css_element"
     And I should see "Full name" in the ".reportbuilder-sidebar-menu" "css_element"
     Then I click on "Switch to preview mode" "button"
     Then I should not see "Preview" in the "[data-region='core_reportbuilder/report-header']" "css_element"
     And I should see "Edit" in the "[data-region='core_reportbuilder/report-header']" "css_element"
-    And I should not see "Settings" in the "[data-region='core_reportbuilder/report-header']" "css_element"
     And I should see "Filters" in the "[data-region='core_reportbuilder/report-header']" "css_element"
     Then I click on "Switch to edit mode" "button"
     Then I should see "Preview" in the "[data-region='core_reportbuilder/report-header']" "css_element"
@@ -142,9 +139,8 @@ Feature: Manage custom reports
     And I click on "<link>" "link" in the "My report" "table_row"
     Then <previewvisible> "Preview" in the "[data-region='core_reportbuilder/report']" "css_element"
     And <editvisible> "Edit" in the "[data-region='core_reportbuilder/report']" "css_element"
-    And <settingsvisible> "Settings" in the "[data-region='core_reportbuilder/report']" "css_element"
-    And <filtersvisible> "Filters" in the "[data-region='core_reportbuilder/report']" "css_element"
+    And "button[title='Filters']" "css_element" <filtersvisible> in the "[data-region='core_reportbuilder/report']" "css_element"
     Examples:
-      | link       | previewvisible    | editvisible       | settingsvisible   | filtersvisible    |
-      | My report  | I should see      | I should not see  | I should see      | I should not see  |
-      | View       | I should not see  | I should not see  | I should not see  | I should see      |
+      | link       | previewvisible    | editvisible       | filtersvisible    |
+      | My report  | I should see      | I should not see  | should not exist  |
+      | View       | I should not see  | I should not see  | should exist      |
