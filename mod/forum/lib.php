@@ -5682,13 +5682,13 @@ function forum_cm_info_view(cm_info $cm) {
 
     if (forum_tp_can_track_forums()) {
         if ($unread = forum_tp_count_forum_unread_posts($cm, $cm->get_course())) {
-            $out = '<span class="unread"> <a href="' . $cm->url . '#unread">';
+            $out = '<span class="badge badge-secondary">';
             if ($unread == 1) {
                 $out .= get_string('unreadpostsone', 'forum');
             } else {
                 $out .= get_string('unreadpostsnumber', 'forum', $unread);
             }
-            $out .= '</a></span>';
+            $out .= '</span>';
             $cm->set_after_link($out);
         }
     }

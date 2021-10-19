@@ -21,68 +21,95 @@
 
     Example context (json):
     {
-        "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Activity example</span></a>",
+        "cmname": {
+            "displayvalue" : "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Activity example</span></a>"
+        },
         "hasname": "true",
-        "moveicon": "<i>[Move]</i>",
-        "indent": 2,
         "afterlink": "<span class=\"badge badge-primary\">30 unread messages</span>",
         "hasextras": true,
         "extras": ["<span class=\"badge badge-secondary\">[extras]</span>"],
         "activityinfo": {
+            "hasmodavailability": true,
             "activityname": "Activity example",
             "hascompletion": true,
             "uservisible": true,
             "hasdates": true,
             "isautomatic": true,
             "istrackeduser": true,
-            "activitydates": [{ "label": "Opens:", "timestamp": 1293876000 }],
-            "completiondetails": [{ "statusincomplete": 1, "description": "Receive a grade" }]
+            "activitydates": [
+                {
+                    "label": "Opens:",
+                    "datestring": "6 April 2021, 6:46 PM"
+                }
+            ],
+            "completiondetails": [
+                {
+                    "statuscomplete": 1,
+                    "description": "Viewed"
+                },
+                {
+                    "statusincomplete": 1,
+                    "description": "Receive a grade"
+                }
+            ]
         },
-        "availability": "<div><span class=\"badge badge-info\">Restricted</span> Available from <strong>3 Dec 2029</strong></div>"
+        "modstealth": true
     }
 }}
-<div>
-    <div class="mod-indent-outer w-100">
-        {{#moveicon}} {{{moveicon}}} {{/moveicon}}
-        {{! This div is used to indent the content. }}
-        <div class="mod-indent {{#indent}}mod-indent-{{indent}}{{/indent}} {{#hugeindent}}mod-indent-huge{{/hugeindent}}"></div>
-        {{! Start a wrapper for the actual content to keep the indentation consistent. }}
-        <div>
-            {{! Display the link to the module (or do nothing if module has no url). }}
-            {{#hasname}}
-            <div class="activityinstance">
-                {{#cmname}} {{> core/inplace_editable }} {{/cmname}}
-                {{{grouping}}}
-                {{{afterlink}}}
-            </div>
+<div class="activity-item {{#modstealth}}hiddenactivity{{/modstealth}}{{!
+        }}{{#modhiddenfromstudents}}hiddenactivity{{/modhiddenfromstudents}}{{!
+        }}{{#modinline}}activityinline{{/modinline}}" data-activityname="{{activityname}}">
+    {{#moveicon}} {{{moveicon}}} {{/moveicon}}
+    <div class="activity-basis d-flex align-items-center">
+        <div class="d-flex flex-column flex-md-row w-100 align-self-start">
+            {{^hasname}}
+                {{> core_courseformat/local/content/cm/badges }}
             {{/hasname}}
-            {{! If there is content but NO link (eg label), then display the
-            content here (BEFORE any icons). In this case cons must be
-            displayed after the content so that it makes more sense visually
-            and for accessibility reasons, e.g. if you have a one-line label
-            it should work similarly (at least in terms of ordering) to an
-            activity. }}
-            {{^hasurl}}
-                <div class="contentwithoutlink {{textclasses}}"> {{{altcontent}}} </div>
-            {{/hasurl}}
-
-            {{#controlmenu}}
-                {{> core_courseformat/local/content/cm/controlmenu }}
-            {{/controlmenu}}
+            {{#cmname}} {{> core/inplace_editable }} {{/cmname}}
+            {{#afterlink}}
+                <div class="afterlink">
+                    {{{afterlink}}}
+                </div>
+            {{/afterlink}}
 
             {{#activityinfo}}
-                {{> core_course/activity_info}}
-            {{/activityinfo}}
-            {{#modavailability}}
-                {{> core_courseformat/local/content/cm/availability }}
-            {{/modavailability}}
-
-            {{#hasurl}}
-                <div class="contentafterlink {{textclasses}}">
-                    {{{altcontent}}}
-                    {{^hasname}} {{{grouping}}} {{/hasname}}
+                <div class="activity-info mt-1 mt-md-0">
+                    {{> core_courseformat/local/content/cm/activity_info}}
                 </div>
-            {{/hasurl}}
+            {{/activityinfo}}
         </div>
+
+        {{#controlmenu}}
+            <div class="activity-actions align-self-start">
+                {{> core_courseformat/local/content/cm/controlmenu }}
+            </div>
+        {{/controlmenu}}
+    </div>
+    {{#hasname}}
+        {{> core_courseformat/local/content/cm/badges }}
+    {{/hasname}}
+
+    <div class="description">
+        {{#activityinfo}}
+            {{#hasdates}}
+            <div data-region="activity-dates" class="activity-dates small course-description-item">
+                <div class="description-inner">
+                    {{#activitydates}}
+                        {{>core_course/activity_date}}
+                    {{/activitydates}}
+                </div>
+            </div>
+            {{/hasdates}}
+        {{/activityinfo}}
+        {{#altcontent}}
+            <div class="activity-altcontent {{#hasname}}course-description-item small{{/hasname}}{{^hasname}}contentwithoutlink{{/hasname}} d-flex">
+                <div class="flex-fill description-inner">
+                    {{{altcontent}}}
+                </div>
+            </div>
+        {{/altcontent}}
+        {{#modavailability}}
+            {{> core_courseformat/local/content/cm/availability }}
+        {{/modavailability}}
     </div>
 </div>

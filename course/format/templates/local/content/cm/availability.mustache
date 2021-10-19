@@ -36,12 +36,14 @@
 }}
 {{#hasmodavailability}}
     {{#info}}
-        <div class="availabilityinfo {{classes}}">
+        <div class="availabilityinfo small course-description-item {{classes}}">
         {{^isrestricted}}
-            <span class="badge badge-info">{{{text}}}</span>
+            <span class="badge badge-pill badge-warning">{{{text}}}</span>
         {{/isrestricted}}
         {{#isrestricted}}
-            <span class="badge badge-info">{{#str}}restricted, core{{/str}}</span> {{{text}}}
+            <div class="description-inner">
+            {{#pix}}t/unlock, core{{/pix}} {{{text}}}
+            </div>
         {{/isrestricted}}
         </div>
     {{/info}}

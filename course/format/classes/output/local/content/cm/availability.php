@@ -78,6 +78,7 @@ class availability extends section_avalability {
 
         $data = (object)[
             'info' => $this->get_info($output),
+            'hasmodavailability' => false,
         ];
 
         if (!empty($data->info)) {
@@ -124,17 +125,6 @@ class availability extends section_avalability {
         // information that module is not available to all/some students.
         $modcontext = $mod->context;
         $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $modcontext);
-        if ($canviewhidden && !$mod->visible) {
-            // This module is hidden but current user has capability to see it.
-            // Do not display the availability info if the whole section is hidden.
-            if ($section->visible) {
-                $info[] = $this->availability_info(get_string('hiddenfromstudents'), 'ishidden');
-            }
-        } else if ($mod->is_stealth()) {
-            // This module is available but is normally not displayed on the course page
-            // (this user can see it because they can manage it).
-            $info[] = $this->availability_info(get_string('hiddenoncoursepage'), 'isstealth');
-        }
 
         if ($canviewhidden && !empty($CFG->enableavailability)) {
             // Display information about conditional availability.

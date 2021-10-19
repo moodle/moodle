@@ -41,7 +41,9 @@
             <span class="badge badge-pill badge-warning">{{{text}}}</span>
         {{/isrestricted}}
         {{#isrestricted}}
-            {{#pix}}t/unlock, core{{/pix}}</span> {{{text}}}
+            <div class="description-inner">
+                {{#pix}}t/unlock, core{{/pix}} {{{text}}}
+            </div>
         {{/isrestricted}}
         </div>
     {{/info}}

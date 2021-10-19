@@ -118,7 +118,7 @@ class block_social_activities extends block_list {
                         ['disableindentation' => true]
                     );
 
-                    $menu = $controlmenu->get_action_menu();
+                    $menu = $controlmenu->get_action_menu($OUTPUT);
 
                     // Add a move primary action.
                     $menu->add(

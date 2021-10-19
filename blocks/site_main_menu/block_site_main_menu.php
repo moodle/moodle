@@ -124,7 +124,7 @@ class block_site_main_menu extends block_list {
                         $mod
                     );
 
-                    $menu = $controlmenu->get_action_menu();
+                    $menu = $controlmenu->get_action_menu($OUTPUT);
 
                     // Add a move primary action.
                     $menu->add(
