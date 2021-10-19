@@ -1,5 +1,9 @@
-/* Rportbuilder */
-.reportbuilder-table-wrapper {
+/**
+* Reportbuilder table.
+*/
+
+/* Filters */
+.reportbuilder-wrapper {
     .filters-dropdown {
         width: 27rem;
         padding: 0;
@@ -7,7 +11,8 @@
             width: 100%;
         }
     }
-    .reportbuilder-filters-wrapper {
+    .reportbuilder-filters-wrapper,
+    .reportbuilder-conditions-list {
         .mform {
             &.full-width-labels {
                 .fitem.row {
@@ -40,6 +45,167 @@
                     text-overflow: clip;
                     word-break: break-all;
                 }
+            }
+        }
+    }
+}
+
+/**
+* Styled scrollbar with left padding for webkit browsers.
+*/
+@mixin reportbuilder-scrollbar() {
+    $inner-scrollbar-thumb: $secondary;
+    $inner-scrollbar-track: lighten($secondary, 40%);
+    &::-webkit-scrollbar {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: $inner-scrollbar-thumb;
+        border-left: 5px solid $white;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: $inner-scrollbar-track;
+        border-left: 5px solid $white;
+    }
+}
+
+/**
+* Custom Reports.
+*/
+
+.reportbuilder-report-container {
+    @extend .flex-fill;
+    min-width: 0;
+}
+
+/* Custom table headers */
+.reportbuilder-table th {
+    a[data-action="report-remove-column"],
+    span[data-drag-type="move"] {
+        .icon {
+            width: 12px;
+            height: 12px;
+            font-size: 12px;
+            vertical-align: text-top;
+            color: $body-color;
+        }
+    }
+    a[data-action="report-remove-column"] .icon {
+        margin-right: 0;
+    }
+}
+
+/* Sidebar menu */
+.reportbuilder-sidebar-menu {
+    @include media-breakpoint-up(md) {
+        width: 250px;
+        flex-shrink: 0;
+    }
+    .card-body .list-group-item {
+        padding: .75rem;
+        .icon {
+            width: 12px;
+            height: 12px;
+            font-size: 12px;
+        }
+    }
+}
+.reportbuilder-sidebar-menu-cards {
+    max-height: 60vh;
+    overflow-y: auto;
+    @include reportbuilder-scrollbar;
+}
+
+/* Remove transition effects. */
+.reportbuilder-wrapper .notransition {
+    -webkit-transition: none !important; /* stylelint-disable-line declaration-no-important */
+    -moz-transition: none !important; /* stylelint-disable-line declaration-no-important */
+    -o-transition: none !important; /* stylelint-disable-line declaration-no-important */
+    transition: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+/* Customreport settings */
+.reportbuilder-sidebar-settings {
+    @include media-breakpoint-up(md) {
+        width: 350px;
+        flex-shrink: 0;
+    }
+    .list-group-item {
+        padding: .75rem;
+        .icon {
+            width: 12px;
+            height: 12px;
+            font-size: 12px;
+            color: $body-color;
+        }
+        a[data-action="report-remove-filter"],
+        a[data-action="report-remove-condition"] {
+            .icon {
+                margin-right: 0;
+                vertical-align: text-top;
+            }
+        }
+        span[data-drag-type="move"] .icon {
+            vertical-align: text-top;
+        }
+    }
+    div[data-region="settings-sorting"] .list-group-item span[data-drag-type="move"] .icon {
+        vertical-align: middle;
+    }
+}
+
+/* Add button styles when a toggle button is active. */
+.reportbuilder-wrapper {
+    button.btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
+    .dropdown.show button.btn-outline-secondary[data-toggle="dropdown"] {
+        color: color-yiq($gray-600);
+        background-color: $gray-600;
+        border-color: $gray-600;
+    }
+}
+
+/* Drag&drop styles. */
+.reportbuilder-sortable-list li,
+.reportbuilder-table th,
+.reportbuilder-conditions-list .condition {
+    &.sortable-list-current-position {
+        background-color: lighten($primary, 40%);
+    }
+    &.sortable-list-is-dragged {
+        background-color: $white;
+        opacity: 0.85;
+    }
+}
+
+/* Toggle cards. */
+.reportbuilder-toggle-card {
+    .card-header {
+        border-bottom: none;
+    }
+    .card-body {
+        border-top: $card-border-width solid $card-border-color;
+    }
+    .toggle-card-button {
+        i.toggle-card-icon {
+            color: $gray-600;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        // Toggle icons using standard bootstrap collapse.
+        .collapsed-icon-container {
+            display: none;
+        }
+        .expanded-icon-container {
+            display: inline-block;
+        }
+
+        &.collapsed {
+            .collapsed-icon-container {
+                display: inline-block;
+            }
+            .expanded-icon-container {
+                display: none;
             }
         }
     }

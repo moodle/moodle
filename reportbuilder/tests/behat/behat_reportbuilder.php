@@ -19,14 +19,42 @@ declare(strict_types=1);
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
+use core_reportbuilder\local\models\report;
+
 /**
- * Behat step definitions for Reportbuilder
+ * Behat step definitions for Report builder
  *
  * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_reportbuilder extends behat_base {
+
+    /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     * Recognised page names are:
+     * | type   | identifier  | description          |
+     * | Editor | Report name | Custom report editor |
+     *
+     * @param string $type
+     * @param string $identifier
+     * @return moodle_url
+     * @throws Exception for unrecognised report or page type
+     */
+    protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
+        if (!$report = report::get_record(['name' => $identifier])) {
+            throw new Exception("Unknown report '{$identifier}'");
+        }
+
+        switch ($type) {
+            case 'Editor':
+                return new moodle_url('/reportbuilder/edit.php', ['id' => $report->get('id')]);
+
+            default:
+                throw new Exception("Unrecognised reportbuilder page type '{$type}'");
+        }
+    }
 
     /**
      * Return the list of partial named selectors
@@ -37,6 +65,9 @@ class behat_reportbuilder extends behat_base {
         return [
             new behat_component_named_selector('Filter', [
                 ".//*[@data-region='filters-form']//*[@data-filter-for=%locator%]",
+            ]),
+            new behat_component_named_selector('Condition', [
+                ".//*[@data-region='conditions-form']//*[@data-condition-name=%locator%]",
             ]),
         ];
     }

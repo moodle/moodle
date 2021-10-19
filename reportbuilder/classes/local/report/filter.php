@@ -21,6 +21,7 @@ namespace core_reportbuilder\local\report;
 use lang_string;
 use moodle_exception;
 use core_reportbuilder\local\filters\base;
+use core_reportbuilder\local\models\filter as filter_model;
 
 /**
  * Class to represent a report filter
@@ -60,6 +61,9 @@ final class filter {
 
     /** @var array $limitoperators */
     protected $limitoperators = [];
+
+    /** @var filter_model $persistent */
+    protected $persistent;
 
     /**
      * Filter constructor
@@ -306,5 +310,25 @@ final class filter {
         }
 
         return array_intersect_key($operators, array_flip($this->limitoperators));
+    }
+
+    /**
+     * Set filter persistent
+     *
+     * @param filter_model $persistent
+     * @return self
+     */
+    public function set_persistent(filter_model $persistent): self {
+        $this->persistent = $persistent;
+        return $this;
+    }
+
+    /**
+     * Return filter persistent
+     *
+     * @return filter_model|null
+     */
+    public function get_persistent(): ?filter_model {
+        return $this->persistent ?? null;
     }
 }

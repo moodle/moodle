@@ -31,22 +31,46 @@
  */
 const SELECTORS = {
     regions: {
-        systemReport: '[data-region="core_reportbuilder/system-report"]',
+        report: '[data-region="core_reportbuilder/report"]',
+        reportTable: '[data-region="reportbuilder-table"]',
+        columnHeader: '[data-region="column-header"]',
         filterButtonLabel: '[data-region="filter-button-label"]',
         filtersForm: '[data-region="filters-form"]',
+        sidebarMenu: '[data-region="sidebar-menu"]',
+        sidebarCard: '[data-region="sidebar-card"]',
+        settingsConditions: '[data-region="settings-conditions"]',
+        activeConditions: '[data-region="active-conditions"]',
+        activeCondition: '[data-region="active-condition"]',
+        settingsFilters: '[data-region="settings-filters"]',
+        activeFilters: '[data-region="active-filters"]',
+        activeFilter: '[data-region="active-filter"]',
+        settingsSorting: '[data-region="settings-sorting"]',
     },
     actions: {
         reportActionPopup: '[data-action="report-action-popup"]',
-    }
+        reportCreate: '[data-action="report-create"]',
+        reportEdit: '[data-action="report-edit"]',
+        reportDelete: '[data-action="report-delete"]',
+        reportAddColumn: '[data-action="report-add-column"]',
+        reportRemoveColumn: '[data-action="report-remove-column"]',
+        reportAddCondition: '[data-action="report-add-condition"]',
+        reportRemoveCondition: '[data-action="report-remove-condition"]',
+        reportAddFilter: '[data-action="report-add-filter"]',
+        reportRemoveFilter: '[data-action="report-remove-filter"]',
+        reportToggleColumnSort: '[data-action="report-toggle-column-sorting"]',
+        reportToggleColumnSortDirection: '[data-action="report-toggle-sort-direction"]',
+        sidebarSearch: '[data-action="sidebar-search"]',
+        toggleEditPreview: '[data-action="toggle-edit-preview"]',
+    },
 };
 
 /**
  * Selector for given report
  *
- * @method forSystemReport
+ * @method forReport
  * @param {Number} reportId
  * @return {String}
  */
-SELECTORS.forSystemReport = reportId => `${SELECTORS.regions.systemReport}[data-reportid="${reportId}"]`;
+SELECTORS.forReport = reportId => `${SELECTORS.regions.report}[data-report-id="${reportId}"]`;
 
 export default SELECTORS;

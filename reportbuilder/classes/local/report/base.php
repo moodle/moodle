@@ -72,6 +72,9 @@ abstract class base {
     /** @var column[] $columns */
     private $columns = [];
 
+    /** @var filter[] $conditions */
+    private $conditions = [];
+
     /** @var filter[] $filters */
     private $filters = [];
 
@@ -118,13 +121,6 @@ abstract class base {
      * - etc
      */
     abstract protected function initialise(): void;
-
-    /**
-     * Output the report
-     *
-     * @return string
-     */
-    abstract public function output(): string;
 
     /**
      * Get the report availability. Sub-classes should override this method to declare themselves unavailable, for example if
@@ -259,6 +255,21 @@ abstract class base {
     }
 
     /**
+     * Returns the entity added to the report from the given entity name
+     *
+     * @param string $name
+     * @return entity_base
+     * @throws coding_exception
+     */
+    final protected function get_entity(string $name): entity_base {
+        if (!array_key_exists($name, $this->entities)) {
+            throw new coding_exception('Invalid entity name', $name);
+        }
+
+        return $this->entities[$name];
+    }
+
+    /**
      * Define a new entity for the report
      *
      * @param string $name
@@ -271,6 +282,21 @@ abstract class base {
         }
 
         $this->entitytitles[$name] = $title;
+    }
+
+    /**
+     * Returns title of given report entity
+     *
+     * @param string $name
+     * @return lang_string
+     * @throws coding_exception
+     */
+    final public function get_entity_title(string $name): lang_string {
+        if (!array_key_exists($name, $this->entitytitles)) {
+            throw new coding_exception('Invalid entity name', $name);
+        }
+
+        return $this->entitytitles[$name];
     }
 
     /**
@@ -301,22 +327,29 @@ abstract class base {
     }
 
     /**
+     * Add given column to the report from an entity
+     *
+     * The entity must have already been added to the report before calling this method
+     *
+     * @param string $uniqueidentifier
+     * @return column
+     */
+    final protected function add_column_from_entity(string $uniqueidentifier): column {
+        [$entityname, $columnname] = explode(':', $uniqueidentifier, 2);
+
+        return $this->add_column($this->get_entity($entityname)->get_column($columnname));
+    }
+
+    /**
      * Add given columns to the report from one or more entities
      *
      * Each entity must have already been added to the report before calling this method
      *
      * @param string[] $columns Unique identifier of each entity column
-     * @throws coding_exception For unknown entities
      */
     final protected function add_columns_from_entities(array $columns): void {
         foreach ($columns as $column) {
-            [$entityname, $columnname] = explode(':', $column, 2);
-
-            if (!array_key_exists($entityname, $this->entities)) {
-                throw new coding_exception('Invalid entity name', $entityname);
-            }
-
-            $this->add_column($this->entities[$entityname]->get_column($columnname));
+            $this->add_column_from_entity($column);
         }
     }
 
@@ -339,6 +372,128 @@ abstract class base {
         return array_filter($this->columns, static function(column $column): bool {
             return $column->get_is_available();
         });
+    }
+
+    /**
+     * Adds a condition to the report
+     *
+     * @param filter $condition
+     * @return filter
+     * @throws coding_exception
+     */
+    final protected function add_condition(filter $condition): filter {
+        if (!array_key_exists($condition->get_entity_name(), $this->entitytitles)) {
+            throw new coding_exception('Invalid entity name', $condition->get_entity_name());
+        }
+
+        $name = $condition->get_name();
+        if (empty($name) || $name !== clean_param($name, PARAM_ALPHANUMEXT)) {
+            throw new coding_exception('Condition name must be comprised of alphanumeric character, underscore or dash');
+        }
+
+        $uniqueidentifier = $condition->get_unique_identifier();
+        if (array_key_exists($uniqueidentifier, $this->conditions)) {
+            throw new coding_exception('Duplicate condition identifier', $uniqueidentifier);
+        }
+
+        $this->conditions[$uniqueidentifier] = $condition;
+
+        return $condition;
+    }
+
+    /**
+     * Add given condition to the report from an entity
+     *
+     * The entity must have already been added to the report before calling this method
+     *
+     * @param string $uniqueidentifier
+     * @return filter
+     */
+    final protected function add_condition_from_entity(string $uniqueidentifier): filter {
+        [$entityname, $conditionname] = explode(':', $uniqueidentifier, 2);
+
+        return $this->add_condition($this->get_entity($entityname)->get_condition($conditionname));
+    }
+
+    /**
+     * Add given conditions to the report from one or more entities
+     *
+     * Each entity must have already been added to the report before calling this method
+     *
+     * @param string[] $conditions Unique identifier of each entity condition
+     */
+    final protected function add_conditions_from_entities(array $conditions): void {
+        foreach ($conditions as $condition) {
+            $this->add_condition_from_entity($condition);
+        }
+    }
+
+    /**
+     * Return report condition by unique identifier
+     *
+     * @param string $uniqueidentifier
+     * @return filter|null
+     */
+    final public function get_condition(string $uniqueidentifier): ?filter {
+        return $this->conditions[$uniqueidentifier] ?? null;
+    }
+
+    /**
+     * Return all available report conditions
+     *
+     * @return filter[]
+     */
+    final public function get_conditions(): array {
+        return array_filter($this->conditions, static function(filter $condition): bool {
+            return $condition->get_is_available();
+        });
+    }
+
+    /**
+     * Return all active report conditions (by default, all available conditions)
+     *
+     * @return filter[]
+     */
+    public function get_active_conditions(): array {
+        return $this->get_conditions();
+    }
+
+    /**
+     * Return all active report condition instances
+     *
+     * @return filter_base[]
+     */
+    final public function get_condition_instances(): array {
+        return array_map(static function(filter $condition): filter_base {
+            /** @var filter_base $conditionclass */
+            $conditionclass = $condition->get_filter_class();
+
+            return $conditionclass::create($condition);
+        }, $this->get_active_conditions());
+    }
+
+    /**
+     * Set the condition values of the report
+     *
+     * @param array $values
+     * @return bool
+     */
+    final public function set_condition_values(array $values): bool {
+        $this->report->set('conditiondata', json_encode($values))
+            ->save();
+
+        return true;
+    }
+
+    /**
+     * Get the condition values of the report
+     *
+     * @return array
+     */
+    final public function get_condition_values(): array {
+        $conditions = (string) $this->report->get('conditiondata');
+
+        return (array) json_decode($conditions);
     }
 
     /**
@@ -369,22 +524,29 @@ abstract class base {
     }
 
     /**
+     * Add given filter to the report from an entity
+     *
+     * The entity must have already been added to the report before calling this method
+     *
+     * @param string $uniqueidentifier
+     * @return filter
+     */
+    final protected function add_filter_from_entity(string $uniqueidentifier): filter {
+        [$entityname, $filtername] = explode(':', $uniqueidentifier, 2);
+
+        return $this->add_filter($this->get_entity($entityname)->get_filter($filtername));
+    }
+
+    /**
      * Add given filters to the report from one or more entities
      *
      * Each entity must have already been added to the report before calling this method
      *
      * @param string[] $filters Unique identifier of each entity filter
-     * @throws coding_exception For unknown entities
      */
     final protected function add_filters_from_entities(array $filters): void {
         foreach ($filters as $filter) {
-            [$entityname, $filtername] = explode(':', $filter, 2);
-
-            if (!array_key_exists($entityname, $this->entities)) {
-                throw new coding_exception('Invalid entity name', $entityname);
-            }
-
-            $this->add_filter($this->entities[$entityname]->get_filter($filtername));
+            $this->add_filter_from_entity($filter);
         }
     }
 
@@ -410,7 +572,16 @@ abstract class base {
     }
 
     /**
-     * Return all report filter instances
+     * Return all active report filters (by default, all available filters)
+     *
+     * @return filter[]
+     */
+    public function get_active_filters(): array {
+        return $this->get_filters();
+    }
+
+    /**
+     * Return all active report filter instances
      *
      * @return filter_base[]
      */
@@ -420,7 +591,7 @@ abstract class base {
             $filterclass = $filter->get_filter_class();
 
             return $filterclass::create($filter);
-        }, $this->get_filters());
+        }, $this->get_active_filters());
     }
 
     /**

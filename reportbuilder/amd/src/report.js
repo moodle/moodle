@@ -26,21 +26,28 @@ import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {setPageNumber, refreshTableContent} from 'core_table/dynamic';
 import * as tableSelectors from 'core_table/local/dynamic/selectors';
 
+let initialized = false;
+
 /**
  * Initialise module for given report
  *
  * @method
- * @param {Number} reportId
  */
-export const init = reportId => {
+export const init = () => {
+
+    if (initialized) {
+        // We already added the event listeners (can be called multiple times by mustache template).
+        return;
+    }
+
     // Listen for the table reload event.
     document.addEventListener(reportEvents.tableReload, async(event) => {
-        const triggerElement = event.target.closest(reportSelectors.forSystemReport(reportId));
-        if (triggerElement === null) {
+        const reportElement = event.target.closest(reportSelectors.regions.report);
+        if (reportElement === null) {
             return;
         }
 
-        const tableRoot = triggerElement.querySelector(tableSelectors.main.region);
+        const tableRoot = reportElement.querySelector(tableSelectors.main.region);
         const pageNumber = event.detail?.preservePagination ? null : 1;
 
         await setPageNumber(tableRoot, pageNumber, false)
@@ -57,4 +64,6 @@ export const init = reportId => {
         const popupAction = JSON.parse(reportActionPopup.dataset.popupAction);
         window.openpopup(event, popupAction.jsfunctionargs);
     });
+
+    initialized = true;
 };

@@ -29,21 +29,25 @@
         "filtersform": "form"
     }
 }}
-<div data-region="core_reportbuilder/system-report"
-        data-reportid="{{id}}"
+<div data-region="core_reportbuilder/report"
+        data-report-id="{{id}}"
         data-source="{{source}}"
         data-parameter="{{parameters}}">
-            <div class="reportbuilder-table-wrapper">
+            <div class="reportbuilder-wrapper">
                 {{#filterspresent}}
-                    {{>core_reportbuilder/local/filters/area}}
+                    <div class="dropdown d-flex justify-content-end">
+                        {{>core_reportbuilder/local/filters/area}}
+                    </div>
                 {{/filterspresent}}
                 <!-- Table -->
-                {{{table}}}
+                <div class="mt-2">
+                    {{{table}}}
+                </div>
             </div>
 </div>
 
 {{#js}}
     require(['core_reportbuilder/report'], function(report) {
-        report.init('{{id}}');
+        report.init();
     });
 {{/js}}

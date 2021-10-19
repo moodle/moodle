@@ -20,6 +20,7 @@ namespace core_reportbuilder\local\filters;
 
 use MoodleQuickForm;
 use core_reportbuilder\local\report\filter;
+use core_reportbuilder\local\models\filter as filter_model;
 
 /**
  * Base class for all report filters
@@ -69,6 +70,26 @@ abstract class base {
      */
     final public function get_header(): string {
         return $this->filter->get_header();
+    }
+
+    /**
+     * Returns the filter's entity name
+     *
+     * @return string
+     */
+    final public function get_entity_name(): string {
+        return $this->filter->get_entity_name();
+    }
+
+    /**
+     * Returns the filter persistent
+     *
+     * Note that filters for system reports don't store a persistent and will return null.
+     *
+     * @return filter_model|null
+     */
+    final public function get_filter_persistent(): ?filter_model {
+        return $this->filter->get_persistent();
     }
 
     /**

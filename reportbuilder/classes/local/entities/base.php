@@ -50,6 +50,9 @@ abstract class base {
     /** @var filter[] $filters List of filters for the entity */
     private $filters = [];
 
+    /** @var filter[] $conditions List of conditions for the entity */
+    private $conditions = [];
+
     /**
      * Database tables that this entity uses and their default aliases
      *
@@ -240,7 +243,7 @@ abstract class base {
      * Add a filter to the entity
      *
      * @param filter $filter
-     * @return $this
+     * @return self
      */
     final protected function add_filter(filter $filter): self {
         $this->filters[$filter->get_name()] = $filter;
@@ -269,5 +272,40 @@ abstract class base {
         }
 
         return $this->filters[$name];
+    }
+
+    /**
+     * Add a condition to the entity
+     *
+     * @param filter $condition
+     * @return $this
+     */
+    final protected function add_condition(filter $condition): self {
+        $this->conditions[$condition->get_name()] = $condition;
+        return $this;
+    }
+
+    /**
+     * Returns entity conditions
+     *
+     * @return filter[]
+     */
+    final public function get_conditions(): array {
+        return $this->conditions;
+    }
+
+    /**
+     * Returns an entity condition
+     *
+     * @param string $name
+     * @return filter
+     * @throws coding_exception For invalid condition name
+     */
+    final public function get_condition(string $name): filter {
+        if (!array_key_exists($name, $this->conditions)) {
+            throw new coding_exception('Invalid condition name', $name);
+        }
+
+        return $this->conditions[$name];
     }
 }

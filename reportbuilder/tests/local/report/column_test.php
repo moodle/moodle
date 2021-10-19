@@ -32,7 +32,7 @@ use core_reportbuilder\local\helpers\database;
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class column_testcase extends advanced_testcase {
+class column_test extends advanced_testcase {
 
     /**
      * Test column name getter/setter
@@ -86,9 +86,17 @@ class column_testcase extends advanced_testcase {
      */
     public function test_type(): void {
         $column = $this->create_column('test');
-        $this->assertEquals(column::TYPE_TEXT, $column
-            ->set_type(column::TYPE_TEXT)
+        $this->assertEquals(column::TYPE_INTEGER, $column
+            ->set_type(column::TYPE_INTEGER)
             ->get_type());
+    }
+
+    /**
+     * Test column default type
+     */
+    public function test_type_default(): void {
+        $column = $this->create_column('test');
+        $this->assertEquals(column::TYPE_TEXT, $column->get_type());
     }
 
     /**

@@ -50,4 +50,14 @@ class format {
     public static function boolean_as_text(bool $value): string {
         return $value ? get_string('yes') : get_string('no');
     }
+
+    /**
+     * Returns float value as a percentage
+     *
+     * @param float $value
+     * @return string
+     */
+    public static function percent(float $value): string {
+        return sprintf('%.1f', $value) . '%';
+    }
 }
