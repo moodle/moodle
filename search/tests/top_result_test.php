@@ -78,6 +78,8 @@ class search_top_result_testcase extends advanced_testcase {
 
         // Courses.
         $this->course1 = $generator->create_course(['fullname' => 'Top course result 1']);
+        // Ensure course 1 is indexed before course 2.
+        $this->run_index();
         $this->course2 = $generator->create_course(['fullname' => 'Top course result 2']);
 
         // User 1.
