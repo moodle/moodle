@@ -20957,6 +20957,11 @@ div.editor_atto_toolbar button .icon {
     display: none; }
   .courseindex .courseindex-item.rectrictions .courseindex-locked {
     display: block; }
+  .courseindex .courseindex-item.pageitem {
+    background-color: #e9ecef;
+    color: black; }
+    .courseindex .courseindex-item.pageitem a {
+      color: black; }
   .courseindex .courseindex-item .completioninfo {
     min-width: 24px;
     transform: scale(0.7); }

@@ -27,6 +27,7 @@
 import DndCmItem from 'core_courseformat/local/courseeditor/dndcmitem';
 import Templates from 'core/templates';
 import Prefetch from 'core/prefetch';
+import Config from 'core/config';
 
 // Prefetch the completion icons template.
 const completionTemplate = 'core_courseformat/local/courseindex/cmcompletion';
@@ -50,6 +51,7 @@ export default class Component extends DndCmItem {
             CMHIDDEN: 'dimmed',
             LOCKED: 'editinprogress',
             RESTRICTIONS: 'rectrictions',
+            PAGEITEM: 'pageitem',
         };
         // We need our id to watch specific events.
         this.id = this.element.dataset.id;
@@ -81,6 +83,10 @@ export default class Component extends DndCmItem {
             state,
             element: state.cm.get(this.id),
         });
+        // Check if this we are displaying this activity id page.
+        if (Config.contextid != Config.courseContextId && Config.contextInstanceId == this.id) {
+            this.element.classList.add(this.classes.PAGEITEM);
+        }
     }
 
     /**
@@ -141,5 +147,4 @@ export default class Component extends DndCmItem {
             throw error;
         }
     }
-
 }
