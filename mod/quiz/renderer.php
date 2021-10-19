@@ -395,7 +395,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @return string HTML fragment.
      */
     protected function render_quiz_nav_section_heading(quiz_nav_section_heading $heading) {
-        return $this->heading($heading->heading, 3, 'mod_quiz-section-heading');
+        if (empty($heading->heading)) {
+            $headingtext = get_string('sectionnoname', 'quiz');
+            $class = ' dimmed_text';
+        } else {
+            $headingtext = $heading->heading;
+            $class = '';
+        }
+        return $this->heading($headingtext, 3, 'mod_quiz-section-heading' . $class);
     }
 
     /**
@@ -671,7 +678,16 @@ class mod_quiz_renderer extends plugin_renderer_base {
             // Add a section headings if we need one here.
             $heading = $attemptobj->get_heading_before_slot($slot);
             if ($heading) {
-                $cell = new html_table_cell(format_string($heading));
+                $heading = format_string($heading);
+            }
+            $sections = $attemptobj->get_quizobj()->get_sections();
+            if (!is_null($heading) && empty($heading) && count($sections) > 1) {
+                $heading = get_string('sectionnoname', 'quiz');
+                $heading = \html_writer::span($heading, 'dimmed_text');
+            }
+
+            if ($heading) {
+                $cell = new html_table_cell($heading);
                 $cell->header = true;
                 $cell->colspan = $tablewidth;
                 $table->data[] = array($cell);
