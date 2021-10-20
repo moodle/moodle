@@ -170,11 +170,27 @@ a.dropdown-toggle,
 .modal-dialog[tabindex="0"],
 .moodle-dialogue-base .closebutton,
 button.close,
-.form-autocomplete-selection {
+.form-autocomplete-selection,
+[role="treeitem"]:not([aria-expanded="true"]) {
     &.focus,
     &:focus {
         outline: 0;
         box-shadow: $input-btn-focus-box-shadow;
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+// We don't want to highlight the whole li when it's expanded. Only the first child is highlighted.
+[role="treeitem"][aria-expanded="true"] {
+    outline: 0;
+    &.focus,
+    &:focus {
+        > *:first-child {
+            outline: 0;
+            box-shadow: $input-btn-focus-box-shadow;
+        }
     }
     &:focus:hover {
         text-decoration: none;
