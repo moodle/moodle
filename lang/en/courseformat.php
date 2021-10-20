@@ -23,4 +23,5 @@
  */
 
 $string['courseindex'] = 'Course index';
-$string['privacy:metadata'] = 'The course format subsystem does not store any personal data.';
+$string['preference:coursesectionspreferences'] = 'Section user preferences for course {$a}';
+$string['privacy:metadata:preference:coursesectionspreferences'] = 'Section user preferences like collapsed and expanded.';

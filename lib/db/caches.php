@@ -197,6 +197,13 @@ $definitions = array(
             'changesincoursecat',
         ),
     ),
+    // Used to store state of sections in course (collapsed or not).
+    'coursesectionspreferences' => [
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
+        'simpledata' => false,
+        'staticacceleration' => true,
+    ],
     // Cache course contacts for the courses.
     'coursecontacts' => array(
         'mode' => cache_store::MODE_APPLICATION,

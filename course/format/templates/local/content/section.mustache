@@ -73,7 +73,7 @@
         "cmcontrols": "[Add an activity or resource]",
         "iscoursedisplaymultipage": true,
         "sectionreturnid": 0,
-        "isactive": true,
+        "contentexpanded": true,
         "sitehome": false
     }
 }}
@@ -97,7 +97,7 @@
     {{#header}} {{> core_courseformat/local/content/section/header }} {{/header}}
     <div id="coursecontentcollapse{{num}}"
          class="content {{^iscoursedisplaymultipage}}
-             {{^sitehome}}course-content-item-content collapse {{#isactive}}show{{/isactive}}{{/sitehome}}
+             {{^sitehome}}course-content-item-content collapse {{#contentexpanded}}show{{/contentexpanded}}{{/sitehome}}
          {{/iscoursedisplaymultipage}}">
         {{#availability}}
             {{> core_courseformat/local/content/section/availability }}
