@@ -1,6 +1,12 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.11.4 ===
+* A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
+  Note: This option overrides the forced download of directly accessed SVGs, so should only be used where the calling method is
+  rendering SVGs directly for content created using XSS risk flagged capabilities (such as creating a SCORM activity).
+  This is also not necessary where SVGs are already being safely loaded into <img> tags by Moodle (eg within forum posts).
+
 === 3.11.3 ===
 * The signature of the get_name() function for grade_category and grade_item has been extended. The new parameter allows
   callers to get the name without escaped characters.
