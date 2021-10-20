@@ -151,7 +151,11 @@ class core_renderer extends \core_renderer {
         $prefix = null;
         if ($context->contextlevel == CONTEXT_MODULE) {
             $heading = $this->page->cm->get_formatted_name();
-            $imagedata = $this->pix_icon('icon', '', $this->page->activityname);
+            $imagedata = $this->pix_icon('icon', '', $this->page->activityname, ['class' => 'activityicon']);
+            $purposeclass = plugin_supports('mod', $this->page->activityname, FEATURE_MOD_PURPOSE);
+            $purposeclass .= ' activityiconcontainer';
+            $purposeclass .= ' modicon_' . $this->page->activityname;
+            $imagedata = html_writer::tag('div', $imagedata, ['class' => $purposeclass]);
             $prefix = get_string('modulename', $this->page->activityname);
         }
 
@@ -192,7 +196,7 @@ class core_renderer extends \core_renderer {
 
         // Headings.
         if (isset($contextheader->prefix)) {
-            $prefix = html_writer::div($contextheader->prefix, 'text-muted text-uppercase');
+            $prefix = html_writer::div($contextheader->prefix, 'text-muted text-uppercase small line-height-3');
             $heading = $prefix . $heading;
         }
         $html .= html_writer::tag('div', $heading, array('class' => 'page-header-headings'));
