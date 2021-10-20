@@ -12,7 +12,7 @@
 include_once("wikimarkup.php");
 
 class nwiki_parser extends wiki_markup_parser {
-    
+
     protected $blockrules = array(
         'nowiki' => array(
             'expression' => "/^<nowiki>(.*?)<\/nowiki>/ims",
@@ -53,7 +53,7 @@ class nwiki_parser extends wiki_markup_parser {
             'tag' => 'p'
         )
     );
-    
+
     protected $tagrules = array(
         'nowiki' => array(
             'expression' => "/<nowiki>(.*?)<\/nowiki>/is",
@@ -93,11 +93,11 @@ class nwiki_parser extends wiki_markup_parser {
             'token' => array("''", "''")
         )
     );
-    
+
     protected function after_parsing() {
         parent::after_parsing();
     }
-      
+
     /**
      * Block hooks
      */
@@ -106,12 +106,12 @@ class nwiki_parser extends wiki_markup_parser {
         if($match[1] != $match[3]) {
             return $match[0];
         }
-        
+
         $num = strlen($match[1]);
-        
+
         return $this->generate_header($match[2], $num);
     }
-    
+
     protected function table_block_rule($match) {
         $rows = explode("\n|-", $match[1]);
         $table = array();
@@ -121,14 +121,14 @@ class nwiki_parser extends wiki_markup_parser {
             foreach($colsendline as $ce) {
                 $cols = array_merge($cols, $this->get_table_cells($ce));
             }
-            
+
             if(!empty($cols)) {
                 $table[] = $cols;
             }
         }
         return $this->generate_table($table);
     }
-    
+
     private function get_table_cells($string) {
         $string = ltrim($string);
         $type = (!empty($string) && $string[0] == "!") ? 'header' : 'normal';
@@ -149,10 +149,10 @@ class nwiki_parser extends wiki_markup_parser {
             }
             $type = 'normal';
         }
-                
+
         return $cells;
     }
-    
+
     protected function tab_paragraph_block_rule($match) {
         $num = strlen($match[1]);
         $text = $match[2];
@@ -160,31 +160,31 @@ class nwiki_parser extends wiki_markup_parser {
         for($i = 0; $i < $num - 1; $i++) {
             $html = parser_utils::h('p', $html, array('class' => 'wiki_tab_paragraph'));
         }
-        
+
         return parser_utils::h('p', $text, array('class' => 'wiki_tab_paragraph'));
     }
-    
+
     protected function desc_list_block_rule($match) {
         preg_match_all("/^(.+?)\:(.+?)\;$/ims", $match[0], $listitems, PREG_SET_ORDER);
-        
+
         $list = "";
         foreach($listitems as $li) {
             $term = $li[1];
             $this->rules($term);
-            
+
             $description = $li[2];
             $this->rules($description);
-            
+
             $list .= parser_utils::h('dt', $term).parser_utils::h('dd', $description);
         }
-        
+
         return $list;
     }
-    
+
     /**
      * Tag functions
      */
-    
+
     /**
      * Bold and italic similar to creole...
      */
@@ -193,23 +193,23 @@ class nwiki_parser extends wiki_markup_parser {
         if(strlen($match[2]) == 5) {
             $text .= "''";
         }
-        
+
         $this->rules($text, array('only' => array('bold')));
         if(strpos($text, "''") !== false) {
             $text = str_replace("''", $this->protect("''"), $text);
         }
-        
+
         return array($text, array());
     }
-    
+
     /**
      * Link tag functions
      */
-    
+
     protected function link_tag_rule($match) {
         return $this->format_link($match[1]);
     }
-    
+
     protected function url_tag_tag_rule($match) {
         $text = trim($match[1]);
         if(preg_match("/(.+?)\|(.+)/is", $text, $matches)) {
@@ -225,34 +225,34 @@ class nwiki_parser extends wiki_markup_parser {
         }
         return array($this->protect($text), array('href' => $this->protect($link)));
     }
-    
+
     protected function url_tag_rule($match) {
         $url = $this->protect($match[1]);
         $options = array('href' => $url);
-                
+
         return array($url, $options);
     }
-    
+
     /**
      * Attachments & images
      */
-     
+
     protected function image_tag_rule($match) {
         return $this->format_image($match[1], $match[2]);
     }
-    
-    protected function attach_tag_rule($match) {        
+
+    protected function attach_tag_rule($match) {
         $parts = explode("|", $match[1]);
-        
+
         $url = array_shift($parts);
-        
+
         if(count($parts) > 0) {
             $text = array_shift($parts);
         }
-        
+
         $extension = substr($url, strrpos($url, "."));
         $text = empty($text) ? $url : $text;
-        
+
         $imageextensions = array('jpg', 'jpeg', 'png', 'bmp', 'gif', 'tif');
         if(in_array($extension, $imageextensions)) {
             $align = 'left';

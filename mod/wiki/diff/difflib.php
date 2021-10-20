@@ -6,156 +6,156 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package ouwiki
  *//** */
- 
+
 // Standard diff
-//////////////// 
- 
+////////////////
+
 /**
  * Basic diff utility function, using standard diff algorithm.
  *
- * Based on Bell Laboratories Computing Science Technical Report #41, 
+ * Based on Bell Laboratories Computing Science Technical Report #41,
  * July 1976, Hunt & McIlroy, Appendix A.1 and A.3.
- * 
+ *
  * http://www.cs.dartmouth.edu/~doug/diff.ps
  *
  * @param array $file1 Array of lines in file 1. The first line in the file
  *   MUST BE INDEX 1 NOT ZERO!!
  * @param array $file2 Array of lines in file 2, again starting from 1.
- * @return array An array with one entry (again 1-based) for each line in  
+ * @return array An array with one entry (again 1-based) for each line in
  *   file 1, with its corresponding position in file 2 or 0 if it isn't there.
  */
 function ouwiki_diff_internal($file1,$file2) {
-	// Basic variables
-	$n=count($file2);
-	$m=count($file1);
-    
+    // Basic variables
+    $n=count($file2);
+    $m=count($file1);
+
     // Special-case for empty file2 which otherwise causes error
-    if($n==0) 
+    if($n==0)
     {
         $result=array();
-        for($i=1;$i<=$m;$i++) 
+        for($i=1;$i<=$m;$i++)
         {
             $result[$i]=0;
         }
         return $result;
     }
-	
-	// Step 1   Build list of elements
-	/////////
-	
-	$V=array(); 
-	for($j=1;$j<=$n;$j++) {
-		$V[$j]=new StdClass;
-		$V[$j]->serial=$j;
-		$V[$j]->hash=crc32($file2[$j]);
-	}
-    
-	// Step 2   Sort by hash,serial
-	/////////
-	
-	usort($V,"ouwiki_diff_sort_v");
-    
+
+    // Step 1   Build list of elements
+    /////////
+
+    $V=array();
+    for($j=1;$j<=$n;$j++) {
+        $V[$j]=new StdClass;
+        $V[$j]->serial=$j;
+        $V[$j]->hash=crc32($file2[$j]);
+    }
+
+    // Step 2   Sort by hash,serial
+    /////////
+
+    usort($V,"ouwiki_diff_sort_v");
+
     // Make it start from 1 again
     array_unshift($V,'bogus');
     unset($V[0]);
-	
-	// $V is now an array including the line number 'serial' and hash
-	// of each line in file 2, sorted by hash and then serial.	
-	
-	// Step 3   Equivalence classes
-	/////////
-	
-	$E=array();
-	$E[0]=new StdClass;
-	$E[0]->serial=0;
-	$E[0]->last=true;
-	for($j=1;$j<=$n;$j++) {
-		$E[$j]=new StdClass;
-		$E[$j]->serial=$V[$j]->serial;
-		$E[$j]->last=$j===$n || $V[$j]->hash!==$V[$j+1]->hash;
-	}
 
-	// E is now an array sorted the same way as $V which includes 
-	// the line number 'serial' and whether or not that is the 'last'
-	// line in the given equivalence class, i.e. set of identical lines
-	
-	// Step 4   For each line in file1, finds start of equivalence class
-	/////////
+    // $V is now an array including the line number 'serial' and hash
+    // of each line in file 2, sorted by hash and then serial.
+
+    // Step 3   Equivalence classes
+    /////////
+
+    $E=array();
+    $E[0]=new StdClass;
+    $E[0]->serial=0;
+    $E[0]->last=true;
+    for($j=1;$j<=$n;$j++) {
+        $E[$j]=new StdClass;
+        $E[$j]->serial=$V[$j]->serial;
+        $E[$j]->last=$j===$n || $V[$j]->hash!==$V[$j+1]->hash;
+    }
+
+    // E is now an array sorted the same way as $V which includes
+    // the line number 'serial' and whether or not that is the 'last'
+    // line in the given equivalence class, i.e. set of identical lines
+
+    // Step 4   For each line in file1, finds start of equivalence class
+    /////////
     $P=array();
-	for($i=1;$i<=$m;$i++) {
-		// Find matching last entry from equivalence list    
-		$P[$i]=ouwiki_diff_find_last($V,$E,crc32($file1[$i]));
-	}
-	
-	// P is now an array that finds the index (within $V) of the *first*
-	// matching line in $V (referencing file 2, but not a line number,
-	// because sorted in $V order) for each line in file 1. In other words
-	// if you were to start at the P-value in $V and continue through, you
-	// would find all the lines from file 2 that are equal to the given line 
-	// from file 1.	
-	
-	// Step 5   Initialise vector of candidates
-	/////////
-	
-	// I do not trust PHP references further than I can throw them (preferably
-	// at the idiot who came up with the idea) so I am using a separate array
-	// to store candidates and all references are integers into that.
-	
-	$candidates=array();
-	$candidates[0]=new StdClass;
-	$candidates[0]->a=0;
-	$candidates[0]->b=0;
-	$candidates[0]->previous=null;
-	$candidates[1]=new StdClass;
-	$candidates[1]->a=$m+1; 
-	$candidates[1]->b=$n+1;
-	$candidates[1]->previous=null;
-	
-	$K=array();
-	$K[0]=0; // Ref to candidate 0
-	$K[1]=1; // Ref to candidate 1
-	$k=0;
-	
-	// Step 6   Merge stage
-	/////////
-	
-	for($i=1;$i<=$m;$i++) {
-		if($P[$i]!==0) {
-			ouwiki_diff_merge($K,$k,$i,$E,$P[$i],$candidates);
-		}
-	}
-	
-	// Step 7
-	/////////
-	
-	$J=array();
-	for($i=1;$i<=$m;$i++) {
-		$J[$i]=0;
-	}
-	
-	// Step 8   Follow candidate chain to make nice representation
-	/////////
-    
-	$index=$K[$k];
-	while(!is_null($index)) {
+    for($i=1;$i<=$m;$i++) {
+        // Find matching last entry from equivalence list
+        $P[$i]=ouwiki_diff_find_last($V,$E,crc32($file1[$i]));
+    }
+
+    // P is now an array that finds the index (within $V) of the *first*
+    // matching line in $V (referencing file 2, but not a line number,
+    // because sorted in $V order) for each line in file 1. In other words
+    // if you were to start at the P-value in $V and continue through, you
+    // would find all the lines from file 2 that are equal to the given line
+    // from file 1.
+
+    // Step 5   Initialise vector of candidates
+    /////////
+
+    // I do not trust PHP references further than I can throw them (preferably
+    // at the idiot who came up with the idea) so I am using a separate array
+    // to store candidates and all references are integers into that.
+
+    $candidates=array();
+    $candidates[0]=new StdClass;
+    $candidates[0]->a=0;
+    $candidates[0]->b=0;
+    $candidates[0]->previous=null;
+    $candidates[1]=new StdClass;
+    $candidates[1]->a=$m+1;
+    $candidates[1]->b=$n+1;
+    $candidates[1]->previous=null;
+
+    $K=array();
+    $K[0]=0; // Ref to candidate 0
+    $K[1]=1; // Ref to candidate 1
+    $k=0;
+
+    // Step 6   Merge stage
+    /////////
+
+    for($i=1;$i<=$m;$i++) {
+        if($P[$i]!==0) {
+            ouwiki_diff_merge($K,$k,$i,$E,$P[$i],$candidates);
+        }
+    }
+
+    // Step 7
+    /////////
+
+    $J=array();
+    for($i=1;$i<=$m;$i++) {
+        $J[$i]=0;
+    }
+
+    // Step 8   Follow candidate chain to make nice representation
+    /////////
+
+    $index=$K[$k];
+    while(!is_null($index)) {
         // Stop when we reach the first, dummy candidate
         if($candidates[$index]->a!=0) {
-		    $J[$candidates[$index]->a]=$candidates[$index]->b;
+            $J[$candidates[$index]->a]=$candidates[$index]->b;
         }
-		$index=$candidates[$index]->previous;
-	}	
-	
-	// Step 9   Get rid of 'jackpots' (hash collisions)
-	/////////
-	
-	for($i=1;$i<=$m;$i++) {
-		if($J[$i]!=0 && $file1[$i]!=$file2[$J[$i]]) {
-			$J[$i]=0;
-		}
-	}
-	
-	// Done! (Maybe.)
-	return $J;
+        $index=$candidates[$index]->previous;
+    }
+
+    // Step 9   Get rid of 'jackpots' (hash collisions)
+    /////////
+
+    for($i=1;$i<=$m;$i++) {
+        if($J[$i]!=0 && $file1[$i]!=$file2[$J[$i]]) {
+            $J[$i]=0;
+        }
+    }
+
+    // Done! (Maybe.)
+    return $J;
 }
 
 // Functions needed by parts of the algorithm
@@ -163,68 +163,68 @@ function ouwiki_diff_internal($file1,$file2) {
 
 // Merge, from step 7 (Appendix A.3)
 function ouwiki_diff_merge(&$K,&$k,$i,&$E,$p,&$candidates) {
-	$r=0;
-	$c=$K[0];
-	
-	while(true) {
-	    $j=$E[$p]->serial; // Paper says 'i' but this is wrong (OCR)
-	    
-	    // Binary search in $K from $r to $k
-	    $min=$r;
-	    $max=$k+1;
-	    
-		while(true) {
-			$try = (int)(($min+$max)/2);
-			if($candidates[$K[$try]]->b >= $j) {
-				$max=$try;
-			} else if($candidates[$K[$try+1]]->b <= $j) {
-				$min=$try+1;
-			} else { // $try is less and $try+1 is more
-			    $s=$try;
-				break;
-			}
-			if($max<=$min) {
-			    $s=-1;
-			    break;
-			}
-		}
+    $r=0;
+    $c=$K[0];
 
-		if($s>-1) {
-			if($candidates[$K[$s+1]]->b > $j) {
-				// Create new candidate
-				$index=count($candidates);
-				$candidates[$index]=new StdClass;
-				$candidates[$index]->a=$i;
-				$candidates[$index]->b=$j;
-				$candidates[$index]->previous=$K[$s];
-				$K[$r]=$c;
-				$r=$s+1;
-				$c=$index; // Or should this go before?
-			}	
-		    
-		    if($s===$k) {
-		        $K[$k+2]=$K[$k+1];
-		        $k++;
-     		    break;
-		    }		    
-		}
-		
-		if($E[$p]->last) {
-		    break;
-		}
-		
-		$p++;
-	}
-	$K[$r]=$c;
-	
+    while(true) {
+        $j=$E[$p]->serial; // Paper says 'i' but this is wrong (OCR)
+
+        // Binary search in $K from $r to $k
+        $min=$r;
+        $max=$k+1;
+
+        while(true) {
+            $try = (int)(($min+$max)/2);
+            if($candidates[$K[$try]]->b >= $j) {
+                $max=$try;
+            } else if($candidates[$K[$try+1]]->b <= $j) {
+                $min=$try+1;
+            } else { // $try is less and $try+1 is more
+                $s=$try;
+                break;
+            }
+            if($max<=$min) {
+                $s=-1;
+                break;
+            }
+        }
+
+        if($s>-1) {
+            if($candidates[$K[$s+1]]->b > $j) {
+                // Create new candidate
+                $index=count($candidates);
+                $candidates[$index]=new StdClass;
+                $candidates[$index]->a=$i;
+                $candidates[$index]->b=$j;
+                $candidates[$index]->previous=$K[$s];
+                $K[$r]=$c;
+                $r=$s+1;
+                $c=$index; // Or should this go before?
+            }
+
+            if($s===$k) {
+                $K[$k+2]=$K[$k+1];
+                $k++;
+                 break;
+            }
+        }
+
+        if($E[$p]->last) {
+            break;
+        }
+
+        $p++;
+    }
+    $K[$r]=$c;
+
 }
 
 // From Step 2
 function ouwiki_diff_sort_v($a,$b) {
     if($a->hash < $b->hash) {
-    	return -1;
+        return -1;
     } else if($a->hash > $b->hash) {
-        return 1;    
+        return 1;
     } else if($a->serial < $b->serial) {
         return -1;
     } else if($a->serial > $b->serial) {
@@ -237,7 +237,7 @@ function ouwiki_diff_sort_v($a,$b) {
 // From Step 4
 function ouwiki_diff_find_last(&$V,&$E,$hash) {
     // Binary search in $V until we find something with $hash
-    
+
     // Min = 1, array is 1-indexed
     $min=1;
     // Max = 1 higher than highest key
@@ -253,27 +253,27 @@ function ouwiki_diff_find_last(&$V,&$E,$hash) {
             break;
         }
         if($max<=$min) {
-        	// No matching line
+            // No matching line
             return 0;
         }
     }
-    
+
     // Now check back in $E to find the first line of that equivalence class
     for($j=$try;!$E[$j-1]->last;$j--) ;
-	return $j;
+    return $j;
 }
 
 ///////////////////////////
 
 
 /**
- * Class representing one 'line' of HTML content for the purpose of 
- * text comparison. 
+ * Class representing one 'line' of HTML content for the purpose of
+ * text comparison.
  */
 class ouwiki_line {
     /** Array of ouwiki_words */
     var $words=array();
-    
+
     /**
      * Construct line object based on a chunk of text.
      * @param string $data Text data that makes up this 'line'. (May include line breaks etc.)
@@ -281,10 +281,10 @@ class ouwiki_line {
      */
     public function __construct($data,$linepos) {
         // 1. Turn things we don't want into spaces (so that positioning stays same)
-        
+
         // Whitespace replaced with space
         $data=preg_replace('/\s/',' ',$data);
-        
+
         // Various ways of writing non-breaking space replaced with space
         // Note that using a single param for replace only works because all
         // the search strings are 6 characters long
@@ -295,7 +295,7 @@ class ouwiki_line {
             return preg_replace("/./", " ", $matches[0]);
         }, $data);
 
-        // 2. Analyse string so that each space-separated thing 
+        // 2. Analyse string so that each space-separated thing
         // is counted as a 'word' (note these may not be real words,
         // for instance words may include punctuation at either end)
         $pos=0;
@@ -307,7 +307,7 @@ class ouwiki_line {
                 // No more content
                 break;
             }
-            
+
             // Aaaand find the next space after that
             $space2=strpos($data,' ',$pos);
             if($space2===false) {
@@ -344,7 +344,7 @@ class ouwiki_line {
         }
         return $result;
     }
-    
+
     /**
      * Static function converts lines to strings.
      * @param array $lines Array of ouwiki_line
@@ -353,12 +353,12 @@ class ouwiki_line {
     static function get_as_strings($lines) {
         $strings=array();
         foreach($lines as $key=>$value) {
-            $strings[$key]=$value->get_as_string();        
+            $strings[$key]=$value->get_as_string();
         }
         return $strings;
     }
-    
-    
+
+
     /**
      * @return True if there are no words in the line
      */
@@ -378,7 +378,7 @@ class ouwiki_word {
     var $word;
     /** Start position in original xhtml */
     var $start;
-    
+
     public function __construct($word,$start) {
         $this->word=$word;
         $this->start=$start;
@@ -396,7 +396,7 @@ class ouwiki_word {
 }
 
 /**
- * Prepares XHTML content for text difference comparison. 
+ * Prepares XHTML content for text difference comparison.
  * @param string $content XHTML content [NO SLASHES]
  * @return array Array of ouwiki_line objects
  */
@@ -406,7 +406,7 @@ function ouwiki_diff_html_to_lines($content) {
     // consequence there is a lot of hackery going down. At every point we
     // replace things with spaces rather than getting rid, in order to store
     // positions within original content.
-    
+
     // Get rid of all script, style, object tags (that might contain non-text
     // outside tags)
     $content=preg_replace_callback(
@@ -416,7 +416,7 @@ function ouwiki_diff_html_to_lines($content) {
 
     // Get rid of all ` symbols as we are going to use these for a marker later.
     $content=preg_replace('/[`]/',' ',$content);
-    
+
     // Put line breaks on block tags. Mark each line break with ` symbol
     $blocktags=array('p','div','h1','h2','h3','h4','h5','h6','td','li');
     $taglist='';
@@ -429,7 +429,7 @@ function ouwiki_diff_html_to_lines($content) {
     $content = preg_replace_callback('/((' . $taglist . ')\s*)+/i', function($matches) {
         return "`" . preg_replace("/./", " ", substr($matches[0], 1));
     }, $content);
-        
+
     // Now go through splitting each line
     $lines=array(); $index=1;
     $pos=0;
@@ -439,7 +439,7 @@ function ouwiki_diff_html_to_lines($content) {
             // No more line breaks? Take content to end
             $nextline=strlen($content);
         }
-        
+
         $linestr=substr($content,$pos,$nextline-$pos);
         $line=new ouwiki_line($linestr,$pos);
         if(!$line->is_empty()) {
@@ -447,13 +447,13 @@ function ouwiki_diff_html_to_lines($content) {
         }
         $pos=$nextline+1;
     }
-    return $lines; 
+    return $lines;
 }
 
-/** 
- * Represents a changed area of file and where it is located in the 
- * two source files. 
- */ 
+/**
+ * Represents a changed area of file and where it is located in the
+ * two source files.
+ */
 class ouwiki_change_range {
     var $file1start,$file1count;
     var $file2start,$file2count;
@@ -463,17 +463,17 @@ class ouwiki_change_range {
  * A more logical representation of the results from ouwiki_internal_diff()
  */
 class ouwiki_changes {
-    
+
     /** Array of indexes (in file 2) of added lines */
     var $adds;
-    
+
     /** Array of indexes (in file 1) of deleted lines */
     var $deletes;
-    
+
     /** Array of changed ranges */
     var $changes;
-    
-    /** 
+
+    /**
      * @param array $diff Array from line indices in file1
      *   to indices in file2. All indices 1-based.
      * @param int $count2 Number of lines in file2
@@ -481,16 +481,16 @@ class ouwiki_changes {
     public function __construct($diff,$count2) {
         // Find deleted lines
         $this->deletes=self::internal_find_deletes($diff,$count2);
-        
+
         // Added lines work the same way after the comparison is
         // reversed.
         $this->adds=self::internal_find_deletes(
             ouwiki_diff_internal_flip($diff,$count2),count($diff));
-        
+
         // Changed ranges are all the other lines from file 1 that
-        // weren't found in file 2 but aren't deleted, and the 
+        // weren't found in file 2 but aren't deleted, and the
         // corresponding lines from file 2 (between the equivalent
-        // 'found' lines).        
+        // 'found' lines).
         $this->changes=array();
         $matchbefore=0;
         $inrange=-1; $lastrange=-1;
@@ -503,8 +503,8 @@ class ouwiki_changes {
                     $inrange=count($this->changes);
                     $this->changes[$inrange]=new ouwiki_change_range;
                     $this->changes[$inrange]->file1start=$index1;
-                    $this->changes[$inrange]->file1count=1;                    
-                    $this->changes[$inrange]->file2start=$matchbefore+1; // Last valid from file2                    
+                    $this->changes[$inrange]->file1count=1;
+                    $this->changes[$inrange]->file2start=$matchbefore+1; // Last valid from file2
                     $this->changes[$inrange]->file2count=0;
                     $lastrange=$inrange;
                 } else {
@@ -554,7 +554,7 @@ class ouwiki_changes {
      */
     function internal_find_deletes($diff,$count2) {
         $deletes=array();
-        
+
         // 1. Create a new array that includes the lowest-valued
         //    index2 value below each run of 0s.
         //    I.e. if our array is say 1,2,0,0,0,3,0 then the
@@ -570,28 +570,28 @@ class ouwiki_changes {
                 $lowest=$index2;
             }
         }
-        
-        // 2. OK now we can use this new array to work out 
+
+        // 2. OK now we can use this new array to work out
         //    items that are known to be deleted because we
-        //    have matching items either side        
+        //    have matching items either side
         $highest=0;
         foreach($diff as $index1=>$index2) {
             if($index2===0) {
                 if($highest===$count2 || $highest+1===$squidges[$index1]) {
                     // Yep! Definitely deleted.
-                    $deletes[]=$index1;                    
-                } 
+                    $deletes[]=$index1;
+                }
             } else {
-                $highest=$index2;                
+                $highest=$index2;
             }
         }
-        return $deletes;        
+        return $deletes;
     }
 }
 
 /**
  * Flips around the array returned by ouwiki_diff_internal
- * so that it refers to lines from the other file. 
+ * so that it refers to lines from the other file.
  * @param array $diff Array of index1=>index2
  * @param int $count2 Count of lines in file 2
  * @return array Flipped version
@@ -615,7 +615,7 @@ function ouwiki_diff_internal_flip($diff,$count2) {
  * @param array $lines1 Array of ouwiki_line
  * @param array $lines2 Array of ouwiki_line
  * @return array (deleted,added); deleted and added are arrays of ouwiki_word with
- *   position numbers from $lines1 and $lines2 respectively 
+ *   position numbers from $lines1 and $lines2 respectively
  */
 function ouwiki_diff_words($lines1,$lines2) {
     // Prepare arrays
@@ -625,7 +625,7 @@ function ouwiki_diff_words($lines1,$lines2) {
     $linediff=ouwiki_diff(
         ouwiki_line::get_as_strings($lines1),
         ouwiki_line::get_as_strings($lines2));
-        
+
     // Handle lines that were entirely deleted
     foreach($linediff->deletes as $deletedline) {
         $deleted = array_merge($deleted, $lines1[$deletedline]->words);
@@ -634,7 +634,7 @@ function ouwiki_diff_words($lines1,$lines2) {
     foreach($linediff->adds as $addedline) {
         $added = array_merge($added, $lines2[$addedline]->words);
     }
-    
+
     // Changes get diffed at the individual-word level
     foreach($linediff->changes as $changerange) {
         // Build list of all words in each side of the range
@@ -652,13 +652,13 @@ function ouwiki_diff_words($lines1,$lines2) {
                 $file2words[]=$word;
             }
         }
-                
+
         // Make arrays 1-based
         array_unshift($file1words,'dummy');
         unset($file1words[0]);
         array_unshift($file2words,'dummy');
         unset($file2words[0]);
-        
+
         // Convert word lists into plain strings
         $file1strings=array();
         foreach($file1words as $index=>$word) {
@@ -668,7 +668,7 @@ function ouwiki_diff_words($lines1,$lines2) {
         foreach($file2words as $index=>$word) {
             $file2strings[$index]=$word->word;
         }
-        
+
         // Run diff on strings
         $worddiff=ouwiki_diff($file1strings,$file2strings);
         foreach($worddiff->adds as $index) {
@@ -688,7 +688,7 @@ function ouwiki_diff_words($lines1,$lines2) {
             }
         }
     }
-    
+
     return array($deleted,$added);
 }
 
@@ -717,7 +717,7 @@ function ouwiki_diff_add_markers($html,$words,$markerclass,$beforetext,$aftertex
     });
 
     // Add marker for each word. We use an odd tag name which will
-    // be replaced by span later, this for ease of replacing 
+    // be replaced by span later, this for ease of replacing
     $spanstart="<ouwiki_diff_add_markers>";
     $pos=0;
     $result='';
@@ -732,23 +732,23 @@ function ouwiki_diff_add_markers($html,$words,$markerclass,$beforetext,$aftertex
 
     // Add everything after last word
     $result.=substr($html,$pos);
-    
+
     // If we end a marker then immediately start one, get rid of
     // both the end and start
     $result=preg_replace('^</ouwiki_diff_add_markers>(\s*)<ouwiki_diff_add_markers>^','$1',$result);
-    
+
     // Turn markers into proper span
     $result=preg_replace('^<ouwiki_diff_add_markers>^',$beforetext.'<span class="'.$markerclass.'">',$result);
     $result=preg_replace('^</ouwiki_diff_add_markers>^','</span>'.$aftertext,$result);
-    
+
     return $result;
 }
 
 /**
  * Compares two HTML files. (This is the main function that everything else supports.)
- * @param string $html1 XHTML for file 1  
+ * @param string $html1 XHTML for file 1
  * @param string $html2 XHTML for file 2
- * @return array ($result1,$result2) to be displayed indicating the differences  
+ * @return array ($result1,$result2) to be displayed indicating the differences
  */
 function ouwiki_diff_html($html1,$html2) {
     $lines1=ouwiki_diff_html_to_lines($html1);
@@ -760,6 +760,6 @@ function ouwiki_diff_html($html1,$html2) {
     $result2=ouwiki_diff_add_markers($html2,$added,'ouw_added',
         '<strong class="accesshide">'.get_string('addedbegins','wiki').'</strong>',
         '<strong class="accesshide">'.get_string('addedends','wiki').'</strong>');
-    return array($result1,$result2);    
+    return array($result1,$result2);
 }
 
