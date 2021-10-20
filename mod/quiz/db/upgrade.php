@@ -102,7 +102,7 @@ function xmldb_quiz_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2021052503, 'quiz');
     }
-    
+
     if ($oldversion < 2021101900) {
 
         // Define field gradednotificationsenttime to be added to quiz_attempts.
