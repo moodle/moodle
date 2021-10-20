@@ -10,9 +10,9 @@
  */
 
 require_once($CFG->dirroot . "/lib/outputcomponents.php");
-    
+
 class parser_utils {
-        
+
     public static function h($tag, $text = null, $options = array(), $escape_text = false) {
         $tag = htmlentities($tag, ENT_COMPAT, 'UTF-8');
         if(!empty($text) && $escape_text) {
@@ -20,7 +20,7 @@ class parser_utils {
             }
         return html_writer::tag($tag, $text, $options);
     }
-    
+
     /**
      * Default link generator
      */
@@ -77,7 +77,7 @@ class parser_utils {
                     }
                     else if($row[$i][0] == 'normal'){
                         $htmlrow .= "\n".parser_utils::h('td', $text)."\n";
-                    }   
+                    }
                 }
             }
             $bodyhtml .= "\n".parser_utils::h('tr', $htmlrow)."\n";
@@ -86,11 +86,11 @@ class parser_utils {
         $html .= "\n".parser_utils::h('tbody', $bodyhtml)."\n";
         return "\n".parser_utils::h('table', $html)."\n";
     }
-    
+
     /**
      * Default path converter
      */
-    
+
     public static function wiki_parser_real_path($url) {
         return $url;
     }
