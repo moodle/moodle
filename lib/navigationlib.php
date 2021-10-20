@@ -4516,7 +4516,8 @@ class settings_navigation extends navigation_node {
         // Manage filters
         if ($adminoptions->filters) {
             $url = new moodle_url('/filter/manage.php', array('contextid'=>$coursecontext->id));
-            $coursenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/filter', ''));
+            $coursenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING,
+                null, 'filtermanagement', new pix_icon('i/filter', ''));
         }
 
         // View course reports.
