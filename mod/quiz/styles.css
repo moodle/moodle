@@ -14,14 +14,12 @@
 
 #page-mod-quiz-attempt .submitbtns,
 #page-mod-quiz-review .submitbtns {
-    clear: left;
-    text-align: left;
-    padding-top: 1.5em;
+    display: flex;
 }
 
 #page-mod-quiz-attempt .submitbtns .mod_quiz-next-nav,
 #page-mod-quiz-review .submitbtns .mod_quiz-next-nav {
-    float: right;
+    margin-left: auto;
 }
 
 .path-mod-quiz .mod_quiz-redo_question_button {
