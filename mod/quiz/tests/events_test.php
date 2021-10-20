@@ -888,4 +888,42 @@ class mod_quiz_events_testcase extends advanced_testcase {
       $this->assertEquals(context_module::instance($quiz->cmid), $event->get_context());
       $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the attempt notify manual graded event.
+     * There is no external API for notification email when manual grading of user's attempt is completed,
+     * so the unit test will simply create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_attempt_manual_grading_completed() {
+        $this->resetAfterTest();
+        list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
+        $attemptobj = quiz_attempt::create($attempt->id);
+
+        $params = [
+            'objectid' => $attemptobj->get_attemptid(),
+            'relateduserid' => $attemptobj->get_userid(),
+            'courseid' => $attemptobj->get_course()->id,
+            'context' => context_module::instance($attemptobj->get_cmid()),
+            'other' => [
+                'quizid' => $attemptobj->get_quizid()
+            ]
+        ];
+        $event = \mod_quiz\event\attempt_manual_grading_completed::create($params);
+
+        // Catch the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_quiz\event\attempt_manual_grading_completed', $event);
+        $this->assertEquals('quiz_attempts', $event->objecttable);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEquals($attempt->userid, $event->relateduserid);
+        $this->assertNotEmpty($event->get_description());
+        $this->assertEventContextNotUsed($event);
+    }
 }

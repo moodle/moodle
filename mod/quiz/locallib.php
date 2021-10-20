@@ -126,6 +126,7 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
     $attempt->state = quiz_attempt::IN_PROGRESS;
     $attempt->currentpage = 0;
     $attempt->sumgrades = null;
+    $attempt->gradednotificationsenttime = null;
 
     // If this is a preview, mark it as such.
     if ($ispreview) {
@@ -1882,6 +1883,51 @@ function quiz_attempt_submitted_handler($event) {
     }
     return quiz_send_notification_messages($course, $quiz, $attempt,
             context_module::instance($cm->id), $cm, $eventdata['other']['studentisonline']);
+}
+
+/**
+ * Send the notification message when a quiz attempt has been manual graded.
+ *
+ * @param quiz_attempt $attemptobj Some data about the quiz attempt.
+ * @param object $userto
+ * @return int|false As for message_send.
+ */
+function quiz_send_notify_manual_graded_message(quiz_attempt $attemptobj, object $userto): ?int {
+    global $CFG;
+
+    $quizname = format_string($attemptobj->get_quiz_name());
+
+    $a = new stdClass();
+    // Course info.
+    $a->courseid           = $attemptobj->get_courseid();
+    $a->coursename         = format_string($attemptobj->get_course()->fullname);
+    // Quiz info.
+    $a->quizname           = $quizname;
+    $a->quizurl            = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $attemptobj->get_cmid();
+
+    // Attempt info.
+    $a->attempttimefinish  = userdate($attemptobj->get_attempt()->timefinish);
+    // Student's info.
+    $a->studentidnumber    = $userto->idnumber;
+    $a->studentname        = fullname($userto);
+
+    $eventdata = new \core\message\message();
+    $eventdata->component = 'mod_quiz';
+    $eventdata->name = 'attempt_grading_complete';
+    $eventdata->userfrom = core_user::get_noreply_user();
+    $eventdata->userto = $userto;
+
+    $eventdata->subject = get_string('emailmanualgradedsubject', 'quiz', $a);
+    $eventdata->fullmessage = get_string('emailmanualgradedbody', 'quiz', $a);
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml = '';
+
+    $eventdata->notification = 1;
+    $eventdata->contexturl = $a->quizurl;
+    $eventdata->contexturlname = $a->quizname;
+
+    // Send the message.
+    return message_send($eventdata);
 }
 
 /**

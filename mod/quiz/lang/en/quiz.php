@@ -94,6 +94,8 @@ $string['attempterrorinvalid'] = 'Invalid quiz attempt ID';
 $string['attempterrorcontentchange'] = 'This quiz preview no longer exists. (When a quiz is edited, any in-progress previews are automatically deleted.)';
 $string['attempterrorcontentchangeforuser'] = 'This quiz attempt no longer exists.';
 $string['attemptfirst'] = 'First attempt';
+$string['attemptgradeddelay'] = 'Delay before sending attempt graded notifications';
+$string['attemptgradeddelay_desc'] = 'A delay is applied before emailing the student to tell them their quiz attempt has now been graded. This is a trade-off. We want to notify the student as soon as possible. However, the teacher may go back and edit the grade again, and we don\'t want to notify the student before that happens';
 $string['attemptincomplete'] = 'That attempt (by {$a}) is not yet completed.';
 $string['attemptlast'] = 'Last attempt';
 $string['attemptnumber'] = 'Attempt';
@@ -325,6 +327,13 @@ $string['emailnotifybody'] = 'Hi {$a->username},
 You can review this attempt at {$a->quizreviewurl}.';
 $string['emailnotifysmall'] = '{$a->studentname} has completed {$a->quizname}. See {$a->quizreviewurl}';
 $string['emailnotifysubject'] = '{$a->studentname} has completed {$a->quizname}';
+$string['emailmanualgradedbody'] = 'Hi {$a->studentname},
+
+Your answers to \'{$a->quizname}\' in course \'{$a->coursename}\' at {$a->attempttimefinish} have now been graded.
+
+You will be able to view your score and feedback by visiting \'{$a->quizurl}\' and reviewing your attempt.';
+
+$string['emailmanualgradedsubject'] = 'Your attempt at {$a->quizname} has been graded';
 $string['emailoverduebody'] = 'Hi {$a->studentname},
 
 You started an attempt at \'{$a->quizname}\' in course \'{$a->coursename}\', but you never submitted it. It should have been submitted by {$a->attemptduedate}.
@@ -344,6 +353,7 @@ $string['essay'] = 'Essay';
 $string['essayquestions'] = 'Questions';
 $string['eventattemptautosaved'] = 'Quiz attempt auto-saved';
 $string['eventattemptdeleted'] = 'Quiz attempt deleted';
+$string['eventattemptmanualgradingcomplete'] = 'Quiz attempt manual grading complete';
 $string['eventattemptpreviewstarted'] = 'Quiz attempt preview started';
 $string['eventattemptquestionrestarted'] = 'Quiz attempt question restarted';
 $string['eventattemptreviewed'] = 'Quiz attempt reviewed';
@@ -501,6 +511,7 @@ $string['matchanswer'] = 'Matching answer';
 $string['matchanswerno'] = 'Matching answer {$a}';
 $string['messageprovider:attempt_overdue'] = 'Warning when your quiz attempt becomes overdue';
 $string['messageprovider:confirmation'] = 'Confirmation of your own quiz submissions';
+$string['messageprovider:attempt_grading_complete'] = 'Notification that your attempt has been graded';
 $string['messageprovider:submission'] = 'Notification of your students\' quiz submissions';
 $string['max'] = 'Max';
 $string['maxmark'] = 'Maximum mark';
@@ -579,6 +590,7 @@ $string['noscript'] = 'JavaScript must be enabled to continue!';
 $string['notavailabletostudents'] = 'Note: This quiz is not currently available to your students';
 $string['notenoughrandomquestions'] = 'There are not enough questions in category {$a->category} to create the question {$a->name} ({$a->id}).';
 $string['notenoughsubquestions'] = 'Not enough sub-questions have been defined!<br />Do you want to go back and fix this question?';
+$string['notifyattemptsgradedtask'] = 'Send notifications about quiz attempts that are now fully graded';
 $string['notimedependentitems'] = 'Time dependent items are not currently supported by the quiz module. As a work around, set a time limit for the whole quiz. Do you wish to choose a different item (or use the current item regardless)?';
 $string['notyetgraded'] = 'Not yet graded';
 $string['notyetviewed'] = 'Not yet viewed';
@@ -669,6 +681,7 @@ $string['privacy:metadata:quiz'] = 'The quiz activity makes use of quiz reports.
 $string['privacy:metadata:quiz_attempts'] = 'Details about each attempt on a quiz.';
 $string['privacy:metadata:quiz_attempts:attempt'] = 'The attempt number.';
 $string['privacy:metadata:quiz_attempts:currentpage'] = 'The current page that the user is on.';
+$string['privacy:metadata:quiz_attempts:gradednotificationsenttime'] = 'The time the user was notified that manual grading of their attempt was complete';
 $string['privacy:metadata:quiz_attempts:preview'] = 'Whether this is a preview of the quiz.';
 $string['privacy:metadata:quiz_attempts:state'] = 'The current state of the attempt.';
 $string['privacy:metadata:quiz_attempts:sumgrades'] = 'The sum of grades in the attempt.';
@@ -736,6 +749,7 @@ $string['quizcloseson'] = 'This quiz will close on {$a}.';
 $string['quiz:deleteattempts'] = 'Delete quiz attempts';
 $string['quiz:emailconfirmsubmission'] = 'Receive confirmation of your own quiz submissions';
 $string['quiz:emailnotifysubmission'] = 'Receive notification of your students\' quiz submissions';
+$string['quiz:emailnotifyattemptgraded'] = 'Receive notification when your attempt has been graded';
 $string['quiz:emailwarnoverdue'] = 'Receive warning when your quiz attempt becomes overdue';
 $string['quiz:grade'] = 'Grade quizzes manually';
 $string['quiz:ignoretimelimits'] = 'Ignore quiz time limit';
