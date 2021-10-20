@@ -116,31 +116,31 @@ class primary_test extends \advanced_testcase {
     public function test_primary_export_provider(): array {
         return [
             "Export the menu data when: custom menu exists; multiple langs installed; user is not logged in." => [
-                true, true, '', ['moremenu', 'lang', 'user']
+                true, true, '', ['mobileprimarynav', 'moremenu', 'lang', 'user']
             ],
             "Export the menu data when: custom menu exists; langs not installed; user is not logged in." => [
-                true, false, '', ['moremenu', 'user']
+                true, false, '', ['mobileprimarynav', 'moremenu', 'user']
             ],
             "Export the menu data when: custom menu exists; multiple langs installed; logged in as admin." => [
-                true, true, 'admin', ['moremenu', 'user']
+                true, true, 'admin', ['mobileprimarynav', 'moremenu', 'user']
             ],
             "Export the menu data when: custom menu exists; langs not installed; logged in as admin." => [
-                true, false, 'admin', ['moremenu', 'user']
+                true, false, 'admin', ['mobileprimarynav', 'moremenu', 'user']
             ],
             "Export the menu data when: custom menu exists; multiple langs installed; logged in as guest." => [
-                true, true, 'guest', ['moremenu', 'lang', 'user']
+                true, true, 'guest', ['mobileprimarynav', 'moremenu', 'lang', 'user']
             ],
             "Export the menu data when: custom menu exists; langs not installed; logged in as guest." => [
-                true, false, 'guest', ['moremenu', 'user']
+                true, false, 'guest', ['mobileprimarynav', 'moremenu', 'user']
             ],
             "Export the menu data when: custom menu does not exist; multiple langs installed; logged in as guest." => [
-                false, true, 'guest', ['moremenu', 'lang', 'user']
+                false, true, 'guest', ['mobileprimarynav', 'moremenu', 'lang', 'user']
             ],
             "Export the menu data when: custom menu does not exist; multiple langs installed; logged in as admin." => [
-                false, true, 'admin', ['moremenu', 'user']
+                false, true, 'admin', ['mobileprimarynav', 'moremenu', 'user']
             ],
             "Export the menu data when: custom menu does not exist; langs not installed; user is not logged in." => [
-                false, false, '', ['moremenu', 'user']
+                false, false, '', ['mobileprimarynav', 'moremenu', 'user']
             ],
         ];
     }

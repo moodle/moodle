@@ -57,10 +57,12 @@ class primary implements renderable, templatable {
 
         $menudata = (object) array_merge($this->get_primary_nav(), $this->get_custom_menu($output));
         $moremenu = new \core\navigation\output\more_menu($menudata, 'navbar-nav', false);
+        $mobileprimarynav = array_merge($this->get_primary_nav(), $this->get_custom_menu($output));
 
         $languagemenu = new \core\output\language_menu($this->page);
 
         return [
+            'mobileprimarynav' => $mobileprimarynav,
             'moremenu' => $moremenu->export_for_template($output),
             'lang' => !isloggedin() || isguestuser() ? $languagemenu->export_for_template($output) : [],
             'user' => $this->get_user_menu($output),
