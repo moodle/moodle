@@ -16,10 +16,10 @@ Feature: Course index depending on role
       | enablecompletion | 1        |
       | numsections      | 4        |
     And the following "activities" exist:
-      | activity | name              | intro                       | course | idnumber | section |
-      | assign   | Activity sample 1 | Test assignment description | C1     | sample1  | 1       |
-      | book     | Activity sample 2 | Test book description       | C1     | sample2  | 2       |
-      | choice   | Activity sample 3 | Test choice description     | C1     | sample3  | 3       |
+      | activity | name                | intro                       | course | idnumber | section |
+      | assign   | Activity sample 1   | Test assignment description | C1     | sample1  | 1       |
+      | book     | Activity sample 2   | Test book description       | C1     | sample2  | 2       |
+      | choice   | Activity sample 3   | Test choice description     | C1     | sample3  | 3       |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | C1     | student        |
@@ -28,9 +28,14 @@ Feature: Course index depending on role
   @javascript
   Scenario: Course index is present on course and activities.
     Given I am on the "C1" "Course" page logged in as "teacher1"
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "C1" "Course" page logged in as "teacher1"
     When I click on "Side panel" "button"
     Then I should see "Open course index drawer"
-    And I am on the "Activity sample 1" "assign activity" page
+    And I am on the "Activity sample 1" "assign activity editing" page
+    And I set the field "Assignment name" in the "General" "fieldset" to "<span lang=\"en\" class=\"multilang\">Activity</span><span lang=\"de\" class=\"multilang\">Aktivität</span> sample 1"
+    And I press "Save and display"
     And I should see "Open course index drawer"
     And I click on "Open course index drawer" "button"
     And I should see "Activity sample 1" in the "courseindex-content" "region"

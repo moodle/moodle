@@ -73,7 +73,7 @@ class cm implements renderable {
 
         $data = (object)[
             'id' => $cm->id,
-            'name' => $cm->name,
+            'name' => external_format_string($cm->name, $cm->context, true),
             'visible' => !empty($cm->visible),
             'sectionid' => $section->id,
             'sectionnumber' => $section->section,
