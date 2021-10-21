@@ -55,6 +55,7 @@ Feature: The timeline block allows user persistence of their page limits
     When I click on "5" "button" in the "Timeline" "block"
     And I click on "25" "link"
     And I should see "Test feedback 2" in the "Timeline" "block"
+    And I change window size to "large"
     And I click on "25" "button" in the "Timeline" "block"
     And I click on "5" "link" in the "[data-region='timeline'] [data-region='paging-control-limit-container'] .dropdown-menu" "css_element"
     Then I should not see "Test feedback 2" in the "Timeline" "block"
