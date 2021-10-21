@@ -742,6 +742,8 @@ trait behat_session_trait {
      * @throws ExpectationException
      */
     protected function resize_window($windowsize, $viewport = false) {
+        global $CFG;
+
         // Non JS don't support resize window.
         if (!$this->running_javascript()) {
             return;
@@ -769,6 +771,12 @@ trait behat_session_trait {
                 $width = (int) $size[0];
                 $height = (int) $size[1];
         }
+
+        if (isset($CFG->behat_window_size_modifier) && is_numeric($CFG->behat_window_size_modifier)) {
+            $width *= $CFG->behat_window_size_modifier;
+            $height *= $CFG->behat_window_size_modifier;
+        }
+
         if ($viewport) {
             // When setting viewport size, we set it so that the document width will be exactly
             // as specified, assuming that there is a vertical scrollbar. (In cases where there is
