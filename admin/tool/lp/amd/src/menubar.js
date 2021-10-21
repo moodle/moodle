@@ -43,8 +43,8 @@ define(['jquery'], function($) {
     /**
      * Constructor
      *
-     * @param {$} menuRoot Jquery collection matching the root of the menu.
-     * @param {Function[]} handlers, called when a menu item is chosen.
+     * @param {jQuery} menuRoot Jquery collection matching the root of the menu.
+     * @param {Function[]} handlers called when a menu item is chosen.
      */
     var Menubar = function(menuRoot, handlers) {
         // Setup private class variables.

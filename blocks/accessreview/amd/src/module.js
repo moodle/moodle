@@ -203,7 +203,7 @@ const toggleAccessMap = (courseId, displayFormat) => {
  * @param {Object[]} sectionData The error data for course sections.
  * @param {Object[]} moduleData The error data for course modules.
  * @returns {Object} An object representing the extra error information.
-*/
+ */
 const getErrorTotals = (sectionData, moduleData) => {
     const totals = {
         totalErrors: 0,
@@ -290,7 +290,6 @@ const fetchReviewData = (courseid, updatePreference = false) => {
  * @param {number} toggled A number represnting the state of the review toggle.
  * @param {string} displayFormat A string representing the display format for icons.
  * @param {number} courseId The course ID.
- * @param {number} userId The id of the currently logged-in user.
  */
 export const init = (toggled, displayFormat, courseId) => {
     // Settings consts.

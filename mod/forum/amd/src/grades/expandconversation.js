@@ -39,6 +39,8 @@ const findGradableNode = node => node.closest(ForumSelectors.expandConversation)
  * Show the post in context in a modal.
  *
  * @param {HTMLElement} rootNode The button that has been clicked
+ * @param {object} param
+ * @param {bool} [param.focusOnClose=null]
  */
 const showPostInContext = async(rootNode, {
     focusOnClose = null,

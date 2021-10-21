@@ -356,8 +356,9 @@ const getBody = (contextId, ueid, formdata = null) => Fragment.loadFragment(
 /**
  * Initialise the statu field handler.
  *
- * @param {Number} contextid
- * @param {Number} uniqueid
+ * @param {object} param
+ * @param {Number} param.contextid
+ * @param {Number} param.uniqueid
  */
 export const init = ({contextid, uniqueid}) => {
     registerEventListeners(contextid, uniqueid);

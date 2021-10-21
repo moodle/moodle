@@ -2456,6 +2456,40 @@
         "to-fast-properties": "^2.0.0"
       }
     },
+    "@es-joy/jsdoccomment": {
+      "version": "0.10.8",
+      "resolved": "https://registry.npmjs.org/@es-joy/jsdoccomment/-/jsdoccomment-0.10.8.tgz",
+      "integrity": "sha512-3P1JiGL4xaR9PoTKUHa2N/LKwa2/eUdRqGwijMWWgBqbFEqJUVpmaOi2TcjcemrsRMgFLBzQCK4ToPhrSVDiFQ==",
+      "dev": true,
+      "requires": {
+        "comment-parser": "1.2.4",
+        "esquery": "^1.4.0",
+        "jsdoc-type-pratt-parser": "1.1.1"
+      },
+      "dependencies": {
+        "esquery": {
+          "version": "1.4.0",
+          "resolved": "https://registry.npmjs.org/esquery/-/esquery-1.4.0.tgz",
+          "integrity": "sha512-cCDispWt5vHHtwMY2YrAQ4ibFkAL8RbH5YGBnZBc90MolvvfkkQcJro/aZiAQUlQ3qgrYS6D6v8Gc5G5CQsc9w==",
+          "dev": true,
+          "requires": {
+            "estraverse": "^5.1.0"
+          }
+        },
+        "estraverse": {
+          "version": "5.2.0",
+          "resolved": "https://registry.npmjs.org/estraverse/-/estraverse-5.2.0.tgz",
+          "integrity": "sha512-BxbNGGNm0RyRYvUdHpIwv9IWzeM9XClbOxwoATuFdOE7ZE6wHL+HQ5T8hoPM+zHvmKzzsEqhgy0GrQ5X13afiQ==",
+          "dev": true
+        },
+        "jsdoc-type-pratt-parser": {
+          "version": "1.1.1",
+          "resolved": "https://registry.npmjs.org/jsdoc-type-pratt-parser/-/jsdoc-type-pratt-parser-1.1.1.tgz",
+          "integrity": "sha512-uelRmpghNwPBuZScwgBG/OzodaFk5RbO5xaivBdsAY70icWfShwZ7PCMO0x1zSkOa8T1FzHThmrdoyg/0AwV5g==",
+          "dev": true
+        }
+      }
+    },
     "@nodelib/fs.scandir": {
       "version": "2.1.3",
       "resolved": "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.3.tgz",
@@ -3675,6 +3709,12 @@
       "integrity": "sha512-JrDGPAKjMGSP1G0DUoaceEJ3DZgAfr/q6X7FVk4+U5KxUSKviYGM2k6zWkfyyBHy5rAtzgYJFa1ro2O9PtoxwQ==",
       "dev": true
     },
+    "comment-parser": {
+      "version": "1.2.4",
+      "resolved": "https://registry.npmjs.org/comment-parser/-/comment-parser-1.2.4.tgz",
+      "integrity": "sha512-pm0b+qv+CkWNriSTMsfnjChF9kH0kxz55y44Wo5le9qLxMj5xDQAaEd9ZN1ovSuk9CsrncWaFwgpOMg7ClJwkw==",
+      "dev": true
+    },
     "common-sequence": {
       "version": "2.0.2",
       "resolved": "https://registry.npmjs.org/common-sequence/-/common-sequence-2.0.2.tgz",
@@ -4332,6 +4372,83 @@
       "dev": true,
       "requires": {
         "eslint-rule-composer": "^0.3.0"
+      }
+    },
+    "eslint-plugin-jsdoc": {
+      "version": "36.1.1",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-36.1.1.tgz",
+      "integrity": "sha512-nuLDvH1EJaKx0PCa9oeQIxH6pACIhZd1gkalTUxZbaxxwokjs7TplqY0Q8Ew3CoZaf5aowm0g/Z3JGHCatt+gQ==",
+      "dev": true,
+      "requires": {
+        "@es-joy/jsdoccomment": "0.10.8",
+        "comment-parser": "1.2.4",
+        "debug": "^4.3.2",
+        "esquery": "^1.4.0",
+        "jsdoc-type-pratt-parser": "^1.1.1",
+        "lodash": "^4.17.21",
+        "regextras": "^0.8.0",
+        "semver": "^7.3.5",
+        "spdx-expression-parse": "^3.0.1"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "4.3.2",
+          "resolved": "https://registry.npmjs.org/debug/-/debug-4.3.2.tgz",
+          "integrity": "sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw==",
+          "dev": true,
+          "requires": {
+            "ms": "2.1.2"
+          }
+        },
+        "esquery": {
+          "version": "1.4.0",
+          "resolved": "https://registry.npmjs.org/esquery/-/esquery-1.4.0.tgz",
+          "integrity": "sha512-cCDispWt5vHHtwMY2YrAQ4ibFkAL8RbH5YGBnZBc90MolvvfkkQcJro/aZiAQUlQ3qgrYS6D6v8Gc5G5CQsc9w==",
+          "dev": true,
+          "requires": {
+            "estraverse": "^5.1.0"
+          }
+        },
+        "estraverse": {
+          "version": "5.2.0",
+          "resolved": "https://registry.npmjs.org/estraverse/-/estraverse-5.2.0.tgz",
+          "integrity": "sha512-BxbNGGNm0RyRYvUdHpIwv9IWzeM9XClbOxwoATuFdOE7ZE6wHL+HQ5T8hoPM+zHvmKzzsEqhgy0GrQ5X13afiQ==",
+          "dev": true
+        },
+        "lru-cache": {
+          "version": "6.0.0",
+          "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-6.0.0.tgz",
+          "integrity": "sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==",
+          "dev": true,
+          "requires": {
+            "yallist": "^4.0.0"
+          }
+        },
+        "semver": {
+          "version": "7.3.5",
+          "resolved": "https://registry.npmjs.org/semver/-/semver-7.3.5.tgz",
+          "integrity": "sha512-PoeGJYh8HK4BTO/a9Tf6ZG3veo/A7ZVsYrSA6J8ny9nb3B1VrpkuN+z9OE5wfE5p6H4LchYZsegiQgbJD94ZFQ==",
+          "dev": true,
+          "requires": {
+            "lru-cache": "^6.0.0"
+          }
+        },
+        "spdx-expression-parse": {
+          "version": "3.0.1",
+          "resolved": "https://registry.npmjs.org/spdx-expression-parse/-/spdx-expression-parse-3.0.1.tgz",
+          "integrity": "sha512-cbqHunsQWnJNE6KhVSMsMeH5H/L9EpymbzqTQ3uLwNCLZ1Q481oWaofqH7nO6V07xlXwY6PhQdQ2IedWx/ZK4Q==",
+          "dev": true,
+          "requires": {
+            "spdx-exceptions": "^2.1.0",
+            "spdx-license-ids": "^3.0.0"
+          }
+        },
+        "yallist": {
+          "version": "4.0.0",
+          "resolved": "https://registry.npmjs.org/yallist/-/yallist-4.0.0.tgz",
+          "integrity": "sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==",
+          "dev": true
+        }
       }
     },
     "eslint-plugin-promise": {
@@ -6319,6 +6436,12 @@
         "walk-back": "^5.0.0"
       }
     },
+    "jsdoc-type-pratt-parser": {
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/jsdoc-type-pratt-parser/-/jsdoc-type-pratt-parser-1.2.0.tgz",
+      "integrity": "sha512-4STjeF14jp4bqha44nKMY1OUI6d2/g6uclHWUCZ7B4DoLzaB5bmpTkQrpqU+vSVzMD0LsKAOskcnI3I3VfIpmg==",
+      "dev": true
+    },
     "jsesc": {
       "version": "2.5.2",
       "resolved": "https://registry.npmjs.org/jsesc/-/jsesc-2.5.2.tgz",
@@ -8096,6 +8219,12 @@
         "unicode-match-property-ecmascript": "^1.0.4",
         "unicode-match-property-value-ecmascript": "^1.2.0"
       }
+    },
+    "regextras": {
+      "version": "0.8.0",
+      "resolved": "https://registry.npmjs.org/regextras/-/regextras-0.8.0.tgz",
+      "integrity": "sha512-k519uI04Z3SaY0fLX843MRXnDeG2+vHOFsyhiPZvNLe7r8rD2YNRjq4BQLZZ0oAr2NrtvZlICsXysGNFPGa3CQ==",
+      "dev": true
     },
     "regjsgen": {
       "version": "0.5.1",

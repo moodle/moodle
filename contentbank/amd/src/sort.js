@@ -228,8 +228,8 @@ const updateButtonTitle = (button, ascending) => {
  * @method updateSortOrder
  * @param {HTMLElement} fileArea the Dom container for the itemlist
  * @param {Array} itemList Nodelist of Dom elements
- * @param {String} attribute, the attribut to sort on
- * @param {Bool} ascending, Sort Ascending
+ * @param {String} attribute the attribut to sort on
+ * @param {Bool} ascending Sort Ascending
  */
 const updateSortOrder = (fileArea, itemList, attribute, ascending) => {
     const sortList = [].slice.call(itemList).sort(function(a, b) {
