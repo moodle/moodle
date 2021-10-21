@@ -19653,11 +19653,11 @@ body {
   font-size: 11px;
   line-height: 11px;
   position: absolute;
-  top: 5px;
+  top: 15px;
   right: 0; }
 
 .navbar .popover-region-container {
-  top: calc(60px - (1rem / 2)); }
+  top: 60px; }
 
 .content-item-container {
   width: 100%;
@@ -20537,7 +20537,7 @@ div.editor_atto_toolbar button .icon {
   box-shadow: none;
   border-bottom: #dee2e6 1px solid;
   align-items: stretch;
-  height: 60px; }
+  height: 61px; }
   .navbar.fixed-top .navbar-brand .logo {
     max-height: calc(60px - (0.25rem * 2)); }
   .navbar.fixed-top .nav-link {
@@ -20941,7 +20941,8 @@ div.editor_atto_toolbar button .icon {
 
 .moremenu {
   opacity: 0;
-  height: 60px; }
+  height: 60px;
+  /* TODO: MDL-72481: Update this style to also apply to aria-selected. */ }
   .moremenu.observed {
     opacity: 1; }
   .moremenu .nav-link {
@@ -20953,10 +20954,17 @@ div.editor_atto_toolbar button .icon {
     border-left: none;
     border-top: none; }
     .moremenu .nav-link:hover, .moremenu .nav-link:focus {
-      background-color: #e9ecef; }
+      border-color: transparent;
+      background-color: #f8f9fa; }
     .moremenu .nav-link.active {
-      font-weight: bold;
-      border-bottom: solid 3px #0f6cbf; }
+      background-color: #f8f9fa;
+      border-color: transparent;
+      border-bottom-color: #0f6cbf; }
+      .moremenu .nav-link.active:focus, .moremenu .nav-link.active:hover {
+        background-color: #f8f9fa;
+        border-bottom-color: #0f6cbf; }
+    .moremenu .nav-link.focus, .moremenu .nav-link:focus {
+      position: relative; }
     .moremenu .nav-link[data-toggle="tab"] {
       display: inline-flex;
       flex-direction: column;
@@ -20996,12 +21004,27 @@ div.editor_atto_toolbar button .icon {
         background-color: #0f6cbf; }
     .moremenu .dropdownmoremenu > .dropdown-menu .dropdown-menu .dropdown-divider {
       display: none; }
+  .moremenu .dropdown-item[aria-current="true"],
+  .moremenu .dropdown-item.active {
+    background-color: transparent;
+    color: #1d2125; }
+    .moremenu .dropdown-item[aria-current="true"]:focus-within,
+    .moremenu .dropdown-item.active:focus-within {
+      background-color: #0f6cbf;
+      color: #fff; }
+      .moremenu .dropdown-item[aria-current="true"]:focus-within a,
+      .moremenu .dropdown-item.active:focus-within a {
+        color: #fff; }
+    .moremenu .dropdown-item[aria-current="true"]:before,
+    .moremenu .dropdown-item.active:before {
+      content: ""; }
 
 .primary-navigation .navigation {
   height: 60px; }
   .primary-navigation .navigation .nav-link {
     height: 60px;
-    color: #1d2125; }
+    color: #1d2125;
+    border-top: 3px solid transparent; }
 
 @media (max-width: 767.98px) {
   .primary-navigation {
@@ -21023,9 +21046,12 @@ div.editor_atto_toolbar button .icon {
   border-top: 1px solid #dee2e6;
   border-bottom: 1px solid #dee2e6; }
   .secondary-navigation .navigation {
-    border-color: #dee2e6;
     height: 60px;
-    margin-bottom: 1rem; }
+    background-color: #fff; }
+    .secondary-navigation .navigation .nav-tabs {
+      border: none; }
+      .secondary-navigation .navigation .nav-tabs .nav-link {
+        border-radius: initial; }
 
 body {
   -webkit-font-smoothing: antialiased;

@@ -17,8 +17,18 @@
         }
 
         &.active {
-            font-weight: bold;
-            border-bottom: solid 3px $primary;
+            background-color: $gray-100;
+            border-color: transparent;
+            border-bottom-color: $primary;
+            &:focus,
+            &:hover {
+                background-color: $gray-100;
+                border-bottom-color: $primary;
+            }
+        }
+        &.focus,
+        &:focus {
+            position: relative;
         }
         &[data-toggle="tab"] {
             display: inline-flex;
@@ -74,6 +84,22 @@
             .dropdown-divider {
                 display: none;
             }
+        }
+    }
+    /* TODO: MDL-72481: Update this style to also apply to aria-selected. */
+    .dropdown-item[aria-current="true"],
+    .dropdown-item.active {
+        background-color: transparent;
+        color: $dropdown-link-color;
+        &:focus-within {
+            background-color: $dropdown-link-active-bg;
+            color: $dropdown-link-active-color;
+            a {
+                color: $dropdown-link-active-color;
+            }
+        }
+        &:before {
+            content: $fa-var-check;
         }
     }
 }

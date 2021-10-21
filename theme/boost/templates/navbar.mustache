@@ -68,7 +68,7 @@
         <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
     </button>
 
-    <a href="{{{ config.wwwroot }}}" class="navbar-brand d-none d-md-flex align-items-center m-0 p-0 aabtn">
+    <a href="{{{ config.wwwroot }}}" class="navbar-brand d-none d-md-flex align-items-center m-0 mr-4 p-0 aabtn">
         {{# output.should_display_navbar_logo }}
             <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
         {{/ output.should_display_navbar_logo }}
@@ -98,7 +98,6 @@
                 {{> core/user_menu }}
             {{/usermenu}}
         </div>
-        <div class="divider border-left h-75 align-self-center ml-1 mr-3"></div>
         {{{ output.edit_switch }}}
     </div>
 </nav>

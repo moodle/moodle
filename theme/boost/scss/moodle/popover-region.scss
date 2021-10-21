@@ -202,12 +202,12 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
         font-size: 11px;
         line-height: 11px;
         position: absolute;
-        top: 5px;
+        top: $navbar-height / 4;
         right: 0;
     }
 
     .popover-region-container {
-        top: calc(#{$navbar-height} - (#{$spacer} / 2));
+        top: $navbar-height;
     }
 
 }
