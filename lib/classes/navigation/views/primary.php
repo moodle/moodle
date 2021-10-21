@@ -57,8 +57,8 @@ class primary extends view {
             }
         }
 
-        // Add a dummy mycourse link to a mycourses page.
-        $this->add(get_string('mycourses'), new \moodle_url('/course/index.php'), self::TYPE_ROOTNODE, null, 'courses');
+        // Add the mycourses link.
+        $this->add(get_string('mycourses'), new \moodle_url('/my/courses.php'), self::TYPE_ROOTNODE, null, 'courses');
 
         // Add the site admin node. We are using the settingsnav so as to avoid rechecking permissions again.
         $settingsnav = $this->page->settingsnav;

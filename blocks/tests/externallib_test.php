@@ -327,9 +327,14 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
         // Force a setting change to check the returned blocks settings.
         set_config('displaycategories', 0, 'block_myoverview');
 
+        $systempage = $DB->get_record('my_pages', array('userid' => null, 'name' => MY_PAGE_DEFAULT, 'private' => true));
         // Get the expected default blocks.
-        $alldefaultblocksordered = $DB->get_records_menu('block_instances',
-            array('pagetypepattern' => 'my-index'), 'defaultregion, defaultweight ASC', 'id, blockname');
+        $alldefaultblocksordered = $DB->get_records_menu(
+            'block_instances',
+            array('pagetypepattern' => 'my-index', 'subpagepattern' => $systempage->id),
+            'defaultregion, defaultweight ASC',
+            'id, blockname'
+        );
 
         $this->setUser($user);
 
@@ -368,8 +373,13 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $PAGE->set_url('/my/index.php');    // Need this because some internal API calls require the $PAGE url to be set.
 
+        $systempage = $DB->get_record('my_pages', array('userid' => null, 'name' => MY_PAGE_DEFAULT, 'private' => true));
         // Get the expected default blocks.
-        $alldefaultblocks = $DB->get_records_menu('block_instances', array('pagetypepattern' => 'my-index'), '', 'id, blockname');
+        $alldefaultblocks = $DB->get_records_menu(
+            'block_instances', array('pagetypepattern' => 'my-index', 'subpagepattern' => $systempage->id),
+            '',
+            'id, blockname'
+        );
 
         // Now, add a sticky block.
         $page = new moodle_page();
@@ -411,8 +421,14 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $PAGE->set_url('/my/index.php');    // Need this because some internal API calls require the $PAGE url to be set.
 
+        $systempage = $DB->get_record('my_pages', array('userid' => null, 'name' => MY_PAGE_DEFAULT, 'private' => true));
         // Get the expected default blocks.
-        $alldefaultblocks = $DB->get_records_menu('block_instances', array('pagetypepattern' => 'my-index'), '', 'id, blockname');
+        $alldefaultblocks = $DB->get_records_menu(
+            'block_instances',
+            array('pagetypepattern' => 'my-index', 'subpagepattern' => $systempage->id),
+            '',
+            'id, blockname'
+        );
 
         // Add a custom block.
         $page = new moodle_page();

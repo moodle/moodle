@@ -717,6 +717,9 @@ class behat_navigation extends behat_base {
             case 'Homepage':
                 return new moodle_url('/');
 
+            case 'My courses':
+                return new moodle_url('/my/courses.php');
+
             case 'Admin notifications':
                 return new moodle_url('/admin/');
 

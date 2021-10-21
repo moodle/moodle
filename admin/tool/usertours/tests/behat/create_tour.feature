@@ -20,7 +20,7 @@ Feature: Add a new user tour
       | Display in middle of page   | Welcome           | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful |
     And I add steps to the "First tour" tour:
       | targettype                  | targetvalue_block | Title             | Content |
-      | Block                       | Course overview   | Course overview   | This area shows you what's happening in some of your courses  |
+      | Block                       | Timeline          | Timeline          | This is the Timeline. All of your upcoming activities can be found here |
       | Block                       | Calendar          | Calendar          | This is the Calendar. All of your assignments and due dates can be found here |
     And I add steps to the "First tour" tour:
       | targettype                  | targetvalue_selector | Title             | Content |
@@ -28,7 +28,7 @@ Feature: Add a new user tour
     When I am on homepage
     Then I should see "Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful"
     And I click on "Next" "button" in the "[data-role='flexitour-step']" "css_element"
-    And I should see "This area shows you what's happening in some of your courses"
+    And I should see "This is the Timeline. All of your upcoming activities can be found here"
     And I should not see "This is the Calendar. All of your assignments and due dates can be found here"
     And I click on "Next" "button" in the "[data-role='flexitour-step']" "css_element"
     And I should see "This is the Calendar. All of your assignments and due dates can be found here"
@@ -95,7 +95,7 @@ Feature: Add a new user tour
       | Display in middle of page | Welcome | First step of the Tour |
     And I add steps to the "Steps tour" tour:
       | targettype | targetvalue_block | Title           | Content                 |
-      | Block      | Course overview   | Course overview | Second step of the Tour |
+      | Block      | Timeline          | Timeline        | Second step of the Tour |
       | Block      | Calendar          | Calendar        | Third step of the Tour  |
     When I am on homepage
     Then I should see "First step of the Tour"
@@ -129,7 +129,7 @@ Feature: Add a new user tour
       | Display in middle of page | Welcome | First step of the Tour |
     And I add steps to the "Steps tour" tour:
       | targettype | targetvalue_block | Title           | Content                 |
-      | Block      | Course overview   | Course overview | Second step of the Tour |
+      | Block      | Timeline          | Timeline        | Second step of the Tour |
       | Block      | Calendar          | Calendar        | Third step of the Tour  |
     When I am on homepage
     Then I should see "First step of the Tour"

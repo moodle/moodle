@@ -2647,7 +2647,30 @@ function blocks_add_default_system_blocks() {
         $subpagepattern = null;
     }
 
-    $newblocks = array('timeline', 'private_files', 'badges', 'calendar_month');
-    $newcontent = array('myoverview');
-    $page->blocks->add_blocks(array(BLOCK_POS_RIGHT => $newblocks, 'content' => $newcontent), 'my-index', $subpagepattern);
+    if ($defaultmycoursespage = $DB->get_record('my_pages', array('userid' => null, 'name' => '__courses', 'private' => 0))) {
+        $mycoursesubpagepattern = $defaultmycoursespage->id;
+    } else {
+        $mycoursesubpagepattern = null;
+    }
+
+    $page->blocks->add_blocks([
+        BLOCK_POS_RIGHT => [
+            'private_files',
+            'badges',
+        ],
+        'content' => [
+            'timeline',
+            'calendar_month',
+        ]],
+        'my-index',
+        $subpagepattern
+    );
+
+    $page->blocks->add_blocks([
+        'content' => [
+            'myoverview'
+        ]],
+        'my-index',
+        $mycoursesubpagepattern
+    );
 }

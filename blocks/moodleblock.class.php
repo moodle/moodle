@@ -249,7 +249,7 @@ class block_base {
             $this->arialabel = $bc->arialabel;
         }
 
-        if ($this->page->user_is_editing()) {
+        if ($this->page->user_is_editing() && $this->instance_can_be_edited()) {
             $bc->controls = $this->page->blocks->edit_controls($this);
         } else {
             // we must not use is_empty on hidden blocks
@@ -689,6 +689,15 @@ class block_base {
      * @return bool
      */
     public function instance_can_be_collapsed() {
+        return true;
+    }
+
+    /**
+     * If overridden and set to false by the block it will not be editable.
+     *
+     * @return bool
+     */
+    public function instance_can_be_edited() {
         return true;
     }
 
