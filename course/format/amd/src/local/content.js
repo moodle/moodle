@@ -182,7 +182,8 @@ export default class Component extends BaseComponent {
      * Most course module HTML is still strongly backend dependant.
      * Some changes require to get a new version af the module.
      *
-     * @param {Object} update the state update data
+     * @param {Object} param
+     * @param {Object} param.element update the state update data
      */
     _reloadCm({element}) {
         const cmitem = this.getElement(this.selectors.CM, element.id);
@@ -194,7 +195,8 @@ export default class Component extends BaseComponent {
     /**
      * Update section collapsed.
      *
-     * @param {Object} details the update details.
+     * @param {object} args
+     * @param {Object} args.element The element to update
      */
     _refreshSectionCollapsed({element}) {
         const target = this.getElement(this.selectors.SECTION, element.id);
@@ -234,7 +236,8 @@ export default class Component extends BaseComponent {
      * Course formats can override the section title rendering so the frontend depends heavily on backend
      * rendering. Luckily in edit mode we can trigger a title update using the inplace_editable module.
      *
-     * @param {Object} details the update details.
+     * @param {Object} param
+     * @param {Object} param.element details the update details.
      */
     _refreshSectionNumber({element}) {
         // Find the element.
@@ -272,8 +275,8 @@ export default class Component extends BaseComponent {
     /**
      * Refresh a section cm list.
      *
-     * @param {details} details the update details
-     * @property {object} details.element the state object
+     * @param {Object} param
+     * @param {Object} param.element details the update details.
      */
     _refreshSectionCmlist({element}) {
         const cmlist = element.cmlist ?? [];
@@ -289,7 +292,8 @@ export default class Component extends BaseComponent {
     /**
      * Refresh the section list.
      *
-     * @param {Object} details the update details.
+     * @param {Object} param
+     * @param {Object} param.element details the update details.
      */
     _refreshCourseSectionlist({element}) {
         const sectionlist = element.sectionlist ?? [];
@@ -361,8 +365,8 @@ export default class Component extends BaseComponent {
      * Most course module HTML is still strongly backend dependant.
      * Some changes require to get a new version of the module.
      *
-     * @param {details} param0 the watcher details
-     * @property {object} param0.element the state object
+     * @param {object} param0 the watcher details
+     * @param {object} param0.element the state object
      */
     _reloadCm({element}) {
         const cmitem = this.getElement(this.selectors.CM, element.id);

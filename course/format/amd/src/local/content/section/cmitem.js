@@ -69,7 +69,8 @@ export default class extends DndCmItem {
     /**
      * Update a course index cm using the state information.
      *
-     * @param {Object} details the update details.
+     * @param {object} param
+     * @param {Object} param.element details the update details.
      */
     _refreshCm({element}) {
         // Update classes.

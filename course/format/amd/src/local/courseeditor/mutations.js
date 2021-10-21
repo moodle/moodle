@@ -285,10 +285,10 @@ export default class {
     }
 
     /**
-    * Get the full updated state data of the course.
-    *
-    * @param {StateManager} stateManager the current state
-    */
+     * Get the full updated state data of the course.
+     *
+     * @param {StateManager} stateManager the current state
+     */
     async courseState(stateManager) {
         const course = stateManager.get('course');
         const updates = await this._callEditWebservice('course_state', course.id);

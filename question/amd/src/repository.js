@@ -28,8 +28,10 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
      * Submit the form data for the question tags form.
      *
      * @method submitTagCreateUpdateForm
+     * @param  {number} questionId
+     * @param  {number} contextId
      * @param {string} formdata The URL encoded values from the form
-     * @return {promise}
+     * @returns {promise}
      */
     var submitTagCreateUpdateForm = function(questionId, contextId, formdata) {
         window.console.warn('warn: The core_question/repository has been deprecated.' +

@@ -1401,7 +1401,7 @@ function(
      * @param {Object} header The header container element.
      * @param {Object} body The body container element.
      * @param {Object} footer The footer container element.
-     * @param {Bool} isFavourite is this conversation a favourite.
+     * @param {Bool} state is this conversation a favourite.
      */
     var renderIsFavourite = function(header, body, footer, state) {
         var favouriteIcon = header.find(SELECTORS.FAVOURITE_ICON_CONTAINER);

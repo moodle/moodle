@@ -97,6 +97,8 @@ define([
     /**
      * This will add a visual indicator to the calendar UI to
      * indicate which nav link is a valid drop zone.
+     *
+     * @param {Event} e
      */
     var dragstartHandler = function(e) {
         // Make sure the drag event is for a calendar event.

@@ -17,7 +17,6 @@
  * Module to handle report AJAX requests
  *
  * @module      core_reportbuilder/local/repository/reports
- * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
