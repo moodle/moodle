@@ -224,7 +224,7 @@ class file_storage {
     /**
      * Returns an image file that represent the given stored file as a preview
      *
-     * At the moment, only GIF, JPEG and PNG files are supported to have previews. In the
+     * At the moment, only GIF, JPEG, PNG and SVG files are supported to have previews. In the
      * future, the support for other mimetypes can be added, too (eg. generate an image
      * preview of PDF, text documents etc).
      *
@@ -410,7 +410,9 @@ class file_storage {
         if ($mimetype === 'image/gif' or $mimetype === 'image/jpeg' or $mimetype === 'image/png') {
             // make a preview of the image
             $data = $this->create_imagefile_preview($file, $mode);
-
+        } else if ($mimetype === 'image/svg+xml') {
+            // If we have an SVG image, then return the original (scalable) file.
+            return $file;
         } else {
             // unable to create the preview of this mimetype yet
             return false;
@@ -2229,7 +2231,15 @@ class file_storage {
         if (file_exists($fullpath)) {
             // The type is unknown. Attempt to look up the file type now.
             $finfo = new finfo(FILEINFO_MIME_TYPE);
-            return mimeinfo_from_type('type', $finfo->file($fullpath));
+
+            // See https://bugs.php.net/bug.php?id=79045 - finfo isn't consistent with returned type, normalize into value
+            // that is used internally by the {@see core_filetypes} class and the {@see mimeinfo_from_type} call below.
+            $mimetype = $finfo->file($fullpath);
+            if ($mimetype === 'image/svg') {
+                $mimetype = 'image/svg+xml';
+            }
+
+            return mimeinfo_from_type('type', $mimetype);
         }
 
         return 'document/unknown';
