@@ -2721,12 +2721,12 @@ function calendar_add_event_allowed($event) {
  */
 function calendar_get_pollinterval_choices() {
     return array(
-        '0' => new \lang_string('never', 'calendar'),
-        HOURSECS => new \lang_string('hourly', 'calendar'),
-        DAYSECS => new \lang_string('daily', 'calendar'),
-        WEEKSECS => new \lang_string('weekly', 'calendar'),
-        '2628000' => new \lang_string('monthly', 'calendar'),
-        YEARSECS => new \lang_string('annually', 'calendar')
+        '0' => get_string('never', 'calendar'),
+        HOURSECS => get_string('hourly', 'calendar'),
+        DAYSECS => get_string('daily', 'calendar'),
+        WEEKSECS => get_string('weekly', 'calendar'),
+        '2628000' => get_string('monthly', 'calendar'),
+        YEARSECS => get_string('annually', 'calendar')
     );
 }
 
@@ -2965,42 +2965,6 @@ function calendar_add_icalendar_event($event, $unused, $subscriptionid, $timezon
 }
 
 /**
- * Update a subscription from the form data in one of the rows in the existing subscriptions table.
- *
- * @param int $subscriptionid The ID of the subscription we are acting upon.
- * @param int $pollinterval The poll interval to use.
- * @param int $action The action to be performed. One of update or remove.
- * @throws dml_exception if invalid subscriptionid is provided
- * @return string A log of the import progress, including errors
- */
-function calendar_process_subscription_row($subscriptionid, $pollinterval, $action) {
-    // Fetch the subscription from the database making sure it exists.
-    $sub = calendar_get_subscription($subscriptionid);
-
-    // Update or remove the subscription, based on action.
-    switch ($action) {
-        case CALENDAR_SUBSCRIPTION_UPDATE:
-            // Skip updating file subscriptions.
-            if (empty($sub->url)) {
-                break;
-            }
-            $sub->pollinterval = $pollinterval;
-            calendar_update_subscription($sub);
-
-            // Update the events.
-            return "<p>" . get_string('subscriptionupdated', 'calendar', $sub->name) . "</p>" .
-                calendar_update_subscription_events($subscriptionid);
-        case CALENDAR_SUBSCRIPTION_REMOVE:
-            calendar_delete_subscription($subscriptionid);
-            return get_string('subscriptionremoved', 'calendar', $sub->name);
-            break;
-        default:
-            break;
-    }
-    return '';
-}
-
-/**
  * Delete subscription and all related events.
  *
  * @param int|stdClass $subscription subscription or it's id, which needs to be deleted.
@@ -3052,6 +3016,7 @@ function calendar_get_icalendar($url) {
     global $CFG;
 
     require_once($CFG->libdir . '/filelib.php');
+    require_once($CFG->libdir . '/bennu/bennu.inc.php');
 
     $curl = new \curl();
     $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => 1, 'CURLOPT_MAXREDIRS' => 5));
@@ -3072,17 +3037,17 @@ function calendar_get_icalendar($url) {
  * Import events from an iCalendar object into a course calendar.
  *
  * @param iCalendar $ical The iCalendar object.
- * @param int $unused Deprecated
- * @param int $subscriptionid The subscription ID.
- * @return string A log of the import progress, including errors.
+ * @param int|null $subscriptionid The subscription ID.
+ * @return array A log of the import progress, including errors.
  */
-function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid = null) {
+function calendar_import_events_from_ical(iCalendar $ical, int $subscriptionid = null): array {
     global $DB;
 
-    $return = '';
+    $errors = [];
     $eventcount = 0;
     $updatecount = 0;
     $skippedcount = 0;
+    $deletedcount = 0;
 
     // Large calendars take a while...
     if (!CLI_SCRIPT) {
@@ -3111,18 +3076,15 @@ function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid
                 $skippedcount++;
                 break;
             case 0:
-                $return .= '<p>' . get_string('erroraddingevent', 'calendar') . ': ';
                 if (empty($event->properties['SUMMARY'])) {
-                    $return .= '(' . get_string('notitle', 'calendar') . ')';
+                    $errors[] = '(' . get_string('notitle', 'calendar') . ')';
                 } else {
-                    $return .= $event->properties['SUMMARY'][0]->value;
+                    $errors[] = $event->properties['SUMMARY'][0]->value;
                 }
-                $return .= "</p>\n";
                 break;
         }
     }
 
-    $return .= html_writer::start_tag('ul');
     $existing = $DB->get_field('event_subscriptions', 'lastupdated', ['id' => $subscriptionid]);
     if (!empty($existing)) {
         $eventsuuids = $DB->get_records_menu('event', ['subscriptionid' => $subscriptionid], '', 'id, uuid');
@@ -3137,16 +3099,21 @@ function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid
             }
             if (!empty($tobedeleted)) {
                 $DB->delete_records_list('event', 'id', $tobedeleted);
-                $return .= html_writer::tag('li', get_string('eventsdeleted', 'calendar', count($tobedeleted)));
+                $deletedcount = count($tobedeleted);
             }
         }
     }
 
-    $return .= html_writer::tag('li', get_string('eventsimported', 'calendar', $eventcount));
-    $return .= html_writer::tag('li', get_string('eventsskipped', 'calendar', $skippedcount));
-    $return .= html_writer::tag('li', get_string('eventsupdated', 'calendar', $updatecount));
-    $return .= html_writer::end_tag('ul');
-    return $return;
+    $result = [
+        'eventsimported' => $eventcount,
+        'eventsskipped' => $skippedcount,
+        'eventsupdated' => $updatecount,
+        'eventsdeleted' => $deletedcount,
+        'haserror' => !empty($errors),
+        'errors' => $errors,
+    ];
+
+    return $result;
 }
 
 /**
@@ -3164,7 +3131,7 @@ function calendar_update_subscription_events($subscriptionid) {
     }
 
     $ical = calendar_get_icalendar($sub->url);
-    $return = calendar_import_icalendar_events($ical, null, $subscriptionid);
+    $return = calendar_import_events_from_ical($ical, $subscriptionid);
     $sub->lastupdated = time();
 
     calendar_update_subscription($sub);
@@ -3978,4 +3945,37 @@ function calendar_get_export_import_link_params(): array {
     }
 
     return $params;
+}
+
+/**
+ * Implements the inplace editable feature.
+ *
+ * @param string $itemtype Type of the inplace editable element
+ * @param int $itemid Id of the item to edit
+ * @param int $newvalue New value of the item
+ * @return \core\output\inplace_editable
+ */
+function calendar_inplace_editable(string $itemtype, int $itemid, int $newvalue): \core\output\inplace_editable {
+    global $OUTPUT;
+
+    if ($itemtype === 'refreshinterval') {
+
+        $subscription = calendar_get_subscription($itemid);
+        $context = calendar_get_calendar_context($subscription);
+        \external_api::validate_context($context);
+
+        $updateresult = \core_calendar\output\refreshintervalcollection::update($itemid, $newvalue);
+
+        $refreshresults = calendar_update_subscription_events($itemid);
+        \core\notification::add($OUTPUT->render_from_template(
+            'core_calendar/subscription_update_result',
+            array_merge($refreshresults, [
+                'subscriptionname' => s($subscription->name),
+            ])
+        ), \core\notification::INFO);
+
+        return $updateresult;
+    }
+
+    \external_api::validate_context(context_system::instance());
 }

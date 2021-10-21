@@ -371,8 +371,6 @@ class core_calendar_renderer extends plugin_renderer_base {
             get_string('colpoll', 'calendar'),
             get_string('colactions', 'calendar')
         );
-        $table->align = array('left', 'left', 'left', 'left', 'left');
-        $table->width = '100%';
         $table->data  = array();
         $table->id = 'subscription_details_table';
 
@@ -394,20 +392,29 @@ class core_calendar_renderer extends plugin_renderer_base {
             }
 
             $type = $sub->eventtype . 'events';
+            $calendarname = new html_table_cell($label);
+            $calendarname->header = true;
 
-            $table->data[] = new html_table_row(array(
-                new html_table_cell($label),
+            $tablerow = new html_table_row(array(
+                $calendarname,
                 new html_table_cell($lastupdated),
                 new html_table_cell(get_string($type, 'calendar')),
                 new html_table_cell($this->render_subscription_update_interval($sub)),
-                new html_table_cell($this->subscription_action_form($sub))
+                new html_table_cell($this->subscription_action_links())
             ));
+            $tablerow->attributes += [
+                'data-subid' => $sub->id,
+                'data-subname' => $sub->name
+            ];
+            $table->data[] = $tablerow;
         }
 
         $out  = $this->output->box_start('generalbox calendarsubs');
 
         $out .= html_writer::table($table);
         $out .= $this->output->box_end();
+
+        $this->page->requires->js_call_amd('core_calendar/manage_subscriptions', 'init');
         return $out;
     }
 
@@ -418,51 +425,24 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function render_subscription_update_interval(stdClass $subscription): string {
-        // Assemble form for the subscription row.
-        $output = html_writer::start_tag('form',
-                ['action' => new moodle_url('/calendar/managesubscriptions.php', calendar_get_export_import_link_params()),
-                        'method' => 'post']);
         if (empty($subscription->url)) {
-            $output .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'pollinterval', 'value' => '0']);
-        } else {
-            // Assemble pollinterval control.
-            $output .= html_writer::start_div();
-            $output .= html_writer::start_tag('select', ['name' => 'pollinterval', 'class' => 'custom-select']);
-            foreach (calendar_get_pollinterval_choices() as $k => $v) {
-                $attributes = array();
-                if ($k == $subscription->pollinterval) {
-                    $attributes['selected'] = 'selected';
-                }
-                $attributes['value'] = $k;
-                $output .= html_writer::tag('option', $v, $attributes);
-            }
-            $output .= html_writer::end_tag('select');
-            $output .= html_writer::end_div();
+            return '';
         }
 
-        return $output;
+        $tmpl = new \core_calendar\output\refreshintervalcollection($subscription);
+        return $this->output->render_from_template('core/inplace_editable', $tmpl->export_for_template($this->output));
     }
 
     /**
      * Creates a form to perform actions on a given subscription.
      *
-     * @param stdClass $subscription
      * @return string
      */
-    protected function subscription_action_form($subscription) {
-        $html = html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
-        $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $subscription->id));
-        $html .= html_writer::start_tag('div', array('class' => 'btn-group float-left'));
-        if (!empty($subscription->url)) {
-            $html .= html_writer::tag('button', get_string('update'), array('type' => 'submit', 'name' => 'action',
-                    'class' => 'btn btn-link',
-                    'value' => CALENDAR_SUBSCRIPTION_UPDATE));
-        }
-        $html .= html_writer::tag('button', get_string('remove'), array('type' => 'submit', 'name' => 'action',
-                'class' => 'btn btn-link',
-                'value' => CALENDAR_SUBSCRIPTION_REMOVE));
+    protected function subscription_action_links(): string {
+        $html = html_writer::start_tag('div', array('class' => 'btn-group float-left'));
+        $html .= html_writer::span(html_writer::link('#', get_string('delete'),
+            ['data-action' => 'delete-subscription']), '');
         $html .= html_writer::end_tag('div');
-        $html .= html_writer::end_tag('form');
         return $html;
     }
 
@@ -476,5 +456,24 @@ class core_calendar_renderer extends plugin_renderer_base {
             'eventtypes' => calendar_get_filter_types(),
         ];
         return $this->render_from_template('core_calendar/event_filter', $data);
+    }
+
+    /**
+     * Render the calendar import result.
+     *
+     * @param array $result Import result
+     * @return string|null
+     */
+    public function render_import_result(array $result): ?string {
+        $data = [
+            'eventsimported' => $result['eventsimported'],
+            'eventsskipped' => $result['eventsskipped'],
+            'eventsupdated' => $result['eventsupdated'],
+            'eventsdeleted' => $result['eventsdeleted'],
+            'haserror' => $result['haserror'],
+            'errors' => $result['errors']
+        ];
+
+        return $this->render_from_template('core_calendar/subscription_update_result', $data);
     }
 }

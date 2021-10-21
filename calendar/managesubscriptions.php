@@ -30,10 +30,6 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 // Required use.
 $courseid = optional_param('course', null, PARAM_INT);
 $categoryid = optional_param('category', null, PARAM_INT);
-// Used for processing subscription actions.
-$subscriptionid = optional_param('id', 0, PARAM_INT);
-$pollinterval  = optional_param('pollinterval', 0, PARAM_INT);
-$action = optional_param('action', '', PARAM_INT);
 
 $url = new moodle_url('/calendar/managesubscriptions.php');
 if ($courseid != SITEID && !empty($courseid)) {
@@ -73,22 +69,6 @@ if (!calendar_user_can_add_event($course)) {
 }
 
 $PAGE->navbar->add(get_string('managesubscriptions', 'calendar'));
-
-if (!empty($subscriptionid)) {
-    // The user is wanting to perform an action upon an existing subscription.
-    require_sesskey(); // Must have sesskey for all actions.
-    if (calendar_can_edit_subscription($subscriptionid)) {
-        try {
-            $importresults = calendar_process_subscription_row($subscriptionid, $pollinterval, $action);
-            redirect($PAGE->url, $importresults);
-        } catch (moodle_exception $e) {
-            // If exception caught, then user should be redirected to page where he/she came from.
-            print_error($e->errorcode, $e->module, $PAGE->url);
-        }
-    } else {
-        print_error('nopermissions', 'error', $PAGE->url, get_string('managesubscriptions', 'calendar'));
-    }
-}
 
 $types = calendar_get_allowed_event_types($courseid);
 

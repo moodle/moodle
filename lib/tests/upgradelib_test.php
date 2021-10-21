@@ -1276,7 +1276,7 @@ class upgradelib_test extends advanced_testcase {
         $ical->unserialize($calendar);
 
         // Import subscription events.
-        calendar_import_icalendar_events($ical, null, $id);
+        calendar_import_events_from_ical($ical, $id);
 
         // Subscription should have added 18 events.
         $eventscount = $DB->count_records('event');

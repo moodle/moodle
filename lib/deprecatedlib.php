@@ -3428,3 +3428,124 @@ function get_all_user_name_fields($returnsql = false, $tableprefix = null, $pref
     }
     return $alternatenames;
 }
+
+/**
+ * Update a subscription from the form data in one of the rows in the existing subscriptions table.
+ *
+ * @param int $subscriptionid The ID of the subscription we are acting upon.
+ * @param int $pollinterval The poll interval to use.
+ * @param int $action The action to be performed. One of update or remove.
+ * @throws dml_exception if invalid subscriptionid is provided
+ * @return string A log of the import progress, including errors
+ * @deprecated since Moodle 4.0 MDL-71953
+ */
+function calendar_process_subscription_row($subscriptionid, $pollinterval, $action) {
+    debugging('calendar_process_subscription_row() is deprecated.', DEBUG_DEVELOPER);
+    // Fetch the subscription from the database making sure it exists.
+    $sub = calendar_get_subscription($subscriptionid);
+
+    // Update or remove the subscription, based on action.
+    switch ($action) {
+        case CALENDAR_SUBSCRIPTION_UPDATE:
+            // Skip updating file subscriptions.
+            if (empty($sub->url)) {
+                break;
+            }
+            $sub->pollinterval = $pollinterval;
+            calendar_update_subscription($sub);
+
+            // Update the events.
+            return "<p>" . get_string('subscriptionupdated', 'calendar', $sub->name) . "</p>" .
+                calendar_update_subscription_events($subscriptionid);
+        case CALENDAR_SUBSCRIPTION_REMOVE:
+            calendar_delete_subscription($subscriptionid);
+            return get_string('subscriptionremoved', 'calendar', $sub->name);
+            break;
+        default:
+            break;
+    }
+    return '';
+}
+
+/**
+ * Import events from an iCalendar object into a course calendar.
+ *
+ * @param iCalendar $ical The iCalendar object.
+ * @param int $unused Deprecated
+ * @param int $subscriptionid The subscription ID.
+ * @return string A log of the import progress, including errors.
+ */
+function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid = null) {
+    debugging('calendar_import_icalendar_events() is deprecated. Please use calendar_import_events_from_ical() instead.',
+        DEBUG_DEVELOPER);
+    global $DB;
+
+    $return = '';
+    $eventcount = 0;
+    $updatecount = 0;
+    $skippedcount = 0;
+
+    // Large calendars take a while...
+    if (!CLI_SCRIPT) {
+        \core_php_time_limit::raise(300);
+    }
+
+    // Grab the timezone from the iCalendar file to be used later.
+    if (isset($ical->properties['X-WR-TIMEZONE'][0]->value)) {
+        $timezone = $ical->properties['X-WR-TIMEZONE'][0]->value;
+    } else {
+        $timezone = 'UTC';
+    }
+
+    $icaluuids = [];
+    foreach ($ical->components['VEVENT'] as $event) {
+        $icaluuids[] = $event->properties['UID'][0]->value;
+        $res = calendar_add_icalendar_event($event, null, $subscriptionid, $timezone);
+        switch ($res) {
+            case CALENDAR_IMPORT_EVENT_UPDATED:
+                $updatecount++;
+                break;
+            case CALENDAR_IMPORT_EVENT_INSERTED:
+                $eventcount++;
+                break;
+            case CALENDAR_IMPORT_EVENT_SKIPPED:
+                $skippedcount++;
+                break;
+            case 0:
+                $return .= '<p>' . get_string('erroraddingevent', 'calendar') . ': ';
+                if (empty($event->properties['SUMMARY'])) {
+                    $return .= '(' . get_string('notitle', 'calendar') . ')';
+                } else {
+                    $return .= $event->properties['SUMMARY'][0]->value;
+                }
+                $return .= "</p>\n";
+                break;
+        }
+    }
+
+    $return .= html_writer::start_tag('ul');
+    $existing = $DB->get_field('event_subscriptions', 'lastupdated', ['id' => $subscriptionid]);
+    if (!empty($existing)) {
+        $eventsuuids = $DB->get_records_menu('event', ['subscriptionid' => $subscriptionid], '', 'id, uuid');
+
+        $icaleventscount = count($icaluuids);
+        $tobedeleted = [];
+        if (count($eventsuuids) > $icaleventscount) {
+            foreach ($eventsuuids as $eventid => $eventuuid) {
+                if (!in_array($eventuuid, $icaluuids)) {
+                    $tobedeleted[] = $eventid;
+                }
+            }
+            if (!empty($tobedeleted)) {
+                $DB->delete_records_list('event', 'id', $tobedeleted);
+                $return .= html_writer::tag('li', get_string('eventsdeleted', 'calendar', count($tobedeleted)));
+            }
+        }
+    }
+
+    $return .= html_writer::tag('li', get_string('eventsimported', 'calendar', $eventcount));
+    $return .= html_writer::tag('li', get_string('eventsskipped', 'calendar', $skippedcount));
+    $return .= html_writer::tag('li', get_string('eventsupdated', 'calendar', $updatecount));
+    $return .= html_writer::end_tag('ul');
+    return $return;
+}
