@@ -123,10 +123,10 @@ class language_menu implements \renderable, \templatable {
      * @param \renderer_base $output
      * @return \stdClass action_menu data export.
      */
-    public function export_for_action_menu(\renderer_base $output): \stdClass {
+    public function export_for_action_menu(\renderer_base $output): ?\stdClass {
         $languagedata = $this->export_for_template($output);
         if (empty($languagedata)) {
-            return [];
+            return null;
         }
         $langmenu = new \action_menu();
         $menuname = \get_string('language');
