@@ -66,15 +66,15 @@ class block_myoverview_testcase extends advanced_testcase {
         $this->setUser($user);
         $context = context_user::instance($user->id);
 
-        if (!$currentpage = my_get_page($user->id, MY_PAGE_PRIVATE)) {
+        if (!$currentpage = my_get_page($user->id, MY_PAGE_PUBLIC, MY_PAGE_COURSES)) {
             throw new moodle_exception('mymoodlesetup');
         }
 
-        $PAGE->set_url('/my/index.php');    // Need this because some internal API calls require the $PAGE url to be set.
+        $PAGE->set_url('/my/courses.php');    // Need this because some internal API calls require the $PAGE url to be set.
         $PAGE->set_context($context);
         $PAGE->set_pagelayout('mydashboard');
         $PAGE->set_pagetype('my-index');
-        $PAGE->blocks->add_region('content');   // Need to add this special regition to retrieve the central blocks.
+        $PAGE->blocks->add_region('content');   // Need to add this special region to retrieve the central blocks.
         $PAGE->set_subpage($currentpage->id);
 
         // Load the block instances for all the regions.

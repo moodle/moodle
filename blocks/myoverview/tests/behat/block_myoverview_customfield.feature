@@ -35,7 +35,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1             | block_myoverview |
       | customfiltergrouping       | checkboxfield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "Checkbox field: Yes" "link" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
@@ -48,7 +48,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1             | block_myoverview |
       | customfiltergrouping       | checkboxfield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "Checkbox field: No" "link" in the "Course overview" "block"
     Then I should not see "Course 1" in the "Course overview" "block"
@@ -61,7 +61,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1         | block_myoverview |
       | customfiltergrouping       | datefield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "1 February 2001" "link" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
@@ -74,7 +74,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1         | block_myoverview |
       | customfiltergrouping       | datefield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "6 August 1980" "link" in the "Course overview" "block"
     Then I should not see "Course 1" in the "Course overview" "block"
@@ -87,7 +87,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1         | block_myoverview |
       | customfiltergrouping       | datefield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "No Date field" "link" in the "Course overview" "block"
     Then I should not see "Course 1" in the "Course overview" "block"
@@ -100,7 +100,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1           | block_myoverview |
       | customfiltergrouping       | selectfield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     And I should not see "Option 4" in the "Course overview" "block"
     When I click on "Option 1" "link" in the "Course overview" "block"
@@ -114,7 +114,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1           | block_myoverview |
       | customfiltergrouping       | selectfield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "Option 2" "link" in the "Course overview" "block"
     Then I should not see "Course 1" in the "Course overview" "block"
@@ -127,7 +127,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1           | block_myoverview |
       | customfiltergrouping       | selectfield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "No Select field" "link" in the "Course overview" "block"
     Then I should not see "Course 1" in the "Course overview" "block"
@@ -140,7 +140,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1         | block_myoverview |
       | customfiltergrouping       | textfield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "fish" "link" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
@@ -153,7 +153,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1         | block_myoverview |
       | customfiltergrouping       | textfield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "dog" "link" in the "Course overview" "block"
     Then I should not see "Course 1" in the "Course overview" "block"
@@ -166,7 +166,7 @@ Feature: The my overview block allows users to group courses by custom fields
     Given the following config values are set as admin:
       | displaygroupingcustomfield | 1         | block_myoverview |
       | customfiltergrouping       | textfield | block_myoverview |
-    And I log in as "student1"
+    And I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     When I click on "No Text field" "link" in the "Course overview" "block"
     Then I should not see "Course 1" in the "Course overview" "block"
@@ -191,7 +191,7 @@ Feature: The my overview block allows users to group courses by custom fields
     And I set the field "Visible to" to "Nobody"
     And I press "Save changes"
     And I log out
-    When I log in as "student1"
+    When I am on the "My courses" page logged in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"
     Then I should not see "penguin" in the "Course overview" "block"
     Then I should not see "No text field" in the "Course overview" "block"
