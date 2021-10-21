@@ -48,13 +48,12 @@ export default class Component extends BaseComponent {
             CM: `[data-for='cmitem']`,
             TOGGLER: `[data-action="togglecoursecontentsection"]`,
             COLLAPSE: `[data-toggle="collapse"]`,
+            // Formats can override the activity tag but a default one is needed to create new elements.
+            ACTIVITYTAG: 'li',
         };
         // Default classes to toggle on refresh.
         this.classes = {
             COLLAPSED: `collapsed`,
-            // Formats can override the activity tag but a default one is needed to create new elements.
-            ACTIVITYTAG: 'li',
-
             // Course content classes.
             ACTIVITY: `activity`,
             STATEDREADY: `stateready`,
@@ -89,6 +88,16 @@ export default class Component extends BaseComponent {
         this._indexContents();
         // Activate section togglers.
         this.addEventListener(this.element, 'click', this._sectionTogglers);
+
+        if (this.reactive.supportComponents) {
+            // Actions are only available in edit mode.
+            if (this.reactive.isEditing) {
+                new DispatchActions(this);
+            }
+
+            // Mark content as state ready.
+            this.element.classList.add(this.classes.STATEDREADY);
+        }
     }
 
     /**
@@ -120,30 +129,6 @@ export default class Component extends BaseComponent {
                     },
                 );
             }
-        }
-    }
-
-    /**
-     *
-     * Course content elements could not provide JS Components because the elements HTML is applied
-     * directly from the course actions. To keep internal components updated this module keeps
-     * a list of the active components and mark them as "indexed". This way when any action replace
-     * the HTML this component will recreate the components an add any necessary event listener.
-     *
-     * Format plugins can override this method to provide extra logic to the course frontend.
-     *
-     */
-    stateReady() {
-        this._indexContents();
-
-        if (this.reactive.supportComponents) {
-            // Actions are only available in edit mode.
-            if (this.reactive.isEditing) {
-                new DispatchActions(this);
-            }
-
-            // Mark content as state ready.
-            this.element.classList.add(this.classes.STATEDREADY);
         }
     }
 
