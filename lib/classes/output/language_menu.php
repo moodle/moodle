@@ -148,9 +148,9 @@ class language_menu implements \renderable, \templatable {
      * @param \renderer_base $output
      * @return \stdClass single_select data export.
      */
-    public function export_for_single_select(\renderer_base $output): \stdClass {
+    public function export_for_single_select(\renderer_base $output): ?\stdClass {
         if (!$this->show_language_menu()) {
-            return '';
+            return null;
         }
         $singleselect = new \single_select($this->page->url, 'lang', $this->langs, $this->currentlang, null);
         $singleselect->label = get_accesshide(\get_string('language'));
