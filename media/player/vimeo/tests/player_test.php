@@ -131,4 +131,104 @@ class media_vimeo_testcase extends advanced_testcase {
         $this->assertMatchesRegularExpression('~</iframe>~', $content);
         $this->assertMatchesRegularExpression('~width="123" height="35"~', $content);
     }
+
+    /**
+     * Test embedding without media filter (for example for displaying URL resorce)
+     * and test that player plugin is parsing the URL with the code.
+     */
+    public function test_embed_url_with_code() {
+        global $CFG;
+
+        $url = new moodle_url('https://vimeo.com/1176321/abcdef12345');
+
+        $manager = core_media_manager::instance();
+        $embedoptions = array(
+            core_media_manager::OPTION_TRUSTED => true,
+            core_media_manager::OPTION_BLOCK => true,
+        );
+
+        $this->assertTrue($manager->can_embed_url($url, $embedoptions));
+        $content = $manager->embed_url($url, 'Test & file', 0, 0, $embedoptions);
+
+        // Video source URL is contains the new vimeo embedded URL format.
+        $this->assertStringContainsString('player.vimeo.com/video/1176321?h=abcdef12345', $content);
+
+        $this->assertMatchesRegularExpression('~mediaplugin_vimeo~', $content);
+        $this->assertMatchesRegularExpression('~</iframe>~', $content);
+        $this->assertMatchesRegularExpression('~width="' . $CFG->media_default_width . '" height="' .
+                            $CFG->media_default_height . '"~', $content);
+
+        // Repeat sending the specific size to the manager.
+        $content = $manager->embed_url($url, 'New file', 123, 50, $embedoptions);
+        $this->assertMatchesRegularExpression('~width="123" height="50"~', $content);
+    }
+
+    /**
+     * Test that mediaplugin filter replaces a link to the supported file with media tag
+     * and test that player plugin is parsing the URL with the code.
+     *
+     * filter_mediaplugin is enabled by default.
+     */
+    public function test_embed_link_with_code() {
+        global $CFG;
+        $url = new moodle_url('https://vimeo.com/1176321/abcdef12345');
+        $text = html_writer::link($url, 'Watch this one');
+        $content = format_text($text, FORMAT_HTML);
+
+        // Video source URL is contains the new vimeo embedded URL format.
+        $this->assertStringContainsString('player.vimeo.com/video/1176321?h=abcdef12345', $content);
+
+        $this->assertMatchesRegularExpression('~mediaplugin_vimeo~', $content);
+        $this->assertMatchesRegularExpression('~</iframe>~', $content);
+        $this->assertMatchesRegularExpression('~width="' . $CFG->media_default_width . '" height="' .
+                            $CFG->media_default_height . '"~', $content);
+    }
+
+    /**
+     * Test that mediaplugin filter adds player code on top of <video> tags
+     * and test that player plugin is parse the URL with the code.
+     *
+     * filter_mediaplugin is enabled by default.
+     */
+    public function test_embed_media_with_code() {
+        global $CFG;
+        $url = new moodle_url('https://vimeo.com/1176321/abcdef12345');
+        $trackurl = new moodle_url('http://example.org/some_filename.vtt');
+        $text = '<video controls="true"><source src="'.$url.'"/>' .
+            '<track src="'.$trackurl.'">Unsupported text</video>';
+        $content = format_text($text, FORMAT_HTML);
+
+        // Video source URL is contains the new vimeo embedded URL format.
+        $this->assertStringContainsString('player.vimeo.com/video/1176321?h=abcdef12345', $content);
+
+        $this->assertMatchesRegularExpression('~mediaplugin_vimeo~', $content);
+        $this->assertMatchesRegularExpression('~</iframe>~', $content);
+        $this->assertMatchesRegularExpression('~width="' . $CFG->media_default_width . '" height="' .
+                            $CFG->media_default_height . '"~', $content);
+        // Video tag, unsupported text and tracks are removed.
+        $this->assertDoesNotMatchRegularExpression('~</video>~', $content);
+        $this->assertDoesNotMatchRegularExpression('~<source\b~', $content);
+        $this->assertDoesNotMatchRegularExpression('~Unsupported text~', $content);
+        $this->assertDoesNotMatchRegularExpression('~<track\b~i', $content);
+
+        // Video with dimensions and source specified as src attribute without <source> tag.
+        $text = '<video controls="true" width="123" height="35" src="'.$url.'">Unsupported text</video>';
+        $content = format_text($text, FORMAT_HTML);
+        $this->assertMatchesRegularExpression('~mediaplugin_vimeo~', $content);
+        $this->assertMatchesRegularExpression('~</iframe>~', $content);
+        $this->assertMatchesRegularExpression('~width="123" height="35"~', $content);
+    }
+
+    /**
+     * Test that mediaplugin filter skip the process when the URL is invalid.
+     */
+    public function test_skip_invalid_url_format_with_code() {
+        $url = new moodle_url('https://vimeo.com/_________/abcdef12345s');
+        $text = html_writer::link($url, 'Invalid Vimeo URL');
+        $content = format_text($text, FORMAT_HTML);
+
+        $this->assertStringNotContainsString('player.vimeo.com/video/_________?h=abcdef12345s', $content);
+        $this->assertDoesNotMatchRegularExpression('~mediaplugin_vimeo~', $content);
+        $this->assertDoesNotMatchRegularExpression('~</iframe>~', $content);
+    }
 }

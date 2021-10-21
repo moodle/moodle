@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class media_vimeo_plugin extends core_media_player_external {
     protected function embed_external(moodle_url $url, $name, $width, $height, $options) {
-        $videoid = $this->matches[1];
+        $videoid = $this->get_video_id();
         $info = s($name);
 
         // Note: resizing via url is not supported, user can click the fullscreen
@@ -54,14 +54,41 @@ OET;
     }
 
     /**
+     * Get Vimeo video ID.
+     * @return string
+     */
+    protected function get_video_id(): string {
+        return $this->get_video_id_with_code() ?? $this->matches[1] ?? '';
+    }
+
+    /**
+     * Get video id with code.
+     * @return string|null If NULL then the URL does not contain the code.
+     */
+    protected function get_video_id_with_code(): ?string {
+        $id = $this->matches[2] ?? null;
+
+        if (!empty($id)) {
+            $code = $this->matches[3] ?? null;
+            if (!empty($code)) {
+                return "{$id}?h={$code}";
+            }
+
+            return $id;
+        }
+
+        return null;
+    }
+
+    /**
      * Returns regular expression to match vimeo URLs.
      * @return string
      */
     protected function get_regex() {
         // Initial part of link.
         $start = '~^https?://vimeo\.com/';
-        // Middle bit: either watch?v= or v/.
-        $middle = '([0-9]+)';
+        // Middle bit: either 123456789 or 123456789/abdef12345.
+        $middle = '(([0-9]+)/([0-9a-f]+)|[0-9]+)';
         return $start . $middle . core_media_player_external::END_LINK_REGEX_PART;
     }
 
