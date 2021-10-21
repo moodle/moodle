@@ -1646,7 +1646,10 @@ class core_renderer extends renderer_base {
     public function lang_menu() {
         $languagemenu = new \core\output\language_menu($this->page);
         $data = $languagemenu->export_for_single_select($this);
-        return $this->render_from_template('core/single_select', $data);
+        if ($data) {
+            return $this->render_from_template('core/single_select', $data);
+        }
+        return '';
     }
 
     /**
