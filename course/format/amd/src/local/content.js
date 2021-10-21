@@ -29,6 +29,7 @@ import Section from 'core_courseformat/local/content/section';
 import CmItem from 'core_courseformat/local/content/section/cmitem';
 // Course actions is needed for actions that are not migrated to components.
 import courseActions from 'core_course/actions';
+import DispatchActions from 'core_courseformat/local/content/actions';
 
 export default class Component extends BaseComponent {
 
@@ -51,6 +52,12 @@ export default class Component extends BaseComponent {
         // Default classes to toggle on refresh.
         this.classes = {
             COLLAPSED: `collapsed`,
+            // Formats can override the activity tag but a default one is needed to create new elements.
+            ACTIVITYTAG: 'li',
+
+            // Course content classes.
+            ACTIVITY: `activity`,
+            STATEDREADY: `stateready`,
         };
         // Array to save dettached elements during element resorting.
         this.dettachedCms = {};
@@ -113,6 +120,30 @@ export default class Component extends BaseComponent {
                     },
                 );
             }
+        }
+    }
+
+    /**
+     *
+     * Course content elements could not provide JS Components because the elements HTML is applied
+     * directly from the course actions. To keep internal components updated this module keeps
+     * a list of the active components and mark them as "indexed". This way when any action replace
+     * the HTML this component will recreate the components an add any necessary event listener.
+     *
+     * Format plugins can override this method to provide extra logic to the course frontend.
+     *
+     */
+    stateReady() {
+        this._indexContents();
+
+        if (this.reactive.supportComponents) {
+            // Actions are only available in edit mode.
+            if (this.reactive.isEditing) {
+                new DispatchActions(this);
+            }
+
+            // Mark content as state ready.
+            this.element.classList.add(this.classes.STATEDREADY);
         }
     }
 
@@ -209,7 +240,8 @@ export default class Component extends BaseComponent {
         // Find the element.
         const target = this.getElement(this.selectors.SECTION, element.id);
         if (!target) {
-            throw new Error(`Unkown section with ID ${element.id}`);
+            // Job done. Nothing to refresh.
+            return;
         }
         // Update section numbers in all data, css and YUI attributes.
         target.id = `section-${element.number}`;
@@ -240,14 +272,17 @@ export default class Component extends BaseComponent {
     /**
      * Refresh a section cm list.
      *
-     * @param {Object} details the update details.
+     * @param {details} details the update details
+     * @property {object} details.element the state object
      */
     _refreshSectionCmlist({element}) {
         const cmlist = element.cmlist ?? [];
         const section = this.getElement(this.selectors.SECTION, element.id);
         const listparent = section?.querySelector(this.selectors.SECTION_CMLIST);
+        // A method to create a fake element to be replaced when the item is ready.
+        const createCm = this._createCmItem.bind(this);
         if (listparent) {
-            this._fixOrder(listparent, cmlist, this.selectors.CM, this.dettachedCms);
+            this._fixOrder(listparent, cmlist, this.selectors.CM, this.dettachedCms, createCm);
         }
     }
 
@@ -259,8 +294,10 @@ export default class Component extends BaseComponent {
     _refreshCourseSectionlist({element}) {
         const sectionlist = element.sectionlist ?? [];
         const listparent = this.getElement(this.selectors.COURSE_SECTIONLIST);
+        // For now section cannot be created at a frontend level.
+        const createSection = () => undefined;
         if (listparent) {
-            this._fixOrder(listparent, sectionlist, this.selectors.SECTION, this.dettachedSections);
+            this._fixOrder(listparent, sectionlist, this.selectors.SECTION, this.dettachedSections, createSection);
         }
     }
 
@@ -321,6 +358,9 @@ export default class Component extends BaseComponent {
     /**
      * Reload a course module contents.
      *
+     * Most course module HTML is still strongly backend dependant.
+     * Some changes require to get a new version of the module.
+     *
      * @param {details} param0 the watcher details
      * @property {object} param0.element the state object
      */
@@ -336,14 +376,42 @@ export default class Component extends BaseComponent {
     }
 
     /**
+     * Create a new course module item in a section.
+     *
+     * Thos method will append a fake item in the container and trigger an ajax request to
+     * replace the fake element by the real content.
+     *
+     * @param {Element} container the container element (section)
+     * @param {Number} cmid the course-module ID
+     * @returns {Element} the created element
+     */
+    _createCmItem(container, cmid) {
+        const newItem = document.createElement(this.selectors.ACTIVITYTAG);
+        newItem.dataset.for = 'cmitem';
+        newItem.dataset.id = cmid;
+        // The legacy actions.js requires a specific ID and class to refresh the CM.
+        newItem.id = `module-${cmid}`;
+        newItem.classList.add(this.classes.ACTIVITY);
+        container.append(newItem);
+        this._reloadCm({
+            element: this.reactive.get('cm', cmid),
+        });
+        return newItem;
+    }
+
+    /**
      * Fix/reorder the section or cms order.
      *
      * @param {Element} container the HTML element to reorder.
      * @param {Array} neworder an array with the ids order
      * @param {string} selector the element selector
      * @param {Object} dettachedelements a list of dettached elements
+     * @param {function} createMethod method to create missing elements
      */
-    _fixOrder(container, neworder, selector, dettachedelements) {
+    async _fixOrder(container, neworder, selector, dettachedelements, createMethod) {
+        if (container === undefined) {
+            return;
+        }
 
         // Empty lists should not be visible.
         if (!neworder.length) {
@@ -357,7 +425,11 @@ export default class Component extends BaseComponent {
 
         // Move the elements in order at the beginning of the list.
         neworder.forEach((itemid, index) => {
-            const item = this.getElement(selector, itemid) ?? dettachedelements[itemid];
+            let item = this.getElement(selector, itemid) ?? dettachedelements[itemid] ?? createMethod(container, itemid);
+            if (item === undefined) {
+                // Missing elements cannot be sorted.
+                return;
+            }
             // Get the current elemnt at that position.
             const currentitem = container.children[index];
             if (currentitem === undefined) {
@@ -375,7 +447,7 @@ export default class Component extends BaseComponent {
         // Remove the remaining elements.
         while (container.children.length > neworder.length) {
             const lastchild = container.lastChild;
-            if (lastchild.classList.contains('dndupload-preview')) {
+            if (lastchild?.classList?.contains('dndupload-preview')) {
                 dndFakeActivity = lastchild;
             } else {
                 dettachedelements[lastchild?.dataset?.id ?? 0] = lastchild;

@@ -25,6 +25,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         'core/modal_factory', 'core/modal_events', 'core/key_codes', 'core/log', 'core_courseformat/courseeditor'],
     function($, ajax, templates, notification, str, url, Y, ModalFactory, ModalEvents, KeyCodes, log, editor) {
 
+        // Eventually, core_courseformat/local/content/actions will handle all actions for
+        // component compatible formats and the default actions.js won't be necessary anymore.
+        // Meanwhile, we filter the migrated actions.
+        const componentActions = ['moveSection', 'moveCm'];
+
+        // The course reactive instance.
         const courseeditor = editor.getCurrentCourseEditor();
 
         var CSS = {
@@ -488,10 +494,17 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @param {Nunmber} sectionid
          * @param {JQuery} target the element (menu item) that was clicked
          * @param {String} courseformat
+         * @return {boolean} true the action call is sent to the server or false if it is ignored.
          */
         var editSection = function(sectionElement, sectionid, target, courseformat) {
             var action = target.attr('data-action'),
                 sectionreturn = target.attr('data-sectionreturn') ? target.attr('data-sectionreturn') : 0;
+
+            // Filter direct component handled actions.
+            if (courseeditor.supportComponents && componentActions.includes(action)) {
+                return false;
+            }
+
             var spinner = addSectionSpinner(sectionElement);
             var promises = ajax.call([{
                 methodname: 'core_course_edit_section',
@@ -522,6 +535,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                         notification.exception(ex);
                     }
                 });
+            return true;
         };
 
         // Register a function to be executed after D&D of an activity.
@@ -735,14 +749,19 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                     var actionItem = $(this),
                         sectionElement = actionItem.closest(SELECTOR.SECTIONLI),
                         sectionId = actionItem.closest(SELECTOR.SECTIONACTIONMENU).attr('data-sectionid');
-                    e.preventDefault();
+
+                    let isExecuted = true;
                     if (actionItem.attr('data-confirm')) {
                         // Action requires confirmation.
                         confirmEditSection(actionItem.attr('data-confirm'), function() {
-                            editSection(sectionElement, sectionId, actionItem, courseformat);
+                            isExecuted = editSection(sectionElement, sectionId, actionItem, courseformat);
                         });
                     } else {
-                        editSection(sectionElement, sectionId, actionItem, courseformat);
+                        isExecuted = editSection(sectionElement, sectionId, actionItem, courseformat);
+                    }
+                    // Prevent any other module from capturing the action if it is already in execution.
+                    if (isExecuted) {
+                        e.preventDefault();
                     }
                 });
 

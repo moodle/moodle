@@ -192,7 +192,12 @@ class cm implements renderable, templatable {
             $data->controlmenu = $controlmenu->export_for_template($output);
 
             // Move and select options.
-            $data->moveicon = course_get_cm_move($mod, $returnsection);
+            if ($format->supports_components()) {
+                $data->moveicon = $output->pix_icon('i/dragdrop', '', 'moodle', ['class' => 'editing_move dragicon']);
+            } else {
+                // Add the legacy YUI move link.
+                $data->moveicon = course_get_cm_move($mod, $returnsection);
+            }
         }
 
         return $data;

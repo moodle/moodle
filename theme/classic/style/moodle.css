@@ -12187,6 +12187,24 @@ body.dragging .dragging {
   visibility: visible;
   cursor: move; }
 
+.waitstate {
+  display: none; }
+
+.stateready .waitstate {
+  display: inherit; }
+
+.stateready .whilenostate {
+  display: none; }
+
+.collapse-list .collapse-list-item {
+  padding: 0.5rem 1rem; }
+  .collapse-list .collapse-list-item:hover, .collapse-list .collapse-list-item:focus {
+    background-color: #e0f0f2;
+    border-color: #b8dce2; }
+
+.collapse-list .collapse-list-item-content .collapse-list-item {
+  padding-left: calc(1rem * 3); }
+
 .icon {
   font-size: 16px;
   width: 16px;

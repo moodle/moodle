@@ -123,6 +123,7 @@ export default class {
             type: 'cm',
             id: cminfo.id,
             name: cminfo.name,
+            sectionid: cminfo.sectionid,
             nextcmid,
         };
     }
