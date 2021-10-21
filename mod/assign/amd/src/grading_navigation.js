@@ -222,7 +222,6 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
      *
      * @private
      * @method _filterChanged
-     * @param {Event} event
      */
     GradingNavigation.prototype._filterChanged = function() {
         // There are 3 types of filter right now.
@@ -536,7 +535,6 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
      *
      * @private
      * @method _handleChangeUser
-     * @param {Event} event
      */
     GradingNavigation.prototype._handleChangeUser = function() {
         var select = this._region.find('[data-action=change-user]');

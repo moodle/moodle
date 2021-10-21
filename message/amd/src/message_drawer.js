@@ -84,7 +84,7 @@ function(
      * @param {string} selector The route container.
      *
      * @return {array} elements Found route container objects.
-    */
+     */
     var getParametersForRoute = function(namespace, root, selector) {
 
         var header = root.find(SELECTORS.HEADER_CONTAINER).find(selector);

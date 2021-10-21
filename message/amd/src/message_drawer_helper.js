@@ -33,7 +33,8 @@ function(
     /**
      * Trigger an event to create a new conversation in the message drawer.
      *
-     * @param {Number} userId The user id to start a conversation.
+     * @param {object} args
+     * @param {Number} args.userId The user id to start a conversation.
      */
     var createConversationWithUser = function(args) {
         PubSub.publish(MessageDrawerEvents.CREATE_CONVERSATION_WITH_USER, args);
@@ -56,7 +57,8 @@ function(
     /**
      * Trigger an event to show the given conversation.
      *
-     * @param {int} conversationId Id for the conversation to show.
+     * @param {object} args
+     * @param {int} args.conversationId Id for the conversation to show.
      */
     var showConversation = function(args) {
         PubSub.publish(MessageDrawerEvents.SHOW_CONVERSATION, args);

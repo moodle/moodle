@@ -26,7 +26,7 @@ define(['core/str', 'core/yui'], function(str, Y) {
     /**
      * Store the current instance of the core drag drop.
      *
-     * @property dragDropInstance M.tool_lp.dragdrop_reorder
+     * @property {object} dragDropInstance M.tool_lp.dragdrop_reorder
      */
     var dragDropInstance = null;
 
