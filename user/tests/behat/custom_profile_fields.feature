@@ -67,7 +67,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
   Scenario: Visible custom profile fields can be part of the sign up form for anonymous users.
     Given I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     And I expand all fieldsets
     Then I should not see "notvisible_field"
     And I should see "uservisible_field"
@@ -79,7 +79,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
     Given I log in as "guest"
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     And I expand all fieldsets
     Then I should not see "notvisible_field"
     And I should see "uservisible_field"

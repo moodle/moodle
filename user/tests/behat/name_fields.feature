@@ -10,7 +10,7 @@ Feature: Both first name and surname are always available for every user
       | passwordpolicy  | 0     |
     And I am on site homepage
     And I follow "Log in"
-    And I press "Create new account"
+    And I click on "Create new account" "link"
     When I set the following fields to these values:
       | Username      | mrwhitespace        |
       | Password      | Gue$$m3ifY0uC&n     |

@@ -1644,28 +1644,9 @@ class core_renderer extends renderer_base {
      * @return string The lang menu HTML or empty string
      */
     public function lang_menu() {
-        global $CFG;
-
-        if (empty($CFG->langmenu)) {
-            return '';
-        }
-
-        if ($this->page->course != SITEID and !empty($this->page->course->lang)) {
-            // do not show lang menu if language forced
-            return '';
-        }
-
-        $currlang = current_language();
-        $langs = get_string_manager()->get_list_of_translations();
-
-        if (count($langs) < 2) {
-            return '';
-        }
-
-        $s = new single_select($this->page->url, 'lang', $langs, $currlang, null);
-        $s->label = get_accesshide(get_string('language'));
-        $s->class = 'langmenu';
-        return $this->render($s);
+        $languagemenu = new \core\output\language_menu($this->page);
+        $data = $languagemenu->export_for_single_select($this);
+        return $this->render_from_template('core/single_select', $data);
     }
 
     /**

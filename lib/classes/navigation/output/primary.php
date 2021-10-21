@@ -58,9 +58,11 @@ class primary implements renderable, templatable {
         $menudata = (object) array_merge($this->get_primary_nav(), $this->get_custom_menu($output));
         $moremenu = new \core\navigation\output\more_menu($menudata, 'navbar-nav', false);
 
+        $languagemenu = new \core\output\language_menu($this->page);
+
         return [
             'moremenu' => $moremenu->export_for_template($output),
-            'lang' => !isloggedin() || isguestuser() ? $this->get_lang_menu($output) : [],
+            'lang' => !isloggedin() || isguestuser() ? $languagemenu->export_for_template($output) : [],
             'user' => $this->get_user_menu($output),
         ];
     }
@@ -109,47 +111,6 @@ class primary implements renderable, templatable {
         }
 
         return $nodes;
-    }
-
-    /**
-     * Get a list of options for the lang picker.
-     *
-     * @param renderer_base $output
-     * @return array
-     */
-    protected function get_lang_menu(renderer_base $output): array {
-        // Early return if a lang menu does not exists.
-        if (empty($output->lang_menu())) {
-            return [];
-        }
-
-        $currentlang = current_language();
-        $langs = get_string_manager()->get_list_of_translations();
-        $nodes = [];
-        $activelanguage = '';
-
-        // Add the lang picker if needed.
-        foreach ($langs as $langtype => $langname) {
-            $isactive = $langtype == $currentlang;
-            $node = [
-                'title' => $langname,
-                'text' => $langname,
-                'link' => true,
-                'isactive' => $isactive,
-                'url' => $isactive ? new \moodle_url('#') : new \moodle_url($this->page->url, ['lang' => $langtype]),
-            ];
-
-            $nodes[] = $node;
-
-            if ($isactive) {
-                $activelanguage = $langname;
-            }
-        }
-
-        return [
-            'title' => $activelanguage,
-            'items' => $nodes,
-        ];
     }
 
     /**
@@ -229,7 +190,8 @@ class primary implements renderable, templatable {
         }, $info->navitems);
 
         // Include the language menu as a submenu within the user menu.
-        $langmenu = $this->get_lang_menu($output);
+        $languagemenu = new \core\output\language_menu($this->page);
+        $langmenu = $languagemenu->export_for_template($output);
         if (!empty($langmenu)) {
             $languageitems = $langmenu['items'];
             // If there are available languages, generate the data for the the language selector submenu.

@@ -528,21 +528,6 @@ a.skip:active {
     display: inline-block;
 }
 
-// Login
-.login-page {
-    [name="username"] {
-        margin-bottom: -1px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-
-    [type="password"] {
-        margin-bottom: 10px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
-}
-
 // Notes
 .notepost {
     margin-bottom: 1em;

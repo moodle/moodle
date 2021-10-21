@@ -11,7 +11,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | sitepolicyhandler | tool_policy |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     Then I should not see "I understand and agree"
     And I set the following fields to these values:
       | Username      | user1                 |
@@ -45,7 +45,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | P1     | This privacy policy |          | full text2 | short text2 | draft |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     Then I should not see "I understand and agree"
     And I set the following fields to these values:
       | Username      | user1                 |
@@ -80,7 +80,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | P1     | This site policy |          | full text3 | short text3 | draft    |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     Then I should see "This site policy" in the "region-main" "region"
     And I should see "short text2"
     And I should see "full text2"
@@ -128,7 +128,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | This guests policy  | 0    |          | full text4 | short text4 | active   | guest    |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     Then I should see "This site policy" in the "region-main" "region"
     And I should see "short text2"
     And I should see "full text2"
@@ -188,7 +188,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | This site policy |          | full text2 | short text2 | active   |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     Then I should see "Age and location verification"
     And I set the field "What is your age?" to "16"
     And I set the field "In which country do you live?" to "DZ"
@@ -239,7 +239,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | This privacy policy | 1    |          | full text3 | short text3 | active   | loggedin |
     And I am on site homepage
     And I follow "Log in"
-    And I press "Create new account"
+    And I click on "Create new account" "link"
     And I should see "This site policy"
     And I press "Next"
     And I should see "This privacy policy"
@@ -494,7 +494,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | This guests policy  | 0    |          | full text4 | short text4 | active   | guest    |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     Then I should see "This site policy" in the "region-main" "region"
     And I should see "short text2"
     And I should see "full text2"
@@ -526,7 +526,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     Then I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     # Confirm that the user can view and accept policies when attempting to create another account.
     Then I should see "This site policy" in the "region-main" "region"
     And I should see "short text2"
@@ -628,7 +628,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     And I press "Log in as a guest"
     # Now sign up
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     Then I should see "This site policy"
     And I should see "short text2"
     And I should see "full text2"
@@ -677,7 +677,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Terms of Service              | We teach, you learn       | Here goes content.  | 1               |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     # The first policy with the agreement style "on its own page" must be accepted first.
     Then I should see "Digital maturity declaration" in the "region-main" "region"
     And I should see "You declare be old enough"
@@ -841,7 +841,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | Terms of Service              | We teach, you learn       | Here goes content.  | 1               | guest     |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     # All the policies to be displayed one by one with a button to accept each of them prior seeing the next.
     Then I should see "Digital maturity declaration" in the "region-main" "region"
     And I should see "You declare be old enough"
