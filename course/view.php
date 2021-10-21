@@ -268,6 +268,9 @@
     // inclusion we pass parameters around this way..
     $displaysection = $section;
 
+    // Include course AJAX
+    include_course_ajax($course, $modnamesused);
+
     // Include the actual course format.
     require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
     // Content wrapper end.
@@ -278,9 +281,6 @@
     // We don't trust $context here. Course format inclusion above executes in the global space. We can't assume
     // anything after that point.
     course_view(context_course::instance($course->id), $section);
-
-    // Include course AJAX
-    include_course_ajax($course, $modnamesused);
 
     // If available, include the JS to prepare the download course content modal.
     if ($candownloadcourse) {
