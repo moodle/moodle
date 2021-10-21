@@ -12851,12 +12851,10 @@ body.dragging .dragging {
   #region-main-settings-menu .menubar {
     justify-content: flex-end; } }
 
-#region-main-settings-menu.has-blocks,
 #region-main.has-blocks {
   display: inline-block;
   width: calc(100% - 375px); }
   @media (max-width: 1199.98px) {
-    #region-main-settings-menu.has-blocks,
     #region-main.has-blocks {
       width: 100%;
       /* MDL-63102 - Remove extra space at bottom.
