@@ -124,7 +124,7 @@ $right-drawer-width: 320px;
         right: 0;
         height: calc(100% - #{$navbar-height});
         width: $right-drawer-width;
-        box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+        box-shadow: -2px 2px 4px $drawer-shadow-color;
         padding: 0;
         visibility: visible;
         opacity: 1;
@@ -158,7 +158,7 @@ $right-drawer-width: 320px;
 
 .dir-rtl {
     [data-region=right-hand-drawer] {
-        box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
+        box-shadow: 2px 2px 4px $drawer-shadow-color;
     }
 }
 
@@ -233,6 +233,9 @@ $right-drawer-width: 320px;
     display: flex;
     align-items: center;
 }
+.drawer.scrolled .drawerheader {
+    box-shadow: 0 8px 11px -7px $drawer-shadow-color;
+}
 
 @include media-breakpoint-down(md) {
     .drawer-md {
@@ -252,6 +255,7 @@ $right-drawer-width: 320px;
 
 .drawercontent {
     position: relative;
+    z-index: -1;
     height: calc(100% - #{$navbar-height});
     display: flex;
     flex-direction: column;

@@ -102,7 +102,6 @@ $courseindex-item-current: $primary !default;
         // Completion.
         .completioninfo {
             min-width: 24px;
-            transform: scale(0.7);
 
             &.completion_complete {
                 color: $success;

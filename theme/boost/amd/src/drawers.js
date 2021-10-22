@@ -40,6 +40,11 @@ const SELECTORS = {
     TOGGLEBTN: '[data-toggler="drawers"][data-action="toggle"]',
     DRAWERS: '[data-region="fixed-drawer"]',
     CONTAINER: '#page.drawers',
+    DRAWERCONTENT: '.drawercontent',
+};
+
+const CLASSES = {
+    SCROLLED: 'scrolled',
 };
 
 /**
@@ -174,6 +179,25 @@ const enableDrawerTooltips = (drawerNode) => {
 };
 
 /**
+ * Add scroll listeners to a drawer element.
+ *
+ * @param {HTMLElement} drawerNode the drawer main node
+ * @private
+ */
+const addInnerScrollListener = (drawerNode) => {
+    const content = drawerNode.querySelector(SELECTORS.DRAWERCONTENT);
+    if (!content) {
+        return;
+    }
+    content.addEventListener("scroll", () => {
+        drawerNode.classList.toggle(
+            CLASSES.SCROLLED,
+            content.scrollTop != 0
+        );
+    });
+};
+
+/**
  * The Drawers class is used to control on-screen drawer elements.
  *
  * It handles opening, and closing of drawer elements, as well as more detailed behaviours such as closing a drawer when
@@ -245,6 +269,8 @@ export default class Drawers {
         if (isSmall()) {
             disableDrawerTooltips(this.drawerNode);
         }
+
+        addInnerScrollListener(this.drawerNode);
 
         drawerMap.set(drawerNode, this);
     }
@@ -520,9 +546,9 @@ const scroller = () => {
     if (drawerLayout) {
         drawerLayout.addEventListener("scroll", () => {
             if (drawerLayout.scrollTop >= window.innerHeight) {
-                body.classList.add('scrolled');
+                body.classList.add(CLASSES.SCROLLED);
             } else {
-                body.classList.remove('scrolled');
+                body.classList.remove(CLASSES.SCROLLED);
             }
         });
     }
