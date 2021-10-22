@@ -249,6 +249,7 @@ class zipwriter {
 
         $exportedcourse = $this->get_course();
         $courselink = (new moodle_url('/course/view.php', ['id' => $exportedcourse->id]))->out(false);
+        $coursename = format_string($exportedcourse->fullname, true, ['context' => $this->coursecontext]);
 
         $this->add_template_requirements();
 
@@ -260,16 +261,16 @@ class zipwriter {
             'pathtotop' => $this->get_relative_context_path($context, $this->rootcontext, '/'),
             'contentexportfooter' => get_string('contentexport_footersummary', 'core', (object) [
                 'courselink' => $courselink,
-                'coursename' => $exportedcourse->fullname,
+                'coursename' => $coursename,
                 'userfullname' => fullname($USER),
                 'date' => userdate(time()),
             ]),
             'contentexportsummary' => get_string('contentexport_coursesummary', 'core', (object) [
                 'courselink' => $courselink,
-                'coursename' => $exportedcourse->fullname,
+                'coursename' => $coursename,
                 'date' => userdate(time()),
             ]),
-            'coursename' => $exportedcourse->fullname,
+            'coursename' => $coursename,
             'courseshortname' => $exportedcourse->shortname,
             'courselink' => $courselink,
             'exportdate' => userdate(time()),
