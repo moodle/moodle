@@ -96,6 +96,14 @@ class language_menu implements \renderable, \templatable {
         // Add the lang picker if needed.
         foreach ($this->langs as $langtype => $langname) {
             $isactive = $langtype == $this->currentlang;
+            $attributes = [];
+            if (!$isactive) {
+                // Set the lang attribute for languages different from the page's current language.
+                $attributes[] = [
+                    'key' => 'lang',
+                    'value' => get_html_lang_attribute_value($langtype),
+                ];
+            }
             $node = [
                 'title' => $langname,
                 'text' => $langname,
@@ -103,6 +111,9 @@ class language_menu implements \renderable, \templatable {
                 'isactive' => $isactive,
                 'url' => $isactive ? new \moodle_url('#') : new \moodle_url($this->page->url, ['lang' => $langtype]),
             ];
+            if (!empty($attributes)) {
+                $node['attributes'] = $attributes;
+            }
 
             $nodes[] = $node;
 
@@ -135,8 +146,15 @@ class language_menu implements \renderable, \templatable {
         }
         $langmenu->set_menu_trigger($menuname);
         foreach ($languagedata['items'] as $node) {
-            $lang = new \action_menu_link_secondary($node['url'], null, $node['title'],
-                ['data-lang' => $node['url']->get_param('lang')]);
+            $langparam = $node['url']->get_param('lang');
+            $attributes = [];
+            if ($langparam) {
+                $attributes = [
+                    'data-lang' => $langparam,
+                    'lang' => $langparam,
+                ];
+            }
+            $lang = new \action_menu_link_secondary($node['url'], null, $node['title'], $attributes);
             $langmenu->add($lang);
         }
         return $langmenu->export_for_template($output);

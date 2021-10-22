@@ -41,7 +41,8 @@
 }}
 {{#items}}
     {{#link}}
-        <a href="{{{url}}}" class="dropdown-item pl-5" role="menuitem" tabindex="-1" {{#isactive}}aria-current="true"{{/isactive}}>
+        <a href="{{{url}}}" class="dropdown-item pl-5" role="menuitem" tabindex="-1" {{#isactive}}aria-current="true"{{/isactive}}
+            {{#attributes}}{{key}}="{{value}}" {{/attributes}}>
             {{text}}
         </a>
     {{/link}}
