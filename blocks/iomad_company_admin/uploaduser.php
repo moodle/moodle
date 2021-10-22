@@ -977,7 +977,7 @@ if ($mform->is_cancelled()) {
                         $ccache[$shortname] = $course;
                         $ccache[$shortname]->groups = null;
                     }
-                    company_user::enrol($user, $ccache[$shortname]->id, $companyid);
+                    company_user::enrol($user, [$ccache[$shortname]->id], $companyid);
                     $coursecontext = context_course::instance($ccache[$shortname]->id);
 
                     // find group to add to
