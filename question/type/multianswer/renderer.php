@@ -299,7 +299,7 @@ class qtype_multianswer_multichoice_inline_renderer
             $feedbackimg = $this->feedback_image($matchinganswer->fraction);
         }
         $select = html_writer::select($choices, $qa->get_qt_field_name($fieldname),
-                $response, array('' => ''), $inputattributes);
+                $response, array('' => '&nbsp;'), $inputattributes);
 
         $order = $subq->get_order($qa);
         $correctresponses = $subq->get_correct_response();
