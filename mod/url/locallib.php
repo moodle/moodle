@@ -83,7 +83,7 @@ function url_fix_submitted_url($url) {
  */
 function url_get_full_url($url, $cm, $course, $config=null) {
 
-    $parameters = empty($url->parameters) ? array() : unserialize($url->parameters);
+    $parameters = empty($url->parameters) ? [] : (array) unserialize_array($url->parameters);
 
     // make sure there are no encoded entities, it is ok to do this twice
     $fullurl = html_entity_decode($url->externalurl, ENT_QUOTES, 'UTF-8');
@@ -195,7 +195,7 @@ function url_print_heading($url, $cm, $course, $notused = false) {
 function url_print_intro($url, $cm, $course, $ignoresettings=false) {
     global $OUTPUT;
 
-    $options = empty($url->displayoptions) ? array() : unserialize($url->displayoptions);
+    $options = empty($url->displayoptions) ? [] : (array) unserialize_array($url->displayoptions);
     if ($ignoresettings or !empty($options['printintro'])) {
         if (trim(strip_tags($url->intro))) {
             echo $OUTPUT->box_start('mod_introbox', 'urlintro');
@@ -277,7 +277,7 @@ function url_print_workaround($url, $cm, $course) {
     $display = url_get_final_display_type($url);
     if ($display == RESOURCELIB_DISPLAY_POPUP) {
         $jsfullurl = addslashes_js($fullurl);
-        $options = empty($url->displayoptions) ? array() : unserialize($url->displayoptions);
+        $options = empty($url->displayoptions) ? [] : (array) unserialize_array($url->displayoptions);
         $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
