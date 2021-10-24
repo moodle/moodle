@@ -56,7 +56,7 @@ page_view($page, $course, $cm, $context);
 
 $PAGE->set_url('/mod/page/view.php', array('id' => $cm->id));
 
-$options = empty($page->displayoptions) ? array() : unserialize($page->displayoptions);
+$options = empty($page->displayoptions) ? [] : (array) unserialize_array($page->displayoptions);
 
 if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
     $PAGE->set_pagelayout('popup');
