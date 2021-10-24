@@ -105,7 +105,7 @@ class mod_url_mod_form extends moodleform_mod {
         if (empty($this->current->parameters)) {
             $parcount = 5;
         } else {
-            $parcount = 5 + count(unserialize($this->current->parameters));
+            $parcount = 5 + count((array) unserialize_array($this->current->parameters));
             $parcount = ($parcount > 100) ? 100 : $parcount;
         }
         $options = url_get_variable_options($config);
@@ -131,7 +131,7 @@ class mod_url_mod_form extends moodleform_mod {
 
     function data_preprocessing(&$default_values) {
         if (!empty($default_values['displayoptions'])) {
-            $displayoptions = unserialize($default_values['displayoptions']);
+            $displayoptions = (array) unserialize_array($default_values['displayoptions']);
             if (isset($displayoptions['printintro'])) {
                 $default_values['printintro'] = $displayoptions['printintro'];
             }
@@ -143,7 +143,7 @@ class mod_url_mod_form extends moodleform_mod {
             }
         }
         if (!empty($default_values['parameters'])) {
-            $parameters = unserialize($default_values['parameters']);
+            $parameters = (array) unserialize_array($default_values['parameters']);
             $i = 0;
             foreach ($parameters as $parameter=>$variable) {
                 $default_values['parameter_'.$i] = $parameter;
