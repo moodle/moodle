@@ -79,7 +79,8 @@ class helper_test extends \advanced_testcase {
         $cat = question_make_default_categories($contexts->all());
         $this->questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);
-        $this->quba = question_engine::make_questions_usage_by_activity('core_question_preview', \context_user::instance($USER->id));
+        $this->quba = question_engine::make_questions_usage_by_activity('core_question_preview',
+            \context_user::instance($USER->id));
         $this->options = new question_preview_options($this->questiondata);
         $this->options->load_user_defaults();
         $this->options->set_from_request();

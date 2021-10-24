@@ -39,7 +39,7 @@ function qbank_viewcreator_edit_form_display($question): string {
         $a->time = userdate($question->timecreated);
         $a->user = fullname($DB->get_record('user', ['id' => $question->createdby]));
         $versiondata['createdby'] = get_string('created', 'question') . ' ' .
-                                    get_string('byandon', 'question', $a) ;
+                                    get_string('byandon', 'question', $a);
     }
     return $PAGE->get_renderer('qbank_viewcreator')->render_version_info($versiondata);
 

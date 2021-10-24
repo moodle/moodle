@@ -57,7 +57,7 @@ class qformat_xml_test extends question_testcase {
         $q->penalty = 0.3333333;
         $q->length = 1;
         $q->stamp = make_unique_id_code();
-        $q->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $q->timecreated = time();
         $q->timemodified = time();
         $q->createdby = $USER->id;
@@ -341,7 +341,7 @@ END;
         $qdata->defaultmark = 0;
         $qdata->length = 0;
         $qdata->penalty = 0;
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $qdata->idnumber = null;
 
         $exporter = new qformat_xml();
@@ -569,7 +569,7 @@ END;
         $qdata->defaultmark = 1;
         $qdata->length = 1;
         $qdata->penalty = 0;
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $qdata->idnumber = null;
         $qdata->options = new stdClass();
         $qdata->options->id = 456;
@@ -741,7 +741,7 @@ END;
         $qdata->defaultmark = 1;
         $qdata->length = 1;
         $qdata->penalty = 0.3333333;
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $qdata->idnumber = null;
 
         $qdata->options = new stdClass();
@@ -974,7 +974,7 @@ END;
         $qdata->defaultmark = 2;
         $qdata->length = 1;
         $qdata->penalty = 0.3333333;
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $qdata->idnumber = null;
 
         $qdata->options = new stdClass();
@@ -1151,7 +1151,7 @@ END;
         $qdata->defaultmark = 1;
         $qdata->length = 1;
         $qdata->penalty = 0.1;
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $qdata->idnumber = null;
 
         $qdata->options = new stdClass();
@@ -1283,7 +1283,7 @@ END;
         $qdata->defaultmark = 1;
         $qdata->length = 1;
         $qdata->penalty = 0.3333333;
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $qdata->idnumber = null;
 
         $qdata->options = new stdClass();
@@ -1459,7 +1459,7 @@ END;
         $qdata->defaultmark = 1;
         $qdata->length = 1;
         $qdata->penalty = 1;
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $qdata->idnumber = null;
 
         $qdata->options = new stdClass();
@@ -1519,7 +1519,7 @@ END;
         $qdata->defaultmark = 1;
         $qdata->length = 1;
         $qdata->penalty = 1;
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $qdata->idnumber = 'TestIDNum2';
 
         $qdata->options = new stdClass();

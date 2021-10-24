@@ -62,7 +62,8 @@ $PAGE->set_heading($COURSE->fullname);
 // Unhide a question.
 if (($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {
     question_require_capability_on($unhide, 'edit');
-    $DB->set_field('question_versions', 'status', 0, ['questionid' => $unhide]);
+    $DB->set_field('question_versions', 'status',
+        \core_question\local\bank\question_version_status::QUESTION_STATUS_READY, ['questionid' => $unhide]);
 
     // Purge these questions from the cache.
     \question_bank::notify_question_edited($unhide);
@@ -81,7 +82,8 @@ if ($deleteselected && ($confirm = optional_param('confirm', '', PARAM_ALPHANUM)
                 $questionid = (int)$questionid;
                 question_require_capability_on($questionid, 'edit');
                 if (questions_in_use(array($questionid))) {
-                    $DB->set_field('question_versions', 'status', 1, ['questionid' => $questionid]);
+                    $DB->set_field('question_versions', 'status',
+                        \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN, ['questionid' => $questionid]);
                 } else {
                     question_delete_question($questionid);
                 }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for qbank_editquestion.
+ * External services definition for qbank_editquestion.
  *
  * @package    qbank_editquestion
  * @copyright  2021 Catalyst IT Australia Pty Ltd
@@ -25,7 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'qbank_editquestion';
-$plugin->version   = 2021110800;
-$plugin->requires  = 2021052500;
-$plugin->maturity  = MATURITY_STABLE;
+$functions = [
+    'qbank_editquestion_set_status' => [
+        'classname' => 'qbank_editquestion\external\update_question_version_status',
+        'description' => 'Update the question status.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+];

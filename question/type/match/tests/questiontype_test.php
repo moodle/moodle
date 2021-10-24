@@ -66,7 +66,7 @@ class qtype_match_test extends advanced_testcase {
         $q->penalty = 0.3333333;
         $q->length = 1;
         $q->stamp = make_unique_id_code();
-        $q->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $q->version = 1;
         $q->versionid = 0;
         $q->questionbankentryid = 0;

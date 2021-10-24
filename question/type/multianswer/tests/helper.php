@@ -131,7 +131,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
 
         $qdata->defaultmark = 2.0;
         $qdata->qtype = 'multianswer';
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $sa = new stdClass();
         test_question_maker::initialise_question_data($sa);
@@ -141,7 +141,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $sa->generalfeedback = '';
         $sa->penalty = 0.0;
         $sa->qtype = 'shortanswer';
-        $sa->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $sa->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $sa->options = new stdClass();
         $sa->options->usecase = 0;
@@ -161,7 +161,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $mc->generalfeedback = '';
         $mc->penalty = 0.0;
         $mc->qtype = 'multichoice';
-        $mc->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $mc->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $mc->options = new stdClass();
         $mc->options->layout = 0;
@@ -217,7 +217,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
 
         $qdata->defaultmark = 1.0;
         $qdata->qtype = 'multianswer';
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $mc = new stdClass();
         test_question_maker::initialise_question_data($mc);
@@ -227,7 +227,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $mc->generalfeedback = '';
         $mc->penalty = 0.0;
         $mc->qtype = 'multichoice';
-        $mc->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $mc->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $mc->options = new stdClass();
         $mc->options->layout = 0;
@@ -279,7 +279,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
             1 => array('text' => 'Hint 2', 'format' => FORMAT_HTML, 'itemid' => 0),
         );
 
-        $formdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $formdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $formdata;
     }

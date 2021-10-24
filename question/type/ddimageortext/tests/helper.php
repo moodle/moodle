@@ -246,7 +246,7 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
         $fromform->hintclearwrong = array(1, 0, 1, 0);
         $fromform->hintshownumcorrect = array(1, 1, 1, 1);
 
-        $fromform->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }

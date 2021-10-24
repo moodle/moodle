@@ -119,7 +119,7 @@ abstract class question_definition {
     public $hints = array();
 
     /** @var boolean question status hidden/ready/draft in the question bank. */
-    public $status =  \core_question\local\bank\constants::QUESTION_STATUS_READY;
+    public $status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
     /** @var int Version id of the question in a question bank */
     public $versionid;

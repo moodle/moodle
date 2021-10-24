@@ -27,7 +27,7 @@
 
 namespace qbank_editquestion;
 
-use core_question\local\bank\constants;
+use core_question\local\bank\question_version_status;
 
 /**
  * Class editquestion_helper for methods related to add/edit/copy
@@ -89,20 +89,11 @@ class editquestion_helper {
     /**
      * Get the string for the status of the question.
      *
-     * @param int $status
+     * @param string $status
      * @return string
      */
     public static function get_question_status_string($status): string {
-        if ((int)$status == constants::QUESTION_STATUS_READY) {
-            $statusstring = get_string('questionstatusready', 'qbank_editquestion');
-        } else if ((int)$status == constants::QUESTION_STATUS_HIDDEN) {
-            $statusstring = get_string('questionstatushidden', 'qbank_editquestion');
-        } else if ((int)$status == constants::QUESTION_STATUS_DRAFT) {
-            $statusstring = get_string('questionstatusdraft', 'qbank_editquestion');
-        } else {
-            $statusstring = get_string('questionstatusunknown', 'qbank_editquestion');
-        }
-        return $statusstring;
+        return get_string('questionstatus' . $status, 'qbank_editquestion');
     }
 
     /**
@@ -112,8 +103,8 @@ class editquestion_helper {
      */
     public static function get_question_status_list(): array {
         $statuslist = [];
-        $statuslist[constants::QUESTION_STATUS_READY] = get_string('questionstatusready', 'qbank_editquestion');
-        $statuslist[constants::QUESTION_STATUS_DRAFT] = get_string('questionstatusdraft', 'qbank_editquestion');
+        $statuslist[question_version_status::QUESTION_STATUS_READY] = get_string('questionstatusready', 'qbank_editquestion');
+        $statuslist[question_version_status::QUESTION_STATUS_DRAFT] = get_string('questionstatusdraft', 'qbank_editquestion');
         return $statuslist;
     }
 

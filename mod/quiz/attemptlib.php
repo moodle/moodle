@@ -1798,7 +1798,7 @@ class quiz_attempt {
         $question->length = $replacedquestion->length;
         $question->penalty = 0;
         $question->stamp = '';
-        $question->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $question->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $question->timecreated = null;
         $question->timemodified = null;
         $question->createdby = null;

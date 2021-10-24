@@ -23,9 +23,9 @@ Feature: Use the qbank base view to test the status change using
     And I navigate to "Question bank > Questions" in current page administration
     And I set the field "Select a category" to "Test questions"
     And I should see "Test questions"
-    And I should see "Ready" on the status column
-    When I click "Ready" on the status column
+    And I should see "Ready" in the "First question" "table_row"
+    When I click on "Ready" "link" in the "First question" "table_row"
     Then I should see "Change question status"
     And I should see "Question status"
     And I click on "Close" "button" in the ".modal-dialog" "css_element"
-    And I should see "Ready" on the status column
+    And I should see "Ready" in the "First question" "table_row"

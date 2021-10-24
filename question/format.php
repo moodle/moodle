@@ -437,7 +437,7 @@ class qformat_default {
             $questionversion->questionbankentryid = $questionbankentry->id;
             $questionversion->questionid = $question->id;
             $questionversion->version = 1;
-            $questionversion->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+            $questionversion->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
             $questionversion->id = $DB->insert_record('question_versions', $questionversion);
 
             $event = \core\event\question_created::create_from_question_instance($question, $this->importcontext);
@@ -924,6 +924,11 @@ class qformat_default {
             $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $qcategory]);
             $question->contextid = $contextid;
             $question->idnumber = $questionbankentry->idnumber;
+            if ($question->status === \core_question\local\bank\question_version_status::QUESTION_STATUS_READY) {
+                $question->status = 0;
+            } else {
+                $question->status = 1;
+            }
 
             // do not export hidden questions
             if (!empty($question->hidden)) {

@@ -1182,6 +1182,7 @@ class qformat_xml extends qformat_default {
         $invalidquestion = false;
         $fs = get_file_storage();
         $contextid = $question->contextid;
+        $question->status = 0;
         // Get files used by the questiontext.
         $question->questiontextfiles = $fs->get_area_files(
                 $contextid, 'question', 'questiontext', $question->id);

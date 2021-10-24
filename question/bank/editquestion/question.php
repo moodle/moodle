@@ -218,7 +218,7 @@ if (isset($question->id)) {
     $toform->status = $questionobject->status;
     $toform->idnumber = $questionobject->idnumber;
 } else {
-    $toform->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+    $toform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 }
 if ($makecopy) {
     $toform->idnumber = core_question_find_next_unused_idnumber($toform->idnumber, $category->id);
@@ -249,7 +249,8 @@ if ($mform->is_cancelled()) {
     // If we are saving as a copy, break the connection to the old question.
     if ($makecopy) {
         $question->id = 0;
-        $question->status = \core_question\local\bank\constants::QUESTION_STATUS_READY; // Copies should not be hidden.
+        // Copies should not be hidden.
+        $question->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
     }
 
     // If is will be added directly to a module send the module name to be referenced.

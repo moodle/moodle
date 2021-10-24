@@ -290,13 +290,13 @@ class random_question_loader {
             $fieldsstring = implode(',', $fields);
         }
 
-        // Create the query to get the questions (validate that at least we have a question id. If not, do not execute the sql.)
+        // Create the query to get the questions (validate that at least we have a question id. If not, do not execute the sql).
         $hasquestions = false;
         if (!empty($questionids)) {
             $hasquestions = true;
         }
         if ($hasquestions) {
-            list($condition, $param) = $DB->get_in_or_equal($questionids,SQL_PARAMS_NAMED, 'questionid');
+            list($condition, $param) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'questionid');
             $condition = 'WHERE q.id ' . $condition;
             $sql = "SELECT {$fieldsstring}
                       FROM (SELECT q.*, qbe.questioncategoryid as category

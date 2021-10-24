@@ -93,7 +93,7 @@ class qtype_random_test extends advanced_testcase {
         $this->assertEquals(0, $questiondata->questiontext); // Used to store 'Select from subcategories'.
         $this->assertEquals('random', $questiondata->qtype);
         $this->assertEquals(1, $questiondata->length);
-        $this->assertEquals(0, $questiondata->status);
+        $this->assertEquals(\core_question\local\bank\question_version_status::QUESTION_STATUS_READY, $questiondata->status);
         $this->assertEquals($category->contextid, $questiondata->contextid);
 
         // Options - not used.

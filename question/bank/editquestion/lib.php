@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for qbank_editquestion.
+ * Helper functions and callbacks.
  *
  * @package    qbank_editquestion
  * @copyright  2021 Catalyst IT Australia Pty Ltd
@@ -23,9 +23,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Question status fragment callback.
+ *
+ * @param array $args
+ * @return string rendered output
+ */
+function qbank_editquestion_output_fragment_question_status($args): string {
+    global $CFG;
+    require_once($CFG->dirroot . '/question/engine/bank.php');
+    $question = question_bank::load_question($args['questionid']);
+    $mform = new \qbank_editquestion\form\question_status_form();
+    $data = ['status' => $question->status];
+    $mform->set_data($data);
 
-$plugin->component = 'qbank_editquestion';
-$plugin->version   = 2021110800;
-$plugin->requires  = 2021052500;
-$plugin->maturity  = MATURITY_STABLE;
+    return $mform->render();
+}

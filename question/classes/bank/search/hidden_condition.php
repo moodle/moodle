@@ -25,7 +25,7 @@
 
 namespace core_question\bank\search;
 
-use core_question\local\bank\constants;
+use core_question\local\bank\question_version_status;
 
 /**
  * This class controls whether hidden / deleted questions are hidden in the list.
@@ -48,8 +48,8 @@ class hidden_condition extends condition {
     public function __construct($hide = true) {
         $this->hide = $hide;
         if ($hide) {
-            $this->where = 'qv.status = ' . constants::QUESTION_STATUS_READY .
-                ' OR qv.status = ' . constants::QUESTION_STATUS_DRAFT;
+            $this->where = "qv.status = '" . question_version_status::QUESTION_STATUS_READY . "' " .
+                " OR qv.status = '" . question_version_status::QUESTION_STATUS_DRAFT . "' ";
         }
     }
 

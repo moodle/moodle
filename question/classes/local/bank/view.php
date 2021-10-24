@@ -1159,7 +1159,7 @@ class view {
      */
     protected function get_row_classes($question, $rowcount): array {
         $classes = [];
-        if ((int)$question->status === 1) {
+        if ($question->status === question_version_status::QUESTION_STATUS_HIDDEN) {
             $classes[] = 'dimmed_text';
         }
         if ($question->id == $this->lastchangedid) {

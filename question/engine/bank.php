@@ -550,7 +550,7 @@ class question_finder implements cache_data_source {
 
         list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
 
-        $readystatus = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $readystatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $select = "q.id, (SELECT COUNT(1)
                             FROM " . $qubaids->from_question_attempts('qa') . "
                            WHERE qa.questionid = q.id AND " . $qubaids->where() . "
@@ -561,7 +561,7 @@ class question_finder implements cache_data_source {
         $from = $from . " " . $join;
         $where  = "qbe.questioncategoryid {$qcsql}
                AND q.parent = 0
-               AND qv.status = " . $readystatus . "
+               AND qv.status = '$readystatus'
                AND qv.version = (SELECT MAX(v.version)
                                   FROM {question_versions} v
                                   JOIN {question_bank_entries} be

@@ -39,7 +39,7 @@ class helper {
             $sql = "SELECT q.*, c.contextid
                       FROM {question} q
                       JOIN {question_versions} qv ON qv.questionid = q.id
-                      JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid 
+                      JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                       JOIN {question_categories} c ON c.id = qbe.questioncategoryid
                      WHERE q.id
                      {$usql}";

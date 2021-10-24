@@ -59,7 +59,7 @@ class qtype_match_test_helper extends question_test_helper {
         $q->defaultmark = 1;
         $q->penalty = 0.3333333;
         $q->length = 1;
-        $q->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $q->versionid = 0;
         $q->version = 1;
         $q->questionbankentryid = 0;
@@ -108,7 +108,7 @@ class qtype_match_test_helper extends question_test_helper {
         $q->generalfeedback = array('text' => 'General feedback.', 'format' => FORMAT_HTML);
         $q->defaultmark = 1;
         $q->penalty = 0.3333333;
-        $q->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $q->versionid = 0;
         $q->version = 1;
         $q->questionbankentryid = 0;
@@ -187,7 +187,7 @@ class qtype_match_test_helper extends question_test_helper {
         $q->defaultmark = 1;
         $q->penalty = 0.3333333;
         $q->length = 1;
-        $q->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $q->versionid = 0;
         $q->version = 1;
         $q->questionbankentryid = 0;
@@ -231,7 +231,7 @@ class qtype_match_test_helper extends question_test_helper {
         $q->generalfeedback = ['text' => 'Java has some advantages over PHP I guess!', 'format' => FORMAT_HTML];
         $q->defaultmark = 1;
         $q->penalty = 0.3333333;
-        $q->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $q->versionid = 0;
         $q->version = 1;
         $q->questionbankentryid = 0;

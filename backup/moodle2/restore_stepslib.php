@@ -4905,7 +4905,11 @@ class restore_create_categories_and_questions extends restore_structure_step {
         $versiondata->version = 1;
         // Question id is updated after inserting the question.
         $versiondata->questionid = 0;
-        $versiondata->status = $data->hidden;
+        $versionstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        if ((int)$data->hidden === 1) {
+            $versionstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
+        }
+        $versiondata->status = $versionstatus;
         $newversionid = $DB->insert_record('question_versions', $versiondata);
         $this->set_mapping('question_version_created', $oldid, $newversionid);
     }

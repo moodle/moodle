@@ -238,7 +238,7 @@ class qtype_gapselect_test extends question_testcase {
         $qdata->defaultmark = 3;
         $qdata->length = 1;
         $qdata->penalty = 0.3333333;
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $qdata->options = new stdClass();
         $qdata->options->shuffleanswers = 1;

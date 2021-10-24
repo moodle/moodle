@@ -116,7 +116,7 @@ class core_questionlib_testcase extends advanced_testcase {
      * @param int $numberofquestions Number of question in a category.
      * @return void Questions in a category.
      */
-    function assert_category_contains_questions(int $categoryid, int $numberofquestions): void {
+    protected function assert_category_contains_questions(int $categoryid, int $numberofquestions): void {
         $questionsid = question_bank::get_finder()->get_questions_from_categories([$categoryid], null);
         $this->assertEquals($numberofquestions, count($questionsid));
     }
@@ -268,10 +268,13 @@ class core_questionlib_testcase extends advanced_testcase {
 
         // Check that there are two questions in the restored to course's context.
         $this->assertEquals(2, $DB->get_record_sql('SELECT COUNT(q.id) as questioncount
-                                                                  FROM {question} q
-                                                                  JOIN {question_versions} qv ON qv.questionid = q.id
-                                                                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                                                                 WHERE qbe.questioncategoryid = ?', [$restoredcategory->id])->questioncount);
+                                                               FROM {question} q
+                                                               JOIN {question_versions} qv
+                                                                 ON qv.questionid = q.id
+                                                               JOIN {question_bank_entries} qbe
+                                                                 ON qbe.id = qv.questionbankentryid
+                                                              WHERE qbe.questioncategoryid = ?',
+            [$restoredcategory->id])->questioncount);
         $rc->destroy();
     }
 

@@ -17,7 +17,7 @@
 namespace qbank_managecategories;
 
 use context;
-use core_question\local\bank\constants;
+use core_question\local\bank\question_version_status;
 use moodle_exception;
 use html_writer;
 
@@ -61,14 +61,14 @@ class helper {
     public static function question_remove_stale_questions_from_category(int $categoryid): void {
         global $DB;
 
-        $sql = 'SELECT q.id
+        $sql = "SELECT q.id
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
                   JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                  WHERE qbe.questioncategoryid = :categoryid
-                   AND (q.qtype = :qtype OR qv.status = :status)';
+                   AND (q.qtype = :qtype OR qv.status = :status)";
 
-        $params = ['categoryid' => $categoryid, 'qtype' => 'random', 'status' => 1];
+        $params = ['categoryid' => $categoryid, 'qtype' => 'random', 'status' => question_version_status::QUESTION_STATUS_HIDDEN];
         $questions = $DB->get_records_sql($sql, $params);
         foreach ($questions as $question) {
             // The function question_delete_question does not delete questions in use.
@@ -246,17 +246,15 @@ class helper {
      * Get all the category objects, including a count of the number of questions in that category,
      * for all the categories in the lists $contexts.
      *
-     * @param $contexts
+     * @param context $contexts
      * @param string $sortorder used as the ORDER BY clause in the select statement.
      * @param bool $top Whether to return the top categories or not.
      * @param int $showallversions 1 to show all versions not only the latest.
-     * @param int|null $statustocount The version status to count. If null will get all except hidden.
      * @return array of category objects.
      * @throws \dml_exception
      */
     public static function get_categories_for_contexts($contexts, string $sortorder = 'parent, sortorder, name ASC',
-                                                       bool $top = false, int $showallversions = 0,
-                                                       ?int $statustocount = null): array {
+                                                       bool $top = false, int $showallversions = 0): array {
         global $DB;
         $topwhere = $top ? '' : 'AND c.parent <> 0';
         $statuscondition = "AND (qv.status = '". question_version_status::QUESTION_STATUS_READY . "' " .

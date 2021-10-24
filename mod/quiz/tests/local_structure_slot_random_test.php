@@ -57,7 +57,7 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         $form->includesubcategories = true;
         $form->fromtags = [];
         $form->defaultmark = 1;
-        $form->status = \core_question\local\bank\constants::QUESTION_STATUS_HIDDEN;
+        $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
         $form->stamp = make_unique_id_code();
 
         // Set the filter conditions.
@@ -371,7 +371,7 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         $form->includesubcategories = true;
         $form->fromtags = [];
         $form->defaultmark = 1;
-        $form->status = \core_question\local\bank\constants::QUESTION_STATUS_HIDDEN;
+        $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
         $form->stamp = make_unique_id_code();
 
         // Prepare 2 tags.

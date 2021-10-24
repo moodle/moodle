@@ -190,7 +190,8 @@ class version_test extends \advanced_testcase {
         global $DB;
 
         $qcategory = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
-        $qcategorychild = $this->qgenerator->create_question_category(['contextid' => $this->context->id, 'parent' => $qcategory->id]);
+        $qcategorychild = $this->qgenerator->create_question_category(['contextid' => $this->context->id,
+            'parent' => $qcategory->id]);
         $systemcontext = \context_system::instance();
         $qcategorysys = $this->qgenerator->create_question_category(['contextid' => $systemcontext->id]);
         $question = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcategorychild->id]);

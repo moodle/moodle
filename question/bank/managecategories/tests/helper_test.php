@@ -72,13 +72,13 @@ class helper_test extends \advanced_testcase {
 
         $qcat1 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
         $q1a = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcat1->id]);     // Will be hidden.
-        $DB->set_field('question_versions', 'status', 1, ['questionid' => $q1a->id]);
+        $DB->set_field('question_versions', 'status', 'hidden', ['questionid' => $q1a->id]);
 
         $qcat2 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
         $q2a = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcat2->id]);     // Will be hidden.
         $q2b = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcat2->id]);     // Will be hidden but used.
-        $DB->set_field('question_versions', 'status', 1, ['questionid' => $q2a->id]);
-        $DB->set_field('question_versions', 'status', 1, ['questionid' => $q2b->id]);
+        $DB->set_field('question_versions', 'status', 'hidden', ['questionid' => $q2a->id]);
+        $DB->set_field('question_versions', 'status', 'hidden', ['questionid' => $q2b->id]);
         quiz_add_quiz_question($q2b->id, $this->quiz);
 
         // Adding a new random question does not add a new question, adds a question_set_references record.

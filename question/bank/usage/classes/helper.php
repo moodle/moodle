@@ -62,7 +62,7 @@ class helper {
                             qz.course as courseid
                       FROM {quiz_slots} slot
                       JOIN {quiz} qz ON qz.id = slot.quizid
-                      JOIN {question_references} qr ON qr.itemid = slot.id                  
+                      JOIN {question_references} qr ON qr.itemid = slot.id
                       JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
                       JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
                      WHERE qv.questionbankentryid = ?)";

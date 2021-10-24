@@ -58,6 +58,7 @@ function get_module_from_cmid($cmid) {
  * @param bool $noparent if true only questions with NO parent will be selected
  * @param bool $recurse include subdirectories
  * @param bool $export set true if this is called by questionbank export
+ * @param bool $latestversion if only the latest versions needed
  * @return array
  */
 function get_questions_category(object $category, bool $noparent, bool $recurse = true, bool $export = true,
@@ -67,7 +68,7 @@ function get_questions_category(object $category, bool $noparent, bool $recurse 
     // Build sql bit for $noparent.
     $npsql = '';
     if ($noparent) {
-      $npsql = " and q.parent='0' ";
+        $npsql = " and q.parent='0' ";
     }
 
     // Get list of categories.

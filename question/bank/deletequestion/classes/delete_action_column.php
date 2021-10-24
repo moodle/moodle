@@ -24,7 +24,7 @@
 
 namespace qbank_deletequestion;
 
-use core_question\local\bank\constants;
+use core_question\local\bank\question_version_status;
 use core_question\local\bank\menu_action_column_base;
 
 /**
@@ -83,7 +83,7 @@ class delete_action_column extends menu_action_column_base {
         if (!question_has_capability_on($question, 'edit')) {
             return [null, null, null];
         }
-        if ((int) $question->status === constants::QUESTION_STATUS_HIDDEN) {
+        if ($question->status === question_version_status::QUESTION_STATUS_HIDDEN) {
             $hiddenparams = array(
                     'unhide' => $question->id,
                     'sesskey' => sesskey());

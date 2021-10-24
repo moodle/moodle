@@ -14,23 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * A column to show the status of the question.
- *
- * @package    qbank_editquestion
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Safat Shahin <safatshahin@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace qbank_editquestion;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_question\local\bank\column_base;
+use core_question\local\bank\question_version_status;
 
 /**
- * Class question_status_column.
+ * A column to show the status of the question.
  *
  * @package    qbank_editquestion
  * @copyright  2021 Catalyst IT Australia Pty Ltd
@@ -48,9 +38,22 @@ class question_status_column extends column_base {
     }
 
     protected function display_content($question, $rowclasses): void {
-        global $DB;
-        $version = $DB->get_record('question_versions', ['questionid' => $question->id], 'status');
-        echo \html_writer::tag('a', editquestion_helper::get_question_status_string($version->status));
+        global $PAGE;
+        $attributes = [];
+        if (question_has_capability_on($question, 'edit')
+            && $question->status !== question_version_status::QUESTION_STATUS_HIDDEN) {
+            $target = 'questionstatus_' . $question->id;
+            $datatarget = '[data-target="' . $target . '"]';
+            $PAGE->requires->js_call_amd('qbank_editquestion/question_status', 'init', [$datatarget, $question->contextid]);
+            $attributes = [
+                'data-target' => $target,
+                'data-questionid' => $question->id,
+                'data-courseid' => $this->qbank->course->id,
+                'class' => 'link-primary comment-pointer',
+                'href' => '#'
+            ];
+        }
+        echo \html_writer::tag('a', editquestion_helper::get_question_status_string($question->status), $attributes);
     }
 
 }

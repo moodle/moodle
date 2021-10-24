@@ -205,7 +205,7 @@ class qtype_calculatedsimple_test_helper extends question_test_helper {
         $form->definition[19] = '1-0-b';
         $form->definition[20] = '1-0-a';
 
-        $form->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $form;
     }
@@ -224,7 +224,7 @@ class qtype_calculatedsimple_test_helper extends question_test_helper {
         $q->penalty = 0.3333333;
         $q->qtype = 'calculatedsimple';
         $q->length = '1';
-        $q->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $q->version = 1;
         $q->options = new stdClass();
         $q->options->synchronize = 0;

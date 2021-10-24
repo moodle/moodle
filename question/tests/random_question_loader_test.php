@@ -68,7 +68,8 @@ class random_question_loader_testcase extends advanced_testcase {
 
         $cat = $generator->create_question_category();
         $question1 = $generator->create_question('shortanswer', null, ['category' => $cat->id]);
-        $DB->set_field('question_versions', 'status', 1, ['questionid' => $question1->id]);
+        $DB->set_field('question_versions', 'status',
+            \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN, ['questionid' => $question1->id]);
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
         $this->assertNull($loader->get_next_question_id($cat->id, 0));

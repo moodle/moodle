@@ -73,7 +73,7 @@ class qtype_ddwtos_test extends question_testcase {
         $dd->penalty = 0.3333333;
         $dd->length = 1;
         $dd->stamp = make_unique_id_code();
-        $dd->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $dd->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $dd->version = 1;
         $dd->versionid = 0;
         $dd->questionbankentryid = 0;
@@ -285,7 +285,7 @@ class qtype_ddwtos_test extends question_testcase {
         $qdata->defaultmark = 3;
         $qdata->length = 1;
         $qdata->penalty = 0.3333333;
-        $qdata->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $qdata->options = new stdClass();
         $qdata->options->shuffleanswers = 1;

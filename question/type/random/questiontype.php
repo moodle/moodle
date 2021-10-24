@@ -86,14 +86,14 @@ class qtype_random extends question_type {
         list($qcsql, $qcparams) = $DB->get_in_or_equal($categorylist);
         // TODO use in_or_equal for $otherquestionsinuse and $this->manualqtypes.
 
-        $readystatus = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $readystatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $sql = "SELECT q.*
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
                   JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                  WHERE qbe.questioncategoryid {$qcsql}
                        AND q.parent = 0
-                       AND qv.status = $readystatus
+                       AND qv.status = '$readystatus'
                        AND q.id NOT IN ($otherquestionsinuse)
                        AND q.qtype IN ($this->manualqtypes)";
 

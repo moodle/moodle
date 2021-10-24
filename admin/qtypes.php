@@ -42,8 +42,8 @@ $qtypes = question_bank::get_all_qtypes();
 $pluginmanager = core_plugin_manager::instance();
 
 // Get some data we will need - question counts and which types are needed.
-$hiddenstatus = \core_question\local\bank\constants::QUESTION_STATUS_HIDDEN;
-$draftstatus = \core_question\local\bank\constants::QUESTION_STATUS_DRAFT;
+$hiddenstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
+$draftstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_DRAFT;
 
 $sql = "SELECT result.qtype,
                SUM(result.numquestions) AS numquestions,

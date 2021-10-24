@@ -162,7 +162,7 @@ class qtype_numerical_test_helper extends question_test_helper {
         $form->hint[1]['text'] = '';
 
         $form->qtype = 'numerical';
-        $form->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $form;
     }
@@ -194,7 +194,7 @@ class qtype_numerical_test_helper extends question_test_helper {
         $q->penalty = 0.3333333;
         $q->qtype = 'numerical';
         $q->length = '1';
-        $q->status = \core_question\local\bank\constants::QUESTION_STATUS_READY;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $q->version = 1;
         $q->createdby = '2';
         $q->modifiedby = '2';
