@@ -107,7 +107,9 @@ class course extends base {
 
         $filters = array_merge($this->get_all_filters(), $customfields->get_filters());
         foreach ($filters as $filter) {
-            $this->add_filter($filter);
+            $this
+                ->add_condition($filter)
+                ->add_filter($filter);
         }
 
         return $this;
