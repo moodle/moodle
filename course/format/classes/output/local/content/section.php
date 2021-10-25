@@ -168,12 +168,12 @@ class section implements renderable, templatable {
             $data->sitehome = true;
         }
 
-        $data->contentexpanded = true;
+        $data->contentcollapsed = false;
         $preferences = $format->get_sections_preferences();
         if (isset($preferences[$thissection->id])) {
             $sectionpreferences = $preferences[$thissection->id];
             if (!empty($sectionpreferences->contentcollapsed)) {
-                $data->contentexpanded = false;
+                $data->contentcollapsed = true;
             }
         }
 

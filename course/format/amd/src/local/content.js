@@ -151,7 +151,7 @@ export default class Component extends BaseComponent {
                     'sectionPreferences',
                     [sectionId],
                     {
-                        contentexpanded: isCollapsed,
+                        contentcollapsed: !isCollapsed,
                     },
                 );
             }
@@ -177,7 +177,7 @@ export default class Component extends BaseComponent {
             'sectionPreferences',
             course.sectionlist ?? [],
             {
-                contentexpanded: isAllCollapsed,
+                contentcollapsed: !isAllCollapsed,
             }
         );
     }
@@ -202,7 +202,7 @@ export default class Component extends BaseComponent {
             // Update section number and title.
             {watch: `section.number:updated`, handler: this._refreshSectionNumber},
             // Collapse and expand sections.
-            {watch: `section.contentexpanded:updated`, handler: this._refreshSectionCollapsed},
+            {watch: `section.contentcollapsed:updated`, handler: this._refreshSectionCollapsed},
             // Sections and cm sorting.
             {watch: `transaction:start`, handler: this._startProcessing},
             {watch: `course.sectionlist:updated`, handler: this._refreshCourseSectionlist},
@@ -231,7 +231,7 @@ export default class Component extends BaseComponent {
         const toggler = target.querySelector(this.selectors.COLLAPSE);
         const isCollapsed = toggler?.classList.contains(this.classes.COLLAPSED) ?? false;
 
-        if (element.contentexpanded === isCollapsed) {
+        if (element.contentcollapsed !== isCollapsed) {
             toggler.click();
         }
 
@@ -253,8 +253,8 @@ export default class Component extends BaseComponent {
         let allexpanded = true;
         state.section.forEach(
             section => {
-                allcollapsed = allcollapsed && !section.contentexpanded;
-                allexpanded = allexpanded && section.contentexpanded;
+                allcollapsed = allcollapsed && section.contentcollapsed;
+                allexpanded = allexpanded && !section.contentcollapsed;
             }
         );
         if (allcollapsed) {

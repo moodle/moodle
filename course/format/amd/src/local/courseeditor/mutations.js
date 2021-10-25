@@ -258,14 +258,14 @@ export default class {
             if (section === undefined) {
                 return;
             }
-            let newValue = preferences.contentexpanded ?? section.contentexpanded;
-            if (section.contentexpanded != newValue) {
-                section.contentexpanded = newValue;
+            let newValue = preferences.contentcollapsed ?? section.contentcollapsed;
+            if (section.contentcollapsed != newValue) {
+                section.contentcollapsed = newValue;
                 updatePreferences = true;
             }
-            newValue = preferences.isactive ?? section.isactive;
-            if (section.isactive != newValue) {
-                section.isactive = newValue;
+            newValue = preferences.indexcollapsed ?? section.indexcollapsed;
+            if (section.indexcollapsed != newValue) {
+                section.indexcollapsed = newValue;
                 updatePreferences = true;
             }
         });
@@ -281,10 +281,10 @@ export default class {
                 indexcollapsed: [],
             };
             state.section.forEach(section => {
-                if (!section.contentexpanded) {
+                if (section.contentcollapsed) {
                     preferences.contentcollapsed.push(section.id);
                 }
-                if (!section.isactive) {
+                if (section.indexcollapsed) {
                     preferences.indexcollapsed.push(section.id);
                 }
             });

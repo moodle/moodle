@@ -73,7 +73,7 @@
         "cmcontrols": "[Add an activity or resource]",
         "iscoursedisplaymultipage": true,
         "sectionreturnid": 0,
-        "contentexpanded": true,
+        "contentcollapsed": false,
         "insertafter": true,
         "numsections": 42,
         "sitehome": false
@@ -125,7 +125,7 @@
     </div>
     <div id="coursecontentcollapse{{num}}"
          class="content {{^iscoursedisplaymultipage}}
-             {{^sitehome}}course-content-item-content collapse {{#contentexpanded}}show{{/contentexpanded}}{{/sitehome}}
+             {{^sitehome}}course-content-item-content collapse {{^contentcollapsed}}show{{/contentcollapsed}}{{/sitehome}}
          {{/iscoursedisplaymultipage}}">
          <div class="{{#hasavailability}}description small{{/hasavailability}} my-3">
             {{#summary}}

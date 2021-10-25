@@ -46,9 +46,11 @@
             <a role="button" data-toggle="collapse"
                href="#coursecontentcollapse{{num}}"
                id="collapssesection{{num}}"
-               aria-expanded="{{#contentexpanded}}true{{/contentexpanded}}{{^contentexpanded}}false{{/contentexpanded}}"
+               aria-expanded="{{^contentcollapsed}}true{{/contentcollapsed}}{{#contentcollapsed}}false{{/contentcollapsed}}"
                aria-controls="coursecontentcollapse{{num}}"
-               class="btn btn-icon mr-1 icons-collapse-expand {{^editing}}stretched-link {{/editing}}{{^contentexpanded}}collapsed{{/contentexpanded}}"
+               class="btn btn-icon mr-1 icons-collapse-expand
+                   {{^editing}} stretched-link {{/editing}}
+                   {{#contentcollapsed}} collapsed {{/contentcollapsed}}"
                aria-label="{{name}}">
             <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, core {{/str}}">
                 {{#pix}} t/expandedchevron, core {{/pix}}

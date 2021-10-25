@@ -95,7 +95,7 @@ export default class Component extends BaseComponent {
 
     getWatchers() {
         return [
-            {watch: `section.isactive:updated`, handler: this._refreshSectionCollapsed},
+            {watch: `section.indexcollapsed:updated`, handler: this._refreshSectionCollapsed},
             {watch: `cm:created`, handler: this._createCm},
             {watch: `cm:deleted`, handler: this._deleteCm},
             {watch: `section:created`, handler: this._createSection},
@@ -131,7 +131,7 @@ export default class Component extends BaseComponent {
                     'sectionPreferences',
                     [sectionId],
                     {
-                        isactive: isCollapsed,
+                        indexcollapsed: !isCollapsed,
                     },
                 );
             }
@@ -153,7 +153,7 @@ export default class Component extends BaseComponent {
         const toggler = target.querySelector(this.selectors.COLLAPSE);
         const isCollapsed = toggler?.classList.contains(this.classes.COLLAPSED) ?? false;
 
-        if (element.isactive === isCollapsed) {
+        if (element.indexcollapsed !== isCollapsed) {
             this._expandSectionNode(element);
         }
     }
@@ -161,9 +161,9 @@ export default class Component extends BaseComponent {
     /**
      * Expand a section node.
      *
-     * By default the method will use element.isactive to decide if the
+     * By default the method will use element.indexcollapsed to decide if the
      * section is opened or closed. However, using forceValue it is possible
-     * to open or close a section independant from the isactive attribute.
+     * to open or close a section independant from the indexcollapsed attribute.
      *
      * @param {Object} element the course module state element
      * @param {boolean} forceValue optional forced expanded value
@@ -182,7 +182,7 @@ export default class Component extends BaseComponent {
         }
 
         if (forceValue === undefined) {
-            forceValue = (element.isactive) ? true : false;
+            forceValue = (element.indexcollapsed) ? false : true;
         }
 
         // Course index is based on Bootstrap 4 collapsibles. To collapse them we need jQuery to
