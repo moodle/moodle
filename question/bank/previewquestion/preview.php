@@ -312,4 +312,8 @@ $event = \core\event\question_viewed::create_from_question_instance($question, $
 $event->trigger();
 
 $PAGE->requires->js_call_amd('qbank_previewquestion/preview', 'init', [$previewdata['redirect']]);
+$PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['responseform']);
+$PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_save_question_preview']);
+$PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_finish_question_preview']);
+$PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_restart_question_preview']);
 echo $OUTPUT->footer();
