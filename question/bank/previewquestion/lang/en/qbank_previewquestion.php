@@ -24,4 +24,4 @@
  */
 
 $string['pluginname'] = 'Preview question';
-$string['privacy:metadata'] = 'Preview question plugin does not store any user data.';
+$string['privacy:metadata'] = 'The Preview question question bank plugin does not store any personal data.';

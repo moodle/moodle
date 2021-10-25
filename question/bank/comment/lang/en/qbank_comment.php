@@ -23,8 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Question comment';
-$string['privacy:metadata:core_comment'] = 'Question comment plugin helps users with permission to comment in a question.';
+$string['pluginname'] = 'Question comments';
+$string['privacy:metadata:core_comment'] = 'The Question comments question bank plugin enables users to comment on questions.';
 // Column.
 $string['comment'] = 'Comment';
 $string['commentplural'] = 'Comments';
@@ -32,10 +32,9 @@ $string['commentplural'] = 'Comments';
 $string['addcomment'] = 'Add comment';
 $string['close'] = 'Close';
 $string['commentheader'] = 'Question comments';
-$string['commentdisabled'] = 'Comment feature is disabled "sitewide",
- please ask your "Site administrator" to enable "usecomments" from "Advanced settings" in order to comment in this question.';
+$string['commentdisabled'] = 'Comments are currently disabled on this site. Please contact your site administrator.';
 // Events.
-$string['comment_added'] = 'The user with id \'{$a->userid}\' added the comment with id \'{$a->objectid}\'
- to the \'{$a->component}\' for the question with id \'{$a->itemid}\'.';
-$string['comment_removed'] = 'The user with id \'{$a->userid}\' deleted the comment with id \'{$a->objectid}\'
- to the \'{$a->component}\' for the question with id \'{$a->itemid}\'.';
+$string['comment_added'] = 'The user with ID \'{$a->userid}\' added the comment with ID \'{$a->objectid}\'
+ to the \'{$a->component}\' for the question with ID \'{$a->itemid}\'.';
+$string['comment_removed'] = 'The user with ID \'{$a->userid}\' deleted the comment with ID \'{$a->objectid}\'
+ from the \'{$a->component}\' for the question with ID \'{$a->itemid}\'.';

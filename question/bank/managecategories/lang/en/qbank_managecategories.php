@@ -24,4 +24,4 @@
  */
 
 $string['pluginname'] = 'Manage categories';
-$string['privacy:metadata'] = 'The Manage Categories plugin does not store any user data.';
+$string['privacy:metadata'] = 'The Manage categories question bank plugin does not store any personal data.';
