@@ -255,7 +255,8 @@ echo $quba->render_question($slot, $options, $displaynumber);
 // Finish the question form.
 echo html_writer::start_tag('div', array('id' => 'previewcontrols', 'class' => 'controls'));
 echo html_writer::empty_tag('input', $restartdisabled + array('type' => 'submit',
-        'name' => 'restart', 'value' => get_string('restart', 'question'), 'class' => 'btn btn-secondary mr-1 mb-1'));
+        'name' => 'restart', 'value' => get_string('restart', 'question'), 'class' => 'btn btn-secondary mr-1 mb-1',
+        'id' => 'id_restart_question_preview'));
 echo html_writer::empty_tag('input', $finishdisabled + array('type' => 'submit',
         'name' => 'save', 'value' => get_string('save', 'question'), 'class' => 'btn btn-secondary mr-1 mb-1',
         'id' => 'id_save_question_preview'));
@@ -295,5 +296,8 @@ $PAGE->requires->strings_for_js(array(
 $PAGE->requires->yui_module('moodle-question-preview', 'M.question.preview.init');
 $PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_save_question_preview']);
 $PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_finish_question_preview']);
+$PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_restart_question_preview']);
+$PAGE->requires->yui_module('moodle-core-formchangechecker',
+    'M.core_formchangechecker.init', [['formid' => 'responseform']]);
 echo $OUTPUT->footer();
 
