@@ -81,7 +81,7 @@ class delete_test extends externallib_advanced_testcase {
         $this->setUser($user);
 
         $this->expectException(report_access_exception::class);
-        $this->expectExceptionMessage('You can not edit this report');
+        $this->expectExceptionMessage('You cannot edit this report');
         delete::execute($report->get('id'));
     }
 }

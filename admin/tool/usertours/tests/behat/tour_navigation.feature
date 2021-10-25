@@ -38,7 +38,7 @@ Feature: Steps can be navigated within a tour
     And I follow "Dashboard" in the user menu
     And I wait until the page is ready
     And I should see "This is the calendar block"
-    Then I should see "Got it!"
+    Then I should see "Got it"
 
   @javascript
   Scenario: End tour button text for multiple step tours
