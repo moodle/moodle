@@ -454,6 +454,7 @@ $string['nopermissiontorate'] = 'Rating of items not allowed!';
 $string['nopermissiontoshow'] = 'No permission to see this!';
 $string['nopermissiontounlock'] = 'No permission to unlock!';
 $string['nopermissiontoupdatecalendar'] = 'Sorry, but you do not have permission to update the calendar event.';
+$string['nopermissiontoviewcalendar'] = 'Sorry, but you do not have permission to view the calendar event.';
 $string['nopermissiontoviewgrades'] = 'Cannot view grades.';
 $string['nopermissiontoviewletergrade'] = 'Missing permission to view letter grades';
 $string['nopermissiontoviewpage'] = 'You are not allowed to look at this page';

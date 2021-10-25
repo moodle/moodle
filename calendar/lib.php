@@ -2171,6 +2171,24 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false, s
 }
 
 /**
+ * Can current user manage a non user event in system context.
+ *
+ * @param calendar_event|stdClass $event event object
+ * @return boolean
+ */
+function calendar_can_manage_non_user_event_in_system($event) {
+    $sitecontext = \context_system::instance();
+    $isuserevent = $event->eventtype == 'user';
+    $canmanageentries = has_capability('moodle/calendar:manageentries', $sitecontext);
+    // If user has manageentries at site level and it's not user event, return true.
+    if ($canmanageentries && !$isuserevent) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Return the capability for viewing a calendar event.
  *
  * @param calendar_event $event event object
@@ -2184,10 +2202,7 @@ function calendar_view_event_allowed(calendar_event $event) {
         return true;
     }
 
-    // If a user can manage events at the site level they can see any event.
-    $sitecontext = \context_system::instance();
-    // If user has manageentries at site level, return true.
-    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
+    if (calendar_can_manage_non_user_event_in_system($event)) {
         return true;
     }
 
@@ -2243,11 +2258,7 @@ function calendar_view_event_allowed(calendar_event $event) {
 
         return can_access_course(get_course($event->courseid));
     } else if ($event->userid) {
-        if ($event->userid != $USER->id) {
-            // No-one can ever see another users events.
-            return false;
-        }
-        return true;
+        return calendar_can_manage_user_event($event);
     } else {
         throw new moodle_exception('unknown event type');
     }
@@ -2320,10 +2331,7 @@ function calendar_edit_event_allowed($event, $manualedit = false) {
         }
     }
 
-    $sitecontext = \context_system::instance();
-
-    // If user has manageentries at site level, return true.
-    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
+    if (calendar_can_manage_non_user_event_in_system($event)) {
         return true;
     }
 
@@ -2347,7 +2355,38 @@ function calendar_edit_event_allowed($event, $manualedit = false) {
         // If course is not set, but userid id set, it's a user event.
         return (has_capability('moodle/calendar:manageownentries', $event->context));
     } else if (!empty($event->userid)) {
-        return (has_capability('moodle/calendar:manageentries', $event->context));
+        return calendar_can_manage_user_event($event);
+    }
+
+    return false;
+}
+
+/**
+ * Can current user edit/delete/add an user event?
+ *
+ * @param calendar_event|stdClass $event event object
+ * @return bool
+ */
+function calendar_can_manage_user_event($event): bool {
+    global $USER;
+
+    if (!($event instanceof \calendar_event)) {
+        $event = new \calendar_event(clone($event));
+    }
+
+    $canmanage = has_capability('moodle/calendar:manageentries', $event->context);
+    $canmanageown = has_capability('moodle/calendar:manageownentries', $event->context);
+    $ismyevent = $event->userid == $USER->id;
+    $isadminevent = is_siteadmin($event->userid);
+
+    if ($canmanageown && $ismyevent) {
+        return true;
+    }
+
+    // In site context, user must have login and calendar:manageentries permissions
+    // ... to manage other user's events except admin users.
+    if ($canmanage && !$isadminevent) {
+        return true;
     }
 
     return false;
@@ -2659,10 +2698,7 @@ function calendar_add_event_allowed($event) {
         return false;
     }
 
-    $sitecontext = \context_system::instance();
-
-    // If user has manageentries at site level, always return true.
-    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
+    if (calendar_can_manage_non_user_event_in_system($event)) {
         return true;
     }
 
@@ -2681,10 +2717,7 @@ function calendar_add_event_allowed($event) {
                     (has_capability('moodle/calendar:managegroupentries', $event->context)
                         && groups_is_member($event->groupid)));
         case 'user':
-            if ($event->userid == $USER->id) {
-                return (has_capability('moodle/calendar:manageownentries', $event->context));
-            }
-        // There is intentionally no 'break'.
+            return calendar_can_manage_user_event($event);
         case 'site':
             return has_capability('moodle/calendar:manageentries', $event->context);
         default:

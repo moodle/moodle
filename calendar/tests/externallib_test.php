@@ -104,7 +104,14 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
             }
         }
         if (!isset($prop->courseid)) {
-            $prop->courseid = $SITE->id;
+            // Set a default value of the event's course ID field.
+            if ($type === 'user') {
+                // If it's a user event, course ID should be zero.
+                $prop->courseid = 0;
+            } else {
+                // Otherwise, default to the site ID.
+                $prop->courseid = $SITE->id;
+            }
         }
 
         // Determine event priority.
@@ -204,7 +211,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $record = new stdClass();
         $record->courseid = $course->id;
         $courseevent = $this->create_calendar_event('course', $USER->id, 'course', 3, time(), $record);
-        $userevent = $this->create_calendar_event('user', $USER->id);
+        $userevent = $this->create_calendar_event('user', $user->id);
         $record = new stdClass();
         $record->courseid = $course->id;
         $record->groupid = $group->id;
@@ -1807,8 +1814,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setUser($user);
 
-        $this->expectException('moodle_exception');
-
+        $this->expectException(moodle_exception::class);
         external_api::clean_returnvalue(
             core_calendar_external::submit_create_update_form_returns(),
             core_calendar_external::submit_create_update_form($querystring)
@@ -2610,11 +2616,215 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($data['event']['id'], $courseevent->id);
         // User not enrolled in the course cannot load the course event.
         $this->setUser($user2);
-        $this->expectException('required_capability_exception');
+        $this->expectException(moodle_exception::class);
         $data = external_api::clean_returnvalue(
             core_calendar_external::get_calendar_event_by_id_returns(),
             core_calendar_external::get_calendar_event_by_id($courseevent->id)
         );
+    }
+
+    /**
+     * User data for testing reading calendar events.
+     *
+     * @return array
+     */
+    public function test_get_calendar_event_by_id_prevent_read_other_users_events_data_provider(): array {
+        $syscontext = context_system::instance();
+        $managerrole = 'manager';
+        return [
+            [true, false, $syscontext, $managerrole, true],
+            [false, false, $syscontext, $managerrole, false],
+            [false, false, null, null, true],
+            [false, true, null, null, false],
+        ];
+    }
+
+    /**
+     * Prevent user from reading other user's event.
+     *
+     * @covers \core_calendar_external::get_calendar_event_by_id
+     * @dataProvider test_get_calendar_event_by_id_prevent_read_other_users_events_data_provider
+     *
+     * @param bool          $isadminevent      Is admin's event
+     * @param bool          $isadmin           Is current user admin user
+     * @param null|stdClass $readerrolecontext Reader role context
+     * @param null|string   $readerrolename    Role name
+     * @param bool          $expectexception   Should the test throw exception
+     */
+    public function test_get_calendar_event_by_id_prevent_read_other_users_events(
+            bool $isadminevent, bool $isadmin, ?stdClass $readerrolecontext,
+            ?string $readerrolename, bool $expectexception) {
+        global $USER, $DB;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        if ($isadminevent) {
+            $this->setAdminUser();
+        } else {
+            $user = $generator->create_user();
+            $this->setUser($user);
+        }
+        $userevent = $this->create_calendar_event('user event', $USER->id, 'user', 0, time());
+        $results = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_event_by_id_returns(),
+            core_calendar_external::get_calendar_event_by_id($userevent->id)
+        );
+        $event = reset($results);
+        $this->assertEquals($userevent->id, $event['id']);
+
+        if ($isadmin) {
+            $this->setAdminUser();
+        } else {
+            $reader = $generator->create_user();
+            if ($readerrolename && $readerrolecontext) {
+                $managerroleid = $DB->get_field('role', 'id', ['shortname' => $readerrolename]);
+                role_assign($managerroleid, $reader->id, $readerrolecontext->id);
+            }
+            $this->setUser($reader);
+        }
+
+        if ($expectexception) {
+            // Setup if exception is expected for the test.
+            $this->expectException(moodle_exception::class);
+        }
+        external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_event_by_id_returns(),
+            core_calendar_external::get_calendar_event_by_id($userevent->id)
+        );
+    }
+
+    /**
+     * User data for testing editing or deleting calendar events.
+     *
+     * @return array
+     */
+    public function test_edit_or_delete_other_users_events_data_provider(): array {
+        $syscontext = context_system::instance();
+        $managerrole = 'manager';
+        return [
+            [false, false, $syscontext, $managerrole, false],
+            [false, true, $syscontext, $managerrole, true],
+            [false, false, null, null, true],
+            [true, false, null, null, false],
+        ];
+    }
+
+    /**
+     * Test the behavior of deleting other users' user events.
+     *
+     * @dataProvider test_edit_or_delete_other_users_events_data_provider
+     * @covers \core_calendar_external::delete_calendar_events
+     * @param bool          $isadmin Whether the current user is admin.
+     * @param bool          $isadminevent Whether it's an admin event or not.
+     * @param stdClass|null $writerrolecontext The reader role context.
+     * @param string|null   $writerrolename The role name.
+     * @param bool          $expectexception Whether the test should throw an exception or not.
+     */
+    public function test_delete_other_users_events(bool $isadmin, bool $isadminevent,
+            ?stdClass $writerrolecontext, ?string $writerrolename, bool $expectexception) {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        if ($isadminevent) {
+            $this->setAdminUser();
+            $user = $USER;
+        } else {
+            $user = $generator->create_user();
+            $this->setUser($user);
+        }
+        $userevent = $this->create_calendar_event('user event', $user->id, 'user', 0, time());
+
+        if ($isadmin) {
+            $this->setAdminUser();
+        } else {
+            $writer = $generator->create_user();
+            if ($writerrolename && $writerrolecontext) {
+                $managerroleid = $DB->get_field('role', 'id', ['shortname' => $writerrolename]);
+                role_assign($managerroleid, $writer->id, $writerrolecontext->id);
+            }
+            $this->setUser($writer);
+        }
+
+        if ($expectexception) {
+            $this->expectException(moodle_exception::class);
+        }
+        $events = [
+            ['eventid' => $userevent->id, 'repeat' => 0]
+        ];
+        core_calendar_external::delete_calendar_events($events);
+    }
+
+    /**
+     * Test the behavior of editing other users' user events
+     *
+     * @dataProvider test_edit_or_delete_other_users_events_data_provider
+     * @covers \core_calendar_external::submit_create_update_form
+     * @param bool          $isadmin Whether the current user is admin.
+     * @param bool          $isadminevent Whether it's an admin event or not.
+     * @param stdClass|null $writerrolecontext The reader role context.
+     * @param string|null   $writerrolename The role name.
+     * @param bool          $expectexception Whether the test should throw an exception or not.
+     */
+    public function test_edit_other_users_events(bool $isadmin, bool $isadminevent,
+            ?stdClass $writerrolecontext, ?string $writerrolename, bool $expectexception) {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        if ($isadminevent) {
+            $this->setAdminUser();
+            $user = $USER;
+        } else {
+            $user = $generator->create_user();
+        }
+
+        $formdata = [
+            'id' => 0,
+            'userid' => $user->id,
+            'modulename' => '',
+            'instance' => 0,
+            'visible' => 1,
+            'eventtype' => 'user',
+            'name' => 'Test',
+            'timestart' => [
+                'day' => 1,
+                'month' => 1,
+                'year' => 2021,
+                'hour' => 1,
+                'minute' => 0,
+            ],
+            'description' => [
+                'text' => 'xxxxx',
+                'format' => 1,
+                'itemid' => 0
+            ],
+            'location' => 'Test',
+            'duration' => 0,
+        ];
+        $formdata = \core_calendar\local\event\forms\create::mock_generate_submit_keys($formdata);
+
+        $querystring = http_build_query($formdata, '', '&');
+
+        if ($isadmin) {
+            $this->setAdminUser();
+        } else {
+            $writer = $generator->create_user();
+            if ($writerrolename && $writerrolecontext) {
+                $managerroleid = $DB->get_field('role', 'id', ['shortname' => $writerrolename]);
+                role_assign($managerroleid, $writer->id, $writerrolecontext->id);
+            }
+            $this->setUser($writer);
+        }
+        $USER->ignoresesskey = true;
+
+        if ($expectexception) {
+            $this->expectException(moodle_exception::class);
+        }
+        core_calendar_external::submit_create_update_form($querystring);
     }
 
     /**

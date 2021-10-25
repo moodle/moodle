@@ -963,4 +963,53 @@ class core_calendar_lib_testcase extends advanced_testcase {
         // Viewing as someone not enrolled in a course with guest access on.
         $this->assertTrue(calendar_view_event_allowed($caleventguest));
     }
+
+    /**
+     *  Test calendar_can_manage_user_event for different users.
+     *
+     * @covers ::calendar_can_manage_user_event
+     */
+    public function test_calendar_can_manage_user_event() {
+        global $DB, $USER;
+        $generator = $this->getDataGenerator();
+        $sitecontext = context_system::instance();
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $adminevent = create_event([
+            'eventtype' => 'user',
+            'userid' => $USER->id,
+        ]);
+
+        $this->setUser($user1);
+        $user1event = create_event([
+            'name' => 'user1 event',
+            'eventtype' => 'user',
+            'userid' => $user1->id,
+        ]);
+        $this->setUser($user2);
+        $user2event = create_event([
+            'name' => 'user2 event',
+            'eventtype' => 'user',
+            'userid' => $user2->id,
+        ]);
+        $this->setUser($user1);
+        $result = calendar_can_manage_user_event($user1event);
+        $this->assertEquals(true, $result);
+        $result = calendar_can_manage_user_event($user2event);
+        $this->assertEquals(false, $result);
+
+        $sitemanager = $generator->create_user();
+
+        $managerroleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+        role_assign($managerroleid, $sitemanager->id, $sitecontext->id);
+
+        $this->setUser($sitemanager);
+
+        $result = calendar_can_manage_user_event($user1event);
+        $this->assertEquals(true, $result);
+        $result = calendar_can_manage_user_event($adminevent);
+        $this->assertEquals(false, $result);
+    }
 }
