@@ -89,10 +89,10 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($course->fullname));
 
-list($uselegacyreader, $useinternalreader, $minloginternalreader, $logtable) = report_outline_get_common_log_variables();
+list($uselegacyreader, $usedatabasereader, $useinternalreader, $minloginternalreader, $logtable) = report_outline_get_common_log_variables();
 
 // If no legacy and no internal log then don't proceed.
-if (!$uselegacyreader && !$useinternalreader) {
+if (!$uselegacyreader && !$usedatabasereader && !$useinternalreader) {
     echo $OUTPUT->box_start('generalbox', 'notice');
     echo $OUTPUT->notification(get_string('nologreaderenabled', 'report_outline'));
     echo $OUTPUT->box_end();
@@ -107,7 +107,7 @@ if ($uselegacyreader) {
 }
 
 // If we are using the internal reader check the minimum time in that table.
-if ($useinternalreader) {
+if ($useinternalreader || $usedatabasereader) {
     // If new log table has older data then don't use the minimum time obtained from the legacy table.
     if (empty($minlog) || ($minloginternalreader <= $minlog)) {
         $minlog = $minloginternalreader;
@@ -172,7 +172,7 @@ if ($uselegacyreader) {
 }
 
 // Get record from sql_internal_table_reader and merge with records obtained from legacy log (if needed).
-if ($useinternalreader) {
+if ($useinternalreader || $usedatabasereader) {
     // Check if we need to show the last access.
     $sqllasttime = '';
     if ($showlastaccess) {
@@ -196,6 +196,12 @@ if ($useinternalreader) {
                AND contextlevel = :contextmodule
                $limittime
           GROUP BY contextinstanceid";
+    if($usedatabasereader){
+       $sql = str_replace(array('{','}'), '', $sql);
+       $logmanager = get_log_manager();
+       $store = new \logstore_database\log\store($logmanager);
+       $DB = $store->get_extdb();
+    }
     $v = $DB->get_records_sql($sql, $params);
 
     if (empty($views)) {
