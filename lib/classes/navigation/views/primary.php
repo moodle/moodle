@@ -33,33 +33,46 @@ class primary extends view {
      * Initialise the primary navigation node
      */
     public function initialise(): void {
-        global $CFG;
         if (during_initial_install() || $this->initialised) {
             return;
         }
         $this->id = 'primary_navigation';
-        if (isloggedin() && !isguestuser()) {
-            $homepage = get_home_page();
-            if ($homepage === HOMEPAGE_SITE) {
-                $this->add(get_string('home'), new \moodle_url('/'), self::TYPE_SYSTEM,
-                        null, 'home', new \pix_icon('i/home', ''));
-                $this->rootnodes['home'] = $this->add(get_string('myhome'), new \moodle_url('/my/'),
-                        self::TYPE_SETTING, null, 'myhome', new \pix_icon('i/dashboard', ''));
-            } else if ($homepage === HOMEPAGE_MY) {
-                $this->add(get_string('myhome'), new \moodle_url('/my/'), self::TYPE_SYSTEM,
-                        null, 'myhome', new \pix_icon('i/dashboard', ''));
-                $this->rootnodes['home'] = $this->add(get_string('sitehome'), new \moodle_url('/'),
-                        self::TYPE_SETTING, null, 'home', new \pix_icon('i/home', ''));
-                if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY)) {
+
+        // We do not need to change the text for the home/dashboard depending on the set homepage.
+        $sitehome = $this->add(get_string('home'), new \moodle_url('/'), self::TYPE_SYSTEM,
+            null, 'home', new \pix_icon('i/home', ''));
+        if (isloggedin() ) {
+            if (!isguestuser()) {
+                if (get_home_page() == HOMEPAGE_MY) {
                     // We need to stop automatic redirection.
-                    $this->rootnodes['home']->action->param('redirect', '0');
+                    $sitehome->action->param('redirect', '0');
                 }
+
+                // Add the dashboard link.
+                $this->add(get_string('myhome'), new \moodle_url('/my/'),
+                    self::TYPE_SETTING, null, 'myhome', new \pix_icon('i/dashboard', ''));
             }
+
+            // Add the mycourses link.
+            $this->add(get_string('mycourses'), new \moodle_url('/my/courses.php'), self::TYPE_ROOTNODE, null, 'courses');
         }
 
-        // Add the mycourses link.
-        $this->add(get_string('mycourses'), new \moodle_url('/my/courses.php'), self::TYPE_ROOTNODE, null, 'courses');
+        if ($node = $this->get_site_admin_node()) {
+            // We don't need everything from the node just the initial link.
+            $this->add($node->text, $node->action(), self::TYPE_SITE_ADMIN, null, 'siteadminnode', $node->icon);
+        }
 
+        // Search and set the active node.
+        $this->set_active_node();
+        $this->initialised = true;
+    }
+
+    /**
+     * Get the site admin node if available.
+     *
+     * @return navigation_node|null
+     */
+    private function get_site_admin_node(): ?navigation_node {
         // Add the site admin node. We are using the settingsnav so as to avoid rechecking permissions again.
         $settingsnav = $this->page->settingsnav;
         $node = $settingsnav->find('siteadministration', self::TYPE_SITE_ADMIN);
@@ -68,14 +81,39 @@ class primary extends view {
             $node = $settingsnav->find('root', self::TYPE_SITE_ADMIN);
         }
 
-        if ($node) {
-            // We don't need everything from the node just the initial link.
-            $this->add($node->text, $node->action(), self::TYPE_SITE_ADMIN, null, 'siteadminnode', $node->icon);
-        }
+        return $node ?: null;
+    }
 
-        // Search and set the active node.
-        $this->search_and_set_active_node($this);
-        $this->initialised = true;
+    /**
+     * Find and set the active node. Initially searches based on URL/explicitly set active node.
+     * If nothing is found, it checks the following:
+     *      - If the node is a site page, set 'Home' as active
+     *      - If within a course context, set 'My courses' as active
+     *      - If within a course category context, set 'Site Admin' (if available) else set 'Home'
+     *      - Else if available set site admin as active
+     *      - Fallback, set 'Home' as active
+     */
+    private function set_active_node(): void {
+        $activenode = $this->search_and_set_active_node($this);
+        // If we haven't found an active node based on the standard search. Follow the criteria above.
+        if (!$activenode) {
+            $children = $this->get_children_key_list();
+            $navactivenode = $this->page->navigation->find_active_node();
+            $activekey = 'home';
+            if (isset($navactivenode->parent) && $navactivenode->parent->text == get_string('sitepages')) {
+                $activekey = 'home';
+            } else if (in_array($this->context->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE])) {
+                $activekey = 'courses';
+            } else if (in_array('siteadminnode', $children) && $node = $this->get_site_admin_node()) {
+                if ($this->context->contextlevel == CONTEXT_COURSECAT || $node->search_for_active_node()) {
+                    $activekey = 'siteadminnode';
+                }
+            }
+
+            if ($activekey && $activenode = $this->find($activekey, null)) {
+                $activenode->make_active();
+            }
+        }
     }
 
     /**
