@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/datafilter/filter_row
+
+    Template for use by each filter condition.
+
+    Context variables required for this template:
+      * filtertypes - Array of filter types available.
+
+    Example context (json):
+    {
+        "filtertypes": [
+            {
+                "name": "status",
+                "title": "Status"
+            }
+        ],
+        "rownumber": 1
+    }
+}}
+<div data-filterregion="filter">
+    <fieldset>
+        <legend class="sr-only">{{#str}}filterrowlegend, core, {{rownumber}}{{/str}}</legend>
+        <div class="border-radius my-2 p-2 bg-white border d-flex flex-column flex-md-row align-items-md-start">
+            <div class="d-flex flex-column flex-md-row align-items-md-center">
+                <label for="core-filter_row-jointype-{{uniqid}}" class="mr-md-2 mb-md-0">{{#str}}match{{/str}}</label>
+                <select class="custom-select mb-1 mb-md-0 mr-md-2" data-filterfield="join" id="core-filter_row-jointype-{{uniqid}}">
+                    <option value="0">{{#str}}none{{/str}}</option>
+                    <option selected=selected value="1">{{#str}}any{{/str}}</option>
+                    <option value="2">{{#str}}all{{/str}}</option>
+                </select>
+            </div>
+
+            <label class="sr-only pt-2" for="core-filter_row-filtertype-{{uniqid}}">{{#str}}filtertype{{/str}}</label>
+            <select class="custom-select mb-1 mb-md-0 mr-md-2" data-filterfield="type" id="core-filter_row-filtertype-{{uniqid}}">
+                <option value="">{{#str}}selectfiltertype{{/str}}</option>
+                {{#filtertypes}}
+                <option value="{{name}}">{{title}}</option>
+                {{/filtertypes}}
+            </select>
+
+            <div data-filterregion="value" class="d-md-block flex-column align-items-start flex-lg-row"></div>
+
+            <button data-filteraction="remove" class="ml-auto icon-no-margin icon-size-4 btn text-reset" aria-label="{{#str}}clearfilterrow{{/str}}">
+                {{#pix}}e/cancel_solid_circle{{/pix}}
+            </button>
+        </div>
+        <div data-filterregion="joinadverb" class="pl-1 text-uppercase font-weight-bold">
+            <div data-filterverbfor="0">{{#str}}operator_andnot{{/str}}</div>
+            <div data-filterverbfor="1">{{#str}}operator_or{{/str}}</div>
+            <div data-filterverbfor="2">{{#str}}operator_and{{/str}}</div>
+        </div>
+    </fieldset>
+</div>

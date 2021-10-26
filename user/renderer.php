@@ -266,7 +266,7 @@ class core_user_renderer extends plugin_renderer_base {
      * Render the data required for the participants filter on the course participants page.
      *
      * @param context $context The context of the course being displayed
-     * @param string $tableregionid The table to be updated by this filter
+     * @param string $tableregionid Container of the table to be updated by this filter, is used to retrieve the table
      * @return string
      */
     public function participants_filter(context $context, string $tableregionid): string {

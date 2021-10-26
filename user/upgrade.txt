@@ -9,6 +9,23 @@ This files describes API changes for code that uses the user API.
     * deleted
     * all potential fullname fields
 
+* Participant filter is moved to core as an API which can be used in different areas of core by implementing the API
+  and filterable objects. As a part of making the API mature as a core one, these are the js files moved from core
+  user to core library:
+  * user/amd/src/local/participantsfilter/filter.js → lib/amd/src/datafilter/filtertype.js
+  * user/amd/src/local/participantsfilter/filtertypes/country.js → lib/amd/src/datafilter/filtertypes/country.js
+  * user/amd/src/local/participantsfilter/filtertypes/courseid.js → lib/amd/src/datafilter/filtertypes/courseid.js
+  * user/amd/src/local/participantsfilter/filtertypes/keyword.js → lib/amd/src/datafilter/filtertypes/keyword.js
+  * user/amd/src/local/participantsfilter/selectors.js → lib/amd/src/datafilter/selectors.js
+  The following mustache have been moved from core user to core library:
+  * user/templates/local/participantsfilter/filterrow.mustache → lib/templates/datafilter/filter_row.mustache
+  * user/templates/local/participantsfilter/filtertype.mustache → lib/templates/datafilter/filter_type.mustache
+  * user/templates/local/participantsfilter/filtertypes.mustache → lib/templates/datafilter/filter_types.mustache
+  * user/templates/local/participantsfilter/autocomplete_layout.mustache → lib/templates/datafilter/autocomplete_layout.mustache
+  * user/templates/local/participantsfilter/autocomplete_selection.mustache → lib/templates/datafilter/autocomplete_selection.mustache
+  * user/templates/local/participantsfilter/autocomplete_selection_items.mustache → lib/templates/datafilter/autocomplete_selection_items.mustache
+  Class participant_filter now extends core filter api in core user.
+
 === 4.0 ===
 
 * External function core_user_external::update_users() will now fail on a per user basis. Previously if one user

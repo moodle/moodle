@@ -57,3 +57,17 @@ notflagged,core_question
 cannotswitcheditmodeon,core_error
 multilangforceold,core_admin
 nopermissionmove,core_question
+addcondition,core_user
+adverbfor_and,core_user
+adverbfor_andnot,core_user
+adverbfor_or,core_user
+applyfilters,core_user
+clearfilterrow,core_user
+clearfilters,core_user
+filtersetmatchdescription,core_user
+filterrowlegend,core_user
+filtertype,core_user
+match,core_user
+matchofthefollowing,core_user
+placeholdertypeorselect,core_user
+selectfiltertype,core_user

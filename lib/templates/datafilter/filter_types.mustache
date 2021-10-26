@@ -15,34 +15,50 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_user/participantsfilter
+    @template core/datafilter/filter_types
 
-    Template for the form containing one or more filter rows.
+    Placeholder to fetch all filter types.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-filterregion="filtertypedata"
+
+    Context variables required for this template:
+    * filtertypes
 
     Example context (json):
     {
         "filtertypes": [
             {
                 "name": "status",
-                "title": "Status",
+                "title": "Enrolment Status",
+                "allowcustom": "0",
                 "values": [
                     {
-                        "value": 1,
-                        "title": "Active"
+                        "value": "0",
+                        "title": "Inactive"
                     },
                     {
-                        "value": 0,
-                        "title": "Suspended"
+                        "value": "1",
+                        "title": "Active"
                     }
                 ]
             }
         ]
     }
 }}
-{{> core/datafilter/filter }}
-
-{{#js}}
-    require(['core_user/participants_filter'], function(ParticipantsFilter) {
-        ParticipantsFilter.init('core-filter-{{uniqid}}');
-    });
-{{/js}}
+<div class="hidden" data-filterregion="filtertypedata">
+    {{#filtertypes}}
+        {{> core/datafilter/filter_type}}
+    {{/filtertypes}}
+</div>
+<div class="hidden">
+    <select disabled="disabled" data-filterfield="type" data-filterregion="filtertypelist">
+        <option value="">{{#str}}selectfiltertype{{/str}}</option>
+        {{#filtertypes}}
+        <option value="{{name}}">{{title}}</option>
+        {{/filtertypes}}
+    </select>
+</div>

@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_user/participantsfilter
+    @template core/datafilter/filter
 
     Template for the form containing one or more filter rows.
 
@@ -39,10 +39,25 @@
         ]
     }
 }}
-{{> core/datafilter/filter }}
 
-{{#js}}
-    require(['core_user/participants_filter'], function(ParticipantsFilter) {
-        ParticipantsFilter.init('core-filter-{{uniqid}}');
-    });
-{{/js}}
+<div id="core-filter-{{uniqid}}" class="filter-group my-2 p-2 bg-light border-radius border" data-table-region="{{tableregionid}}" data-table-course-id="{{courseid}}" data-filterverb="2">
+    {{> core/datafilter/filter_match }}
+
+    <div data-filterregion="filters">
+        {{> core/datafilter/filter_row }}
+    </div>
+
+    <div class="d-flex" data-filterregion="actions">
+        &nbsp;
+        <button type="button" class="btn btn-link text-reset" data-filteraction="add">
+            {{#pix}}t/add{{/pix}}<span class="pl-3">{{#str}}addcondition{{/str}}</span>
+        </button>
+        <button data-filteraction="reset" type="button" class="btn btn-secondary ml-auto mr-2">{{#str}}clearfilters{{/str}}</button>
+        <button data-filteraction="apply" type="button" class="btn btn-primary">{{#str}}applyfilters{{/str}}</button>
+    </div>
+
+    {{> core/datafilter/filter_types }}
+
+</div>
+
+
