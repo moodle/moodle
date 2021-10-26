@@ -3132,10 +3132,9 @@ class assign {
             $assignment->update_effective_access($USER->id);
             $timedue = $assignment->get_instance()->duedate;
 
-            if (has_capability('mod/assign:grade', $context)) {
-                $submitted = $assignment->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED);
-
-            } else if (has_capability('mod/assign:submit', $context)) {
+            if (has_capability('mod/assign:submit', $context) &&
+                !has_capability('moodle/site:config', $context)) {
+                $cangrade = false;
                 if ($assignment->get_instance()->teamsubmission) {
                     $usersubmission = $assignment->get_group_submission($USER->id, 0, false);
                 } else {
@@ -3147,17 +3146,22 @@ class assign {
                 } else {
                     $submitted = get_string('submissionstatus_', 'assign');
                 }
-            }
-            $gradinginfo = grade_get_grades($course->id, 'mod', 'assign', $cm->instance, $USER->id);
-            if (isset($gradinginfo->items[0]->grades[$USER->id]) &&
-                    !$gradinginfo->items[0]->grades[$USER->id]->hidden ) {
-                $grade = $gradinginfo->items[0]->grades[$USER->id]->str_grade;
-            } else {
-                $grade = '-';
+
+                $gradinginfo = grade_get_grades($course->id, 'mod', 'assign', $cm->instance, $USER->id);
+                if (isset($gradinginfo->items[0]->grades[$USER->id]) &&
+                        !$gradinginfo->items[0]->grades[$USER->id]->hidden ) {
+                    $grade = $gradinginfo->items[0]->grades[$USER->id]->str_grade;
+                } else {
+                    $grade = '-';
+                }
+            } else if (has_capability('mod/assign:grade', $context)) {
+                $submitted = $assignment->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED);
+                $grade = $assignment->count_submissions_need_grading();
+                $cangrade = true;
             }
 
-            $courseindexsummary->add_assign_info($cm->id, $cm->get_formatted_name(), $sectionname, $timedue, $submitted, $grade);
-
+            $courseindexsummary->add_assign_info($cm->id, $cm->get_formatted_name(),
+                $sectionname, $timedue, $submitted, $grade, $cangrade);
         }
 
         $o .= $this->get_renderer()->render($courseindexsummary);

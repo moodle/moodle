@@ -634,14 +634,16 @@ class assign_course_index_summary implements renderable {
      * @param string $submissioninfo - A string with either the number of submitted assignments, or the
      *                                 status of the current users submission depending on capabilities.
      * @param string $gradeinfo - The current users grade if they have been graded and it is not hidden.
+     * @param bool cangrade - Does this user have grade capability?
      */
-    public function add_assign_info($cmid, $cmname, $sectionname, $timedue, $submissioninfo, $gradeinfo) {
-        $this->assignments[] = array('cmid'=>$cmid,
-                               'cmname'=>$cmname,
-                               'sectionname'=>$sectionname,
-                               'timedue'=>$timedue,
-                               'submissioninfo'=>$submissioninfo,
-                               'gradeinfo'=>$gradeinfo);
+    public function add_assign_info($cmid, $cmname, $sectionname, $timedue, $submissioninfo, $gradeinfo, $cangrade = false) {
+        $this->assignments[] = ['cmid' => $cmid,
+                               'cmname' => $cmname,
+                               'sectionname' => $sectionname,
+                               'timedue' => $timedue,
+                               'submissioninfo' => $submissioninfo,
+                               'gradeinfo' => $gradeinfo,
+                               'cangrade' => $cangrade];
     }
 
 
