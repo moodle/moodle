@@ -246,6 +246,12 @@ $calendarCurrentDateBackground: $primary;
 
         td {
 
+            a.day:focus {
+                display: inline-block;
+                border-radius: 50%;
+                box-shadow: $input-btn-focus-box-shadow;
+            }
+
             .day-number-circle {
                 display: inline-block;
                 line-height: 0;

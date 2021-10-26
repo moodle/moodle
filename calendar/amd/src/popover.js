@@ -60,24 +60,33 @@ const showPopover = target => {
 
     if (isPopoverAvailable(target)) {
         jQuery(target).popover('show');
-
         target.addEventListener('mouseleave', hidePopover);
+        target.addEventListener('focusout', hidePopover);
     }
 };
 
 const hidePopover = e => {
-    if (isPopoverConfigured.has(e.target)) {
-        jQuery(e.target).popover('hide');
+    const target = e.target;
+    const dateContainer = e.target.closest(CalendarSelectors.elements.dateContainer);
+    if (!dateContainer) {
+        return;
     }
-
-    e.target.removeEventListener('mouseleave', hidePopover);
+    if (isPopoverConfigured.has(dateContainer)) {
+        const isTargetActive = target.contains(document.activeElement);
+        const isTargetHover = target.matches(':hover');
+        if (!isTargetActive && !isTargetHover) {
+            jQuery(dateContainer).popover('hide');
+            dateContainer.removeEventListener('mouseleave', hidePopover);
+            dateContainer.removeEventListener('focusout', hidePopover);
+        }
+    }
 };
 
 /**
  * Register events for date container.
  */
 const registerEventListeners = () => {
-    document.addEventListener('mouseover', e => {
+    const showPopoverHandler = (e) => {
         const dateContainer = e.target.closest(CalendarSelectors.elements.dateContainer);
         if (!dateContainer) {
             return;
@@ -85,8 +94,10 @@ const registerEventListeners = () => {
 
         e.preventDefault();
         showPopover(dateContainer);
-    });
+    };
 
+    document.addEventListener('mouseover', showPopoverHandler);
+    document.addEventListener('focusin', showPopoverHandler);
 };
 
 let listenersRegistered = false;

@@ -13280,6 +13280,10 @@ body.dragging .dragging {
     .maincalendar .calendarmonth th {
       text-align: left;
       padding-left: 16px; }
+    .maincalendar .calendarmonth td a.day:focus {
+      display: inline-block;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0.2rem rgba(15, 108, 191, 0.75); }
     .maincalendar .calendarmonth td .day-number-circle {
       display: inline-block;
       line-height: 0;
