@@ -76,11 +76,17 @@ final class column {
     /** @var array $params  */
     private $params = [];
 
+    /** @var string $groupbysql */
+    private $groupbysql;
+
     /** @var array[] $callbacks Array of [callable, additionalarguments] */
     private $callbacks = [];
 
     /** @var base|null $aggregation Aggregation type to apply to column */
     private $aggregation = null;
+
+    /** @var array $disabledaggregation Aggregation types explicitly disabled  */
+    private $disabledaggregation = [];
 
     /** @var bool $issortable Used to indicate if a column is sortable */
     private $issortable = false;
@@ -369,10 +375,15 @@ final class column {
     public function get_fields(): array {
         $fieldsalias = $this->get_fields_sql_alias();
 
-        // We aggregate the first field only.
         if (!empty($this->aggregation)) {
+            $fieldsaliassql = array_column($fieldsalias, 'sql');
             $field = reset($fieldsalias);
-            $fields = [$this->aggregation::get_field_sql($field['sql'], $this->get_type()) . " AS {$field['alias']}"];
+
+            // If aggregating the column, generate SQL from column fields and use it to generate aggregation SQL.
+            $columnfieldsql = $this->aggregation::get_column_field_sql($fieldsaliassql);
+            $aggregationfieldsql = $this->aggregation::get_field_sql($columnfieldsql, $this->get_type());
+
+            $fields = ["{$aggregationfieldsql} AS {$field['alias']}"];
         } else {
             $fields = array_map(static function(array $field): string {
                 return "{$field['sql']} AS {$field['alias']}";
@@ -380,23 +391,6 @@ final class column {
         }
 
         return array_values($fields);
-    }
-
-    /**
-     * Return suitable SQL fragment for grouping by the column fields (during aggregation)
-     *
-     * @return array
-     */
-    public function get_groupby_sql(): array {
-        global $DB;
-
-        $fieldsalias = $this->get_fields_sql_alias();
-
-        // Note that we can reference field aliases in GROUP BY only in MySQL/Postgres.
-        $usealias = in_array($DB->get_dbfamily(), ['mysql', 'postgres']);
-        $columnname = $usealias ? 'alias' : 'sql';
-
-        return array_column($fieldsalias, $columnname);
     }
 
     /**
@@ -427,6 +421,39 @@ final class column {
         }
 
         return reset($fields)['alias'];
+    }
+
+    /**
+     * Define suitable SQL fragment for grouping by the columns fields. This will be returned from {@see get_groupby_sql} if set
+     *
+     * @param string $groupbysql
+     * @return self
+     */
+    public function set_groupby_sql(string $groupbysql): self {
+        $this->groupbysql = $groupbysql;
+        return $this;
+    }
+
+    /**
+     * Return suitable SQL fragment for grouping by the column fields (during aggregation)
+     *
+     * @return array
+     */
+    public function get_groupby_sql(): array {
+        global $DB;
+
+        // Return defined value if it's already been set during column definition.
+        if (!empty($this->groupbysql)) {
+            return [$this->groupbysql];
+        }
+
+        $fieldsalias = $this->get_fields_sql_alias();
+
+        // Note that we can reference field aliases in GROUP BY only in MySQL/Postgres.
+        $usealias = in_array($DB->get_dbfamily(), ['mysql', 'postgres']);
+        $columnname = $usealias ? 'alias' : 'sql';
+
+        return array_column($fieldsalias, $columnname);
     }
 
     /**
@@ -489,6 +516,41 @@ final class column {
     }
 
     /**
+     * Set disabled aggregation methods for the column. Typically only those methods suitable for the current column type are
+     * available: {@see aggregation::get_column_aggregations}, however in some cases we may want to disable specific methods
+     *
+     * @param array $disabledaggregation Array of types, e.g. ['min', 'sum']
+     * @return self
+     */
+    public function set_disabled_aggregation(array $disabledaggregation): self {
+        $this->disabledaggregation = $disabledaggregation;
+        return $this;
+    }
+
+    /**
+     * Disable all aggregation methods for the column, for instance when current database can't aggregate fields that contain
+     * sub-queries
+     *
+     * @return self
+     */
+    public function set_disabled_aggregation_all(): self {
+        $aggregationnames = array_map(static function(string $aggregation): string {
+            return $aggregation::get_class_name();
+        }, aggregation::get_aggregations());
+
+        return $this->set_disabled_aggregation($aggregationnames);
+    }
+
+    /**
+     * Return those aggregations methods explicitly disabled for the column
+     *
+     * @return array
+     */
+    public function get_disabled_aggregation(): array {
+        return $this->disabledaggregation;
+    }
+
+    /**
      * Sets the column as sortable
      *
      * @param bool $issortable
@@ -505,6 +567,12 @@ final class column {
      * @return bool
      */
     public function get_is_sortable(): bool {
+
+        // Defer sortable status to aggregation type if column is being aggregated.
+        if (!empty($this->aggregation)) {
+            return $this->aggregation::sortable($this->issortable);
+        }
+
         return $this->issortable;
     }
 
@@ -517,8 +585,9 @@ final class column {
     private function get_values(array $row): array {
         $values = [];
 
+        // During aggregation we only get a single alias back, subsequent aliases won't exist.
         foreach ($this->get_fields_sql_alias() as $alias => $field) {
-            $values[$alias] = $row[$field['alias']];
+            $values[$alias] = $row[$field['alias']] ?? null;
         }
 
         return $values;
@@ -565,7 +634,8 @@ final class column {
             $value = $this->aggregation::format_value($value, $values, $this->callbacks);
         } else {
             foreach ($this->callbacks as $callback) {
-                $value = ($callback[0])($value, (object) $values, $callback[1]);
+                [$callable, $arguments] = $callback;
+                $value = ($callable)($value, (object) $values, $arguments);
             }
         }
 

@@ -53,23 +53,32 @@ class aggregation {
     }
 
     /**
+     * Return list of all available/valid aggregation types
+     *
+     * @return base[]
+     */
+    public static function get_aggregations(): array {
+        $classes = core_component::get_component_classes_in_namespace('core_reportbuilder', 'local\\aggregation');
+
+        return array_filter(array_keys($classes), static function(string $class): bool {
+            return static::valid($class);
+        });
+    }
+
+    /**
      * Get available aggregation types for given column type
      *
      * @param int $columntype
-     * @param array $exclude List of types to exclude, if omitted then include all available types
+     * @param array $exclude List of types to exclude, e.g. ['min', 'sum']
      * @return string[] Aggregation types indexed by [shortname => name]
      */
     public static function get_column_aggregations(int $columntype, array $exclude = []): array {
         $types = [];
 
-        $classes = core_component::get_component_classes_in_namespace('core_reportbuilder', 'local\\aggregation');
-        foreach ($classes as $class => $path) {
-            /** @var base $aggregationclass */
-            $aggregationclass = $class;
-            if (static::valid($aggregationclass) && $aggregationclass::compatible($columntype) &&
-                    !in_array($aggregationclass::get_class_name(), $exclude)) {
-
-                $types[$aggregationclass::get_class_name()] = (string) $aggregationclass::get_name();
+        $classes = static::get_aggregations();
+        foreach ($classes as $class) {
+            if ($class::compatible($columntype) && !in_array($class::get_class_name(), $exclude)) {
+                $types[$class::get_class_name()] = (string) $class::get_name();
             }
         }
 

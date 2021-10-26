@@ -19,7 +19,9 @@ declare(strict_types=1);
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
+use core_reportbuilder\local\aggregation\groupconcatdistinct;
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\report\column;
 
 /**
  * Behat step definitions for Report builder
@@ -70,5 +72,31 @@ class behat_reportbuilder extends behat_base {
                 ".//*[@data-region='conditions-form']//*[@data-condition-name=%locator%]",
             ]),
         ];
+    }
+
+    /**
+     * Set aggregation for given column in report editor (proxied so we can skip if aggregation type not available)
+     *
+     * @When I set the :column column aggregation to :aggregation
+     *
+     * @param string $column
+     * @param string $aggregation
+     *
+     * @throws \Moodle\BehatExtension\Exception\SkippedException
+     */
+    public function i_set_the_column_aggregation_to(string $column, string $aggregation): void {
+
+        // Skip if aggregation type unavailable.
+        $aggregationgroupconcatdistinct = (string) groupconcatdistinct::get_name();
+        if ($aggregation === $aggregationgroupconcatdistinct && !groupconcatdistinct::compatible(column::TYPE_TEXT)) {
+            throw new \Moodle\BehatExtension\Exception\SkippedException("{$aggregationgroupconcatdistinct} not available");
+        }
+
+        $editlabel = get_string('aggregatecolumn', 'core_reportbuilder', $column);
+
+        // Work around for MDL-72696, which treats all inplace_editable elements as text boxes and causes unpredictable
+        // behaviour in Chrome when it types characters into an inplace_editable of type select (it selects the wrong option).
+        $this->execute('behat_general::i_click_on', [$this->escape($editlabel), 'link']);
+        $this->execute('behat_forms::i_set_the_field_to', [$this->escape($editlabel), $this->escape($aggregation)]);
     }
 }

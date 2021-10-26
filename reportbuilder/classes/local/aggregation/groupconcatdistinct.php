@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\aggregation;
 
 use lang_string;
-use core_reportbuilder\local\report\column;
+use core_reportbuilder\local\helpers\database;
 
 /**
  * Column group concatenation distinct aggregation type
@@ -28,7 +28,7 @@ use core_reportbuilder\local\report\column;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class groupconcatdistinct extends base {
+class groupconcatdistinct extends groupconcat {
 
     /**
      * Return aggregation name
@@ -53,9 +53,7 @@ class groupconcatdistinct extends base {
             'postgres',
         ]);
 
-        return $dbsupportedtype && !in_array($columntype, [
-            column::TYPE_TIMESTAMP,
-        ]);
+        return $dbsupportedtype && parent::compatible($columntype);
     }
 
     /**
@@ -69,22 +67,15 @@ class groupconcatdistinct extends base {
         global $DB;
 
         // DB limitations mean we only support MySQL and Postgres, and each handle it differently.
+        $fieldsort = database::sql_group_concat_sort($field);
         if ($DB->get_dbfamily() === 'postgres') {
-            return "STRING_AGG(DISTINCT CAST({$field} AS VARCHAR), ', ')";
-        } else {
-            return $DB->sql_group_concat("DISTINCT {$field}");
-        }
-    }
+            if ($fieldsort !== '') {
+                $fieldsort = "ORDER BY {$fieldsort}";
+            }
 
-    /**
-     * Return formatted value for column when applying aggregation
-     *
-     * @param mixed $value
-     * @param array $values
-     * @param array $callbacks
-     * @return mixed
-     */
-    public static function format_value($value, array $values, array $callbacks) {
-        return $value;
+            return "STRING_AGG(DISTINCT CAST({$field} AS VARCHAR), ', ' {$fieldsort})";
+        } else {
+            return $DB->sql_group_concat("DISTINCT {$field}", ', ', $fieldsort);
+        }
     }
 }
