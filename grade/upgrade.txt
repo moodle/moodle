@@ -3,6 +3,9 @@ Information provided here is intended especially for developers.
 
 === 4.0 ===
 
+* The setting $CFG->grade_navmethod setting has been completely removed because it's not required anymore. This setting
+  was used to set the type of navigation (tabs or dropdown box) used in gradebook which is now replaced with tertiary
+  navigation.
 * The print_grade_plugin_selector() function has been deprecated. This function was used to generate and output the
   dropdown box navigation in gradebook which is now replaced with tertiary navigation.
 * The grade_print_tabs() function has been deprecated. This function was used to generate and output the tabs navigation
