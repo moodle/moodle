@@ -44,14 +44,22 @@ class boostnavbar implements \renderable {
      * Prepares the navigation nodes for use with boost.
      */
     protected function prepare_nodes_for_boost(): void {
-        // Don't display the navbar if we are in the site navigation.
-        if (!is_null($this->get_item('root'))) {
-            $this->clear_items();
-            return;
-        }
+        global $PAGE;
 
         $this->remove('myhome'); // Dashboard.
         $this->remove('home');
+
+        if (!is_null($this->get_item('root'))) { // We are in site administration.
+            // Remove the 'Site administration' navbar node as it already exists in the primary navigation menu.
+            $this->remove('root');
+            // Loop through the remaining navbar nodes and remove the ones that already exist in the secondary
+            // navigation menu.
+            foreach ($this->items as $item) {
+                if ($PAGE->secondarynav->get($item->key)) {
+                    $this->remove($item->key);
+                }
+            }
+        }
 
         // Set the designated one path for courses.
         $mycoursesnode = $this->get_item('mycourses');
