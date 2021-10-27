@@ -108,7 +108,6 @@ If you wish to display a tour on the Site Home page, you can use the value: "FRO
 ';
 $string['placement'] = 'Placement';
 $string['pluginname'] = 'User tours';
-$string['previousstep'] = 'Previous';
 $string['resettouronpage'] = 'Reset user tour on this page';
 $string['right'] = 'Right';
 $string['select_block'] = 'Select a block';
@@ -120,6 +119,7 @@ $string['targettype_help'] = 'Each step is associated with a part of the page - 
 $string['selector_defaulttitle'] = 'Enter a descriptive title';
 $string['selectordisplayname'] = 'A CSS selector matching \'{$a}\'';
 $string['skip'] = 'Skip';
+$string['skip_tour'] = 'Skip tour';
 $string['target'] = 'Target';
 $string['target_heading'] = 'Step target';
 $string['target_block'] = 'Block';
@@ -256,3 +256,6 @@ $string['tour_activityinfo_course_teacher_content'] = 'New course settings \'Sho
 
 $string['tour_final_step_title'] = 'End of tour';
 $string['tour_final_step_content'] = 'This is the end of your user tour. It won\'t show again unless you reset it using the link in the footer.';
+
+// Deprecated since Moodle 4.0.
+$string['previousstep'] = 'Previous';

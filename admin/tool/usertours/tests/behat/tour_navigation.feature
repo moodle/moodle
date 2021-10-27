@@ -56,9 +56,11 @@ Feature: Steps can be navigated within a tour
       | Block                       | Course overview   | Course overview   | This area shows you what's happening in some of your courses  |
       | Block                       | Calendar          | Calendar          | This is the Calendar. All of your assignments and due dates can be found here |
     When I am on homepage
-    Then I should see "End tour"
-    And I should see "Next"
-    And I click on "Next" "button"
+    Then I should see "Skip tour"
+    And I should see "Next (1/3)"
+    And I click on "Next (1/3)" "button" in the "Welcome" "dialogue"
+    And I should see "Skip tour"
+    And I click on "Next (2/3)" "button" in the "Course overview" "dialogue"
     And I should see "End tour"
 
   @javascript

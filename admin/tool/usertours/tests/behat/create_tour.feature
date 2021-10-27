@@ -33,10 +33,7 @@ Feature: Add a new user tour
     And I click on "Next" "button" in the "[data-role='flexitour-step']" "css_element"
     And I should see "This is the Calendar. All of your assignments and due dates can be found here"
     And I should not see "This area shows you what's happening in some of your courses"
-    And I click on "Prev" "button" in the "[data-role='flexitour-step']" "css_element"
-    And I should not see "This is the Calendar. All of your assignments and due dates can be found here"
-    And I should see "This area shows you what's happening in some of your courses"
-    And I click on "End tour" "button" in the "[data-role='flexitour-step']" "css_element"
+    And I click on "Skip tour" "button" in the "[data-role='flexitour-step']" "css_element"
     And I should not see "This area shows you what's happening in some of your courses"
     And I am on homepage
     And I should not see "Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful"
@@ -87,11 +84,12 @@ Feature: Add a new user tour
       | student1 | Student   | 1        | student1@example.com |
     And I log in as "admin"
     And I add a new user tour with:
-      | Name                 | Steps tour    |
-      | Description          | My steps tour |
-      | Apply to URL match   | /my/%         |
-      | Tour is enabled      | 1             |
-      | Display step numbers | 1             |
+      | Name                    | Steps tour       |
+      | Description             | My steps tour    |
+      | Apply to URL match      | /my/%            |
+      | Tour is enabled         | 1                |
+      | Display step numbers    | 1                |
+      | End tour button's label | Sample end label |
     And I add steps to the "Steps tour" tour:
       | targettype                | Title   | Content                |
       | Display in middle of page | Welcome | First step of the Tour |
@@ -102,12 +100,17 @@ Feature: Add a new user tour
     When I am on homepage
     Then I should see "First step of the Tour"
     And I should see "Next (1/3)"
+    And I should not see "End tour"
+    And I should not see "Sample end label"
+    And "Skip tour" "button" should exist in the "[data-role='flexitour-step']" "css_element"
     And I click on "Next (1/3)" "button" in the "[data-role='flexitour-step']" "css_element"
     And I should see "Second step of the Tour"
     And I should see "Next (2/3)"
     And I click on "Next (2/3)" "button" in the "[data-role='flexitour-step']" "css_element"
     And I should see "Third step of the Tour"
     And I should not see "Next (3/3)"
+    And I should not see "Skip tour"
+    And "Sample end label" "button" should exist in the "[data-role='flexitour-step']" "css_element"
 
   @javascript
   Scenario: Display step numbers was disabled
