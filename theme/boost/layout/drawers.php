@@ -85,6 +85,8 @@ if (!defined('BEHAT_SITE_RUNNING')) {
             $overflow = $overflowdata->export_for_template($OUTPUT);
         }
     }
+} else {
+    $buildsecondarynavigation = $PAGE->has_secondary_navigation_setter(false);
 }
 
 $primary = new core\navigation\output\primary($PAGE);

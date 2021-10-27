@@ -50,7 +50,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
 
   @javascript
   Scenario: Browse by category
-    When I follow "Browse by category"
+    When I select "Browse by category" from the "Browse the glossary using this index" singleselect
     And I set the field "Categories" to "The ones I like"
     Then I should see "Sweet cucumber"
     And I should not see "Sour eggplants"
@@ -60,7 +60,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
 
   @javascript
   Scenario: Browse by date
-    When I follow "Browse by date"
+    When I select "Browse by date" from the "Browse the glossary using this index" singleselect
     And I follow "By creation date"
     Then "Delete entry: Eggplant" "link" should appear before "Delete entry: Cucumber" "link"
     And I follow "By last update"
@@ -69,7 +69,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
 
   @javascript
   Scenario: Browse by author
-    When I follow "Browse by Author"
+    When I select "Browse by Author" from the "Browse the glossary using this index" singleselect
     And I click on "T" "link" in the ".entrybox" "css_element"
     Then I should see "Teacher 1"
     And I should see "Sour eggplants"

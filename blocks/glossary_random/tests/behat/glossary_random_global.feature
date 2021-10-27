@@ -30,7 +30,7 @@ Feature: Random glossary entry block linking to global glossary
     When I log in as "admin"
     And I am on "Course 2" course homepage
     And I follow "Tips and Tricks"
-    And I press "Add a new entry"
+    And I press "Add entry"
     And I set the following fields to these values:
       | Concept    | Never come late               |
       | Definition | Come in time for your classes |

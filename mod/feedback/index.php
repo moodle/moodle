@@ -53,7 +53,9 @@ $PAGE->navbar->add($strfeedbacks);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title(get_string('modulename', 'feedback').' '.get_string('activities'));
 echo $OUTPUT->header();
-echo $OUTPUT->heading($strfeedbacks);
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading($strfeedbacks);
+}
 
 /// Get all the appropriate data
 

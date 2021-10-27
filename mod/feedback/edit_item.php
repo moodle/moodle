@@ -101,13 +101,14 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
 
+if (!$PAGE->has_secondary_navigation()) {
 // Print the main part of the page.
-echo $OUTPUT->heading(format_string($feedback->name));
+    echo $OUTPUT->heading(format_string($feedback->name));
+}
 
 /// print the tabs
 $current_tab = 'edit';
 $id = $cm->id;
-require('tabs.php');
 
 //print errormsg
 if (isset($error)) {

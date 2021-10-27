@@ -26,7 +26,7 @@ Feature: Using the glossary activities which support point scale
   @javascript
   Scenario: Glossary rescale grade should not be possible when users are graded
     Given I am on the "Test glossary name" "glossary activity" page logged in as student1
-    And I press "Add a new entry"
+    And I press "Add entry"
     And I set the following fields to these values:
       | Concept    | Testing score                   |
       | Definition | Scoring high on tests           |

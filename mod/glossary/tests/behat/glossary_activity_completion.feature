@@ -47,7 +47,7 @@ Feature: View activity completion in the glossary activity
     And the "Make entries: 1" completion condition of "Music history" is displayed as "todo"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And I am on the "Music history" "glossary activity" page
-    And I press "Add a new entry"
+    And I press "Add entry"
     And I set the following fields to these values:
       | Concept    | Blast beats                                               |
       | Definition | Repeated fast tempo hits combining bass, snare and cymbal |

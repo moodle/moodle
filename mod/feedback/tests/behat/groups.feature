@@ -139,7 +139,8 @@ Feature: Feedbacks in courses with groups
     And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
-    And I follow "Show responses"
+    And I am on the "Course feedback" "feedback activity" page
+    And I navigate to "Responses" in current page administration
     And the field "Separate groups" matches value "Group 2"
     And I should not see "Username 1"
     And I should see "Username 3"
@@ -234,7 +235,8 @@ Feature: Feedbacks in courses with groups
     And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
-    And I follow "Show responses"
+    And I am on the "Course anon feedback" "feedback activity" page
+    And I navigate to "Responses" in current page administration
     # The response numbers were randomly allocated, we only can assert the number of visible responses here:
     And the field "Separate groups" matches value "Group 2"
     And "//tr[contains(@id,'_r2') and contains(.,'Response number')]" "xpath_element" should exist

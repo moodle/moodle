@@ -83,10 +83,9 @@ Feature: Non anonymous feedback
     And I should see "Do you like our site?"
     And I should see "1 (50.00 %)" in the "Yes of course" "table_row"
     And I should see "1 (50.00 %)" in the "Not at all" "table_row"
-    And I should not see "Show responses"
     And I log out
     And I am on the "Site feedback" "feedback activity" page logged in as manager
-    And I navigate to "Show responses" in current page administration
+    And I navigate to "Responses" in current page administration
     And I should see "Username"
     And I should see "Non anonymous entries (2)"
     And I should not see "Anonymous entries"
@@ -134,7 +133,7 @@ Feature: Non anonymous feedback
     And I should see "Do you like this course?"
     And I press "Continue"
     And I should not see "Answer the questions"
-    And I navigate to "Show responses" in current page administration
+    And I navigate to "Responses" in current page administration
     And I should see "Non anonymous entries (2)"
     And I should not see "Anonymous"
     And I click on "," "link" in the "Username 1" "table_row"

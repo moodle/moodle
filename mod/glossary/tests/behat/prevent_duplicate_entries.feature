@@ -25,7 +25,7 @@ Feature: A teacher can choose whether to allow duplicate entries in a glossary
     And I add a glossary entry with the following data:
       | Concept | Unique concept |
       | Definition | I'm the definition of an unique concept |
-    When I press "Add a new entry"
+    When I press "Add entry"
     And I set the following fields to these values:
       | Concept | Unique concept |
       | Definition | There is no definition restriction |
