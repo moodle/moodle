@@ -1009,7 +1009,15 @@ abstract class base {
             }
         }
         if ($needrebuild) {
-            rebuild_course_cache($this->courseid, true);
+            if ($sectionid) {
+                $sectionrecord = $DB->get_record('course_sections', ['id' => $sectionid], 'course, section', MUST_EXIST);
+                course_purge_section_cache($sectionrecord);
+                // Partial rebuild sections that have been invalidated.
+                rebuild_course_cache($this->courseid, true, true);
+            } else {
+                // Full rebuild if sectionid is null.
+                rebuild_course_cache($this->courseid);
+            }
         }
         if ($changed) {
             // Reset internal caches.
@@ -1277,7 +1285,7 @@ abstract class base {
         }
         if (!is_object($section)) {
             $section = $DB->get_record('course_sections', array('course' => $this->get_courseid(), 'section' => $section),
-                'id,section,sequence,summary');
+                'id,course,section,sequence,summary');
         }
         if (!$section || !$section->section) {
             // Not possible to delete 0-section.
@@ -1314,7 +1322,9 @@ abstract class base {
         // Delete section and it's format options.
         $DB->delete_records('course_format_options', array('sectionid' => $section->id));
         $DB->delete_records('course_sections', array('id' => $section->id));
-        rebuild_course_cache($course->id, true);
+        course_purge_section_cache($section);
+        // Partial rebuild section cache that has been purged.
+        rebuild_course_cache($course->id, true, true);
 
         // Delete section summary files.
         $context = \context_course::instance($course->id);

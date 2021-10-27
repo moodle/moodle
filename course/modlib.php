@@ -374,7 +374,11 @@ function edit_module_post_actions($moduleinfo, $course) {
         $moduleinfo->showgradingmanagement = $showgradingmanagement;
     }
 
-    rebuild_course_cache($course->id, true);
+    $cminfo = new stdClass();
+    $cminfo->course = $moduleinfo->course;
+    $cminfo->id = $moduleinfo->coursemodule;
+    course_purge_module_cache($cminfo);
+    rebuild_course_cache($course->id, true, true);
     if ($hasgrades) {
         grade_regrade_final_grades($course->id);
     }

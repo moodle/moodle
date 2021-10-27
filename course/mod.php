@@ -190,7 +190,9 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
     $DB->set_field('course_modules', 'indent', $cm->indent, array('id'=>$cm->id));
 
-    rebuild_course_cache($cm->course);
+    course_purge_module_cache($cm);
+    // Rebuild invalidated module cache.
+    rebuild_course_cache($cm->course, false, true);
 
     redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
 

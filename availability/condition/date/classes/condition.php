@@ -292,14 +292,15 @@ class condition extends \core_availability\condition {
                 $updatesection->availability = json_encode($tree->save());
                 $updatesection->timemodified = time();
                 $DB->update_record('course_sections', $updatesection);
+                course_purge_section_cache($section);
 
                 $anychanged = true;
             }
         }
 
-        // Ensure course cache is cleared if required.
         if ($anychanged) {
-            rebuild_course_cache($courseid, true);
+            // Partial rebuild the sections which have been invalidated.
+            rebuild_course_cache($courseid, true, true);
         }
     }
 }
