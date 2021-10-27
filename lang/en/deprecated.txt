@@ -167,3 +167,7 @@ monthlyview,core_calendar
 evidence,core_badges
 recipientdetails,core_badges
 recipientidentificationproblem,core_badges
+navmethod,core_grades
+dropdown,core_grades
+tabs,core_grades
+combo,core_grades
