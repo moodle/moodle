@@ -3,6 +3,10 @@ Information provided here is intended especially for developers.
 
 === 4.0 ===
 
+* The print_grade_plugin_selector() function has been deprecated. This function was used to generate and output the
+  dropdown box navigation in gradebook which is now replaced with tertiary navigation.
+* The grade_print_tabs() function has been deprecated. This function was used to generate and output the tabs navigation
+  in gradebook which is now replaced with tertiary navigation.
 * There is a new callback inside of grade_get_plugin_info called extend_gradebook_plugininfo
   which allows for new tabs to be added to the gradebook.
 
