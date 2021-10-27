@@ -58,7 +58,7 @@ class permission_test extends advanced_testcase {
         unassign_capability('moodle/reportbuilder:view', $userrole, context_system::instance());
 
         $this->expectException(report_access_exception::class);
-        $this->expectExceptionMessage('You can not view this report');
+        $this->expectExceptionMessage('You cannot view this report');
         permission::require_can_view_reports_list();
     }
 
@@ -92,7 +92,7 @@ class permission_test extends advanced_testcase {
         unassign_capability('moodle/reportbuilder:view', $userrole, context_system::instance());
 
         $this->expectException(report_access_exception::class);
-        $this->expectExceptionMessage('You can not view this report');
+        $this->expectExceptionMessage('You cannot view this report');
         permission::require_can_view_report($report);
     }
 
@@ -109,7 +109,7 @@ class permission_test extends advanced_testcase {
         $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
 
         $this->expectException(report_access_exception::class);
-        $this->expectExceptionMessage('You can not edit this report');
+        $this->expectExceptionMessage('You cannot edit this report');
         permission::require_can_edit_report($systemreport->get_report_persistent());
     }
 
@@ -139,7 +139,7 @@ class permission_test extends advanced_testcase {
         }
 
         $this->expectException(report_access_exception::class);
-        $this->expectExceptionMessage('You can not edit this report');
+        $this->expectExceptionMessage('You cannot edit this report');
         permission::require_can_edit_report($reportadmin);
     }
 
@@ -169,7 +169,7 @@ class permission_test extends advanced_testcase {
         $this->setUser($user);
 
         $this->expectException(report_access_exception::class);
-        $this->expectExceptionMessage('You can not edit this report');
+        $this->expectExceptionMessage('You cannot edit this report');
         permission::require_can_edit_report($reportadmin);
     }
 
@@ -212,7 +212,7 @@ class permission_test extends advanced_testcase {
         $this->setUser($user3);
 
         $this->expectException(report_access_exception::class);
-        $this->expectExceptionMessage('You can not create a new report');
+        $this->expectExceptionMessage('You cannot create a new report');
         permission::require_can_create_report((int)$user3->id);
     }
 }

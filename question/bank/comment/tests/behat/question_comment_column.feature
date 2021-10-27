@@ -20,13 +20,13 @@ Feature: Use the qbank plugin manager page for comment
   Scenario: Enable/disable comment column from the base view
     Given I log in as "admin"
     When I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
-    And I should see "Question comment"
-    And I click on "Disable" "link" in the "Question comment" "table_row"
+    And I should see "Question comments"
+    And I click on "Disable" "link" in the "Question comments" "table_row"
     And I am on the "Test quiz" "quiz activity" page
     And I navigate to "Question bank > Questions" in current page administration
     Then "#categoryquestions .header.commentcount" "css_element" should not be visible
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
-    And I click on "Enable" "link" in the "Question comment" "table_row"
+    And I click on "Enable" "link" in the "Question comments" "table_row"
     And I am on the "Test quiz" "quiz activity" page
     And I navigate to "Question bank > Questions" in current page administration
     And "#categoryquestions .header.commentcount" "css_element" should be visible

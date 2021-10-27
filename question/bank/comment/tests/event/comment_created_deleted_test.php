@@ -103,7 +103,7 @@ class qbank_comment_comment_created_deleted_test extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\qbank_comment\event\comment_created', $event);
         $this->assertEquals($this->context, $event->get_context());
-        $this->assertStringContainsString('\'qbank_comment\' for the question with id \''.$this->questiondata->id.'\'',
+        $this->assertStringContainsString('\'qbank_comment\' for the question with ID \''.$this->questiondata->id.'\'',
                 $event->get_description());
     }
 
@@ -122,7 +122,7 @@ class qbank_comment_comment_created_deleted_test extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\qbank_comment\event\comment_deleted', $event);
         $this->assertEquals($this->context, $event->get_context());
-        $this->assertStringContainsString('\'qbank_comment\' for the question with id \''.$this->questiondata->id.'\'',
+        $this->assertStringContainsString('\'qbank_comment\' for the question with ID \''.$this->questiondata->id.'\'',
                 $event->get_description());
     }
 }
