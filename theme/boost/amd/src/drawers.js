@@ -155,10 +155,10 @@ export default class Drawers {
         this.drawerNode = drawerNode;
 
         if (this.drawerNode.classList.contains('show')) {
-            this.openDrawer(true);
+            this.openDrawer({focusOnCloseButton: false});
         } else if (this.drawerNode.dataset.forceopen == 1) {
             if (!isSmall()) {
-                this.openDrawer(true);
+                this.openDrawer({focusOnCloseButton: false});
             }
         } else {
             Aria.hide(this.drawerNode);
@@ -270,14 +270,14 @@ export default class Drawers {
     /**
      * Open the drawer.
      *
-     * By default, openDrawer move the page focus to the close drawer button.However, when
-     * a drawer is opened by default this represents an accessibility problem as the initial
-     * focus changes without any user interaction. Using the  keepfocus param it is possible to
-     * prevent the focus lose.
+     * By default, openDrawer sets the page focus to the close drawer button. However, when a drawer is open at page
+     * load, this represents an accessibility problem as the initial focus changes without any user interaction. The
+     * focusOnCloseButton parameter can be set to false to prevent this behaviour.
      *
-     * @param {boolean} keepfocus true if the drawer has to open but don't alter the page focus.
+     * @param {object} args
+     * @param {boolean} [args.focusOnCloseButton=true] Whether to alter page focus when opening the drawer
      */
-    openDrawer(keepfocus) {
+    openDrawer({focusOnCloseButton = true} = {}) {
         const showEvent = this.dispatchEvent(Drawers.eventTypes.drawerShow, true);
         if (showEvent.defaultPrevented) {
             return;
@@ -308,7 +308,7 @@ export default class Drawers {
             .catch();
         }
 
-        if (!keepfocus) {
+        if (focusOnCloseButton) {
             const closeButton = this.drawerNode.querySelector('[data-toggle="drawers"][data-action="closedrawer"]');
             closeButton.focus();
         }
