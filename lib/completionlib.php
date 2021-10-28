@@ -133,16 +133,6 @@ define('COMPLETION_OR', false);
 define('COMPLETION_AND', true);
 
 /**
- * When a module implements this, completion state is dependent to the
- * module's _get_completion_state callback and activity_custom_completion class.
- */
-define('COMPLETION_CUSTOM_MODULE_FLOW', true);
-/**
- * Standard flow indicates ALL conditions need to be met for completion to be marked as done.
- */
-define('COMPLETION_STANDARD_FLOW', false);
-
-/**
  * Course completion criteria aggregation method.
  */
 define('COMPLETION_AGGREGATION_ALL', 1);
@@ -733,28 +723,22 @@ class completion_info {
                 $response = $function($this->course, $cm, $userid, COMPLETION_AND, $completionstate);
             }
 
-            // Get the relationship between the core_completion and plugin_completion criteria.
-            $aggregationtype = COMPLETION_STANDARD_FLOW;
-            if ($aggregationfn = component_callback_exists("mod_$cminfo->modname", 'get_completion_aggregation_state')) {
-                $aggregationtype = $aggregationfn();
-            }
-            // If the module aggregates using COMPLETION_STANDARD_FLOW, it requires ALL conditions to be met.
-            // If the aggregation type is COMPLETION_CUSTOM_MODULE_FLOW, completion can be overridden by the plugin.
-            if (!$response && $aggregationtype == COMPLETION_STANDARD_FLOW) {
+            if (!$response) {
                 return COMPLETION_INCOMPLETE;
-            } else if ($aggregationtype == COMPLETION_CUSTOM_MODULE_FLOW) {
-                return ($response ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE);
             }
         }
 
         if ($completionstate) {
             // We have allowed the plugins to do it's thing and run their own checks.
             // We have now reached a state where we need to AND all the calculated results.
+            // Preference for COMPLETION_COMPLETE_PASS over COMPLETION_COMPLETE for proper indication in reports.
             $newstate = array_reduce($completionstate, function($carry, $value) {
-                if ($carry == COMPLETION_INCOMPLETE) {
-                    return $carry;
+                if (in_array(COMPLETION_INCOMPLETE, [$carry, $value])) {
+                    return COMPLETION_INCOMPLETE;
+                } else if (in_array(COMPLETION_COMPLETE_FAIL, [$carry, $value])) {
+                    return COMPLETION_COMPLETE_FAIL;
                 } else {
-                    return $value;
+                    return in_array(COMPLETION_COMPLETE_PASS, [$carry, $value]) ? COMPLETION_COMPLETE_PASS : $value;
                 }
 
             }, COMPLETION_COMPLETE);
