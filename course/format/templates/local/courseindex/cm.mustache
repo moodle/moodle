@@ -28,7 +28,7 @@
         "isactive": 1,
         "uniqid": "0",
         "isactive": 1,
-        "accessvisible": 1,
+        "accessvisible": 1
     }
 }}
 <li class="courseindex-item
@@ -38,10 +38,11 @@
     id="{{uniqid}}-course-index-cm-{{id}}"
     data-for="cm"
     data-id="{{id}}"
+    role="treeitem"
 >
     {{#url}}
         {{#uservisible}}
-            <a class="courseindex-link text-truncate" href="{{{url}}}" data-for="cm_name">
+            <a class="courseindex-link text-truncate" href="{{{url}}}" data-for="cm_name" tabindex="-1">
                 {{{name}}}
             </a>
         {{/uservisible}}
