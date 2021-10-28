@@ -279,9 +279,13 @@ class behat_grade extends behat_base {
     /**
      * Select the tab in the gradebook. We must be on one of the gradebook pages already.
      *
+     * @deprecated since 4.0 - use select_in_gradebook_navigation_selector() instead.
      * @param string $gradepath examples: "View > User report", "Letters > View", "Scales"
      */
     protected function select_in_gradebook_tabs($gradepath) {
+        debugging('The function select_in_gradebook_tabs() is deprecated, please use ' .
+            'select_in_gradebook_navigation_selector() instead.', DEBUG_DEVELOPER);
+
         $gradepath = preg_split('/\s*>\s*/', trim($gradepath));
         if (count($gradepath) > 2) {
             throw new coding_exception('Grade path is too long (must have no more than two items separated with ">")');

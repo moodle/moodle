@@ -3,6 +3,8 @@ Information provided here is intended especially for developers.
 
 === 4.0 ===
 
+* The select_in_gradebook_tabs() function in behat_grade.php has been deprecated. Please use the function
+  select_in_gradebook_navigation_selector() instead.
 * The setting $CFG->grade_navmethod setting has been completely removed because it's not required anymore. This setting
   was used to set the type of navigation (tabs or dropdown box) used in gradebook which is now replaced with tertiary
   navigation.
