@@ -41,11 +41,11 @@ class qtype_ordering_test extends advanced_testcase {
     /** @var qtype_ordering instance of the question type class to test. */
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = new qtype_ordering();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 
@@ -82,13 +82,15 @@ class qtype_ordering_test extends advanced_testcase {
 
         foreach ($questiondata as $property => $value) {
             if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated', 'options', 'stamp'))) {
-                $this->assertAttributeEquals($value, $property, $actualquestiondata);
+                $this->assertContainsEquals($value, (array)$actualquestiondata);
+                $this->assertContainsEquals($property, array_keys((array)$actualquestiondata));
             }
         }
 
         foreach ($questiondata->options as $optionname => $value) {
             if ($optionname != 'answers') {
-                $this->assertAttributeEquals($value, $optionname, $actualquestiondata->options);
+                $this->assertContainsEquals($value, (array)$actualquestiondata->options);
+                $this->assertContainsEquals($optionname, array_keys((array)$actualquestiondata->options));
             }
         }
 
@@ -96,9 +98,11 @@ class qtype_ordering_test extends advanced_testcase {
             $actualanswer = array_shift($actualquestiondata->options->answers);
             foreach ($answer as $ansproperty => $ansvalue) {
                 if ($ansproperty === 'question') {
-                    $this->assertAttributeEquals($returnedfromsave->id, $ansproperty, $actualanswer);
+                    $this->assertContainsEquals($returnedfromsave->id, (array)$actualanswer);
+                    $this->assertContainsEquals($ansproperty, array_keys((array)$actualanswer));
                 } else if ($ansproperty !== 'id') {
-                    $this->assertAttributeEquals($ansvalue, $ansproperty, $actualanswer);
+                    $this->assertContainsEquals($ansvalue, (array)$actualanswer);
+                    $this->assertContainsEquals($ansproperty, array_keys((array)$actualanswer));
                 }
             }
         }
@@ -157,7 +161,7 @@ class qtype_ordering_test extends advanced_testcase {
                     6 => new question_possible_response('Position 6', 0.1666667),
             ),
         );
-        $this->assertEquals($expectedresponseclasses, $possibleresponses, '', 0.0000005);
+        $this->assertEqualsWithDelta($expectedresponseclasses, $possibleresponses, 0.0000005, '');
     }
 
     public function test_get_numberingstyle() {

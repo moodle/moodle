@@ -281,7 +281,11 @@ class qtype_ordering_question_test extends advanced_testcase {
         // Create an Ordering question.
         $question = test_question_maker::make_question('ordering');
         $question->start_attempt(new question_attempt_pending_step(), 1);
-        $this->assertArraySubset($this->get_response($question, self::CORRECTORDER), $question->get_correct_response());
+
+        // The assertEquals() is used to replace the deprecated assertArraySubset(), because in this one case
+        // they are equals. For more info see https://thephp.cc/articles/migrating-to-phpunit-9
+        // and https://github.com/rdohms/phpunit-arraysubset-asserts.
+        $this->assertEquals($this->get_response($question, self::CORRECTORDER), $question->get_correct_response());
     }
     public function test_is_same_response() {
         // Create an Ordering question.
@@ -396,7 +400,7 @@ class qtype_ordering_question_test extends advanced_testcase {
                 'Environment' => new question_classified_response(6, 'Position 6', 0.1666667),
         ];
 
-        $this->assertEquals($expected, $classifiedresponse, '', 0.0000005);
+        $this->assertEqualsWithDelta($expected, $classifiedresponse, 0.0000005, '');
     }
 
     public function test_classify_response_partially_correct() {
@@ -415,6 +419,6 @@ class qtype_ordering_question_test extends advanced_testcase {
                 'Environment' => new question_classified_response(6, 'Position 6', 0.1666667),
         ];
 
-        $this->assertEquals($expected, $classifiedresponse, '', 0.0000005);
+        $this->assertEqualsWithDelta($expected, $classifiedresponse, 0.0000005, '');
     }
 }
