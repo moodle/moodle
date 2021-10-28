@@ -2,15 +2,15 @@
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="moodle_database" type="databaseType" />
     <xs:complexType name="databaseType">
-    	<xs:sequence>
-    		<xs:element maxOccurs="unbounded" name="table"
-    			type="tableType" />
-    	</xs:sequence>
-    	<xs:attribute name="version" type="xs:float" use="required" />
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="table"
+                type="tableType" />
+        </xs:sequence>
+        <xs:attribute name="version" type="xs:float" use="required" />
         <xs:attribute name="release" type="xs:string"></xs:attribute>
         <xs:attribute name="timestamp" type="xs:dateTime"
-    		use="required" />
-    	<xs:attribute name="comment" type="xs:string" />
+            use="required" />
+        <xs:attribute name="comment" type="xs:string" />
     </xs:complexType>
     <xs:complexType name="tableType">
         <xs:sequence>
