@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_quiz;
+
+use backup;
+use core_user;
+use restore_controller;
+use restore_dbops;
+
 /**
  * Unit tests restoring quiz attempts
  *
@@ -21,7 +28,7 @@
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_restore_attempt_test extends advanced_testcase {
+class restore_attempt_test extends \advanced_testcase {
 
     /**
      * Load required libraries
@@ -34,6 +41,8 @@ class mod_quiz_restore_attempt_test extends advanced_testcase {
 
     /**
      * Test restore dates.
+     *
+     * @covers \restore_quiz_activity_structure_step
      */
     public function test_restore_question_attempts_missing_users(): void {
         global $DB, $USER;
