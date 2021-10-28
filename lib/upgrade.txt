@@ -111,6 +111,12 @@ completely removed from Moodle core too.
 classes extending it. When possible, the enable_plugin() method will store these changes into the config_log table, to let admins
 check when and who has enabled/disabled plugins.
 
+=== 3.11.4 ===
+* A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
+  Note: This option overrides the forced download of directly accessed SVGs, so should only be used where the calling method is
+  rendering SVGs directly for content created using XSS risk flagged capabilities (such as creating a SCORM activity).
+  This is also not necessary where SVGs are already being safely loaded into <img> tags by Moodle (eg within forum posts).
+
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.
   For this reason, manually disabling emulateredirects will no longer have any effect (and will generate a debugging message).
