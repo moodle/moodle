@@ -2288,7 +2288,7 @@ ul {
 // rather than being specific to the footer. This is kept for backwards compatibility.
 $footer-link-color: $bg-inverse-link-color !default;
 
-.footer-dark {
+.footer-dark .container {
     a {
         color: $footer-link-color;
         text-decoration: underline;

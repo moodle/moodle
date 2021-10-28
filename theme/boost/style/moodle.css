@@ -11725,12 +11725,12 @@ ul {
       margin-top: 30px;
       margin-right: 0; } }
 
-.footer-dark a {
+.footer-dark .container a {
   color: #fff;
   text-decoration: underline; }
-  .footer-dark a .icon {
+  .footer-dark .container a .icon {
     color: #fff; }
-  .footer-dark a:focus .icon {
+  .footer-dark .container a:focus .icon {
     color: #212529; }
 
 .btn-footer-popover {
