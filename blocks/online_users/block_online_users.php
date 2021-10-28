@@ -135,7 +135,12 @@ class block_online_users extends block_base {
                 } else { // Not a guest user.
                     $this->content->text .= '<div class="user">';
                     $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->page->course->id.'" title="'.$timeago.'">';
-                    $avataroptions = ['size' => 16, 'visibletoscreenreaders' => false, 'link' => false];
+                    $avataroptions = [
+                        'size' => 30,
+                        'class' => 'userpicture align-middle',
+                        'visibletoscreenreaders' => false,
+                        'link' => false,
+                    ];
                     $this->content->text .= $OUTPUT->user_picture($user, $avataroptions) . $user->fullname . '</a></div>';
 
                     if ($USER->id == $user->id) {

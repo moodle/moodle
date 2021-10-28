@@ -1117,7 +1117,8 @@ div#dock {
     border-radius: 50%;
     color: $gray-800;
     font-weight: normal;
-    &.size-16 {
+    &.size-16,
+    &.size-30 {
         width: 30px;
         height: 30px;
     }

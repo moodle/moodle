@@ -2,6 +2,10 @@
     clear: both;
 }
 
+.block_online_users .content .list li.listentry:not(:first-child) {
+    padding-top: 3px;
+}
+
 .block_online_users .content .list li.listentry .user {
     float: left;
     position: relative;
