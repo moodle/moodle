@@ -416,7 +416,7 @@ function message_handle_phpunit_redirection(\core\message\message $eventdata, st
 /**
  * Updates the message_providers table with the current set of message providers
  *
- * @param string $component For example 'moodle', 'mod_forum' or 'block_quiz_results'
+ * @param string $component For example 'moodle', 'mod_forum' or 'block_activity_results'
  * @return boolean True on success
  */
 function message_update_providers($component='moodle') {
@@ -684,7 +684,7 @@ function message_get_providers_for_user($userid) {
  * This is an internal function used within messagelib.php
  *
  * @see message_update_providers()
- * @param string $component A moodle component like 'moodle', 'mod_forum', 'block_quiz_results'
+ * @param string $component A moodle component like 'moodle', 'mod_forum', 'block_activity_results'
  * @return array An array of message providers
  */
 function message_get_providers_from_db($component) {
@@ -701,7 +701,7 @@ function message_get_providers_from_db($component) {
  *
  * @see message_update_providers()
  * @see message_update_processors()
- * @param string $component A moodle component like 'moodle', 'mod_forum', 'block_quiz_results'
+ * @param string $component A moodle component like 'moodle', 'mod_forum', 'block_activity_results'
  * @return array An array of message providers or empty array if not exists
  */
 function message_get_providers_from_file($component) {
@@ -728,7 +728,7 @@ function message_get_providers_from_file($component) {
 /**
  * Remove all message providers for particular component and corresponding settings
  *
- * @param string $component A moodle component like 'moodle', 'mod_forum', 'block_quiz_results'
+ * @param string $component A moodle component like 'moodle', 'mod_forum', 'block_activity_results'
  * @return void
  */
 function message_provider_uninstall($component) {
