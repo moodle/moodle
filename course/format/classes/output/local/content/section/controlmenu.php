@@ -255,7 +255,11 @@ class controlmenu implements renderable, templatable {
                     'icon' => 'i/delete',
                     'name' => $strdelete,
                     'pixattr' => ['class' => ''],
-                    'attr' => ['class' => 'icon editing_delete'],
+                    'attr' => [
+                        'class' => 'icon editing_delete',
+                        'data-action' => 'deleteSection',
+                        'data-id' => $section->id,
+                    ],
                 ];
             }
         }

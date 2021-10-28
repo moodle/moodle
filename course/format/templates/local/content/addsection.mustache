@@ -22,6 +22,9 @@
     Example context (json):
     {
         "showaddsection": true,
+        "id": 42,
+        "insertafter": true,
+        "num": 0,
         "increase": {
             "url": "#"
         },
@@ -48,7 +51,14 @@
     </a>
     {{/decrease}}
     {{#addsections}}
-    <a href="{{{url}}}" class="add-sections" data-add-sections="{{title}}" data-new-sections="{{newsection}}">
+    <a
+        href="{{{url}}}"
+        class="add-sections"
+        data-add-sections="{{title}}"
+        data-new-sections="{{newsection}}"
+        data-action="addSection"
+        {{#insertafter}} data-id="{{id}}" {{/insertafter}}
+    >
         {{#pix}} t/add, moodle {{/pix}} {{title}}
     </a>
     {{/addsections}}

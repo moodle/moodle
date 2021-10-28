@@ -68,7 +68,7 @@ Feature: Course content collapsed user preferences
     And I click on "#collapssesection4" "css_element"
     And I turn editing mode on
     And I delete section "1"
-    And I press "Delete"
+    And I click on "Delete" "button" in the ".modal" "css_element"
     And I should not see "Activity sample 1" in the "region-main" "region"
     And I should see "Activity sample 2" in the "region-main" "region"
     And I should see "Activity sample 3" in the "region-main" "region"

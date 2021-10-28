@@ -54,6 +54,9 @@ class content implements renderable, templatable {
     /** @var string section selector class name */
     protected $sectionselectorclass;
 
+    /** @var bool if uses add section */
+    protected $hasaddsection = true;
+
     /**
      * Constructor.
      *
@@ -78,8 +81,6 @@ class content implements renderable, templatable {
     public function export_for_template(\renderer_base $output) {
         $format = $this->format;
 
-        $addsection = new $this->addsectionclass($format);
-
         // Most formats uses section 0 as a separate section so we remove from the list.
         $sections = $this->export_sections($output);
         $initialsection = '';
@@ -91,8 +92,8 @@ class content implements renderable, templatable {
             'title' => $format->page_title(), // This method should be in the course_format class.
             'initialsection' => $initialsection,
             'sections' => $sections,
-            'numsections' => $addsection->export_for_template($output),
             'format' => $format->get_format(),
+            'sectionreturn' => 0,
         ];
 
         // The single section format has extra navigation.
@@ -106,6 +107,12 @@ class content implements renderable, templatable {
 
             $data->hasnavigation = true;
             $data->singlesection = array_shift($data->sections);
+            $data->sectionreturn = $singlesection;
+        }
+
+        if ($this->hasaddsection) {
+            $addsection = new $this->addsectionclass($format);
+            $data->numsections = $addsection->export_for_template($output);
         }
 
         return $data;

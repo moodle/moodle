@@ -132,6 +132,7 @@ class section implements renderable, templatable {
             'num' => $thissection->section ?? '0',
             'id' => $thissection->id,
             'sectionreturnid' => $singlesection,
+            'insertafter' => false,
             'summary' => $summary->export_for_template($output),
             'availability' => $availability->export_for_template($output),
         ];

@@ -109,7 +109,7 @@ export default class extends BaseComponent {
         if (dropdata?.type === 'cm') {
             return true;
         }
-        // We accept any section bu the section 0 or ourself
+        // We accept any section but the section 0 or ourself
         if (dropdata?.type === 'section') {
             const sectionzeroid = this.course.sectionlist[0];
             return dropdata?.id != this.id && dropdata?.id != sectionzeroid && this.id != sectionzeroid;
