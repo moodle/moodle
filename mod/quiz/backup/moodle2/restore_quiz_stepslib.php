@@ -40,6 +40,9 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
      */
     protected $sectioncreated = false;
 
+    /** @var stdClass|null $currentquizattempt Track the current quiz attempt being restored. */
+    protected $currentquizattempt = null;
+
     /**
      * @var bool when restoring old quizzes (2.8 or before) this records the
      * shufflequestionsoption quiz option which has moved to the quiz_sections table.
@@ -453,7 +456,16 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->quiz = $this->get_new_parentid('quiz');
         $data->attempt = $data->attemptnum;
 
-        $data->userid = $this->get_mappingid('user', $data->userid);
+        // Get user mapping, return early if no mapping found for the quiz attempt.
+        $olduserid = $data->userid;
+        $data->userid = $this->get_mappingid('user', $olduserid, 0);
+        if ($data->userid === 0) {
+            $this->log('Mapped user ID not found for user ' . $olduserid . ', quiz ' . $this->get_new_parentid('quiz') .
+                ', attempt ' . $data->attempt . '. Skipping quiz attempt', backup::LOG_INFO);
+
+            $this->currentquizattempt = null;
+            return;
+        }
 
         if (!empty($data->timecheckstate)) {
             $data->timecheckstate = $this->apply_date_offset($data->timecheckstate);
@@ -488,6 +500,9 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         global $DB;
 
         $data = $this->currentquizattempt;
+        if ($data === null) {
+            return;
+        }
 
         $oldid = $data->id;
         $data->uniqueid = $newusageid;
