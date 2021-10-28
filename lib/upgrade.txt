@@ -104,6 +104,7 @@ completely removed from Moodle core too.
   fixed units), to always include a non-breaking space between the number and unit, and to use
   consistent rounding (always 1 decimal place by default).
 * The persistent method get() now returns the correct type for each property defined in the persistent class.
+* The persistent method from_record() now only attempts to load record properties defined in the persistent class.
 * Require pass grade criteria is now part of core.
   Refer to upgrade.php to see transitioning from similar plugin criteria to core
   Refer to completion/upgrade.txt for additional information.
