@@ -198,7 +198,7 @@ class external_api {
         // Eventually this should shift into the various handlers and not be handled via config.
         $readonlysession = $externalfunctioninfo->readonlysession ?? false;
         if (!$readonlysession || empty($CFG->enable_read_only_sessions)) {
-            \core\session\manager::restart_with_write_lock();
+            \core\session\manager::restart_with_write_lock($readonlysession);
         }
 
         $currentpage = $PAGE;

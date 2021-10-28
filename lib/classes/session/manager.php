@@ -61,6 +61,15 @@ class manager {
     private static $priorsession = [];
 
     /**
+     * @var bool Used to trigger the SESSION mutation warning without actually preventing SESSION mutation.
+     * This variable is used to "copy" what the $requireslock parameter  does in start_session().
+     * Once requireslock is set in start_session it's later accessible via $handler->requires_write_lock,
+     * When using $CFG->enable_read_only_sessions_debug mode, this variable serves the same purpose without
+     * actually setting the handler as requiring a write lock.
+     */
+    private static $requireslockdebug;
+
+    /**
      * If the current session is not writeable, abort it, and re-open it
      * requesting (and blocking) until a write lock is acquired.
      * If current session was already opened with an intentional write lock,
@@ -69,8 +78,16 @@ class manager {
      * if the original session was not opened with the explicit intention of being locked,
      * this will still restart your session so that code behaviour matches as closely
      * as practical across environments.
+     *
+     * @param bool $readonlysession Used by debugging logic to determine if whatever
+     *                              triggered the restart (e.g., a webservice) declared
+     *                              itself as read only.
      */
-    public static function restart_with_write_lock() {
+    public static function restart_with_write_lock(bool $readonlysession) {
+        global $CFG;
+
+        self::$requireslockdebug = !$readonlysession;
+
         if (self::$sessionactive && !self::$handler->requires_write_lock()) {
             @self::$handler->abort();
             self::$sessionactive = false;
@@ -108,6 +125,17 @@ class manager {
         } else {
             $requireslock = true; // For backwards compatibility, we default to assuming that a lock is needed.
         }
+
+        // By default make the two variables the same. This means that when they are
+        // checked below in start_session and write_close there is no possibility for
+        // the debug version to "accidentally" execute the debug mode.
+        self::$requireslockdebug = $requireslock;
+        if (defined('READ_ONLY_SESSION') && !empty($CFG->enable_read_only_sessions_debug)) {
+            // Only change the debug variable if READ_ONLY_SESSION is declared,
+            // as would happen with the real requireslock variable.
+            self::$requireslockdebug = !READ_ONLY_SESSION;
+        }
+
         self::start_session($requireslock);
     }
 
@@ -138,9 +166,10 @@ class manager {
             self::$sessionactive = true; // Set here, so the session can be cleared if the security check fails.
             self::check_security();
 
-            if (!$requireslock || isset($CFG->enable_read_only_sessions_debug)) {
+            if (!$requireslock || !self::$requireslockdebug) {
                 self::$priorsession = (array) $_SESSION['SESSION'];
             }
+
             if (!empty($CFG->enable_read_only_sessions) && isset($_SESSION['SESSION']->cachestore_session)) {
                 $caches = join(', ', array_keys($_SESSION['SESSION']->cachestore_session));
                 $caches = str_replace('default_session-', '', $caches);
@@ -705,7 +734,7 @@ class manager {
             self::sessionlock_debugging();
 
             $requireslock = self::$handler->requires_write_lock();
-            if (!$requireslock || isset($CFG->enable_read_only_sessions_debug)) {
+            if (!$requireslock || !self::$requireslockdebug) {
                 // Compare the array of the earlier session data with the array now, if
                 // there is a difference then a lock is required.
                 $arraydiff = self::array_session_diff(
