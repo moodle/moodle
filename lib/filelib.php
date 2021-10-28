@@ -2499,6 +2499,9 @@ function file_safe_save_content($content, $destination) {
  * @param array $options An array of options, currently accepts:
  *                       - (string) cacheability: public, or private.
  *                       - (string|null) immutable
+ *                       - (bool) dontforcesvgdownload: true if force download should be disabled on SVGs.
+ *                                Note: This overrides a security feature, so should only be applied to "trusted" content
+ *                                (eg module content that is created using an XSS risk flagged capability, such as SCORM).
  * @return null script execution stopped unless $dontdie is true
  */
 function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='',
@@ -2529,8 +2532,9 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
         $filename = rawurlencode($filename);
     }
 
-    // Make sure we force download of SVG files for security reasons (https://digi.ninja/blog/svg_xss.php).
-    if (file_is_svg_image_from_mimetype($mimetype)) {
+    // Make sure we force download of SVG files, unless the module explicitly allows them (eg within SCORM content).
+    // This is for security reasons (https://digi.ninja/blog/svg_xss.php).
+    if (file_is_svg_image_from_mimetype($mimetype) && empty($options['dontforcesvgdownload'])) {
         $forcedownload = true;
     }
 
