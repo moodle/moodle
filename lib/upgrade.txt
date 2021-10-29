@@ -105,6 +105,7 @@ completely removed from Moodle core too.
   consistent rounding (always 1 decimal place by default).
 * The persistent method get() now returns the correct type for each property defined in the persistent class.
 * The persistent method from_record() now only attempts to load record properties defined in the persistent class.
+* New persistent set_many() helper for setting multiple properties in single method call.
 * Require pass grade criteria is now part of core.
   Refer to upgrade.php to see transitioning from similar plugin criteria to core
   Refer to completion/upgrade.txt for additional information.

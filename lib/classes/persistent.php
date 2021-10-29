@@ -110,6 +110,8 @@ abstract class persistent {
      *
      * @param  string $property The property name.
      * @return $this
+     *
+     * @throws coding_exception
      */
     final public function set($property, $value) {
         if (!static::has_property($property)) {
@@ -121,6 +123,21 @@ abstract class persistent {
             return $this;
         }
         return $this->raw_set($property, $value);
+    }
+
+    /**
+     * Data setter for multiple properties
+     *
+     * Internally calls {@see set} on each property
+     *
+     * @param array $values Array of property => value elements
+     * @return $this
+     */
+    final public function set_many(array $values): self {
+        foreach ($values as $property => $value) {
+            $this->set($property, $value);
+        }
+        return $this;
     }
 
     /**
