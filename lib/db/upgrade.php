@@ -3040,7 +3040,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021102600.01);
     }
 
-    if ($oldversion < 2021102900.00) {
+    if ($oldversion < 2021102900.02) {
         // If portfolio_boxnet is no longer present, remove it.
         if (!file_exists($CFG->dirroot . '/portfolio/boxnet/version.php')) {
             $instance = $DB->get_record('portfolio_instance', ['plugin' => 'boxnet']);
@@ -3076,11 +3076,14 @@ function xmldb_main_upgrade($oldversion) {
             // Clean config.
             unset_all_config_for_plugin('repository_boxnet');
 
+            // The boxnet repository plugin stores some config in 'boxnet' incorrectly.
+            unset_all_config_for_plugin('boxnet');
+
             // Remove orphaned files.
             upgrade_delete_orphaned_file_records();
         }
 
-        upgrade_main_savepoint(true, 2021102900.00);
+        upgrade_main_savepoint(true, 2021102900.02);
     }
 
     return true;
