@@ -111,8 +111,11 @@ completely removed from Moodle core too.
   Refer to upgrade.php to see transitioning from similar plugin criteria to core
   Refer to completion/upgrade.txt for additional information.
 * The method enable_plugin() has been added to the core_plugininfo\base class and it has been implemented by all the plugininfo
-classes extending it. When possible, the enable_plugin() method will store these changes into the config_log table, to let admins
-check when and who has enabled/disabled plugins.
+  classes extending it. When possible, the enable_plugin() method will store these changes into the config_log table, to let admins
+  check when and who has enabled/disabled plugins.
+* Final deprecation: The following functions along with associated tests have been removed:
+  - core_grades_external::get_grades
+  - core_grades_external::get_grade_item
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
