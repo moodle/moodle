@@ -128,6 +128,8 @@ completely removed from Moodle core too.
   -get_safe_orderby() - where a single sort parameter is required.
   -get_safe_orderby_multiple() - where multiple sort parameters are required.
 * Added the cleanstr mustache template helper to clean strings after loading them from language packs.
+* A new parameter $displayoptions has been added to the core_renderer::confirm() to allow better customization for confirming page
+such as the title and strings for continue and cancel buttons.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
