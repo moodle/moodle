@@ -92,6 +92,20 @@
     {{#singleheader}} {{> core_courseformat/local/content/section/header }} {{/singleheader}}
     <div class="left side">{{#iscurrent}} {{{currentlink}}} {{/iscurrent}}</div>
     <div class="right side">
+    {{#collapsemenu}}
+        <div class="flex-fill d-flex justify-content-end mr-2 align-self-center">
+            <a
+                id="collapsesections"
+                class="section-collapsemenu"
+                href="#"
+                aria-expanded="true"
+                data-toggle="toggleall"
+            >
+                <span class="collapseall">{{#str}}collapseall{{/str}}</span>
+                <span class="expandall">{{#str}}expandall{{/str}}</span>
+            </a>
+        </div>
+    {{/collapsemenu}}
     {{#controlmenu}}
             {{> core_courseformat/local/content/section/controlmenu }}
     {{/controlmenu}}

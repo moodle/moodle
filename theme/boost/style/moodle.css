@@ -14636,6 +14636,18 @@ span.editinstructions {
 #changenumsections {
   border-top: 1px solid #3584c9; }
 
+.section-collapsemenu .collapseall {
+  display: block; }
+
+.section-collapsemenu .expandall {
+  display: none; }
+
+.section-collapsemenu.collapsed .collapseall {
+  display: none; }
+
+.section-collapsemenu.collapsed .expandall {
+  display: block; }
+
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target {
   scroll-margin-top: 70px; }

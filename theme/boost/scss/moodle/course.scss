@@ -1312,3 +1312,22 @@ span.editinstructions {
 #changenumsections {
     border-top: $border-width solid $primary-light-border;
 }
+.section-collapsemenu {
+    .collapseall {
+        display: block;
+    }
+
+    .expandall {
+        display: none;
+    }
+
+    &.collapsed {
+        .collapseall {
+            display: none;
+        }
+
+        .expandall {
+            display: block;
+        }
+    }
+}
