@@ -5378,7 +5378,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
                 }
 
             } else {
-                // This is a reference to some external file such as in boxnet or dropbox.
+                // This is a reference to some external file such as dropbox.
                 // If we are restoring to the same site, keep the reference untouched and
                 // restore the alias as is.
                 if ($this->task->is_samesite()) {

@@ -488,7 +488,7 @@ class repository_type implements cacheable_object {
  * This is the base class of the repository class.
  *
  * To create repository plugin, see: {@link http://docs.moodle.org/dev/Repository_plugins}
- * See an example: {@link repository_boxnet}
+ * See an example: repository_dropbox
  *
  * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}

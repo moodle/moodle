@@ -3040,5 +3040,48 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021102600.01);
     }
 
+    if ($oldversion < 2021102900.00) {
+        // If portfolio_boxnet is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/portfolio/boxnet/version.php')) {
+            $instance = $DB->get_record('portfolio_instance', ['plugin' => 'boxnet']);
+            if (!empty($instance)) {
+                // Remove all records from portfolio_instance_config.
+                $DB->delete_records('portfolio_instance_config', ['instance' => $instance->id]);
+                // Remove all records from portfolio_instance_user.
+                $DB->delete_records('portfolio_instance_user', ['instance' => $instance->id]);
+                // Remove all records from portfolio_log.
+                $DB->delete_records('portfolio_log', ['portfolio' => $instance->id]);
+                // Remove all records from portfolio_tempdata.
+                $DB->delete_records('portfolio_tempdata', ['instance' => $instance->id]);
+                // Remove the record from the portfolio_instance table.
+                $DB->delete_records('portfolio_instance', ['id' => $instance->id]);
+            }
+
+            // Clean config.
+            unset_all_config_for_plugin('portfolio_boxnet');
+        }
+
+        // If repository_boxnet is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/repository/boxnet/version.php')) {
+            $instance = $DB->get_record('repository', ['type' => 'boxnet']);
+            if (!empty($instance)) {
+                // Remove all records from repository_instance_config table.
+                $DB->delete_records('repository_instance_config', ['instanceid' => $instance->id]);
+                // Remove all records from repository_instances table.
+                $DB->delete_records('repository_instances', ['typeid' => $instance->id]);
+                // Remove the record from the repository table.
+                $DB->delete_records('repository', ['id' => $instance->id]);
+            }
+
+            // Clean config.
+            unset_all_config_for_plugin('repository_boxnet');
+
+            // Remove orphaned files.
+            upgrade_delete_orphaned_file_records();
+        }
+
+        upgrade_main_savepoint(true, 2021102900.00);
+    }
+
     return true;
 }
