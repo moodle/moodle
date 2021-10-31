@@ -243,6 +243,7 @@ $string['categoryheader'] = 'Category menu';
 $string['categoryhidden'] = '(hidden)';
 $string['categorymodifiedcancel'] = 'Category was modified! Please cancel and try again.';
 $string['categoryname'] = 'Category name';
+$string['categorypath'] = 'Category path';
 $string['categorysubcategoryof'] = '{$a->category} - subcategory of {$a->parentcategory}';
 $string['idnumbercoursecategory'] = 'Category ID number';
 $string['idnumbercoursecategory_help'] = 'The ID number of a course category  is only used when matching the category against external systems and is not displayed anywhere on the site. If the category has an official code name it may be entered, otherwise the field can be left blank.';

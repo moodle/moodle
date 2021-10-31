@@ -44,7 +44,7 @@ use core_reportbuilder\local\helpers\user_filter_manager;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_testcase extends advanced_testcase {
+class course_test extends advanced_testcase {
 
     /**
      * Load required classes
@@ -142,7 +142,6 @@ class course_testcase extends advanced_testcase {
         });
         $courserow = reset($courserows);
 
-        $this->assertEquals($coursecategory1->name, $courserow['category']);
         $this->assertEquals('Course 1', $courserow['fullname']);
         $this->assertEquals('C1', $courserow['shortname']);
         $this->assertEquals('IDNumber1', $courserow['idnumber']);
@@ -221,16 +220,6 @@ class course_testcase extends advanced_testcase {
             'course:startdate_operator' => date::DATE_RANGE,
             'course:startdate_from' => 289135800,
             'course:startdate_to' => 289740600,
-        ];
-        $tablerows = $this->get_report_table_rows($filtervalues);
-        $this->assertEquals([
-            'Course 1',
-        ], array_column($tablerows, 'fullname'));
-
-        // Filter by category field.
-        $filtervalues = [
-            'course:category_operator' => select::EQUAL_TO,
-            'course:category_value' => $coursecategory1->id,
         ];
         $tablerows = $this->get_report_table_rows($filtervalues);
         $this->assertEquals([

@@ -20,7 +20,6 @@ namespace core_reportbuilder\local\entities;
 
 use context_course;
 use context_helper;
-use core_course_category;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\course_selector;
 use core_reportbuilder\local\filters\date;
@@ -124,7 +123,6 @@ class course extends base {
         return [
             'fullname' => new lang_string('fullnamecourse'),
             'shortname' => new lang_string('shortnamecourse'),
-            'category' => new lang_string('coursecategory'),
             'idnumber' => new lang_string('idnumbercourse'),
             'summary' => new lang_string('coursesummary'),
             'format' => new lang_string('format'),
@@ -177,7 +175,6 @@ class course extends base {
             case 'summary':
                 $fieldtype = column::TYPE_LONGTEXT;
                 break;
-            case 'category':
             case 'groupmode':
                 $fieldtype = column::TYPE_INTEGER;
                 break;
@@ -354,15 +351,6 @@ class course extends base {
             SEPARATEGROUPS => get_string('groupsseparate', 'group'),
             VISIBLEGROUPS => get_string('groupsvisible', 'group'),
         ];
-    }
-
-    /**
-     * List of options for the field category.
-     *
-     * @return array
-     */
-    public static function get_options_for_category(): array {
-        return core_course_category::make_categories_list('moodle/category:viewcourselist');
     }
 
     /**
