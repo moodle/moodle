@@ -98,7 +98,7 @@ if (empty($CFG->tool_generator_users_password) || is_bool($CFG->tool_generator_u
 
 // Create files.
 $courseid = $DB->get_field('course', 'id', array('shortname' => $shortname));
-$usersfile = tool_generator_testplan_backend::create_users_file($courseid, !empty($options['updateuserspassword']));
+$usersfile = tool_generator_testplan_backend::create_users_file($courseid, !empty($options['updateuserspassword']), $size);
 $testplanfile = tool_generator_testplan_backend::create_testplan_file($courseid, $size);
 
 // One file path per line so other CLI scripts can easily parse the output.

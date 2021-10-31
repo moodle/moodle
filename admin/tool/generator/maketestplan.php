@@ -51,7 +51,7 @@ if ($data = $mform->get_data()) {
 
     // Creating both test plan and users files.
     $testplanfile = tool_generator_testplan_backend::create_testplan_file($data->courseid, $data->size);
-    $usersfile = tool_generator_testplan_backend::create_users_file($data->courseid, $data->updateuserspassword);
+    $usersfile = tool_generator_testplan_backend::create_users_file($data->courseid, $data->updateuserspassword, $data->size);
 
     // Test plan link.
     $testplanurl = moodle_url::make_pluginfile_url(
