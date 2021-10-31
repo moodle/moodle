@@ -31,6 +31,11 @@ export default class {
      */
     constructor(reactive) {
         this.reactive = reactive;
+
+        // Completions states are defined in lib/completionlib.php. There are 4 different completion
+        // state values, however, the course index uses the same state for complete and complete_pass.
+        // This is the reason why completed appears twice in the array.
+        this.COMPLETIONS = ['incomplete', 'complete', 'complete', 'fail'];
     }
 
     /**
@@ -149,5 +154,26 @@ export default class {
             name: sectioninfo.name,
             number: sectioninfo.number,
         };
+    }
+
+    /**
+     * Generate a compoetion export data from the cm element.
+     *
+     * @param {Object} state the current state.
+     * @param {Object} cminfo the course module state data.
+     * @returns {Object}
+     */
+    cmCompletion(state, cminfo) {
+        const data = {
+            statename: '',
+            state: 'NaN',
+        };
+        if (cminfo.completionstate !== undefined) {
+            data.state = cminfo.completionstate;
+            data.hasstate = true;
+            const statename = this.COMPLETIONS[cminfo.completionstate] ?? 'NaN';
+            data[`is${statename}`] = true;
+        }
+        return data;
     }
 }

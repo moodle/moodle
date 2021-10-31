@@ -20726,9 +20726,16 @@ div.editor_atto_toolbar button .icon {
   .courseindex .courseindex-item.dimmed {
     opacity: .7;
     font-style: italic; }
+  .courseindex .courseindex-item .completioninfo {
+    min-width: 24px;
+    transform: scale(0.5); }
+    .courseindex .courseindex-item .completioninfo.completion_complete {
+      color: #357a32; }
+    .courseindex .courseindex-item .completioninfo.completion_fail {
+      color: #ca3120; }
 
 .courseindex .courseindex-sectioncontent .courseindex-item {
-  padding-left: calc(1rem * 2 + 0.5rem); }
+  padding-left: 1rem; }
 
 .courseindex .courseindex-section .current-badge {
   line-height: 1.5;
