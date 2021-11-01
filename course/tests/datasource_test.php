@@ -66,4 +66,42 @@ class datasource_test extends core_reportbuilder_testcase {
             'CAT101', // Course ID number.
         ], $contentrow);
     }
+
+    /**
+     * Tests courses datasource using multilang filters
+     */
+    public function test_courses_datasource_multilang_filters(): void {
+        $this->resetAfterTest();
+
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+
+        // Test subject.
+        $category = $this->getDataGenerator()->create_category([
+            'name' => '<span class="multilang" lang="en">Cat (en)</span><span class="multilang" lang="es">Cat (es)</span>',
+        ]);
+        $course = $this->getDataGenerator()->create_course([
+            'category' => $category->id,
+            'fullname' => '<span class="multilang" lang="en">Crs (en)</span><span class="multilang" lang="es">Crs (es)</span>',
+        ]);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        // Create a report containing columns that support multilang content.
+        $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 0]);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:name']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:coursefullnamewithlink']);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertCount(1, $content);
+
+        $contentrow = array_values(reset($content));
+        $this->assertEquals([
+            'Cat (en)',
+            'Crs (en)',
+            '<a href="' . (string) course_get_url($course->id) . '">Crs (en)</a>',
+        ], $contentrow);
+    }
 }
