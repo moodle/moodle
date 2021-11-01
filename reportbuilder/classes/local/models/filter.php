@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\models;
 
+use context;
 use lang_string;
 use core\persistent;
 
@@ -151,5 +152,19 @@ class filter extends persistent {
         $params = ['reportid' => $reportid, 'iscondition' => (int) $iscondition];
 
         return (int) $DB->get_field(static::TABLE, "MAX(filterorder)", $params, MUST_EXIST);
+    }
+
+    /**
+     * Return formatted filter heading
+     *
+     * @param context|null $context If the context of the report is already known, it should be passed here
+     * @return string
+     */
+    public function get_formatted_heading(?context $context = null): string {
+        if ($context === null) {
+            $context = $this->get_report()->get_context();
+        }
+
+        return format_string($this->raw_get('heading'), true, ['context' => $context]);
     }
 }
