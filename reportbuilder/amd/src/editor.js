@@ -40,12 +40,10 @@ let initialized = false;
  * Initialise editor and all it's modules
  */
 export const init = () => {
-    const reportElement = document.querySelector(reportSelectors.regions.report);
-
-    columnsEditorInit(reportElement, initialized);
-    conditionsEditorInit(reportElement, initialized);
-    filtersEditorInit(reportElement, initialized);
-    sortingEditorInit(reportElement, initialized);
+    columnsEditorInit(initialized);
+    conditionsEditorInit(initialized);
+    filtersEditorInit(initialized);
+    sortingEditorInit(initialized);
 
     // Ensure we only add our listeners once (can be called multiple times by mustache template).
     if (initialized) {
@@ -60,6 +58,7 @@ export const init = () => {
         if (toggleEditViewMode) {
             event.preventDefault();
 
+            const reportElement = event.target.closest(reportSelectors.regions.report);
             const pendingPromise = new Pending('core_reportbuilder/reports:get');
             const toggledEditMode = toggleEditViewMode.dataset.editMode !== "1";
 
@@ -68,10 +67,10 @@ export const init = () => {
             getReport(reportElement.dataset.reportId, toggledEditMode)
                 .then(response => {
                     customjs = response.javascript;
-                    return Templates.render('core_reportbuilder/custom_report', response);
+                    return Templates.render('core_reportbuilder/local/dynamictabs/editor', response);
                 })
                 .then((html, js) => {
-                    return Templates.replaceNodeContents(reportElement, html, js + customjs);
+                    return Templates.replaceNode(reportElement, html, js + customjs);
                 })
                 .then(() => pendingPromise.resolve())
                 .catch(Notification.exception);

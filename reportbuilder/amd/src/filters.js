@@ -59,6 +59,13 @@ const setFilterButtonCount = async(reportElement, filterCount) => {
 export const init = (reportId, contextId) => {
     const reportElement = document.querySelector(reportSelectors.forReport(reportId));
     const filterFormContainer = reportElement.querySelector(reportSelectors.regions.filtersForm);
+
+    // Ensure we only add our listeners once (can be called multiple times by mustache template).
+    if (filterFormContainer.dataset.initialized) {
+        return;
+    }
+    filterFormContainer.dataset.initialized = true;
+
     const filterForm = new DynamicForm(filterFormContainer, '\\core_reportbuilder\\form\\filter');
 
     // Submit report filters.

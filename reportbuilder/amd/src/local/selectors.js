@@ -45,6 +45,13 @@ const SELECTORS = {
         activeFilters: '[data-region="active-filters"]',
         activeFilter: '[data-region="active-filter"]',
         settingsSorting: '[data-region="settings-sorting"]',
+        audiencesContainer: '[data-region="audiences"]',
+        audienceFormContainer: '[data-region="audience-form-container"]',
+        audienceCard: '[data-region="audience-card"]',
+        audienceForm: '[data-region="audience-form"]',
+        audienceEmptyMessage: '[data-region=no-instances-message]',
+        audienceDescription: '[data-region=audience-description]',
+        audienceNotSavedLabel: '[data-region=audience-not-saved]',
     },
     actions: {
         reportActionPopup: '[data-action="report-action-popup"]',
@@ -61,6 +68,9 @@ const SELECTORS = {
         reportToggleColumnSortDirection: '[data-action="report-toggle-sort-direction"]',
         sidebarSearch: '[data-action="sidebar-search"]',
         toggleEditPreview: '[data-action="toggle-edit-preview"]',
+        audienceAdd: '[data-action="add-audience"]',
+        audienceEdit: '[data-action="edit-audience"]',
+        audienceDelete: '[data-action="delete-audience"]',
     },
 };
 

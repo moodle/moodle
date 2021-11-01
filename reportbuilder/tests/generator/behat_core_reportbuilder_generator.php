@@ -71,6 +71,16 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
                     'report' => 'reportid',
                 ],
             ],
+            'Audience' => [
+                'datagenerator' => 'audience',
+                'required' => [
+                    'report',
+                    'configdata',
+                ],
+                'switchids' => [
+                    'report' => 'reportid',
+                ],
+            ],
         ];
     }
 

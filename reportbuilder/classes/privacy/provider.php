@@ -21,6 +21,7 @@ namespace core_reportbuilder\privacy;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\writer;
 use core_reportbuilder\local\helpers\user_filter_manager;
+use core_reportbuilder\local\models\audience;
 use core_reportbuilder\local\models\column;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\models\filter;
@@ -60,6 +61,12 @@ class provider implements
             'usercreated' => 'privacy:metadata:filter:usercreated',
             'usermodified' => 'privacy:metadata:filter:usermodified',
         ], 'privacy:metadata:filter');
+
+        $collection->add_database_table(audience::TABLE, [
+            'classname' => 'privacy:metadata:audience:classname',
+            'usercreated' => 'privacy:metadata:audience:usercreated',
+            'usermodified' => 'privacy:metadata:audience:usermodified',
+        ], 'privacy:metadata:audience');
 
         $collection->add_user_preference('core_reportbuilder', 'privacy:metadata:preference:reportfilter');
 

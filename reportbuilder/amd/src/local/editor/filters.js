@@ -57,20 +57,21 @@ const reloadSettingsFiltersRegion = (reportElement, templateContext) => {
 /**
  * Initialise module
  *
- * @param {Element} reportElement
  * @param {Boolean} initialized Ensure we only add our listeners once
  */
-export const init = (reportElement, initialized) => {
+export const init = (initialized) => {
     if (initialized) {
         return;
     }
 
-    reportElement.addEventListener('click', event => {
+    document.addEventListener('click', event => {
 
         // Add filter to report.
         const reportAddFilter = event.target.closest(reportSelectors.actions.reportAddFilter);
         if (reportAddFilter) {
             event.preventDefault();
+
+            const reportElement = reportAddFilter.closest(reportSelectors.regions.report);
 
             // Check if dropdown is closed with no filter selected.
             if (reportAddFilter.value === '0') {
@@ -93,6 +94,7 @@ export const init = (reportElement, initialized) => {
         if (reportRemoveFilter) {
             event.preventDefault();
 
+            const reportElement = reportRemoveFilter.closest(reportSelectors.regions.report);
             const filterContainer = reportRemoveFilter.closest(reportSelectors.regions.activeFilter);
             const filterName = filterContainer.dataset.filterName;
 
@@ -123,9 +125,10 @@ export const init = (reportElement, initialized) => {
     var activeFiltersSortableList = new SortableList(`${reportSelectors.regions.activeFilters} ul`, {isHorizontal: false});
     activeFiltersSortableList.getElementName = element => Promise.resolve(element.data('filterName'));
 
-    $(reportElement).on(SortableList.EVENTS.DROP, 'li[data-filter-id]', (event, info) => {
+    $(document).on(SortableList.EVENTS.DROP, `${reportSelectors.regions.report} li[data-filter-id]`, (event, info) => {
         if (info.positionChanged) {
             const pendingPromise = new Pending('core_reportbuilder/filters:reorder');
+            const reportElement = event.target.closest(reportSelectors.regions.report);
             const filterId = info.element.data('filterId');
             const filterPosition = info.element.data('filterPosition');
 

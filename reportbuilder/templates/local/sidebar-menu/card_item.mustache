@@ -25,15 +25,26 @@
         "identifier": "tool_reportbuilder:users"
     }
 }}
-<a href="#"
-   title="{{title}}"
-   role="button"
-   class="list-group-item list-group-item-action d-flex align-items-start justify-content-between pr-2"
-   data-action="{{action}}"
-   data-unique-identifier="{{identifier}}"
-   data-name="{{name}}">
-    {{{name}}}
-    <span class="my-auto ml-1">
-        {{#pix}} t/add, core {{/pix}}
-    </span>
-</a>
+{{^disabled}}
+    <a href="#"
+       title="{{title}}"
+       role="button"
+       class="list-group-item list-group-item-action d-flex align-items-start justify-content-between pr-2"
+       data-action="{{action}}"
+       data-unique-identifier="{{identifier}}"
+       data-name="{{name}}">
+        {{{name}}}
+        <span class="my-auto ml-1">
+            {{#pix}} t/add, core {{/pix}}
+        </span>
+    </a>
+{{/disabled}}
+{{#disabled}}
+    <div title="{{title}}"
+          class="list-group-item list-group-item-action d-flex align-items-start justify-content-between pr-2 text-muted" >
+            {{{name}}}
+        <span class="ml-auto ml-1 ">
+            {{#pix}} i/info, core {{/pix}}
+        </span>
+    </div>
+{{/disabled}}

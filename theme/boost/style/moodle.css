@@ -20754,6 +20754,25 @@ div.editor_atto_toolbar button .icon {
 .reportbuilder-toggle-card .toggle-card-button.collapsed .expanded-icon-container {
   display: none; }
 
+/**
+* Audiences.
+*/
+.reportbuilder-audiences-container {
+  /* 'OR' separator. */
+  /* Card action icons. */ }
+  .reportbuilder-audiences-container .audience-separator {
+    text-transform: uppercase; }
+    .reportbuilder-audiences-container .audience-separator::before, .reportbuilder-audiences-container .audience-separator::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.125); }
+    .reportbuilder-audiences-container .audience-separator:not(:empty)::before {
+      margin-right: 1rem; }
+    .reportbuilder-audiences-container .audience-separator:not(:empty)::after {
+      margin-left: 1rem; }
+  .reportbuilder-audiences-container .instance-card .card-header i.icon {
+    margin-right: 0; }
+
 .courseindex .courseindex-heading {
   padding: 0.5rem 1rem; }
 

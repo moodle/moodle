@@ -60,6 +60,7 @@ $string['eventcohortupdated'] = 'Cohort updated';
 $string['external'] = 'External cohort';
 $string['invalidtheme'] = 'Cohort theme does not exist';
 $string['idnumber'] = 'Cohort ID';
+$string['memberofcohort'] = 'Member of cohort';
 $string['memberscount'] = 'Cohort size';
 $string['name'] = 'Name';
 $string['namecolumnmissing'] = 'There is something wrong with the format of the CSV file. Please check that it includes the correct column names. To add users to a cohort, go to \'Upload users\' in the Site administration.';

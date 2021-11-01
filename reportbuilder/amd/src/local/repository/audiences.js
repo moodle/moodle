@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,19 +13,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-declare(strict_types=1);
-
-namespace core_reportbuilder\table;
-
-use core_table\local\filter\string_filter;
-
 /**
- * Class for storing given system report parameters
+ * Module to handle audiences AJAX requests
  *
- * @package     core_reportbuilder
- * @copyright   2021 Paul Holden <paulh@moodle.com>
+ * @module      core_reportbuilder/local/repository/audiences
+ * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class system_report_table_parameters_filter extends string_filter {
 
-}
+import Ajax from 'core/ajax';
+
+/**
+ * Remove audience from given report
+ *
+ * @param {Number} reportId
+ * @param {Number} instanceId
+ * @return {Promise}
+ */
+export const deleteAudience = (reportId, instanceId) => {
+    const request = {
+        methodname: 'core_reportbuilder_audiences_delete',
+        args: {reportid: reportId, instanceid: instanceId}
+    };
+
+    return Ajax.call([request])[0];
+};

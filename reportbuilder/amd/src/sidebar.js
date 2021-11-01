@@ -88,9 +88,11 @@ const expandCard = (card) => {
 
 /**
  * Initialise module
+ *
+ * @param {string} selectorId
  */
-export const init = () => {
-    const sidebarMenu = document.querySelector(reportSelectors.regions.sidebarMenu);
+export const init = (selectorId) => {
+    const sidebarMenu = document.querySelector(selectorId + reportSelectors.regions.sidebarMenu);
     const sidebarSearch = sidebarMenu.querySelector(reportSelectors.actions.sidebarSearch);
 
     // Debounce the event listener to allow the user to finish typing.

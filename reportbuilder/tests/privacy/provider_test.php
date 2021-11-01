@@ -26,6 +26,7 @@ use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
 use core_reportbuilder\manager;
 use core_reportbuilder\local\helpers\user_filter_manager;
+use core_reportbuilder\local\models\audience;
 use core_reportbuilder\local\models\column;
 use core_reportbuilder\local\models\filter;
 use core_reportbuilder\local\models\report;
@@ -47,7 +48,7 @@ class provider_test extends provider_testcase {
         $collection = new collection('core_reportbuilder');
         $metadata = provider::get_metadata($collection)->get_collection();
 
-        $this->assertCount(4, $metadata);
+        $this->assertCount(5, $metadata);
 
         $this->assertInstanceOf(database_table::class, $metadata[0]);
         $this->assertEquals(report::TABLE, $metadata[0]->get_name());
@@ -58,7 +59,10 @@ class provider_test extends provider_testcase {
         $this->assertInstanceOf(database_table::class, $metadata[2]);
         $this->assertEquals(filter::TABLE, $metadata[2]->get_name());
 
-        $this->assertInstanceOf(user_preference::class, $metadata[3]);
+        $this->assertInstanceOf(database_table::class, $metadata[3]);
+        $this->assertEquals(audience::TABLE, $metadata[3]->get_name());
+
+        $this->assertInstanceOf(user_preference::class, $metadata[4]);
     }
 
     /**
