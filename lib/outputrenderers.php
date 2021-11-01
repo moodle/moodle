@@ -4883,6 +4883,19 @@ EOD;
     }
 
     /**
+     * Renders the tertiary nav for the participants page
+     *
+     * @param object $course The course we are operating within
+     * @param string|null $renderedbuttons Any additional buttons/content to be displayed in line with the nav
+     * @return string
+     */
+    public function render_participants_tertiary_nav(object $course, ?string $renderedbuttons = null) {
+        $actionbar = new \core\output\participants_action_bar($course, $this->page, $renderedbuttons);
+        $content = $this->render_from_template('core_course/participants_actionbar', $actionbar->export_for_template($this));
+        return $content ?: "";
+    }
+
+    /**
      * Renders release information in the footer popup
      * @return string Moodle release info.
      */

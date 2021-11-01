@@ -100,12 +100,27 @@ if ($node) {
 }
 
 echo $OUTPUT->header();
+
+$participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
+
+// Manage enrolments.
+$manager = new course_enrolment_manager($PAGE, $course);
+$enrolbuttons = $manager->get_manual_enrol_buttons();
+$enrolrenderer = $PAGE->get_renderer('core_enrol');
+$enrolbuttonsout = '';
+foreach ($enrolbuttons as $enrolbutton) {
+    $enrolbuttonsout .= $enrolrenderer->render($enrolbutton);
+}
+
+echo $OUTPUT->render_participants_tertiary_nav($course, html_writer::div($enrolbuttonsout, '', [
+    'data-region' => 'wrapper',
+    'data-table-uniqueid' => $participanttable->uniqueid,
+]));
+
 echo $OUTPUT->heading(get_string('participants'));
 
 $filterset = new \core_user\table\participants_filterset();
 $filterset->add_filter(new integer_filter('courseid', filter::JOINTYPE_DEFAULT, [(int)$course->id]));
-
-$participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
 
 $canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
 $filtergroupids = $urlgroupid ? [$urlgroupid] : [];
@@ -154,20 +169,6 @@ if ($roleid) {
         $filterset->add_filter(new integer_filter('roles', filter::JOINTYPE_DEFAULT, [$roleid]));
     }
 }
-
-// Manage enrolments.
-$manager = new course_enrolment_manager($PAGE, $course);
-$enrolbuttons = $manager->get_manual_enrol_buttons();
-$enrolrenderer = $PAGE->get_renderer('core_enrol');
-$enrolbuttonsout = '';
-foreach ($enrolbuttons as $enrolbutton) {
-    $enrolbuttonsout .= $enrolrenderer->render($enrolbutton);
-}
-
-echo html_writer::div($enrolbuttonsout, 'd-flex justify-content-end', [
-    'data-region' => 'wrapper',
-    'data-table-uniqueid' => $participanttable->uniqueid,
-]);
 
 // Render the user filters.
 $userrenderer = $PAGE->get_renderer('core_user');

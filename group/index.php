@@ -170,10 +170,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
-// Add tabs
-$currenttab = 'groups';
-require('tabs.php');
-
+echo $OUTPUT->render_participants_tertiary_nav($course);
 echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) .' '.$strgroups, 3);
 
 $groups = groups_get_all_groups($courseid);

@@ -126,6 +126,10 @@ if (!is_null($reportuser)) {
 }
 
 echo $OUTPUT->header();
+// Display the participants tertiary action bar if within a course context.
+if ($course && $context->contextlevel == CONTEXT_COURSE) {
+    echo $OUTPUT->render_participants_tertiary_nav($course);
+}
 
 // Print heading.
 echo $OUTPUT->heading($title);
@@ -180,7 +184,7 @@ echo '</form>';
 echo $OUTPUT->box_end();
 
 // Appropriate back link.
-if ($context->contextlevel > CONTEXT_USER) {
+if (!$PAGE->has_secondary_navigation() && $context->contextlevel > CONTEXT_USER) {
     echo html_writer::start_tag('div', array('class'=>'backlink'));
     if ($returnurl) {
         $backurl = new moodle_url($returnurl);
