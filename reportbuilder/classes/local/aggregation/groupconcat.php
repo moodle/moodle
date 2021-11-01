@@ -32,7 +32,10 @@ use core_reportbuilder\local\report\column;
 class groupconcat extends base {
 
     /** @var string Character to use as a delimeter between column fields */
-    private const DELIMETER = '|';
+    protected const COLUMN_FIELD_DELIMETER = '<|>';
+
+    /** @var string Character to use as a delimeter between field values */
+    protected const FIELD_VALUE_DELIMETER = '<,>';
 
     /**
      * Return aggregation name
@@ -93,7 +96,7 @@ class groupconcat extends base {
             }
 
             $concatfields[] = "COALESCE({$sqlfield}, ' ')";
-            $concatfields[] = "'" . self::DELIMETER . "'";
+            $concatfields[] = "'" . self::COLUMN_FIELD_DELIMETER . "'";
         }
 
         // Slice off the last delimeter.
@@ -112,7 +115,7 @@ class groupconcat extends base {
 
         $fieldsort = database::sql_group_concat_sort($field);
 
-        return $DB->sql_group_concat($field, ', ', $fieldsort);
+        return $DB->sql_group_concat($field, self::FIELD_VALUE_DELIMETER, $fieldsort);
     }
 
     /**
@@ -129,11 +132,11 @@ class groupconcat extends base {
 
         // Store original names of all values that would be present without aggregation.
         $valuenames = array_keys($values);
-        $values = explode(', ', (string) reset($values));
+        $values = explode(self::FIELD_VALUE_DELIMETER, (string) reset($values));
 
         // Loop over each extracted value from the concatenated string.
         foreach ($values as $value) {
-            $originalvalue = array_combine($valuenames, explode(self::DELIMETER, $value));
+            $originalvalue = array_combine($valuenames, explode(self::COLUMN_FIELD_DELIMETER, $value));
             $originalfirstvalue = reset($originalvalue);
 
             // Once we've re-constructed each value, we can apply callbacks to it.
