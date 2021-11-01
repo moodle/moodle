@@ -33,6 +33,7 @@ $string['bulkadd'] = 'Add to cohort';
 $string['bulknocohort'] = 'No available cohorts found';
 $string['categorynotfound'] = 'Category <b>{$a}</b> not found or you don\'t have permission to create a cohort there. The default context will be used.';
 $string['cohort'] = 'Cohort';
+$string['cohortmember'] = 'Cohort member';
 $string['cohorts'] = 'Cohorts';
 $string['cohortsin'] = '{$a}: available cohorts';
 $string['assigncohorts'] = 'Assign cohort members';
