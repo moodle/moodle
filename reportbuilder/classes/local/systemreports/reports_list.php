@@ -249,7 +249,7 @@ class reports_list extends system_report {
         // Preview action.
         $this->add_action((new action(
             new moodle_url('/reportbuilder/view.php', ['id' => ':id']),
-            new pix_icon('i/search', get_string('view', 'moodle')),
+            new pix_icon('i/search', get_string('viewreport', 'core_reportbuilder')),
             []
         ))
             ->add_callback(function(stdClass $row): bool {
