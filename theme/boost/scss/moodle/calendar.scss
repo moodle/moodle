@@ -129,6 +129,20 @@ $calendarCurrentDateBackground: $primary;
     }
 }
 
+#region-main {
+    .maincalendar {
+        .calendarwrapper {
+            td {
+                & > div {
+                    height: 11.5em;
+                    overflow: hidden;
+                }
+            }
+        }
+    }
+
+}
+
 .maincalendar {
     vertical-align: top;
     padding: 0;
@@ -154,8 +168,13 @@ $calendarCurrentDateBackground: $primary;
             margin: 0;
             padding: 0;
 
+            li[data-event-folded="true"] {
+                display: none;
+            }
+
             li {
                 list-style-type: none;
+                line-height: 1.2em;
 
                 > a {
                     @include text-truncate;
@@ -169,6 +188,10 @@ $calendarCurrentDateBackground: $primary;
                             text-decoration: $link-hover-decoration;
                         }
                     }
+                }
+
+                a[data-action="view-day-link"] {
+                    @include text-truncate;
                 }
 
                 .icon {
@@ -222,7 +245,6 @@ $calendarCurrentDateBackground: $primary;
         }
 
         td {
-            height: 5em;
 
             .day-number-circle {
                 display: inline-block;

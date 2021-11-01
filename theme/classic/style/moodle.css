@@ -13205,6 +13205,10 @@ body.dragging .dragging {
   border-spacing: 2px;
   width: 100%; }
 
+#region-main .maincalendar .calendarwrapper td > div {
+  height: 11.5em;
+  overflow: hidden; }
+
 .maincalendar {
   vertical-align: top;
   padding: 0; }
@@ -13226,8 +13230,11 @@ body.dragging .dragging {
     .maincalendar .calendarmonth ul {
       margin: 0;
       padding: 0; }
+      .maincalendar .calendarmonth ul li[data-event-folded="true"] {
+        display: none; }
       .maincalendar .calendarmonth ul li {
-        list-style-type: none; }
+        list-style-type: none;
+        line-height: 1.2em; }
         .maincalendar .calendarmonth ul li > a {
           overflow: hidden;
           text-overflow: ellipsis;
@@ -13238,6 +13245,10 @@ body.dragging .dragging {
             text-decoration: none; }
             .maincalendar .calendarmonth ul li > a:hover .eventname {
               text-decoration: underline; }
+        .maincalendar .calendarmonth ul li a[data-action="view-day-link"] {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap; }
         .maincalendar .calendarmonth ul li .icon {
           margin-left: 0.25em;
           margin-right: 0.25em;
@@ -13269,22 +13280,20 @@ body.dragging .dragging {
     .maincalendar .calendarmonth th {
       text-align: left;
       padding-left: 16px; }
-    .maincalendar .calendarmonth td {
-      height: 5em; }
-      .maincalendar .calendarmonth td .day-number-circle {
+    .maincalendar .calendarmonth td .day-number-circle {
+      display: inline-block;
+      line-height: 0;
+      width: 30px;
+      height: 30px; }
+      .maincalendar .calendarmonth td .day-number-circle .day-number {
         display: inline-block;
-        line-height: 0;
-        width: 30px;
-        height: 30px; }
-        .maincalendar .calendarmonth td .day-number-circle .day-number {
-          display: inline-block;
-          padding: 50% 4px;
-          width: 100%;
-          text-align: center; }
-      .maincalendar .calendarmonth td.today .day-number-circle {
-        border-radius: 50%;
-        color: #fff;
-        background-color: #0f6cbf; }
+        padding: 50% 4px;
+        width: 100%;
+        text-align: center; }
+    .maincalendar .calendarmonth td.today .day-number-circle {
+      border-radius: 50%;
+      color: #fff;
+      background-color: #0f6cbf; }
     .maincalendar .calendarmonth .clickable:hover {
       background-color: #ededed; }
   .maincalendar .controls {
