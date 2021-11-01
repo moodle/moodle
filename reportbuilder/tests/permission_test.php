@@ -125,7 +125,7 @@ class permission_test extends advanced_testcase {
 
         // User does not have view capability and belongs to an audience.
         $this->expectException(report_access_exception::class);
-        $this->expectExceptionMessage('You can not view this report');
+        $this->expectExceptionMessage('You cannot view this report');
         permission::require_can_view_report($report);
     }
 
