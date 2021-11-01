@@ -55,7 +55,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Outcomes" in current page administration
-    And I follow "Edit outcomes"
+    And I press "Manage outcomes"
     And I press "Add a new outcome"
     And I follow "Add a new scale"
     And I set the following fields to these values:
@@ -64,7 +64,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I press "Save changes"
     And I am on "Course 1" course homepage
     And I navigate to "Outcomes" in current page administration
-    And I follow "Edit outcomes"
+    And I press "Manage outcomes"
     And I press "Add a new outcome"
     And I set the following fields to these values:
       | Full name | M8d skillZ! |

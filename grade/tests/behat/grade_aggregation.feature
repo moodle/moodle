@@ -65,6 +65,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
 
   Scenario: Mean of grades aggregation
+    When I navigate to "View > Grader report" in the course gradebook
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Mean of grades |
     And I set the following settings for grade item "Sub category 1":
@@ -83,6 +84,7 @@ Feature: We can use calculated grade totals
     And I should see "30.42 (30.42 %)" in the "overview-grade" "table"
 
   Scenario: Weighted mean of grades aggregation
+    When I navigate to "View > Grader report" in the course gradebook
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Weighted mean of grades |
     And I set the following settings for grade item "Sub category 1":
@@ -105,6 +107,7 @@ Feature: We can use calculated grade totals
     And I should see "26.94 (26.94 %)" in the "overview-grade" "table"
 
   Scenario: Simple weighted mean of grades aggregation
+    When I navigate to "View > Grader report" in the course gradebook
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Simple weighted mean of grades |
     And I set the following settings for grade item "Sub category 1":
@@ -125,6 +128,7 @@ Feature: We can use calculated grade totals
     And I should see "48.57 (48.57 %)" in the "overview-grade" "table"
 
   Scenario: Mean of grades (with extra credits) aggregation
+    When I navigate to "View > Grader report" in the course gradebook
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Mean of grades (with extra credits) |
     And I set the following settings for grade item "Sub category 1":
@@ -145,6 +149,7 @@ Feature: We can use calculated grade totals
     And I should see "47.22 (47.22 %)" in the "overview-grade" "table"
 
   Scenario: Median of grades aggregation
+    When I navigate to "View > Grader report" in the course gradebook
     And I set the following settings for grade item "Course 1":
       | Aggregation | Median of grades |
     And I set the following settings for grade item "Sub category 1":
@@ -163,6 +168,7 @@ Feature: We can use calculated grade totals
     And I should see "25.83 (25.83 %)" in the "overview-grade" "table"
 
   Scenario: Lowest grade aggregation
+    When I navigate to "View > Grader report" in the course gradebook
     And I set the following settings for grade item "Course 1":
       | Aggregation | Lowest grade |
     And I set the following settings for grade item "Sub category 1":
@@ -185,6 +191,7 @@ Feature: We can use calculated grade totals
     And I should see "0.00 (0.00 %)" in the "overview-grade" "table"
 
   Scenario: Highest grade aggregation
+    When I navigate to "View > Grader report" in the course gradebook
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Highest grade |
     And I set the following settings for grade item "Sub category 1":
@@ -205,6 +212,7 @@ Feature: We can use calculated grade totals
     And I should see "50.00 (50.00 %)" in the "overview-grade" "table"
 
   Scenario: Mode of grades aggregation
+    When I navigate to "View > Grader report" in the course gradebook
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Mode of grades |
     And I set the following settings for grade item "Sub category 1":
@@ -315,6 +323,7 @@ Feature: We can use calculated grade totals
     And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
 
   Scenario: Natural aggregation
+    When I navigate to "View > Grader report" in the course gradebook
     And I set the following settings for grade item "Sub category 1":
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
@@ -502,7 +511,8 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Natural aggregation with weights of zero
-    When I set the following settings for grade item "Course 1":
+    When I navigate to "View > Grader report" in the course gradebook
+    And I set the following settings for grade item "Course 1":
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
     And I set the following settings for grade item "Sub category 1":
@@ -528,6 +538,7 @@ Feature: We can use calculated grade totals
     And I set the field "Show contribution to course total" to "Show"
     And I set the field "Show weightings" to "Show"
     And I press "Save changes"
+    And I navigate to "View > Grader report" in the course gradebook
     Then I should see "75.00 (16.85 %)" in the ".course" "css_element"
     And I navigate to "View > User report" in the course gradebook
     And I select "Myself" from the "View report as" singleselect

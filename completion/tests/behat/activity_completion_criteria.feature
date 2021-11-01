@@ -156,7 +156,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
   Scenario: Course completion should not be updated when teacher imports grades with csv file
     Given I log in as "teacher1"
     And I am on "Completion course" course homepage
-    And I navigate to "Import" in the course gradebook
+    And I navigate to "CSV file" import page in the course gradebook
     And I upload "lib/tests/fixtures/upload_grades.csv" file to "File" filemanager
     And I press "Upload grades"
     And I set the field "Map to" to "Email address"
