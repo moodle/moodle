@@ -279,9 +279,12 @@ body:not(.editing)  .sitetopic ul.section {
     margin: .5em 0;
 }
 
-.editing .section .activity:hover,
-.editing .section .activity.action-menu-shown {
-    background-color: $table-accent-bg;
+.editing .section {
+    .activity:hover,
+    .activity.action-menu-shown,
+    .sectionname:hover {
+        background-color: $table-accent-bg;
+    }
 }
 
 .course-content .current {
