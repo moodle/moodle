@@ -93,11 +93,13 @@ class custom_report_columns_sorting_exporter extends exporter {
 
         $reportid = $report->get_report_persistent()->get('id');
         $activecolumns = column::get_records(['reportid' => $reportid], 'sortorder');
-        $sortablecolumns = array_filter($activecolumns, function(column $persistent) use($report) {
-            $column = $report->get_column($persistent->get('uniqueidentifier'))
-                ->set_aggregation($persistent->get('aggregation'));
+        $sortablecolumns = array_filter($activecolumns, function(column $persistent) use($report): bool {
+            $column = $report->get_column($persistent->get('uniqueidentifier'));
+            if ($column === null) {
+                return false;
+            }
 
-            return $column && $column->get_is_sortable();
+            return $column->set_aggregation($persistent->get('aggregation'))->get_is_sortable();
         });
 
         $sortablecolumns = array_map(function(column $persistent) use ($report) {

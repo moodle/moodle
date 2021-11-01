@@ -124,7 +124,10 @@ class condition extends dynamic_form {
 
         $conditions = filter::get_condition_records($this->get_report()->get_report_persistent()->get('id'), 'filterorder');
         foreach ($conditions as $condition) {
-            $conditioninstance = $conditioninstances[$condition->get('uniqueidentifier')];
+            $conditioninstance = $conditioninstances[$condition->get('uniqueidentifier')] ?? null;
+            if ($conditioninstance === null) {
+                continue;
+            }
 
             $entityname = $conditioninstance->get_entity_name();
             $displayvalue = $conditioninstance->get_header();

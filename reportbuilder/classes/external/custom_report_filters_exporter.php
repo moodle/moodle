@@ -103,11 +103,11 @@ class custom_report_filters_exporter extends exporter {
         /** @var base $report */
         $report = $this->related['report'];
 
-        // Current filter instances contained in the report.
-        $filterinstances = filter::get_filter_records($report->get_report_persistent()->get('id'), 'filterorder');
+        // Current filters added to the report.
+        $filters = filter::get_filter_records($report->get_report_persistent()->get('id'), 'filterorder');
         $filteridentifiers = array_map(static function(filter $filter): string {
             return $filter->get('uniqueidentifier');
-        }, $filterinstances);
+        }, $filters);
 
         $availablefilters = $activefilters = [];
 
@@ -134,12 +134,16 @@ class custom_report_filters_exporter extends exporter {
         }
 
         // Populate active filters.
-        foreach ($filterinstances as $filter) {
-            $editable = new filter_heading_editable($filter->get('id'));
+        $filterinstances = $report->get_filter_instances();
+        foreach ($filters as $filter) {
+            $filterinstance = $filterinstances[$filter->get('uniqueidentifier')] ?? null;
+            if ($filterinstance === null) {
+                continue;
+            }
 
-            $filterinstance = $report->get_filter($filter->get('uniqueidentifier'));
             $entityname = $filterinstance->get_entity_name();
             $displayvalue = $filterinstance->get_header();
+            $editable = new filter_heading_editable($filter->get('id'));
 
             $activefilters[] = [
                 'id' => $filter->get('id'),
