@@ -655,7 +655,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
     }
 
     /**
-     * The digest being in the past is queued til the next day.
+     * The digest being in the future is queued for today.
      */
     public function test_cron_digest_same_day() {
         global $DB, $CFG;
@@ -693,6 +693,73 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $task = reset($tasks);
         $digesttime = usergetmidnight(time(), \core_date::get_server_timezone()) + ($CFG->digestmailtime * 3600);
         $this->assertLessThanOrEqual($digesttime, $task->nextruntime);
+    }
+
+    /**
+     * Tests that if a new message is posted after the days digest time,
+     * but before that days digests are sent a new task is created.
+     */
+    public function test_cron_digest_queue_next_before_current_processed() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Set up a basic user enrolled in a course.
+        $userhelper = $this->helper_setup_user_in_course();
+        $user = $userhelper->user;
+        $forum1 = $userhelper->forums->forum1;
+
+        // Add 1 discussions to forum 1.
+        $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+
+        // Set the tested user's default maildigest setting.
+        $DB->set_field('user', 'maildigest', 1, ['id' => $user->id]);
+
+        // Set the digest time to the future (magic, shouldn't work).
+        $CFG->digestmailtime = 25;
+        // One digest e-mail should be sent, and no individual notifications.
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        // Set the digest time to midnight.
+        $CFG->digestmailtime = 0;
+
+        // Add another discussions to forum 1.
+        $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+
+        // One digest e-mail should be sent, and no individual notifications.
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        // There should now be two tasks queued.
+        $tasks = $DB->get_records('task_adhoc');
+        $this->assertCount(2, $tasks);
+
+        // Add yet another another discussions to forum 1.
+        $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+
+        // One digest e-mail should be sent, and no individual notifications.
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        // There should still be two tasks queued.
+        $tasks = $DB->get_records('task_adhoc');
+        $this->assertCount(2, $tasks);
     }
 
     /**
