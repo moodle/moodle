@@ -46,9 +46,15 @@
     {{#showreview}}
         <div class="btn-toolbar collapse-buttons">
             <div class="btn-group">
-                <button type="button" class="btn btn-secondary collapse-review-panel">{{#pix}} layout-expand-right, mod_assign, {{#str}} collapsereviewpanel, mod_assign {{/str}} {{/pix}}</button>
-                <button type="button" class="btn btn-secondary collapse-none active">{{#pix}} layout-default, mod_assign, {{#str}} defaultlayout, mod_assign {{/str}} {{/pix}}</button>
-                <button type="button" class="btn btn-secondary collapse-grade-panel">{{#pix}} layout-expand-left, mod_assign, {{#str}} collapsegradepanel, mod_assign {{/str}} {{/pix}}</button>
+                <button type="button" class="btn btn-secondary collapse-review-panel" aria-label="{{#str}} collapsereviewpanel, mod_assign {{/str}}" title="{{#str}} collapsereviewpanel, mod_assign {{/str}}">
+                    {{#pix}} layout-expand-right, mod_assign {{/pix}}
+                </button>
+                <button type="button" class="btn btn-secondary collapse-none active" aria-label="{{#str}} defaultlayout, mod_assign {{/str}}" title="{{#str}} defaultlayout, mod_assign {{/str}}">
+                    {{#pix}} layout-default, mod_assign {{/pix}}
+                </button>
+                <button type="button" class="btn btn-secondary collapse-grade-panel" aria-label="{{#str}} collapsegradepanel, mod_assign {{/str}}" title="{{#str}} collapsegradepanel, mod_assign {{/str}}">
+                    {{#pix}} layout-expand-left, mod_assign {{/pix}}
+                </button>
             </div>
         </div>
     {{/showreview}}
