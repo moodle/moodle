@@ -140,7 +140,7 @@ if ($action === 'delete') {
     }
 
     // The attempts table.
-    $attemptstable = html_writer::div(html_writer::table($table), 'table-responsive');
+    $attemptstable = html_writer::table($table);
 
     // The HTML that we will be displaying which includes the attempts table and bulk actions menu, if necessary.
     $attemptshtml = $attemptstable;
@@ -352,9 +352,7 @@ if ($action === 'delete') {
         } else {
             $table->data[] = array(get_string('didnotanswerquestion', 'lesson'), " ");
         }
-        echo html_writer::start_tag('div', ['class' => 'no-overflow table-responsive']);
         echo html_writer::table($table);
-        echo html_writer::end_tag('div');
     }
 } else {
     print_error('unknowaction');

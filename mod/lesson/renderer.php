@@ -253,7 +253,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $pageid = $page->nextpageid;
         }
 
-        return html_writer::div(html_writer::table($table), 'table-responsive');
+        return html_writer::table($table);
     }
 
     /**
