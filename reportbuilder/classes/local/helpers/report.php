@@ -45,10 +45,8 @@ class report {
      * @return report_model
      */
     public static function create_report(stdClass $data, bool $default = true): report_model {
-        // TODO move this properties_definition validation into the persistents, or resolve MDL-71086.
-        $data = (object) array_merge(array_intersect_key((array) $data, report_model::properties_definition()), [
-            'type' => datasource::TYPE_CUSTOM_REPORT,
-        ]);
+        $data->name = trim($data->name);
+        $data->type = datasource::TYPE_CUSTOM_REPORT;
 
         $reportpersistent = manager::create_report_persistent($data);
 
@@ -77,7 +75,7 @@ class report {
             throw new invalid_parameter_exception('Invalid report');
         }
 
-        $report->set('name', $data->name)
+        $report->set('name', trim($data->name))
             ->update();
 
         return $report;

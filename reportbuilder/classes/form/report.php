@@ -147,4 +147,21 @@ class report extends dynamic_form {
     public function get_page_url_for_dynamic_submission(): moodle_url {
         return new moodle_url('/reportbuilder/index.php');
     }
+
+    /**
+     * Perform some extra moodle validation
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    public function validation($data, $files): array {
+        $errors = [];
+
+        if (trim($data['name']) === '') {
+            $errors['name'] = get_string('required');
+        }
+
+        return $errors;
+    }
 }

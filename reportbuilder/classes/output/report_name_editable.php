@@ -70,7 +70,7 @@ class report_name_editable extends inplace_editable {
         core_external::validate_context($report->get_context());
         permission::require_can_edit_report($report);
 
-        $value = clean_param($value, PARAM_TEXT);
+        $value = trim(clean_param($value, PARAM_TEXT));
         if ($value !== '') {
             $report
                 ->set('name', $value)
