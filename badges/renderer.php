@@ -395,7 +395,9 @@ class core_badges_renderer extends plugin_renderer_base {
 
         $output .= $this->output->heading(get_string('issuerdetails', 'badges'), 3);
         $dl = array();
-        $dl[get_string('issuername', 'badges')] = $badge->issuername;
+        $dl[get_string('issuername', 'badges')] = format_string($badge->issuername, true,
+            ['context' => context_system::instance()]);
+
         if (isset($badge->issuercontact) && !empty($badge->issuercontact)) {
             $dl[get_string('contact', 'badges')] = obfuscate_mailto($badge->issuercontact);
         }
@@ -428,7 +430,7 @@ class core_badges_renderer extends plugin_renderer_base {
 
         if ($badge->type == BADGE_TYPE_COURSE && isset($badge->courseid)) {
             $coursename = $DB->get_field('course', 'fullname', array('id' => $badge->courseid));
-            $dl[get_string('course')] = $coursename;
+            $dl[get_string('course')] = format_string($coursename, true, ['context' => context_course::instance($badge->courseid)]);
         }
         $dl[get_string('bcriteria', 'badges')] = self::print_badge_criteria($badge);
         $output .= $this->definition_list($dl);
