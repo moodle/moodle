@@ -13393,10 +13393,13 @@ table.calendartable caption {
 .content-bank-container.view-list .cb-btnsort span {
   display: none; }
 
+.content-bank-container.view-list .cb-btnsort .title {
+  display: inline; }
+
 .content-bank-container.view-list .cb-btnsort.dir-none .default,
 .content-bank-container.view-list .cb-btnsort.dir-asc .asc,
 .content-bank-container.view-list .cb-btnsort.dir-desc .desc {
-  display: block; }
+  display: inline; }
 
 .cb-toolbar-container .dropdown-scrollable {
   max-height: 190px;

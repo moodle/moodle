@@ -52,6 +52,8 @@ export default {
     },
     elements: {
         listitem: '.cb-listitem',
+        heading: '.cb-heading',
+        cell: '.cb-column',
         cbnavbarbreadcrumb: '.cb-navbar-breadbrumb',
         cbnavbartotalsearch: '.cb-navbar-totalsearch',
         searchinput: '#searchinput',
