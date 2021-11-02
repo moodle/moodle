@@ -31,12 +31,6 @@ if ($hassiteconfig) {
     $settings = new admin_settingpage('local_iomad_settings', get_string('pluginname', 'local_iomad_settings'));
     $ADMIN->add('localplugins', $settings);
 
-    $settings->add(new admin_setting_configtext('establishment_code',
-                                                get_string('establishment_code', 'local_iomad_settings'),
-                                                get_string('establishment_code_help', 'local_iomad_settings'),
-                                                '',
-                                                PARAM_INT));
-
     $settings->add(new admin_setting_configcheckbox('iomad_use_email_as_username',
                                                 get_string('iomad_use_email_as_username', 'local_iomad_settings'),
                                                 get_string('iomad_use_email_as_username_help', 'local_iomad_settings'),
@@ -71,6 +65,12 @@ if ($hassiteconfig) {
                                                 get_string('iomad_hidevalidcourses', 'local_iomad_settings'),
                                                 get_string('iomad_hidevalidcourses', 'local_iomad_settings'),
                                                 0));
+
+    $settings->add(new admin_setting_configtext('iomad_emaildelay',
+                                                get_string('emaildelay', 'local_iomad_settings'),
+                                                get_string('emaildelay_help', 'local_iomad_settings'),
+                                                0,
+                                                PARAM_INT));
 
     $dateformats = array('Y-m-d' => 'YYYY-MM-DD',
                          'Y/m/d' => 'YYYY/MM/DD',

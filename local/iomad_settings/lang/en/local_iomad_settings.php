@@ -23,11 +23,11 @@
 
 $string['pluginname'] = 'Iomad settings';
 $string['privacy:metadata'] = 'The Local Iomad settings plugin only shows data stored in other locations.';
-$string['establishment_code'] = 'Establishment Code';
-$string['establishment_code_help'] = 'What should the admin see in the course list block?';
 $string['customtext2'] = 'Custom Text 2';
 $string['customtext3'] = 'Custom Text 3';
 $string['dateformat'] = 'Date format';
+$string['emaildelay'] = 'Email delay';
+$string['emaildelay_help'] = 'Any Iomad emails will have this value (in seconds) added to the send time by default.  This allows for a default delay in sending, much like for forum posts, of any Iomad email.  Timings will still be impacted by the local_mail cron task but this delay will be a minimum value';
 $string['iomad_autoenrol_managers'] = 'Enrol managers as non students';
 $string['iomad_autoenrol_managers_help'] = 'If this is unticked then manager accounts will not be enrolled as the company teacher roles on manual enrol courses ';
 $string['iomad_autoreallocate_licenses'] = 'Automatically re-allocate license';
