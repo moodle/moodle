@@ -338,6 +338,15 @@ $capabilities = array(
         ),
     ),
 
+    'block/iomad_company_admin:viewallsharedcourses' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
     'block/iomad_company_admin:user_create' => array(
 
         'captype' => 'write',

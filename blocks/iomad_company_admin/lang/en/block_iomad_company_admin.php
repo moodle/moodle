@@ -364,6 +364,7 @@ $string['iomad_company_admin:destroycourses'] = 'Delete a non-shared company cou
 $string['iomad_company_admin:manageallcourses'] = 'Manage Iomad course settings for all companies and courses';
 $string['iomad_company_admin:managecourses'] = 'Manage Iomad course settings';
 $string['iomad_company_admin:viewcourses'] = 'View company courses';
+$string['iomad_company_admin:viewallsharedcourses'] = 'View all closed shared courses not just parent company ones';
 $string['iomad_company_admin:manageframeworks'] = 'Manage Iomad competency framework settings';
 $string['iomad_company_admin:managetemplates'] = 'Manage Iomad learning plan template settings';
 $string['iomad_company_admin:myaddinstance'] = 'Add a new Iomad company admin block to the users dashboard';
