@@ -61,7 +61,7 @@ Feature: Set up contextual data for tests
     And I navigate to "Users > Groups" in current page administration
     Then I should see "Group 1"
     And I should see "Group 2"
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And I should see "Grouping 1"
     And I should see "Grouping 2"
 

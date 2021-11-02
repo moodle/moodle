@@ -43,7 +43,7 @@ Feature: Import course's contents into another course
     And I navigate to "Users > Permissions" in current page administration
     Then I should see "Non-editing teacher (1)"
     And I set the field "Advanced role override" to "Non-editing teacher (1)"
-    And I press "Go"
+    And I click on "Go" "button" in the "div.advancedoverride" "css_element"
     And "enrol/manual:enrol" capability has "Allow" permission
 
   Scenario: Import process without permission option

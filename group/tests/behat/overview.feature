@@ -59,7 +59,7 @@ Feature: Group overview
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Users > Groups" in current page administration
-    And I follow "Overview"
+    And I select "Overview" from the "jump" singleselect
 
     # Grouping All and Group All filter
     When I select "All" from the "Grouping" singleselect

@@ -26,7 +26,7 @@ Feature: Automatic updating of groups and groupings
       | Group name | Group (with ID) |
       | Group ID number | An ID |
     And I press "Save changes"
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And I press "Create grouping"
     And I set the following fields to these values:
       | Grouping name | Grouping (without ID) |
@@ -36,7 +36,7 @@ Feature: Automatic updating of groups and groupings
       | Grouping name | Grouping (with ID) |
       | Grouping ID number | An ID |
     And I press "Save changes"
-    And I follow "Groups"
+    And I select "Groups" from the "jump" singleselect
 
   @javascript
   Scenario: Update groups and groupings with ID numbers
@@ -52,7 +52,7 @@ Feature: Automatic updating of groups and groupings
     And I press "Edit group settings"
     And the field "idnumber" matches value "An ID (updated)"
     And I press "Save changes"
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And I click on "Edit" "link" in the "Grouping (with ID)" "table_row"
     And the field "idnumber" matches value "An ID"
     And I set the following fields to these values:
@@ -86,7 +86,7 @@ Feature: Automatic updating of groups and groupings
     And the "idnumber" "field" should be readonly
     And the field "idnumber" matches value "An ID"
     And I press "Save changes"
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And I click on "Edit" "link" in the "Grouping (with ID)" "table_row"
     And the "idnumber" "field" should be readonly
     And the field "idnumber" matches value "An ID"
