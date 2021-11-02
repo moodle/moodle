@@ -64,6 +64,9 @@
                                         {{#hasgrade}}
                                             <strong>{{#str}} finalscore, block_mycourses,  {{ finalscore }}</strong> {{/str}}
                                         {{/hasgrade}}
+                                        {{^hasgrade}}
+                                            <strong>{{#str}} result, block_mycourses,  {{ finalscore }}</strong> {{/str}}
+                                        {{/hasgrade}}
                                     </div>
                                 </div>
                                 {{#certificates}}

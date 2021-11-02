@@ -526,6 +526,7 @@ $string['licenseleft1'] = 'You have ';
 $string['licenseleft2'] = ' courses left to allocate on this license';
 $string['licensevalidfrom'] = 'available from {$a}';
 $string['licensevalidfromwarning'] = 'you can assign this license to users but emails will only be set out after {$a} and users will not be able to access the course until this date.';
+$string['passed'] = 'Passed';
 $string['postcode'] = 'Postcode';
 $string['programleft2'] = ' program slots left to allocate on this license';
 $string['purgeselectedentries'] = 'Purge selected entries';

@@ -57,7 +57,7 @@ class completed_view implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
         require_once($CFG->dirroot.'/course/lib.php');
 
         // Build courses view data structure.
@@ -109,7 +109,12 @@ class completed_view implements renderable, templatable {
             $exportedcourse->hasprogress = true;
             $exportedcourse->certificates = array();
             $certificateimage = $output->image_url('f/pdf-32');
-            $exportedcourse->finalscore = intval($completed->finalgrade);
+            if (!empty($completed->hasgrade)) {
+                $exportedcourse->finalscore = intval($completed->finalgrade);
+                $exportedcourse->hasgrade = true;
+            } else {
+                $exportedcourse->finalscore = get_string('passed', 'block_iomad_company_admin');
+            }
             foreach ($completed->certificates as $certificate) {
                 $certout = new \stdclass();
                 $certout->certificateurl = $certificate->certificateurl;
