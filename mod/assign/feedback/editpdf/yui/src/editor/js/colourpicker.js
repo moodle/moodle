@@ -42,9 +42,11 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
             button = Y.Node.create('<button><img alt="' + title + '" src="' + img + '"/></button>');
             button.setAttribute('data-colour', colour);
             button.setAttribute('data-rgb', rgb);
+            button.setAttribute('role', 'menuitem');
             button.setStyle('backgroundImage', 'none');
             listitem = Y.Node.create('<li/>');
             listitem.append(button);
+            listitem.setAttribute('role', 'none');
             colourlist.append(listitem);
         }, this);
 
