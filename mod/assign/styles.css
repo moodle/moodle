@@ -967,16 +967,6 @@
     height: 60px;
 }
 
-/*rtl:ignore*/
-.path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
-    position: absolute;
-    top: 0;
-    left: auto;
-    right: 15px;
-    margin: 0;
-    line-height: 60px;
-}
-
 .path-mod-assign [data-region="grade-actions"] {
     padding: 1em;
     text-align: center;
