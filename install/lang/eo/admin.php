@@ -29,7 +29,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Rěč';
-$string['moodlelogo'] = 'Moodle-logo';
-$string['next'] = 'Nadalny';
-$string['previous'] = 'Wróćo';
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'j';
+$string['cliincorrectvalueerror'] = 'Eraro, malĝusta valoro "{$a->value}"  por "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Malĝusta valoro, bonvolu reprovi';
+$string['clitypevalue'] = 'tajpvaloro';
+$string['clitypevaluedefault'] = 'tajpvaloro, tajpu Enigklavon por uzi defaŭltan valoron ({$a})';
