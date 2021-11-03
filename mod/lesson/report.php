@@ -227,7 +227,6 @@ if ($action === 'delete') {
                                 get_string('highscore', 'lesson'), get_string('lowscore', 'lesson'),
                                 get_string('hightime', 'lesson'), get_string('lowtime', 'lesson'));
         $stattable->align = array('center', 'center', 'center', 'center', 'center', 'center');
-        $stattable->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap');
         $stattable->attributes['class'] = 'standardtable generaltable';
         $stattable->data[] = array($data->avescore, $data->avetime, $data->highscore, $data->lowscore, $data->hightime, $data->lowtime);
 
@@ -238,7 +237,6 @@ if ($action === 'delete') {
         $stattable->head = array(get_string('averagetime', 'lesson'), get_string('hightime', 'lesson'),
                                 get_string('lowtime', 'lesson'));
         $stattable->align = array('center', 'center', 'center');
-        $stattable->wrap = array('nowrap', 'nowrap', 'nowrap');
         $stattable->attributes['class'] = 'standardtable generaltable';
         $stattable->data[] = array($data->avetime, $data->hightime, $data->lowtime);
     }
