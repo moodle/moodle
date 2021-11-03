@@ -141,6 +141,12 @@ class exportable_textarea extends exportable_item {
             $exporteditem->set_content($text);
         }
 
+        if (!empty($this->textformatfield)) {
+            $formattedcontent = format_text($exporteditem->get_content(), $record->{$this->textformatfield},
+                ['context' => $this->get_context()]);
+            $exporteditem->set_content($formattedcontent);
+        }
+
         $exporteditem->set_title($this->get_user_visible_name());
         return $exporteditem;
     }
