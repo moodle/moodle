@@ -201,7 +201,13 @@ define(
          * @returns {Node}
          */
         var addSectionLightbox = function(sectionelement) {
-            var lightbox = M.util.add_lightbox(Y, Y.Node(sectionelement.get(0)));
+            const item = sectionelement.get(0);
+            var lightbox = M.util.add_lightbox(Y, Y.Node(item));
+            if (item.dataset.for == 'section' && item.dataset.id) {
+                courseeditor.dispatch('sectionLock', [item.dataset.id], true);
+                lightbox.setAttribute('data-state', 'section');
+                lightbox.setAttribute('data-state-id', item.dataset.id);
+            }
             lightbox.show();
             return lightbox;
         };
@@ -237,6 +243,14 @@ define(
             if (lightbox) {
                 window.setTimeout(function() {
                     lightbox.hide();
+                    // Unlock state if necessary.
+                    if (lightbox.getAttribute('data-state')) {
+                        courseeditor.dispatch(
+                            `${lightbox.getAttribute('data-state')}Lock`,
+                            [lightbox.getAttribute('data-state-id')],
+                            false
+                        );
+                    }
                 }, delay);
             }
         };
@@ -776,18 +790,13 @@ define(
                     return;
                 }
 
-                // Send the element is locked. Reactive events are only triggered when the state
-                // read only mode is restored. We want to notify the interface the element is
-                // locked so we need to do a quick lock operation before performing the rest
-                // of the mutation.
-                statemanager.setReadOnly(false);
-                cm.locked = true;
-                statemanager.setReadOnly(true);
+                // Send the element is locked.
+                courseeditor.dispatch('cmLock', [cm.id], true);
 
                 // Now we do the real mutation.
                 statemanager.setReadOnly(false);
 
-                // This locked will take effect when the read only is restored.
+                // This unlocked will take effect when the read only is restored.
                 cm.locked = false;
 
                 switch (action) {

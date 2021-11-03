@@ -82,12 +82,12 @@ export default class extends DndSection {
     }
 
     /**
-    * Validate if the drop data can be dropped over the component.
-    *
-    * @param {Object} dropdata the exported drop data.
-    * @returns {boolean}
-    */
-   validateDropData(dropdata) {
+     * Validate if the drop data can be dropped over the component.
+     *
+     * @param {Object} dropdata the exported drop data.
+     * @returns {boolean}
+     */
+    validateDropData(dropdata) {
         // If the format uses one section per page sections dropping in the content is ignored.
        if (dropdata?.type === 'section' && this.reactive.sectionReturn != 0) {
             return false;
