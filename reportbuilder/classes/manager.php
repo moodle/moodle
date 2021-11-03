@@ -67,10 +67,10 @@ class manager {
     }
 
     /**
-     * Run reset code after unit tests to reset the instance cache
+     * Run reset code after tests to reset the instance cache
      */
     public static function reset_caches(): void {
-        if (PHPUNIT_TEST) {
+        if (PHPUNIT_TEST || defined('BEHAT_TEST')) {
             static::$instances = [];
         }
     }
