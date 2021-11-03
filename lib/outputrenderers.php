@@ -863,6 +863,11 @@ class core_renderer extends renderer_base {
         global $CFG;
         $output = '';
 
+        if (during_initial_install()) {
+            // Debugging info can not work before install is finished.
+            return $output;
+        }
+
         // This function is normally called from a layout.php file
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in the footer.
@@ -4878,7 +4883,7 @@ EOD;
      */
     public function moodle_release() {
         global $CFG;
-        if (is_siteadmin()) {
+        if (!during_initial_install() && is_siteadmin()) {
             return $CFG->release;
         }
     }
