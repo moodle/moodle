@@ -229,11 +229,6 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $table = new html_table();
         $table->head = array(get_string('pagetitle', 'lesson'), get_string('qtype', 'lesson'), get_string('jumps', 'lesson'), get_string('actions', 'lesson'));
         $table->align = array('left', 'left', 'left', 'center');
-        $table->wrap = array('', 'nowrap', '', 'nowrap');
-        $table->tablealign = 'center';
-        $table->cellspacing = 0;
-        $table->cellpadding = '2px';
-        $table->width = '80%';
         $table->data = array();
 
         $canedit = has_capability('mod/lesson:edit', context_module::instance($this->page->cm->id));
