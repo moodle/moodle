@@ -162,9 +162,10 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="userid-forumid" UNIQUE="false" FIELDS="userid, forumid"/>
-        <INDEX NAME="userid-discussionid" UNIQUE="false" FIELDS="userid, discussionid"/>
+        <INDEX NAME="forumid-userid" UNIQUE="false" FIELDS="forumid, userid"/>
+        <INDEX NAME="discussionid-userid" UNIQUE="false" FIELDS="discussionid, userid"/>
         <INDEX NAME="postid-userid" UNIQUE="false" FIELDS="postid, userid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="forum_track_prefs" COMMENT="Tracks each users untracked forums">
