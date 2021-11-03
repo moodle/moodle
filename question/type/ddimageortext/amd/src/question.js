@@ -310,7 +310,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             newIndex = currentIndex + 2;
 
         var info = dragDrop.prepare(e);
-        if (!info.start) {
+        if (!info.start || drag.hasClass('beingdragged')) {
             return;
         }
 
