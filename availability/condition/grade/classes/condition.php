@@ -240,7 +240,7 @@ class condition extends \core_availability\condition {
                 // Get all grades for the current course.
                 $rs = $DB->get_recordset_sql('
                         SELECT
-                            gi.id,gg.finalgrade,gg.rawgrademin,gg.rawgrademax
+                            gi.id,gg.finalgrade,gi.grademin,gi.grademax
                         FROM
                             {grade_items} gi
                             LEFT JOIN {grade_grades} gg ON gi.id=gg.itemid AND gg.userid=?
