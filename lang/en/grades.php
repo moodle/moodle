@@ -555,6 +555,7 @@ $string['nocategories'] = 'Grade categories could not be added or found for this
 $string['nocategoryname'] = 'No category name was given.';
 $string['nocategoryview'] = 'No category to view by';
 $string['nocourses'] = 'There are no courses yet';
+$string['noexistingscales'] = 'There are no existing scales.';
 $string['noexistingoutcomes'] = 'There are no existing outcomes.';
 $string['noforce'] = 'Do not force';
 $string['nogradeletters'] = 'No grade letters set';
