@@ -202,7 +202,7 @@ class qtype_essay_renderer extends qtype_renderer {
 
         $question = $qa->get_question();
         return html_writer::nonempty_tag('div', $question->format_text(
-                $question->graderinfo, $question->graderinfo, $qa, 'qtype_essay',
+                $question->graderinfo, $question->graderinfoformat, $qa, 'qtype_essay',
                 'graderinfo', $question->id), array('class' => 'graderinfo'));
     }
 }
