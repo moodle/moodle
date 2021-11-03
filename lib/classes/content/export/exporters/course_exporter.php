@@ -262,7 +262,7 @@ class course_exporter extends component_exporter {
         $cm = $this->modinfo->get_cm($modcontext->instanceid);
         $modname = $cm->modname;
 
-        $record = $DB->get_record($modname, ['id' => $cm->instance], 'intro,introformat');
+        $record = $DB->get_record($modname, ['id' => $cm->instance], 'intro, introformat');
 
         // Fetch the module intro content.
         if ($record->intro) {
