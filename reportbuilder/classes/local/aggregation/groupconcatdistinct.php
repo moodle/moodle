@@ -73,9 +73,9 @@ class groupconcatdistinct extends groupconcat {
                 $fieldsort = "ORDER BY {$fieldsort}";
             }
 
-            return "STRING_AGG(DISTINCT CAST({$field} AS VARCHAR), ', ' {$fieldsort})";
+            return "STRING_AGG(DISTINCT CAST({$field} AS VARCHAR), '" . self::FIELD_VALUE_DELIMETER . "' {$fieldsort})";
         } else {
-            return $DB->sql_group_concat("DISTINCT {$field}", ', ', $fieldsort);
+            return $DB->sql_group_concat("DISTINCT {$field}", self::FIELD_VALUE_DELIMETER, $fieldsort);
         }
     }
 }
