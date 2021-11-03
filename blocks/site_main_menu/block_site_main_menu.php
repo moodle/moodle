@@ -76,17 +76,43 @@ class block_site_main_menu extends block_list {
                         $indent = '';
                     }
 
-                    if (empty($cm->url)) {
+                    $badges = '';
+                    if (!$cm->visible) {
+                        $badges = html_writer::tag(
+                            'span',
+                            get_string('hiddenfromstudents'),
+                            ['class' => 'badge badge-pill badge-warning mt-2']
+                        );
+                    }
+
+                    if ($cm->is_stealth()) {
+                        $badges = html_writer::tag(
+                            'span',
+                            get_string('hiddenoncoursepage'),
+                            ['class' => 'badge badge-pill badge-warning mt-2']
+                        );
+                    }
+
+                    if (!$cm->url) {
+                        $activitybasis = html_writer::div(
+                            $indent . $cm->get_formatted_content(['overflowdiv' => true, 'noclean' => true]),
+                            'activity-basis d-flex align-items-center');
                         $content = html_writer::div(
-                            $cm->get_formatted_content(['overflowdiv' => true, 'noclean' => true]),
-                            'contentwithoutlink'
+                            $activitybasis . $badges,
+                            'contentwithoutlink activity-item activity'
                         );
                     } else {
                         $cmname = new $cmnameclass($format, $cm->get_section_info(), $cm, $isediting);
-                        $content = $courserenderer->render($cmname);
+                        $activitybasis = html_writer::div(
+                            $indent . $courserenderer->render($cmname),
+                            'activity-basis d-flex align-items-center');
+                        $content = html_writer::div(
+                            $activitybasis . $badges,
+                            'activity-item activity'
+                        );
                     }
 
-                    $this->content->items[] = $indent . html_writer::div($content, 'main-menu-content activity');
+                    $this->content->items[] = html_writer::div($content, 'main-menu-content section');
                 }
             }
             return $this->content;
@@ -126,23 +152,22 @@ class block_site_main_menu extends block_list {
 
                     $menu = $controlmenu->get_action_menu($OUTPUT);
 
-                    // Add a move primary action.
-                    $menu->add(
-                        new action_menu_link_primary(
-                            new moodle_url('/course/mod.php', ['sesskey' => sesskey(), 'copy' => $mod->id]),
-                            new pix_icon('t/move', $strmove, 'moodle', ['class' => 'iconsmall', 'title' => '']),
-                            $strmove
-                        )
+                    $moveaction = html_writer::link(
+                        new moodle_url('/course/mod.php', ['sesskey' => sesskey(), 'copy' => $mod->id]),
+                        $OUTPUT->pix_icon('i/dragdrop', $strmove),
+                        ['class' => 'editing_move_activity']
                     );
 
                     $editbuttons = html_writer::tag(
                         'div',
                         $courserenderer->render($controlmenu),
-                        ['class' => 'buttons']
+                        ['class' => 'buttons activity-actions ml-auto']
                     );
                 } else {
                     $editbuttons = '';
+                    $moveaction = '';
                 }
+
                 if ($mod->visible || has_capability('moodle/course:viewhiddenactivities', $mod->context)) {
                     if ($ismoving) {
                         if ($mod->id == $USER->activitycopy) {
@@ -153,21 +178,55 @@ class block_site_main_menu extends block_list {
                             'class' => 'movehere'));
                         $this->content->icons[] = '';
                     }
+
                     if ($mod->indent > 0) {
                         $indent = '<div class="mod-indent mod-indent-'.$mod->indent.'"></div>';
                     } else {
                         $indent = '';
                     }
+
+                    $badges = '';
+                    if (!$mod->visible) {
+                        $badges = html_writer::tag(
+                            'span',
+                            get_string('hiddenfromstudents'),
+                            ['class' => 'badge badge-pill badge-warning mt-2']
+                        );
+                    }
+
+                    if ($mod->is_stealth()) {
+                        $badges = html_writer::tag(
+                            'span',
+                            get_string('hiddenoncoursepage'),
+                            ['class' => 'badge badge-pill badge-warning mt-2']
+                        );
+                    }
+
                     if (!$mod->url) {
+                        $activitybasis = html_writer::div(
+                            $moveaction .
+                            $indent .
+                            $mod->get_formatted_content(['overflowdiv' => true, 'noclean' => true]) .
+                            $editbuttons,
+                            'activity-basis d-flex align-items-center');
                         $content = html_writer::div(
-                            $mod->get_formatted_content(['overflowdiv' => true, 'noclean' => true]),
-                            'contentwithoutlink'
+                            $activitybasis . $badges,
+                            'contentwithoutlink activity-item activity'
                         );
                     } else {
                         $cmname = new $cmnameclass($format, $mod->get_section_info(), $mod, $isediting);
-                        $content = html_writer::div($courserenderer->render($cmname), 'activity');
+                        $activitybasis = html_writer::div(
+                            $moveaction .
+                            $indent .
+                            $courserenderer->render($cmname) .
+                            $editbuttons,
+                            'activity-basis d-flex align-items-center');
+                        $content = html_writer::div(
+                            $activitybasis . $badges,
+                            'activity-item activity'
+                        );
                     }
-                    $this->content->items[] = $indent . html_writer::div($content . $editbuttons, 'main-menu-content');
+                    $this->content->items[] = html_writer::div($content, 'main-menu-content');
                 }
             }
         }
