@@ -295,9 +295,13 @@ class helper_test extends \advanced_testcase {
      * @param array $expectedquiz2facilities  expected quiz 2 facilities
      * @param array $expectedaveragefacilities expected average facilities
      */
-    public function test_load_question_facility(array $quiz1attempts, array $expectedquiz1facilities,
-                                                array $quiz2attempts, array $expectedquiz2facilities,
-                                                array $expectedaveragefacilities): void {
+    public function test_load_question_facility(
+        array $quiz1attempts,
+        array $expectedquiz1facilities,
+        array $quiz2attempts,
+        array $expectedquiz2facilities,
+        array $expectedaveragefacilities)
+    : void {
         $this->resetAfterTest();
 
         list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
@@ -371,9 +375,13 @@ class helper_test extends \advanced_testcase {
      * @param array $expectedquiz2discriminativeefficiency expected quiz 2 discriminative efficiency
      * @param array $expectedaveragediscriminativeefficiency expected average discriminative efficiency
      */
-    public function test_load_question_discriminative_efficiency(array $quiz1attempts, array $expectedquiz1discriminativeefficiency,
-                                                                 array $quiz2attempts, array $expectedquiz2discriminativeefficiency,
-                                                                 array $expectedaveragediscriminativeefficiency): void {
+    public function test_load_question_discriminative_efficiency(
+        array $quiz1attempts,
+        array $expectedquiz1discriminativeefficiency,
+        array $quiz2attempts,
+        array $expectedquiz2discriminativeefficiency,
+        array $expectedaveragediscriminativeefficiency
+    ): void {
         $this->resetAfterTest();
 
         list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
@@ -471,9 +479,13 @@ class helper_test extends \advanced_testcase {
      * @param array $expectedquiz2discriminationindex expected quiz 2 discrimination index
      * @param array $expectedaveragediscriminationindex expected average discrimination index
      */
-    public function test_load_question_discrimination_index(array $quiz1attempts, array $expectedquiz1discriminationindex,
-                                                            array $quiz2attempts, array $expectedquiz2discriminationindex,
-                                                            array $expectedaveragediscriminationindex): void {
+    public function test_load_question_discrimination_index(
+        array $quiz1attempts,
+        array $expectedquiz1discriminationindex,
+        array $quiz2attempts,
+        array $expectedquiz2discriminationindex,
+        array $expectedaveragediscriminationindex
+    ): void {
         $this->resetAfterTest();
 
         list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);

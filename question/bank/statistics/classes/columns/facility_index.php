@@ -29,14 +29,19 @@ use qbank_statistics\helper;
 class facility_index extends column_base {
 
     /**
-     * {@inheritdoc}
+     * Title for this column.
+     *
+     * @return string column title
      */
     protected function get_title(): string {
         return get_string('facility_index', 'qbank_statistics');
     }
 
+
     /**
-     * {@inheritdoc}
+     * Column name.
+     *
+     * @return string column name
      */
     public function get_name(): string {
         return 'facility_index';

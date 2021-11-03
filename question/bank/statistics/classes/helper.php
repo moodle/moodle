@@ -16,14 +16,17 @@
 
 namespace qbank_statistics;
 
+use core_question\statistics\questions\all_calculated_for_qubaid_condition;
+use quiz_statistics_report;
+
 defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/statisticslib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
-use core_question\statistics\questions\all_calculated_for_qubaid_condition;
-use quiz_statistics_report;
+
 /**
  * Helper for statistics
  *
@@ -59,7 +62,9 @@ class helper {
                         FROM {quiz_attempts} qa
                         JOIN {question_usages} qu ON qu.id = qa.uniqueid
                         JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
-                       WHERE qatt.questionid = :questionid", ['questionid' => $questionid]);
+                       WHERE qatt.questionid = :questionid",
+            ['questionid' => $questionid]
+        );
         return $quizzes;
     }
 
