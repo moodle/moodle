@@ -7,38 +7,28 @@ Feature: We can change what we are viewing on the grader report
   Background:
     Given the following "courses" exist:
       | fullname | shortname | format |
-      | Course 1 | C1 | topics |
+      | Course 1 | C1        | topics |
     And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
-      | student1 | Student | 1 | student1@example.com |
-      | student2 | Student | 1 | student2@example.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+      | student2 | Student   | 1        | student2@example.com |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name 1 |
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name 2 |
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-    And I log out
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+    And the following "activities" exist:
+      | activity | course | section | name                   | intro                   | assignsubmission_onlinetext_enabled | submissiondrafts |
+      | assign   | C1     | 1       | Test assignment name 1 | Submit your online text | 1                                   | 0                |
+      | assign   | C1     | 1       | Test assignment name 2 | submit your online text | 1                                   | 0                |
+    And the following "mod_assign > submissions" exist:
+      | assign                 | user     | onlinetext                            |
+      | Test assignment name 1 | student1 | This is a submission for assignment 1 |
+      | Test assignment name 2 | student1 | This is a submission for assignment 2 |
     And I am on the "Test assignment name 1" "assign activity" page logged in as student1
-    When I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | This is a submission for assignment 1 |
-    And I press "Save changes"
     Then I should see "Submitted for grading"
     And I am on the "Test assignment name 2" "assign activity" page
-    When I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | This is a submission for assignment 2 |
-    And I press "Save changes"
     Then I should see "Submitted for grading"
     And I log out
     And I log in as "teacher1"
@@ -89,9 +79,6 @@ Feature: We can change what we are viewing on the grader report
       | capability | permission |
       | moodle/grade:viewhidden | Prevent |
     And I log out
-    And the following "course enrolments" exist:
-      | user | course | role |
-      | student2 | C1 | student |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
