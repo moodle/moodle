@@ -25,14 +25,12 @@
 $string['ariadayfilter'] = 'Filter timeline by date';
 $string['ariadayfilteroption'] = '{$a} filter option';
 $string['ariaeventlistitem'] = '{$a->name} activity in {$a->course} is due on {$a->date}';
-$string['ariaeventlistpagelimit'] = 'Show {$a} activities per page';
-$string['ariaeventlistpaginationnavdates'] = 'Timeline activities pagination';
-$string['ariaeventlistpaginationnavcourses'] = 'Timeline activities for course {$a} pagination';
 $string['ariaviewselector'] = 'Sort timeline items';
 $string['ariaviewselectoroption'] = '{$a} sort option';
 $string['clearsearch'] = 'Clear search';
 $string['duedate'] = 'Due date';
-$string['morecourses'] = 'More courses';
+$string['moreactivities'] = 'Show more activities';
+$string['morecourses'] = 'Show more courses';
 $string['timeline:myaddinstance'] = 'Add a new timeline block to Dashboard';
 $string['nocoursesinprogress'] = 'No in-progress courses';
 $string['noevents'] = 'No activities require action';
@@ -51,3 +49,8 @@ $string['viewcourse'] = 'View course';
 $string['privacy:metadata:timelinesortpreference'] = 'The user sort preference for the timeline block.';
 $string['privacy:metadata:timelinefilterpreference'] = 'The user day filter preference for the timeline block.';
 $string['privacy:metadata:timelinelimitpreference'] = 'The user page limit preference for the timeline block.';
+
+// Deprecated since Moodle 4.0.
+$string['ariaeventlistpagelimit'] = 'Show {$a} activities per page';
+$string['ariaeventlistpaginationnavdates'] = 'Timeline activities pagination';
+$string['ariaeventlistpaginationnavcourses'] = 'Timeline activities for course {$a} pagination';

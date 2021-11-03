@@ -1,0 +1,3 @@
+ariaeventlistpagelimit,block_timeline
+ariaeventlistpaginationnavdates,block_timeline
+ariaeventlistpaginationnavcourses,block_timeline

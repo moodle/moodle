@@ -91,5 +91,5 @@ Feature: The timeline block allows users to search for upcoming activities
     And I should see "Test choice 4" in the "Timeline" "block"
     And I should see "Test choice 5" in the "Timeline" "block"
     And I should not see "Test choice 6" in the "Timeline" "block"
-    And I click on "[data-control='next']" "css_element" in the "Timeline" "block"
+    And I click on "Show more activities" "button"
     And I should see "Test choice 6" in the "Timeline" "block"
