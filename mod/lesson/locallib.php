@@ -947,9 +947,6 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
         $table->align[$colcount - 2] = 'left';
     }
 
-    $table->wrap = [];
-    $table->wrap = array_pad($table->wrap, $colcount, 'nowrap');
-
     $table->attributes['class'] = 'table table-striped';
 
     // print out the $studentdata array
