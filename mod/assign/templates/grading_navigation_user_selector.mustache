@@ -30,11 +30,12 @@
 
     This template uses ajax functionality, so it cannot be shown in the template library.
 }}
-<a href="#previous" data-action="previous-user">{{{larrow}}}</a>
-    <span data-region="input-field">
-        <select data-action="change-user" data-currentuserid="{{currentuserid}}" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}"></select>
-    </span>
-<a href="#next" data-action="next-user">{{{rarrow}}}</a>
+<a href="#previous" data-action="previous-user" aria-label="{{#str}} previoususer, mod_assign {{/str}}" title="{{#str}} previoususer, mod_assign {{/str}}">{{{larrow}}}</a>
+<span data-region="input-field">
+    <label for="change-user-select" class="sr-only">{{#str}} changeuser, mod_assign {{/str}}</label>
+    <select id="change-user-select" data-action="change-user" data-currentuserid="{{currentuserid}}" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}"></select>
+</span>
+<a href="#next" data-action="next-user" aria-label="{{#str}} nextuser, mod_assign {{/str}}" title="{{#str}} nextuser, mod_assign {{/str}}">{{{rarrow}}}</a>
 
 <br>
 
@@ -43,7 +44,17 @@
         <span data-region="user-count-summary">{{#str}}xofy, mod_assign, { "x": "{{index}}", "y": "{{count}}" }{{/str}}</span>
     </small>
 </span>
-
+<a href="#" data-region="user-filters" title="{{#str}}changefilters, mod_assign{{/str}}" aria-expanded="false" aria-controls="filter-configuration-{{uniqid}}">
+    <span class="accesshide">
+        {{#filters}}
+            {{filtername}}
+        {{/filters}}
+        {{^filters}}
+            {{#str}}nofilters, mod_assign{{/str}}
+        {{/filters}}
+    </span>
+    {{#pix}}i/filter{{/pix}}
+</a>
 <div data-region="configure-filters" id="filter-configuration-{{uniqid}}" class="card card-large p-2">
     <form>
         <span class="row px-3 py-1">
@@ -82,15 +93,3 @@
         {{/hasmarkingworkflow}}
     </form>
 </div>
-
-<a href="#" data-region="user-filters" title="{{#str}}changefilters, mod_assign{{/str}}" aria-expanded="false" aria-controls="filter-configuration-{{uniqid}}">
-    <span class="accesshide">
-        {{#filters}}
-            {{filtername}}
-        {{/filters}}
-        {{^filters}}
-            {{#str}}nofilters, mod_assign{{/str}}
-        {{/filters}}
-    </span>
-    {{#pix}}i/filter{{/pix}}
-</a>

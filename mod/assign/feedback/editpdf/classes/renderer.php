@@ -203,7 +203,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
 
             // Add toolbars to toolbar_group in order of display, and float the toolbar_group right.
             $toolbars = $rotationtools . $toolbar1 . $toolbar2 . $toolbar3 . $toolbar4;
-            $toolbargroup = html_writer::div($toolbars, 'toolbar_group', array('role' => 'toolbar_group'));
+            $toolbargroup = html_writer::div($toolbars, 'toolbar_group', ['role' => 'toolbar']);
         }
 
         $pageheader = html_writer::div($navigation1 .
