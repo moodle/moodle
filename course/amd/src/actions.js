@@ -608,6 +608,32 @@ define(
         };
 
         /**
+         * Get the focused element path in an activity if any.
+         *
+         * This method is used to restore focus when the activity HTML is refreshed.
+         * Only the main course editor elements can be refocused as they are always present
+         * even if the activity content changes.
+         *
+         * @param {String} id the element id the activity element
+         * @return {String|undefined} the inner path of the focused element or undefined
+         */
+        const getActivityFocusedElement = function(id) {
+            const element = document.getElementById(id);
+            if (!element || !element.contains(document.activeElement)) {
+                return undefined;
+            }
+            // Check if the actions menu toggler is focused.
+            if (element.querySelector(SELECTOR.ACTIONAREA).contains(document.activeElement)) {
+                return `${SELECTOR.ACTIONAREA} [tabindex="0"]`;
+            }
+            // Return the current element id if any.
+            if (document.activeElement.id) {
+                return `#${document.activeElement.id}`;
+            }
+            return undefined;
+        };
+
+        /**
          * Replaces the course module with the new html (used to update module after it was edited or its visibility was changed).
          *
          * @param {String} activityHTML
@@ -616,10 +642,18 @@ define(
             $('<div>' + activityHTML + '</div>').find(SELECTOR.ACTIVITYLI).each(function() {
                 // Extract id from the new activity html.
                 var id = $(this).attr('id');
+                // Check if the current focused element is inside the activity.
+                let focusedPath = getActivityFocusedElement(id);
                 // Find the existing element with the same id and replace its contents with new html.
                 $(SELECTOR.ACTIVITYLI + '#' + id).replaceWith(activityHTML);
                 // Initialise action menu.
                 initActionMenu(id);
+                // Re-focus the previous elements.
+                if (focusedPath) {
+                    const newItem = document.getElementById(id);
+                    newItem.querySelector(focusedPath)?.focus();
+                }
+
             });
         };
 

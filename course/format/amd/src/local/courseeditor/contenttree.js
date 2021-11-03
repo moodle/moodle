@@ -27,33 +27,41 @@
  */
 
 // The core/tree uses jQuery to expand all nodes.
-import $ from 'jquery';
+import jQuery from 'jquery';
 import Tree from 'core/tree';
+import {getList} from 'core/normalise';
 
 export default class extends Tree {
 
     /**
      * Setup the core/tree keyboard navigation.
      *
-     * @param {CourseIndex} parent the parent component
+     * @param {Element|undefined} mainElement an alternative main element in case it is not from the parent component
+     * @param {Object|undefined} selectors alternative selectors
+     * @param {boolean} preventcache if the elements cache must be disabled.
      */
-    constructor(parent) {
+    constructor(mainElement, selectors, preventcache) {
         // Init this value with the parent DOM element.
-        super(parent.element);
+        super(mainElement);
 
         // Get selectors from parent.
-        this.selectors = parent.selectors;
+        this.selectors = {
+            SECTION: selectors.SECTION,
+            TOGGLER: selectors.TOGGLER,
+            COLLAPSE: selectors.COLLAPSE,
+            ENTER: selectors.ENTER ?? selectors.TOGGLER,
+        };
 
         // The core/tree library saves the visible elements cache inside the main tree node.
         // However, in edit mode content can change suddenly so we need to refresh caches when needed.
-        if (parent.reactive.isEditing) {
+        if (preventcache) {
             this._getVisibleItems = this.getVisibleItems;
             this.getVisibleItems = () => {
                 this.refreshVisibleItemsCache();
                 return this._getVisibleItems();
             };
         }
-        // Add jQuery events to detect boostrap collapse and uncollapse.
+        // All jQuery events can be replaced when MDL-79179 is integrated.
         this.treeRoot.on('hidden.bs.collapse shown.bs.collapse', () => {
             this.refreshVisibleItemsCache();
         });
@@ -69,7 +77,7 @@ export default class extends Tree {
     getActiveItem() {
         const activeItem = this.treeRoot.data('activeItem');
         if (activeItem) {
-            return activeItem.get(0);
+            return getList(activeItem)[0];
         }
         return undefined;
     }
@@ -77,16 +85,25 @@ export default class extends Tree {
     /**
      * Handle enter key on a collpasible node.
      *
-     * @param {JQuery} item the jQuery object
+     * @param {JQuery} jQueryItem the jQuery object
      */
-    enterCallback(item) {
-        if (this.isGroupItem(item)) {
+    enterCallback(jQueryItem) {
+        const item = getList(jQueryItem)[0];
+        if (this.isGroupItem(jQueryItem)) {
             // Group elements is like clicking a topic but without loosing the focus.
-            window.location.href = item.find(this.selectors.TOGGLER).first().attr('href');
-            item.find(this.selectors.TOGGLER).get(0).click();
+            const enter = item.querySelector(this.selectors.ENTER);
+            if (enter.getAttribute('href') !== '#') {
+                window.location.href = enter.getAttribute('href');
+            }
+            enter.click();
         } else {
             // Activity links just follow the link href.
-            window.location.href = item.find('a').first().attr('href');
+            const link = item.querySelector('a');
+            if (link.getAttribute('href') !== '#') {
+                window.location.href = link.getAttribute('href');
+            } else {
+                link.click();
+            }
             return;
         }
     }
@@ -94,12 +111,13 @@ export default class extends Tree {
     /**
      * Check if a gorup item is collapsed.
      *
-     * @param {JQuery} item  the jQuery object
+     * @param {JQuery} jQueryItem  the jQuery object
      * @returns {boolean} if the element is collapsed
      */
-    isGroupCollapsed(item) {
-        const toggler = item.find(`[aria-expanded]`);
-        return toggler.attr('aria-expanded') === 'false';
+    isGroupCollapsed(jQueryItem) {
+        const item = getList(jQueryItem)[0];
+        const toggler = item.querySelector(`[aria-expanded]`);
+        return toggler.getAttribute('aria-expanded') === 'false';
     }
 
     /**
@@ -108,6 +126,7 @@ export default class extends Tree {
      * @param {JQuery} item  the jQuery object
      */
     toggleGroup(item) {
+        // All jQuery in this segment of code can be replaced when MDL-79179 is integrated.
         const toggler = item.find(this.selectors.COLLAPSE);
         let collapsibleId = toggler.data('target') ?? toggler.attr('href');
         if (!collapsibleId) {
@@ -116,7 +135,10 @@ export default class extends Tree {
         collapsibleId = collapsibleId.replace('#', '');
 
         // Bootstrap 4 uses jQuery to interact with collapsibles.
-        $(`#${collapsibleId}`).collapse('toggle');
+        const collapsible = jQuery(`#${collapsibleId}`);
+        if (collapsible.length) {
+            jQuery(`#${collapsibleId}`).collapse('toggle');
+        }
     }
 
     /**
@@ -145,9 +167,9 @@ export default class extends Tree {
      * Expand all groups.
      */
     expandAllGroups() {
-        const togglers = this.treeRoot.find(this.selectors.SECTION);
-        togglers.each((index, item) => {
-            this.expandGroup($(item));
+        const togglers = getList(this.treeRoot)[0].querySelectorAll(this.selectors.SECTION);
+        togglers.forEach(item => {
+            this.expandGroup(jQuery(item));
         });
     }
 }

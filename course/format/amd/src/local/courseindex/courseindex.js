@@ -25,7 +25,7 @@
 import {BaseComponent} from 'core/reactive';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 import jQuery from 'jquery';
-import TreeNav from 'core_courseformat/local/courseindex/keyboardnav';
+import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
 
 export default class Component extends BaseComponent {
 
@@ -90,7 +90,7 @@ export default class Component extends BaseComponent {
         });
 
         // Configure Aria Tree.
-        this.treeNav = new TreeNav(this);
+        this.contentTree = new ContentTree(this.element, this.selectors, this.reactive.isEditing);
     }
 
     getWatchers() {
@@ -187,7 +187,7 @@ export default class Component extends BaseComponent {
 
         // Course index is based on Bootstrap 4 collapsibles. To collapse them we need jQuery to
         // interact with collapsibles methods. Hopefully, this will change in Bootstrap 5 because
-        // it does not require jQuery anymore.
+        // it does not require jQuery anymore (when MDL-79179 is integrated).
         const togglerValue = (forceValue) ? 'show' : 'hide';
         jQuery(collapsible).collapse(togglerValue);
     }

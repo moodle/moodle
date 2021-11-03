@@ -77,9 +77,11 @@
 
 }}
 <p data-for="sectionname">{{#str}} movefull, moodle, {{cmname}} {{/str}}:</p>
-<nav class="collapse-list" id="destination-selector">
+<nav class="collapse-list" id="destination-selector" role="tree">
     {{#sections}}
-    <div data-for="sectionnode">
+    <div data-for="sectionnode"
+        role="treeitem"
+    >
         <div class="collapse-list-item d-flex"
             id="movemodalsection{{number}}"
             data-for="section_item"
@@ -101,7 +103,7 @@
                     <span class="sr-only">{{#str}} collapse, core {{/str}}</span>
                 </span>
             </a>
-            <a href="{{{sectionurl}}}"
+            <a href="#"
                 class="collapse-list-link text-truncate"
                 data-for="section"
                 data-id="{{id}}"
@@ -113,12 +115,14 @@
         </div>
         <div id="movemodalcollapse{{number}}"
             class="collapse-list-item-content collapse"
-            aria-labelledby="movemodalsection{{number}}">
+            aria-labelledby="movemodalsection{{number}}"
+            role="group"
+        >
             <ul class="unlist" data-for="cmlist" data-id="{{id}}">
                 {{#cms}}
-                <li class="collapse-list-item d-flex">
+                <li class="collapse-list-item d-flex" role="treeitem">
                     <a class="collapse-list-link text-truncate"
-                        href="{{{url}}}"
+                        href="#"
                         data-for="cm"
                         data-id="{{id}}"
                     >

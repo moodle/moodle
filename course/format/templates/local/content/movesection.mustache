@@ -43,12 +43,13 @@
 
 }}
 <p data-for="sectionname">{{#str}} movefull, moodle, {{sectiontitle}} {{/str}}:</p>
-<nav class="collapse-list" id="destination-selector">
+<nav class="collapse-list" id="destination-selector" role="tree">
     {{#sections}}
     <div
         class="collapse-list-item"
+        role="treeitem"
     >
-        <a href="{{{sectionurl}}}"
+        <a href="#"
             class="collapse-list-link text-truncate"
             data-for="section"
             data-id="{{id}}"
