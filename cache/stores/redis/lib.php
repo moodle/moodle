@@ -606,7 +606,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         $count = 0;
         $batches = 0;
         $timebefore = microtime(true);
-        $memorybefore = $this->get_used_memory();
+        $memorybefore = $this->store_total_size();
         do {
             $keys = $this->redis->zRangeByScore($this->hash . self::TTL_SUFFIX, 0, $limit,
                     ['limit' => [0, self::TTL_EXPIRE_BATCH]]);
@@ -614,7 +614,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             $count += count($keys);
             $batches++;
         } while (count($keys) === self::TTL_EXPIRE_BATCH);
-        $memoryafter = $this->get_used_memory();
+        $memoryafter = $this->store_total_size();
         $timeafter = microtime(true);
 
         $result = ['keys' => $count, 'batches' => $batches, 'time' => $timeafter - $timebefore];
@@ -658,11 +658,28 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
     }
 
     /**
+     * Estimates the stored size, taking into account whether compression is turned on.
+     *
+     * @param mixed $key Key name
+     * @param mixed $value Value
+     * @return int Approximate stored size
+     */
+    public function estimate_stored_size($key, $value): int {
+        if ($this->compressor == self::COMPRESSOR_NONE) {
+            // If uncompressed, use default estimate.
+            return parent::estimate_stored_size($key, $value);
+        } else {
+            // If compressed, compress value.
+            return strlen($this->serialize($key)) + strlen($this->compress($value));
+        }
+    }
+
+    /**
      * Gets Redis reported memory usage.
      *
      * @return int|null Memory used by Redis or null if we don't know
      */
-    protected function get_used_memory(): ?int {
+    public function store_total_size(): ?int {
         $details = $this->redis->info('MEMORY');
         if (empty($details['used_memory'])) {
             return null;

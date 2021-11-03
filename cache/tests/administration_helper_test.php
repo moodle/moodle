@@ -235,4 +235,39 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $result = cache_helper::hash_key('test/test', $definition);
         $this->assertEquals(sha1($definition->generate_single_key_prefix().'-test/test'), $result);
     }
+
+    /**
+     * Tests the get_usage function.
+     */
+    public function test_get_usage(): void {
+        // Create a test cache definition and put items in it.
+        $instance = cache_config_testing::instance(true);
+        $instance->phpunit_add_definition('phpunit/test', [
+                'mode' => cache_store::MODE_APPLICATION,
+                'component' => 'phpunit',
+                'area' => 'test',
+                'simplekeys' => true
+        ]);
+        $cache = cache::make('phpunit', 'test');
+        for ($i = 0; $i < 100; $i++) {
+            $cache->set('key' . $i, str_repeat('x', $i));
+        }
+
+        $factory = cache_factory::instance();
+        $adminhelper = $factory->get_administration_display_helper();
+
+        $usage = $adminhelper->get_usage(10)['phpunit/test'];
+        $this->assertEquals('phpunit/test', $usage->cacheid);
+        $this->assertCount(1, $usage->stores);
+        $store = $usage->stores[0];
+        $this->assertEquals('default_application', $store->name);
+        $this->assertEquals('cachestore_file', $store->class);
+        $this->assertEquals(true, $store->supported);
+        $this->assertEquals(100, $store->items);
+
+        // As file store checks all items, the values should be exact.
+        $this->assertEqualsWithDelta(57.4, $store->mean, 0.1);
+        $this->assertEqualsWithDelta(29.0, $store->sd, 0.1);
+        $this->assertEquals(0, $store->margin);
+    }
 }
