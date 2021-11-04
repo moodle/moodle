@@ -1,6 +1,12 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+===3.9.12===
+* Two new helper functions have been added to lib/datalib.php, for safely preparing SQL ORDER BY statements where user
+  interactions define sort parameters (see the respective docblocks for full details and examples):
+  -get_safe_orderby() - where a single sort parameter is required.
+  -get_safe_orderby_multiple() - where multiple sort parameters are required.
+
 === 3.9.9 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.
   For this reason, manually disabling emulateredirects will no longer have any effect (and will generate a debugging message).
