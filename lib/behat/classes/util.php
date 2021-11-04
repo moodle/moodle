@@ -414,6 +414,8 @@ class behat_util extends testing_util {
 
         filter_manager::reset_caches();
 
+        \core_reportbuilder\manager::reset_caches();
+
         // Reset course and module caches.
         core_courseformat\base::reset_course_cache(0);
         get_fast_modinfo(0, 0, true);
