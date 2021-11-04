@@ -98,6 +98,9 @@ function core_reportbuilder_inplace_editable(string $itemtype, int $itemid, stri
 
         case 'audienceheading':
             return \core_reportbuilder\output\audience_heading_editable::update($itemid, $newvalue);
+
+        case 'schedulename':
+            return \core_reportbuilder\output\schedule_name_editable::update($itemid, $newvalue);
     }
 
     return null;

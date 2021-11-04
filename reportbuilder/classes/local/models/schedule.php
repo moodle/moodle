@@ -34,6 +34,15 @@ class schedule extends persistent {
     /** @var string Table name */
     public const TABLE = 'reportbuilder_schedule';
 
+    /** @var int Send report schedule as viewed by recipient */
+    public const REPORT_VIEWAS_RECIPIENT = -1;
+
+    /** @var int Send report schedule as viewed by creator */
+    public const REPORT_VIEWAS_CREATOR = 0;
+
+    /** @var int Send report schedule as viewed by specific user */
+    public const REPORT_VIEWAS_USER = 1;
+
     /** @var int No recurrence */
     public const RECURRENCE_NONE = 0;
 
@@ -103,10 +112,7 @@ class schedule extends persistent {
             ],
             'userviewas' => [
                 'type' => PARAM_INT,
-                'default' => static function(): int {
-                    global $USER;
-                    return (int) $USER->id;
-                },
+                'default' => self::REPORT_VIEWAS_CREATOR,
             ],
             'timescheduled' => [
                 'type' => PARAM_INT,
