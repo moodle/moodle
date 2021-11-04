@@ -96,21 +96,11 @@ if ($override->groupid) {
     $confirmstr = get_string("overridedeletegroupsure", "quiz", $group->name);
 } else {
     $user = $DB->get_record('user', ['id' => $override->userid]);
+    profile_load_custom_fields($user);
 
-    $username = fullname($user);
-    $namefields = [];
-
-    // TODO Does not support custom user profile fields (MDL-70456).
-    foreach (\core_user\fields::for_identity($context, false)->get_required_fields() as $field) {
-        if (isset($user->$field) && $user->$field !== '') {
-            $namefields[] = s($user->$field);
-        }
-    }
-    if ($namefields) {
-        $username .= ' (' . implode(', ', $namefields) . ')';
-    }
-
-    $confirmstr = get_string('overridedeleteusersure', 'quiz', $username);
+    $confirmstr = get_string('overridedeleteusersure', 'quiz',
+            quiz_override_form::display_user_name($user,
+                    \core_user\fields::get_identity_fields($context)));
 }
 
 echo $OUTPUT->confirm($confirmstr, $confirmurl, $cancelurl);
