@@ -259,6 +259,8 @@ class lesson_page_type_truefalse extends lesson_page {
 
         foreach ($answers as $answer) {
             $answer = parent::rewrite_answers_urls($answer);
+            $answertext = format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
+            $correctresponsetext = html_writer::div(get_string('correctresponse', 'lesson'), 'badge badge-success');
             if ($this->properties->qoption) {
                 if ($useranswer == null) {
                     $userresponse = array();
@@ -292,12 +294,11 @@ class lesson_page_type_truefalse extends lesson_page {
                     // unchecked
                     $checkboxelement = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                 }
+                $answercontent = html_writer::label($checkboxelement . ' ' . $answertext, null);
                 if (($answer->score > 0 && $this->lesson->custom) || ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto) && !$this->lesson->custom)) {
-                    $answertext = $checkboxelement . format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
-                    $data = "<div class='highlight'><label>$answertext</label></div>";
+                    $data = html_writer::div($answercontent, 'text-success') . $correctresponsetext;
                 } else {
-                    $answertext = $checkboxelement . format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
-                    $data = "<label>$answertext</label>";
+                    $data = $answercontent;
                 }
             } else {
                 if ($useranswer != null and $answer->id == $useranswer->answerid) {
@@ -323,12 +324,11 @@ class lesson_page_type_truefalse extends lesson_page {
                     // unchecked
                     $checkboxelement = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                 }
+                $answercontent = html_writer::label($checkboxelement . ' ' . $answertext, null);
                 if (($answer->score > 0 && $this->lesson->custom) || ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto) && !$this->lesson->custom)) {
-                    $answertext = $checkboxelement . format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
-                    $data = "<div class='highlight'><label>$answertext</label></div>";
+                    $data = html_writer::div($answercontent, 'text-success') . $correctresponsetext;
                 } else {
-                    $answertext = $checkboxelement . format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
-                    $data = "<label>$answertext</label>";
+                    $data = $answercontent;
                 }
             }
             if (isset($pagestats[$this->properties->id][$answer->id])) {
