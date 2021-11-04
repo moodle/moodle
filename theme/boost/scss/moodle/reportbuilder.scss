@@ -117,14 +117,6 @@
     @include reportbuilder-scrollbar;
 }
 
-/* Remove transition effects. */
-.reportbuilder-wrapper .notransition {
-    -webkit-transition: none !important; /* stylelint-disable-line declaration-no-important */
-    -moz-transition: none !important; /* stylelint-disable-line declaration-no-important */
-    -o-transition: none !important; /* stylelint-disable-line declaration-no-important */
-    transition: none !important; /* stylelint-disable-line declaration-no-important */
-}
-
 /* Customreport settings */
 .reportbuilder-sidebar-settings {
     @include media-breakpoint-up(md) {

@@ -47,6 +47,7 @@ $string['audienceadded'] = 'Added audience \'{$a}\'';
 $string['audiencedeleted'] = 'Deleted audience \'{$a}\'';
 $string['audiencemultiselectpostfix'] = '{$a->elements} plus {$a->morecount} more';
 $string['audiencenotsaved'] = 'Audience not saved';
+$string['audiencesaved'] = 'Audience saved';
 $string['columnadded'] = 'Added column \'{$a}\'';
 $string['columnaggregated'] = 'Aggregated column \'{$a}\'';
 $string['columndeleted'] = 'Deleted column \'{$a}\'';
