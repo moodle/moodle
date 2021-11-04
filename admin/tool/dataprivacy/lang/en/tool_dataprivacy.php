@@ -135,6 +135,7 @@ $string['effectiveretentionperioduser'] = '{$a} (since the last time the user ac
 $string['emailsalutation'] = 'Dear {$a},';
 $string['errorcannotrequestdeleteforself'] = 'You don\'t have permission to create deletion request for yourself.';
 $string['errorcannotrequestdeleteforother'] = 'You don\'t have permission to create deletion request for this user.';
+$string['errorcannotrequestexportforself'] = 'You don\'t have permission to create export request for yourself.';
 $string['errorcontactdpodisabled'] = 'The option to contact the privacy officer is disabled.';
 $string['errorinvalidrequestcomments'] = 'The comments field may contain plain text only.';
 $string['errorinvalidrequestcreationmethod'] = 'Invalid request creation method!';
