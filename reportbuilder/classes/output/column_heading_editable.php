@@ -50,9 +50,14 @@ class column_heading_editable extends inplace_editable {
         $columninstance = manager::get_report_from_persistent($report)
             ->get_column($column->get('uniqueidentifier'));
 
-        $displayvalue = $column->get('heading') ?: $columninstance->get_title();
+        // Use column defined title if custom heading not set.
+        if ('' !== $value = (string) $column->get('heading')) {
+            $displayvalue = $column->get_formatted_heading($report->get_context());
+        } else {
+            $displayvalue = $value = $columninstance->get_title();
+        }
 
-        parent::__construct('core_reportbuilder', 'columnheading', $column->get('id'), $editable, $displayvalue, $displayvalue,
+        parent::__construct('core_reportbuilder', 'columnheading', $column->get('id'), $editable, $displayvalue, $value,
             get_string('renamecolumn', 'core_reportbuilder', $columninstance->get_title()));
     }
 
@@ -73,7 +78,7 @@ class column_heading_editable extends inplace_editable {
 
         $value = clean_param($value, PARAM_TEXT);
         $column
-            ->set('heading', $value)
+            ->set('heading', trim($value))
             ->update();
 
         return new self(0, $column);

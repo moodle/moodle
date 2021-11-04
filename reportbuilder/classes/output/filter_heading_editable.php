@@ -19,11 +19,10 @@ declare(strict_types=1);
 namespace core_reportbuilder\output;
 
 use core_external;
-use core_reportbuilder\local\models\filter;
 use core\output\inplace_editable;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
-use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\models\filter;
 
 /**
  * Filter heading editable component
@@ -51,10 +50,15 @@ class filter_heading_editable extends inplace_editable {
         $filterinstance = manager::get_report_from_persistent($report)
             ->get_filter($filter->get('uniqueidentifier'));
 
-        $displayvalue = $filter->get('heading') ?: $filterinstance->get_header();
+        // Use filter defined header if custom heading not set.
+        if ('' !== $value = (string) $filter->get('heading')) {
+            $displayvalue = $filter->get_formatted_heading($report->get_context());
+        } else {
+            $displayvalue = $value = $filterinstance->get_header();
+        }
 
-        parent::__construct('core_reportbuilder', 'filterheading', $filter->get('id'), $editable, $displayvalue,
-            $displayvalue, get_string('renamefilter', 'core_reportbuilder', $filterinstance->get_header()));
+        parent::__construct('core_reportbuilder', 'filterheading', $filter->get('id'), $editable, $displayvalue, $value,
+            get_string('renamefilter', 'core_reportbuilder', $filterinstance->get_header()));
     }
 
     /**
@@ -73,7 +77,7 @@ class filter_heading_editable extends inplace_editable {
 
         $value = clean_param($value, PARAM_TEXT);
         $filter
-            ->set('heading', $value)
+            ->set('heading', trim($value))
             ->update();
 
         return new self(0, $filter);

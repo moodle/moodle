@@ -94,7 +94,8 @@ class custom_report_table extends base_report_table {
 
         $columnheaders = [];
         foreach ($columns as $column) {
-            $columnheaders[$column->get_column_alias()] = $column->get_persistent()->get('heading') ?: $column->get_title();
+            $columnheading = $column->get_persistent()->get_formatted_heading($this->report->get_context());
+            $columnheaders[$column->get_column_alias()] = $columnheading !== '' ? $columnheading : $column->get_title();
 
             $columnaggregation = $column->get_aggregation();
             if ($hasaggregatedcolumns && empty($columnaggregation)) {

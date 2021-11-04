@@ -102,7 +102,7 @@ class custom_report_columns_sorting_exporter extends exporter {
 
         $sortablecolumns = array_map(function(column $persistent) use ($report) {
             $columntitle = $report->get_column($persistent->get('uniqueidentifier'))->get_title();
-            $columnheading = $persistent->get('heading') ?: $columntitle;
+            $columnheading = $persistent->get_formatted_heading($report->get_context());
 
             $columnsortascending = ($persistent->get('sortdirection') == SORT_ASC);
             $sortenabledtitle = $persistent->get('sortenabled') ? 'columnsortdisable' : 'columnsortenable';
@@ -114,7 +114,7 @@ class custom_report_columns_sorting_exporter extends exporter {
             return [
                 'id' => $persistent->get('id'),
                 'title' => $columntitle,
-                'heading' => $columnheading,
+                'heading' => $columnheading !== '' ? $columnheading : $columntitle,
                 'sortdirection' => $persistent->get('sortdirection'),
                 'sortenabled' => (int)$persistent->get('sortenabled'),
                 'sortorder' => $persistent->get('sortorder'),

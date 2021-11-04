@@ -124,11 +124,13 @@ class filter extends dynamic_form {
         // Allow each filter instance to add itself to this form, wrapping each inside custom header/footer template.
         $filterinstances = $this->get_report()->get_filter_instances();
         foreach ($filterinstances as $filterinstance) {
+            $header = $filterinstance->get_header();
+
             // Check if filter has a custom header set.
-            if ($filterinstance->get_filter_persistent() && !empty($filterinstance->get_filter_persistent()->get('heading'))) {
-                $header = $filterinstance->get_filter_persistent()->get('heading');
-            } else {
-                $header = $filterinstance->get_header();
+            if ($persistent = $filterinstance->get_filter_persistent()) {
+                if ('' !== (string) $persistent->get('heading')) {
+                    $header = $persistent->get_formatted_heading($this->get_report()->get_context());
+                }
             }
 
             $mform->addElement('html', $OUTPUT->render_from_template('core_reportbuilder/local/filters/header', [

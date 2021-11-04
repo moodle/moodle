@@ -25,6 +25,21 @@ Feature: Manage custom report columns
     And I reload the page
     Then I should see "My renamed column" in the "reportbuilder-table" "table"
 
+  Scenario: Rename column in report using filters
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   | default |
+      | My report | core_user\reportbuilder\datasource\users | 0       |
+    And the following "core_reportbuilder > Columns" exist:
+      | report    | uniqueidentifier |
+      | My report | user:fullname    |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    When I set the field "Rename column 'Full name'" to "<span class=\"multilang\" lang=\"en\">English</span><span class=\"multilang\" lang=\"es\">Spanish</span>"
+    And I reload the page
+    Then I should see "English" in the "reportbuilder-table" "table"
+    And I should not see "Spanish" in the "reportbuilder-table" "table"
+
   Scenario: Move column in report
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   | default |

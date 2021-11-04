@@ -25,13 +25,32 @@ Feature: Manage custom report filters
       | report    | uniqueidentifier |
       | My report | user:email       |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
-    When I click on "Show/hide settings sidebar" "button"
+    And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Filters'" "button"
-    And I set the field "Rename filter 'Email address'" to "My Email filter"
+    When I set the field "Rename filter 'Email address'" to "My Email filter"
     And I reload the page
     And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Filters'" "button"
     Then I should see "My Email filter" in the "[data-region='active-filters']" "css_element"
+
+  Scenario: Rename filter in report using filters
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   | default |
+      | My report | core_user\reportbuilder\datasource\users | 0       |
+    And the following "core_reportbuilder > Filters" exist:
+      | report    | uniqueidentifier |
+      | My report | user:email       |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I click on "Show/hide settings sidebar" "button"
+    And I click on "Show/hide 'Filters'" "button"
+    When I set the field "Rename filter 'Email address'" to "<span class=\"multilang\" lang=\"en\">English</span><span class=\"multilang\" lang=\"es\">Spanish</span>"
+    And I reload the page
+    And I click on "Show/hide settings sidebar" "button"
+    And I click on "Show/hide 'Filters'" "button"
+    Then I should see "English" in the "[data-region='active-filters']" "css_element"
+    And I should not see "Spanish" in the "[data-region='active-filters']" "css_element"
 
   Scenario: Move filter in report
     Given the following "core_reportbuilder > Reports" exist:
