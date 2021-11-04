@@ -121,8 +121,7 @@ function padding($n) {
  * @return int
  */
 function chat_add_instance($chat) {
-    global $DB, $CFG;
-    require_once($CFG->dirroot . '/course/lib.php');
+    global $DB;
 
     $chat->timemodified = time();
     $chat->chattime = chat_calculate_next_chat_time($chat->schedule, $chat->chattime);
@@ -707,13 +706,10 @@ function chat_update_chat_times($chatid=0) {
         $chat->chattime = chat_calculate_next_chat_time($chat->schedule, $chat->chattime);
         if ($originalchattime != $chat->chattime) {
             $courseids[] = $chat->course;
-            $DB->update_record("chat", $chat);
-
-            $cm = get_coursemodule_from_instance('chat', $chat->id, $chat->course);
-            course_purge_module_cache($cm);
         }
-
+        $DB->update_record("chat", $chat);
         $event = new stdClass(); // Update calendar too.
+
         $cond = "modulename='chat' AND eventtype = :eventtype AND instance = :chatid AND timestart <> :chattime";
         $params = ['chattime' => $chat->chattime, 'eventtype' => CHAT_EVENT_TYPE_CHATTIME, 'chatid' => $chat->id];
 
@@ -727,7 +723,7 @@ function chat_update_chat_times($chatid=0) {
 
     $courseids = array_unique($courseids);
     foreach ($courseids as $courseid) {
-        rebuild_course_cache($courseid, true, true);
+        rebuild_course_cache($courseid, true);
     }
 }
 

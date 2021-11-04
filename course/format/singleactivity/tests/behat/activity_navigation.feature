@@ -25,15 +25,15 @@ Feature: Activity navigation in a single activity course
   Scenario: Step through hidden activities in the course as a teacher.
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage
-    # The last activity (Forum 1) won't have the next activity link.
-    And "#next-activity-link" "css_element" should not exist
-    And I should see "Chat 1 (hidden)" in the "#prev-activity-link" "css_element"
-    And I follow "Chat 1 (hidden)"
-    And I should see "Forum 1" in the "#next-activity-link" "css_element"
-    And I should see "Assignment 1 (hidden)" in the "#prev-activity-link" "css_element"
-    And I follow "Assignment 1 (hidden)"
+    # The first activity (Forum 1) won't have the previous activity link.
     Then "#prev-activity-link" "css_element" should not exist
+    And I should see "Assignment 1 (hidden)" in the "#next-activity-link" "css_element"
+    And I follow "Assignment 1 (hidden)"
+    And I should see "Forum 1" in the "#prev-activity-link" "css_element"
     And I should see "Chat 1 (hidden)" in the "#next-activity-link" "css_element"
+    And I follow "Chat 1 (hidden)"
+    And I should see "Assignment 1 (hidden)" in the "#prev-activity-link" "css_element"
+    And "#next-activity-link" "css_element" should not exist
 
   Scenario: Jump to a hidden activity as a teacher
     Given I log in as "teacher1"
@@ -45,17 +45,17 @@ Feature: Activity navigation in a single activity course
     And the "Jump to..." select box should contain "Assignment 1 (hidden)"
     And the "Jump to..." select box should contain "Chat 1 (hidden)"
     # Jump to a hidden activity somewhere in the middle.
-    When I select "Chat 1 (hidden)" from the "Jump to..." singleselect
-    Then I should see "Chat 1"
-    And I should see "Assignment 1 (hidden)" in the "#prev-activity-link" "css_element"
-    And I should see "Forum 1" in the "#next-activity-link" "css_element"
-    # Jump to the first activity.
-    And I select "Assignment 1 (hidden)" from the "Jump to..." singleselect
+    When I select "Assignment 1 (hidden)" from the "Jump to..." singleselect
+    Then I should see "Assignment 1"
+    And I should see "Forum 1" in the "#prev-activity-link" "css_element"
     And I should see "Chat 1 (hidden)" in the "#next-activity-link" "css_element"
+    # Jump to the first activity.
+    And I select "Forum 1" from the "Jump to..." singleselect
+    And I should see "Assignment 1 (hidden)" in the "#next-activity-link" "css_element"
     But "#prev-activity-link" "css_element" should not exist
     # Jump to the last activity.
-    And I select "Forum 1" from the "Jump to..." singleselect
-    And I should see "Chat 1 (hidden)" in the "#prev-activity-link" "css_element"
+    And I select "Chat 1 (hidden)" from the "Jump to..." singleselect
+    And I should see "Assignment 1 (hidden)" in the "#prev-activity-link" "css_element"
     But "#next-activity-link" "css_element" should not exist
 
   Scenario: The activity navigation controls are not available as a student.
