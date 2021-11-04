@@ -99,6 +99,21 @@ class course_category extends base {
             ->add_fields("{$tablealias}.name")
             ->set_is_sortable(true);
 
+        // Path column.
+        $columns[] = (new column(
+            'path',
+            new lang_string('categorypath'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$tablealias}.name, {$tablealias}.id")
+            ->add_callback(static function(string $name, stdClass $category): string {
+                return core_course_category::get($category->id, MUST_EXIST, true)->get_nested_name(false);
+            })
+            ->set_disabled_aggregation(['groupconcat', 'groupconcatdistinct'])
+            ->set_is_sortable(true);
+
         // ID number column.
         $columns[] = (new column(
             'idnumber',
