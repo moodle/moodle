@@ -96,6 +96,11 @@ if ($data = $mform->get_data()) {
             throw new moodle_exception('nopermissions', 'error', '',
                 get_string('errorcannotrequestdeleteforother', 'tool_dataprivacy'));
         }
+    } else if ($data->type == \tool_dataprivacy\api::DATAREQUEST_TYPE_EXPORT) {
+        if ($data->userid == $USER->id && !\tool_dataprivacy\api::can_create_data_download_request_for_self()) {
+            throw new moodle_exception('nopermissions', 'error', '',
+                get_string('errorcannotrequestexportforself', 'tool_dataprivacy'));
+        }
     }
 
     \tool_dataprivacy\api::create_data_request($data->userid, $data->type, $data->comments);
