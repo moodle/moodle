@@ -448,6 +448,10 @@ class core_calendar_external extends external_api {
         $context = \context_user::instance($user->id);
         self::validate_context($context);
 
+        if ($params['userid'] && $USER->id !== $params['userid'] && !has_capability('moodle/calendar:manageentries', $context)) {
+            throw new \required_capability_exception($context, 'moodle/calendar:manageentries', 'nopermission', '');
+        }
+
         if (empty($params['aftereventid'])) {
             $params['aftereventid'] = null;
         }
