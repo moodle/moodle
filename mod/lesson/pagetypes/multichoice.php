@@ -351,7 +351,7 @@ class lesson_page_type_multichoice extends lesson_page {
                 }
                 if (in_array($answer->id, $userresponse)) {
                     // make checked
-                    $data = "<input  readonly=\"readonly\" disabled=\"disabled\" name=\"answer[$i]\" checked=\"checked\" type=\"checkbox\" value=\"1\" />";
+                    $checkboxelement = "<input  readonly=\"readonly\" disabled=\"disabled\" name=\"answer[$i]\" checked=\"checked\" type=\"checkbox\" value=\"1\" />";
                     if (!isset($answerdata->response)) {
                         if ($answer->response == null) {
                             if ($useranswer->correct) {
@@ -374,17 +374,19 @@ class lesson_page_type_multichoice extends lesson_page {
                     }
                 } else {
                     // unchecked
-                    $data = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
+                    $checkboxelement = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                 }
                 if (($answer->score > 0 && $this->lesson->custom) || ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto) && !$this->lesson->custom)) {
-                    $data = "<div class=highlight>".$data.' '.format_text($answer->answer,$answer->answerformat,$formattextdefoptions)."</div>";
+                    $answertext = $checkboxelement . format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
+                    $data = "<div class='highlight'><label>$answertext</label></div>";
                 } else {
-                    $data .= format_text($answer->answer,$answer->answerformat,$formattextdefoptions);
+                    $answertext = $checkboxelement . format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
+                    $data = "<label>$answertext</label>";
                 }
             } else {
                 if ($useranswer != null and $answer->id == $useranswer->answerid) {
                     // make checked
-                    $data = "<input  readonly=\"readonly\" disabled=\"disabled\" name=\"answer[$i]\" checked=\"checked\" type=\"checkbox\" value=\"1\" />";
+                    $checkboxelement = "<input  readonly=\"readonly\" disabled=\"disabled\" name=\"answer[$i]\" checked=\"checked\" type=\"checkbox\" value=\"1\" />";
                     if ($answer->response == null) {
                         if ($useranswer->correct) {
                             $answerdata->response = get_string("thatsthecorrectanswer", "lesson");
@@ -403,12 +405,14 @@ class lesson_page_type_multichoice extends lesson_page {
                     }
                 } else {
                     // unchecked
-                    $data = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
+                    $checkboxelement = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                 }
                 if (($answer->score > 0 && $this->lesson->custom) || ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto) && !$this->lesson->custom)) {
-                    $data = "<div class=\"highlight\">".$data.' '.format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions)."</div>";
+                    $answertext = $checkboxelement . format_text($answer->answer, FORMAT_MOODLE, $formattextdefoptions);
+                    $data = "<div class='highlight'><label>$answertext</label></div>";
                 } else {
-                    $data .= format_text($answer->answer,$answer->answerformat,$formattextdefoptions);
+                    $answertext = $checkboxelement . format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
+                    $data = "<label>$answertext</label>";
                 }
             }
             if (isset($pagestats[$this->properties->id][$answer->id])) {
