@@ -644,7 +644,7 @@
 
 .path-mod-assign [data-region="grade-panel"] td.submissionnotgraded,
 .path-mod-assign [data-region="grade-panel"] div.submissionnotgraded {
-    color: red;
+    color: #ca3120;
     background-color: transparent;
 }
 

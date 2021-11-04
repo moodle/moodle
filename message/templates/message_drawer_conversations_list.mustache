@@ -78,12 +78,12 @@
                         {{#str}} sender, core_message, {{.}} {{/str}}
                     {{/lastsendername}}
                 {{/sentfromcurrentuser}}
-                <span class="text-muted">{{{lastmessage}}}</span>
+                <span>{{{lastmessage}}}</span>
             </p>
         </div>
         <div class="d-flex align-self-stretch">
             <div
-                class="px-2 py-1 small position-absolute position-right text-muted {{^lastmessagedate}}hidden{{/lastmessagedate}}"
+                class="px-2 py-1 small position-absolute position-right {{^lastmessagedate}}hidden{{/lastmessagedate}}"
                 data-region="last-message-date" aria-hidden="true"
             >
                 {{#lastmessagedate}}
@@ -98,7 +98,7 @@
             </div>
             <div class="d-flex align-self-center align-items-center">
                 <span
-                    class="badge badge-pill badge-primary bg-primary {{^unreadcount}}hidden{{/unreadcount}}"
+                    class="badge badge-pill badge-primary {{^unreadcount}}hidden{{/unreadcount}}"
                     data-region="unread-count"
                     aria-label="{{#str}} unreadmessages, core_message, {{unreadcount}} {{/str}}"
                 >
