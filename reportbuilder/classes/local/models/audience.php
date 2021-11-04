@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\models;
 
+use context;
 use lang_string;
 use core\persistent;
 use core_reportbuilder\local\helpers\audience as helper;
@@ -43,6 +44,11 @@ class audience extends persistent {
         return [
             'reportid' => [
                 'type' => PARAM_INT,
+            ],
+            'heading' => [
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ],
             'classname' => [
                 'type' => PARAM_TEXT,
@@ -112,5 +118,19 @@ class audience extends persistent {
      */
     public function get_report(): report {
         return new report($this->get('reportid'));
+    }
+
+    /**
+     * Return formatted audience heading
+     *
+     * @param context|null $context If the context of the report is already known, it should be passed here
+     * @return string
+     */
+    public function get_formatted_heading(?context $context = null): string {
+        if ($context === null) {
+            $context = $this->get_report()->get_context();
+        }
+
+        return format_string($this->raw_get('heading'), true, ['context' => $context]);
     }
 }

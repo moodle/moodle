@@ -166,4 +166,11 @@ $messageproviders = array (
     'infected' => array(
         'capability'  => 'moodle/site:config',
     ),
+
+    // Report builder schedules.
+    'reportbuilderschedule' => [
+        'defaults' => [
+            'email' => MESSAGE_FORCED,
+        ],
+    ],
 );

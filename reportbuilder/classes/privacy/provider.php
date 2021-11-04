@@ -23,8 +23,9 @@ use core_privacy\local\request\writer;
 use core_reportbuilder\local\helpers\user_filter_manager;
 use core_reportbuilder\local\models\audience;
 use core_reportbuilder\local\models\column;
-use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\models\filter;
+use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\models\schedule;
 
 /**
  * Privacy Subsystem for core_reportbuilder
@@ -67,6 +68,13 @@ class provider implements
             'usercreated' => 'privacy:metadata:audience:usercreated',
             'usermodified' => 'privacy:metadata:audience:usermodified',
         ], 'privacy:metadata:audience');
+
+        $collection->add_database_table(schedule::TABLE, [
+            'name' => 'privacy:metadata:schedule:name',
+            'userviewas' => 'privacy:metadata:schedule:userviewas',
+            'usercreated' => 'privacy:metadata:schedule:usercreated',
+            'usermodified' => 'privacy:metadata:schedule:usermodified',
+        ], 'privacy:metadata:schedule');
 
         $collection->add_user_preference('core_reportbuilder', 'privacy:metadata:preference:reportfilter');
 

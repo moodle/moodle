@@ -132,6 +132,11 @@ class report extends persistent {
         foreach (audience::get_records($reportparams) as $audience) {
             $audience->delete();
         }
+
+        // Schedules.
+        foreach (schedule::get_records($reportparams) as $schedule) {
+            $schedule->delete();
+        }
     }
 
     /**
