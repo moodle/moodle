@@ -47,7 +47,6 @@ function mycourses_get_my_completion($datefrom = 0) {
     $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade
                                           FROM {local_iomad_track} cc
                                           JOIN {course} c ON (c.id = cc.courseid)
-                                          JOIN {iomad_courses} ic ON (c.id = ic.courseid and cc.courseid = ic.courseid)
                                           JOIN {user_enrolments} ue ON (ue.userid = cc.userid)
                                           JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = c.id)
                                           LEFT JOIN {iomad_courses} ic ON (c.id = ic.courseid AND cc.courseid = ic.courseid)
