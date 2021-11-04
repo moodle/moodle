@@ -1960,6 +1960,7 @@ class core_plugin_manager {
                 'previewquestion',
                 'statistics',
                 'tagquestion',
+                'usage',
                 'viewcreator',
                 'viewquestionname',
                 'viewquestiontext',
