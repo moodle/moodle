@@ -284,5 +284,56 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021101100, 'forum');
     }
 
+    if ($oldversion < 2021101101) {
+        // Remove the userid-forumid index as it gets replaces with forumid-userid.
+        $table = new xmldb_table('forum_read');
+        $index = new xmldb_index('userid-forumid', XMLDB_INDEX_NOTUNIQUE, ['userid', 'forumid']);
+
+        // Conditionally launch drop index userid-forumid.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Remove the userid-discussionid index as it gets replaced with discussionid-userid.
+        $table = new xmldb_table('forum_read');
+        $index = new xmldb_index('userid-discussionid', XMLDB_INDEX_NOTUNIQUE, ['userid', 'discussionid']);
+
+        // Conditionally launch drop index userid-discussionid.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define index userid (not unique) to be added to forum_read.
+        $table = new xmldb_table('forum_read');
+        $index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
+
+        // Conditionally launch add index userid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Build replacement indexes to replace the two dropped earlier.
+        // Define index forumid-userid (not unique) to be added to forum_read.
+        $table = new xmldb_table('forum_read');
+        $index = new xmldb_index('forumid-userid', XMLDB_INDEX_NOTUNIQUE, ['forumid', 'userid']);
+
+        // Conditionally launch add index forumid-userid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index discussionid-userid (not unique) to be added to forum_read.
+        $table = new xmldb_table('forum_read');
+        $index = new xmldb_index('discussionid-userid', XMLDB_INDEX_NOTUNIQUE, ['discussionid', 'userid']);
+
+        // Conditionally launch add index discussionid-userid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2021101101, 'forum');
+    }
+
     return true;
 }
