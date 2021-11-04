@@ -10031,7 +10031,7 @@ button.close:focus:hover,
   outline: 0; }
   [role="treeitem"][aria-expanded="true"].focus > *:first-child, [role="treeitem"][aria-expanded="true"]:focus > *:first-child {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(15, 111, 197, 0.75); }
+    box-shadow: 0 0 0 0.2rem rgba(15, 108, 191, 0.75); }
   [role="treeitem"][aria-expanded="true"]:focus:hover {
     text-decoration: none; }
 

@@ -10031,7 +10031,7 @@ button.close:focus:hover,
   outline: 0; }
   [role="treeitem"][aria-expanded="true"].focus > *:first-child, [role="treeitem"][aria-expanded="true"]:focus > *:first-child {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(15, 111, 197, 0.75); }
+    box-shadow: 0 0 0 0.2rem rgba(15, 108, 191, 0.75); }
   [role="treeitem"][aria-expanded="true"]:focus:hover {
     text-decoration: none; }
 
@@ -15980,10 +15980,10 @@ a.ygtvspacer:hover {
       border-right: 0; }
       .message-app .list-group .list-group-item:hover {
         color: #fff;
-        background-color: #0f6fc5; }
+        background-color: #0f6cbf; }
         .message-app .list-group .list-group-item:hover .badge-primary {
           background-color: #fff;
-          color: #0f6fc5; }
+          color: #0f6cbf; }
       .message-app .list-group .list-group-item:first-child {
         border-top: 0; }
       .message-app .list-group .list-group-item:last-child {
