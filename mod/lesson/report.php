@@ -140,7 +140,7 @@ if ($action === 'delete') {
     }
 
     // The attempts table.
-    $attemptstable = html_writer::table($table);
+    $attemptstable = html_writer::div(html_writer::table($table), 'table-responsive');
 
     // The HTML that we will be displaying which includes the attempts table and bulk actions menu, if necessary.
     $attemptshtml = $attemptstable;
