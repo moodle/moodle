@@ -240,7 +240,7 @@ class condition extends \core_availability\condition {
                 // Get all grades for the current course.
                 $rs = $DB->get_recordset_sql('
                         SELECT
-                            gi.id,gg.finalgrade,gg.rawgrademin,gg.rawgrademax
+                            gi.id,gg.finalgrade,gi.grademin,gi.grademax
                         FROM
                             {grade_items} gi
                             LEFT JOIN {grade_grades} gg ON gi.id=gg.itemid AND gg.userid=?
@@ -249,14 +249,14 @@ class condition extends \core_availability\condition {
                 foreach ($rs as $record) {
                     // This function produces division by zero error warnings when rawgrademax and rawgrademin
                     // are equal. Below change does not affect function behavior, just avoids the warning.
-                    if (is_null($record->finalgrade) || $record->rawgrademax == $record->rawgrademin) {
+                    if (is_null($record->finalgrade) || $record->grademax == $record->grademin) {
                         // No grade = false.
                         $cachedgrades[$record->id] = false;
                     } else {
                         // Otherwise convert grade to percentage.
                         $cachedgrades[$record->id] =
-                                (($record->finalgrade - $record->rawgrademin) * 100) /
-                                ($record->rawgrademax - $record->rawgrademin);
+                                (($record->finalgrade - $record->grademin) * 100) /
+                                ($record->grademax - $record->grademin);
                     }
                 }
                 $rs->close();
