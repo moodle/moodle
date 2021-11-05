@@ -35,7 +35,7 @@ class helper {
     public static function get_question_entry_usage_count($question) {
         global $DB;
 
-        $sql = 'SELECT COUNT(quizid) FROM (' . self::question_usage_sql() . ') AS quizid';
+        $sql = 'SELECT COUNT(*) FROM (' . self::question_usage_sql() . ') quizid';
 
         return $DB->count_records_sql($sql, [$question->id, $question->id]);
     }
@@ -49,7 +49,7 @@ class helper {
         $sqlset = "(SELECT qz.id as quizid,
                            qz.name as modulename,
                            qz.course as courseid
-                      FROM {quiz} as qz
+                      FROM {quiz} qz
                       JOIN {quiz_attempts} qa ON qa.quiz = qz.id
                       JOIN {question_usages} qu ON qu.id = qa.uniqueid
                       JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
