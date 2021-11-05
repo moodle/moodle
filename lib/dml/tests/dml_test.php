@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @subpackage dml
  * @copyright  2008 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \moodle_database
  */
 class dml_test extends database_driver_testcase {
 
@@ -501,7 +502,7 @@ SELECT * FROM {users}
 -- line 74 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
 -- line 83 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two()
 -- line 92 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three()
--- line 497 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
+-- line 498 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
 EOD;
         $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
 
@@ -3838,6 +3839,44 @@ EOD;
         $DB = $this->tdb;
         $sql = "SELECT ".$DB->sql_ceil(665.666)." AS res ".$DB->sql_null_from_clause();
         $this->assertEquals(666, $DB->get_field_sql($sql));
+    }
+
+    /**
+     * Test DML libraries sql_cast_to_char method
+     *
+     * @covers ::sql_cast_to_char
+     */
+    public function test_cast_to_char(): void {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $tableone = $this->get_test_table('one');
+        $tableone->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $tableone->add_field('intfield', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $tableone->add_field('details', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $tableone->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $dbman->create_table($tableone);
+
+        $tableonename = $tableone->getName();
+        $DB->insert_record($tableonename, (object) ['intfield' => 10, 'details' => 'uno']);
+        $DB->insert_record($tableonename, (object) ['intfield' => 20, 'details' => 'dos']);
+
+        $tabletwo = $this->get_test_table('two');
+        $tabletwo->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $tabletwo->add_field('charfield', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $tabletwo->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $dbman->create_table($tabletwo);
+
+        $tabletwoname = $tabletwo->getName();
+        $DB->insert_record($tabletwoname, (object) ['charfield' => '10']);
+
+        // Test by joining a char field to a cast int field (mixing types not supported across databases).
+        $sql = "SELECT t1.details
+                  FROM {{$tableonename}} t1
+                  JOIN {{$tabletwoname}} t2 ON t2.charfield = " . $DB->sql_cast_to_char('t1.intfield');
+
+        $fieldset = $DB->get_fieldset_sql($sql);
+        $this->assertEquals(['uno'], $fieldset);
     }
 
     public function test_cast_char2int() {

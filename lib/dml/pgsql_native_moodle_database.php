@@ -1453,6 +1453,16 @@ class pgsql_native_moodle_database extends moodle_database {
         return '((' . $int1 . ') # (' . $int2 . '))';
     }
 
+    /**
+     * Return SQL for casting to char of given field/expression
+     *
+     * @param string $field Table field or SQL expression to be cast
+     * @return string
+     */
+    public function sql_cast_to_char(string $field): string {
+        return "CAST({$field} AS VARCHAR)";
+    }
+
     public function sql_cast_char2int($fieldname, $text=false) {
         return ' CAST(' . $fieldname . ' AS INT) ';
     }
@@ -1493,7 +1503,7 @@ class pgsql_native_moodle_database extends moodle_database {
      */
     public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {
         $fieldsort = $sort ? "ORDER BY {$sort}" : '';
-        return "STRING_AGG(CAST({$field} AS VARCHAR), '{$separator}' {$fieldsort})";
+        return "STRING_AGG(" . $this->sql_cast_to_char($field) . ", '{$separator}' {$fieldsort})";
     }
 
     public function sql_regex_supported() {
