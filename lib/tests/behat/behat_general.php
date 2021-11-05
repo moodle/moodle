@@ -1453,7 +1453,8 @@ EOF;
         // Get row xpath.
         // Some drivers make XPath relative to the current context, so use descendant.
         $rowxpath = $tablexpath . "/tbody/tr[descendant::*[@class='rowtitle'][normalize-space(.)=" . $rowliteral . "] | " . "
-            descendant::th[normalize-space(.)=" . $rowliteral . "] | descendant::td[normalize-space(.)=" . $rowliteral . "]]";
+            descendant::th[contains(normalize-space(.)," . $rowliteral . ")] | " . "
+            descendant::td[contains(normalize-space(.)," . $rowliteral . ")]]";
 
         $columnvaluexpath = $rowxpath . $columnpositionxpath . "[contains(normalize-space(.)," . $valueliteral . ")]";
 

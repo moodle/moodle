@@ -346,4 +346,52 @@ class mod_assign_mod_form extends moodleform_mod {
         return !empty($data['completionsubmit' . $suffix]);
     }
 
+    /**
+     * Get the list of admin settings for this module and apply any defaults/advanced/locked/required settings.
+     *
+     * @param array $datetimeoffsets  - If passed, this is an array of fieldnames => times that the
+     *                          default date/time value should be relative to. If not passed, all
+     *                          date/time fields are set relative to the users current midnight.
+     * @return void
+     */
+    public function apply_admin_defaults($datetimeoffsets = []): void {
+        parent::apply_admin_defaults($datetimeoffsets);
+
+        $isupdate = !empty($this->_cm);
+        if ($isupdate) {
+            return;
+        }
+
+        $settings = get_config('mod_assign');
+        $mform = $this->_form;
+
+        if ($mform->elementExists('grade')) {
+            $element = $mform->getElement('grade');
+
+            if (property_exists($settings, 'defaultgradetype')) {
+                switch ((int)$settings->defaultgradetype) {
+                    case GRADE_TYPE_NONE :
+                        $element->currentgradetype = 'none';
+                        break;
+                    case GRADE_TYPE_SCALE :
+                        $element->currentgradetype = 'scale';
+                        break;
+                    case GRADE_TYPE_VALUE :
+                        $element->currentgradetype = 'point';
+                        break;
+                }
+            }
+
+            if (property_exists($settings, 'defaultgradescale')) {
+                /** @var grade_scale|false $gradescale */
+                $gradescale = grade_scale::fetch(['id' => (int)$settings->defaultgradescale, 'courseid' => 0]);
+
+                if ($gradescale) {
+                    $element->currentscaleid = $gradescale->id;
+                }
+            }
+
+            $element->onQuickFormEvent('updateValue', null, $mform);
+        }
+    }
 }

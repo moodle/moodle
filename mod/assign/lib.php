@@ -941,20 +941,19 @@ function assign_print_recent_mod_activity($activity, $courseid, $detail, $modnam
 }
 
 /**
- * Checks if scale is being used by any instance of assignment
+ * Checks if scale is being used by any instance of assignment or is the default scale used for assignments.
  *
  * This is used to find out if scale used anywhere
  * @param int $scaleid
- * @return boolean True if the scale is used by any assignment
+ * @return boolean True if the scale is used by any assignment or is the default scale used for assignments.
  */
 function assign_scale_used_anywhere($scaleid) {
     global $DB;
 
-    if ($scaleid and $DB->record_exists('assign', array('grade'=>-$scaleid))) {
-        return true;
-    } else {
-        return false;
-    }
+    return $scaleid && (
+        $DB->record_exists('assign', ['grade' => -(int)$scaleid]) ||
+        (int)get_config('mod_assign', 'defaultgradescale') === (int)$scaleid
+    );
 }
 
 /**
