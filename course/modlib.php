@@ -213,7 +213,7 @@ function plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course) {
  * @return object moduleinfo update with grading management info
  */
 function edit_module_post_actions($moduleinfo, $course) {
-    global $CFG;
+    global $CFG, $USER;
     require_once($CFG->libdir.'/gradelib.php');
 
     $modcontext = context_module::instance($moduleinfo->coursemodule);
@@ -385,6 +385,18 @@ function edit_module_post_actions($moduleinfo, $course) {
 
     // Allow plugins to extend the course module form.
     $moduleinfo = plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course);
+
+    if (!empty($moduleinfo->coursecontentnotification)) {
+        // Schedule adhoc-task for delivering the course content updated notification.
+        if ($course->visible && $moduleinfo->visible) {
+            $adhocktask = new \core_course\task\content_notification_task();
+            $adhocktask->set_custom_data(
+                ['update' => $moduleinfo->update, 'cmid' => $moduleinfo->coursemodule,
+                'courseid' => $course->id, 'userfrom' => $USER->id]);
+            $adhocktask->set_component('course');
+            \core\task\manager::queue_adhoc_task($adhocktask, true);
+        }
+    }
 
     return $moduleinfo;
 }

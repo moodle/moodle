@@ -59,6 +59,12 @@ $string['completion_setby:manual:done'] = '{$a->activityname} is marked by {$a->
 $string['completion_setby:manual:markdone'] = '{$a->activityname} is marked by {$a->setby} as not done. Press to mark as done.';
 $string['completionrequirements'] = 'Completion requirements for {$a}';
 $string['coursealreadyfinished'] = 'Course already finished';
+$string['coursecontentnotification'] = 'Send content change notification';
+$string['coursecontentnotifnew'] = '{$a->coursename} new content';
+$string['coursecontentnotifnewbody'] = '<p>{$a->moduletypename} <a href="{$a->link}">{$a->modulename}</a> is new in the course <a href="{$a->courselink}">{$a->coursename}</a>.</p><p><a href="{$a->notificationpreferenceslink}">Change your notification preferences</a></p>';
+$string['coursecontentnotifupdate'] = '{$a->coursename} content change';
+$string['coursecontentnotifupdatebody'] = '<p>{$a->moduletypename} <a href="{$a->link}">{$a->modulename}</a> has been changed in the course <a href="{$a->courselink}">{$a->coursename}</a>.</p><p><a href="{$a->notificationpreferenceslink}">Change your notification preferences</a></p>';
+$string['coursecontentnotification_help'] = 'You can send a notification to the course users about any new or updated resource or activity. Please notice that the notification will be sent only if the new resource or activity is visible.';
 $string['coursenotyetstarted'] = 'The course has not yet started';
 $string['coursenotyetfinished'] = 'The course has not yet finished';
 $string['coursetoolong'] = 'The course is too long';

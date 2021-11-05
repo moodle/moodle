@@ -89,6 +89,15 @@ $messageproviders = array (
     // Course completed. Requires course completion configured at course level. It does not work with just activity progress.
     'coursecompleted' => [],
 
+    // Course content updated. New content (activities or resources) has been created or existing content updated.
+    'coursecontentupdated' => array (
+        'defaults' => array(
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDOFF,
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+        ),
+    ),
+
     // Badge award notification to a badge recipient.
     'badgerecipientnotice' => array (
         'defaults' => array(

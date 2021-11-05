@@ -1256,6 +1256,7 @@ $string['messageprovider:badgerecipientnotice'] = 'Badge recipient notifications
 $string['messageprovider:competencyplancomment'] = 'Comment posted on a learning plan';
 $string['messageprovider:competencyusercompcomment'] = 'Comment posted on a competency';
 $string['messageprovider:coursecompleted'] = 'Course completed';
+$string['messageprovider:coursecontentupdated'] = 'Course content changes';
 $string['messageprovider:courserequestapproved'] = 'Course creation request approval notification';
 $string['messageprovider:courserequested'] = 'Course creation request notification';
 $string['messageprovider:courserequestrejected'] = 'Course creation request rejection notification';

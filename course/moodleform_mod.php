@@ -1190,6 +1190,10 @@ abstract class moodleform_mod extends moodleform {
 
         $mform = $this->_form;
 
+        $mform->addElement('checkbox', 'coursecontentnotification', get_string('coursecontentnotification', 'course'));
+        $mform->addHelpButton('coursecontentnotification', 'coursecontentnotification', 'course');
+        $mform->closeHeaderBefore('coursecontentnotification');
+
         // elements in a row need a group
         $buttonarray = array();
 
@@ -1209,7 +1213,6 @@ abstract class moodleform_mod extends moodleform {
 
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->setType('buttonar', PARAM_RAW);
-        $mform->closeHeaderBefore('buttonar');
     }
 
     /**
