@@ -86,7 +86,7 @@ abstract class component_gradeitem {
 
         $classname = "{$component}\\grades\\{$itemname}_gradeitem";
         if (!class_exists($classname)) {
-            throw new coding_exception("Unknown gradeitem {$itemname} for component {$classname}");
+            throw new \coding_exception("Unknown gradeitem {$itemname} for component {$classname}");
         }
 
         return $classname::load_from_context($context);
@@ -145,7 +145,7 @@ abstract class component_gradeitem {
      *
      * @param stdClass $gradeduser The user being graded
      * @param stdClass $grader The user who is grading
-     * @throws required_capability_exception
+     * @throws \required_capability_exception
      */
     abstract public function require_user_can_grade(stdClass $gradeduser, stdClass $grader): void;
 
@@ -377,9 +377,7 @@ abstract class component_gradeitem {
     public function get_grade(int $gradeid): stdClass {
         global $DB;
 
-        $grade = $DB->get_record($this->get_table_name(), ['id' => $gradeid]);
-
-        return $grade ?: null;
+        return $DB->get_record($this->get_table_name(), ['id' => $gradeid]);
     }
 
     /**
@@ -390,6 +388,48 @@ abstract class component_gradeitem {
      * @return stdClass The grade value
      */
     abstract public function get_grade_for_user(stdClass $gradeduser, stdClass $grader): ?stdClass;
+
+    /**
+     * Returns the grade that should be displayed to the user.
+     *
+     * The grade does not necessarily return a float value, this method takes grade settings into considering so
+     * the correct value be shown, eg. a float vs a letter.
+     *
+     * @param stdClass $gradeduser
+     * @param stdClass $grader
+     * @return stdClass|null
+     */
+    public function get_formatted_grade_for_user(stdClass $gradeduser, stdClass $grader): ?stdClass {
+        global $DB;
+
+        if ($grade = $this->get_grade_for_user($gradeduser, $grader)) {
+            $gradeitem = $this->get_grade_item();
+            if (!$this->is_using_scale()) {
+                $grade->usergrade = grade_format_gradevalue($grade->grade, $gradeitem);
+                $grade->maxgrade = format_float($gradeitem->grademax, $gradeitem->get_decimals());
+                // If displaying the raw grade, also display the total value.
+                if ($gradeitem->get_displaytype() == GRADE_DISPLAY_TYPE_REAL) {
+                    $grade->usergrade .= ' / ' . $grade->maxgrade;
+                }
+            } else {
+                $grade->usergrade = '-';
+                if ($scale = $DB->get_record('scale', ['id' => $gradeitem->scaleid])) {
+                    $options = make_menu_from_list($scale->scale);
+
+                    $gradeint = (int) $grade->grade;
+                    if (isset($options[$gradeint])) {
+                        $grade->usergrade = $options[$gradeint];
+                    }
+                }
+
+                $grade->maxgrade = format_float($gradeitem->grademax, $gradeitem->get_decimals());
+            }
+
+            return $grade;
+        }
+
+        return null;
+    }
 
     /**
      * Get the grade status for the specified user.
