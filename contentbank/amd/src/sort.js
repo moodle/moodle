@@ -196,6 +196,8 @@ const updateSortButtons = (contentBank, sortButton) => {
             button.classList.remove('dir-desc');
             button.classList.add('dir-none');
 
+            button.closest(selectors.elements.cell).setAttribute('aria-sort', 'none');
+
             updateButtonTitle(button, false);
         }
     });
@@ -205,13 +207,16 @@ const updateSortButtons = (contentBank, sortButton) => {
     if (sortButton.classList.contains('dir-none')) {
         sortButton.classList.remove('dir-none');
         sortButton.classList.add('dir-asc');
+        sortButton.closest(selectors.elements.cell).setAttribute('aria-sort', 'ascending');
     } else if (sortButton.classList.contains('dir-asc')) {
         sortButton.classList.remove('dir-asc');
         sortButton.classList.add('dir-desc');
+        sortButton.closest(selectors.elements.cell).setAttribute('aria-sort', 'descending');
         ascending = false;
     } else if (sortButton.classList.contains('dir-desc')) {
         sortButton.classList.remove('dir-desc');
         sortButton.classList.add('dir-asc');
+        sortButton.closest(selectors.elements.cell).setAttribute('aria-sort', 'ascending');
     }
 
     updateButtonTitle(sortButton, ascending);
