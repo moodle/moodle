@@ -394,7 +394,7 @@ $string['numberofteams'] = 'Groups';
 $string['offline'] = 'No online submissions required';
 $string['open'] = 'Open';
 $string['outof'] = '{$a->current} out of {$a->total}';
-$string['overdue'] = '<font color="red">Assignment is overdue by: {$a}</font>';
+$string['overdue'] = 'Assignment is overdue by: {$a}';
 $string['override'] = 'Override';
 $string['overridedeletegroupsure'] = 'Are you sure you want to delete the override for group {$a}?';
 $string['overridedeleteusersure'] = 'Are you sure you want to delete the override for user {$a}?';
