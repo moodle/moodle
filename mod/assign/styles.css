@@ -642,6 +642,8 @@
     border-bottom: 1px solid #ddd;
 }
 
+.path-mod-assign .overdue,
+.path-mod-assign .overduesubmission,
 .path-mod-assign [data-region="grade-panel"] td.submissionnotgraded,
 .path-mod-assign [data-region="grade-panel"] div.submissionnotgraded {
     color: #ca3120;
