@@ -136,14 +136,14 @@ class fetch extends external_api {
         }
 
         $hasgrade = $gradeitem->user_has_grade($gradeduser);
-        $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
+        $grade = $gradeitem->get_formatted_grade_for_user($gradeduser, $USER);
+        $isgrading = $gradeitem->user_can_grade($gradeduser, $USER);
 
         // Set up some items we need to return on other interfaces.
         $gradegrade = \grade_grade::fetch(['itemid' => $gradeitem->get_grade_item()->id, 'userid' => $gradeduser->id]);
         $gradername = $gradegrade ? fullname(\core_user::get_user($gradegrade->usermodified)) : null;
-        $maxgrade = (int) $gradeitem->get_grade_item()->grademax;
 
-        return self::get_fetch_data($grade, $hasgrade, $maxgrade, $gradername);
+        return self::get_fetch_data($grade, $hasgrade, $gradeitem, $gradername, $isgrading);
     }
 
     /**
@@ -151,18 +151,32 @@ class fetch extends external_api {
      *
      * @param stdClass $grade
      * @param bool $hasgrade
-     * @param int $maxgrade
+     * @param gradeitem $gradeitem
      * @param string|null $gradername
+     * @param bool $isgrading
      * @return array
      */
-    public static function get_fetch_data(stdClass $grade, bool $hasgrade, int $maxgrade, ?string $gradername): array {
+    public static function get_fetch_data(stdClass $grade,
+        bool $hasgrade,
+        gradeitem $gradeitem,
+        ?string $gradername,
+        bool $isgrading = false
+    ): array {
+        $templatename = 'core_grades/grades/grader/gradingpanel/point';
+
+        // We do not want to display anything if we are showing the grade as a letter. For example the 'Grade' might
+        // read 'B-'. We do not want to show the user the actual point they were given. See MDL-71439.
+        if (($gradeitem->get_grade_item()->get_displaytype() == GRADE_DISPLAY_TYPE_LETTER) && !$isgrading) {
+            $templatename = 'core_grades/grades/grader/gradingpanel/point_blank';
+        }
+
         return [
-            'templatename' => 'core_grades/grades/grader/gradingpanel/point',
+            'templatename' => $templatename,
             'hasgrade' => $hasgrade,
             'grade' => [
                 'grade' => $grade->grade,
-                'usergrade' => $grade->grade,
-                'maxgrade' => $maxgrade,
+                'usergrade' => $grade->usergrade,
+                'maxgrade' => (int) $grade->maxgrade,
                 'gradedby' => $gradername,
                 'timecreated' => $grade->timecreated,
                 'timemodified' => $grade->timemodified,
