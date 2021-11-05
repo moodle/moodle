@@ -76,7 +76,7 @@ class helper {
     public static function get_question_attempts_count_in_quiz(int $questionid, int $quizid): int {
         global $DB;
         $sql = 'SELECT COUNT(qatt.id)
-                  FROM {quiz} as qz
+                  FROM {quiz} qz
                   JOIN {quiz_attempts} qa ON qa.quiz = qz.id
                   JOIN {question_usages} qu ON qu.id = qa.uniqueid
                   JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
