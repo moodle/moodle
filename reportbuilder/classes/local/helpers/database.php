@@ -134,7 +134,7 @@ class database {
             }
 
             // Cast sort, stick the direction on the end.
-            $fieldsort = "CAST({$fieldsort} AS VARCHAR) {$fieldsortdirection}";
+            $fieldsort = $DB->sql_cast_to_char($fieldsort) . ' ' . $fieldsortdirection;
         }
 
         return $fieldsort;
