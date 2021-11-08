@@ -28,6 +28,10 @@
             }
             .form-group {
                 margin-bottom: 0;
+                max-width: 100%;
+                > span {
+                    max-width: 100%;
+                }
             }
         }
         .filter {

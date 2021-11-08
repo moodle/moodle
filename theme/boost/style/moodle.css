@@ -20643,7 +20643,11 @@ div.editor_atto_toolbar button .icon {
 
 .reportbuilder-wrapper .reportbuilder-filters-wrapper .mform .form-group,
 .reportbuilder-wrapper .reportbuilder-conditions-list .mform .form-group {
-  margin-bottom: 0; }
+  margin-bottom: 0;
+  max-width: 100%; }
+  .reportbuilder-wrapper .reportbuilder-filters-wrapper .mform .form-group > span,
+  .reportbuilder-wrapper .reportbuilder-conditions-list .mform .form-group > span {
+    max-width: 100%; }
 
 .reportbuilder-wrapper .reportbuilder-filters-wrapper .filter .filter-header,
 .reportbuilder-wrapper .reportbuilder-conditions-list .filter .filter-header {
