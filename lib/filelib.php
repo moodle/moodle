@@ -4555,6 +4555,40 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             \core\session\manager::write_close(); // Unlock session during file serving.
             send_stored_file($file, 0, 0, true, $sendfileoptions);
 
+        } else if ($filearea === 'event_description' and $context->contextlevel == CONTEXT_COURSECAT) {
+
+            if ($CFG->forcelogin) {
+                require_login();
+            }
+
+            // Get category, this will also validate access.
+            $category = core_course_category::get($context->instanceid);
+
+            // Get the event ID from the args array, load event.
+            $eventid = array_shift($args);
+            $event = $DB->get_record('event', [
+                'id' => (int) $eventid,
+                'eventtype' => 'category',
+                'categoryid' => $category->id,
+            ]);
+
+            if (!$event) {
+                send_file_not_found();
+            }
+
+            // Retrieve file from storage, and serve.
+            $filename = array_pop($args);
+            $filepath = $args ? '/' . implode('/', $args) .'/' : '/';
+            if (!$file = $fs->get_file($context->id, $component, $filearea, $eventid, $filepath, $filename) or
+                    $file->is_directory()) {
+
+                send_file_not_found();
+            }
+
+            // Unlock session during file serving.
+            \core\session\manager::write_close();
+            send_stored_file($file, HOURSECS, 0, $forcedownload, $sendfileoptions);
+
         } else if ($filearea === 'event_description' and $context->contextlevel == CONTEXT_COURSE) {
 
             // Respect forcelogin and require login unless this is the site.... it probably
