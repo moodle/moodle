@@ -181,7 +181,12 @@ class behat_field_manager {
 
         if ($tagname == 'span') {
             if ($node->hasAttribute('data-inplaceeditable') && $node->getAttribute('data-inplaceeditable')) {
-                return 'inplaceeditable';
+                // Determine appropriate editable type of this field (text or select).
+                if ($node->getAttribute('data-type') == 'select') {
+                    return 'inplaceeditable_select';
+                } else {
+                    return 'inplaceeditable';
+                }
             }
         }
 

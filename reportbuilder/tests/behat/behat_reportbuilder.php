@@ -93,10 +93,6 @@ class behat_reportbuilder extends behat_base {
         }
 
         $editlabel = get_string('aggregatecolumn', 'core_reportbuilder', $column);
-
-        // Work around for MDL-72696, which treats all inplace_editable elements as text boxes and causes unpredictable
-        // behaviour in Chrome when it types characters into an inplace_editable of type select (it selects the wrong option).
-        $this->execute('behat_general::i_click_on', [$this->escape($editlabel), 'link']);
         $this->execute('behat_forms::i_set_the_field_to', [$this->escape($editlabel), $this->escape($aggregation)]);
     }
 }
