@@ -41,9 +41,13 @@ Feature: Manage custom reports
     When I navigate to "Reports > Report builder > Custom reports" in site administration
     And I click on "New report" "button"
     And I set the following fields in the "New report" "dialogue" to these values:
-      | Name                  | My report |
       | Report source         | Users     |
       | Include default setup | 0         |
+    # Try to set the report name to some blank spaces.
+    And I set the field "Name" in the "New report" "dialogue" to "   "
+    And I click on "Save" "button" in the "New report" "dialogue"
+    And I should see "Required"
+    And I set the field "Name" in the "New report" "dialogue" to "My report"
     And I click on "Save" "button" in the "New report" "dialogue"
     Then I should see "My report"
     And I should see "Nothing to display"
@@ -58,6 +62,8 @@ Feature: Manage custom reports
       | My report | core_user\reportbuilder\datasource\users |
     And I log in as "admin"
     When I navigate to "Reports > Report builder > Custom reports" in site administration
+    # Try to set the report name to some blank spaces. It should simply ignore the change.
+    And I set the field "Edit report name" in the "My report" "table_row" to "   "
     And I set the field "Edit report name" in the "My report" "table_row" to "My renamed report"
     And I reload the page
     Then the following should exist in the "reportbuilder-table" table:
