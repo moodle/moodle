@@ -1135,6 +1135,14 @@ tr.flagged-tag a {
     margin-left: 3px;
 }
 
+#page-enrol-otherusers .userenrolment .col_role {
+    .role {
+        float: none;
+        margin: 3px 3px 3px 0;
+        padding: 3px 3px 3px 0;
+    }
+}
+
 .corelightbox {
     background-color: #ccc;
     position: absolute;
