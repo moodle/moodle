@@ -138,8 +138,8 @@ switch($view) {
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title("$course->shortname: $strcalendar: $pagetitle");
 
-$headingstr = ($iscoursecalendar) ? get_string('coursecalendar', 'core_calendar', $COURSE->shortname) :
-        get_string('calendar', 'core_calendar');
+$headingstr = get_string('calendar', 'core_calendar');
+$headingstr = ($iscoursecalendar) ? "{$headingstr}: {$COURSE->shortname}" : $headingstr;
 $PAGE->set_heading($headingstr);
 
 $renderer = $PAGE->get_renderer('core_calendar');

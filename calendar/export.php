@@ -123,11 +123,13 @@ $calendar->set_sources($course, $courses);
 $pagetitle = get_string('export', 'calendar');
 
 $PAGE->navbar->add(get_string('managesubscriptions', 'calendar'), $managesubscriptionsurl);
-$PAGE->navbar->add($pagetitle);
+$PAGE->navbar->add(get_string('exportcalendar', 'calendar'), $url);
 
 // Print title and header.
+$headingstr = get_string('calendar', 'core_calendar');
+$headingstr = ($courseid != SITEID && !empty($courseid)) ? "{$headingstr}: {$COURSE->shortname}" : $headingstr;
 $PAGE->set_title($course->shortname.': '.get_string('calendar', 'calendar').': '.$pagetitle);
-$PAGE->set_heading($course->fullname);
+$PAGE->set_heading($headingstr);
 $PAGE->set_pagelayout('standard');
 
 $renderer = $PAGE->get_renderer('core_calendar');
