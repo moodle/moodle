@@ -3351,7 +3351,7 @@ function get_user_key($script, $userid, $instance=null, $iprestriction=null, $va
  * @return bool Always returns true
  */
 function update_user_login_times() {
-    global $USER, $DB;
+    global $USER, $DB, $SESSION;
 
     if (isguestuser()) {
         // Do not update guest access times/ips for performance.
@@ -3375,6 +3375,7 @@ function update_user_login_times() {
 
     // Function user_accesstime_log() may not update immediately, better do it here.
     $USER->lastaccess = $user->lastaccess = $now;
+    $SESSION->userpreviousip = $USER->lastip;
     $USER->lastip = $user->lastip = getremoteaddr();
 
     // Note: do not call user_update_user() here because this is part of the login process,
@@ -4544,6 +4545,27 @@ function complete_user_login($user) {
         )
     );
     $event->trigger();
+
+    // Check if the user is using a new browser or session (a new MoodleSession cookie is set in that case).
+    // If the user is accessing from the same IP, ignore everything (most of the time will be a new session in the same browser).
+    // Skip Web Service requests, CLI scripts, AJAX scripts, and request from the mobile app itself.
+    $loginip = getremoteaddr();
+    $isnewip = isset($SESSION->userpreviousip) && $SESSION->userpreviousip != $loginip;
+    $isvalidenv = (!WS_SERVER && !CLI_SCRIPT && !NO_MOODLE_COOKIES) || PHPUNIT_TEST;
+
+    if (!empty($SESSION->isnewsessioncookie) && $isnewip && $isvalidenv && !\core_useragent::is_moodle_app()) {
+
+        $logintime = time();
+        $ismoodleapp = false;
+        $useragent = \core_useragent::get_user_agent_string();
+
+        // Schedule adhoc task to sent a login notification to the user.
+        $task = new \core\task\send_login_notifications();
+        $task->set_userid($USER->id);
+        $task->set_custom_data(compact('ismoodleapp', 'useragent', 'loginip', 'logintime'));
+        $task->set_component('core');
+        \core\task\manager::queue_adhoc_task($task);
+    }
 
     // Queue migrating the messaging data, if we need to.
     if (!get_user_preferences('core_message_migrate_data', false, $USER->id)) {

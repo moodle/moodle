@@ -1264,6 +1264,7 @@ $string['messageprovider:errors'] = 'Important errors with the site';
 $string['messageprovider:errors_help'] = 'These are important errors that an administrator should know about.';
 $string['messageprovider:gradenotifications'] = 'Grade notifications';
 $string['messageprovider:messagecontactrequests'] = 'Message contact requests notification';
+$string['messageprovider:newlogin'] = 'New login notifications';
 $string['messageprovider:notices'] = 'Notices about minor problems';
 $string['messageprovider:notices_help'] = 'These are notices that an administrator might be interested in seeing.';
 $string['messageprovider:infected'] = 'Antivirus failure notifications.';
@@ -1386,6 +1387,18 @@ $string['new'] = 'New';
 $string['newaccount'] = 'New account';
 $string['newactivityname'] = 'New name for activity {$a}';
 $string['newcourse'] = 'New course';
+$string['newloginnotificationtitle'] = 'New sign in to your {$a} account';
+$string['newloginnotificationbodysmall'] = 'Your {$a} account was just signed in to from a new device.';
+$string['newloginnotificationbodyfull'] = '<p>Hi {$a->userfullname},</p>
+<p>Your {$a->sitename} account was just signed in to from a new device.</p>
+<ul>
+<li>Your account: {$a->username} {$a->useremail}</li>
+<li>{$a->logintime}</li>
+<li>Device: {$a->logindevice}</li>
+<li>IP: {$a->loginip}</li>
+</ul>
+<p>If this was you, then you don\'t need to do anything.</p>
+<p>If you don\'t recognise this activity, please <a href="{$a->changepasswordlink}">change your password</a></p>';
 $string['newpassword'] = 'New password';
 $string['newpassword_help'] = 'Enter a new password or leave blank to keep current password.';
 $string['newpasswordfromlost'] = '<strong>NOTICE:</strong> Your <strong>Current password</strong> will have been sent to you in the <strong>second</strong> of the two emails sent as part of the lost password recovery process. Make sure you have received your replacement password before continuing with this screen.';

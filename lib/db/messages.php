@@ -35,6 +35,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $messageproviders = array (
 
+    'newlogin' => array (
+        'defaults' => array(
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+        ),
+    ),
+
     // Notices that an admin might be interested in
     'notices' => array (
          'capability'  => 'moodle/site:config'
