@@ -181,7 +181,8 @@ class reports_list extends system_report {
         );
 
         // The user who modified the report.
-        $this->add_column_from_entity('user:fullname');
+        $this->add_column_from_entity('user:fullname')
+            ->set_title(new lang_string('usermodified', 'reportbuilder'));
 
         // Initial sorting.
         $this->set_initial_sort_column('report:timecreated', SORT_DESC);

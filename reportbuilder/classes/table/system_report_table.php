@@ -101,8 +101,8 @@ class system_report_table extends base_report_table {
 
             $columnheaders[$column->get_column_alias()] = $column->get_title();
 
-            // Specify whether column should behave as a user fullname column.
-            if (preg_match('/^user:fullname.*$/', $column->get_unique_identifier())) {
+            // Specify whether column should behave as a user fullname column unless the column has a custom title set.
+            if (preg_match('/^user:fullname.*$/', $column->get_unique_identifier()) && !$column->has_custom_title()) {
                 $this->userfullnamecolumns[] = $column->get_column_alias();
             }
 

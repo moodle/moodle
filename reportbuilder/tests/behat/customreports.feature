@@ -33,8 +33,8 @@ Feature: Manage custom reports
     Then I should see "Email address" in the "[data-region='report-filters']" "css_element"
     And I navigate to "Reports > Report builder > Custom reports" in site administration
     And the following should exist in the "reportbuilder-table" table:
-      | Name      | Report source |
-      | My report | Users         |
+      | Name      | Report source | Modified by |
+      | My report | Users         | Admin User  |
 
   Scenario: Create custom report without default setup
     Given I log in as "admin"
