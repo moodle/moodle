@@ -213,7 +213,7 @@ class course extends base {
             'courseidnumberewithlink' => 'idnumber',
         ];
         foreach ($fields as $key => $field) {
-            $columns[] = (new column(
+            $column = (new column(
                 $key,
                 new lang_string($key, 'core_reportbuilder'),
                 $this->get_entity_name()
@@ -227,8 +227,23 @@ class course extends base {
                         return '';
                     }
 
-                    return html_writer::link(course_get_url($row->id), $value);
+                    context_helper::preload_from_record($row);
+
+                    return html_writer::link(course_get_url($row->id),
+                        format_string($value, true, ['context' => context_course::instance($row->id)]));
                 });
+
+            // Join on the context table so that we can use it for formatting these columns later.
+            if ($key === 'coursefullnamewithlink') {
+                $join = "LEFT JOIN {context} {$contexttablealias}
+                           ON {$contexttablealias}.contextlevel = " . CONTEXT_COURSE . "
+                          AND {$contexttablealias}.instanceid = {$tablealias}.id";
+
+                $column->add_join($join)
+                    ->add_fields(context_helper::get_preload_record_columns_sql($contexttablealias));
+            }
+
+            $columns[] = $column;
         }
 
         foreach ($coursefields as $coursefield => $coursefieldlang) {
