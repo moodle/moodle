@@ -47,11 +47,6 @@ class restore_attempt_test extends \advanced_testcase {
     public function test_restore_question_attempts_missing_users(): void {
         global $DB, $USER;
 
-        // TODO: Remove this once MDL-72950 is fixed.
-        if ($DB->get_dbfamily() == 'oracle') {
-            $this->markTestSkipped("Skipping for Oracle until MDL-72950 is fixed.");
-        }
-
         $this->resetAfterTest();
         $this->setAdminUser();
 
