@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @skip_interim
 Feature: In a lesson activity, a non editing teacher can grade essay questions
   As a non editing teacher
   I need to grade student answers to essay questions in lesson

@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @skip_interim
 Feature: In a lesson activity, students can see questions in random order
   In order to create a lesson with clusters
   As a teacher

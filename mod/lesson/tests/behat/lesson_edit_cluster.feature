@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @skip_interim
 Feature: In a lesson activity, teacher can edit a cluster page
   In order to modify an existing lesson and change navigation
   As a teacher

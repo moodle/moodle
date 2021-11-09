@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @skip_interim
 Feature: In Dashboard, teacher can see the number of student attempts to lessons
   In order to know the number of student attempts to a lesson
   As a teacher

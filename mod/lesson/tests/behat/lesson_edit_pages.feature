@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @skip_interim
 Feature: In a lesson activity, teacher can edit lesson's pages
   In order to modify an existing lesson
   As a teacher

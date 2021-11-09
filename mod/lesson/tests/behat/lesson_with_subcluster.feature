@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @skip_interim
 Feature: In a lesson activity, students can see questions in random order and a single question drawn from a branch
   In order to create a lesson with a cluster and a subcluster
   As a teacher

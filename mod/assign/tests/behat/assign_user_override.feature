@@ -144,6 +144,7 @@ Feature: Assign user override
     Then I should see "No groups you can access."
     And the "Add user override" "button" should be disabled
 
+  @skip_interim
   Scenario: A teacher without accessallgroups permission should only be able to add user override for users that he/she shares groups with,
         when the activity's group mode is "separate groups"
     Given the following "permission overrides" exist:
