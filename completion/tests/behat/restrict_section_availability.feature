@@ -88,7 +88,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I should see "Submitted for grading"
     And I log out
     And I am on the "Grade assignment" "assign activity" page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student First" "table_row"
     And I set the following fields to these values:
       | Grade | 21 |

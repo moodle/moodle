@@ -48,12 +48,13 @@ if ($pageid !== null) {
     $url->param('pageid', $pageid);
 }
 $PAGE->set_url($url);
-if ($action == 'reportoverview') {
-    $PAGE->navbar->add(get_string('reports', 'lesson'));
-    $PAGE->navbar->add(get_string('overview', 'lesson'));
+if ($action == 'reportdetail') {
+    $PAGE->navbar->add(get_string('report', 'lesson'), $url);
 }
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
+$reportactionmenu = new \mod_lesson\output\report_action_menu($id, $url);
+$reportactionarea = $lessonoutput->render($reportactionmenu);
 
 if ($action === 'delete') {
     /// Process any form data before fetching attempts, grades and times
@@ -118,6 +119,9 @@ if ($action === 'delete') {
 
     if ($table === false) {
         echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('nolessonattempts', 'lesson'));
+        if ($PAGE->has_secondary_navigation()) {
+            echo $reportactionarea;
+        }
         if (!empty($currentgroup)) {
             $groupname = groups_get_group_name($currentgroup);
             echo $OUTPUT->notification(get_string('nolessonattemptsgroup', 'lesson', $groupname));
@@ -130,6 +134,9 @@ if ($action === 'delete') {
     }
 
     echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('overview', 'lesson'));
+    if ($PAGE->has_secondary_navigation()) {
+        echo $reportactionarea;
+    }
     groups_print_activity_menu($cm, $url);
 
     $course_context = context_course::instance($course->id);
@@ -257,6 +264,9 @@ if ($action === 'delete') {
 
 **************************************************************************/
     echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('detailedstats', 'lesson'));
+    if ($PAGE->has_secondary_navigation()) {
+        echo $reportactionarea;
+    }
     groups_print_activity_menu($cm, $url);
 
     $course_context = context_course::instance($course->id);

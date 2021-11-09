@@ -106,7 +106,7 @@ Feature: Using the activity grade form element
       | grade[modgrade_scale] | ABCDEF |
     And I press "Save and display"
     And I am on the "Test assignment name" "assign activity" page
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade" to "C"
     And I press "Save changes"

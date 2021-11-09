@@ -59,21 +59,30 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
         $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
         if (has_capability('mod/lesson:manage', $context)) {
-            $output .= $this->output->heading_with_help($activityname, 'overview', 'lesson');
-            $output .= $this->output->activity_information($cminfo, $completiondetails, $activitydates);
+            $activitypage = new moodle_url('/mod/' . $this->page->activityname . '/view.php');
+            $setactive = $activitypage->compare($this->page->url, URL_MATCH_BASE);
+            if ($setactive) {
+                if (!$this->page->has_secondary_navigation()) {
+                    $output .= $this->output->heading_with_help($activityname, 'overview', 'lesson');
+                }
+                $output .= $this->output->activity_information($cminfo, $completiondetails, $activitydates);
+            }
 
             // Info box.
             if ($lesson->intro) {
                 $output .= $this->output->box(format_module_intro('lesson', $lesson, $cm->id), 'generalbox', 'intro');
             }
-            if (!empty($currenttab)) {
+
+            if (!empty($currenttab) && !$this->page->has_secondary_navigation()) {
                 ob_start();
                 include($CFG->dirroot.'/mod/lesson/tabs.php');
                 $output .= ob_get_contents();
                 ob_end_clean();
             }
         } else {
-            $output .= $this->output->heading($activityname);
+            if (!$this->page->has_secondary_navigation()) {
+                $output .= $this->output->heading($activityname);
+            }
             $output .= $this->output->activity_information($cminfo, $completiondetails, $activitydates);
 
             // Info box.
@@ -645,5 +654,51 @@ class mod_lesson_renderer extends plugin_renderer_base {
                 array('class' => 'centerpadded lessonbutton standardbutton pr-3'));
         }
         return $output;
+    }
+
+    /**
+     * Render the override action menu.
+     *
+     * @param \mod_lesson\output\override_action_menu $overrideactionmenu The overrideactionmenu
+     *
+     * @return string The rendered override action menu.
+     */
+    public function render_override_action_menu(\mod_lesson\output\override_action_menu $overrideactionmenu): string {
+        $context = $overrideactionmenu->export_for_template($this);
+        return $this->render_from_template('mod_lesson/override_action_menu', $context);
+    }
+
+    /**
+     * Render the edit action buttons.
+     *
+     * @param \mod_lesson\output\edit_action_buttons $editbuttons The editbuttons
+     *
+     * @return string The rendered edit action buttons.
+     */
+    public function render_edit_action_buttons(\mod_lesson\output\edit_action_buttons $editbuttons): string {
+        $context = $editbuttons->export_for_template($this);
+        return $this->render_from_template('mod_lesson/edit_action_buttons', $context);
+    }
+
+    /**
+     * Render the edit action area.
+     *
+     * @param \mod_lesson\output\edit_action_area $editarea The edit area.
+     * @return string The rendered edit action area.
+     */
+    public function render_edit_action_area(\mod_lesson\output\edit_action_area $editarea): string {
+        $context = $editarea->export_for_template($this);
+        return $this->render_from_template('mod_lesson/edit_action_area', $context);
+    }
+
+    /**
+     * Render the report action menu
+     *
+     * @param \mod\lesson\output\report_action_menu $reportmenu The reportmenu.
+     * @return string The rendered report action menu.
+     */
+    public function render_report_action_menu(\mod_lesson\output\report_action_menu $reportmenu): string {
+        $context = $reportmenu->export_for_template($this);
+        return $this->render_from_template('mod_lesson/report_action_menu', $context);
     }
 }

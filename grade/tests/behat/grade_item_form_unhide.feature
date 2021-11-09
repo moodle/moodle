@@ -20,7 +20,7 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
       | activity | course | idnumber | name                 | intro                       | assignfeedback_comments_enabled |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1                               |
     And I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100  | 50                       |

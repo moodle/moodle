@@ -38,7 +38,7 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('booktool/importhtml:import', $context);
 
-$PAGE->set_url('/mod/book/tool/importhtml/index.php', array('id'=>$id, 'chapterid'=>$chapterid));
+$PAGE->set_url('/mod/book/tool/importhtml/index.php', array('id' => $id));
 
 if ($chapterid) {
     if (!$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id))) {

@@ -60,6 +60,8 @@ $canmanage = $lesson->can_manage();
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
+$editbuttons = new \mod_lesson\output\edit_action_buttons($id, $canmanage);
+
 $reviewmode = $lesson->is_in_review_mode();
 
 if ($lesson->usepassword && !empty($userpassword)) {
@@ -69,17 +71,20 @@ if ($lesson->usepassword && !empty($userpassword)) {
 // Check these for students only TODO: Find a better method for doing this!
 if ($timerestriction = $lesson->get_time_restriction_status()) {  // Deadline restrictions.
     echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('notavailable'));
+    echo $lessonoutput->render($editbuttons);
     // No need to display warnings because activity dates are displayed at the top of the page.
     echo $lessonoutput->lesson_inaccessible('');
     echo $lessonoutput->footer();
     exit();
 } else if ($passwordrestriction = $lesson->get_password_restriction_status($userpassword)) { // Password protected lesson code.
     echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)));
+    echo $lessonoutput->render($editbuttons);
     echo $lessonoutput->login_prompt($lesson, $userpassword !== '');
     echo $lessonoutput->footer();
     exit();
 } else if ($dependenciesrestriction = $lesson->get_dependencies_restriction_status()) { // Check for dependencies.
     echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('completethefollowingconditions', 'lesson', format_string($lesson->name)));
+    echo $lessonoutput->render($editbuttons);
     echo $lessonoutput->dependancy_errors($dependenciesrestriction->dependentlesson, $dependenciesrestriction->errors);
     echo $lessonoutput->footer();
     exit();
@@ -140,6 +145,7 @@ if (empty($pageid)) {
         if ($lesson->left_during_timed_session($retries)) {
 
             echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
+            echo $lessonoutput->render($editbuttons);
             if ($lesson->timelimit) {
                 if ($lesson->retake) {
                     $continuelink = new single_button(new moodle_url('/mod/lesson/view.php',
@@ -167,6 +173,7 @@ if (empty($pageid)) {
     if ($attemptflag) {
         if (!$lesson->retake) {
             echo $lessonoutput->header($lesson, $cm, 'view', '', null, get_string("noretake", "lesson"));
+            echo $lessonoutput->render($editbuttons);
             $courselink = new single_button(new moodle_url('/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
             echo $lessonoutput->footer();
@@ -176,6 +183,7 @@ if (empty($pageid)) {
     // start at the first page
     if (!$pageid = $lessonfirstpageid) {
         echo $lessonoutput->header($lesson, $cm, 'view', '', null);
+        echo $lessonoutput->render($editbuttons);
         // Lesson currently has no content. A message for display has been prepared and will be displayed by the header method
         // of the lesson renderer.
         echo $lessonoutput->footer();
@@ -229,6 +237,8 @@ if ($pageid != LESSON_EOL) {
 
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
     echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid, $extrapagetitle);
+    echo $lessonoutput->render($editbuttons);
+
     if ($attemptflag) {
         // We are using level 3 header because attempt heading is a sub-heading of lesson title (MDL-30911).
         echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries), 3);
@@ -255,6 +265,7 @@ if ($pageid != LESSON_EOL) {
 
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
     echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid, get_string("congratulations", "lesson"));
+    echo $lessonoutput->render($editbuttons);
     echo $lessoncontent;
     echo $lessonoutput->footer();
 }

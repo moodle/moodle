@@ -4569,7 +4569,9 @@ class assign {
         $gradingoptionsdata->workflowfilter = $workflowfilter;
         $gradingoptionsform->set_data($gradingoptionsdata);
 
-        $actionformtext = $this->get_renderer()->render($gradingactions);
+        $buttons = new \mod_assign\output\grading_actionmenu($this->get_course_module()->id);
+        $actionformtext = $this->get_renderer()->render($buttons);
+        $actionformtext .= $this->get_renderer()->render($gradingactions);
 
         $currenturl = new moodle_url('/mod/assign/view.php', ['id' => $this->get_course_module()->id, 'action' => 'grading']);
 
@@ -5802,6 +5804,9 @@ class assign {
         }
 
         if ($this->can_view_grades()) {
+            $actionbuttons = new \mod_assign\output\actionmenu($this->get_course_module()->id);
+            $o .= $this->get_renderer()->submission_actionmenu($actionbuttons);
+
             // Group selector will only be displayed if necessary.
             $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
             $o .= groups_print_activity_menu($this->get_course_module(), $currenturl->out(), true);
@@ -5809,10 +5814,9 @@ class assign {
             $summary = $this->get_assign_grading_summary_renderable();
             $o .= $this->get_renderer()->render($summary);
         }
-        $grade = $this->get_user_grade($USER->id, false);
-        $submission = $this->get_user_submission($USER->id, false);
 
         if ($this->can_view_submission($USER->id)) {
+            $o .= $this->view_submission_action_bar($instance, $USER);
             $o .= $this->view_student_summary($USER, true);
         }
 
@@ -5821,6 +5825,44 @@ class assign {
         \mod_assign\event\submission_status_viewed::create_from_assign($this)->trigger();
 
         return $o;
+    }
+
+    /**
+     * The action bar displayed in the submissions page.
+     *
+     * @param stdClass $instance The settings for the current instance of this assignment
+     * @param stdClass $user The user to print the action bar for
+     * @return string
+     */
+    public function view_submission_action_bar(stdClass $instance, stdClass $user): string {
+        $submission = $this->get_user_submission($user->id, false);
+        // Figure out if we are team or solitary submission.
+        $teamsubmission = null;
+        if ($instance->teamsubmission) {
+            $teamsubmission = $this->get_group_submission($user->id, 0, false);
+        }
+
+        $showsubmit = ($this->submissions_open($user->id)
+            && $this->show_submit_button($submission, $teamsubmission, $user->id));
+        $showedit = ($this->is_any_submission_plugin_enabled()) && $this->can_edit_submission($user->id);
+
+        // The method get_group_submission() says that it returns a stdClass, but it can return false >_>.
+        if ($teamsubmission === false) {
+            $teamsubmission = new stdClass();
+        }
+        // Same goes for get_user_submission().
+        if ($submission === false) {
+            $submission = new stdClass();
+        }
+        $actionbuttons = new \mod_assign\output\user_submission_actionmenu(
+            $this->get_course_module()->id,
+            $showsubmit,
+            $showedit,
+            $submission,
+            $teamsubmission
+        );
+
+        return $this->get_renderer()->render($actionbuttons);
     }
 
     /**

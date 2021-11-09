@@ -68,7 +68,9 @@
         $PAGE->set_title(format_string($choice->name).": $strresponses");
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
-        echo $OUTPUT->heading(format_string($choice->name), 2, null);
+        if (!$PAGE->has_secondary_navigation()) {
+            echo $OUTPUT->heading(format_string($choice->name), 2, null);
+        }
         /// Check to see if groups are being used in this choice
         $groupmode = groups_get_activity_groupmode($cm);
         if ($groupmode) {

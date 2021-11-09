@@ -111,7 +111,9 @@ echo $OUTPUT->header();
 
 if ($lti->showtitlelaunch) {
     // Print the main part of the page.
-    echo $OUTPUT->heading(format_string($lti->name, true, array('context' => $context)));
+    if (!$PAGE->has_secondary_navigation()) {
+        echo $OUTPUT->heading(format_string($lti->name, true, array('context' => $context)));
+    }
 }
 
 // Display any activity information (eg completion requirements / dates).

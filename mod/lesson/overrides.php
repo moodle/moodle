@@ -66,8 +66,15 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('overrides', 'lesson'));
 $PAGE->set_heading($course->fullname);
+
+navigation_node::override_active_url(new moodle_url('/mod/lesson/overrides.php', ['cmid' => $cmid]));
+
+$renderer = $PAGE->get_renderer('mod_lesson');
+
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($lesson->name, true, array('context' => $context)));
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading(format_string($lesson->name, true, array('context' => $context)));
+}
 
 // Delete orphaned group overrides.
 $sql = 'SELECT o.id
@@ -131,6 +138,47 @@ if ($groupmode) {
 }
 
 $overrides = $DB->get_records_sql($sql, $params);
+
+$canoverride = true;
+$errormessage = '';
+
+if ($groupmode) {
+    if (empty($groups)) {
+        // There are no groups.
+        $canoverride = false;
+        $errormessage = get_string('groupsnone', 'lesson');
+    }
+} else {
+    $users = array();
+    // See if there are any users in the lesson.
+    if ($accessallgroups) {
+        $users = get_enrolled_users($context, '', 0, 'u.id');
+        $nousermessage = get_string('usersnone', 'lesson');
+    } else if ($groups) {
+        $enrolledjoin = get_enrolled_join($context, 'u.id');
+        list($ingroupsql, $ingroupparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+        $params = $enrolledjoin->params + $ingroupparams;
+        $sql = "SELECT u.id
+                  FROM {user} u
+                  JOIN {groups_members} gm ON gm.userid = u.id
+                       {$enrolledjoin->joins}
+                 WHERE gm.groupid $ingroupsql
+                       AND {$enrolledjoin->wheres}
+              ORDER BY $sort";
+        $users = $DB->get_records_sql($sql, $params);
+        $nousermessage = get_string('usersnone', 'lesson');
+    } else {
+        $nousermessage = get_string('groupsnone', 'lesson');
+    }
+    $info = new \core_availability\info_module($cm);
+    $users = $info->filter_user_list($users);
+
+    if (empty($users)) {
+        // There are no users.
+        $canoverride = false;
+        $errormessage = $nousermessage;
+    }
+}
 
 // Initialise table.
 $table = new html_table();
@@ -275,6 +323,9 @@ foreach ($overrides as $override) {
     }
 }
 
+$overrideselect = new \mod_lesson\output\override_action_menu($cm->id, $url, $canoverride);
+echo $renderer->render($overrideselect);
+
 // Output the table and button.
 echo html_writer::start_tag('div', array('id' => 'lessonoverrides'));
 if (count($table->data)) {
@@ -285,49 +336,8 @@ if ($hasinactive) {
 }
 
 echo html_writer::start_tag('div', array('class' => 'buttons'));
-$options = array();
-if ($groupmode) {
-    if (empty($groups)) {
-        // There are no groups.
-        echo $OUTPUT->notification(get_string('groupsnone', 'lesson'), 'error');
-        $options['disabled'] = true;
-    }
-    echo $OUTPUT->single_button($overrideediturl->out(true,
-            array('action' => 'addgroup', 'cmid' => $cm->id)),
-            get_string('addnewgroupoverride', 'lesson'), 'post', $options);
-} else {
-    $users = array();
-    // See if there are any users in the lesson.
-    if ($accessallgroups) {
-        $users = get_enrolled_users($context, '', 0, 'u.id');
-        $nousermessage = get_string('usersnone', 'lesson');
-    } else if ($groups) {
-        $enrolledjoin = get_enrolled_join($context, 'u.id');
-        list($ingroupsql, $ingroupparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
-        $params = $enrolledjoin->params + $ingroupparams;
-        $sql = "SELECT u.id
-                  FROM {user} u
-                  JOIN {groups_members} gm ON gm.userid = u.id
-                       {$enrolledjoin->joins}
-                 WHERE gm.groupid $ingroupsql
-                       AND {$enrolledjoin->wheres}
-              ORDER BY $sort";
-        $users = $DB->get_records_sql($sql, $params);
-        $nousermessage = get_string('usersnone', 'lesson');
-    } else {
-        $nousermessage = get_string('groupsnone', 'lesson');
-    }
-    $info = new \core_availability\info_module($cm);
-    $users = $info->filter_user_list($users);
-
-    if (empty($users)) {
-        // There are no users.
-        echo $OUTPUT->notification($nousermessage, 'error');
-        $options['disabled'] = true;
-    }
-    echo $OUTPUT->single_button($overrideediturl->out(true,
-            array('action' => 'adduser', 'cmid' => $cm->id)),
-            get_string('addnewuseroverride', 'lesson'), 'get', $options);
+if (!empty($errormessage)) {
+    echo $OUTPUT->notification($errormessage, 'error');
 }
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');

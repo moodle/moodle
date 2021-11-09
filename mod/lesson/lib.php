@@ -1033,40 +1033,17 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
 
     if (has_capability('mod/lesson:manageoverrides', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/lesson/overrides.php', array('cmid' => $PAGE->cm->id));
-        $node = navigation_node::create(get_string('groupoverrides', 'lesson'),
-                new moodle_url($url, array('mode' => 'group')),
-                navigation_node::TYPE_SETTING, null, 'mod_lesson_groupoverrides');
-        $lessonnode->add_node($node, $beforekey);
-
-        $node = navigation_node::create(get_string('useroverrides', 'lesson'),
-                new moodle_url($url, array('mode' => 'user')),
+        $node = navigation_node::create(get_string('overrides', 'lesson'), $url,
                 navigation_node::TYPE_SETTING, null, 'mod_lesson_useroverrides');
         $lessonnode->add_node($node, $beforekey);
     }
 
-    if (has_capability('mod/lesson:edit', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id));
-        $lessonnode->add(get_string('preview', 'lesson'), $url);
-        $editnode = $lessonnode->add(get_string('edit', 'lesson'));
-        $url = new moodle_url('/mod/lesson/edit.php', array('id' => $PAGE->cm->id, 'mode' => 'collapsed'));
-        $editnode->add(get_string('collapsed', 'lesson'), $url);
-        $url = new moodle_url('/mod/lesson/edit.php', array('id' => $PAGE->cm->id, 'mode' => 'full'));
-        $editnode->add(get_string('full', 'lesson'), $url);
-    }
-
     if (has_capability('mod/lesson:viewreports', $PAGE->cm->context)) {
-        $reportsnode = $lessonnode->add(get_string('reports', 'lesson'));
-        $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
-        $reportsnode->add(get_string('overview', 'lesson'), $url);
-        $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportdetail'));
-        $reportsnode->add(get_string('detailedstats', 'lesson'), $url);
+        $reportsnode = $lessonnode->add(
+            get_string('reports', 'lesson'),
+            new moodle_url('/mod/lesson/report.php', ['id' => $PAGE->cm->id, 'action' => 'reportoverview'])
+        );
     }
-
-    if (has_capability('mod/lesson:grade', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$PAGE->cm->id));
-        $lessonnode->add(get_string('manualgrading', 'lesson'), $url);
-    }
-
 }
 
 /**

@@ -99,7 +99,7 @@ Feature: Marking guides can be created and edited
     When I press "Save changes"
     And I follow "Edit settings"
     And I follow "Test assignment 1 name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     # Checking that the user grade is correct.
     Then I should see "80" in the "Student 1" "table_row"
     And I log out

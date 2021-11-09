@@ -45,6 +45,7 @@ if ($mode !== 'display') {
     $url->param('mode', $mode);
 }
 $PAGE->set_url($url);
+$PAGE->set_secondary_active_tab('modulepage');
 
 $currentgroup = groups_get_activity_group($cm, true);
 

@@ -81,7 +81,7 @@ Feature: Submit assignment without group
     And I am on the "c1assign1" "assign activity" page logged in as teacher1
     And I should see "1" in the "Groups" "table_row"
     And I should not see "The setting 'Require group to make submission\' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "Default group" in the "Student 1" "table_row"
     And I should see "Default group" in the "Student 2" "table_row"
     And I should see "Submitted for grading" in the "Student 1" "table_row"
@@ -89,7 +89,7 @@ Feature: Submit assignment without group
     And I am on the "c1assign2" "assign activity" page
     And I should see "0" in the "Groups" "table_row"
     And I should see "The setting 'Require group to make submission' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "Not a member of any group, so unable to make submissions." in the "Student 1" "table_row"
     And I should see "Not a member of any group, so unable to make submissions." in the "Student 2" "table_row"
     And I should not see "Submitted for grading" in the "Student 1" "table_row"
@@ -97,7 +97,7 @@ Feature: Submit assignment without group
     And I am on the "c2assign1" "assign activity" page
     And I should see "1" in the "Groups" "table_row"
     And I should not see "The setting 'Require group to make submission' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "Group 1" in the "Student 1" "table_row"
     And I should see "Group 1" in the "Student 2" "table_row"
     And I should see "Submitted for grading" in the "Student 1" "table_row"
@@ -112,7 +112,7 @@ Feature: Submit assignment without group
     And I log out
     And I am on the "c3assign1" "assign activity" page logged in as teacher1
     And I should see "The setting 'Require group to make submission' is enabled and some users are either not a member of any group, or are a member of more than one group, so are unable to make submissions."
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "Member of more than one group, so unable to make submissions." in the "Student 3" "table_row"
 
   Scenario: All users are in groups, so no warning messages needed.

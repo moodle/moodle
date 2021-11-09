@@ -49,7 +49,7 @@ Feature: In a book, create chapters and sub chapters
     And I should see "2. Dummy second chapter" in the ".book_content" "css_element"
     And I should see "2. Dummy second chapter" in the "strong" "css_element"
     And I should not see "Next" in the ".book_content" "css_element"
-    And I click on "Exit book" "link"
+    And I am on "Course 1" course homepage
     And I should see "Test book" in the "Topic 1" "section"
     And I click on "Test book" "link" in the "Topic 1" "section"
     And I should not see "Previous" in the ".book_content" "css_element"
