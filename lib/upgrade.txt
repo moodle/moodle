@@ -116,6 +116,9 @@ completely removed from Moodle core too.
   - core_grades_external::get_grades
   - core_grades_external::get_grade_item
 * \core\session\manager::init_empty_session() has a new optional parameter $newsid to indicate whether this is a new user session
+* New html_table attribute "$responsive" which defaults to true. When set to true, tables created via html_writer::table() will be enclosed
+  in a .table-responsive div container which will allow the table to be scrolled horizontally with ease, especially when the table is rendered in smaller viewports.
+  Set to false to prevent the table from being enclosed in the responsive container.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.

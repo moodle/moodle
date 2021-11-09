@@ -1278,6 +1278,8 @@ class grade_report_grader extends grade_report {
         $fulltable->id = 'user-grades';
         $fulltable->caption = get_string('summarygrader', 'gradereport_grader');
         $fulltable->captionhide = true;
+        // We don't want the table to be enclosed within in a .table-responsive div as it is heavily customised.
+        $fulltable->responsive = false;
 
         // Extract rows from each side (left and right) and collate them into one row each
         foreach ($leftrows as $key => $row) {

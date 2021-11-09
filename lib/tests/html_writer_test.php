@@ -193,6 +193,7 @@ class core_html_writer_testcase extends basic_testcase {
         $row->cells[] = $cell;
 
         $table = new html_table();
+        $table->responsive = false;
         // The attribute will get overwritten by the ID.
         $table->id = 'Jeffrey';
         $table->attributes['id'] = 'will get overwritten';
@@ -230,6 +231,7 @@ EOF;
         );
         $table->caption = "Who even knows?";
         $table->captionhide = true;
+        $table->responsive = false;
 
         $output = html_writer::table($table);
         $expected = <<<EOF
