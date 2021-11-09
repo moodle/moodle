@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @skip_interim
 Feature: In a lesson activity, students can see their progress viewing a progress bar.
   In order to create a lesson with conditional paths
   As a teacher

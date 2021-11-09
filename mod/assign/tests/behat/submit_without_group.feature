@@ -3,7 +3,7 @@ Feature: Submit assignment without group
   As a teacher
   I should be able to prevent students submitting team assignments as members of the default group
 
-  @javascript
+  @javascript @skip_interim
   Scenario: Switch between group modes
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |

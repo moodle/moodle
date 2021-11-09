@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @skip_interim
 Feature: In a lesson activity, students can exit and re-enter the activity when it consists only of cluster pages
   As a student
   I need to exit and re-enter a lesson out and into clusters.

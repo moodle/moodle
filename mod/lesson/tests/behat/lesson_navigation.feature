@@ -18,6 +18,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | student1 | C1 | student |
     And I log in as "teacher1"
 
+  @skip_interim
   Scenario: Student navigation with pages and questions
     Given the following "activities" exist:
       | activity   | name             | intro                   | course | idnumber    |

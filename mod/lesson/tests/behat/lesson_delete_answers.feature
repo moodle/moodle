@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @skip_interim
 Feature: In a lesson activity, teacher can delete question answers and
 branch table contents
   In order to modify an existing lesson

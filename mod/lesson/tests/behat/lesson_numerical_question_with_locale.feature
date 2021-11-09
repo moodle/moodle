@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @skip_interim
 Feature: In a lesson activity, I need to edit pages in the lesson taking into account locale settings
 
   Background:

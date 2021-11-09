@@ -1,4 +1,4 @@
-@mod @mod_lesson @_file_upload
+@mod @mod_lesson @_file_upload @skip_interim
 Feature: In a lesson activity, teacher can add an essay question
   As a teacher
   I need to add an essay question in a lesson and grade student attempts
