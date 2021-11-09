@@ -61,6 +61,9 @@ final class column {
     /** @var lang_string $columntitle Used as a title for the column in reports */
     private $columntitle;
 
+    /** @var bool $hascustomcolumntitle Used to store if the column has been given a custom title */
+    private $hascustomcolumntitle = false;
+
     /** @var string $entityname Name of the entity this column belongs to */
     private $entityname;
 
@@ -151,6 +154,7 @@ final class column {
      */
     public function set_title(?lang_string $title): self {
         $this->columntitle = $title;
+        $this->hascustomcolumntitle = true;
         return $this;
     }
 
@@ -161,6 +165,15 @@ final class column {
      */
     public function get_title(): string {
         return $this->columntitle ? (string) $this->columntitle : '';
+    }
+
+    /**
+     * Check whether this column has been given a custom title
+     *
+     * @return bool
+     */
+    public function has_custom_title(): bool {
+        return $this->hascustomcolumntitle;
     }
 
     /**
