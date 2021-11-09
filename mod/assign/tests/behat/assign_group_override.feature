@@ -140,7 +140,7 @@ Feature: Assign group override
     And I am on the "Test assignment name" Activity page logged in as student1
     And I should not see "Tuesday, 1 January 2030, 8:00"
 
-  @javascript
+  @javascript @skip_interim
   Scenario: Add both a user and group override and verify that both are applied correctly
     Given I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Settings" in current page administration

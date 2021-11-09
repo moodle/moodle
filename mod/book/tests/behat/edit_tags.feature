@@ -1,4 +1,4 @@
-@mod @mod_book @core_tag @javascript
+@mod @mod_book @core_tag @javascript @skip_interim
 Feature: Edited book chapters handle tags correctly
   In order to get book chapters properly labelled
   As a user
