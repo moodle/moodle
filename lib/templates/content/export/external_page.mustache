@@ -51,7 +51,7 @@
 <html lang="{{global.language}}"{{#global.righttoleft}} dir="rtl"{{/global.righttoleft}}>
 <head>
     <meta charset="UTF-8">
-    <title>{{global.sitename}} - {{global.coursename}}</title>
+    <title>{{{global.sitename}}} - {{{global.coursename}}}</title>
     <link rel="stylesheet" type="text/css" href="{{global.pathtotop}}/shared/moodle.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
@@ -64,7 +64,7 @@
         </nav>
         <main class="container-fluid mt-2 flex-grow-1 flex-shrink-1">
             <div>
-                <h1><a href="{{global.pathtotop}}index.html">{{global.coursename}}</a></h1>
+                <h1><a href="{{global.pathtotop}}index.html">{{{global.coursename}}}</a></h1>
                 <p>{{global.courseshortname}}</p>
                 {{$pagecontent}}{{/pagecontent}}
             </div>
