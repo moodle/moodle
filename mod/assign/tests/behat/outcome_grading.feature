@@ -68,7 +68,6 @@ Feature: Outcome grading
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 1" "table_row"
 
-  @skip_interim
   Scenario: Giving an outcome to a group submission
     Given the following "users" exist:
       | username | firstname | lastname | email |

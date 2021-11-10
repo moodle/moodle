@@ -144,7 +144,6 @@ Feature: Assign user override
     Then I should see "No groups you can access."
     And the "Add user override" "button" should be disabled
 
-  @skip_interim
   Scenario: A teacher without accessallgroups permission should only be able to add user override for users that he/she shares groups with,
         when the activity's group mode is "separate groups"
     Given the following "permission overrides" exist:
@@ -164,11 +163,12 @@ Feature: Assign user override
       | student2 | G2    |
     And I am on the "Assignment 2" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
     And I press "Add user override"
     Then the "Override user" select box should contain "Sam1 Student1, student1@example.com"
     And the "Override user" select box should not contain "Sam2 Student2, student2@example.com"
 
-  @javascript @skip_interim
+  @javascript
   Scenario: A teacher without accessallgroups permission should only be able to see the user override for users that he/she shares groups with,
         when the activity's group mode is "separate groups"
     Given the following "permission overrides" exist:
@@ -188,6 +188,7 @@ Feature: Assign user override
       | student2 | G2    |
     And I am on the "Assignment 2" Activity page logged in as admin
     And I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user          | Student1                            |
@@ -201,6 +202,7 @@ Feature: Assign user override
 
     And I am on the "Assignment 2" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
     Then I should see "Student1" in the ".generaltable" "css_element"
     But I should not see "Student2" in the ".generaltable" "css_element"
 
