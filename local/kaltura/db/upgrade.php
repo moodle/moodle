@@ -73,5 +73,34 @@ function xmldb_local_kaltura_upgrade($oldversion) {
         // Kaltura savepoint reached.
         upgrade_plugin_savepoint(true, 2016120130, 'local', 'kaltura');
     }
+
+    // fix wrong versions
+    if ($oldversion == 20210620311) {
+        update_wrong_plugin_version_value($oldversion, '2021051700');
+    }
+    else if ($oldversion == 20201215310 || $oldversion == 20210620310) {
+        update_wrong_plugin_version_value($oldversion, '2020110900');
+    }
+    else if ($oldversion == 2020070539 || $oldversion == 2020121539 || $oldversion == 2021062039) {
+        update_wrong_plugin_version_value($oldversion, '2020061500');
+    }
+
     return true;
+}
+
+/**
+ * @param $oldversion
+ * @param $newversion
+ */
+function update_wrong_plugin_version_value($oldversion, $newversion) {
+    global $DB;
+    $pluginsRecords = $DB->get_records_select('config_plugins', "name = 'version' AND value = '$oldversion'");
+
+    foreach ($pluginsRecords as $record) {
+        $record->value = $newversion;
+        $DB->update_record('config_plugins', $record);
+    }
+
+//    // TODO: UNDERSTAND IF I NEED THIS
+//    upgrade_plugin_savepoint(true, 2020090700, 'tool', 'moodlenet');
 }
