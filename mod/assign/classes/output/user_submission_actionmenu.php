@@ -76,7 +76,7 @@ class user_submission_actionmenu implements templatable, renderable {
      * @return string The status of the submission.
      */
     protected function get_current_status(): string {
-        if (!is_null($this->teamsubmission)) {
+        if (!is_null($this->teamsubmission) && isset($this->teamsubmission->status)) {
             return $this->teamsubmission->status;
         } else if (!empty((array)$this->submission)) {
             return $this->submission->status;

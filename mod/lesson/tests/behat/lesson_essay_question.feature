@@ -1,4 +1,4 @@
-@mod @mod_lesson @_file_upload @skip_interim
+@mod @mod_lesson @_file_upload
 Feature: In a lesson activity, teacher can add an essay question
   As a teacher
   I need to add an essay question in a lesson and grade student attempts
@@ -47,7 +47,7 @@ Feature: In a lesson activity, teacher can add an essay question
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And I click on "Grade essays" "button"
+    And I grade lesson essays
     And I should see "Student 1"
     And I should see "Essay question"
     And I follow "Essay question"

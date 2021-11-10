@@ -1,4 +1,4 @@
-@mod @mod_lesson @skip_interim
+@mod @mod_lesson
 Feature: In a lesson activity, I need to edit pages in the lesson taking into account locale settings
 
   Background:
@@ -43,7 +43,7 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test lesson name"
-    And I click on "Edit" "button" in the "region-main" "region"
+    And I edit the lesson
     And I follow "Hardest question ever"
     Then I should see "2#87"
     And I should see "2#1:2#8"
@@ -53,8 +53,8 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test lesson name"
-    And I click on "Edit" "button" in the "region-main" "region"
-    And I select "Expanded" from the "jump" singleselect
+    And I edit the lesson
+    And I select edit type "Expanded"
     Then I should see "2#87"
     And I should see "2#1:2#8"
     And I log out
@@ -115,7 +115,7 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
       | core_langconfig | decsep   | ,     |
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test lesson name"
-    Then I click on "Edit" "button" in the "region-main" "region"
+    Then I edit the lesson
     And I follow "Hardest question ever"
     Then I should see "2,87"
     And I should see "2,1:2,8"

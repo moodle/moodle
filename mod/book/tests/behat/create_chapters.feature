@@ -61,7 +61,6 @@ Feature: In a book, create chapters and sub chapters
     And I should see "1. Dummy first chapter" in the ".book_content" "css_element"
     And I should see "1. Dummy first chapter" in the "strong" "css_element"
 
-  @skip_interim
   Scenario: Change editing mode for an individual chapter
     Given I am on the "Test book" Activity page
     And I should see "Add new chapter"
