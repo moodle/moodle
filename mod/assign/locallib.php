@@ -8945,7 +8945,10 @@ class assign {
                 if ($gradebookplugin) {
                     $grade = $this->get_user_grade($result->userid, false);
                     if ($grade) {
-                        $gradebookgrade->feedback = $gradebookplugin->text_for_gradebook($grade);
+                        $feedbacktext = $gradebookplugin->text_for_gradebook($grade);
+                        if (!empty($feedbacktext)) {
+                            $gradebookgrade->feedback = $feedbacktext;
+                        }
                         $gradebookgrade->feedbackformat = $gradebookplugin->format_for_gradebook($grade);
                         $gradebookgrade->feedbackfiles = $gradebookplugin->files_for_gradebook($grade);
                     }
