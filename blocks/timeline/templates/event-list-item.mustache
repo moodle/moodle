@@ -56,13 +56,15 @@
                 {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
             </div>
             <div class="event-name-container flex-grow-1 line-height-3 nowrap text-truncate">
-                <h6 class="event-name mb-0 pb-1 text-truncate">
-                    <a href="{{url}}"
-                            title="{{name}}"
-                            aria-label='{{#cleanstr}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{activityname}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/cleanstr}}'>
-                        {{{activityname}}}</a>
-                    {{#overdue}}<span class="badge badge-pill badge-danger ml-1">{{#str}} overdue, block_timeline {{/str}}</span>{{/overdue}}
-                </h6>
+                <div class="d-flex">
+                    <h6 class="event-name mb-0 pb-1 text-truncate">
+                        {{#overdue}}<span class="badge badge-pill badge-danger ml-1 float-right">{{#str}} overdue, block_timeline {{/str}}</span>{{/overdue}}
+                        <a href="{{url}}"
+                                title="{{name}}"
+                                aria-label='{{#cleanstr}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{activityname}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/cleanstr}}'>
+                            {{{activityname}}}</a>
+                    </h6>
+                </div>
                 <small class="mb-0">
                     {{#courseview}}
                         {{activitystr}}
