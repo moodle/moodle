@@ -42,6 +42,15 @@ require_once($CFG->libdir . '/badgeslib.php');
  */
 class core_badges_external_testcase extends externallib_advanced_testcase {
 
+    /** @var stdClass $course */
+    private $course;
+
+    /** @var stdClass $student */
+    private $student;
+
+    /** @var stdClass $teacher */
+    private $teacher;
+
     /**
      * Set up for every test
      */
@@ -53,15 +62,9 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
 
-        // Create users.
-        $this->student = self::getDataGenerator()->create_user();
-        $this->teacher = self::getDataGenerator()->create_user();
-
-        // Users enrolments.
-        $this->studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $this->teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
-        $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id, 'manual');
-        $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
+        // Create users and enrolments.
+        $this->student = $this->getDataGenerator()->create_and_enrol($this->course, 'student');
+        $this->teacher = $this->getDataGenerator()->create_and_enrol($this->course, 'editingteacher');
 
         // Mock up a site badge.
         $now = time();
@@ -139,7 +142,7 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
         $badge->issue($this->student->id, true);
 
         // Hack the database to adjust the time each badge was issued.
-        $DB->set_field('badge_issued', 'dateissued', $now - 11, array('userid' => $this->student->id, 'badgeid' => $coursebadgeid));
+        $DB->set_field('badge_issued', 'dateissued', $now - 10, array('userid' => $this->student->id, 'badgeid' => $coursebadgeid));
 
         // Make the site badge a related badge.
         $badge->add_related_badges(array($badgeid));
@@ -245,5 +248,29 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
                 $this->assertFalse(isset($badge['message']));
             }
         }
+    }
+
+    /**
+     * Test get_user_badges where issuername contains text to be filtered
+     */
+    public function test_get_user_badges_filter_issuername(): void {
+        global $DB;
+
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+
+        external_settings::get_instance()->set_filter(true);
+
+        // Update issuer name of test badge.
+        $issuername = '<span class="multilang" lang="en">Issuer (en)</span><span class="multilang" lang="es">Issuer (es)</span>';
+        $DB->set_field('badge', 'issuername', $issuername, ['name' => 'Test badge site']);
+
+        // Retrieve student badges.
+        $result = core_badges_external::get_user_badges($this->student->id);
+        $result = external_api::clean_returnvalue(core_badges_external::get_user_badges_returns(), $result);
+
+        // Site badge will be last, because it has the earlier issued date.
+        $badge = end($result['badges']);
+        $this->assertEquals('Issuer (en)', $badge['issuername']);
     }
 }
