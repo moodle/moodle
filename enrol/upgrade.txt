@@ -1,6 +1,11 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+* Final deprecation of the following webservice:
+  * core_enrol_edit_user_enrolment
+
 === 3.11 ===
 
 * Added onlysuspended option to core_enrol_get_enrolled_users webservice to retrieve only suspended users.

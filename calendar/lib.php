@@ -70,12 +70,6 @@ define('CALENDAR_TF_24', '%H:%M');
 define('CALENDAR_TF_12', '%I:%M %p');
 
 /**
- * CALENDAR_EVENT_GLOBAL - Site calendar event types
- * @deprecated since 3.8
- */
-define('CALENDAR_EVENT_GLOBAL', 1);
-
-/**
  * CALENDAR_EVENT_SITE - Site calendar event types
  */
 define('CALENDAR_EVENT_SITE', 1);
