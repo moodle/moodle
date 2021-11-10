@@ -1338,13 +1338,14 @@ class core_badges_renderer extends plugin_renderer_base {
             );
             if (!$currentbadge->is_active() && !$currentbadge->is_locked()) {
                 $delete = $this->output->action_icon(
-                    new moodle_url('alignment_action.php',
-                        array(
-                            'id' => $currentbadge->id,
-                            'alignmentid' => $item->id,
-                            'action' => 'remove'
-                        )
-                    ), new pix_icon('t/delete', get_string('delete')));
+                    new moodle_url('/badges/alignment_action.php', [
+                        'id' => $currentbadge->id,
+                        'alignmentid' => $item->id,
+                        'sesskey' => sesskey(),
+                        'action' => 'remove'
+                    ]),
+                    new pix_icon('t/delete', get_string('delete'))
+                );
                 $edit = $this->output->action_icon(
                     new moodle_url('alignment.php',
                         array(
