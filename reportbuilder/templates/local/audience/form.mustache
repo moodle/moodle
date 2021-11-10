@@ -45,13 +45,21 @@
                 </span>
                 <span class="ml-auto">
                     {{#canedit}}
-                        <button class="btn btn-link px-0" data-action="edit-audience" {{^description}}disabled{{/description}}>
-                            {{#pix}} i/settings, core, {{#str}} editaudience, core_reportbuilder, {{title}} {{/str}} {{/pix}}
+                        <button class="btn btn-link px-0"
+                                data-action="edit-audience"
+                                title="{{#str}} editaudience, core_reportbuilder, {{title}} {{/str}}"
+                                aria-label="{{#str}} editaudience, core_reportbuilder, {{title}} {{/str}}"
+                                {{^description}}disabled{{/description}}>
+                            {{#pix}} i/settings, core {{/pix}}
                         </button>
                     {{/canedit}}
                     {{#candelete}}
-                        <button class="btn btn-link px-0 mr-2" data-action="delete-audience" {{^description}}disabled{{/description}}>
-                            {{#pix}} i/trash, core, {{#str}} deleteaudience, core_reportbuilder, {{title}} {{/str}} {{/pix}}
+                        <button class="btn btn-link px-0 mr-2"
+                                data-action="delete-audience"
+                                title="{{#str}} deleteaudience, core_reportbuilder, {{title}} {{/str}}"
+                                aria-label="{{#str}} deleteaudience, core_reportbuilder, {{title}} {{/str}}"
+                                {{^description}}disabled{{/description}}>
+                            {{#pix}} i/trash, core {{/pix}}
                         </button>
                     {{/candelete}}
                 </span>

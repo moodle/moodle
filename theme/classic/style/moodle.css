@@ -20663,17 +20663,6 @@ div.editor_atto_toolbar button .icon {
     background-color: white;
     border-left: 5px solid #fff; }
 
-/* Remove transition effects. */
-.reportbuilder-wrapper .notransition {
-  -webkit-transition: none !important;
-  /* stylelint-disable-line declaration-no-important */
-  -moz-transition: none !important;
-  /* stylelint-disable-line declaration-no-important */
-  -o-transition: none !important;
-  /* stylelint-disable-line declaration-no-important */
-  transition: none !important;
-  /* stylelint-disable-line declaration-no-important */ }
-
 /* Customreport settings */
 @media (min-width: 768px) {
   .reportbuilder-sidebar-settings {

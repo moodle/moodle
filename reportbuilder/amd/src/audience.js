@@ -32,6 +32,7 @@ import {add as addToast} from 'core/toast';
 import {deleteAudience} from 'core_reportbuilder/local/repository/audiences';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {loadFragment} from 'core/fragment';
+import {markFormAsDirty} from 'core_form/changechecker';
 
 let reportId = 0;
 let contextId = 0;
@@ -61,7 +62,9 @@ const addAudienceCard = (className, title) => {
             const audienceCard = Templates.appendNodeContents(audiencesContainer, html, js)[0];
             const audienceEmptyMessage = audiencesContainer.querySelector(reportSelectors.regions.audienceEmptyMessage);
 
-            initAudienceCardForm(audienceCard);
+            const audienceForm = initAudienceCardForm(audienceCard);
+            // Mark as dirty new audience form created to prevent users leaving the page without saving it.
+            markFormAsDirty(audienceForm.getFormNode());
             audienceEmptyMessage.classList.add('hidden');
 
             return getString('audienceadded', 'core_reportbuilder', title);
@@ -120,6 +123,9 @@ const initAudienceCardForm = audienceCard => {
         audienceDescription.innerHTML = data.detail.description;
 
         closeAudienceCardForm(audienceCard);
+
+        return getString('audiencesaved', 'core_reportbuilder')
+            .then(addToast);
     });
 
     // If cancelling the form, close the card or remove it if it was never created.
