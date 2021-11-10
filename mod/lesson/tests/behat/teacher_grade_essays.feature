@@ -1,4 +1,4 @@
-@mod @mod_lesson @skip_interim
+@mod @mod_lesson
 Feature: In a lesson activity, a non editing teacher can grade essay questions
   As a non editing teacher
   I need to grade student answers to essay questions in lesson
@@ -69,7 +69,7 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     Then I should see "Grade essays"
-    And I click on "Grade essays" "button"
+    And I grade lesson essays
     And I should see "Student 1"
     And I should see "Student 2"
     And I should see "Essay question"
@@ -94,6 +94,6 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     Then I should see "Grade essays"
-    And I click on "Grade essays" "button"
+    And I grade lesson essays
     And I should not see "Student 1"
     And I should see "Student 2"

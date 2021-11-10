@@ -1,4 +1,4 @@
-@mod @mod_lesson @skip_interim
+@mod @mod_lesson
 Feature: In a lesson activity, teacher can edit a cluster page
   In order to modify an existing lesson and change navigation
   As a teacher
@@ -29,7 +29,7 @@ Feature: In a lesson activity, teacher can edit a cluster page
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I select "Expanded" from the "jump" singleselect
+    And I select edit type "Expanded"
     And I click on "Add a cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][2]" "xpath_element"
     And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][3]" "xpath_element"
     And I set the field "Select a question type" to "Multichoice"

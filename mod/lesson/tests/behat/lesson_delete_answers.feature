@@ -1,4 +1,4 @@
-@mod @mod_lesson @skip_interim
+@mod @mod_lesson
 Feature: In a lesson activity, teacher can delete question answers and
 branch table contents
   In order to modify an existing lesson
@@ -47,7 +47,7 @@ branch table contents
       | id_jumpto_1 | First page name |
       | id_score_1 | 0 |
     And I press "Save page"
-    And I select "Expanded" from the "jump" singleselect
+    And I select edit type "Expanded"
 
   Scenario: Edit lesson content page
     Given I click on "//th[normalize-space(.)='First page name']/descendant::a[3]" "xpath_element"

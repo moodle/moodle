@@ -1,4 +1,4 @@
-@mod @mod_lesson @skip_interim
+@mod @mod_lesson
 Feature: In Dashboard, teacher can see the number of student attempts to lessons
   In order to know the number of student attempts to a lesson
   As a teacher
@@ -68,7 +68,7 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I select "Expanded" from the "jump" singleselect
+    And I select edit type "Expanded"
     And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][3]" "xpath_element"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"

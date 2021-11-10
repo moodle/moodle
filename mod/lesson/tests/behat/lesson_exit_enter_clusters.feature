@@ -1,4 +1,4 @@
-@mod @mod_lesson @skip_interim
+@mod @mod_lesson
 Feature: In a lesson activity, students can exit and re-enter the activity when it consists only of cluster pages
   As a student
   I need to exit and re-enter a lesson out and into clusters.
@@ -28,7 +28,7 @@ Feature: In a lesson activity, students can exit and re-enter the activity when 
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I select "Expanded" from the "jump" singleselect
+    And I select edit type "Expanded"
     And I click on "Add a cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][2]" "xpath_element"
     And I follow "Update page: Cluster"
     And I set the following fields to these values:
