@@ -498,7 +498,8 @@ class core_calendar_external extends external_api {
                 'timesortfrom' => new external_value(PARAM_INT, 'Time sort from', VALUE_DEFAULT, null),
                 'timesortto' => new external_value(PARAM_INT, 'Time sort to', VALUE_DEFAULT, null),
                 'aftereventid' => new external_value(PARAM_INT, 'The last seen event id', VALUE_DEFAULT, 0),
-                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 20)
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 20),
+                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against', VALUE_DEFAULT, null)
             )
         );
     }
@@ -512,10 +513,11 @@ class core_calendar_external extends external_api {
      * @param null|int $timesortto Events before this time (inclusive)
      * @param null|int $aftereventid Get events with ids greater than this one
      * @param int $limitnum Limit the number of results to this value
+     * @param string|null $searchvalue The value a user wishes to search against
      * @return array
      */
     public static function get_calendar_action_events_by_course(
-        $courseid, $timesortfrom = null, $timesortto = null, $aftereventid = 0, $limitnum = 20) {
+        $courseid, $timesortfrom = null, $timesortto = null, $aftereventid = 0, $limitnum = 20, ?string $searchvalue = null) {
 
         global $PAGE, $USER;
 
@@ -528,6 +530,7 @@ class core_calendar_external extends external_api {
                 'timesortto' => $timesortto,
                 'aftereventid' => $aftereventid,
                 'limitnum' => $limitnum,
+                'searchvalue' => $searchvalue
             ]
         );
         $context = \context_user::instance($USER->id);
@@ -551,7 +554,8 @@ class core_calendar_external extends external_api {
             $params['timesortfrom'],
             $params['timesortto'],
             $params['aftereventid'],
-            $params['limitnum']
+            $params['limitnum'],
+            $params['searchvalue']
         );
 
         $exportercache = new events_related_objects_cache($events, $courses);
