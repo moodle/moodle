@@ -150,10 +150,10 @@ Feature: Using the activity grade form element
     Then I should see "You cannot change the type, as grades already exist for this item."
     And the "Maximum grade" "field" should be disabled
 
-  @javascript @skip_interim
+  @javascript
   Scenario: Attempting to change the maximum grade when no rescaling option has been chosen
     Given I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
     And I press "Save changes"

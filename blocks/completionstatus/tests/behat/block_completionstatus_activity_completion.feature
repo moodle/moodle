@@ -67,7 +67,7 @@ Feature: Enable Block Completion in a course using activity completion
     And I follow "More details"
     And I should see "Yes" in the "Activity completion" "table_row"
 
-  @javascript @skip_interim
+  @javascript
   Scenario: Add the block to a the course and add course completion items with passing grade
     Given I am on the "Test assign name" "assign activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
@@ -78,7 +78,7 @@ Feature: Enable Block Completion in a course using activity completion
       | gradepass                 | 50                                                |
     And I press "Save and return to course"
     And I am on the "Test assign name" "assign activity" page
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student" "table_row"
     And I set the field "Grade out of 100" to "53"
     And I set the field "Notify students" to "0"
@@ -101,7 +101,7 @@ Feature: Enable Block Completion in a course using activity completion
     And I should see "Achieving grade, Achieving passing grade" in the "Activity completion" "table_row"
     And I should see "Yes" in the "Activity completion" "table_row"
 
-  @javascript @skip_interim
+  @javascript
   Scenario: Add the block to a the course and add course completion items with failing grade.
     Given I am on the "Test assign name" "assign activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
@@ -112,7 +112,7 @@ Feature: Enable Block Completion in a course using activity completion
       | gradepass                 | 50                                                |
     And I press "Save and return to course"
     And I am on the "Test assign name" "assign activity" page
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student" "table_row"
     And I set the field "Grade out of 100" to "49"
     And I set the field "Notify students" to "0"
