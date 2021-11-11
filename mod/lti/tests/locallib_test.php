@@ -934,7 +934,7 @@ class mod_lti_locallib_testcase extends advanced_testcase {
                 'claim' => 'url',
                 'isarray' => false
             ],
-            'custom_context_memberships_url' => [
+            'custom_context_memberships_v2_url' => [
                 'suffix' => 'nrps',
                 'group' => 'namesroleservice',
                 'claim' => 'context_memberships_url',
