@@ -59,7 +59,7 @@ function xmldb_assign_upgrade($oldversion) {
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2021093000) {
+    if ($oldversion < 2021110901) {
         // Define field activity to be added to assign.
         $table = new xmldb_table('assign');
         $field = new xmldb_field('activity', XMLDB_TYPE_TEXT, null, null, null, null, null, 'alwaysshowdescription');
@@ -109,7 +109,7 @@ function xmldb_assign_upgrade($oldversion) {
         }
 
         // Assign savepoint reached.
-        upgrade_mod_savepoint(true, 2021093000, 'assign');
+        upgrade_mod_savepoint(true, 2021110901, 'assign');
     }
 
     return true;
