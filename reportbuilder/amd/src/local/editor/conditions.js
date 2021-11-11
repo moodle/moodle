@@ -63,6 +63,9 @@ const initConditionsForm = () => {
     // Handle dynamic conditions form.
     const reportElement = document.querySelector(reportSelectors.regions.report);
     const conditionFormContainer = reportElement.querySelector(reportSelectors.regions.settingsConditions);
+    if (!conditionFormContainer) {
+        return;
+    }
     const conditionForm = new DynamicForm(conditionFormContainer, '\\core_reportbuilder\\form\\condition');
 
     // Submit report conditions.

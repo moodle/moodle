@@ -2,6 +2,13 @@
 * Reportbuilder table.
 */
 
+/* Table */
+.reportbuilder-table {
+    td {
+        @extend .align-middle;
+    }
+}
+
 /* Filters */
 .reportbuilder-wrapper {
     .filters-dropdown {
@@ -149,6 +156,16 @@
     div[data-region="settings-sorting"] .list-group-item span[data-drag-type="move"] .icon {
         vertical-align: middle;
     }
+    div[data-region="settings-cardview"] form {
+        .col-md-3,
+        .col-md-9 {
+            flex: 1 1;
+            max-width: initial;
+        }
+        div[data-fieldtype="submit"] {
+            flex-basis: auto;
+        }
+    }
 }
 
 /* Add button styles when a toggle button is active. */
@@ -235,5 +252,78 @@
                 margin-right: 0;
             }
         }
+    }
+}
+
+/* Report table card view styles */
+@mixin table-cards {
+    table.reportbuilder-table {
+        thead {
+            display: none;
+        }
+        tr {
+            display: flex;
+            flex-direction: column;
+            margin: .5rem 0;
+            padding: .25rem .5rem 0 .5rem;
+            background-color: $card-bg !important; /* stylelint-disable-line declaration-no-important */
+            word-wrap: break-word;
+            background-clip: border-box;
+            border: $card-border-width solid $card-border-color;
+            @include border-radius($card-border-radius);
+            &:hover {
+                background-color: $card-bg !important; /* stylelint-disable-line declaration-no-important */
+            }
+            &.emptyrow {
+                display: none;
+            }
+            &:not(.show) {
+                td[data-cardviewhidden] {
+                    display: none;
+                }
+            }
+            td {
+                display: block;
+                min-height: 3.6rem;
+                padding: .5rem .25rem;
+                border: none;
+                &::before {
+                    content: attr(data-cardtitle);
+                    display: block;
+                    text-transform: uppercase;
+                    font-size: 70%;
+                    color: $gray-800;
+                }
+                &:not([data-cardtitle]) {
+                    min-height: 3rem;
+                }
+                &:not(:first-child):not(.card-toggle) {
+                    border-top: $card-border-width solid $card-border-color;
+                }
+                &:first-child {
+                    padding-right: 2rem;
+                }
+            }
+            td.card-toggle {
+                display: block !important; /* stylelint-disable-line declaration-no-important */
+                position: absolute;
+                right: 10px;
+                button {
+                    padding: 0 .5rem;
+                    color: $gray-600;
+                    i {
+                        font-size: 1.5em;
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Report table card view for small screens */
+.reportbuilder-report[data-report-type="0"]:not([data-editing]) {
+    @include media-breakpoint-down(xs) {
+        @include table-cards;
     }
 }

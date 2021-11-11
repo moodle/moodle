@@ -58,6 +58,6 @@ if ($reportpersistent->get('type') === \core_reportbuilder\local\report\base::TY
 } else {
     permission::require_can_view_report($reportpersistent);
 
-    $customreport = new \core_reportbuilder\output\custom_report($reportpersistent, false, false, $download);
+    $customreport = new \core_reportbuilder\output\custom_report($reportpersistent, false, $download);
     echo $PAGE->get_renderer('core_reportbuilder')->render($customreport);
 }

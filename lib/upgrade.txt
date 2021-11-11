@@ -2,6 +2,9 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 4.0 ===
+* New method flexible_table::set_columnsattributes() has been introduced to add column attributes applied in every cell.
+* New method flexible_table::get_row_cells_html() has been introduced, extracted from flexible_table::get_row_html
+  so it can be overriden individually.
 * Since Boxnet has been remove from core then boxnet_client() class has been removed from core too.
 * New navigation classes to mimic the new navigation project. The existing navigation callbacks are still available and
   will be called. The following behaviour will be the new standard for nodes added via callbacks:

@@ -56,6 +56,10 @@ class get_test extends externallib_advanced_testcase {
             'default' => false,
         ]);
 
+        // Add two filters.
+        $filterfullname = $generator->create_filter(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
+        $filteremail = $generator->create_filter(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:email']);
+
         $result = get::execute($report->get('id'), true);
         $result = external_api::clean_returnvalue(get::execute_returns(), $result);
 
@@ -64,13 +68,14 @@ class get_test extends externallib_advanced_testcase {
         $this->assertEquals($result['source'], users::class);
         $this->assertNotEmpty($result['table']);
         $this->assertNotEmpty($result['javascript']);
+        $this->assertFalse($result['filterspresent']);
         $this->assertEmpty($result['filtersform']);
         $this->assertEquals(1, $result['editmode']);
-        $this->assertTrue($result['showeditbutton']);
         $this->assertTrue($result['filters']['hasavailablefilters']);
         $this->assertNotEmpty($result['filters']['availablefilters']);
-        $this->assertFalse($result['filters']['hasactivefilters']);
-        $this->assertEmpty($result['filters']['activefilters']);
+        $this->assertTrue($result['filters']['hasactivefilters']);
+        $this->assertEquals($filterfullname->get('id'), $result['filters']['activefilters'][0]['id']);
+        $this->assertEquals($filteremail->get('id'), $result['filters']['activefilters'][1]['id']);
     }
 
     /**
@@ -90,8 +95,8 @@ class get_test extends externallib_advanced_testcase {
         ]);
 
         // Add two filters.
-        $filterfullname = $generator->create_filter(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
-        $filteremail = $generator->create_filter(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:email']);
+        $generator->create_filter(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
+        $generator->create_filter(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:email']);
 
         $result = get::execute($report->get('id'), false);
         $result = external_api::clean_returnvalue(get::execute_returns(), $result);
@@ -101,14 +106,13 @@ class get_test extends externallib_advanced_testcase {
         $this->assertEquals($result['source'], users::class);
         $this->assertNotEmpty($result['table']);
         $this->assertNotEmpty($result['javascript']);
+        $this->assertTrue($result['filterspresent']);
         $this->assertNotEmpty($result['filtersform']);
         $this->assertEquals(0, $result['editmode']);
-        $this->assertTrue($result['showeditbutton']);
-        $this->assertTrue($result['filters']['hasavailablefilters']);
-        $this->assertNotEmpty($result['filters']['availablefilters']);
-        $this->assertTrue($result['filters']['hasactivefilters']);
-        $this->assertEquals($filterfullname->get('id'), $result['filters']['activefilters'][0]['id']);
-        $this->assertEquals($filteremail->get('id'), $result['filters']['activefilters'][1]['id']);
+        $this->assertEmpty($result['filters']);
+        $this->assertEmpty($result['conditions']);
+        $this->assertEmpty($result['sorting']);
+        $this->assertEmpty($result['cardview']);
     }
 
     /**

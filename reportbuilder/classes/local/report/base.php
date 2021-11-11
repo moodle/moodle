@@ -497,6 +497,31 @@ abstract class base {
     }
 
     /**
+     * Set the settings values of the report
+     *
+     * @param array $values
+     * @return bool
+     */
+    final public function set_settings_values(array $values): bool {
+        $currentsettings = $this->get_settings_values();
+        $settings = array_merge($currentsettings, $values);
+        $this->report->set('settingsdata', json_encode($settings))
+            ->save();
+        return true;
+    }
+
+    /**
+     * Get the settings values of the report
+     *
+     * @return array
+     */
+    final public function get_settings_values(): array {
+        $settings = (string) $this->report->get('settingsdata');
+
+        return (array) json_decode($settings);
+    }
+
+    /**
      * Adds a filter to the report
      *
      * @param filter $filter

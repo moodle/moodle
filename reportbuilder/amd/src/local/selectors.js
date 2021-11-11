@@ -52,6 +52,7 @@ const SELECTORS = {
         audienceEmptyMessage: '[data-region=no-instances-message]',
         audienceDescription: '[data-region=audience-description]',
         audienceNotSavedLabel: '[data-region=audience-not-saved]',
+        settingsCardView: '[data-region="settings-cardview"]',
     },
     actions: {
         reportActionPopup: '[data-action="report-action-popup"]',
@@ -71,6 +72,7 @@ const SELECTORS = {
         audienceAdd: '[data-action="add-audience"]',
         audienceEdit: '[data-action="edit-audience"]',
         audienceDelete: '[data-action="delete-audience"]',
+        toggleCardView: '[data-action="toggle-card"]',
     },
 };
 
