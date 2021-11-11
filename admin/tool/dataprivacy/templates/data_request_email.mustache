@@ -56,7 +56,7 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        table, th, td {
+        table.dataprivacy_email_table, .dataprivacy_email_table th, .dataprivacy_email_table td {
             border: 1px solid black;
             padding: 0.5em;
         }
@@ -67,7 +67,7 @@
     <div>
         <p>{{#str}}emailsalutation, tool_dataprivacy, {{dponame}}{{/str}}</p>
         <p>{{#str}}requestemailintro, tool_dataprivacy{{/str}}</p>
-        <table>
+        <table class="dataprivacy_email_table">
             <tr>
                 <th scope="row">
                     {{#str}}requesttype, tool_dataprivacy{{/str}}
