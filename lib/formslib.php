@@ -2250,11 +2250,13 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             // iterate over all elements, calling their exportValue() methods
             foreach (array_keys($this->_elements) as $key) {
                 if ($this->_elements[$key]->isFrozen() && !$this->_elements[$key]->_persistantFreeze) {
-                    $varname = $this->_elements[$key]->_attributes['name'];
                     $value = '';
-                    // If we have a default value then export it.
-                    if (isset($this->_defaultValues[$varname])) {
-                        $value = $this->prepare_fixed_value($varname, $this->_defaultValues[$varname]);
+                    if (isset($this->_elements[$key]->_attributes['name'])) {
+                        $varname = $this->_elements[$key]->_attributes['name'];
+                        // If we have a default value then export it.
+                        if (isset($this->_defaultValues[$varname])) {
+                            $value = $this->prepare_fixed_value($varname, $this->_defaultValues[$varname]);
+                        }
                     }
                 } else {
                     $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
