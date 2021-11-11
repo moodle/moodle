@@ -27,6 +27,7 @@ require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->libdir.'/plagiarismlib.php');
 
+use core\content\export\exporters\component_exporter;
 use core_grades\component_gradeitems;
 
 /**
@@ -635,6 +636,22 @@ abstract class moodleform_mod extends moodleform {
                              VISIBLEGROUPS  => get_string('groupsvisible'));
             $mform->addElement('select', 'groupmode', get_string('groupmode', 'group'), $options, NOGROUPS);
             $mform->addHelpButton('groupmode', 'groupmode', 'group');
+        }
+
+        if ($CFG->downloadcoursecontentallowed) {
+                $choices = [
+                    DOWNLOAD_COURSE_CONTENT_DISABLED => get_string('no'),
+                    DOWNLOAD_COURSE_CONTENT_ENABLED => get_string('yes'),
+                ];
+                $mform->addElement('select', 'downloadcontent', get_string('downloadcontent', 'course'), $choices);
+                $downloadcontentdefault = $this->_cm->downloadcontent ?? DOWNLOAD_COURSE_CONTENT_ENABLED;
+                $mform->addHelpButton('downloadcontent', 'downloadcontent', 'course');
+                if (has_capability('moodle/course:configuredownloadcontent', $this->get_context())) {
+                    $mform->setDefault('downloadcontent', $downloadcontentdefault);
+                } else {
+                    $mform->hardFreeze('downloadcontent');
+                    $mform->setConstant('downloadcontent', $downloadcontentdefault);
+                }
         }
 
         if ($this->_features->groupings) {

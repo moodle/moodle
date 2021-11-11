@@ -467,7 +467,7 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->showdescription  = $rawmods[$seq]->showdescription;
                    $mod[$seq]->availability = $rawmods[$seq]->availability;
                    $mod[$seq]->deletioninprogress = $rawmods[$seq]->deletioninprogress;
-
+                   $mod[$seq]->downloadcontent = $rawmods[$seq]->downloadcontent;
                    $modname = $mod[$seq]->mod;
                    $functionname = $modname."_get_coursemodule_info";
 
@@ -850,6 +850,23 @@ function set_coursemodule_idnumber($id, $idnumber) {
         rebuild_course_cache($cm->course, true);
     }
     return ($cm->idnumber != $idnumber);
+}
+
+/**
+ * Set downloadcontent value to course module.
+ *
+ * @param int $id The id of the module.
+ * @param bool $downloadcontent Whether the module can be downloaded when download course content is enabled.
+ * @return bool True if downloadcontent has been updated, false otherwise.
+ */
+function set_downloadcontent(int $id, bool $downloadcontent): bool {
+    global $DB;
+    $cm = $DB->get_record('course_modules', ['id' => $id], 'id, course, downloadcontent', MUST_EXIST);
+    if ($cm->downloadcontent != $downloadcontent) {
+        $DB->set_field('course_modules', 'downloadcontent', $downloadcontent, ['id' => $cm->id]);
+        rebuild_course_cache($cm->course, true);
+    }
+    return ($cm->downloadcontent != $downloadcontent);
 }
 
 /**

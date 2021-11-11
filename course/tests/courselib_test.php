@@ -7233,4 +7233,30 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals(1, average_number_of_participants(true));
     }
 
+    /**
+     * Test the set_downloadcontent() function.
+     */
+    public function test_set_downloadcontent() {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $page = $generator->create_module('page', ['course' => $course]);
+
+        // Test the module 'downloadcontent' field is set to enabled.
+        set_downloadcontent($page->cmid, DOWNLOAD_COURSE_CONTENT_ENABLED);
+        $modinfo = get_fast_modinfo($course)->get_cm($page->cmid);
+        $this->assertEquals(DOWNLOAD_COURSE_CONTENT_ENABLED, $modinfo->downloadcontent);
+
+        // Now let's test the 'downloadcontent' value is updated to disabled.
+        set_downloadcontent($page->cmid, DOWNLOAD_COURSE_CONTENT_DISABLED);
+        $modinfo = get_fast_modinfo($course)->get_cm($page->cmid);
+        $this->assertEquals(DOWNLOAD_COURSE_CONTENT_DISABLED, $modinfo->downloadcontent);
+
+        // Nothing to update, the download course content value is the same, it should return false.
+        $this->assertFalse(set_downloadcontent($page->cmid, DOWNLOAD_COURSE_CONTENT_DISABLED));
+
+        // The download course content value has changed, it should return true in this case.
+        $this->assertTrue(set_downloadcontent($page->cmid, DOWNLOAD_COURSE_CONTENT_ENABLED));
+    }
 }
