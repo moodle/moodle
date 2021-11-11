@@ -51,7 +51,6 @@ $string['availablegroupings'] = 'Available filters';
 $string['availablegroupings_desc'] = 'Course filters which are available for selection by users. If none are selected, all courses will be displayed.';
 $string['card'] = 'Card';
 $string['cards'] = 'Cards';
-$string['clearsearch'] = "Clear search";
 $string['courseprogress'] = 'Course progress:';
 $string['completepercent'] = '{$a}% complete';
 $string['customfield'] = 'Custom field';
@@ -87,6 +86,9 @@ $string['hidecourse'] = 'Archive';
 $string['hiddencourses'] = 'Archived';
 $string['show'] = 'Unarchive';
 $string['privacy:request:preference:set'] = 'The value of the setting \'{$a->name}\' was \'{$a->value}\'';
+
+// Deprecated since Moodle 4.0.
+$string['clearsearch'] = "Clear search";
 
 // Deprecated since Moodle 3.7.
 $string['complete'] = 'complete';

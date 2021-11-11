@@ -44,9 +44,8 @@ function(
         TIMELINE_VIEW_SELECTOR: '[data-region="view-selector"]',
         DATA_DAYS_OFFSET: '[data-days-offset]',
         DATA_DAYS_LIMIT: '[data-days-limit]',
-        TIMELINE_SEARCH_INPUT: '[data-region="search-input"]',
-        TIMELINE_SEARCH_CLEAR_ICON: '[data-region="clear-icon"]',
-        TIMELINE_SEARCH_SEARCH_ICON: '[data-region="search-icon"]'
+        TIMELINE_SEARCH_INPUT: '[data-action="search"]',
+        TIMELINE_SEARCH_CLEAR_ICON: '[data-action="clearsearch"]',
     };
 
     /**
@@ -158,44 +157,40 @@ function(
      */
     const registerSearch = (root, timelineViewRoot) => {
         const searchInput = root.find(SELECTORS.TIMELINE_SEARCH_INPUT);
-        const searchIcon = root.find(SELECTORS.TIMELINE_SEARCH_SEARCH_ICON);
         const clearSearchIcon = root.find(SELECTORS.TIMELINE_SEARCH_CLEAR_ICON);
         searchInput.on('input', Utils.debounce(() => {
             if (searchInput.val() !== '') {
-                activeSearchState(searchIcon, clearSearchIcon, timelineViewRoot);
+                activeSearchState(clearSearchIcon, timelineViewRoot);
             } else {
-                clearSearchState(searchIcon, clearSearchIcon, timelineViewRoot);
+                clearSearchState(clearSearchIcon, timelineViewRoot);
             }
         }, 300));
         clearSearchIcon.on('click', () => {
             searchInput.val('');
-            clearSearchState(searchIcon, clearSearchIcon, timelineViewRoot);
+            clearSearchState(clearSearchIcon, timelineViewRoot);
+            searchInput.focus();
         });
     };
 
     /**
-     * Change the search icon to clear icon.
+     * Show the clear search icon.
      *
-     * @param {object} searchIcon Search icon element.
      * @param {object} clearSearchIcon Clear search icon element.
      * @param {object} timelineViewRoot The root element for the timeline view
      */
-    const activeSearchState = (searchIcon, clearSearchIcon, timelineViewRoot) => {
-        searchIcon.addClass('d-none');
-        clearSearchIcon.parent().removeClass('d-none');
+    const activeSearchState = (clearSearchIcon, timelineViewRoot) => {
+        clearSearchIcon.removeClass('d-none');
         View.reset(timelineViewRoot);
     };
 
     /**
-     * Change the clear search icon to search icon.
+     * Hide the clear search icon.
      *
-     * @param {object} searchIcon Search icon element.
      * @param {object} clearSearchIcon Clear search icon element.
      * @param {object} timelineViewRoot The root element for the timeline view
      */
-    const clearSearchState = (searchIcon, clearSearchIcon, timelineViewRoot) => {
-        searchIcon.removeClass('d-none');
-        clearSearchIcon.parent().addClass('d-none');
+    const clearSearchState = (clearSearchIcon, timelineViewRoot) => {
+        clearSearchIcon.addClass('d-none');
         View.reset(timelineViewRoot);
     };
 

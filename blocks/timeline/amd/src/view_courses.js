@@ -50,7 +50,7 @@ function(
         COURSE_NAME: '[data-region="course-name"]',
         LOADING_ICON: '.loading-icon',
         TIMELINE_BLOCK: '[data-region="timeline"]',
-        TIMELINE_SEARCH: '[data-region="search-input"]'
+        TIMELINE_SEARCH: '[data-action="search"]'
     };
 
     var TEMPLATES = {
