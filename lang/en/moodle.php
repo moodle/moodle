@@ -248,6 +248,7 @@ $string['categorysubcategoryof'] = '{$a->category} - subcategory of {$a->parentc
 $string['idnumbercoursecategory'] = 'Category ID number';
 $string['idnumbercoursecategory_help'] = 'The ID number of a course category  is only used when matching the category against external systems and is not displayed anywhere on the site. If the category has an official code name it may be entered, otherwise the field can be left blank.';
 $string['categoryupdated'] = 'The category \'{$a}\' was updated';
+$string['changesmade'] = 'Changes made';
 $string['changesmadereallygoaway'] = 'You have made changes. Are you sure you want to navigate away and lose your changes?';
 $string['city'] = 'City/town';
 $string['cleaningtempdata'] = 'Cleaning temp data';
