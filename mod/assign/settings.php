@@ -153,10 +153,12 @@ if ($ADMIN->fulltree) {
 
     $name = new lang_string('enabletimelimit', 'mod_assign');
     $description = new lang_string('enabletimelimit_help', 'mod_assign');
-    $setting = new admin_setting_configcheckbox('assign/enabletimelimit',
+    $setting = new admin_setting_configcheckbox(
+        'assign/enabletimelimit',
         $name,
         $description,
-        0);
+        0
+    );
     $settings->add($setting);
 
     $name = new lang_string('gradingduedate', 'mod_assign');

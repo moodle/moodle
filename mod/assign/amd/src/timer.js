@@ -92,12 +92,8 @@ const update = () => {
         // Only add a notification on the assign submission page.
         if (document.getElementById("mod_assign_timelimit_block")) {
             getString('caneditsubmission', 'mod_assign')
-                .done(
-                    str => Notification.addNotification({
-                        type: "error",
-                        message: str
-                    })
-                ).fail(Notification.exception);
+                .then(message => Notification.addNotification({message}))
+                .catch(Notification.exception);
         }
 
         stop();
