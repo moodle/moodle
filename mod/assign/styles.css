@@ -1226,3 +1226,10 @@
     padding: 0;
 }
 /** End of YUI tree fix **/
+
+/* Countdown timer. */
+div[id*='mod_assign-timer-'] {
+    display: block;
+    font-weight: 600;
+    font-size: 1.4em;
+}

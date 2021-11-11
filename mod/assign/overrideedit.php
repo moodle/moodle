@@ -96,7 +96,7 @@ if ($overrideid) {
 }
 
 // Merge assign defaults with data.
-$keys = array('duedate', 'cutoffdate', 'allowsubmissionsfromdate');
+$keys = array('duedate', 'cutoffdate', 'allowsubmissionsfromdate', 'timelimit');
 foreach ($keys as $key) {
     if (!isset($data->{$key}) || $reset) {
         $data->{$key} = $assigninstance->{$key};

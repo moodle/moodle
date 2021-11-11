@@ -58,10 +58,20 @@ class mod_assign_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements(get_string('description', 'assign'));
 
+        // Activity.
+        $mform->addElement('editor', 'activityeditor',
+             get_string('activityeditor', 'assign'), array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
+            'noclean' => true, 'context' => $this->context, 'subdirs' => true));
+        $mform->addHelpButton('activityeditor', 'activityeditor', 'assign');
+        $mform->setType('activityeditor', PARAM_RAW);
+
         $mform->addElement('filemanager', 'introattachments',
                             get_string('introattachments', 'assign'),
                             null, array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes) );
         $mform->addHelpButton('introattachments', 'introattachments', 'assign');
+
+        $mform->addElement('advcheckbox', 'submissionattachments', get_string('submissionattachments', 'assign'));
+        $mform->addHelpButton('submissionattachments', 'submissionattachments', 'assign');
 
         $ctx = null;
         if ($this->current && $this->current->coursemodule) {
@@ -76,8 +86,6 @@ class mod_assign_mod_form extends moodleform_mod {
             $course = $DB->get_record('course', array('id'=>$this->current->course), '*', MUST_EXIST);
             $assignment->set_course($course);
         }
-
-        $config = get_config('assign');
 
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
         $mform->setExpanded('availability', true);
@@ -98,6 +106,14 @@ class mod_assign_mod_form extends moodleform_mod {
         $name = get_string('gradingduedate', 'assign');
         $mform->addElement('date_time_selector', 'gradingduedate', $name, array('optional' => true));
         $mform->addHelpButton('gradingduedate', 'gradingduedate', 'assign');
+
+        $timelimitenabled = get_config('assign', 'enabletimelimit');
+        // Time limit.
+        if ($timelimitenabled) {
+            $mform->addElement('duration', 'timelimit', get_string('timelimit', 'assign'),
+                array('optional' => true));
+            $mform->addHelpButton('timelimit', 'timelimit', 'assign');
+        }
 
         $name = get_string('alwaysshowdescription', 'assign');
         $mform->addElement('checkbox', 'alwaysshowdescription', $name);
@@ -283,6 +299,17 @@ class mod_assign_mod_form extends moodleform_mod {
         file_prepare_draft_area($draftitemid, $ctx->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA,
                                 0, array('subdirs' => 0));
         $defaultvalues['introattachments'] = $draftitemid;
+
+        // Activity editor fields.
+        $activitydraftitemid = file_get_submitted_draft_itemid('activityeditor');
+        if (!empty($defaultvalues['activity'])) {
+            $defaultvalues['activityeditor'] = array(
+                'text' => file_prepare_draft_area($activitydraftitemid, $ctx->id, 'mod_assign', ASSIGN_ACTIVITYATTACHMENT_FILEAREA,
+                    0, array('subdirs' => 0), $defaultvalues['activity']),
+                'format' => $defaultvalues['activityformat'],
+                'itemid' => $activitydraftitemid
+            );
+        }
 
         $assignment->plugin_data_preprocessing($defaultvalues);
     }

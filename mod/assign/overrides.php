@@ -205,6 +205,12 @@ foreach ($overrides as $override) {
         $values[] = $override->cutoffdate > 0 ? userdate($override->cutoffdate) : get_string('noclose', 'assign');
     }
 
+    // Format timelimit.
+    if (isset($override->timelimit)) {
+        $fields[] = get_string('timelimit', 'assign');
+        $values[] = $override->timelimit > 0 ? format_time($override->timelimit) : get_string('none', 'assign');
+    }
+
     // Icons.
     $iconstr = '';
 

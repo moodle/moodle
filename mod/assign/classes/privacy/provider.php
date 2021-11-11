@@ -89,6 +89,7 @@ class provider implements
                 'userid' => 'privacy:metadata:userid',
                 'timecreated' => 'privacy:metadata:timecreated',
                 'timemodified' => 'timemodified',
+                'timestarted' => 'privacy:metadata:timestarted',
                 'status' => 'gradingstatus',
                 'groupid' => 'privacy:metadata:groupid',
                 'attemptnumber' => 'attemptnumber',
@@ -566,6 +567,7 @@ class provider implements
         $submissiondata = (object)[
             'timecreated' => transform::datetime($submission->timecreated),
             'timemodified' => transform::datetime($submission->timemodified),
+            'timestarted' => transform::datetime($submission->timestarted),
             'status' => get_string('submissionstatus_' . $submission->status, 'mod_assign'),
             'groupid' => $submission->groupid,
             'attemptnumber' => ($submission->attemptnumber + 1),
