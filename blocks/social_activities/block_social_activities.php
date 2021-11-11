@@ -70,16 +70,44 @@ class block_social_activities extends block_list {
                         continue;
                     }
 
+                    $badges = '';
+                    if (!$cm->visible) {
+                        $badges = html_writer::tag(
+                            'span',
+                            get_string('hiddenfromstudents'),
+                            ['class' => 'badge badge-pill badge-warning mt-2']
+                        );
+                    }
+
+                    if ($cm->is_stealth()) {
+                        $badges = html_writer::tag(
+                            'span',
+                            get_string('hiddenoncoursepage'),
+                            ['class' => 'badge badge-pill badge-warning mt-2']
+                        );
+                    }
+
                     if (!$cm->url) {
-                        $content = html_writer::div(
+                        $activitybasis = html_writer::div(
                             $cm->get_formatted_content(['overflowdiv' => true, 'noclean' => true]),
-                            'contentwithoutlink'
+                            'activity-basis d-flex align-items-center'
+                        );
+                        $content = html_writer::div(
+                            $activitybasis . $badges,
+                            'contentwithoutlink activity-item activity'
                         );
                         $this->content->items[] = $content;
                         $this->content->icons[] = '';
                     } else {
                         $cmname = new $cmnameclass($format, $cm->get_section_info(), $cm, $isediting);
-                        $this->content->items[] = html_writer::div($courserenderer->render($cmname), 'activity');
+                        $activitybasis = html_writer::div(
+                            $courserenderer->render($cmname),
+                            'activity-basis d-flex align-items-center');
+                        $content = html_writer::div(
+                            $activitybasis . $badges,
+                            'activity-item activity'
+                        );
+                        $this->content->items[] = $content;
                     }
                 }
             }
@@ -121,20 +149,19 @@ class block_social_activities extends block_list {
                     $menu = $controlmenu->get_action_menu($OUTPUT);
 
                     // Add a move primary action.
-                    $menu->add(
-                        new action_menu_link_primary(
-                            new moodle_url('/course/mod.php', ['sesskey' => sesskey(), 'copy' => $mod->id]),
-                            new pix_icon('t/move', $strmove, 'moodle', ['class' => 'iconsmall', 'title' => '']),
-                            $strmove
-                        )
+                    $moveaction = html_writer::link(
+                        new moodle_url('/course/mod.php', ['sesskey' => sesskey(), 'copy' => $mod->id]),
+                        $OUTPUT->pix_icon('i/dragdrop', $strmove),
+                        ['class' => 'editing_move_activity']
                     );
 
                     $editbuttons = html_writer::tag('div',
                         $courserenderer->render($controlmenu),
-                        ['class' => 'buttons']
+                        ['class' => 'buttons activity-actions ml-auto']
                     );
                 } else {
                     $editbuttons = '';
+                    $moveaction = '';
                 }
                 if ($mod->visible || has_capability('moodle/course:viewhiddenactivities', $mod->context)) {
                     if ($ismoving) {
@@ -146,16 +173,50 @@ class block_social_activities extends block_list {
                             'class' => 'movehere'));
                         $this->content->icons[] = '';
                     }
-                    if (!$mod->url) {
-                        $content = html_writer::div(
-                            $mod->get_formatted_content(['overflowdiv' => true, 'noclean' => true]),
-                            'contentwithoutlink'
+
+                    $badges = '';
+                    if (!$mod->visible) {
+                        $badges = html_writer::tag(
+                            'span',
+                            get_string('hiddenfromstudents'),
+                            ['class' => 'badge badge-pill badge-warning mt-2']
                         );
-                        $this->content->items[] = $content . $editbuttons;
+                    }
+
+                    if ($mod->is_stealth()) {
+                        $badges = html_writer::tag(
+                            'span',
+                            get_string('hiddenoncoursepage'),
+                            ['class' => 'badge badge-pill badge-warning mt-2']
+                        );
+                    }
+
+                    if (!$mod->url) {
+                        $activitybasis = html_writer::div(
+                            $mod->get_formatted_content(['overflowdiv' => true, 'noclean' => true]) .
+                            $editbuttons,
+                            'activity-basis d-flex align-items-center');
+                        $content = html_writer::div(
+                            $moveaction .
+                            $activitybasis .
+                            $badges,
+                            'contentwithoutlink activity-item activity'
+                        );
+                        $this->content->items[] = $content;
                         $this->content->icons[] = '';
                     } else {
                         $cmname = new $cmnameclass($format, $mod->get_section_info(), $mod, $isediting);
-                        $this->content->items[] = html_writer::div($courserenderer->render($cmname), 'activity') . $editbuttons;
+                        $activitybasis = html_writer::div(
+                            $courserenderer->render($cmname) .
+                            $editbuttons,
+                            'activity-basis d-flex align-items-center');
+                        $content = html_writer::div(
+                            $moveaction .
+                            $activitybasis .
+                            $badges,
+                            'activity-item activity'
+                        );
+                        $this->content->items[] = $content;
                     }
                 }
             }
