@@ -1,10 +1,11 @@
 .secondary-navigation {
-    border-top: 1px solid $nav-tabs-border-color;
-    border-bottom: 1px solid $nav-tabs-border-color;
     max-width: $course-content-maxwidth;
     margin: 0 auto;
+    padding: 0 15px 15px;
     .navigation {
-        height: $moremenu-height;
+        border-top: 1px solid $nav-tabs-border-color;
+        border-bottom: 1px solid $nav-tabs-border-color;
+        height: calc(#{$moremenu-height} + 2px);
         background-color: $body-bg;
         .nav-tabs {
             border: none;

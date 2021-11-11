@@ -9872,12 +9872,6 @@ a.text-dark:hover, a.text-dark:focus {
   background-color: #fff; }
 
 @media (min-width: 576px) {
-  #region-main {
-    border: 1px solid rgba(0, 0, 0, 0.125);
-    border-radius: 0.25rem;
-    padding: 1.25rem; } }
-
-@media (min-width: 576px) {
   .context-header-settings-menu,
   .region-main-settings-menu {
     float: right;
@@ -11552,7 +11546,7 @@ nav.navbar .logo img {
 /** Header-bar styles **/
 .page-context-header {
   overflow: hidden;
-  padding: 0.25rem; }
+  padding: 0.25rem 0; }
   .page-context-header .page-header-image,
   .page-context-header .page-header-headings {
     float: left;
@@ -11741,12 +11735,12 @@ ul {
       margin-top: 30px;
       margin-right: 0; } }
 
-.footer-dark .container a {
+.footer-dark a {
   color: #fff;
   text-decoration: underline; }
-  .footer-dark .container a .icon {
+  .footer-dark a .icon {
     color: #fff; }
-  .footer-dark .container a:focus .icon {
+  .footer-dark a:focus .icon {
     color: #1d2125; }
 
 .btn-footer-popover {
@@ -11760,6 +11754,8 @@ ul {
   .popover.footer .popover-body .footer-section a {
     color: #1d2125;
     text-decoration: underline; }
+    .popover.footer .popover-body .footer-section a .icon {
+      color: #1d2125; }
     .popover.footer .popover-body .footer-section a:focus {
       text-decoration: none; }
 
@@ -12213,12 +12209,13 @@ body.dragging .dragging {
 .collapse-list .collapse-list-item-content .collapse-list-item {
   padding-left: calc(1rem * 3); }
 
-.page-mycourses #region-main {
-  padding: 0; }
-
-.page-mycourses #region-main,
-.page-mycourses .block_myoverview {
+.drawers .block_myoverview {
   border: 0; }
+  .drawers .block_myoverview > .card-body {
+    padding-left: 0 !important;
+    /* stylelint-disable-line declaration-no-important */
+    padding-right: 0 !important;
+    /* stylelint-disable-line declaration-no-important */ }
 
 .icon {
   font-size: 16px;
@@ -17513,7 +17510,8 @@ textarea[data-auto-rows] {
 .login-container {
   background-color: #fff;
   padding: 3rem;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); }
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  margin-bottom: 2rem; }
   .login-container .login-languagemenu {
     display: flex;
     justify-content: flex-end;
@@ -20164,23 +20162,29 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     margin: 0 auto;
     border-radius: 0.25rem;
     background-color: #fff;
-    padding: 1.5rem;
+    padding: 1.5rem 0.5rem;
     margin-top: 3rem;
-    margin-bottom: 3rem; }
+    margin-bottom: 3rem;
+    flex: 1 0 auto; }
+  #page.drawers div[role="main"] {
+    padding-left: 15px;
+    padding-right: 15px; }
 
 @media (min-width: 768px) {
   .pagelayout-standard #page.drawers .main-inner,
   body.limitedwidth #page.drawers .main-inner {
-    max-width: 800px; }
+    max-width: 830px; }
   .pagelayout-standard #page.drawers .footer-popover,
   body.limitedwidth #page.drawers .footer-popover {
-    max-width: 800px;
+    max-width: 830px;
     width: 100%;
     margin: 0 auto;
     border-radius: 0.25rem; }
   .header-maxwidth {
-    max-width: 800px;
-    margin: 0 auto; }
+    max-width: 830px;
+    margin: 0 auto;
+    padding-left: 15px;
+    padding-right: 15px; }
     .header-maxwidth .header-inner {
       padding-left: 0;
       padding-right: 0; } }
@@ -20248,7 +20252,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 @media (min-width: 992px) {
   .drawer-left,
   .drawer-right {
-    top: calc(60px + 1px);
+    top: 60px;
     height: calc(100vh - 60px); }
   #page.drawers {
     position: relative;
@@ -21301,12 +21305,13 @@ div.editor_atto_toolbar button .icon {
       border-right: 0; }
 
 .secondary-navigation {
-  border-top: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6;
-  max-width: 800px;
-  margin: 0 auto; }
+  max-width: 830px;
+  margin: 0 auto;
+  padding: 0 15px 15px; }
   .secondary-navigation .navigation {
-    height: 60px;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    height: calc(60px + 2px);
     background-color: #fff; }
     .secondary-navigation .navigation .nav-tabs {
       border: none; }
