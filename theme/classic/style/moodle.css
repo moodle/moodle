@@ -19899,6 +19899,11 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     left: 50%;
     transform: translate(-50%, -50%); }
 
+.modal .close {
+  margin: -0.8rem -0.8rem -0.8rem auto; }
+  .modal .close:not(:disabled):not(.disabled):hover, .modal .close:not(:disabled):not(.disabled):focus {
+    opacity: inherit; }
+
 .layout.fullscreen {
   height: 100vh;
   position: fixed;
