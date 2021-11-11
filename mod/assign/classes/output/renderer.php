@@ -1375,7 +1375,8 @@ class renderer extends \plugin_renderer_base {
     protected function get_time_remaining(\mod_assign\output\assign_submission_status $status): array {
         $time = time();
         $submission = $status->teamsubmission ? $status->teamsubmission : $status->submission;
-        $timelimitenabled = get_config('assign', 'enabletimelimit') && $status->timelimit > 0 && $submission->timestarted;
+        $submissionstarted = $submission && property_exists($submission, 'timestarted') && $submission->timestarted;
+        $timelimitenabled = get_config('assign', 'enabletimelimit') && $status->timelimit > 0 && $submissionstarted;
         $duedatereached = $status->duedate > 0 && $status->duedate - $time <= 0;
         $timelimitenabledbeforeduedate = $timelimitenabled && !$duedatereached;
 
