@@ -588,66 +588,64 @@ class api {
 
         $warnings = array();
 
-        $curl = new curl();
-        // Return certificate information and verify the certificate.
-        $curl->setopt(array('CURLOPT_CERTINFO' => 1, 'CURLOPT_SSL_VERIFYPEER' => true));
-        $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot); // Force https url.
-        // Check https using a page not redirecting or returning exceptions.
-        $curl->head($httpswwwroot . "/$CFG->admin/tool/mobile/mobile.webmanifest.php");
-        $info = $curl->get_info();
+        if (is_https()) {
+            $curl = new curl();
+            // Return certificate information and verify the certificate.
+            $curl->setopt(array('CURLOPT_CERTINFO' => 1, 'CURLOPT_SSL_VERIFYPEER' => true));
+            // Check https using a page not redirecting or returning exceptions.
+            $curl->head("$CFG->wwwroot/$CFG->admin/tool/mobile/mobile.webmanifest.php");
+            $info = $curl->get_info();
 
-        // First of all, check the server certificate (if any).
-        if (empty($info['http_code']) or ($info['http_code'] >= 400)) {
-            $warnings[] = ['nohttpsformobilewarning', 'admin'];
-        } else {
             // Check the certificate is not self-signed or has an untrusted-root.
             // This may be weak in some scenarios (when the curl SSL verifier is outdated).
-            if (empty($info['certinfo'])) {
+            if (empty($info['http_code']) || empty($info['certinfo'])) {
                 $warnings[] = ['selfsignedoruntrustedcertificatewarning', 'tool_mobile'];
             } else {
                 $timenow = time();
-                $expectedissuer = null;
-                foreach ($info['certinfo'] as $cert) {
+                $infokeys = array_keys($info['certinfo']);
+                $lastkey = end($infokeys);
+
+                if (count($info['certinfo']) == 1) {
+                    // This will work in a normal browser because it will complete the chain, but not in a mobile app.
+                    $warnings[] = ['invalidcertificatechainwarning', 'tool_mobile'];
+                }
+
+                foreach ($info['certinfo'] as $key => $cert) {
+                    // Convert to lower case the keys, some OS/curl implementations differ.
+                    $cert = array_change_key_case($cert, CASE_LOWER);
 
                     // Due to a bug in certain curl/openssl versions the signature algorithm isn't always correctly parsed.
                     // See https://github.com/curl/curl/issues/3706 for reference.
-                    if (!array_key_exists('Signature Algorithm', $cert)) {
+                    if (!array_key_exists('signature algorithm', $cert)) {
                         // The malformed field that does contain the algorithm we're looking for looks like the following:
                         // <WHITESPACE>Signature Algorithm: <ALGORITHM><CRLF><ALGORITHM>.
-                        preg_match('/\s+Signature Algorithm: (?<algorithm>[^\s]+)/', $cert['Public Key Algorithm'], $matches);
+                        preg_match('/\s+Signature Algorithm: (?<algorithm>[^\s]+)/', $cert['public key algorithm'], $matches);
 
                         $signaturealgorithm = $matches['algorithm'] ?? '';
                     } else {
-                        $signaturealgorithm = $cert['Signature Algorithm'];
+                        $signaturealgorithm = $cert['signature algorithm'];
                     }
 
                     // Check if the signature algorithm is weak (Android won't work with SHA-1).
-                    if ($signaturealgorithm == 'sha1WithRSAEncryption' || $signaturealgorithm == 'sha1WithRSA') {
-                        $warnings[] = ['insecurealgorithmwarning', 'tool_mobile'];
+                    if ($key != $lastkey &&
+                            ($signaturealgorithm == 'sha1WithRSAEncryption' || $signaturealgorithm == 'sha1WithRSA')) {
+                        $warnings['insecurealgorithmwarning'] = ['insecurealgorithmwarning', 'tool_mobile'];
                     }
                     // Check certificate start date.
-                    if (strtotime($cert['Start date']) > $timenow) {
-                        $warnings[] = ['invalidcertificatestartdatewarning', 'tool_mobile'];
+                    if (strtotime($cert['start date']) > $timenow) {
+                        $warnings['invalidcertificatestartdatewarning'] = ['invalidcertificatestartdatewarning', 'tool_mobile'];
                     }
                     // Check certificate end date.
-                    if (strtotime($cert['Expire date']) < $timenow) {
-                        $warnings[] = ['invalidcertificateexpiredatewarning', 'tool_mobile'];
+                    if (strtotime($cert['expire date']) < $timenow) {
+                        $warnings['invalidcertificateexpiredatewarning'] = ['invalidcertificateexpiredatewarning', 'tool_mobile'];
                     }
-                    // Check the chain.
-                    if ($expectedissuer !== null) {
-                        if ($expectedissuer !== $cert['Subject'] || $cert['Subject'] === $cert['Issuer']) {
-                            $warnings[] = ['invalidcertificatechainwarning', 'tool_mobile'];
-                        }
-                    }
-                    $expectedissuer = $cert['Issuer'];
                 }
             }
+        } else {
+            // Warning for non https sites.
+            $warnings[] = ['nohttpsformobilewarning', 'admin'];
         }
-        // Now check typical configuration problems.
-        if ((int) $CFG->userquota === PHP_INT_MAX) {
-            // In old Moodle version was a text so was possible to have numeric values > PHP_INT_MAX.
-            $warnings[] = ['invaliduserquotawarning', 'tool_mobile'];
-        }
+
         // Check ADOdb debug enabled.
         if (get_config('auth_db', 'debugauthdb') || get_config('enrol_database', 'debugdb')) {
             $warnings[] = ['adodbdebugwarning', 'tool_mobile'];

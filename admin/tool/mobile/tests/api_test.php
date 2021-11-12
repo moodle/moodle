@@ -78,7 +78,7 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
         $CFG->debugdisplay = 1;
         set_config('debugauthdb', 1, 'auth_db');
         set_config('debugdb', 1, 'enrol_database');
-        $expectedissues = array('nohttpsformobilewarning', 'invaliduserquotawarning', 'adodbdebugwarning', 'displayerrorswarning');
+        $expectedissues = array('adodbdebugwarning', 'displayerrorswarning');
 
         $issues = api::get_potential_config_issues();
         $this->assertCount(count($expectedissues), $issues);
