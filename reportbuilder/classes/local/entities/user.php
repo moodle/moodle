@@ -28,6 +28,7 @@ use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
+use core_reportbuilder\local\filters\user as user_filter;
 use core_reportbuilder\local\helpers\user_profile_fields;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\column;
@@ -410,6 +411,16 @@ class user extends base {
 
             $filters[] = $filter;
         }
+
+        // User select filter.
+        $filters[] = (new filter(
+            user_filter::class,
+            'userselect',
+            new lang_string('userselect', 'core_reportbuilder'),
+            $this->get_entity_name(),
+            "{$tablealias}.id"
+        ))
+            ->add_joins($this->get_joins());
 
         return $filters;
     }
