@@ -1353,6 +1353,71 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_calendar_action_events_by_course with search feature
+     */
+    public function test_get_calendar_action_events_by_course_with_search() {
+        // Generate data.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $instance = $generator->create_instance(['course' => $course->id]);
+
+        // Enrol.
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        $this->resetAfterTest(true);
+        $this->setUser($user);
+
+        for ($i = 1; $i < 5; $i++) {
+            $this->create_calendar_event(
+                sprintf('Event %d', $i),
+                $user->id,
+                'user',
+                0,
+                1,
+                [
+                    'type' => CALENDAR_EVENT_TYPE_ACTION,
+                    'courseid' => $course->id,
+                    'timesort' => $i,
+                    'modulename' => 'assign',
+                    'instance' => $instance->id,
+                ]
+            );
+        }
+
+        // No result found for fake search.
+        $result = core_calendar_external::get_calendar_action_events_by_course($course->id, null, null, 0, 20, 'Fake search');
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_action_events_by_course_returns(),
+            $result
+        );
+        $result = $result['events'];
+        $this->assertEmpty($result);
+
+        // Search for event name called 'Event 1'.
+        $result = core_calendar_external::get_calendar_action_events_by_course($course->id, null, null, 0, 20, 'Event 1');
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_action_events_by_course_returns(),
+            $result
+        );
+        $result = $result['events'];
+        $this->assertCount(1, $result);
+        $this->assertEquals('Event 1', $result[0]['name']);
+
+        // Search for activity type called 'assign'.
+        $result = core_calendar_external::get_calendar_action_events_by_course($course->id, null, null, 0, 20, 'assign');
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_action_events_by_course_returns(),
+            $result
+        );
+        $result = $result['events'];
+        $this->assertCount(4, $result);
+        $this->assertEquals('Event 1', $result[0]['name']);
+        $this->assertEquals('Event 2', $result[1]['name']);
+        $this->assertEquals('Event 3', $result[2]['name']);
+        $this->assertEquals('Event 4', $result[3]['name']);
+    }
+
+    /**
      * Test that get_action_events_by_courses will return a list of events for each
      * course you provided as long as the user is enrolled in the course.
      */
