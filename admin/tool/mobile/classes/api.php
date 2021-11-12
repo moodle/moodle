@@ -326,7 +326,7 @@ class api {
 
         if (empty($section) or $section == 'supportcontact') {
             $settings->supportname = $CFG->supportname;
-            $settings->supportemail = $CFG->supportemail;
+            $settings->supportemail = $CFG->supportemail ?? null;
             $settings->supportpage = $CFG->supportpage;
         }
 

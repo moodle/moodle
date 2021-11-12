@@ -48,17 +48,15 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('supportcontact', new lang_string('supportcontact', 'admin'));
     $primaryadmin = get_admin();
     if ($primaryadmin) {
-        $primaryadminemail = $primaryadmin->email;
         $primaryadminname = fullname($primaryadmin, true);
     } else {
         // No defaults during installation - admin user must be created first.
-        $primaryadminemail = null;
         $primaryadminname = null;
     }
     $temp->add(new admin_setting_configtext('supportname', new lang_string('supportname', 'admin'),
         new lang_string('configsupportname', 'admin'), $primaryadminname, PARAM_NOTAGS));
-    $setting = new admin_setting_configtext('supportemail', new lang_string('supportemail', 'admin'),
-        new lang_string('configsupportemail', 'admin'), $primaryadminemail, PARAM_EMAIL);
+    $setting = new admin_setting_requiredtext('supportemail', new lang_string('supportemail', 'admin'),
+        new lang_string('configsupportemail', 'admin'), null, PARAM_EMAIL);
     $setting->set_force_ltr(true);
     $temp->add($setting);
     $temp->add(new admin_setting_configtext('supportpage', new lang_string('supportpage', 'admin'),

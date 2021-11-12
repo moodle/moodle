@@ -118,6 +118,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         set_config('lang', 'a_b');  // Set invalid lang.
         set_config('disabledfeatures', 'myoverview', 'tool_mobile');
         set_config('minimumversion', '3.8.0', 'tool_mobile');
+        set_config('supportemail', 'test@test.com');
 
         // Enable couple of issuers.
         $issuer = \core\oauth2\api::create_standard_issuer('google');
@@ -186,6 +187,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         $mysitepolicy = 'http://mysite.is/policy/';
         set_config('sitepolicy', $mysitepolicy);
+        set_config('supportemail', 'test@test.com');
 
         $result = external::get_config();
         $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
