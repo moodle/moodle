@@ -75,8 +75,10 @@ class report {
             throw new invalid_parameter_exception('Invalid report');
         }
 
-        $report->set('name', trim($data->name))
-            ->update();
+        $report->set_many([
+            'name' => trim($data->name),
+            'uniquerows' => $data->uniquerows,
+        ])->update();
 
         return $report;
     }

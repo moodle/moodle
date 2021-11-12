@@ -62,7 +62,7 @@ class custom_report_table extends base_report_table {
 
         $this->define_baseurl(new moodle_url('/reportbuilder/edit.php', ['id' => $matches['id']]));
 
-        // Load the report persistent, and accompanying system report instance.
+        // Load the report persistent, and accompanying report instance.
         $this->persistent = new report($matches['id']);
         $this->report = manager::get_report_from_persistent($this->persistent);
 
@@ -90,7 +90,10 @@ class custom_report_table extends base_report_table {
         $aggregatedcolumns = array_filter($columns, static function(column $column): bool {
             return !empty($column->get_aggregation());
         });
+
+        // Also take account of the report setting to show unique rows (only if no columns are being aggregated).
         $hasaggregatedcolumns = !empty($aggregatedcolumns);
+        $showuniquerows = !$hasaggregatedcolumns && $this->persistent->get('uniquerows');
 
         $columnheaders = [];
         $columnsattributes = [];
@@ -98,8 +101,9 @@ class custom_report_table extends base_report_table {
             $columnheading = $column->get_persistent()->get_formatted_heading($this->report->get_context());
             $columnheaders[$column->get_column_alias()] = $columnheading !== '' ? $columnheading : $column->get_title();
 
+            // We need to determine for each column whether we should group by it's fields, to support aggregation.
             $columnaggregation = $column->get_aggregation();
-            if ($hasaggregatedcolumns && empty($columnaggregation)) {
+            if ($showuniquerows || ($hasaggregatedcolumns && empty($columnaggregation))) {
                 $groupby = array_merge($groupby, $column->get_groupby_sql());
             }
 

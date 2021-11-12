@@ -65,9 +65,9 @@ Feature: Manage custom report columns aggregation
     Then I should see "Aggregated column 'Last access'"
     And I should see "<output>" in the "Richie" "table_row"
     Examples:
-      | aggregation    | output                              |
-      | Count          | 3                                   |
-      | Count distinct | 2                                   |
+      | aggregation    | output                       |
+      | Count          | 3                            |
+      | Count distinct | 2                            |
       | Maximum        | ##2 days ago##%A, %d %B %Y## |
       | Minimum        | ##3 days ago##%A, %d %B %Y## |
 
@@ -94,3 +94,25 @@ Feature: Manage custom report columns aggregation
       | Minimum                         | No           |
       | Percentage                      | 66.7%        |
       | Sum                             | 2            |
+
+  Scenario: Show unique report rows
+    Given the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   | default | uniquerows |
+      | My report | core_user\reportbuilder\datasource\users | 0       | 1          |
+    And the following "core_reportbuilder > Columns" exist:
+      | report    | uniqueidentifier |
+      | My report | user:firstname   |
+      | My report | user:lastname    |
+    When I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    Then the following should exist in the "reportbuilder-table" table:
+      | -1-        | -2-     |
+      | Admin      | User    |
+      | Ben        | Richie  |
+      | Bill       | Richie  |
+    # Assert there is no 4th row (duplicate Bill Richie) because we're showing unique rows.
+    And "//table[@data-region='reportbuilder-table']/tbody/tr[not(@class = 'emptyrow')][4]" "xpath_element" should not exist
+    And I set the "First name" column aggregation to "Comma separated values"
+    And the following should exist in the "reportbuilder-table" table:
+      | -1-             | -2-     |
+      | Admin           | User    |
+      | Ben, Bill, Bill | Richie  |

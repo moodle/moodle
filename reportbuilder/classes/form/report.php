@@ -111,6 +111,9 @@ class report extends dynamic_form {
             $mform->setDefault('includedefaultsetup', 1);
             $mform->addHelpButton('includedefaultsetup', 'includedefaultsetup', 'core_reportbuilder');
         }
+
+        $mform->addElement('advcheckbox', 'uniquerows', get_string('uniquerows', 'core_reportbuilder'));
+        $mform->addHelpButton('uniquerows', 'uniquerows', 'core_reportbuilder');
     }
 
     /**
