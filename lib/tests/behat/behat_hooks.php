@@ -38,12 +38,10 @@ use Behat\Testwork\Hook\Scope\BeforeSuiteScope,
     Behat\Behat\Hook\Scope\BeforeStepScope,
     Behat\Behat\Hook\Scope\AfterStepScope,
     Behat\Mink\Exception\ExpectationException,
-    Behat\Mink\Exception\DriverException as DriverException,
-    WebDriver\Exception\NoSuchWindow as NoSuchWindow,
-    WebDriver\Exception\UnexpectedAlertOpen as UnexpectedAlertOpen,
-    WebDriver\Exception\UnknownError as UnknownError,
-    WebDriver\Exception\CurlExec as CurlExec,
-    WebDriver\Exception\NoAlertOpenError as NoAlertOpenError;
+    Behat\Mink\Exception\DriverException,
+    Facebook\WebDriver\Exception\UnexpectedAlertOpenException,
+    Facebook\WebDriver\Exception\WebDriverCurlException,
+    Facebook\WebDriver\Exception\UnknownErrorException;
 
 /**
  * Hooks to the behat process.
@@ -82,7 +80,7 @@ class behat_hooks extends behat_base {
      * failure, but we can store them here to fail the step in i_look_for_exceptions()
      * which result will be parsed by the framework as the last step result.
      *
-     * @var Null or the exception last step throw in the before or after hook.
+     * @var ?Exception Null or the exception last step throw in the before or after hook.
      */
     protected static $currentstepexception = null;
 
@@ -348,17 +346,16 @@ The following debugging information is available:
 
 EOF;
 
-
         try {
             $this->restart_session();
-        } catch (CurlExec | DriverException $e) {
-            // The CurlExec Exception is thrown by WebDriver.
+        } catch (WebDriverCurlException | DriverException $e) {
+            // Thrown by WebDriver.
             self::log_and_stop(
                 $driverexceptionmsg . '. ' .
                 $e->getMessage() . "\n\n" .
                 format_backtrace($e->getTrace(), true)
             );
-        } catch (UnknownError $e) {
+        } catch (UnknownErrorException $e) {
             // Generic 'I have no idea' Selenium error. Custom exception to provide more feedback about possible solutions.
             self::log_and_stop(
                 $e->getMessage() . "\n\n" .
@@ -646,7 +643,7 @@ EOF;
         try {
             $this->wait_for_pending_js();
             self::$currentstepexception = null;
-        } catch (UnexpectedAlertOpen $e) {
+        } catch (UnexpectedAlertOpenException $e) {
             self::$currentstepexception = $e;
 
             // Accepting the alert so the framework can continue properly running
