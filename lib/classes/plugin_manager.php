@@ -1861,7 +1861,7 @@ class core_plugin_manager {
             ),
 
             'editor' => array(
-                'atto', 'textarea', 'tinymce'
+                'atto', 'textarea', 'tiny', 'tinymce'
             ),
 
             'enrol' => array(
@@ -2027,6 +2027,9 @@ class core_plugin_manager {
                 'graphs',
                 'objectives'
             ),
+
+            'tiny' => [
+            ],
 
             'tinymce' => array(
                 'ctrlhelp', 'managefiles', 'moodleemoticon', 'moodleimage',
