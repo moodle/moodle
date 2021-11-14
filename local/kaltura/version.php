@@ -43,27 +43,22 @@ if ($localKalturaPluginVersionRecords) {
     }
 }
 
+$updatedVersion = null;
 if ($kalturaPluginVersion == 20210620311) {
-    $pluginsRecords = $DB->get_records_select('config_plugins', "name = 'version' AND value = '$kalturaPluginVersion'");
-
-    foreach ($pluginsRecords as $record) {
-        $record->value = 2021051700;
-        $DB->update_record('config_plugins', $record);
-    }
+    $updatedVersion = 2021051700;
 }
 else if ($kalturaPluginVersion == 20201215310 || $kalturaPluginVersion == 20210620310) {
-    $pluginsRecords = $DB->get_records_select('config_plugins', "name = 'version' AND value = '$kalturaPluginVersion'");
-
-    foreach ($pluginsRecords as $record) {
-        $record->value = 2020110900;
-        $DB->update_record('config_plugins', $record);
-    }
+    $updatedVersion = 2020110900;
 }
 else if ($kalturaPluginVersion == 2020070539 || $kalturaPluginVersion == 2020121539 || $kalturaPluginVersion == 2021062039) {
+    $updatedVersion = 2020061500;
+}
+
+if (!empty($updatedVersion)) {
     $pluginsRecords = $DB->get_records_select('config_plugins', "name = 'version' AND value = '$kalturaPluginVersion'");
 
     foreach ($pluginsRecords as $record) {
-        $record->value = 2020061500;
+        $record->value = $updatedVersion;
         $DB->update_record('config_plugins', $record);
     }
 }
