@@ -154,7 +154,16 @@ class behat_theme_classic_behat_navigation extends behat_navigation {
         }
 
         $exception = new ElementNotFoundException($this->getSession(), "\"{$element}\" \"{$selectortype}\"");
-        $this->find('xpath', $menuxpath, $exception);
+        try {
+            $this->find('xpath', $menuxpath, $exception);
+        } catch (Exception $e) {
+            // For question bank a different approach.
+            $menuxpath = $rootxpath . "//div[contains(@class, 'dropdown-menu')]";
+            if ($selectortype === 'link') {
+                $menuxpath .= "//a[contains(text(), 'Categories')]";
+            }
+            $this->find('xpath', $menuxpath, $e);
+        }
     }
 
     /**
