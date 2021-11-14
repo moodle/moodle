@@ -30,3 +30,40 @@ $plugin->component = 'local_kaltura';
 $plugin->release = 'Kaltura release 4.3.1';
 $plugin->requires = 2018120300;
 $plugin->maturity = MATURITY_STABLE;
+
+global $DB;
+
+$localKalturaPluginVersionRecords = $DB->get_records_select('config_plugins', "plugin = 'local_kaltura' AND name = 'version'");
+
+$kalturaPluginVersion = "";
+if ($localKalturaPluginVersionRecords) {
+    foreach ($localKalturaPluginVersionRecords as $key => $localKalturaPluginVersionRecord) {
+        $kalturaPluginVersion = $localKalturaPluginVersionRecord->value;
+        break;
+    }
+}
+
+if ($kalturaPluginVersion == 20210620311) {
+    $pluginsRecords = $DB->get_records_select('config_plugins', "name = 'version' AND value = '$kalturaPluginVersion'");
+
+    foreach ($pluginsRecords as $record) {
+        $record->value = 2021051700;
+        $DB->update_record('config_plugins', $record);
+    }
+}
+else if ($kalturaPluginVersion == 20201215310 || $kalturaPluginVersion == 20210620310) {
+    $pluginsRecords = $DB->get_records_select('config_plugins', "name = 'version' AND value = '$kalturaPluginVersion'");
+
+    foreach ($pluginsRecords as $record) {
+        $record->value = 2020110900;
+        $DB->update_record('config_plugins', $record);
+    }
+}
+else if ($kalturaPluginVersion == 2020070539 || $kalturaPluginVersion == 2020121539 || $kalturaPluginVersion == 2021062039) {
+    $pluginsRecords = $DB->get_records_select('config_plugins', "name = 'version' AND value = '$kalturaPluginVersion'");
+
+    foreach ($pluginsRecords as $record) {
+        $record->value = 2020061500;
+        $DB->update_record('config_plugins', $record);
+    }
+}
