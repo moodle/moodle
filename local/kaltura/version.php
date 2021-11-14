@@ -33,14 +33,12 @@ $plugin->maturity = MATURITY_STABLE;
 
 global $DB;
 
-$localKalturaPluginVersionRecords = $DB->get_records_select('config_plugins', "plugin = 'local_kaltura' AND name = 'version'");
+$localKalturaPluginVersionRecord = $DB->get_records_select('config_plugins', "plugin = 'local_kaltura' AND name = 'version'");
 
 $kalturaPluginVersion = "";
-if ($localKalturaPluginVersionRecords) {
-    foreach ($localKalturaPluginVersionRecords as $key => $localKalturaPluginVersionRecord) {
-        $kalturaPluginVersion = $localKalturaPluginVersionRecord->value;
-        break;
-    }
+if ($localKalturaPluginVersionRecord) {
+    $localKalturaPluginVersionRecordValue = array_pop($localKalturaPluginVersionRecord);
+    $kalturaPluginVersion = $localKalturaPluginVersionRecordValue->value;
 }
 
 $updatedVersion = null;
