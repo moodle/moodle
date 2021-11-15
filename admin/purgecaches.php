@@ -38,12 +38,11 @@ $form = new core_admin\form\purge_caches(null, ['returnurl' => $returnurl]);
 if ($data = $form->get_data()) {
 
     // Valid request. Purge, and redirect the user back to where they came from.
-    $selected = $data->purgeselectedoptions;
-    purge_caches($selected);
-
     if (isset($data->all)) {
+        purge_caches();
         $message = get_string('purgecachesfinished', 'admin');
     } else {
+        purge_caches($data->purgeselectedoptions);
         $message = get_string('purgeselectedcachesfinished', 'admin');
     }
 
