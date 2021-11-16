@@ -28,6 +28,7 @@ import {dispatchEvent} from 'core/event_dispatcher';
 import 'core/inplace_editable';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
+import {prefetchStrings} from 'core/prefetch';
 import SortableList from 'core/sortable_list';
 import {get_string as getString, get_strings as getStrings} from 'core/str';
 import Templates from 'core/templates';
@@ -84,26 +85,52 @@ const initConditionsForm = () => {
     conditionForm.addEventListener(conditionForm.events.NOSUBMIT_BUTTON_PRESSED, event => {
         event.preventDefault();
 
-        const pendingPromise = new Pending('core_reportbuilder/conditions:reset');
+        getStrings([
+            {key: 'resetconditions', component: 'core_reportbuilder'},
+            {key: 'resetconditionsconfirm', component: 'core_reportbuilder'},
+            {key: 'resetall', component: 'core_reportbuilder'},
+        ]).then(([confirmTitle, confirmText, confirmButton]) => {
+            Notification.confirm(confirmTitle, confirmText, confirmButton, null, () => {
+                const pendingPromise = new Pending('core_reportbuilder/conditions:reset');
 
-        resetConditions(reportElement.dataset.reportId)
-            .then(data => reloadSettingsConditionsRegion(reportElement, data))
-            .then(() => getString('conditionsreset', 'core_reportbuilder'))
-            .then(addToast)
-            .then(() => {
-                dispatchEvent(reportEvents.tableReload, {}, reportElement);
-                return pendingPromise.resolve();
-            })
-            .catch(Notification.exception);
+                resetConditions(reportElement.dataset.reportId)
+                    .then(data => reloadSettingsConditionsRegion(reportElement, data))
+                    .then(() => getString('conditionsreset', 'core_reportbuilder'))
+                    .then(addToast)
+                    .then(() => {
+                        dispatchEvent(reportEvents.tableReload, {}, reportElement);
+                        return pendingPromise.resolve();
+                    })
+                    .catch(Notification.exception);
+            });
+            return;
+        }).catch(Notification.exception);
     });
 };
 
 /**
- * Initialise module
+ * Initialise module, prefetch all required strings
  *
  * @param {Boolean} initialized Ensure we only add our listeners once
  */
-export const init = (initialized) => {
+export const init = initialized => {
+    prefetchStrings('core_reportbuilder', [
+        'conditionadded',
+        'conditiondeleted',
+        'conditionmoved',
+        'conditionsapplied',
+        'conditionsreset',
+        'deletecondition',
+        'deleteconditionconfirm',
+        'resetall',
+        'resetconditions',
+        'resetconditionsconfirm',
+    ]);
+
+    prefetchStrings('core', [
+        'delete',
+    ]);
+
     initConditionsForm();
     if (initialized) {
         return;
@@ -149,7 +176,7 @@ export const init = (initialized) => {
             getStrings([
                 {key: 'deletecondition', component: 'core_reportbuilder', param: conditionName},
                 {key: 'deleteconditionconfirm', component: 'core_reportbuilder', param: conditionName},
-                {key: 'delete', component: 'moodle'},
+                {key: 'delete', component: 'core'},
             ]).then(([confirmTitle, confirmText, confirmButton]) => {
                 Notification.confirm(confirmTitle, confirmText, confirmButton, null, () => {
                     const pendingPromise = new Pending('core_reportbuilder/conditions:remove');
