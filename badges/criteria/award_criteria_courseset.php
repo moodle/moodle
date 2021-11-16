@@ -238,7 +238,7 @@ class award_criteria_courseset extends award_criteria {
             }
         }
 
-        return $overall;
+        return isset($overall) ? $overall: false;
     }
 
     /**
