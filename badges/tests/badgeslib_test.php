@@ -758,6 +758,66 @@ class badgeslib_test extends advanced_testcase {
     }
 
     /**
+     * Test badges observer when user_updated event is fired.
+     * @covers \award_criteria_courseset
+     */
+    public function test_badges_observer_courseset_criteria_review(): void {
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+        $badge = new badge($this->coursebadge);
+        $this->assertFalse($badge->is_issued($this->user->id));
+
+        $additionalcourse = $this->getDataGenerator()->create_course(['enablecompletion' => true]);
+        $this->getDataGenerator()->enrol_user($this->user->id, $additionalcourse->id);
+
+        $criteriaoverall = award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id]);
+        $criteriaoverall->save(['agg' => BADGE_CRITERIA_AGGREGATION_ANY]);
+        $criteriaoverall1 = award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_COURSESET, 'badgeid' => $badge->id]);
+        $criteriaoverall1->save(['agg' => BADGE_CRITERIA_AGGREGATION_ANY, 'course_' . $this->course->id => $this->course->id,
+            'course_' . $additionalcourse->id => $additionalcourse->id]);
+
+        $ccompletion = new completion_completion(['course' => $this->course->id, 'userid' => $this->user->id]);
+        $ccompletion2 = new completion_completion(['course' => $additionalcourse->id, 'userid' => $this->user->id]);
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+
+        // Mark course as complete.
+        $sink = $this->redirectMessages();
+        $ccompletion->mark_complete();
+        $ccompletion2->mark_complete();
+        // Thee messages are generated: Two for the course completed and the other one for the badge awarded.
+        $messages = $sink->get_messages();
+        $this->assertCount(3, $messages);
+        $this->assertEquals('badgerecipientnotice', $messages[0]->eventtype);
+        $this->assertEquals('coursecompleted', $messages[1]->eventtype);
+        $sink->close();
+
+        // Check if badge is awarded.
+        $this->assertDebuggingCalled('Error baking badge image!');
+        $this->assertTrue($badge->is_issued($this->user->id));
+    }
+
+    /**
+     * Test the criteria review method for courseset
+     * @covers \award_criteria_courseset::review
+     */
+    public function test_badges_courseset_criteria_review_empty_courseset(): void {
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+        $badge = new badge($this->coursebadge);
+        $this->assertFalse($badge->is_issued($this->user->id));
+
+        $criteriaoverall = award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id]);
+        $criteriaoverall->save(['agg' => BADGE_CRITERIA_AGGREGATION_ANY]);
+        $criteriaoverall1 = award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_COURSESET, 'badgeid' => $badge->id]);
+        $criteriaoverall1->save();
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+    }
+
+    /**
      * Test badges observer when cohort_member_added event is fired and user required to belong to multiple (all) cohorts.
      *
      * @covers \award_criteria_cohort

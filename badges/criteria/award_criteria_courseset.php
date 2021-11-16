@@ -197,6 +197,7 @@ class award_criteria_courseset extends award_criteria {
      * @return bool Whether criteria is complete
      */
     public function review($userid, $filtered = false) {
+        $overall = false;
         foreach ($this->params as $param) {
             $course =  new stdClass();
             $course->id = $param['course'];
