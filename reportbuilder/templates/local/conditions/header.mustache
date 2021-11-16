@@ -35,7 +35,11 @@
                 <small class="text-muted text-uppercase">{{entityname}} • {{heading}}</small>
             </div>
         </div>
-        <a data-action="report-remove-condition" class="ml-auto" href="#">
-            {{#pix}}e/cancel, core, {{#str}}deletecondition, core_reportbuilder, {{{heading}}}{{/str}}{{/pix}}
-        </a>
+        <button class="btn btn-link p-0 ml-auto"
+                type="button"
+                data-action="report-remove-condition"
+                title="{{#str}}deletecondition, core_reportbuilder, {{{heading}}}{{/str}}"
+                aria-label="{{#str}}deletecondition, core_reportbuilder, {{{heading}}}{{/str}}">
+            {{#pix}}e/cancel, core{{/pix}}
+        </button>
     </div>

@@ -63,7 +63,7 @@ Feature: Manage custom report columns
       | report    | uniqueidentifier |
       | My report | user:fullname    |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
-    When I click on "Delete column 'Full name'" "link"
+    When I click on "Delete column 'Full name'" "button"
     And I click on "Delete" "button" in the "Delete column 'Full name'" "dialogue"
     Then I should see "Deleted column 'Full name'"
     And I should see "Nothing to display"

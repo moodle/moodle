@@ -48,7 +48,7 @@
     {{#showtabsnavigation}}
         <ul class="nav nav-tabs mb-4" id="dynamictabs-tabs" role="tablist">
             {{#tabs}}
-                <li class="nav-item">
+                <li class="nav-item" role="presentation">
                     <a class="nav-link {{#active}}active{{/active}} {{^enabled}}disabled{{/enabled}}" id="{{shortname}}-tab" data-toggle="tab" href="#{{shortname}}" role="tab" aria-controls="{{shortname}}">
                         {{{displayname}}}
                     </a>

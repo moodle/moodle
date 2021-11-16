@@ -21,19 +21,38 @@
 
     Example context (json):
     {
-        "id": 1,
+        "reportid": 1,
+        "contextid": 1,
         "hasinstances": 1,
-        "instances": "instances",
-        "form": "form"
+        "instances": [{
+            "instanceid": 1,
+            "classname": "some\\class\\name",
+            "title": "Title",
+            "showormessage": 1,
+            "canedit": 1,
+            "candelete": 1,
+            "description": "description",
+            "form": "form"
+        }],
+        "sidebarmenucards": [{
+            "menucards": [{
+                "name": "General",
+                "items": [{
+                    "name": "Manually added users",
+                    "identifier": "core_reportbuilder:users"
+                }]
+            }]
+        }]
     }
 }}
+<h2 class="sr-only">{{#str}} audience, core_reportbuilder {{/str}}</h2>
 <div class="audiences-wrapper d-flex flex-column flex-md-row">
     <div id="audiences-menu">
-        <!-- Sidebar -->
+        {{! Sidebar }}
         {{> core_reportbuilder/local/sidebar-menu/area}}
     </div>
     <div id="audiences-container" class="reportbuilder-audiences-container d-flex flex-column flex-fill" data-region="audiences">
-        <!-- No audience container -->
+        {{! No audience container }}
         <div class="justify-content-center {{#hasinstances}}hidden{{/hasinstances}}" data-region="no-instances-message">
             <div class="alert alert-info mb-0">{{#str}} addaudiences, core_reportbuilder {{/str}}</div>
         </div>

@@ -67,6 +67,6 @@ Feature: Manage custom report columns sorting
     Given I click on "Show/hide settings sidebar" "button"
     And I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
-    When I click on "Delete column 'Username'" "link"
+    When I click on "Delete column 'Username'" "button"
     And I click on "Delete" "button" in the "Delete column 'Username'" "dialogue"
     Then I should not see "Username" in the "#settingssorting" "css_element"

@@ -39,7 +39,7 @@ Feature: Manage card view settings in the report editor
     And the following fields match these values:
       | Columns visible       | 3     |
       | First column title    | Yes   |
-    And I click on "Delete column 'Full name'" "link"
+    And I click on "Delete column 'Full name'" "button"
     And I click on "Delete" "button" in the "Delete column 'Full name'" "dialogue"
     # Check that 'Columns visible' select updates taking into account report maximum columns.
     And the field "visiblecolumns" matches value "2"

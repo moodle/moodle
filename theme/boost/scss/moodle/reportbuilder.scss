@@ -92,7 +92,7 @@
 
 /* Custom table headers */
 .reportbuilder-table th {
-    a[data-action="report-remove-column"],
+    button[data-action="report-remove-column"],
     span[data-drag-type="move"] {
         .icon {
             width: 12px;
@@ -102,7 +102,7 @@
             color: $body-color;
         }
     }
-    a[data-action="report-remove-column"] .icon {
+    button[data-action="report-remove-column"] .icon {
         margin-right: 0;
     }
 }
@@ -142,8 +142,8 @@
             font-size: 12px;
             color: $body-color;
         }
-        a[data-action="report-remove-filter"],
-        a[data-action="report-remove-condition"] {
+        button[data-action="report-remove-filter"],
+        button[data-action="report-remove-condition"] {
             .icon {
                 margin-right: 0;
                 vertical-align: text-top;
