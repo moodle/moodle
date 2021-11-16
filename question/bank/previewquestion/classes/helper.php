@@ -27,7 +27,7 @@ use context;
 use core\plugininfo\qbank;
 use core_question\local\bank\edit_menu_column;
 use core_question\local\bank\view;
-use core_question\lib\question_edit_contexts;
+use core_question\local\bank\question_edit_contexts;
 use moodle_url;
 use question_bank;
 use question_definition;

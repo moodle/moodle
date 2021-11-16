@@ -1250,7 +1250,7 @@ class structure {
     public function can_add_random_questions() {
         if ($this->canaddrandom === null) {
             $quizcontext = $this->quizobj->get_context();
-            $relatedcontexts = new \core_question\lib\question_edit_contexts($quizcontext);
+            $relatedcontexts = new \core_question\local\bank\question_edit_contexts($quizcontext);
             $usablecontexts = $relatedcontexts->having_cap('moodle/question:useall');
 
             $this->canaddrandom = !empty($usablecontexts);

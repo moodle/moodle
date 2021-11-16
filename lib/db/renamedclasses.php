@@ -81,6 +81,6 @@ $renamedclasses = [
     'preview_options_form' => 'qbank_previewquestion\\form\\preview_options_form',
     'question_preview_options' => 'qbank_previewquestion\\output\\question_preview_options',
     'core_question\\form\\tags' => 'qbank_tagquestion\\form\\tags_form',
-    'context_to_string_translator' => 'core_question\\lib\\context_to_string_translator',
-    'question_edit_contexts' => 'core_question\\lib\\question_edit_contexts',
+    'context_to_string_translator' => 'core_question\\local\\bank\\context_to_string_translator',
+    'question_edit_contexts' => 'core_question\\local\\bank\\question_edit_contexts',
 ];

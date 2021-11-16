@@ -108,7 +108,7 @@ if ($cmid) {
 } else {
     throw new moodle_exception('missingcourseorcmid', 'question');
 }
-$contexts = new core_question\lib\question_edit_contexts($thiscontext);
+$contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 $PAGE->set_pagelayout('admin');
 
 if (optional_param('addcancel', false, PARAM_BOOL)) {

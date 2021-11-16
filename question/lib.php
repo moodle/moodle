@@ -65,7 +65,7 @@ function core_question_output_fragment_tags_form($args) {
                  WHERE q.id = :id";
         $category = $DB->get_record_sql($sql, ['id' => $question->id]);
         $questioncontext = \context::instance_by_id($category->contextid);
-        $contexts = new \core_question\lib\question_edit_contexts($editingcontext);
+        $contexts = new \core_question\local\bank\question_edit_contexts($editingcontext);
 
         // Load the question tags and filter the course tags by the current course.
         if (core_tag_tag::is_enabled('core_question', 'question')) {

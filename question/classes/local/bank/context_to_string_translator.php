@@ -14,21 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_question\local\bank;
+
 /**
  * Converts contextlevels to strings and back to help with reading/writing contexts to/from import/export files.
- *
- * @package   core_question
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-namespace core_question\lib;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Class context_to_string_translator.
  *
  * @package   core_question
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -68,8 +57,7 @@ class context_to_string_translator {
      * @return false|int|string
      */
     public function string_to_context($contextname) {
-        $contextid = array_search($contextname, $this->contexttostringarray);
-        return $contextid;
+        return array_search($contextname, $this->contexttostringarray);
     }
 
     /**

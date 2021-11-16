@@ -28,7 +28,6 @@ use qbank_managecategories\question_category_object;
 use qtype_description;
 use qtype_description_edit_form;
 use qtype_description_test_helper;
-use question_edit_contexts;
 use test_question_maker;
 
 defined('MOODLE_INTERNAL') || die();
@@ -57,7 +56,7 @@ class events_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $contexts = new \core_question\lib\question_edit_contexts(context_module::instance($quiz->cmid));
+        $contexts = new \core_question\local\bank\question_edit_contexts(\context_module::instance($quiz->cmid));
 
         $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
         $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
@@ -108,11 +107,7 @@ class events_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-<<<<<<< HEAD:question/tests/event/events_test.php
-        $contexts = new question_edit_contexts(\context_module::instance($quiz->cmid));
-=======
-        $contexts = new core_question\lib\question_edit_contexts(context_module::instance($quiz->cmid));
->>>>>>> MDL-71696 core_question: Changes for versioning:question/tests/events_test.php
+        $contexts = new \core_question\local\bank\question_edit_contexts(\context_module::instance($quiz->cmid));
 
         $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
         $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;

@@ -16,7 +16,7 @@
 
 namespace qbank_bulkmove;
 
-use core_question\lib\question_edit_contexts;
+use core_question\local\bank\question_edit_contexts;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -55,7 +55,7 @@ class helper_test extends \advanced_testcase {
     protected $context;
 
     /**
-     * @var \question_edit_contexts $contexts
+     * @var \core_question\local\bank\question_edit_contexts $contexts
      */
     protected $contexts;
 

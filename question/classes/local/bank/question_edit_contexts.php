@@ -14,21 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_question\local\bank;
+
 /**
  * Tracks all the contexts related to the one we are currently editing questions and provides helper methods to check permissions.
- *
- * @package   core_question
- * @copyright 2007 Jamie Pratt me@jamiep.org
- * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-namespace core_question\lib;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Class question_edit_contexts.
  *
  * @package   core_question
  * @copyright 2007 Jamie Pratt me@jamiep.org

@@ -67,7 +67,7 @@ $catcontext = context::instance_by_id($category->contextid);
 require_capability('moodle/question:useall', $catcontext);
 
 $thiscontext = context_module::instance($cm->id);
-$contexts = new core_question\lib\question_edit_contexts($thiscontext);
+$contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 
 // Create the editing form.
 $mform = new mod_quiz\form\randomquestion_form(new moodle_url('/mod/quiz/editrandom.php'), ['contexts' => $contexts]);

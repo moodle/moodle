@@ -19,7 +19,6 @@ namespace qbank_previewquestion;
 use context_course;
 use moodle_url;
 use core\plugininfo\qbank;
-use \core_question\lib\question_edit_contexts;
 use question_bank;
 use question_engine;
 use stdClass;
@@ -75,7 +74,7 @@ class helper_test extends \advanced_testcase {
         $course = $generator->create_course();
         $this->context = context_course::instance($course->id);
         // Create a question in the default category.
-        $contexts = new \core_question\lib\question_edit_contexts($this->context);
+        $contexts = new \core_question\local\bank\question_edit_contexts($this->context);
         $cat = question_make_default_categories($contexts->all());
         $this->questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);

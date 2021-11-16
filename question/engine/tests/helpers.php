@@ -117,7 +117,7 @@ abstract class question_test_helper {
      */
     public static function get_question_editing_form($cat, $questiondata) {
         $catcontext = context::instance_by_id($cat->contextid, MUST_EXIST);
-        $contexts = new core_question\lib\question_edit_contexts($catcontext);
+        $contexts = new core_question\local\bank\question_edit_contexts($catcontext);
         $dataforformconstructor = new stdClass();
         $dataforformconstructor->createdby = $questiondata->createdby;
         $dataforformconstructor->qtype = $questiondata->qtype;

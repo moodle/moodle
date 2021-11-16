@@ -1609,7 +1609,7 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
         ];
     }
 
-    $contexts = new core_question\lib\question_edit_contexts($context);
+    $contexts = new core_question\local\bank\question_edit_contexts($context);
     foreach ($corenavigations as $key => $corenavigation) {
         if ($contexts->have_one_edit_tab_cap($key)) {
             $questionnode->add($corenavigation['title'], new moodle_url(
@@ -1754,7 +1754,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
         require_login($course, false, $cm);
 
         require_once($CFG->dirroot . '/question/editlib.php');
-        $contexts = new core_question\lib\question_edit_contexts($context);
+        $contexts = new core_question\local\bank\question_edit_contexts($context);
         // Check export capability.
         $contexts->require_one_edit_tab_cap('export');
         $categoryid = (int)array_shift($args);

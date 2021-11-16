@@ -49,7 +49,7 @@ class core_question_bank_view_testcase extends advanced_testcase {
         $context = context_course::instance($course->id);
 
         // Create a question in the default category.
-        $contexts = new core_question\lib\question_edit_contexts($context);
+        $contexts = new core_question\local\bank\question_edit_contexts($context);
         $cat = question_make_default_categories($contexts->all());
         $questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);
@@ -93,7 +93,7 @@ class core_question_bank_view_testcase extends advanced_testcase {
         $context = context_course::instance($course->id);
 
         // Create a question in the default category.
-        $contexts = new core_question\lib\question_edit_contexts($context);
+        $contexts = new core_question\local\bank\question_edit_contexts($context);
         $cat = question_make_default_categories($contexts->all());
         $questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);
