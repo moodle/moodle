@@ -397,13 +397,15 @@ export default class Drawers {
 const scroller = () => {
     const body = document.querySelector('body');
     const drawerLayout = document.querySelector('#page.drawers');
-    drawerLayout.addEventListener("scroll", () => {
-        if (drawerLayout.scrollTop >= window.innerHeight) {
-            body.classList.add('scrolled');
-        } else {
-            body.classList.remove('scrolled');
-        }
-    });
+    if (drawerLayout) {
+        drawerLayout.addEventListener("scroll", () => {
+            if (drawerLayout.scrollTop >= window.innerHeight) {
+                body.classList.add('scrolled');
+            } else {
+                body.classList.remove('scrolled');
+            }
+        });
+    }
 };
 
 /**

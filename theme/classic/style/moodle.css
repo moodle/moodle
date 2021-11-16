@@ -20942,6 +20942,22 @@ div.editor_atto_toolbar button .icon {
     height: 50px;
     color: #1d2125; }
 
+@media (max-width: 767.98px) {
+  .primary-navigation {
+    display: none; }
+  .editmode-switch-form .custom-control-label {
+    font-size: 0;
+    color: transparent; } }
+
+.drawer-primary .drawercontent {
+  padding: 0; }
+  .drawer-primary .drawercontent .list-group {
+    border-radius: 0;
+    margin-top: -1px; }
+    .drawer-primary .drawercontent .list-group .list-group-item {
+      border-left: 0;
+      border-right: 0; }
+
 .secondary-navigation {
   border-top: 1px solid #dee2e6;
   border-bottom: 1px solid #dee2e6; }

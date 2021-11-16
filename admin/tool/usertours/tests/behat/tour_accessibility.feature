@@ -14,7 +14,7 @@ Feature: Apply accessibility to a tour
     And I add steps to the tour:
       | targettype | targetvalue_selector | Title       | Content   |
       | Selector   | .usermenu            | User menu   | Next page |
-      | Selector   | input,button         | Page 2      | Next page |
+      | Selector   | .navbar-brand         | Page 2      | Next page |
     And I add steps to the tour:
       | targettype                  | Title   | Content     |
       | Display in middle of page   | Page 3  | Final page. |
@@ -66,11 +66,11 @@ Feature: Apply accessibility to a tour
     And I am on site homepage
     When I click on "Next" "button"
     And I click on "Next" "button"
-    Then "input[aria-describedby^='tour-step-tool_usertours'],button[aria-describedby^='tour-step-tool_usertours']" "css_element" should exist
-    And "input[tabindex],button[tabindex]" "css_element" should exist
+    Then ".navbar-brand[aria-describedby^='tour-step-tool_usertours']" "css_element" should exist
+    And ".navbar-brand[tabindex]" "css_element" should exist
     When I click on "Next" "button"
-    Then "input[aria-describedby^='tour-step-tool_usertours'],button[aria-describedby^='tour-step-tool_usertours']" "css_element" should not exist
-    And "input[tabindex]:not([tabindex='-1']),button[tabindex]:not([tabindex='-1'])" "css_element" should not exist
+    Then ".navbar-brand[aria-describedby^='tour-step-tool_usertours']" "css_element" should not exist
+    And ".navbar-brand[tabindex]:not([tabindex='-1'])" "css_element" should not exist
     When I click on "End tour" "button"
-    Then "input[aria-describedby^='tour-step-tool_usertours'],button[aria-describedby^='tour-step-tool_usertours']" "css_element" should not exist
-    And "input[tabindex]:not([tabindex='0']),button[tabindex]:not([tabindex='0'])" "css_element" should not exist
+    Then ".navbar-brand[aria-describedby^='tour-step-tool_usertours']" "css_element" should not exist
+    And ".navbar-brand[tabindex]:not([tabindex='0'])" "css_element" should not exist

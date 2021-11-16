@@ -34,7 +34,24 @@
         "config": {
             "wwwroot": "#"
         },
-        "sitename": "Moodle Site"
+        "sitename": "Moodle Site",
+        "mobileprimarynav": [
+            {
+                "text": "Dashboard",
+                "url": "/my",
+                "isactive": true
+            },
+            {
+                "text": "Site home",
+                "url": "/",
+                "isactive": false
+            },
+            {
+                "text": "My courses",
+                "url": "/course",
+                "isactive": false
+            }
+        ]
     }
 }}
 <nav class="navbar fixed-top navbar-light bg-white navbar-expand" aria-label="{{#str}}sitemenubar, admin{{/str}}">
@@ -46,7 +63,12 @@
         </button>
     </div>
 
-    <a href="{{{ config.wwwroot }}}" class="navbar-brand d-flex align-items-center m-0 p-0 aabtn">
+    <button class="navbar-toggler aabtn d-block d-md-none my-1 mr-2" data-toggle="drawers" data-action="toggle" data-target="theme_boost-drawers-primary">
+        <span class="navbar-toggler-icon"></span>
+        <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
+    </button>
+
+    <a href="{{{ config.wwwroot }}}" class="navbar-brand d-none d-md-flex align-items-center m-0 p-0 aabtn">
         {{# output.should_display_navbar_logo }}
             <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
         {{/ output.should_display_navbar_logo }}
@@ -80,3 +102,5 @@
         {{{ output.edit_switch }}}
     </div>
 </nav>
+
+{{> theme_boost/primary-drawer-mobile }}
