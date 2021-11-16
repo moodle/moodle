@@ -64,7 +64,7 @@ Feature: Perform basic calendar functionality
     And I follow "Full calendar"
     And I click on "Really awesome event!" "link"
     And "Course 1" "link" should exist in the "Really awesome event!" "dialogue"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "Really awesome event!" "dialogue"
     And I log out
     And I log in as "student2"
     And I follow "Full calendar"
@@ -203,7 +203,7 @@ Feature: Perform basic calendar functionality
     Then "Course 1" "autocomplete_suggestions" should exist
     And "Course 2" "autocomplete_suggestions" should not exist
     And "Course 3" "autocomplete_suggestions" should not exist
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "New event" "dialogue"
     And I am on site homepage
     And I navigate to "Appearance > Calendar" in site administration
     And I set the field "Admins see all" to "1"
@@ -226,7 +226,7 @@ Feature: Perform basic calendar functionality
     And I follow "Full calendar"
     When I click on "New event" "button"
     Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "New event" "dialogue"
     And I log out
     Given I log in as "admin"
     And I navigate to "Appearance > Calendar" in site administration

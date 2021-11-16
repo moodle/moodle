@@ -183,9 +183,9 @@ Feature: Upload users
     And I click on "Manual enrolments" "link" in the "Student One" "table_row"
     Then I should see "1 January 2019" in the "Enrolment starts" "table_row"
     And I should not see "Enrolment ends"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "Enrolment details" "dialogue"
     And I click on "Manual enrolments" "link" in the "Student Two" "table_row"
     Then I should see "2 January 2020" in the "Enrolment starts" "table_row"
     And I should see "12 January 2020" in the "Enrolment ends" "table_row"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "Enrolment details" "dialogue"
     And I log out
