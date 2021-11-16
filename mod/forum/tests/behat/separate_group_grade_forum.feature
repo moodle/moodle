@@ -72,3 +72,37 @@ Feature: I can grade a students by group with separate groups
     Then I should not see "1 out of 1"
     And I should not see "1 out of 2"
     And I should see "1 out of 3"
+
+  @javascript
+  Scenario: Teacher can see only the discussions which are joined to
+    Given the following "users" exist:
+      | username | firstname | lastname | email |
+      | teacher2 | Teacher | 2 | teacher2@example.com |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | teacher2 | C1 | teacher |
+    And the following "group members" exist:
+      | user | group |
+      | teacher2 | G2 |
+      | teacher2 | G3 |
+    And I log out
+    When I am on the "Test Forum 1" "forum activity" page logged in as student1
+    And I select "Group A" from the "Separate groups" singleselect
+    And I click on "Add a new discussion topic" "link"
+    And I set the following fields to these values:
+      | Subject  | Discussion subject A |
+      | Message | Discussion message A |
+    And I press "Post to forum"
+    And I select "Group C" from the "Separate groups" singleselect
+    And I click on "Add a new discussion topic" "link"
+    And I set the following fields to these values:
+      | Subject  | Discussion subject C |
+      | Message | Discussion message C |
+    And I press "Post to forum"
+    And I log out
+    Then I am on the "Test Forum 1" "forum activity" page logged in as teacher2
+    And I select "Group C" from the "Separate groups" singleselect
+    And I click on "Grade users" "button"
+    And I should see "Student 1"
+    And I should see "Discussion subject C"
+    And I should not see "Discussion subject A"
