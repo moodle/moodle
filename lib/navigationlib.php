@@ -4561,6 +4561,12 @@ class settings_navigation extends navigation_node {
             badges_add_course_navigation($coursenode, $course);
         }
 
+        // Import data from other courses.
+        if ($adminoptions->import) {
+            $url = new moodle_url('/backup/import.php', array('id' => $course->id));
+            $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/import', ''));
+        }
+
         // Backup this course
         if ($adminoptions->backup) {
             $url = new moodle_url('/backup/backup.php', array('id'=>$course->id));
@@ -4571,12 +4577,6 @@ class settings_navigation extends navigation_node {
         if ($adminoptions->restore) {
             $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$coursecontext->id));
             $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
-        }
-
-        // Import data from other courses
-        if ($adminoptions->import) {
-            $url = new moodle_url('/backup/import.php', array('id'=>$course->id));
-            $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/import', ''));
         }
 
         // Copy this course.

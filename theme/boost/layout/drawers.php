@@ -79,9 +79,14 @@ $bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 
 $secondarynavigation = false;
+$overflow = '';
 if ($PAGE->has_secondary_navigation()) {
     $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs');
     $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+    $overflowdata = $PAGE->secondarynav->get_overflow_menu_data();
+    if (!is_null($overflowdata)) {
+        $overflow = $overflowdata->export_for_template($OUTPUT);
+    }
 }
 
 $primary = new core\navigation\output\primary($PAGE);
@@ -108,6 +113,7 @@ $templatecontext = [
     'forceblockdraweropen' => $forceblockdraweropen,
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
+    'overflow' => $overflow
 ];
 
 $nav = $PAGE->flatnav;
