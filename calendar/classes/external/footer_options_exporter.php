@@ -82,26 +82,10 @@ class footer_options_exporter extends exporter {
      */
     protected function get_manage_subscriptions_link(): ?string {
         if (calendar_user_can_add_event($this->calendar->course)) {
-            $managesubscriptionurl = new moodle_url('/calendar/managesubscriptions.php', $this->get_link_params());
+            $managesubscriptionurl = new moodle_url('/calendar/managesubscriptions.php');
             return $managesubscriptionurl->out(true);
         }
         return null;
-    }
-
-    /**
-     * Get the list of URL parameters for calendar links.
-     *
-     * @return array
-     */
-    protected function get_link_params() {
-        $params = [];
-        if (SITEID !== $this->calendar->course->id) {
-            $params['course'] = $this->calendar->course->id;
-        } else if (null !== $this->calendar->categoryid && $this->calendar->categoryid > 0) {
-            $params['category'] = $this->calendar->categoryid;
-        }
-
-        return $params;
     }
 
     /**
@@ -165,12 +149,6 @@ class footer_options_exporter extends exporter {
             'view' => 'month',
             'time' => $this->calendar->time,
         ]);
-
-        if ($this->calendar->course && SITEID !== $this->calendar->course->id) {
-            $url->param('course', $this->calendar->course->id);
-        } else if ($this->calendar->categoryid) {
-            $url->param('category', $this->calendar->categoryid);
-        }
 
         return $url->out(false);
     }

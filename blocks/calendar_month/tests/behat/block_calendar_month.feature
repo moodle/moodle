@@ -41,12 +41,12 @@ Feature: Enable the calendar block in a course and test it's functionality
   @javascript
   Scenario: View a course event in the calendar block
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
     And I create a calendar event with form data:
-      | id_eventtype | Course |
-      | id_name | Course Event |
-    When I am on "Course 1" course homepage
+      | Type of event | course        |
+      | Course        | Course 1      |
+      | Event title   | Course Event  |
+    When I am on "Course 1" course homepage with editing mode on
+    And I add the "Calendar" block
     And I hover over today in the mini-calendar block
     Then I should see "Course Event"
 
