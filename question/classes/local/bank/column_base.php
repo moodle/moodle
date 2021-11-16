@@ -133,7 +133,7 @@ abstract class column_base {
     /**
      * Title for this column. Not used if is_sortable returns an array.
      */
-    abstract protected function get_title();
+    abstract public function get_title();
 
     /**
      * Use this when get_title() returns
@@ -141,7 +141,7 @@ abstract class column_base {
      *
      * @return string a fuller version of the name.
      */
-    protected function get_title_tip() {
+    public function get_title_tip() {
         return '';
     }
 

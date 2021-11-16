@@ -33,7 +33,7 @@ class discriminative_efficiency extends column_base {
      *
      * @return string column title
      */
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('discriminative_efficiency', 'qbank_statistics');
     }
 

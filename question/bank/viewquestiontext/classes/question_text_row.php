@@ -44,7 +44,7 @@ class question_text_row extends row_base {
         return 'questiontext';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('questiontext', 'question');
     }
 

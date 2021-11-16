@@ -33,7 +33,7 @@ class question_status_column extends column_base {
         return 'questionstatus';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('questionstatus', 'qbank_editquestion');
     }
 

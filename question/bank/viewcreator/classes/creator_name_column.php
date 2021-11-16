@@ -32,7 +32,7 @@ class creator_name_column extends column_base {
         return 'creatorname';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('createdby', 'question');
     }
 

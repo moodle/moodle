@@ -33,7 +33,7 @@ class discrimination_index extends column_base {
      *
      * @return string column title
      */
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('discrimination_index', 'qbank_statistics');
     }
 

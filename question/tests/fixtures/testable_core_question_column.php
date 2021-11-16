@@ -60,7 +60,7 @@ class testable_core_question_column extends \core_question\local\bank\column_bas
         return 'test_column';
     }
 
-    protected function get_title() {
+    public function get_title() {
         return 'Test Column';
     }
 }

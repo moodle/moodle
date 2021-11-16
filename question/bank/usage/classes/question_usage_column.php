@@ -32,7 +32,7 @@ class question_usage_column extends column_base {
         return 'questionusage';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('questionusage', 'qbank_usage');
     }
 
