@@ -30,7 +30,7 @@ import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
 import SortableList from 'core/sortable_list';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {get_string as getString} from 'core/str';
 import Templates from 'core/templates';
 import {add as addToast} from 'core/toast';
 import DynamicForm from 'core_form/dynamicform';
@@ -88,26 +88,24 @@ const initConditionsForm = () => {
     conditionForm.addEventListener(conditionForm.events.NOSUBMIT_BUTTON_PRESSED, event => {
         event.preventDefault();
 
-        getStrings([
-            {key: 'resetconditions', component: 'core_reportbuilder'},
-            {key: 'resetconditionsconfirm', component: 'core_reportbuilder'},
-            {key: 'resetall', component: 'core_reportbuilder'},
-        ]).then(([confirmTitle, confirmText, confirmButton]) => {
-            Notification.confirm(confirmTitle, confirmText, confirmButton, null, () => {
-                const pendingPromise = new Pending('core_reportbuilder/conditions:reset');
+        Notification.saveCancelPromise(
+            getString('resetconditions', 'core_reportbuilder'),
+            getString('resetconditionsconfirm', 'core_reportbuilder'),
+            getString('resetall', 'core_reportbuilder')
+        ).then(() => {
+            const pendingPromise = new Pending('core_reportbuilder/conditions:reset');
 
-                resetConditions(reportElement.dataset.reportId)
-                    .then(data => reloadSettingsConditionsRegion(reportElement, data))
-                    .then(() => getString('conditionsreset', 'core_reportbuilder'))
-                    .then(addToast)
-                    .then(() => {
-                        dispatchEvent(reportEvents.tableReload, {}, reportElement);
-                        return pendingPromise.resolve();
-                    })
-                    .catch(Notification.exception);
-            });
+            return resetConditions(reportElement.dataset.reportId)
+                .then(data => reloadSettingsConditionsRegion(reportElement, data))
+                .then(() => addToast(getString('conditionsreset', 'core_reportbuilder')))
+                .then(() => {
+                    dispatchEvent(reportEvents.tableReload, {}, reportElement);
+                    return pendingPromise.resolve();
+                })
+                .catch(Notification.exception);
+        }).catch(() => {
             return;
-        }).catch(Notification.exception);
+        });
     });
 };
 
@@ -176,26 +174,24 @@ export const init = initialized => {
             const conditionContainer = reportRemoveCondition.closest(reportSelectors.regions.activeCondition);
             const conditionName = conditionContainer.dataset.conditionName;
 
-            getStrings([
-                {key: 'deletecondition', component: 'core_reportbuilder', param: conditionName},
-                {key: 'deleteconditionconfirm', component: 'core_reportbuilder', param: conditionName},
-                {key: 'delete', component: 'core'},
-            ]).then(([confirmTitle, confirmText, confirmButton]) => {
-                Notification.confirm(confirmTitle, confirmText, confirmButton, null, () => {
-                    const pendingPromise = new Pending('core_reportbuilder/conditions:remove');
+            Notification.saveCancelPromise(
+                getString('deletecondition', 'core_reportbuilder', conditionName),
+                getString('deleteconditionconfirm', 'core_reportbuilder', conditionName),
+                getString('delete', 'core')
+            ).then(() => {
+                const pendingPromise = new Pending('core_reportbuilder/conditions:remove');
 
-                    deleteCondition(reportElement.dataset.reportId, conditionContainer.dataset.conditionId)
-                        .then(data => reloadSettingsConditionsRegion(reportElement, data))
-                        .then(() => getString('conditiondeleted', 'core_reportbuilder', conditionName))
-                        .then(addToast)
-                        .then(() => {
-                            dispatchEvent(reportEvents.tableReload, {}, reportElement);
-                            return pendingPromise.resolve();
-                        })
-                        .catch(Notification.exception);
-                });
+                return deleteCondition(reportElement.dataset.reportId, conditionContainer.dataset.conditionId)
+                    .then(data => reloadSettingsConditionsRegion(reportElement, data))
+                    .then(() => addToast(getString('conditiondeleted', 'core_reportbuilder', conditionName)))
+                    .then(() => {
+                        dispatchEvent(reportEvents.tableReload, {}, reportElement);
+                        return pendingPromise.resolve();
+                    })
+                    .catch(Notification.exception);
+            }).catch(() => {
                 return;
-            }).catch(Notification.exception);
+            });
         }
     });
 

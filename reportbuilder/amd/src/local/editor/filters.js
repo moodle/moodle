@@ -28,8 +28,9 @@ import {dispatchEvent} from 'core/event_dispatcher';
 import 'core/inplace_editable';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
+import {prefetchStrings} from 'core/prefetch';
 import SortableList from 'core/sortable_list';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {get_string as getString} from 'core/str';
 import Templates from 'core/templates';
 import {add as addToast} from 'core/toast';
 import * as reportEvents from 'core_reportbuilder/local/events';
@@ -58,11 +59,23 @@ const reloadSettingsFiltersRegion = (reportElement, templateContext) => {
 };
 
 /**
- * Initialise module
+ * Initialise module, prefetch all required strings
  *
  * @param {Boolean} initialized Ensure we only add our listeners once
  */
-export const init = (initialized) => {
+export const init = initialized => {
+    prefetchStrings('core_reportbuilder', [
+        'deletefilter',
+        'deletefilterconfirm',
+        'filteradded',
+        'filterdeleted',
+        'filtermoved',
+    ]);
+
+    prefetchStrings('core', [
+        'delete',
+    ]);
+
     if (initialized) {
         return;
     }
@@ -101,26 +114,24 @@ export const init = (initialized) => {
             const filterContainer = reportRemoveFilter.closest(reportSelectors.regions.activeFilter);
             const filterName = filterContainer.dataset.filterName;
 
-            getStrings([
-                {key: 'deletefilter', component: 'core_reportbuilder', param: filterName},
-                {key: 'deletefilterconfirm', component: 'core_reportbuilder', param: filterName},
-                {key: 'delete', component: 'moodle'},
-            ]).then(([confirmTitle, confirmText, confirmButton]) => {
-                Notification.confirm(confirmTitle, confirmText, confirmButton, null, () => {
-                    const pendingPromise = new Pending('core_reportbuilder/filters:remove');
+            Notification.saveCancelPromise(
+                getString('deletefilter', 'core_reportbuilder', filterName),
+                getString('deletefilterconfirm', 'core_reportbuilder', filterName),
+                getString('delete', 'core')
+            ).then(() => {
+                const pendingPromise = new Pending('core_reportbuilder/filters:remove');
 
-                    deleteFilter(reportElement.dataset.reportId, filterContainer.dataset.filterId)
-                        .then(data => reloadSettingsFiltersRegion(reportElement, data))
-                        .then(() => getString('filterdeleted', 'core_reportbuilder', filterName))
-                        .then(addToast)
-                        .then(() => {
-                            dispatchEvent(reportEvents.tableReload, {}, reportElement);
-                            return pendingPromise.resolve();
-                        })
-                        .catch(Notification.exception);
-                });
+                return deleteFilter(reportElement.dataset.reportId, filterContainer.dataset.filterId)
+                    .then(data => reloadSettingsFiltersRegion(reportElement, data))
+                    .then(() => addToast(getString('filterdeleted', 'core_reportbuilder', filterName)))
+                    .then(() => {
+                        dispatchEvent(reportEvents.tableReload, {}, reportElement);
+                        return pendingPromise.resolve();
+                    })
+                    .catch(Notification.exception);
+            }).catch(() => {
                 return;
-            }).catch(Notification.exception);
+            });
         }
     });
 
