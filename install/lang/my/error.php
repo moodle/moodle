@@ -33,3 +33,5 @@ $string['cannotcreatetempdir'] = 'temp directory ကို မတည်ဆော
 $string['cannotdownloadcomponents'] = 'အစိတ်အပိုင်းများကို ဒေါင်းလုတ်ဆွဲမရပါ။';
 $string['cannotdownloadzipfile'] = 'ZIP ဖိုင်ကိုဒေါင်းလုတ်ဆွဲမရပါ။';
 $string['cannotfindcomponent'] = 'အစိတ်အပိုင်းကို ရှာဖွေမတွေ့ရှိပါ။';
+$string['cannotsavemd5file'] = 'md5 ဖိုင်ကို မသိမ်းဆည်းနိုင်ပါ';
+$string['cannotsavezipfile'] = 'ZIP ဖိုင်ကို မသိမ်းဆည်းနိုင်ပါ';
