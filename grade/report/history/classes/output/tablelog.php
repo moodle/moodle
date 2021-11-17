@@ -140,8 +140,7 @@ class tablelog extends \table_sql implements \renderable {
      * Setup the headers for the html table.
      */
     protected function define_table_columns() {
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = \core_user\fields::get_identity_fields($this->context, false);
+        $extrafields = \core_user\fields::get_identity_fields($this->context);
 
         // Define headers and columns.
         $cols = array(
@@ -154,7 +153,7 @@ class tablelog extends \table_sql implements \renderable {
             if (get_string_manager()->string_exists($field, 'moodle')) {
                 $cols[$field] = get_string($field);
             } else {
-                $cols[$field] = $field;
+                $cols[$field] = \core_user\fields::get_display_name($field);
             }
         }
 
@@ -394,15 +393,24 @@ class tablelog extends \table_sql implements \renderable {
                    ggh.source, ggh.overridden, ggh.locked, ggh.excluded, ggh.feedback, ggh.feedbackformat,
                    gi.itemtype, gi.itemmodule, gi.iteminstance, gi.itemnumber, ';
 
+        $userfieldsapi = \core_user\fields::for_identity($this->context);
+        $userfieldssql = $userfieldsapi->get_sql('u', true, '', '', true);
+        $userfieldsselects = '';
+        $userfieldsjoins = '';
+        $userfieldsparams = [];
+        if (!$count) {
+            $userfieldsselects = $userfieldssql->selects;
+            $userfieldsjoins = $userfieldssql->joins;
+            $userfieldsparams = $userfieldssql->params;
+        }
+
         // Add extra user fields that we need for the graded user.
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = \core_user\fields::get_identity_fields($this->context, false);
-        foreach ($extrafields as $field) {
-            $fields .= 'u.' . $field . ', ';
+        $extrafields = [];
+        foreach ($userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]) as $field) {
+            $extrafields[$field] = $userfieldssql->mappings[$field];
         }
         $userfieldsapi = \core_user\fields::for_name();
-        $gradeduserfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-        $fields .= $gradeduserfields . ', ';
+        $fields .= $userfieldsapi->get_sql('u', false, '', '', false)->selects . ', ';
         $groupby = $fields;
 
         // Add extra user fields that we need for the grader user.
@@ -437,12 +445,14 @@ class tablelog extends \table_sql implements \renderable {
 
         list($where, $params) = $this->get_filters_sql_and_params();
 
-        $sql =  "SELECT $select
+        $sql = " SELECT $select $userfieldsselects
                    FROM {grade_grades_history} ggh
                    JOIN {grade_items} gi ON gi.id = ggh.itemid
                    JOIN {user} u ON u.id = ggh.userid
+                        $userfieldsjoins
               LEFT JOIN {user} ug ON ug.id = ggh.usermodified
                   WHERE $where";
+        $params = array_merge($userfieldsparams, $params);
 
         // As prevgrade is a dynamic field, we need to wrap the query. This is the only filtering
         // that should be defined outside the method self::get_filters_sql_and_params().

@@ -242,6 +242,159 @@ class gradereport_history_report_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for \gradereport_history_report_testcase::test_get_users_with_profile_fields()
+     * Testing get_users() and get_users_count() test cases.
+     *
+     * @return array List of data sets (test cases)
+     */
+    public function get_users_with_profile_fields_provider(): array {
+        return [
+            // User identity check boxes, 'email', 'profile_field_lang' and 'profile_field_height' are checked.
+                'show email,lang and height;search for all users' =>
+                        ['email,profile_field_lang,profile_field_height', '', ['u1', 'u2', 'u3', 'u4']],
+                'show email,lang and height;search for users on .org ' =>
+                        ['email,profile_field_lang,profile_field_height', '.org', ['u1', 'u2', 'u4']],
+                'show email,lang and height;search for users on .com ' =>
+                        ['email,profile_field_lang,profile_field_height', '.com', []],
+                'show email,lang and height;search for users on .uk ' =>
+                        ['email,profile_field_lang,profile_field_height', '.uk', ['u3']],
+                'show email,lang and height,search for Spanish speakers' =>
+                        ['email,profile_field_lang,profile_field_height', 'spanish', ['u1', 'u4']],
+                'show email,lang and height,search for Spanish speakers' =>
+                        ['email,profile_field_lang,profile_field_height', 'spa', ['u1', 'u4']],
+                'show email,lang and height,search for German speakers' =>
+                        ['email,profile_field_lang,profile_field_height', 'german', ['u2']],
+                'show email,lang and height,search for German speakers' =>
+                        ['email,profile_field_lang,profile_field_height', 'ger', ['u2']],
+                'show email,lang and height,search for English speakers' =>
+                        ['email,profile_field_lang,profile_field_height', 'english', ['u3']],
+                'show email,lang and height,search for English speakers' =>
+                        ['email,profile_field_lang,profile_field_height', 'eng', ['u3']],
+                'show email,lang and height,search for English speakers' =>
+                        ['email,profile_field_lang,profile_field_height', 'ish', ['u3']],
+                'show email,lang and height,search for users with height 180cm' =>
+                        ['email,profile_field_lang,profile_field_height', '180cm', ['u2', 'u3', 'u4']],
+                'show email,lang and height,search for users with height 180cm' =>
+                        ['email,profile_field_lang,profile_field_height', '180', ['u2', 'u3', 'u4']],
+                'show email,lang and height,search for users with height 170cm' =>
+                        ['email,profile_field_lang,profile_field_height', '170cm', ['u1']],
+                'show email,lang and height,search for users with height 170cm' =>
+                        ['email,profile_field_lang,profile_field_height', '170', ['u1']],
+
+            // User identity check boxes, 'email' and 'profile_field_height' are checked.
+                'show email and height;search for users on .org' =>
+                        ['email,profile_field_height', '.org', ['u1', 'u2', 'u4']],
+                'show email and height;search for users on .com' =>
+                        ['email,profile_field_height', '.com', []],
+                'show email and height;search for users on .co' =>
+                        ['email,profile_field_height', '.co', ['u3']],
+                'show email and height,search for Spanish/German/English speakers' =>
+                        ['email,profile_field_height', 'spanish', []],
+                'show email and height,search for Spanish/German/English speakers' =>
+                        ['email,profile_field_height', 'german', []],
+                'show email and height,search for Spanish/German/English speakers' =>
+                        ['email,profile_field_height', 'english', []],
+                'show email,lang and height,search for English speakers' =>
+                        ['email,profile_field_height', 'english', []],
+                'show email and height,search for English speakers' =>
+                        ['email,profile_field_height', 'eng', []],
+                'show email and height,search for English speakers' =>
+                        ['email,profile_field_height', 'ish', []],
+                'show email and height,search for users with height 180cm' =>
+                        ['email,profile_field_height', '180cm', ['u2', 'u3', 'u4']],
+                'show email,lang and height,search for users with height 180cm' =>
+                        ['email,profile_field_height', '180', ['u2', 'u3', 'u4']],
+                'show email,lang and height,search for users with height 170cm' =>
+                        ['email,profile_field_height', '170cm', ['u1']],
+                'show email,lang and height,search for users with height 170cm' =>
+                        ['email,profile_field_height', '170', ['u1']],
+
+            // User identity check boxes, only 'email' is checked.
+                'show email only;search for users on .org' => ['email', '.org', ['u1', 'u2', 'u4']],
+                'show email only;search for users on .com' => ['email', '.com', []],
+                'show email only;search for users on .co.uk' => ['email', 'co.uk', ['u3']],
+                'show email only;search for users on .uk' => ['email', '.uk', ['u3']],
+                'show email only;search for users on .co' => ['email', '.co', ['u3']],
+                'show email only;search for Spanish speakers' => ['email', 'spanish', []],
+                'show email only;search for German speakers' => ['email', 'german', []],
+                'show email only;search for English speakers' => ['email', 'english', []],
+                'show email only;search for users with height 180cm' => ['email', '180cm', []],
+                'show email only;search for users with height 180cm' => ['email', '180', []],
+                'show email only;search for users with height 170cm' => ['email', '170cm', []],
+                'show email only;search for users with height 170cm' => ['email', '170', []],
+        ];
+    }
+
+    /**
+     * Testing the search functionality on get_users() and get_users_count() and their inner methods.
+     *
+     * @dataProvider get_users_with_profile_fields_provider
+     *
+     * @param string $showuseridentity, list of user identities to be shown.
+     * @param string $searchstring, the string to be searched.
+     * @param array $expectedusernames, a list of expected usernames.
+     * @return void
+     */
+    public function test_get_users_with_profile_fields(string $showuseridentity, string $searchstring,
+            array $expectedusernames): void {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+        $this->resetAfterTest();
+
+        // Create a couple of custom profile fields, which are in user identity.
+        $generator = $this->getDataGenerator();
+        $generator->create_custom_profile_field(['datatype' => 'text',
+                'shortname' => 'lang', 'name' => 'Language']);
+        $generator->create_custom_profile_field(['datatype' => 'text',
+                'shortname' => 'height', 'name' => 'Height']);
+
+        // Create a couple of test users.
+        $u1 = $generator->create_user(['firstname' => 'Eduardo', 'lastname' => 'Gomes',
+                'username' => 'u1', 'email' => 'u1@x.org', 'profile_field_lang' => 'Spanish',
+                'profile_field_height' => '170cm']);
+        $u2 = $generator->create_user(['firstname' => 'Dieter', 'lastname' => 'Schmitt',
+                'username' => 'u2', 'email' => 'u2@x.org', 'profile_field_lang' => 'German',
+                'profile_field_height' => '180cm']);
+
+        $u3 = $generator->create_user(['firstname' => 'Peter', 'lastname' => 'Jones',
+                'username' => 'u3', 'email' => 'u3@x.co.uk', 'profile_field_lang' => 'English',
+                'profile_field_height' => '180cm']);
+        $u4 = $generator->create_user(['firstname' => 'Pedro', 'lastname' => 'Gomes',
+                'username' => 'u4', 'email' => 'u3@x.org', 'profile_field_lang' => 'Spanish',
+                'profile_field_height' => '180cm']);
+
+        // Do this as admin user.
+        $this->setAdminUser();
+
+        // Making the setup.
+        $c1 = $this->getDataGenerator()->create_course();
+        $c1ctx = context_course::instance($c1->id);
+        $c1m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c1));
+
+        // Creating grade history for some users.
+        $gi = grade_item::fetch(array('iteminstance' => $c1m1->id, 'itemtype' => 'mod', 'itemmodule' => 'assign'));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u2->id));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u3->id));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u4->id));
+
+        // Checking fetching some users with this config settings.
+        set_config('showuseridentity', $showuseridentity);
+        $numberofexpectedusers = count($expectedusernames);
+        $users = \gradereport_history\helper::get_users($c1ctx, $searchstring);
+        $userscount = \gradereport_history\helper::get_users_count($c1ctx, $searchstring);
+        $this->assertEquals($numberofexpectedusers, $userscount);
+        $this->assertCount($numberofexpectedusers, $users);
+        foreach ($users as $user) {
+            if (in_array($user->username, $expectedusernames)) {
+                $this->assertArrayHasKey($user->id, $users);
+            } else {
+                $this->assertArrayNotHasKey($user->id, $users);
+            }
+        }
+    }
+
+    /**
      * Data provider method for \gradereport_history_report_testcase::test_get_users_with_groups()
      */
     public function get_users_provider() {
