@@ -38,6 +38,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         new lang_string('customusermenuitems', 'admin'),
         new lang_string('configcustomusermenuitems', 'admin'),
         'grades,grades|/grade/report/mygrades.php|t/grades
+calendar,core_calendar|/calendar/view.php?view=month|i/calendar
 messages,message|/message/index.php|t/message
 preferences,moodle|/user/preferences.php|t/preferences',
         PARAM_RAW,

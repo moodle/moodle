@@ -2927,20 +2927,6 @@ class global_navigation extends navigation_node {
                     self::TYPE_SETTING, null, 'search');
         }
 
-        if ($navoptions->calendar) {
-            $courseid = $COURSE->id;
-            $params = array('view' => 'month');
-            if ($courseid != $SITE->id) {
-                $params['course'] = $courseid;
-            }
-
-            // Calendar
-            $calendarurl = new moodle_url('/calendar/view.php', $params);
-            $node = $coursenode->add(get_string('calendar', 'calendar'), $calendarurl,
-                self::TYPE_CUSTOM, null, 'calendar', new pix_icon('i/calendar', ''));
-            $node->showinflatnavigation = true;
-        }
-
         if (isloggedin()) {
             $usercontext = context_user::instance($USER->id);
             if (has_capability('moodle/user:manageownfiles', $usercontext)) {

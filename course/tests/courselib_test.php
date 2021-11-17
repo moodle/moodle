@@ -3191,7 +3191,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertTrue($navoptions->badges);
         $this->assertTrue($navoptions->tags);
         $this->assertFalse($navoptions->search);
-        $this->assertTrue($navoptions->calendar);
         $this->assertTrue($navoptions->competencies);
 
         // Enable global search now.
@@ -3216,7 +3215,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertTrue($navoptions->badges);
         $this->assertTrue($navoptions->tags);
         $this->assertTrue($navoptions->search);
-        $this->assertTrue($navoptions->calendar);
     }
 
     /**

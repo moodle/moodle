@@ -3171,5 +3171,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021111700.01);
     }
 
+    if ($oldversion < 2021112600.01) {
+
+        // Get current configuration data.
+        $currentcustomusermenuitems = str_replace(["\r\n", "\r"], "\n", $CFG->customusermenuitems);
+        $lines = explode("\n", $currentcustomusermenuitems);
+        $lines = array_map('trim', $lines);
+        $calendarcustomusermenu = 'calendar,core_calendar|/calendar/view.php?view=month|i/calendar';
+
+        if (!in_array($calendarcustomusermenu, $lines)) {
+            // Add Calendar item to the menu.
+            array_splice($lines, 1, 0, [$calendarcustomusermenu]);
+            set_config('customusermenuitems', implode("\n", $lines));
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021112600.01);
+    }
+
     return true;
 }
