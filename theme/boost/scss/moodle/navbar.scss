@@ -1,5 +1,6 @@
 @mixin hover-navbar {
-    background-color: $gray-200;
+    border-color: transparent;
+    background-color: $gray-100;
 }
 
 .navbar.fixed-top {
@@ -8,7 +9,7 @@
     box-shadow: none;
     border-bottom: $gray-300 1px solid;
     align-items: stretch;
-    height: $navbar-height;
+    height: $navbar-height + 1px;
 
     .navbar-brand {
         .logo {

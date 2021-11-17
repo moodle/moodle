@@ -4,6 +4,7 @@
         .nav-link {
             height: $navbar-height;
             color: $gray-900;
+            border-top: 3px solid transparent;
         }
     }
 }

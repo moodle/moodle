@@ -1,9 +1,14 @@
 .secondary-navigation {
-    border-top: 1px solid $gray-300;
-    border-bottom: 1px solid $gray-300;
+    border-top: 1px solid $nav-tabs-border-color;
+    border-bottom: 1px solid $nav-tabs-border-color;
     .navigation {
-        border-color: $gray-300;
         height: $moremenu-height;
-        margin-bottom: map-get($spacers, 3);
+        background-color: $body-bg;
+        .nav-tabs {
+            border: none;
+            .nav-link {
+                border-radius: initial;
+            }
+        }
     }
 }
