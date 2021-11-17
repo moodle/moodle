@@ -352,7 +352,7 @@ class secondary extends view {
                         $othernode = $this->get_first_action_for_node($other);
                         // Get the first node and check whether it's been added already.
                         if ($othernode && !$this->get($othernode->key)) {
-                            $this->add_node($othernode);
+                            $this->add_node(clone $othernode);
                         }
                     }
                 }
@@ -481,9 +481,9 @@ class secondary extends view {
                     } else {
                         $child->action = new \moodle_url("/admin/search.php", [], "link$child->key");
                     }
-                    $this->add_node($child);
+                    $this->add_node(clone $child);
                 } else {
-                    $siteadminnode->add_node($child);
+                    $siteadminnode->add_node(clone $child);
                 }
             }
         }
@@ -502,10 +502,10 @@ class secondary extends view {
             if (is_string($key)) {
                 $parentnode = $nodes[floor($key)] ?? null;
                 if ($parentnode) {
-                    $parentnode->add_node($node);
+                    $parentnode->add_node(clone $node);
                 }
             } else {
-                $this->add_node($node);
+                $this->add_node(clone $node);
             }
         }
     }
@@ -534,7 +534,7 @@ class secondary extends view {
 
                 // Confirm we have a valid object to add.
                 if ($leftovernode) {
-                    $this->add_node($leftovernode);
+                    $this->add_node(clone $leftovernode);
                 }
             }
         }

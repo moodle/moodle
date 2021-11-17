@@ -21,7 +21,7 @@ Feature: Primary navigation
     Examples:
       | defaulthomepageset | homepage    |  sitehome  |   linkelement                                                                                               |
       |   0                | Home        |   Home     |  //a[contains(@class, 'nav-link active') and contains(@tabindex, 0) and not(contains(@href, 'redirect=0'))] |
-      |   1                | Dashboard   |  Site home |  //a[contains(@class, 'nav-link') and contains(@tabindex, -1) and (contains(@href, 'redirect=0'))]          |
+      |   1                | Dashboard   |   Home     |  //a[contains(@class, 'nav-link') and contains(@tabindex, 0) and (contains(@href, 'redirect=0'))]          |
 
   @javascript @theme_boost
   Scenario Outline: Admin sets defaulthomepage to 2 and verify the landing page based on user preference set

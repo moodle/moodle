@@ -65,7 +65,6 @@ $courserenderer = $PAGE->get_renderer('core', 'course');
 $PAGE->set_heading($heading);
 $content = $courserenderer->course_category($categoryid);
 
-$PAGE->set_primary_active_tab('courses');
 $PAGE->set_secondary_active_tab('categorymain');
 
 echo $OUTPUT->header();
