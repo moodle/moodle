@@ -72,6 +72,12 @@ $THEME->layouts = [
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
+    // My courses page.
+    'mycourses' => array(
+        'file' => 'columns.php',
+        'regions' => array('content'),
+        'defaultregion' => 'content',
+    ),
     // My dashboard page.
     'mydashboard' => array(
         'file' => 'columns.php',

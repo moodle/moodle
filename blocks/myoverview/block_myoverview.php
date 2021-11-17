@@ -113,5 +113,18 @@ class block_myoverview extends block_base {
             'plugin' => $configs,
         ];
     }
+
+    /**
+     * Disable block editing on the my courses page.
+     *
+     * @return boolean
+     */
+    public function instance_can_be_edited() {
+        if ($this->page->blocks->is_known_region(BLOCK_POS_LEFT) || $this->page->blocks->is_known_region(BLOCK_POS_RIGHT)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 

@@ -43,7 +43,8 @@ class behat_theme_classic_behat_course extends behat_course {
     public function i_navigate_to_course_participants() {
         $coursestr = behat_context_helper::escape(get_string('courses'));
         $mycoursestr = behat_context_helper::escape(get_string('mycourses'));
-        $xpath = "//div[contains(@class,'block')]//li[p/*[string(.)=$coursestr or string(.)=$mycoursestr]]";
+        $xpath = "//div[contains(@class,'block')]//li[contains(@class,'contains_branch')]" .
+            "[p/*[string(.)=$coursestr or string(.)=$mycoursestr]]";
         $this->execute('behat_general::i_click_on_in_the', [get_string('participants'), 'link', $xpath, 'xpath_element']);
     }
 

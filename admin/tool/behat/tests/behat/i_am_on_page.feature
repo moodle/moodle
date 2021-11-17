@@ -71,9 +71,9 @@ Feature: Use core page resolvers for the I am on the page steps
     Then I should see "<shouldsee>"
 
     Examples:
-      | description | identifier | shouldsee                   |
-      | Admin page  | "Admin notifications"      | Check for available updates |
-      | Home page   | Homepage   | Course overview   |
+      | description | identifier              | shouldsee                   |
+      | Admin page  | "Admin notifications"   | Check for available updates |
+      | Home page   | Homepage                | Calendar                    |
 
   Scenario Outline: When I am on a named page logged in as
     When I am on the <identifier> page logged in as admin
@@ -82,4 +82,4 @@ Feature: Use core page resolvers for the I am on the page steps
     Examples:
       | description | identifier            | shouldsee                   |
       | Admin page  | "Admin notifications" | Check for available updates |
-      | Home page   | Homepage              | Course overview   |
+      | Home page   | Homepage              | Calendar                    |

@@ -39,21 +39,21 @@ Feature: My overview block searching
       | student1 | C13 | student |
 
   Scenario: The search should return no courses if I am not enrolled in any
-    When I log in as "student2"
+    When I am on the "My courses" page logged in as "student1"
     Then I should see "No courses" in the "Course overview" "block"
     And I set the field "Search courses" to "Fake example"
     And I should see "No courses" in the "Course overview" "block"
     And I log out
 
   Scenario: Single page search
-    Given I log in as "student1"
+    Given I am on the "My courses" page logged in as "student1"
     And I set the field "Search courses" to "Course 0"
     Then I should see "Course 01" in the "Course overview" "block"
     And I should not see "Course 13" in the "Course overview" "block"
     And I log out
 
   Scenario: Paginated search
-    Given I log in as "student1"
+    Given I am on the "My courses" page logged in as "student1"
     And I set the field "Search courses" to "Course"
     And I should see "Course 01" in the "Course overview" "block"
     And I should not see "Course 13" in the "Course overview" "block"

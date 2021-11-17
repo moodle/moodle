@@ -38,7 +38,6 @@ Feature: We can change what we are viewing on the grader report
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name 1"
     And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment name 2"
     And I press "Save changes"
-    And I turn editing mode off
 
   @javascript
   Scenario: View and minimise the grader report containing hidden activities

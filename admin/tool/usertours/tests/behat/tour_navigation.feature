@@ -53,14 +53,14 @@ Feature: Steps can be navigated within a tour
       | Display in middle of page   | Welcome           | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful |
     And I add steps to the "First tour" tour:
       | targettype                  | targetvalue_block | Title             | Content |
-      | Block                       | Course overview   | Course overview   | This area shows you what's happening in some of your courses  |
+      | Block                       | Timeline          | Timeline          | This is the Timeline. All of your upcoming activities can be found here |
       | Block                       | Calendar          | Calendar          | This is the Calendar. All of your assignments and due dates can be found here |
     When I am on homepage
     Then I should see "Skip tour"
     And I should see "Next (1/3)"
     And I click on "Next (1/3)" "button" in the "Welcome" "dialogue"
     And I should see "Skip tour"
-    And I click on "Next (2/3)" "button" in the "Course overview" "dialogue"
+    And I click on "Next (2/3)" "button" in the "Timeline" "dialogue"
     And I should see "End tour"
 
   @javascript

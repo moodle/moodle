@@ -2875,3 +2875,13 @@ body.dragging {
         }
     }
 }
+
+.page-mycourses {
+    #region-main {
+        padding: 0;
+    }
+    #region-main,
+    .block_myoverview {
+        border: 0;
+    }
+}

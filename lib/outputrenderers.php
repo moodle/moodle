@@ -4372,7 +4372,8 @@ EOD;
         $pagetype = $this->page->pagetype;
         $homepage = get_home_page();
         $homepagetype = null;
-        if ($homepage == HOMEPAGE_MY) {
+        // Add a special case since /my/courses is a part of the /my subsystem.
+        if ($homepage == HOMEPAGE_MY && $this->page->title !== get_string('mycourses')) {
             $homepagetype = 'my-index';
         } else if ($homepage == HOMEPAGE_SITE) {
             $homepagetype = 'site-index';

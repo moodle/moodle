@@ -12211,6 +12211,13 @@ body.dragging .dragging {
 .collapse-list .collapse-list-item-content .collapse-list-item {
   padding-left: calc(1rem * 3); }
 
+.page-mycourses #region-main {
+  padding: 0; }
+
+.page-mycourses #region-main,
+.page-mycourses .block_myoverview {
+  border: 0; }
+
 .icon {
   font-size: 16px;
   width: 16px;

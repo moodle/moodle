@@ -1328,7 +1328,14 @@ class global_navigation extends navigation_node {
         $this->rootnodes['site'] = $this->add_course($SITE);
         $this->rootnodes['myprofile'] = $this->add(get_string('profile'), null, self::TYPE_USER, null, 'myprofile');
         $this->rootnodes['currentcourse'] = $this->add(get_string('currentcourse'), null, self::TYPE_ROOTNODE, null, 'currentcourse');
-        $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), null, self::TYPE_ROOTNODE, null, 'mycourses', new pix_icon('i/course', ''));
+        $this->rootnodes['mycourses'] = $this->add(
+            get_string('mycourses'),
+            new moodle_url('/my/courses.php'),
+            self::TYPE_ROOTNODE,
+            null,
+            'mycourses',
+            new pix_icon('i/course', '')
+        );
         $this->rootnodes['courses'] = $this->add(get_string('courses'), new moodle_url('/course/index.php'), self::TYPE_ROOTNODE, null, 'courses');
         if (!core_course_category::user_top()) {
             $this->rootnodes['courses']->hide();
@@ -1521,7 +1528,7 @@ class global_navigation extends navigation_node {
         foreach ($this->rootnodes as $node) {
             // Dont remove the home node
             /** @var navigation_node $node */
-            if (!in_array($node->key, ['home', 'myhome']) && !$node->has_children() && !$node->isactive) {
+            if (!in_array($node->key, ['home', 'mycourses', 'myhome']) && !$node->has_children() && !$node->isactive) {
                 $node->remove();
             }
         }
@@ -2879,6 +2886,9 @@ class global_navigation extends navigation_node {
         // Hidden node that we use to determine if the front page navigation is loaded.
         // This required as there are not other guaranteed nodes that may be loaded.
         $coursenode->add('frontpageloaded', null, self::TYPE_CUSTOM, null, 'frontpageloaded')->display = false;
+
+        // Add My courses to the site pages within the navigation structure so the block can read it.
+        $coursenode->add(get_string('mycourses'), new moodle_url('/my/courses.php'), self::TYPE_CUSTOM, null, 'mycourses');
 
         // Participants.
         if ($navoptions->participants) {

@@ -60,6 +60,7 @@ $PAGE->blocks->add_custom_regions_for_pagetype($pagetype);
 $pagetype = explode('-', $pagetype);
 switch ($pagetype[0]) {
     case 'my':
+    case 'mycourses':
         $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
         break;
     case 'user':
