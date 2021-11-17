@@ -74,6 +74,7 @@ Options:
 --adminpass=PASSWORD  Password for the moodle admin account,
                       required in non-interactive mode.
 --adminemail=STRING   Email address for the moodle admin account.
+--sitepreset=STRING   Admin site preset to be applied during the installation process.
 --upgradekey=STRING   The upgrade key to be set in the config.php, leave empty to not set it.
 --non-interactive     No interactive questions, installation fails if any
                       problem encountered.
@@ -254,6 +255,7 @@ list($options, $unrecognized) = cli_get_params(
         'adminuser'         => 'admin',
         'adminpass'         => '',
         'adminemail'        => '',
+        'sitepreset'        => '',
         'upgradekey'        => '',
         'non-interactive'   => false,
         'agree-license'     => false,
@@ -274,6 +276,12 @@ $lang = clean_param($options['lang'], PARAM_SAFEDIR);
 $languages = get_string_manager()->get_list_of_translations();
 if (array_key_exists($lang, $languages)) {
     $CFG->lang = $lang;
+}
+
+// Set up site admin preset.
+$sitepreset = clean_param($options['sitepreset'], PARAM_RAW);
+if (!empty($sitepreset)) {
+    $CFG->setsitepresetduringinstall = $sitepreset;
 }
 
 if ($unrecognized) {

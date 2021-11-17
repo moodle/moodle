@@ -1152,6 +1152,22 @@ $CFG->admin = 'admin';
 // When the full classname is used, this rule always takes priority over any wildcard rules.
 //
 //=========================================================================
+// 18. SITE ADMIN PRESETS
+//=========================================================================
+//
+// The site admin presets plugin has been integrated in Moodle LMS. You can use a setting in case you
+// want to apply a preset during the installation:
+//
+//      $CFG->setsitepresetduringinstall = 'starter';
+//
+// This setting accepts the following values:
+// - One of the core preset names (i.e "starter" or "full").
+// - The path of a valid XML preset file, that will be imported and applied. Absolute paths are recommended, to
+//   guarantee the file is found: i.e."MOODLEPATH/admin/tool/admin_presets/tests/fixtures/import_settings_plugins.xml".
+//
+// This setting is only used during the installation process. So once the Moodle site is installed, it is ignored.
+//
+//=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
 

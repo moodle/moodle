@@ -240,4 +240,120 @@ class helper_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test the behaviour of change_default_preset() method.
+     *
+     * @covers ::change_default_preset
+     * @dataProvider change_default_preset_provider
+     *
+     * @param string $preset The preset name to apply or the path to the XML to be imported and applied.
+     * @param array|null $settings A few settings to check (with their expected values).
+     * @param array|null $plugins A few module plugins to check (with their expected values for the visibility).
+     */
+    public function test_change_default_preset(string $preset, ?array $settings = null, ?array $plugins = null): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // We need to change some of the default values; otherwise, the full preset won't be applied, because all the settings
+        // and plugins are the same.
+        set_config('enableanalytics', '0');
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_admin_presets');
+        $generator->create_preset(['name' => 'Preset 1']);
+
+        $presetid = helper::change_default_preset($preset);
+
+        if (empty($settings) && empty($plugins)) {
+            // The preset hasn't been applied.
+            $this->assertNull($presetid);
+        } else {
+            // The preset has been applied. Check the settings and plugins are the expected.
+            $this->assertNotEmpty($presetid);
+
+            // Check the setting values have changed accordingly with the ones defined in the preset.
+            foreach ($settings as $settingname => $settingvalue) {
+                $this->assertEquals($settingvalue, get_config('core', $settingname));
+            }
+
+            // Check the plugins visibility have changed accordingly with the ones defined in the preset.
+            $enabledplugins = \core\plugininfo\mod::get_enabled_plugins();
+            foreach ($plugins as $pluginname => $pluginvalue) {
+                if ($pluginvalue) {
+                    $this->assertArrayHasKey($pluginname, $enabledplugins);
+                } else {
+                    $this->assertArrayNotHasKey($pluginname, $enabledplugins);
+                }
+            }
+        }
+    }
+
+    /**
+     * Data provider for test_change_default_preset().
+     *
+     * @return array
+     */
+    public function change_default_preset_provider(): array {
+        return [
+            'Starter preset' => [
+                'preset' => 'starter',
+                'settings' => [
+                    'enablebadges' => 0,
+                    'enableportfolios' => 0,
+                ],
+                'plugins' => [
+                    'assign' => 1,
+                    'chat' => 0,
+                    'data' => 0,
+                    'lesson' => 0,
+                ],
+            ],
+            'Full preset' => [
+                'preset' => 'full',
+                'settings' => [
+                    'enablebadges' => 1,
+                    'enableportfolios' => 0,
+                ],
+                'plugins' => [
+                    'assign' => 1,
+                    'chat' => 1,
+                    'data' => 1,
+                    'lesson' => 1,
+                ],
+            ],
+            'Preset 1, created manually' => [
+                'preset' => 'Preset 1',
+                'settings' => [
+                    'enablebadges' => 0,
+                    'allowemojipicker' => 1,
+                ],
+                'plugins' => [
+                    'assign' => 1,
+                    'glossary' => 0,
+                ],
+            ],
+            'Unexisting preset name' => [
+                'preset' => 'unexisting',
+            ],
+            'Valid XML file' => [
+                'preset' => __DIR__ . '/fixtures/import_settings_plugins.xml',
+                'settings' => [
+                    'allowemojipicker' => 1,
+                    'enableportfolios' => 1,
+                ],
+                'plugins' => [
+                    'assign' => 1,
+                    'chat' => 0,
+                    'data' => 0,
+                    'lesson' => 1,
+                ],
+            ],
+            'Invalid XML file' => [
+                'preset' => __DIR__ . '/fixtures/invalid_xml_file.xml',
+            ],
+            'Unexisting XML file' => [
+                'preset' => __DIR__ . '/fixtures/unexisting.xml',
+            ],
+        ];
+    }
 }
