@@ -20,14 +20,14 @@ Feature: Verify that courseindex is usable with the keyboard
     And I click on "Side panel" "button"
     And I click on "Open course index drawer" "button"
     And I should see "Topic 1" in the "courseindex-content" "region"
-    And the focused element is ".drawertoggle" "css_element"
+    And the focused element is "[data-preference='drawer-open-index'] .drawertoggle" "css_element"
     And I press the tab key
     Then the focused element is ".courseindex-section" "css_element"
 
   @javascript
   Scenario: General focus on open course index.
     When I press the shift tab key
-    And the focused element is ".drawertoggle" "css_element"
+    And the focused element is "[data-preference='drawer-open-index'] .drawertoggle" "css_element"
     And I press enter
     Then I should not see "Topic 1" in the "courseindex-content" "region"
 
