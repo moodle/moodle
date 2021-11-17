@@ -809,7 +809,11 @@ function initialise_local_config_cache() {
         $contents = "<?php
 // ********** This file is generated DO NOT EDIT **********
 \$CFG->siteidentifier = '" . addslashes($CFG->siteidentifier) . "';
-define('SYSCONTEXTID', ".SYSCONTEXTID.");
+\$CFG->bootstraphash = '" . hash_local_config_cache() . "';
+// Only if the file is not stale and has not been defined.
+if (\$CFG->bootstraphash === hash_local_config_cache() && !defined('SYSCONTEXTID')) {
+    define('SYSCONTEXTID', ".SYSCONTEXTID.");
+}
 ";
 
         $temp = $bootstrapcachefile . '.tmp' . uniqid();
@@ -817,6 +821,25 @@ define('SYSCONTEXTID', ".SYSCONTEXTID.");
         @chmod($temp, $CFG->filepermissions);
         rename($temp, $bootstrapcachefile);
     }
+}
+
+/**
+ * Calculate a proper hash to be able to invalidate stale cached configs.
+ *
+ * Only to be used to verify bootstrap.php status.
+ *
+ * @return string md5 hash of all the sensible bits deciding if cached config is stale or no.
+ */
+function hash_local_config_cache() {
+    global $CFG;
+
+    // This is pretty much {@see moodle_database::get_settings_hash()} that is used
+    // as identifier for the database meta information MUC cache. Should be enough to
+    // react against any of the normal changes (new prefix, change of DB type) while
+    // *incorrectly* keeping the old dataroot directory unmodified with stale data.
+    // This may need more stuff to be considered if it's discovered that there are
+    // more variables making the file stale.
+    return md5($CFG->dbtype . $CFG->dbhost . $CFG->dbuser . $CFG->dbname . $CFG->prefix);
 }
 
 /**
