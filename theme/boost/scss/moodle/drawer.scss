@@ -2,6 +2,8 @@
 $fixed-header-y: $navbar-height;
 
 $drawer-width: 285px !default;
+$drawer-left-width: 285px !default;
+$drawer-right-width: 315px !default;
 $drawer-padding-x: 20px !default;
 $drawer-padding-y: 20px !default;
 $drawer-offscreen-gutter: 20px !default;
@@ -90,20 +92,20 @@ body.drawer-ease {
 
 body:not(.uses-drawers).drawer-open-left {
     @include media-breakpoint-up(md) {
-        margin-left: $drawer-width;
+        margin-left: $drawer-left-width;
     }
 }
 
 body.drawer-open-left #page.drawers {
     @include media-breakpoint-up(md) {
-        margin-left: $drawer-width;
+        margin-left: $drawer-left-width;
         padding-left: 1rem;
     }
 }
 
 body.drawer-open-right {
     @include media-breakpoint-up(md) {
-        margin-right: $drawer-width;
+        margin-right: $drawer-right-width;
     }
 }
 
@@ -169,22 +171,21 @@ $right-drawer-width: 320px;
 }
 
 @mixin drawertypes() {
-    &.drawer-left,
     &.drawer-right {
-        width: $drawer-width;
-        max-width: $drawer-width;
-    }
-    &.drawer-right {
+        width: $drawer-right-width;
+        max-width: $drawer-right-width;
         border-left: $border-width solid $border-color;
-        right: calc(-#{$drawer-width} + -10px);
+        right: calc(-#{$drawer-right-width} + -10px);
         @include box-shadow($box-shadow-drawer-right);
         &.show {
             right: 0;
         }
     }
     &.drawer-left {
+        width: $drawer-left-width;
+        max-width: $drawer-left-width;
         border-right: $border-width solid $border-color;
-        left: calc(-#{$drawer-width} + -10px);
+        left: calc(-#{$drawer-left-width} + -10px);
         @include box-shadow($box-shadow-drawer-left);
         &.show {
             left: 0;
