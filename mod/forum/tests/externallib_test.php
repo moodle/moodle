@@ -3036,6 +3036,32 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, count($discussions['discussions']));
 
         $this->assertEquals($expectedposts, $discussions);
+
+        // When groupmode is SEPARATEGROUPS, even there is no groupid specified, the post not for the user shouldn't be seen.
+        $group1 = self::getDataGenerator()->create_group(['courseid' => $course1->id]);
+        $group2 = self::getDataGenerator()->create_group(['courseid' => $course1->id]);
+        // Update discussion with group.
+        $discussion = new \stdClass();
+        $discussion->id = $discussion1->id;
+        $discussion->groupid = $group1->id;
+        $DB->update_record('forum_discussions', $discussion);
+        $discussion = new \stdClass();
+        $discussion->id = $discussion2->id;
+        $discussion->groupid = $group2->id;
+        $DB->update_record('forum_discussions', $discussion);
+        $cm = get_coursemodule_from_id('forum', $forum1->cmid);
+        $cm->groupmode = SEPARATEGROUPS;
+        $DB->update_record('course_modules', $cm);
+        $teacher = self::getDataGenerator()->create_user();
+        $role = $DB->get_record('role', array('shortname' => 'teacher'), '*', MUST_EXIST);
+        self::getDataGenerator()->enrol_user($teacher->id, $course1->id, $role->id);
+        groups_add_member($group2->id, $teacher->id);
+        self::setUser($teacher);
+        $discussions = mod_forum_external::get_discussion_posts_by_userid($user2->id, $forum1->cmid, 'modified', 'DESC');
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_by_userid_returns(), $discussions);
+        // Discussion is only 1 record (group 2).
+        $this->assertEquals(1, count($discussions['discussions']));
+        $this->assertEquals($expectedposts['discussions'][1], $discussions['discussions'][0]);
     }
 
     /**

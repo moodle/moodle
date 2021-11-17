@@ -2237,6 +2237,9 @@ class mod_forum_external extends external_api {
         $builtdiscussions = [];
         foreach ($discussionsummaries as $discussionsummary) {
             $discussion = $discussionsummary->get_discussion();
+            if (!$capabilitymanager->can_view_discussion($USER, $discussion)) {
+                continue;
+            }
             $posts = $postvault->get_posts_in_discussion_for_user_id(
                     $discussion->get_id(),
                     $user->id,
