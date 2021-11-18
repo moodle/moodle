@@ -67,9 +67,8 @@ $start   = optional_param('start', 0, PARAM_INT);
 $sifirst = optional_param('sifirst', 'all', PARAM_NOTAGS);
 $silast  = optional_param('silast', 'all', PARAM_NOTAGS);
 
-// Whether to show extra user identity information
-// TODO Does not support custom user profile fields (MDL-70456).
-$extrafields = \core_user\fields::get_identity_fields($context, false);
+// Whether to show extra user identity information.
+$extrafields = \core_user\fields::get_identity_fields($context, true);
 $leftcols = 1 + count($extrafields);
 
 // Check permissions
