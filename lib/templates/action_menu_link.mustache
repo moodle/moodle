@@ -27,7 +27,7 @@
     }
 }}
 {{^disabled}}
-    <a href="{{url}}" class="{{$actionmenulinkclasses}}aabtn {{classes}}{{/actionmenulinkclasses}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>
+    <a href="{{url}}" class="{{$actionmenulinkclasses}}aabtn {{classes}}{{/actionmenulinkclasses}}" {{#attributes}}{{name}}="{{value}}" {{/attributes}}{{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>
         {{#icon}}
             {{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}
         {{/icon}}
