@@ -67,8 +67,7 @@ require_login($course, false);
 if (!calendar_user_can_add_event($course)) {
     print_error('errorcannotimport', 'calendar');
 }
-
-$PAGE->navbar->add(get_string('managesubscriptions', 'calendar'));
+$PAGE->navbar->add(get_string('managesubscriptions', 'calendar'), $PAGE->url);
 
 $types = calendar_get_allowed_event_types($courseid);
 
@@ -140,7 +139,9 @@ $subscriptions = $DB->get_records_sql($sql, $params);
 
 // Print title and header.
 $PAGE->set_title("$course->shortname: ".get_string('calendar', 'calendar').": ".get_string('subscriptions', 'calendar'));
-$PAGE->set_heading($course->fullname);
+$heading = get_string('calendar', 'core_calendar');
+$heading = ($courseid != SITEID && !empty($courseid)) ? "{$heading}: {$COURSE->shortname}" : $heading;
+$PAGE->set_heading($heading);
 
 $renderer = $PAGE->get_renderer('core_calendar');
 

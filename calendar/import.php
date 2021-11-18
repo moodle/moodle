@@ -98,14 +98,15 @@ if (!empty($category)) {
 }
 
 $heading = get_string('importcalendar', 'calendar');
+$headingstr = get_string('calendar', 'core_calendar');
+$headingstr = ($courseid != SITEID && !empty($courseid)) ? "{$headingstr}: {$COURSE->shortname}" : $headingstr;
 $pagetitle = $course->shortname . ': ' . get_string('calendar', 'calendar') . ': ' . $heading;
 
 $PAGE->set_title($pagetitle);
-$PAGE->set_heading($heading);
+$PAGE->set_heading($headingstr);
 $PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('admin');
-$PAGE->navbar->add(get_string('managesubscriptions', 'calendar'), $managesubscriptionsurl);
-$PAGE->navbar->add($heading);
+$PAGE->navbar->add($heading, $pageurl);
 $renderer = $PAGE->get_renderer('core_calendar');
 
 $customdata = [
