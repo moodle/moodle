@@ -12,7 +12,11 @@ information provided here is intended especially for developers.
   - calendar_import_icalendar_events()
 * The following has been removed after being deprecated in 3.8
   * CALENDAR_EVENT_GLOBAL
-
+* The following have been deprecated because the three-month pseudo block has been removed:
+  - fake_block_threemonths() renderer method.
+  - calendar_threemonth.js.
+  - calendar_threemonth and threemonth_month templates.
+  - Behat step definitions i_hover_over_day_of_this_month_in_calendar and i_click_day_of_this_month_in_calendar.
 
 === 3.10 ===
 * The core_calendar\local\event\value_objects\times_interface class now has new method get_usermidnight_time() which

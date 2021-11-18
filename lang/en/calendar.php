@@ -183,7 +183,6 @@ $string['manyevents'] = '{$a} events';
 $string['mon'] = 'Mon';
 $string['monday'] = 'Monday';
 $string['monthly'] = 'Monthly';
-$string['monthlyview'] = 'Monthly view';
 $string['monthnext'] = 'Next month';
 $string['monthprev'] = 'Previous month';
 $string['monththis'] = 'This month';
@@ -286,6 +285,7 @@ $string['yoursubscriptions'] = 'Imported calendars';
 // Deprecated since Moodle 4.0.
 $string['calendarurl'] = 'Calendar URL: {$a}';
 $string['importfrominstructions'] = 'Please provide either a URL to a remote calendar, or upload a file.';
+$string['monthlyview'] = 'Monthly view';
 
 // Deprecated since Moodle 3.8.
 $string['global'] = 'Global';

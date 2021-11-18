@@ -81,4 +81,56 @@ class behat_deprecated extends behat_base {
         throw new Exception($message);
     }
 
+    /**
+     * Hover over a specific day in the calendar.
+     *
+     * @Given /^I hover over day "(?P<dayofmonth>\d+)" of this month in the calendar$/
+     * @param int $day The day of the current month
+     *
+     * @deprecated since 4.0 MDL-72810. This tested the three-month calendar pseudo block, which has been removed.
+     * @todo MDL-73117 This will be deleted in Moodle 4.4.
+     */
+    public function i_hover_over_day_of_this_month_in_calendar($day) {
+        $this->deprecated_message('Check information in the course or timeline calendar blocks or full calendar, as appropriate.');
+
+        $summarytitle = userdate(time(), get_string('strftimemonthyear'));
+        // The current month table.
+        $currentmonth = "table[descendant::*[self::caption[contains(concat(' ', normalize-space(.), ' '), ' {$summarytitle} ')]]]";
+
+        // Strings for the class cell match.
+        $cellclasses  = "contains(concat(' ', normalize-space(@class), ' '), ' day ')";
+        $daycontains  = "text()[contains(concat(' ', normalize-space(.), ' '), ' {$day} ')]";
+        $daycell      = "td[{$cellclasses}]";
+        $dayofmonth   = "a[{$daycontains}]";
+
+        $xpath = '//' . $currentmonth . '/descendant::' . $daycell . '/' . $dayofmonth;
+        $this->execute("behat_general::i_hover", [$xpath, "xpath_element"]);
+    }
+
+    /**
+     * Click a specific day in the calendar.
+     *
+     * @Given /^I click day "(?P<dayofmonth>\d+)" of this month in the calendar$/
+     * @param int $day The day of the current month
+     *
+     * @deprecated since 4.0 MDL-72810. This tested the three-month calendar pseudo block, which has been removed.
+     * @todo MDL-73117 This will be deleted in Moodle 4.4.
+     */
+    public function i_click_day_of_this_month_in_calendar($day) {
+        $this->deprecated_message('Check information in the course or timeline calendar blocks or full calendar, as appropriate.');
+
+        // The current month table.
+        $currentmonth = "table[descendant::*[self::caption[contains(concat(' ', normalize-space(.), ' '), ' {$summarytitle} ')]]]";
+
+        // Strings for the class cell match.
+        $cellclasses  = "contains(concat(' ', normalize-space(@class), ' '), ' day ')";
+        $daycontains  = "text()[contains(concat(' ', normalize-space(.), ' '), ' {$day} ')]";
+        $daycell      = "td[{$cellclasses}]";
+        $dayofmonth   = "a[{$daycontains}]";
+
+        $xpath = '//' . $currentmonth . '/descendant::' . $daycell . '/' . $dayofmonth;
+        $this->execute("behat_general::wait_until_the_page_is_ready");
+        $this->execute("behat_general::i_click_on", array($xpath, "xpath_element"));
+        $this->execute("behat_general::wait_until_the_page_is_ready");
+    }
 }

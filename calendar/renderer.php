@@ -55,10 +55,15 @@ class core_calendar_renderer extends plugin_renderer_base {
      *
      * This includes the previous month, the current month, and the next month
      *
+     * @deprecated since 4.0 MDL-72810.
+     * @todo MDL-73117 This will be deleted in Moodle 4.4.
+     *
      * @param calendar_information $calendar
      * @return string
      */
     public function fake_block_threemonths(calendar_information $calendar) {
+        debugging('This method is no longer used as the three month calendar block has been removed', DEBUG_DEVELOPER);
+
         // Get the calendar type we are using.
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
         $time = $calendartype->timestamp_to_date_array($calendar->time);
