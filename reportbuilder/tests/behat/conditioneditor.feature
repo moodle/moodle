@@ -80,6 +80,11 @@ Feature: Manage custom report conditions
       | Email address operator | Does not contain |
       | Email address value    | example.com      |
     And I click on "Apply" "button" in the "[data-region='settings-conditions']" "css_element"
-    And I click on "Reset" "button" in the "[data-region='settings-conditions']" "css_element"
+    And I should see "Nothing to display"
+    And I click on "Reset all" "button" in the "[data-region='settings-conditions']" "css_element"
+    And I click on "Reset all" "button" in the "Reset conditions" "dialogue"
+    Then I should see "Conditions reset"
+    And the following fields in the "Email address" "core_reportbuilder > Condition" match these values:
+      | Email address operator | Is any value |
     And I should see "User One" in the "reportbuilder-table" "table"
     And I should see "User Two" in the "reportbuilder-table" "table"
