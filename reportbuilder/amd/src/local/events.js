@@ -35,6 +35,7 @@ export default {
      * @type {CustomEvent}
      * @property {object} detail
      * @property {Boolean} detail.preservePagination Whether current pagination should be preserved (default false)
+     * @property {String} detail.preserveTriggerElement Element selector that should be focused after table reload (default null)
      *
      * @example <caption>Triggering table reload</caption>
      * import {dispatchEvent} from 'core/event_dispatcher';

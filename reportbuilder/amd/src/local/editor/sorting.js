@@ -112,7 +112,12 @@ export const init = (initialized) => {
             const sortdirection = parseInt(toggleSorting.closest('li').dataset.columnSortDirection);
 
             updateSorting(reportElement, toggleSorting, toggleSorting.checked, sortdirection)
-                .then(() => pendingPromise.resolve())
+                .then(() => {
+                    // Re-focus the toggle sorting element after reloading the region.
+                    const toggleSortingElement = document.getElementById(toggleSorting.id);
+                    toggleSortingElement?.focus();
+                    return pendingPromise.resolve();
+                })
                 .catch(Notification.exception);
         }
 
@@ -134,7 +139,12 @@ export const init = (initialized) => {
             }
 
             updateSorting(reportElement, toggleSortDirection, sortenabled, sortdirection)
-                .then(() => pendingPromise.resolve())
+                .then(() => {
+                    // Re-focus the toggle sort direction element after reloading the region.
+                    const toggleSortDirectionElement = document.getElementById(toggleSortDirection.id);
+                    toggleSortDirectionElement?.focus();
+                    return pendingPromise.resolve();
+                })
                 .catch(Notification.exception);
         }
     });

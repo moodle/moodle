@@ -50,6 +50,9 @@ const reloadSettingsFiltersRegion = (reportElement, templateContext) => {
     return Templates.renderForPromise('core_reportbuilder/local/settings/filters', {filters: templateContext})
         .then(({html, js}) => {
             Templates.replaceNode(settingsFiltersRegion, html, js);
+            // Re-focus the add filter element after reloading the region.
+            const reportAddFilter = reportElement.querySelector(reportSelectors.actions.reportAddFilter);
+            reportAddFilter?.focus();
             return pendingPromise.resolve();
         });
 };
