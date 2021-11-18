@@ -5129,16 +5129,26 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             send_file_not_found();
         }
 
+        $componentargs = fullclone($args);
         $itemid = (int)array_shift($args);
         $filename = array_pop($args);
         $filepath = $args ? '/'.implode('/', $args).'/' : '/';
-        if (!$file = $fs->get_file($context->id, $component, $filearea, $itemid, $filepath, $filename) or
-            $file->is_directory()) {
-            send_file_not_found();
-        }
 
         \core\session\manager::write_close(); // Unlock session during file serving.
-        send_stored_file($file, 0, 0, true, $sendfileoptions); // must force download - security!
+
+        $contenttype = $DB->get_field('contentbank_content', 'contenttype', ['id' => $itemid]);
+        if (component_class_callback("\\{$contenttype}\\contenttype", 'pluginfile',
+                [$course, null, $context, $filearea, $componentargs, $forcedownload, $sendfileoptions], false) === false) {
+
+            if (!$file = $fs->get_file($context->id, $component, $filearea, $itemid, $filepath, $filename) or
+
+                $file->is_directory()) {
+                send_file_not_found();
+
+            } else {
+                send_stored_file($file, 0, 0, true, $sendfileoptions); // Must force download - security!
+            }
+        }
     } else if (strpos($component, 'mod_') === 0) {
         $modname = substr($component, 4);
         if (!file_exists("$CFG->dirroot/mod/$modname/lib.php")) {
