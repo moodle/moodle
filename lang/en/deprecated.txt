@@ -163,3 +163,6 @@ mediapluginswf,core_admin
 mediapluginswfnote,core_admin
 createuserandpass,core
 supplyinfo,core
+evidence,core_badges
+recipientdetails,core_badges
+recipientidentificationproblem,core_badges
