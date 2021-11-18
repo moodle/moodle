@@ -30,6 +30,7 @@
     * badgedescription - Badge description.
     * badgeissuedon - Date where the badge was issued on by the user.
     * recipientname - User awarded with the badge.
+    * recipientnotification.message - Message to be displayed if there is some issue with the recipient.
     * criteria - HTML code with the criteria to display.
     * issuedby - Badge issuer.
     * issuedbyemailobfuscated - Badge issuer email link obfuscated.
@@ -45,6 +46,7 @@
     * relatedbadges - Array of related badges (if hasrelatedbadges is set to true).
     * hasalignments - Whether the badge has alignments or not.
     * alignments - Array of alignments (if hasalignments is set to true).
+    * hostedurl - The URL where the badge is hosted [optional].
 
     Example context (json):
     {
@@ -55,7 +57,10 @@
         "badgedescription":"This badge is awarded to people who have provided outstanding support to other participants in the MOOC",
         "badgeissuedon": 1625491897,
         "recipientname": "Judit Cortes",
-        "criteria": "Complete <strong>ALL</strong> of the listed requirements.<ul><li>This badge has to be awarded by a user with the following role:<ul><li>Teacher</li></ul></li><li>The following activity has to be completed:<ul><li><strong>View video</strong></li></ul></li><li>The following badge has to be earned:<ul><li><strong>Lean Moodle 3.11 Basics participant</strong></li></ul></li></ul>;",
+        "recipientnotification": {
+            "message": "This user cannot be verified as a recipient of this badge."
+        },
+        "criteria": "Complete <strong>ALL</strong> of the listed requirements.<ul><li>This badge has to be awarded by a user with the following role:<ul><li>Teacher</li></ul></li><li>The following activity has to be completed:<ul><li><strong>View video</strong></li></ul></li><li>The following badge has to be earned:<ul><li><strong>Lean Moodle 3.11 Basics participant</strong></li></ul></li></ul>",
         "issuedby": "Moodle HQ",
         "issuedbyemailobfuscated": "<a href=\"mailto:xxxxx\">Moodle HQ</a>",
         "hasotherfields": true,
@@ -106,7 +111,8 @@
                 "targetframework": "Framework name",
                 "targetcode": "A1001"
             }
-        ]
+        ],
+        "hostedurl": "http://externalbackpack/badge?id=ABC"
     }
 }}
 
@@ -134,6 +140,9 @@
     <div id="badge-details-col" class="col">
         <h2>{{badgename}}</h2>
         <div id="badge-awardedto" class="pt-1 pb-2">
+            {{#recipientnotification}}
+                {{> core/notification_warning}}
+            {{/recipientnotification}}
             {{#str}}awardedto, core_badges, {{recipientname}}{{/str}}
         </div>
 
@@ -178,6 +187,14 @@
                 {{/str}}
             </div>
             {{/issuedby}}
+
+            {{#hostedurl}}
+            <div class="pb-2">
+                <a href="{{.}}" target="_blank" aria-label="{{#str}}hostedurldescription, core_badges{{/str}}">
+                    {{#str}}hostedurl, core_badges{{/str}}
+                </a>
+            </div>
+            {{/hostedurl}}
 
             {{#coursefullname}}
             <div class="pb-2">
