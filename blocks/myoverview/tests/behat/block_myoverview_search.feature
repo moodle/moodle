@@ -39,7 +39,7 @@ Feature: My overview block searching
       | student1 | C13 | student |
 
   Scenario: The search should return no courses if I am not enrolled in any
-    When I am on the "My courses" page logged in as "student1"
+    When I am on the "My courses" page logged in as "student2"
     Then I should see "No courses" in the "Course overview" "block"
     And I set the field "Search courses" to "Fake example"
     And I should see "No courses" in the "Course overview" "block"
