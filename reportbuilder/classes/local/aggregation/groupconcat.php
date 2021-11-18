@@ -132,11 +132,19 @@ class groupconcat extends base {
 
         // Store original names of all values that would be present without aggregation.
         $valuenames = array_keys($values);
-        $values = explode(self::FIELD_VALUE_DELIMETER, (string) reset($values));
+        $valuenamescount = count($valuenames);
 
         // Loop over each extracted value from the concatenated string.
+        $values = explode(self::FIELD_VALUE_DELIMETER, (string) reset($values));
         foreach ($values as $value) {
-            $originalvalue = array_combine($valuenames, explode(self::COLUMN_FIELD_DELIMETER, $value));
+
+            // Ensure we have equal number of value names/data, account for truncation by DB.
+            $valuedata = explode(self::COLUMN_FIELD_DELIMETER, $value);
+            if ($valuenamescount !== count($valuedata)) {
+                continue;
+            }
+
+            $originalvalue = array_combine($valuenames, $valuedata);
             $originalfirstvalue = reset($originalvalue);
 
             // Once we've re-constructed each value, we can apply callbacks to it.
