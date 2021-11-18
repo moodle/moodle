@@ -40,45 +40,45 @@
     <div class="mb-2 custom-control custom-checkbox hidden" data-region="delete-messages-for-all-users-toggle-container">
         <input type="checkbox" class="custom-control-input" id="delete-messages-for-all-users" data-region="delete-messages-for-all-users-toggle">
         <label class="custom-control-label text-muted" for="delete-messages-for-all-users">
-            {{#str}} deleteforeveryone, core_message {{/str}}
+            {{#cleanstr}} deleteforeveryone, core_message {{/cleanstr}}
         </label>
     </div>
     <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-block">
-        <span data-region="dialogue-button-text">{{#str}} blockuserconfirmbutton, core_message {{/str}}</span>
+        <span data-region="dialogue-button-text">{{#cleanstr}} blockuserconfirmbutton, core_message {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>
     <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-unblock">
-        <span data-region="dialogue-button-text">{{#str}} unblock, core_message {{/str}}</span>
+        <span data-region="dialogue-button-text">{{#cleanstr}} unblock, core_message {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>
     <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-remove-contact">
-        <span data-region="dialogue-button-text">{{#str}} remove, core {{/str}}</span>
+        <span data-region="dialogue-button-text">{{#cleanstr}} remove, core {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>
     <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-add-contact">
-        <span data-region="dialogue-button-text">{{#str}} add, core {{/str}}</span>
+        <span data-region="dialogue-button-text">{{#cleanstr}} add, core {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>
     <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-delete-selected-messages">
-        <span data-region="dialogue-button-text">{{#str}} delete, core {{/str}}</span>
+        <span data-region="dialogue-button-text">{{#cleanstr}} delete, core {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>
     <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-delete-conversation">
-        <span data-region="dialogue-button-text">{{#str}} delete, core {{/str}}</span>
+        <span data-region="dialogue-button-text">{{#cleanstr}} delete, core {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>
     <button type="button" class="btn btn-primary btn-block hidden" data-action="request-add-contact">
-        <span data-region="dialogue-button-text">{{#str}} sendcontactrequest, core_message {{/str}}</span>
+        <span data-region="dialogue-button-text">{{#cleanstr}} sendcontactrequest, core_message {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>
     <button type="button" class="btn btn-primary btn-block hidden" data-action="accept-contact-request">
-        <span data-region="dialogue-button-text">{{#str}} acceptandaddcontact, core_message {{/str}}</span>
+        <span data-region="dialogue-button-text">{{#cleanstr}} acceptandaddcontact, core_message {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>
     <button type="button" class="btn btn-secondary btn-block hidden" data-action="decline-contact-request">
-        <span data-region="dialogue-button-text">{{#str}} decline, core_message {{/str}}</span>
+        <span data-region="dialogue-button-text">{{#cleanstr}} decline, core_message {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>
-    <button type="button" class="btn btn-primary btn-block" data-action="okay-confirm">{{#str}} ok, core {{/str}}</button>
-    <button type="button" class="btn btn-secondary btn-block" data-action="cancel-confirm">{{#str}} cancel, core {{/str}}</button>
+    <button type="button" class="btn btn-primary btn-block" data-action="okay-confirm">{{#cleanstr}} ok, core {{/cleanstr}}</button>
+    <button type="button" class="btn btn-secondary btn-block" data-action="cancel-confirm">{{#cleanstr}} cancel, core {{/cleanstr}}</button>
 </div>

@@ -50,8 +50,8 @@
         </div>
         <div class="w-100 event-name-container text-truncate line-height-3">
             <a href="{{url}}"
-               title={{#quote}}{{{name}}}{{/quote}}
-               aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{name}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
+               title="{{name}}"
+               aria-label='{{#cleanstr}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{name}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/cleanstr}}'
             ><h6 class="event-name text-truncate mb-0">{{{name}}}</h6></a>
             {{#course.fullnamedisplay}}
             <small class="text-muted text-truncate mb-0">{{{course.fullnamedisplay}}}</small>
