@@ -445,10 +445,15 @@ class OAuthRequest {
     }
 
     /**
-     * parses the url and rebuilds it to be
-     * scheme://host/path
+     * Parses {@see http_url} and returns normalized scheme://host/path if non-empty, otherwise return empty string
+     *
+     * @return string
      */
     public function get_normalized_http_url() {
+        if ($this->http_url === '') {
+            return '';
+        }
+
         $parts = parse_url($this->http_url);
 
         $port = @$parts['port'];
