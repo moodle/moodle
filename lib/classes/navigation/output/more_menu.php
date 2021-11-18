@@ -57,8 +57,9 @@ class more_menu implements renderable, templatable {
     public function export_for_template(renderer_base $output): array {
         $data = ['navbarstyle' => $this->navbarstyle];
         if ($this->haschildren) {
+            // The node collection doesn't have anything to render so exit now.
             if (!isset($this->content->children) || count($this->content->children) == 0) {
-                $data = [];
+                return [];
             }
             $data['nodecollection'] = $this->content;
         } else {
