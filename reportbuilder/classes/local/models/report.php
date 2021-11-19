@@ -60,6 +60,10 @@ class report extends persistent {
                     base::TYPE_SYSTEM_REPORT,
                 ],
             ],
+            'uniquerows' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
             'conditiondata' => [
                 'type' => PARAM_RAW,
                 'null' => NULL_ALLOWED,
