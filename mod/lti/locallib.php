@@ -3158,7 +3158,7 @@ function lti_get_lti_types_and_proxies_count(bool $orphanedonly = false, int $to
 
     $proxiessql = helper::get_tool_proxy_sql($orphanedonly, true);
 
-    $countsql = "SELECT ($typessql) + ($proxiessql) as total";
+    $countsql = "SELECT ($typessql) + ($proxiessql) as total" . $DB->sql_null_from_clause();
 
     return $DB->count_records_sql($countsql, $typesparams);
 }
