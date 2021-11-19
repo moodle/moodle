@@ -299,6 +299,9 @@ define(['jquery', 'core/ajax', 'core/paged_content_factory', 'core/notification'
      * @private
      */
     var reloadToolList = function() {
+        // Behat tests should wait for the tool list to load.
+        M.cfg.js_pending('reloadToolList');
+
         const cardContainer = getToolCardContainer();
         const listContainer = getToolListContainer();
         const limit = 60;
@@ -322,7 +325,10 @@ define(['jquery', 'core/ajax', 'core/paged_content_factory', 'core/notification'
                 // Add the paged content into the page.
                 templates.replaceNodeContents(cardContainer, html, js);
                 })
-                .always(stopLoading(listContainer));
+                .always(function() {
+                    stopLoading(listContainer);
+                    M.cfg.js_complete('reloadToolList');
+                });
         });
         startLoading(listContainer);
     };
