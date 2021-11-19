@@ -55,12 +55,9 @@
 <div class="usermenu">
     {{#unauthenticateduser}}
         <span class="login pl-2">
-            {{#guest}}
-                {{#str}} loggedinasguest, core {{/str}}
-                <div class="divider border-left h-75 align-self-center mx-2"></div>
-            {{/guest}}
+            {{content}}
             {{#url}}
-                <a href="{{url}}">{{#str}} login, core {{/str}}</a>
+                (<a href="{{url}}">{{#str}} login, core {{/str}}</a>)
             {{/url}}
         </span>
     {{/unauthenticateduser}}
