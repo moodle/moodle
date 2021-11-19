@@ -300,7 +300,7 @@ define(['jquery', 'core/ajax', 'core/paged_content_factory', 'core/notification'
      */
     var reloadToolList = function() {
         // Behat tests should wait for the tool list to load.
-        M.cfg.js_pending('reloadToolList');
+        M.util.js_pending('reloadToolList');
 
         const cardContainer = getToolCardContainer();
         const listContainer = getToolListContainer();
@@ -327,7 +327,7 @@ define(['jquery', 'core/ajax', 'core/paged_content_factory', 'core/notification'
                 })
                 .always(function() {
                     stopLoading(listContainer);
-                    M.cfg.js_complete('reloadToolList');
+                    M.util.js_complete('reloadToolList');
                 });
         });
         startLoading(listContainer);
