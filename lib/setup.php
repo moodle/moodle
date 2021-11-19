@@ -666,6 +666,12 @@ $bootstrapcachefile = $CFG->localcachedir . '/bootstrap.php';
 if (is_readable($bootstrapcachefile)) {
     try {
         require_once($bootstrapcachefile);
+        // Verify the file is not stale.
+        if (!isset($CFG->bootstraphash) || $CFG->bootstraphash !== hash_local_config_cache()) {
+            // Something has changed, the bootstrap.php file is stale.
+            unset($CFG->siteidentifier);
+            @unlink($bootstrapcachefile);
+        }
     } catch (Throwable $e) {
         // If it is corrupted then attempt to delete it and it will be rebuilt.
         @unlink($bootstrapcachefile);
