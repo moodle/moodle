@@ -53,7 +53,7 @@ class api {
     const LOGIN_KEY_TTL = 60;
     /** @var string URL of the Moodle Apps Portal */
     const MOODLE_APPS_PORTAL_URL = 'https://apps.moodle.com';
-    /** @var int seconds a QR login key will expire. */
+    /** @var int default value in seconds a QR login key will expire. */
     const LOGIN_QR_KEY_TTL = 600;
     /** @var int QR code disabled value */
     const QR_CODE_DISABLED = 0;
@@ -383,17 +383,19 @@ class api {
      * Creates a QR login key for the current user, this key is restricted by time and ip address.
      * This key is used for automatically login the user in the site when the user scans a QR code in the Moodle app.
      *
+     * @param  stdClass $mobilesettings  mobile app plugin settings
      * @return string the key
      * @since Moodle 3.9
      */
-    public static function get_qrlogin_key() {
+    public static function get_qrlogin_key(stdClass $mobilesettings) {
         global $USER;
         // Delete previous keys.
         delete_user_key('tool_mobile', $USER->id);
 
         // Create a new key.
         $iprestriction = getremoteaddr(null);
-        $validuntil = time() + self::LOGIN_QR_KEY_TTL;
+        $qrkeyttl = !empty($mobilesettings->qrkeyttl) ? $mobilesettings->qrkeyttl : self::LOGIN_QR_KEY_TTL;
+        $validuntil = time() + $qrkeyttl;
         return create_user_key('tool_mobile', $USER->id, null, $iprestriction, $validuntil);
     }
 
@@ -687,7 +689,7 @@ class api {
         $data = $urlscheme . '://' . $CFG->wwwroot;
 
         if ($mobilesettings->qrcodetype == static::QR_CODE_LOGIN) {
-            $qrloginkey = static::get_qrlogin_key();
+            $qrloginkey = static::get_qrlogin_key($mobilesettings);
             $data .= '?qrlogin=' . $qrloginkey . '&userid=' . $USER->id;
         }
 

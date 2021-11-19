@@ -623,7 +623,8 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $qrloginkey = api::get_qrlogin_key();
+        $mobilesettings = get_config('tool_mobile');
+        $qrloginkey = api::get_qrlogin_key($mobilesettings);
 
         // Generate new tokens, the ones we expect to receive.
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
