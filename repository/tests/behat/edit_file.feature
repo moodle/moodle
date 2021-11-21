@@ -8,11 +8,14 @@ Feature: Edit file feature
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
+    And I log in as "admin"
 
   @javascript
   Scenario: Select file from "Files" filemanager using "icons" view and edit the name
-    Given I log in as "admin"
-    And I follow "Manage private files"
+    Given I follow "Manage private files"
     And I click on "Display folder with file icons" "link" in the ".filemanager" "css_element"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I should see "empty.txt" in the ".fp-content .fp-file" "css_element"
@@ -26,8 +29,7 @@ Feature: Edit file feature
 
   @javascript
   Scenario: Select file from "Files" filemanager using "list" view and edit the name
-    Given I log in as "admin"
-    And I follow "Manage private files"
+    Given I follow "Manage private files"
     And I click on "Display folder with file details" "link" in the ".filemanager" "css_element"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I should see "empty.txt" in the ".fp-content .fp-filename" "css_element"
@@ -41,8 +43,7 @@ Feature: Edit file feature
 
   @javascript
   Scenario: Select file from "Files" filemanager using "tree" view and edit the name
-    Given I log in as "admin"
-    And I follow "Manage private files"
+    Given I follow "Manage private files"
     And I click on "Display folder as file tree" "link" in the ".filemanager" "css_element"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I should see "empty.txt" in the ".fp-content .fp-hascontextmenu .fp-filename" "css_element"

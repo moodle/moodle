@@ -14,6 +14,9 @@ Feature: Atto Autosave
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | teacher2 | C1 | editingteacher |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     And I log in as "admin"
     And I navigate to "Plugins > Text editors > Atto HTML editor > Atto toolbar settings" in site administration
     And I set the field "Autosave frequency" to "3"

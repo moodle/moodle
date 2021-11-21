@@ -5,7 +5,10 @@ Feature: Content bank use editor feature
   I need to be able to access the edition options
 
   Background:
-    Given I log in as "admin"
+    Given the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
+    And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
     And the following config values are set as admin:

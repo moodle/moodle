@@ -28,6 +28,9 @@ Feature: Teachers can override the grade for any question
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
     And I follow "Attempt quiz"
     And I follow "Finish attempt ..."

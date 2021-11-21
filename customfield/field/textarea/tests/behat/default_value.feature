@@ -21,6 +21,9 @@ Feature: Default value for the textarea custom field can contain images
     And the following "custom field categories" exist:
       | name              | component   | area   | itemid |
       | Category for test | core_course | course | 0      |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     # Upload an image into the private files.
     And I log in as "admin"
     And I follow "Manage private files"
