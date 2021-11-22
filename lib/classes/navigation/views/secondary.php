@@ -68,6 +68,8 @@ class secondary extends view {
                 'gradebooksetup' => 2.1,
                 'outcomes' => 2.2,
                 'coursecompletion' => 6,
+                'coursebadges' => 7.1,
+                'newbadge' => 7.2,
                 'filtermanagement' => 9,
                 'unenrolself' => 10,
                 'coursetags' => 11,

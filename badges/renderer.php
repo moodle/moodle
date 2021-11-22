@@ -476,13 +476,6 @@ class core_badges_renderer extends plugin_renderer_base {
 
         // New badge button.
         $htmlnew = '';
-        if (has_capability('moodle/badges:createbadge', $this->page->context)) {
-            $n['type'] = $this->page->url->get_param('type');
-            $n['id'] = $this->page->url->get_param('id');
-            $btn = $this->output->single_button(new moodle_url('newbadge.php', $n), get_string('newbadge', 'badges'));
-            $htmlnew = $this->output->box($btn);
-        }
-
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
         $table->attributes['class'] = 'table table-bordered table-striped';
@@ -527,6 +520,8 @@ class core_badges_renderer extends plugin_renderer_base {
     /**
      * Prints tabs for badge editing.
      *
+     * @deprecated since Moodle 4.0
+     * @todo MDL-73426 Final deprecation.
      * @param integer $badgeid The badgeid to edit.
      * @param context $context The current context.
      * @param string $current The currently selected tab.
@@ -534,6 +529,8 @@ class core_badges_renderer extends plugin_renderer_base {
      */
     public function print_badge_tabs($badgeid, $context, $current = 'overview') {
         global $DB;
+        debugging("print_badge_tabs() is deprecated. " .
+            "This is replaced with the manage_badge_action_bar tertiary navigation.", DEBUG_DEVELOPER);
 
         $badge = new badge($badgeid);
         $row = array();
@@ -1130,5 +1127,15 @@ class core_badges_renderer extends plugin_renderer_base {
         }
 
         return $result;
+    }
+
+    /**
+     * Render the tertiary navigation for the page.
+     *
+     * @param \core_badges\output\base_action_bar $actionbar
+     * @return bool|string
+     */
+    public function render_tertiary_navigation(\core_badges\output\base_action_bar $actionbar) {
+        return $this->render_from_template($actionbar->get_template(), $actionbar->export_for_template($this));
     }
 }
