@@ -341,7 +341,7 @@ function users_search_sql(string $search, string $u = 'u', bool $searchanywhere 
  * @param array $customfieldmappings associative array of mappings for custom fields returned by \core_user\fields::get_sql.
  * @return array with two elements:
  *      string SQL fragment to use in the ORDER BY clause. For example, "firstname, lastname".
- *      array of parameters used in the SQL fragment.
+ *      array of parameters used in the SQL fragment. If $search is not given, this is guaranteed to be an empty array.
  */
 function users_order_by_sql(string $usertablealias = '', string $search = null, context $context = null,
         array $customfieldmappings = []) {
