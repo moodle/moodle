@@ -1,0 +1,30 @@
+version: '3'
+services:
+  web:
+    image: moodlehq/moodle-php-apache:7.2
+    ports:
+      - "8088:80"
+    volumes:
+      - ./:/var/www/html
+      - moodle_web_php_config:/etc/php
+      - moodle_data:/moodledata
+
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password --log_bin_trust_function_creators=1
+    restart: always
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_DATABASE: moodle_db
+      MYSQL_USER: moodle_user
+      MYSQL_PASSWORD: change-me
+    ports:
+      - "3307:3306"
+    volumes:
+      - moodle_db_data:/var/lib/mysql
+
+volumes:
+  moodle_db_data:
+  moodle_data:
+  moodle_web_php_config:
+  
