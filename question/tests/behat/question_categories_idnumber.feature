@@ -84,8 +84,10 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
     And I press "submitbutton"
     # Javascript is required for the next step.
     And I click on "Test question 3" "checkbox" in the "Test question 3" "table_row"
-    And I set the field "Question category" to "Used category"
-    And I press "Move to >>"
+    And I click on "With selected" "button"
+    And I click on question bulk action "move"
+    And I set the field "Question category" to "Subcategory"
+    And I press "Move to"
     And I choose "Edit question" action for "Test question 3" in the question bank
     # The question just moved into this category needs to have a unique idnumber, so a number is appended.
     Then the field "ID number" matches value "q1_1"

@@ -14,24 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace qbank_managecategories;
-
-use core_question\local\bank\navigation_node_base;
+namespace qbank_deletequestion;
 
 /**
- * Class plugin_feature.
+ * Class bulk_delete_action is the base class for delete bulk actions ui.
  *
- * Entry point for qbank plugin.
- * Every qbank plugin must extent this class.
- *
- * @package    qbank_managecategories
+ * @package    qbank_deletequestion
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin_feature extends \core_question\local\bank\plugin_features_base {
+class bulk_delete_action extends \core_question\local\bank\bulk_action_base {
 
-    public function get_navigation_node(): ?navigation_node_base {
-        return new navigation();
+    public function get_bulk_action_title(): string {
+        return get_string('delete');
+    }
+
+    public function get_bulk_action_key(): string {
+        return 'deleteselected';
+    }
+
+    public function get_bulk_action_url(): \moodle_url {
+        return new \moodle_url('/question/bank/deletequestion/delete.php');
+    }
+
+    public function get_bulk_action_capabilities(): ?array {
+        return [
+            'moodle/question:editall',
+        ];
     }
 }

@@ -192,7 +192,6 @@ class helper_test extends \advanced_testcase {
 
         // Test the select menu of question categories output.
         $this->assertStringContainsString('Question category', $output);
-        $this->assertStringContainsString('<option selected="selected" value="">choosedots</option>', $output);
         $this->assertStringContainsString('Test this question category', $output);
     }
 

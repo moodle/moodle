@@ -49,8 +49,11 @@ Feature: The questions in the question bank can be selected in various ways
 
   @javascript
   Scenario: The action button can be disabled when the question not be chosen in the list of questions
-    Given the "Delete" "button" should be disabled
-    And the "Move to >>" "button" should be disabled
-    When I click on "Select all" "checkbox"
-    Then the "Delete" "button" should be enabled
-    And the "Move to >>" "button" should be enabled
+    Given the field "Select all" matches value ""
+    When I click on "With selected" "button"
+    And I should not see "Delete"
+    And I should not see "Move to..."
+    And I click on "Select all" "checkbox"
+    And I click on "With selected" "button"
+    Then I should see question bulk action "move"
+    And I should see question bulk action "deleteselected"

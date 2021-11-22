@@ -150,6 +150,11 @@ class view {
     public $customfilterobjects = null;
 
     /**
+     * @var array $bulkactions to identify the bulk actions for the api.
+     */
+    public $bulkactions = [];
+
+    /**
      * Constructor for view.
      *
      * @param \question_edit_contexts $contexts
@@ -178,6 +183,32 @@ class view {
         $this->init_columns($this->wanted_columns(), $this->heading_column());
         $this->init_sort();
         $this->init_search_conditions();
+        $this->init_bulk_actions();
+    }
+
+    /**
+     * Initialize bulk actions.
+     */
+    protected function init_bulk_actions(): void {
+        $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
+        foreach ($plugins as $componentname => $plugin) {
+            $pluginentrypoint = new $plugin();
+            $pluginentrypointobject = $pluginentrypoint->get_bulk_actions();
+            // Don't need the plugins without bulk actions.
+            if ($pluginentrypointobject === null) {
+                unset($plugins[$componentname]);
+                continue;
+            }
+            if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
+                unset($plugins[$componentname]);
+                continue;
+            }
+            $this->bulkactions[$pluginentrypointobject->get_bulk_action_key()] = [
+                'title' => $pluginentrypointobject->get_bulk_action_title(),
+                'url' => $pluginentrypointobject->get_bulk_action_url(),
+                'capabilities' => $pluginentrypointobject->get_bulk_action_capabilities()
+            ];
+        }
     }
 
     /**
@@ -696,11 +727,6 @@ class view {
 
         echo \html_writer::start_div('questionbankwindow boxwidthwide boxaligncenter');
 
-        // This one will become redundant after implementing bulk actions plugin.
-        if ($this->process_actions_needing_ui()) {
-            return;
-        }
-
         $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
 
         // Show the filters and search options.
@@ -933,7 +959,7 @@ class view {
         $this->display_top_pagnation($OUTPUT->render($pagingbar));
 
         // This html will be refactored in the bulk actions implementation.
-        echo \html_writer::start_tag('form', ['action' => $pageurl, 'method' => 'post']);
+        echo \html_writer::start_tag('form', ['action' => $pageurl, 'method' => 'post', 'id' => 'questionsubmit']);
         echo \html_writer::start_tag('fieldset', ['class' => 'invisiblefieldset', 'style' => "display: block;"]);
         echo \html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
         echo \html_writer::input_hidden_params($this->baseurl);
@@ -942,7 +968,7 @@ class view {
 
         $this->display_bottom_pagination($OUTPUT->render($pagingbar), $totalnumber, $perpage, $pageurl);
 
-        $this->display_bottom_controls($totalnumber, $recurse, $category, $catcontext, $addcontexts);
+        $this->display_bottom_controls($catcontext);
 
         echo \html_writer::end_tag('fieldset');
         echo \html_writer::end_tag('form');
@@ -999,53 +1025,44 @@ class view {
 
     /**
      * Display the controls at the bottom of the list of questions.
-     * @param int      $totalnumber Total number of questions that might be shown (if it was not for paging).
-     * @param bool     $recurse     Whether to include subcategories.
-     * @param \stdClass $category    The question_category row from the database.
-     * @param \context  $catcontext  The context of the category being displayed.
-     * @param array    $addcontexts contexts where the user is allowed to add new questions.
+     *
+     * @param \context $catcontext The context of the category being displayed.
      */
-    protected function display_bottom_controls($totalnumber, $recurse, $category, \context $catcontext, array $addcontexts): void {
+    protected function display_bottom_controls(\context $catcontext): void {
         $caneditall = has_capability('moodle/question:editall', $catcontext);
         $canuseall = has_capability('moodle/question:useall', $catcontext);
         $canmoveall = has_capability('moodle/question:moveall', $catcontext);
-
-        echo \html_writer::start_tag('div', ['class' => "modulespecificbuttonscontainer"]);
         if ($caneditall || $canmoveall || $canuseall) {
-            $withselectedcontent = '&nbsp;' . get_string('withselected', 'question') . ':';
-            echo \html_writer::tag('strong', $withselectedcontent);
-            echo \html_writer::empty_tag('br');
+            global $PAGE;
+            $bulkactiondatas = [];
+            $params = $this->base_url()->params();
+            $params['returnurl'] = $this->base_url();
+            foreach ($this->bulkactions as $key => $action) {
+                // Check capabilities.
+                $capcount = 0;
+                foreach ($action['capabilities'] as $capability) {
+                    if (has_capability($capability, $catcontext)) {
+                        $capcount ++;
+                    }
+                }
+                // At least one cap need to be there.
+                if ($capcount === 0) {
+                    unset($this->bulkactions[$key]);
+                    continue;
+                }
+                $actiondata = new \stdClass();
+                $actiondata->actionname = $action['title'];
+                $actiondata->actionkey = $key;
+                $actiondata->actionurl = new \moodle_url($action['url'], $params);
+                $bulkactiondata[] = $actiondata;
 
-            // Print delete and move selected question.
-            if ($caneditall) {
-                echo \html_writer::empty_tag('input', [
-                        'type' => 'submit',
-                        'class' => 'btn btn-secondary mr-1',
-                        'name' => 'deleteselected',
-                        'value' => get_string('delete'),
-                        'data-action' => 'toggle',
-                        'data-togglegroup' => 'qbank',
-                        'data-toggle' => 'action',
-                        'disabled' => true,
-                ]);
+                $bulkactiondatas ['bulkactionitems'] = $bulkactiondata;
             }
-
-            if ($canmoveall && count($addcontexts)) {
-                echo \html_writer::empty_tag('input', [
-                        'type' => 'submit',
-                        'class' => 'btn btn-secondary mr-1',
-                        'name' => 'move',
-                        'value' => get_string('moveto', 'question'),
-                        'data-action' => 'toggle',
-                        'data-togglegroup' => 'qbank',
-                        'data-toggle' => 'action',
-                        'disabled' => true,
-                ]);
-                helper::question_category_select_menu($addcontexts, false, 0, "{$category->id},{$category->contextid}");
+            // We dont need to show this section if none of the plugins are enabled.
+            if (!empty($bulkactiondatas)) {
+                echo $PAGE->get_renderer('core_question', 'bank')->render_bulk_actions_ui($bulkactiondatas);
             }
         }
-
-        echo \html_writer::end_tag('div');
     }
 
     /**
@@ -1094,7 +1111,7 @@ class view {
      *
      * @deprecated since Moodle 4.0
      * @see print_table()
-     * @todo Final deprecation of this function in moodle 4.4
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     protected function start_table() {
         debugging('Function start_table() is deprecated, please use print_table() instead.', DEBUG_DEVELOPER);
@@ -1110,7 +1127,7 @@ class view {
      *
      * @deprecated since Moodle 4.0
      * @see print_table()
-     * @todo Final deprecation of this function in moodle 4.4
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     protected function end_table() {
         debugging('Function end_table() is deprecated, please use print_table() instead.', DEBUG_DEVELOPER);
@@ -1170,126 +1187,27 @@ class view {
 
     /**
      * Process actions for the selected action.
-     *
+     * @deprecated since Moodle 4.0
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public function process_actions(): void {
-        global $DB;
-        // Now, check for commands on this page and modify variables as necessary.
-        if (optional_param('move', false, PARAM_BOOL) and confirm_sesskey()) {
-            // Move selected questions to new category.
-            $category = required_param('category', PARAM_SEQUENCE);
-            list($tocategoryid, $contextid) = explode(',', $category);
-            if (! $tocategory = $DB->get_record('question_categories',
-                    ['id' => $tocategoryid, 'contextid' => $contextid])) {
-                throw new \moodle_exception('cannotfindcate', 'question');
-            }
-            $tocontext = \context::instance_by_id($contextid);
-            require_capability('moodle/question:add', $tocontext);
-            $rawdata = (array) data_submitted();
-            $questionids = [];
-            foreach ($rawdata as $key => $value) {
-                // Parse input for question ids.
-                if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
-                    $key = $matches[1];
-                    $questionids[] = $key;
-                }
-            }
-            if ($questionids) {
-                list($usql, $params) = $DB->get_in_or_equal($questionids);
-                $questions = $DB->get_records_sql("
-                        SELECT q.*, c.contextid
-                        FROM {question} q
-                        JOIN {question_categories} c ON c.id = q.category
-                        WHERE q.id {$usql}", $params);
-                foreach ($questions as $question) {
-                    question_require_capability_on($question, 'move');
-                }
-                question_move_questions_to_category($questionids, $tocategory->id);
-                redirect($this->baseurl->out(false, ['category' => "{$tocategoryid},{$contextid}"]));
-            }
-        }
-
-        if (optional_param('deleteselected', false, PARAM_BOOL)) {
-            // Delete selected questions from the category.
-            // If teacher has already confirmed the action.
-            if (($confirm = optional_param('confirm', '', PARAM_ALPHANUM)) and confirm_sesskey()) {
-                $deleteselected = required_param('deleteselected', PARAM_RAW);
-                if ($confirm == md5($deleteselected)) {
-                    if ($questionlist = explode(',', $deleteselected)) {
-                        // For each question either hide it if it is in use or delete it.
-                        foreach ($questionlist as $questionid) {
-                            $questionid = (int)$questionid;
-                            question_require_capability_on($questionid, 'edit');
-                            if (questions_in_use([$questionid])) {
-                                $DB->set_field('question', 'hidden', 1, ['id' => $questionid]);
-                            } else {
-                                question_delete_question($questionid);
-                            }
-                        }
-                    }
-                    redirect($this->baseurl);
-                } else {
-                    throw new \moodle_exception('invalidconfirm', 'question');
-                }
-            }
-        }
-
-        // Unhide a question.
-        if (($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {
-            question_require_capability_on($unhide, 'edit');
-            $DB->set_field('question', 'hidden', 0, ['id' => $unhide]);
-
-            // Purge these questions from the cache.
-            \question_bank::notify_question_edited($unhide);
-
-            redirect($this->baseurl);
-        }
+        debugging('Function process_actions() is deprecated and its code has been completely deleted.
+         Please, remove the call from your code and check core_question\local\bank\bulk_action_base
+          to learn more about bulk actions in qbank.', DEBUG_DEVELOPER);
+        // Associated code is deleted to make sure any incorrect call doesnt not cause any data loss.
     }
 
     /**
      * Process actions with ui.
      * @return bool
+     * @deprecated since Moodle 4.0
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public function process_actions_needing_ui(): bool {
-        global $DB, $OUTPUT;
-        if (optional_param('deleteselected', false, PARAM_BOOL)) {
-            // Make a list of all the questions that are selected.
-            $rawquestions = $_REQUEST; // This code is called by both POST forms and GET links, so cannot use data_submitted.
-            $questionlist = '';  // Comma separated list of ids of questions to be deleted.
-            $questionnames = ''; // String with names of questions separated by <br/> with an asterix
-            // in front of those that are in use.
-            $inuse = false;      // Set to true if at least one of the questions is in use.
-            foreach ($rawquestions as $key => $value) {    // Parse input for question ids.
-                if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
-                    $key = $matches[1];
-                    $questionlist .= $key.',';
-                    question_require_capability_on((int)$key, 'edit');
-                    if (questions_in_use([$key])) {
-                        $questionnames .= '* ';
-                        $inuse = true;
-                    }
-                    $questionnames .= $DB->get_field('question', 'name', ['id' => $key]) . '<br />';
-                }
-            }
-            if (!$questionlist) { // No questions were selected.
-                redirect($this->baseurl);
-            }
-            $questionlist = rtrim($questionlist, ',');
-
-            // Add an explanation about questions in use.
-            if ($inuse) {
-                $questionnames .= '<br />'.get_string('questionsinuse', 'question');
-            }
-            $baseurl = new \moodle_url($this->baseurl, $this->baseurl->params());
-            $deleteurl = new \moodle_url($baseurl, ['deleteselected' => $questionlist, 'confirm' => md5($questionlist),
-                    'sesskey' => sesskey()]);
-
-            $continue = new \single_button($deleteurl, get_string('delete'), 'post');
-            echo $OUTPUT->confirm(get_string('deletequestionscheck', 'question', $questionnames), $continue, $baseurl);
-
-            return true;
-        }
-
+        debugging('Function process_actions_needing_ui() is deprecated and its code has been completely deleted.
+         Please, remove the call from your code and check core_question\local\bank\bulk_action_base
+          to learn more about bulk actions in qbank.', DEBUG_DEVELOPER);
+        // Associated code is deleted to make sure any incorrect call doesnt not cause any data loss.
         return false;
     }
 

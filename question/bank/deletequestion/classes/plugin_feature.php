@@ -25,6 +25,7 @@
 
 namespace qbank_deletequestion;
 
+use core_question\local\bank\bulk_action_base;
 use core_question\local\bank\plugin_features_base;
 
 /**
@@ -40,5 +41,9 @@ class plugin_feature extends plugin_features_base {
         return [
             new delete_action_column($qbank),
         ];
+    }
+
+    public function get_bulk_actions(): ?bulk_action_base {
+        return new bulk_delete_action();
     }
 }

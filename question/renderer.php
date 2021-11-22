@@ -157,6 +157,16 @@ class core_question_bank_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render bulk actions ui.
+     *
+     * @param array $displaydata
+     * @return bool|string
+     */
+    public function render_bulk_actions_ui($displaydata) {
+        return $this->render_from_template('core_question/bulk_actions_ui', $displaydata);
+    }
+
+    /**
      * Build the HTML for the question chooser javascript popup.
      *
      * @param array $real A set of real question types

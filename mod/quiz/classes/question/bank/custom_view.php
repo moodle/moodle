@@ -142,7 +142,7 @@ class custom_view extends \core_question\local\bank\view {
         return $out;
     }
 
-    protected function display_bottom_controls($totalnumber, $recurse, $category, \context $catcontext, array $addcontexts): void {
+    protected function display_bottom_controls(\context $catcontext): void {
         $cmoptions = new \stdClass();
         $cmoptions->hasattempts = !empty($this->quizhasattempts);
 
