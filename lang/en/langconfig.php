@@ -31,7 +31,6 @@ $string['iso6391'] = 'en';
 $string['iso6392'] = 'eng';
 $string['labelsep'] = ': ';
 $string['listsep'] = ',';
-$string['listitemssep'] = ', ';
 $string['locale'] = 'en_AU.UTF-8';
 $string['localecldr'] = 'en-AU';
 $string['localewin'] = 'English_Australia.1252';

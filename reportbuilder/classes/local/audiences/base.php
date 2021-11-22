@@ -174,7 +174,7 @@ abstract class base {
             return $OUTPUT->render($notification);
         }
 
-        $listseparator = get_string('listitemssep', 'langconfig');
+        $listseparator = get_string('listsep', 'langconfig') . ' ';
         if ($elementcount > self::MULTI_SELECT_LIMIT) {
             $elements = array_slice($elements, 0, self::MULTI_SELECT_LIMIT);
 
