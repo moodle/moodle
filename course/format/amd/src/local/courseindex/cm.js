@@ -78,14 +78,23 @@ export default class Component extends DndCmItem {
      */
     stateReady(state) {
         this.configDragDrop(this.id);
+        const cm = state.cm.get(this.id);
         // Refresh completion icon.
         this._refreshCompletion({
             state,
-            element: state.cm.get(this.id),
+            element: cm,
         });
         // Check if this we are displaying this activity id page.
         if (Config.contextid != Config.courseContextId && Config.contextInstanceId == this.id) {
             this.element.classList.add(this.classes.PAGEITEM);
+        }
+        // Add anchor logic if the element is not user visible.
+        if (!cm.uservisible) {
+            this.addEventListener(
+                this.getElement(this.selectors.CM_NAME),
+                'click',
+                this._activityAnchor,
+            );
         }
     }
 
@@ -146,5 +155,28 @@ export default class Component extends DndCmItem {
         } catch (error) {
             throw error;
         }
+    }
+
+    /**
+     * The activity anchor event.
+     *
+     * @param {Event} event
+     */
+    _activityAnchor(event) {
+        const cm = this.reactive.get('cm', this.id);
+        // If the user cannot access the element but the element is present in the page
+        // the new url should be an anchor link.
+        if (document.getElementById(cm.anchor)) {
+            return;
+        }
+        // If the element is not present in the page we need to go to the specific section.
+        const course = this.reactive.get('course');
+        const section = this.reactive.get('section', cm.sectionid);
+        if (!section) {
+            return;
+        }
+        const url = `${course.baseurl}&section=${section.number}#${cm.anchor}`;
+        event.preventDefault();
+        window.location = url;
     }
 }

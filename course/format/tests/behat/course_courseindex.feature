@@ -229,3 +229,34 @@ Feature: Course index depending on role
     And I click on "Delete" "button" in the ".modal" "css_element"
     Then I should not see "Topic 4" in the "courseindex-content" "region"
     And I should not see "Activity sample 1" in the "courseindex-content" "region"
+
+  @javascript
+  Scenario: Course index locked activity link
+    Given the following config values are set as admin:
+      | enableavailability | 1 |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Course layout" to "Show one section per page"
+    And I click on "Save and display" "button"
+    # Add access restriction to Activity sample 3.
+    And I open "Activity sample 3" actions menu
+    And I click on "Edit settings" "link" in the "Activity sample 3" activity
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    And I set the following fields to these values:
+      | x[day]   | 31                  |
+      | x[month] | 12                  |
+      | x[year]  | ## +1 year ## %Y ## |
+    And I press "Save and return to course"
+    And I log out
+    # Check course index link goes to the specific section.
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I click on "Open course index drawer" "button"
+    And I click on "Topic 1" "link" in the "region-main" "region"
+    And I should not see "Activity sample 3" in the "region-main" "region"
+    And I click on "Activity sample 3" "link" in the "courseindex-content" "region"
+    Then I should see "Activity sample 3" in the "region-main" "region"

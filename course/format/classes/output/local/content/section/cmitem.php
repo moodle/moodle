@@ -99,6 +99,7 @@ class cmitem implements renderable, templatable {
         $item = new $this->cmclass($format, $this->section, $mod, $this->displayoptions);
         return (object)[
             'id' => $mod->id,
+            'anchor' => "module-{$mod->id}",
             'module' => $mod->modname,
             'extraclasses' => $mod->extraclasses,
             'cmformat' => $item->export_for_template($output),

@@ -80,6 +80,7 @@ class cm implements renderable {
 
         $data = (object)[
             'id' => $cm->id,
+            'anchor' => "module-{$cm->id}",
             'name' => external_format_string($cm->name, $cm->context, true),
             'visible' => !empty($cm->visible),
             'sectionid' => $section->id,

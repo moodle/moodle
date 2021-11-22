@@ -49,9 +49,9 @@
             </a>
         {{/uservisible}}
         {{^uservisible}}
-            <span class="courseindex-name text-truncate" data-for="cm_name">
+            <a class="courseindex-link text-truncate" href="#{{{anchor}}}" data-for="cm_name" tabindex="-1" data-anchor="true">
                 {{{name}}}
-            </span>
+            </a>
         {{/uservisible}}
     {{/url}}
     {{^url}}

@@ -45,7 +45,7 @@ Feature: Restrict activity availability through grade conditions
     When I am on the "Course 1" course page logged in as student1
     Then I should see "Not available unless: You achieve a required score in Grade assignment"
     And I should see "Test page name"
-    And "Test page name" "link" should not exist
+    And "Test page name" "link" should not exist in the "region-main" "region"
     And I am on the "Grade assignment" "assign activity" page
     And I press "Add submission"
     And I set the following fields to these values:
