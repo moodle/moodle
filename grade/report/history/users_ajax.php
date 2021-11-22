@@ -61,16 +61,17 @@ foreach ($users as $user) {
     $newuser->userid = $user->id;
     $newuser->picture = $OUTPUT->user_picture($user, $useroptions);
     $newuser->fullname = fullname($user);
+    $fieldvalues = [];
     foreach ($extrafields as $field) {
         if ($user->{$field}) {
-            $newuser->extrafields[] = $user->{$field};
+            $fieldvalues[] = $user->{$field};
         }
     }
+    $newuser->extrafields = implode(', ', $fieldvalues);
     $outcome->response['users'][] = $newuser;
 }
 
 $outcome->success = true;
-
 echo $OUTPUT->header();
 echo json_encode($outcome);
 echo $OUTPUT->footer();
