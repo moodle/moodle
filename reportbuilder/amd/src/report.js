@@ -21,6 +21,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Notification from 'core/notification';
 import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {setPageNumber, refreshTableContent} from 'core_table/dynamic';
@@ -58,7 +59,8 @@ export const init = () => {
         const pageNumber = event.detail?.preservePagination ? null : 1;
 
         await setPageNumber(tableRoot, pageNumber, false)
-            .then(refreshTableContent);
+            .then(refreshTableContent)
+            .catch(Notification.exception);
     });
 
     // Listen for trigger popup events.
