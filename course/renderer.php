@@ -1191,8 +1191,8 @@ class core_course_renderer extends plugin_renderer_base {
                 $rolenames = array_map(function ($role) {
                     return $role->displayname;
                 }, $coursecontact['roles']);
-                $name = implode(", ", $rolenames).': '.
-                    html_writer::link(new moodle_url('/user/view.php',
+                $name = html_writer::tag('span', implode(", ", $rolenames).': ', ['class' => 'font-weight-bold']);
+                $name .= html_writer::link(new moodle_url('/user/view.php',
                         ['id' => $coursecontact['user']->id, 'course' => SITEID]),
                         $coursecontact['username']);
                 $content .= html_writer::tag('li', $name);
@@ -1246,8 +1246,8 @@ class core_course_renderer extends plugin_renderer_base {
         if ($chelper->get_show_courses() == self::COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT) {
             if ($cat = core_course_category::get($course->category, IGNORE_MISSING)) {
                 $content .= html_writer::start_tag('div', ['class' => 'coursecat']);
-                $content .= get_string('category').': '.
-                    html_writer::link(new moodle_url('/course/index.php', ['categoryid' => $cat->id]),
+                $content .= html_writer::tag('span', get_string('category').': ', ['class' => 'font-weight-bold']);
+                $content .= html_writer::link(new moodle_url('/course/index.php', ['categoryid' => $cat->id]),
                         $cat->get_formatted_name(), ['class' => $cat->visible ? '' : 'dimmed']);
                 $content .= html_writer::end_tag('div');
             }
@@ -1287,11 +1287,15 @@ class core_course_renderer extends plugin_renderer_base {
         if ($course instanceof stdClass) {
             $course = new core_course_list_element($course);
         }
-        $content = $this->course_summary($chelper, $course);
+        $content = \html_writer::start_tag('div', ['class' => 'd-flex']);
         $content .= $this->course_overview_files($course);
+        $content .= \html_writer::start_tag('div', ['class' => 'flex-grow-1']);
+        $content .= $this->course_summary($chelper, $course);
         $content .= $this->course_contacts($course);
         $content .= $this->course_category_name($chelper, $course);
         $content .= $this->course_custom_fields($course);
+        $content .= \html_writer::end_tag('div');
+        $content .= \html_writer::end_tag('div');
         return $content;
     }
 
@@ -1348,8 +1352,11 @@ class core_course_renderer extends plugin_renderer_base {
             } else if ($viewmoreurl = $chelper->get_courses_display_option('viewmoreurl')) {
                 // the option for 'View more' link was specified, display more link
                 $viewmoretext = $chelper->get_courses_display_option('viewmoretext', new lang_string('viewmore'));
-                $morelink = html_writer::tag('div', html_writer::link($viewmoreurl, $viewmoretext),
-                        array('class' => 'paging paging-morelink'));
+                $morelink = html_writer::tag(
+                    'div',
+                    html_writer::link($viewmoreurl, $viewmoretext, ['class' => 'btn btn-secondary']),
+                    ['class' => 'paging paging-morelink']
+                );
             }
         } else if (($totalcount > $CFG->coursesperpage) && $paginationurl && $paginationallowall) {
             // there are more than one page of results and we are in 'view all' mode, suggest to go back to paginated view mode
@@ -1684,7 +1691,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $output .= html_writer::start_tag('div', array('class' => 'categorypicker'));
                 $select = new single_select(new moodle_url('/course/index.php'), 'categoryid',
                         core_course_category::make_categories_list(), $coursecat->id, null, 'switchcategory');
-                $select->set_label(get_string('categories').':');
+                $select->set_label(get_string('categories').':', ['class' => 'sr-only']);
                 $output .= $this->render($select);
                 $output .= html_writer::end_tag('div'); // .categorypicker
             }
@@ -1943,7 +1950,7 @@ class core_course_renderer extends plugin_renderer_base {
         $output = '';
         $output .= html_writer::start_tag('div', array('class' => 'coursebox remotecoursebox clearfix'));
         $output .= html_writer::start_tag('div', array('class' => 'info'));
-        $output .= html_writer::start_tag('h3', array('class' => 'name'));
+        $output .= html_writer::start_tag('h3', array('class' => 'coursename'));
         $output .= html_writer::link($url, format_string($course->fullname), array('title' => get_string('entercourse')));
         $output .= html_writer::end_tag('h3'); // .name
         $output .= html_writer::tag('div', '', array('class' => 'moreinfo'));
