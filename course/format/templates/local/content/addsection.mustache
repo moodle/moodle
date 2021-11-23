@@ -39,7 +39,7 @@
     }
 }}
 {{#showaddsection}}
-<div id="changenumsections" class="mdl-left">
+<div id="changenumsections" class="mdl-left py-2">
     {{#increase}}
     <a href="{{{url}}}" class="increase-sections">
         {{#pix}}t/switch_plus, moodle, {{#str}} increasesections, moodle {{/str}}{{/pix}}
@@ -59,7 +59,7 @@
         data-action="addSection"
         {{#insertafter}} data-id="{{id}}" {{/insertafter}}
     >
-        {{#pix}} t/add, moodle {{/pix}} {{title}}
+        {{title}}
     </a>
     {{/addsections}}
 </div>

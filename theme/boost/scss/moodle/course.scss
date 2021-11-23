@@ -1311,3 +1311,7 @@ $activity-item-hover: theme-color-level('primary', -10) !default;
     width: 100%;
     border-radius: 4px;
 }
+
+#changenumsections {
+    border-top: $border-width solid $activity-item-border;
+}

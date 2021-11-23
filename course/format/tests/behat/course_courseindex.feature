@@ -217,7 +217,7 @@ Feature: Course index depending on role
     And I am on "Course 1" course homepage with editing mode on
     And I click on "Side panel" "button"
     And I click on "Open course index drawer" "button"
-    When I click on "Add topic after" "link" in the "Topic 4" "section"
+    When I click on "Add topic" "link" in the "Topic 4" "section"
     Then I should see "Topic 5" in the "courseindex-content" "region"
 
   @javascript

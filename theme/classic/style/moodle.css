@@ -14622,6 +14622,9 @@ span.editinstructions {
     cursor: pointer;
     background-color: #cfe2f2; }
 
+#changenumsections {
+  border-top: 1px solid #3584c9; }
+
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target {
   scroll-margin-top: 60px; }
