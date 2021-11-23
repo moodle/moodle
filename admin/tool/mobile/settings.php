@@ -130,6 +130,18 @@ if ($hassiteconfig) {
                 new lang_string('minimumversion_key', 'tool_mobile'),
                 new lang_string('minimumversion', 'tool_mobile'), '', PARAM_NOTAGS));
 
+    $options = [
+        60 => new lang_string('numminutes', '', 1),
+        180 => new lang_string('numminutes', '', 3),
+        360 => new lang_string('numminutes', '', 6),
+        900 => new lang_string('numminutes', '', 15),
+        1800 => new lang_string('numminutes', '', 30),
+        3600 => new lang_string('numminutes', '', 60)
+    ];
+    $temp->add(new admin_setting_configselect('tool_mobile/autologinmintimebetweenreq',
+        new lang_string('autologinmintimebetweenreq', 'tool_mobile'),
+        new lang_string('autologinmintimebetweenreq_desc', 'tool_mobile'), 360, $options));
+
     $ADMIN->add('mobileapp', $temp);
 
     // Appearance related settings.

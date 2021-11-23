@@ -306,6 +306,10 @@ class api {
             $settings->tool_mobile_filetypeexclusionlist = get_config('tool_mobile', 'filetypeexclusionlist');
             $settings->tool_mobile_custommenuitems = get_config('tool_mobile', 'custommenuitems');
             $settings->tool_mobile_apppolicy = get_config('tool_mobile', 'apppolicy');
+            // This setting could be not set in some edge cases such as bad upgrade.
+            $mintimereq = get_config('tool_mobile', 'autologinmintimebetweenreq');
+            $mintimereq = empty($mintimereq) ? 6 * MINSECS : $mintimereq;
+            $settings->tool_mobile_autologinmintimebetweenreq = $mintimereq;
         }
 
         if (empty($section) or $section == 'calendar') {

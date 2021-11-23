@@ -4,6 +4,7 @@ Information provided here is intended especially for developers.
 === 4.0 ===
 
 * The function tool_mobile\api::get_qrlogin_key() now requires as parameter an object with all the mobile plugin settings.
+* The tool_mobile_external::get_config external function now returns the tool_mobile_autologinmintimebetweenreq setting.
 
 === 3.7 ===
 

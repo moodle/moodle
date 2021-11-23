@@ -219,6 +219,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'tool_mobile_filetypeexclusionlist', 'value' => ''),
             array('name' => 'tool_mobile_custommenuitems', 'value' => ''),
             array('name' => 'tool_mobile_apppolicy', 'value' => ''),
+            array('name' => 'tool_mobile_autologinmintimebetweenreq', 'value' => 6 * MINSECS),
             array('name' => 'calendartype', 'value' => $CFG->calendartype),
             array('name' => 'calendar_site_timeformat', 'value' => $CFG->calendar_site_timeformat),
             array('name' => 'calendar_startwday', 'value' => $CFG->calendar_startwday),
@@ -385,6 +386,15 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $mocktime = time() - 7 * MINSECS;
         set_user_preference('tool_mobile_autologin_request_last', $mocktime, $USER);
         $result = external::get_autologin_key($token->privatetoken);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+
+        // Change min time between requests to 30 seconds.
+        set_config('autologinmintimebetweenreq', 30, 'tool_mobile');
+
+        // Mock a previous request, 60 seconds ago.
+        $mocktime = time() - MINSECS;
+        set_user_preference('tool_mobile_autologin_request_last', $mocktime, $USER);
+        $result = external::get_autologin_key($token->privatetoken);    // All good, we were expecint 30 seconds or more.
         $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
 
         // We just requested one token, we must wait.
