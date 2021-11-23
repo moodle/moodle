@@ -43,7 +43,7 @@ class user_field_mapping extends persistent {
      * @return array
      */
     private static function get_user_fields() {
-        return array_merge(\core_user::AUTHSYNCFIELDS, ['picture', 'username']);
+        return array_merge(\core_user::AUTHSYNCFIELDS, ['picture', 'username'], self::get_profile_field_names());
     }
 
     /**
@@ -72,7 +72,9 @@ class user_field_mapping extends persistent {
      * @return array
      */
     public function get_internalfield_list() {
-        return array_combine(self::get_user_fields(), self::get_user_fields());
+        $userfields = array_merge(\core_user::AUTHSYNCFIELDS, ['picture', 'username']);
+        $internalfields = array_combine($userfields, $userfields);
+        return array_merge(['' => $internalfields], self::get_profile_field_list());
     }
 
     /**
@@ -86,5 +88,40 @@ class user_field_mapping extends persistent {
             return new lang_string('userfieldexternalfield_error', 'tool_oauth2');
         }
         return true;
+    }
+
+    /**
+     * Return the list of valid custom profile user fields.
+     *
+     * @return array array of profile field names
+     */
+    private static function get_profile_field_names(): array {
+        $profilefields = profile_get_user_fields_with_data(0);
+        $profilefieldnames = [];
+        foreach ($profilefields as $field) {
+            $profilefieldnames[] = $field->inputname;
+        }
+        return $profilefieldnames;
+    }
+
+    /**
+     * Return the list of profile fields
+     * in a format they can be used for choices in a group select menu.
+     *
+     * @return array array of category name with its profile fields
+     */
+    private function get_profile_field_list(): array {
+        $customfields = profile_get_user_fields_with_data_by_category(0);
+        $data = [];
+        foreach ($customfields as $category) {
+            foreach ($category as $field) {
+                $categoryname = $field->get_category_name();
+                if (!isset($data[$categoryname])) {
+                    $data[$categoryname] = [];
+                }
+                $data[$categoryname][$field->inputname] = $field->field->name;
+            }
+        }
+        return $data;
     }
 }
