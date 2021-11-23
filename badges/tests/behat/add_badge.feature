@@ -40,12 +40,11 @@ Feature: Add badges to the system
     And I should see "Alignments (0)"
     And I should not see "Create badge"
     And I should not see "Issuer details"
-    And I follow "Overview"
+    And I select "Overview" from the "jump" singleselect
     And I should see "Issuer details"
     And I should see "Test Badge Site"
     And I should see "testuser@example.com"
     And I navigate to "Badges > Manage badges" in site administration
-    And I should see "Number of badges available: 1"
     And I should not see "There are no badges available."
 
   @javascript @_file_upload
@@ -62,7 +61,6 @@ Feature: Add badges to the system
     And I press "Create badge"
     And I wait until the page is ready
     And I navigate to "Badges > Manage badges" in site administration
-    And I should see "Number of badges available: 1"
     And I press "Add a new badge"
     And I set the following fields to these values:
       | Name | Test Badge 2 |
@@ -73,7 +71,7 @@ Feature: Add badges to the system
       | Image caption | Test caption image |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
-    And I follow "Related badges (0)"
+    And I select "Related badges (0)" from the "jump" singleselect
     And I should see "This badge does not have any related badges."
     And I press "Add related badge"
     And I follow "Related badges"
@@ -97,7 +95,7 @@ Feature: Add badges to the system
     When I press "Create badge"
     Then I should see "Edit details"
     And I should see "Endorsement"
-    And I follow "Endorsement"
+    And I select "Endorsement" from the "jump" singleselect
     And I set the following fields to these values:
       | Endorser name | Endorser |
       | Email | endorsement@example.com |
@@ -121,7 +119,7 @@ Feature: Add badges to the system
     When I press "Create badge"
     Then I should see "Test Badge"
     And I should see "Endorsement"
-    And I follow "Alignments (0)"
+    And I select "Alignments (0)" from the "jump" singleselect
     And I should see "This badge does not have any external skills or standards specified."
     And I press "Add external skill or standard"
     And I set the following fields to these values:
@@ -158,7 +156,6 @@ Feature: Add badges to the system
     And I should see "Alignments (0)"
     And I should not see "Create badge"
     And I navigate to "Badges > Manage badges" in site administration
-    And I should see "Number of badges available: 1"
     And I should not see "There are no badges available."
     # See buttons from the "Site badges" page.
     And I am on homepage
@@ -183,14 +180,14 @@ Feature: Add badges to the system
       | Image caption | Test caption image |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
-    When I follow "Edit details"
+    When I select "Edit details" from the "jump" singleselect
     And I should see "Test badge with 'apostrophe' and other friends (&@#)"
     And I should not see "Issuer details"
     And I set the following fields to these values:
       | Name | Test badge renamed |
       | Version | secondversion |
     And I press "Save changes"
-    And I follow "Overview"
+    And I select "Overview" from the "jump" singleselect
     Then I should not see "Test badge with 'apostrophe' and other friends (&@#)"
     And I should not see "firstversion"
     And I should see "Test badge renamed"

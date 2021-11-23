@@ -146,7 +146,7 @@ Feature: Award badges based on cohort
     And I press "Save"
     When I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "First User (first@example.com)"
     And I press "Award badge"
@@ -198,7 +198,7 @@ Feature: Award badges based on cohort
     And I set the field "update" to "Any"
     When I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (1)"
+    And I select "Recipients (1)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "First User (first@example.com)"
     And I press "Award badge"
@@ -255,7 +255,7 @@ Feature: Award badges based on cohort
     And I set the field "update" to "Any"
     When I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (1)"
+    And I select "Recipients (1)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "First User (first@example.com)"
     And I press "Award badge"
@@ -314,7 +314,7 @@ Feature: Award badges based on cohort
     And I set the field "update" to "All"
     When I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "First User (first@example.com)"
     And I press "Award badge"

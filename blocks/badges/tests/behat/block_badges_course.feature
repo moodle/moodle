@@ -28,7 +28,7 @@ Feature: Enable Block Badges in a course
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
     And I press "Award badge"
@@ -45,7 +45,7 @@ Feature: Enable Block Badges in a course
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
     And I press "Award badge"
