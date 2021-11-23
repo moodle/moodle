@@ -857,7 +857,7 @@ class external_warnings extends external_multiple_structure {
                     'item' => new external_value(PARAM_TEXT, $itemdesc, VALUE_OPTIONAL),
                     'itemid' => new external_value(PARAM_INT, $itemiddesc, VALUE_OPTIONAL),
                     'warningcode' => new external_value(PARAM_ALPHANUM, $warningcodedesc),
-                    'message' => new external_value(PARAM_TEXT,
+                    'message' => new external_value(PARAM_RAW,
                             'untranslated english message to explain the warning')
                 ), 'warning'),
             'list of warnings', VALUE_OPTIONAL);
