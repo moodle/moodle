@@ -296,6 +296,16 @@ class cohort extends base {
         ))
             ->add_joins($this->get_joins());
 
+        // Description filter.
+        $filters[] = (new filter(
+            text::class,
+            'description',
+            new lang_string('description'),
+            $this->get_entity_name(),
+            "{$tablealias}.description"
+        ))
+            ->add_joins($this->get_joins());
+
         return $filters;
     }
 }
