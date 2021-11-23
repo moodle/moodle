@@ -260,7 +260,8 @@ class api {
 
         // Map supplied issuer user info to Moodle user fields.
         $userfieldmapping = new \core\oauth2\user_field_mapping();
-        foreach ($userfieldmapping->get_internalfield_list() as $field) {
+        $userfieldlist = $userfieldmapping->get_internalfield_list();
+        foreach (reset($userfieldlist) as $field) {
             if (isset($userinfo[$field]) && $userinfo[$field]) {
                 $user->$field = $userinfo[$field];
             }
@@ -309,7 +310,8 @@ class api {
 
         // Map supplied issuer user info to Moodle user fields.
         $userfieldmapping = new \core\oauth2\user_field_mapping();
-        foreach ($userfieldmapping->get_internalfield_list() as $field) {
+        $userfieldlist = $userfieldmapping->get_internalfield_list();
+        foreach (reset($userfieldlist) as $field) {
             if (isset($userinfo[$field]) && $userinfo[$field]) {
                 $user->$field = $userinfo[$field];
             }
