@@ -13786,20 +13786,42 @@ body:not(.editing) .sitetopic ul.section {
                  */
   padding-left: 2rem; }
 
-.editing .editinprogress {
-  opacity: .7;
-  animation: editinprogress-pulse 2s infinite linear; }
+.editing .course-content .stateready .section .spinner {
+  display: none; }
 
-@keyframes editinprogress-pulse {
+.editing .editinprogress {
+  position: relative; }
+  .editing .editinprogress > * {
+    opacity: .4; }
+  .editing .editinprogress .corelightbox,
+  .editing .editinprogress .lightbox {
+    display: none; }
+  .editing .editinprogress:after {
+    position: absolute;
+    font-family: "FontAwesome";
+    font-size: 20px;
+    color: #6a737b;
+    content: "";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    left: calc(50% - 15px);
+    top: calc(50% - 15px);
+    animation: editinprogress-rotation 2s infinite linear; }
+  .editing .editinprogress .editinprogress:after {
+    display: none; }
+
+@keyframes editinprogress-rotation {
   0% {
-    background-color: #f8f9fa;
-    filter: grayscale(60%); }
+    opacity: 0;
+    transform: rotate(0deg); }
   50% {
-    background-color: #e9ecef;
-    filter: grayscale(40%); }
+    opacity: 1; }
   100% {
-    background-color: #f8f9fa;
-    filter: grayscale(60%); } }
+    opacity: 0;
+    transform: rotate(359deg); } }
 
 .editing_show + .editing_assign,
 .editing_hide + .editing_assign {

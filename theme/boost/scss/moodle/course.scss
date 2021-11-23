@@ -1,7 +1,5 @@
 /* course.less */
 
-$course-editinprogress-bg: $gray-100 !default;
-
 /* COURSE CONTENT */
 
 .section_add_menus {
@@ -189,24 +187,59 @@ body:not(.editing)  .sitetopic ul.section {
             }
         }
     }
+    // Remove old spinners if the reactive state is ready.
+    .course-content .stateready .section .spinner {
+        display: none;
+    }
+    // New editing in progress spinners.
     .editinprogress {
-        opacity: .7;
-        animation: editinprogress-pulse 2s infinite linear;
+        position: relative;
+
+        & > * {
+            opacity: .4;
+        }
+
+        .corelightbox,
+        .lightbox {
+            display: none;
+        }
+
+        &:after {
+            position: absolute;
+            font-family: "FontAwesome";
+            font-size: 20px;
+            color: $gray-600;
+            content: "";
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            left: calc(50% - 15px);
+            top: calc(50% - 15px);
+            animation: editinprogress-rotation 2s infinite linear;
+        }
+
+        // Prevent inner editingprogress.
+        .editinprogress {
+            &:after {
+                display: none;
+            }
+        }
     }
 }
 
-@keyframes editinprogress-pulse {
+@keyframes editinprogress-rotation {
     0% {
-        background-color: $course-editinprogress-bg;
-        filter: grayscale(60%);
+        opacity: 0;
+        transform: rotate(0deg);
     }
     50% {
-        background-color: darken($course-editinprogress-bg, 5%);
-        filter: grayscale(40%);
+        opacity: 1;
     }
     100% {
-        background-color: $course-editinprogress-bg;
-        filter: grayscale(60%);
+        opacity: 0;
+        transform: rotate(359deg);
     }
 }
 
