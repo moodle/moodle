@@ -435,6 +435,7 @@ class core_enrol_external extends external_api {
                 'overviewfiles' => $overviewfiles,
                 'showactivitydates' => $course->showactivitydates,
                 'showcompletionconditions' => $course->showcompletionconditions,
+                'timemodified' => $course->timemodified,
             ];
             if ($returnusercount) {
                 $courseresult['enrolledusercount'] = $enrolledusercount;
@@ -483,6 +484,8 @@ class core_enrol_external extends external_api {
                     'overviewfiles' => new external_files('Overview files attached to this course.', VALUE_OPTIONAL),
                     'showactivitydates' => new external_value(PARAM_BOOL, 'Whether the activity dates are shown or not'),
                     'showcompletionconditions' => new external_value(PARAM_BOOL, 'Whether the activity completion conditions are shown or not'),
+                    'timemodified' => new external_value(PARAM_INT, 'Last time course settings were updated (timestamp).',
+                        VALUE_OPTIONAL),
                 )
             )
         );
