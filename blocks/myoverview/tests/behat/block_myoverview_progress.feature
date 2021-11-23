@@ -22,8 +22,8 @@ Feature: Course overview block show users their progress on courses
 
   Scenario: Course progress percentage should not be displayed if completion is not enabled
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
-    When I click on "All (except removed from view)" "link" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "All" "link" in the "Course overview" "block"
     Then I should not see "0%" in the "Course overview" "block"
 
   Scenario: User complete activity and verify his progress
@@ -35,10 +35,10 @@ Feature: Course overview block show users their progress on courses
     And I press "Save and return to course"
     And I log out
     When I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
     And I should see "0%" in the "Course overview" "block"
     And I am on the "Test choice 1" "choice activity" page
     And I am on the "My courses" page
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     And I should see "100%" in the "Course overview" "block"

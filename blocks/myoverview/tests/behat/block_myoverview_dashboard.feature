@@ -28,7 +28,7 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View past courses
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     When I click on "Past" "link" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
     And I should not see "Course 2" in the "Course overview" "block"
@@ -38,7 +38,7 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View future courses
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     When I click on "Future" "link" in the "Course overview" "block"
     Then I should see "Course 5" in the "Course overview" "block"
     And I should not see "Course 1" in the "Course overview" "block"
@@ -48,7 +48,7 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View inprogress courses
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     When I click on "In progress" "link" in the "Course overview" "block"
     Then I should see "Course 2" in the "Course overview" "block"
     Then I should see "Course 3" in the "Course overview" "block"
@@ -58,21 +58,21 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View all (except removed) courses
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
-    When I click on "All (except removed from view)" "link" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "All" "link" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
     Then I should see "Course 2" in the "Course overview" "block"
     Then I should see "Course 3" in the "Course overview" "block"
     Then I should see "Course 4" in the "Course overview" "block"
     Then I should see "Course 5" in the "Course overview" "block"
 
-  Scenario: View all (including removed) courses
+  Scenario: View all (including archived) courses
     Given the following config values are set as admin:
       | config                            | value | plugin           |
       | displaygroupingallincludinghidden | 1     | block_myoverview |
     And I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
-    # We have to click on the data attribute instead of the button element text as we might risk to click on the false positive "All (except removed from view)" element instead
+    And I click on "All" "button" in the "Course overview" "block"
+    # We have to click on the data attribute instead of the button element text as we might risk to click on the false positive "All (including archived)" element instead
     When I click on "[data-value='allincludinghidden']" "css_element" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
     Then I should see "Course 2" in the "Course overview" "block"
@@ -82,7 +82,7 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View inprogress courses - test persistence
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     And I click on "In progress" "link" in the "Course overview" "block"
     And I reload the page
     Then I should see "In progress" in the "Course overview" "block"
@@ -94,10 +94,10 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View all (except removed) courses - w/ persistence
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
-    When I click on "All (except removed from view)" "link" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "All" "link" in the "Course overview" "block"
     And I reload the page
-    Then I should see "All (except removed from view)" in the "Course overview" "block"
+    Then I should see "All" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
     Then I should see "Course 2" in the "Course overview" "block"
     Then I should see "Course 3" in the "Course overview" "block"
@@ -106,7 +106,7 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View past courses - w/ persistence
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     When I click on "Past" "link" in the "Course overview" "block"
     And I reload the page
     Then I should see "Past" in the "Course overview" "block"
@@ -118,7 +118,7 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View future courses - w/ persistence
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     When I click on "Future" "link" in the "Course overview" "block"
     And I reload the page
     Then I should see "Future" in the "Course overview" "block"
@@ -132,7 +132,7 @@ Feature: The my overview block allows users to easily access their courses
     Given I am on the "My courses" page logged in as "student1"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     When I click on "Starred" "link" in the "Course overview" "block"
     And I reload the page
     Then I should see "Starred" in the "Course overview" "block"
@@ -198,10 +198,10 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View inprogress courses with hide persistent functionality
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     When I click on "In progress" "link" in the "Course overview" "block"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Archive" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I reload the page
     Then I should see "Course 3" in the "Course overview" "block"
     Then I should see "Course 4" in the "Course overview" "block"
@@ -211,10 +211,10 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View past courses with hide persistent functionality
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     When I click on "Past" "link" in the "Course overview" "block"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 1')]" "xpath_element"
-    And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 1')]" "xpath_element"
+    And I click on "Archive" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 1')]" "xpath_element"
     And I reload the page
     Then I should not see "Course 1" in the "Course overview" "block"
     And I should not see "Course 2" in the "Course overview" "block"
@@ -224,10 +224,10 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View future courses with hide persistent functionality
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
     When I click on "Future" "link" in the "Course overview" "block"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
-    And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
+    And I click on "Archive" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I reload the page
     Then I should not see "Course 5" in the "Course overview" "block"
     And I should not see "Course 1" in the "Course overview" "block"
@@ -237,10 +237,10 @@ Feature: The my overview block allows users to easily access their courses
 
   Scenario: View all (except hidden) courses with hide persistent functionality
     Given I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
-    When I click on "All (except removed from view)" "link" in the "Course overview" "block"
+    And I click on "All" "button" in the "Course overview" "block"
+    When I click on "All" "link" in the "Course overview" "block"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
-    And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
+    And I click on "Archive" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I reload the page
     Then I should not see "Course 5" in the "Course overview" "block"
     And I should see "Course 1" in the "Course overview" "block"
@@ -248,16 +248,16 @@ Feature: The my overview block allows users to easily access their courses
     And I should see "Course 3" in the "Course overview" "block"
     And I should see "Course 4" in the "Course overview" "block"
 
-  Scenario: View all (including removed) courses with hide persistent functionality
+  Scenario: View all (including archived) courses with hide persistent functionality
     Given the following config values are set as admin:
       | config                            | value | plugin           |
       | displaygroupingallincludinghidden | 1     | block_myoverview |
     And I am on the "My courses" page logged in as "student1"
-    And I click on "All (except removed from view)" "button" in the "Course overview" "block"
-    # We have to click on the data attribute instead of the button element text as we might risk to click on the false positive "All (except removed from view)" element instead
+    And I click on "All" "button" in the "Course overview" "block"
+    # We have to click on the data attribute instead of the button element text as we might risk to click on the false positive "All (including archived)" element instead
     When I click on "[data-value='allincludinghidden']" "css_element" in the "Course overview" "block"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
-    And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
+    And I click on "Archive" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
     And I reload the page
     Then I should see "Course 5" in the "Course overview" "block"
     And I should see "Course 1" in the "Course overview" "block"
