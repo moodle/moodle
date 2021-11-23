@@ -148,7 +148,7 @@ class custom_view extends \core_question\local\bank\view {
 
         $canuseall = has_capability('moodle/question:useall', $catcontext);
 
-        echo \html_writer::start_tag('div', ['class' => 'modulespecificbuttonscontainer']);
+        echo \html_writer::start_tag('div', ['class' => 'pt-2']);
         if ($canuseall) {
             // Add selected questions to the quiz.
             $params = array(
