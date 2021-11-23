@@ -18,8 +18,11 @@ declare(strict_types=1);
 
 namespace core_cohort\reportbuilder\datasource;
 
-use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
+use core_reportbuilder_testcase;
+use core_reportbuilder\manager;
+use core_reportbuilder\local\filters\user;
+use core_user;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -70,5 +73,63 @@ class datasource_test extends core_reportbuilder_testcase {
             '<div class="text_to_html">Cohort for the legends</div>', // Description.
             'Lionel Richards', // User.
         ], $contentrow);
+    }
+
+    /**
+     * Data provider for {@see test_cohorts_datasource_user_select}
+     *
+     * @return array[]
+     */
+    public function cohorts_datasource_user_select_provider(): array {
+        return [
+            ['user01', 'Cohort01'],
+            ['user02', 'Cohort02'],
+        ];
+    }
+
+    /**
+     * Test cohorts datasource, while adding the user select condition
+     *
+     * @param string $username
+     * @param string $expectedcohort
+     *
+     * @dataProvider cohorts_datasource_user_select_provider
+     */
+    public function test_cohorts_datasource_user_select(string $username, string $expectedcohort): void {
+        $this->resetAfterTest();
+
+        // First cohort/user member.
+        $cohort01 = $this->getDataGenerator()->create_cohort(['name' => 'Cohort01']);
+        $user01 = $this->getDataGenerator()->create_user(['username' => 'user01']);
+        cohort_add_member($cohort01->id, $user01->id);
+
+        // Second cohort/user member.
+        $cohort02 = $this->getDataGenerator()->create_cohort(['name' => 'Cohort02']);
+        $user02 = $this->getDataGenerator()->create_user(['username' => 'user02']);
+        cohort_add_member($cohort02->id, $user02->id);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'User cohorts', 'source' => cohorts::class, 'default' => 0]);
+
+        // Add cohort name and user fullname columns.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:name']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:username']);
+
+        // Add condition to limit report data to current user.
+        $condition = $generator->create_condition(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:userselect']);
+        manager::get_report_from_persistent($report)->set_condition_values([
+            $condition->get('uniqueidentifier') . '_operator' => user::USER_CURRENT,
+        ]);
+
+        // Switch user, request report.
+        $currentuser = core_user::get_user_by_username($username);
+        $this->setUser($currentuser);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertCount(1, $content);
+
+        $contentrow = array_values(reset($content));
+        $this->assertEquals([$expectedcohort, $username], $contentrow);
     }
 }
