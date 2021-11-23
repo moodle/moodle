@@ -1649,7 +1649,7 @@ function get_enrolled_users(context $context, $withcapability = '', $groupid = 0
  * @param string $withcapability
  * @param int $groupid 0 means ignore groups, any other value limits the result by group id
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
- * @return array of user records
+ * @return int number of users enrolled into course
  */
 function count_enrolled_users(context $context, $withcapability = '', $groupid = 0, $onlyactive = false) {
     global $DB;
