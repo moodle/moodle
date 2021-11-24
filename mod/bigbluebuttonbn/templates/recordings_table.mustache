@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_bigbluebuttonbn/recording_table
+
+    This template renders the mobile page.
+
+    Example context (json):
+    {
+        "bbbid" : 3,
+        "has_records": true,
+        "search_input": {}
+    }
+}}
+<div class="mod_bigbluebuttonbn_recordings_table">
+    {{#has_recordings}}
+        <div>
+            <h4>{{$title}}{{/title}}</h4>
+        </div>
+        <div>
+            {{#search}}
+                {{>mod_bigbluebuttonbn/search_input_recordings}}
+            {{/search}}
+            <div {{!
+                }} id="bigbluebuttonbn-recording-table-{{uniqid}}"{{!
+                }} data-bbbid="{{bbbid}}"{{!
+                }} data-tools="{{$tools}}protect,unprotect,publish,unpublish,delete{{/tools}}"{{!
+                }} data-group-id="{{groupid}}"{{!
+                }} {{$otherattributes}}{{/otherattributes}}{{!
+            }}></div>
+        </div>
+    {{/has_recordings}}
+    {{^has_recordings}}
+        <div id="bigbluebuttonbn_recordings_table">{{#str}}view_message_norecordings, mod_bigbluebuttonbn{{/str}}</div>
+    {{/has_recordings}}
+</div>
+
+{{#has_recordings}}
+    {{#js}}
+        require(['mod_bigbluebuttonbn/recordings'], function(recordings) {
+            recordings.init('#bigbluebuttonbn-recording-table-{{uniqid}}', '#searchform-auto-{{uniqid}}');
+        });
+        require(['core/inplace_editable']);
+    {{/js}}
+{{/has_recordings}}
