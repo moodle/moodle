@@ -2815,6 +2815,12 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_reportbuilder_columns_sort_get' => [
+        'classname'   => 'core_reportbuilder\external\columns\sort\get',
+        'description' => 'Retrieve column sorting for report',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
     'core_reportbuilder_columns_sort_reorder' => [
         'classname'   => 'core_reportbuilder\external\columns\sort\reorder',
         'description' => 'Re-order column sorting within report',

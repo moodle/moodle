@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Module to handle column AJAX requests
+ * Module to handle column sorting AJAX requests
  *
  * @module      core_reportbuilder/local/repository/sorting
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
@@ -22,6 +22,21 @@
  */
 
 import Ajax from 'core/ajax';
+
+/**
+ * Retrieve column sorting
+ *
+ * @param {Number} reportId
+ * @return {Promise}
+ */
+export const getColumnSorting = reportId => {
+    const request = {
+        methodname: 'core_reportbuilder_columns_sort_get',
+        args: {reportid: reportId}
+    };
+
+    return Ajax.call([request])[0];
+};
 
 /**
  * Re-order sort column position

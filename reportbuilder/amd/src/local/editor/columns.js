@@ -36,6 +36,7 @@ import {add as addToast} from 'core/toast';
 import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {addColumn, deleteColumn, reorderColumn} from 'core_reportbuilder/local/repository/columns';
+import {getColumnSorting} from 'core_reportbuilder/local/repository/sorting';
 
 /**
  * Initialise module
@@ -150,6 +151,7 @@ export const init = (initialized) => {
 
         const columnAggregation = event.target.closest('[data-itemtype="columnaggregation"]');
         if (columnAggregation) {
+            const pendingPromise = new Pending('core_reportbuilder/columns:aggregate');
             const reportElement = columnAggregation.closest(reportSelectors.regions.report);
             const columnHeader = columnAggregation.closest(reportSelectors.regions.columnHeader);
 
@@ -159,9 +161,13 @@ export const init = (initialized) => {
                     // Pass preserveTriggerElement parameter so columnAggregationLink will be focused after the report reload.
                     const columnAggregationLink = `[data-itemtype="columnaggregation"][data-itemid="`
                         + `${columnAggregation.dataset.itemid}"] > a`;
+
+                    // Now reload the table, and notify listeners that columns have been updated.
                     dispatchEvent(reportEvents.tableReload, {preserveTriggerElement: columnAggregationLink}, reportElement);
-                    return;
+                    return getColumnSorting(reportElement.dataset.reportId);
                 })
+                .then(data => publish(reportEvents.publish.reportColumnsUpdated, data))
+                .then(() => pendingPromise.resolve())
                 .catch(Notification.exception);
         }
     });
