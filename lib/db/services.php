@@ -648,6 +648,15 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_course_get_enrolled_courses_with_action_events_by_timeline_classification' => array(
+        'classname' => '\core_course\external\get_enrolled_courses_with_action_events_by_timeline_classification',
+        'methodname' => 'execute',
+        'classpath' => '',
+        'description' => 'List of enrolled courses with action events in a given timeframe, for the given timeline classification.',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_course_get_recent_courses' => array(
         'classname' => 'core_course_external',
         'methodname' => 'get_recent_courses',

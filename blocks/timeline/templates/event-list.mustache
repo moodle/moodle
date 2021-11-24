@@ -42,19 +42,5 @@
         </div>
     </div>
     <div data-region="event-list-content"></div>
-    {{#urls.noevents}}
-    <div class="hidden text-xs-center text-center mt-3" data-region="empty-message">
-        <img
-            src="{{urls.noevents}}"
-            alt=""
-            style="height: 70px; width: 70px"
-        >
-        <p class="text-muted mt-1">{{#str}} noevents, block_timeline {{/str}}</p>
-    </div>
-    {{/urls.noevents}}
-    {{^urls.noevents}}
-    <div class="hidden text-xs-left text-left mt-3" data-region="empty-message">
-        <p class="text-muted mt-1">{{#str}} noevents, block_timeline {{/str}}</p>
-    </div>
-    {{/urls.noevents}}
+    {{> block_timeline/no-events }}
 </div>

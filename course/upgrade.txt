@@ -77,6 +77,10 @@ course formats don't have their own renderer.
 * Calendar menu entry is now moved to User menu items, so the following methods will not return the calendar item anymore:
   - course_get_user_navigation_options
   - core_course_externalcore_course_external::get_user_navigation_options
+* New external \core_course\external\get_enrolled_courses_with_action_events_by_timeline_classification:
+  - Returns courses the user is enrolled in which contain at least one action event in the supplied time/text filtering parameters.
+  - Provides a similar response to get_enrolled_courses_by_timeline_classification, but omits courses which have no matching
+    action events.
 
 === 3.11 ===
 * A new callback xxx_coursemodule_definition_after_data that allows plugins to extend activity forms after the data is set.
