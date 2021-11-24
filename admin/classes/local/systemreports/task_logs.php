@@ -140,15 +140,19 @@ class task_logs extends system_report {
         // Action to view individual task log on a popup window.
         $this->add_action((new action(
             new moodle_url('/admin/tasklogs.php', ['logid' => ':id']),
-            new pix_icon('e/search', get_string('view')),
+            new pix_icon('e/search', ''),
             [],
             true,
+            new lang_string('view'),
         )));
 
         // Action to download individual task log.
         $this->add_action((new action(
             new moodle_url('/admin/tasklogs.php', ['logid' => ':id', 'download' => true]),
-            new pix_icon('t/download', get_string('download')),
+            new pix_icon('t/download', ''),
+            [],
+            false,
+            new lang_string('download'),
         )));
     }
 }
