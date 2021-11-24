@@ -25,7 +25,6 @@
 namespace core_courseformat\output\local\content;
 
 use core_courseformat\base as course_format;
-use completion_info;
 use context_course;
 use renderable;
 use templatable;

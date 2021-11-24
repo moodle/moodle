@@ -60,8 +60,8 @@ class get_state extends external_api {
      *
      * As the other main course outputs, format plugins can override those output components
      * to send more information to the frontend course editor. These extended classes should
-     * be located in format_XXX\output\courseformat\state\course, format_XXX\output\section_format\state\section
-     * or format_XXX\output\cm_format\state\cm.
+     * be located in format_XXX\output\courseformat\state\course, format_XXX\output\courseformat\state\section
+     * or format_XXX\output\courseformat\state\cm.
      *
      * @param int $courseid the course id
      * @return string Course state in JSON

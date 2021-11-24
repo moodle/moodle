@@ -25,7 +25,6 @@
 namespace core_courseformat\output\local\content\section;
 
 use core_courseformat\base as course_format;
-use core_course\output\section_format;
 use renderer_base;
 use section_info;
 use renderable;
@@ -45,7 +44,7 @@ class cmitem implements renderable, templatable {
     /** @var course_format the course format class */
     protected $format;
 
-    /** @var section_format the course section class */
+    /** @var section_info the course section class */
     protected $section;
 
     /** @var cm_info the course module to display */

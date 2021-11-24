@@ -16,50 +16,50 @@ The colours for these types are defined in theme/boost/scss/moodle/variables.scs
 * The format_base is now deprecated. Use core_courseformat\base instead.
 * The new course output components deprecate many renderer methods from course
 renderer and course format renderer:
-  - output\course_format: to render the general course structure
-  - output\section_format: to render a section
-  - output\cm_format: to render an activity card inside a section
-  - output\course_format\*: to render parts of the course structure
-  - output\section_format\*: to render parts of the course section
+  - core_courseformat\output\local\content: to render the general course structure
+  - core_courseformat\output\local\content\section: to render a section
+  - core_courseformat\output\local\content\cm: to render an activity card inside a section
+  - core_courseformat\output\local\content\cm\*: to render parts of the course structure
+  - core_courseformat\output\local\content\section\*: to render parts of the course section
 * The previous format renderer page_title method has been moved to course_format::page_title
 * New format renderer methods to interact with the new output components:
   - render: override the default templatable mustache location for the new course components.
   - course_section_updated_cm_item: used when the course editor needs to update a cm item HTML.
-  - render_course_format: contrib formats should override this method to change the default template.
+  - render_content: contrib formats should override this method to change the default template.
 * The following methods are adapted to use outputs but with a deprecation warning and should not be used anymore:
-  - print_single_section_page (replaced by output\course_format)
-  - print_multiple_section_page (replaced by output\course_format)
-  - course_activity_clipboard (integrated in replaced by output\course_format)
-  - format_summary_text (replaced by output\section_format\summay)
-  - change_number_sections (replaced by output\course_format\addsection)
-  - course_section_cm_list_item (replaced by output\section_format\cmitem)
-  - course_section_cm (replaced by output\cm_format)
-  - course_section_cm_list (replaced by output\section_format\cmlist)
-  - section_edit_control_menu (replaced by output\section_format\controlmenu)
-  - section_right_content (integrated in output\section_format)
-  - section_left_content (integrated in output\section_format)
-  - section_header (replaced by output\section_format\header)
-  - section_footer (integrated in output\section_format)
-  - section_edit_control_items (replaced by output\section_format\controlmenu)
-  - section_summary (replaced by output\section_format\summary)
-  - section_activity_summary (replaced by output\section_format\cmsummary)
-  - section_availability_message (integrated in output\section_format\availability)
-  - section_availability (replaced by output\section_format\availability)
-  - get_nav_links (replaced by output\course_format\sectionnavigation)
-  - stealth_section_header (replaced by output\section_format\header)
-  - stealth_section_footer (integrated in by output\section_format)
-  - section_nav_selection (replaced by output\course_format\sectionselector)
-  - course_section_cm_edit_actions (replaced by core_courseformat\output\local\content\cm\\controlmenu)
+  - print_single_section_page (replaced by core_courseformat\output\local\content)
+  - print_multiple_section_page (replaced by core_courseformat\output\local\content)
+  - course_activity_clipboard (integrated in replaced by core_courseformat\output\local\content)
+  - format_summary_text (replaced by core_courseformat\output\local\content\section\summay)
+  - change_number_sections (replaced by core_courseformat\output\local\content\addsection)
+  - course_section_cm_list_item (replaced by core_courseformat\output\local\content\section\cmitem)
+  - course_section_cm (replaced by core_courseformat\output\local\content\cm)
+  - course_section_cm_list (replaced by core_courseformat\output\local\content\section\cmlist)
+  - section_edit_control_menu (replaced by core_courseformat\output\local\content\section\controlmenu)
+  - section_right_content (integrated in core_courseformat\output\local\content\section)
+  - section_left_content (integrated in core_courseformat\output\local\content\section)
+  - section_header (replaced by core_courseformat\output\local\content\section\header)
+  - section_footer (integrated in core_courseformat\output\local\content\section)
+  - section_edit_control_items (replaced by core_courseformat\output\local\content\section\controlmenu)
+  - section_summary (replaced by core_courseformat\output\local\content\section\summary)
+  - section_activity_summary (replaced by core_courseformat\output\local\content\section\cmsummary)
+  - section_availability_message (integrated in core_courseformat\output\local\content\section\availability)
+  - section_availability (replaced by core_courseformat\output\local\content\section\availability)
+  - get_nav_links (replaced by core_courseformat\output\local\content\sectionnavigation)
+  - stealth_section_header (replaced by core_courseformat\output\local\content\section\header)
+  - stealth_section_footer (integrated in by core_courseformat\output\local\content\section)
+  - section_nav_selection (replaced by core_courseformat\output\local\content\sectionselector)
+  - course_section_cm_edit_actions (replaced by core_courseformat\output\local\content\cm\controlmenu)
   - is_cm_conditionally_hidden (incorporated in core_availability\info_module::is_available_for_all)
-  - course_section_cm_name (replaced by core_courseformat\output\local\content\cm\\cmname)
+  - course_section_cm_name (replaced by core_courseformat\output\local\content\cm\cmname)
   - course_section_cm_classes (integrated in core_courseformat\output\local\content\cm)
-  - course_section_cm_name_title (replaced by core_courseformat\\output\\local\\cm\\title)
-  - course_section_cm_text (integrated in core_courseformat\\output\\local\\content\\cm)
-  - course_section_cm_availability (replaced by core_courseformat\\output\\local\\content\\cm\\availability))
+  - course_section_cm_name_title (replaced by core_courseformat\output\local\cm\title)
+  - course_section_cm_text (integrated in core_courseformat\output\local\content\cm)
+  - course_section_cm_availability (replaced by core_courseformat\output\local\content\cm\availability))
 * The following abstract methods are deleted:
-  - start_section_list (integrated in output\course_format)
-  - end_section_list (integrated in output\course_format)
-  - page_title (moved to output\course_format)
+  - start_section_list (integrated in core_courseformat\output\local\content)
+  - end_section_list (integrated in core_courseformat\output\local\content)
+  - page_title (moved to core_courseformat\output\local\content)
 * Course formats should have a renderer (until now it was only highly recommended but not mandatory). For backwards
 compatibility (to not break third-party plugins without it), legacy_format_renderer has been created and will be used when
 course formats don't have their own renderer.
@@ -73,7 +73,7 @@ course formats don't have their own renderer.
 * New core_course_drawer() function to render the message drawer in the top of the body of each page.
 * New course_get_enrolled_courses_for_logged_in_user_from_search which hooks in with external\get_enrolled_courses_by_timeline_classification
   given COURSE_TIMELINE_SEARCH is set then get_enrolled_courses_by_timeline_classification will deviate to use a string search of enrolled courses.
-* Class core_course\output\course_module_name is deprecated. Now core_courseformat\output\local\cm\cmname controls inline edit.
+* Class core_course\output\course_module_name is deprecated. Now core_courseformat\output\local\content\cm\cmname controls inline edit.
 * Calendar menu entry is now moved to User menu items, so the following methods will not return the calendar item anymore:
   - course_get_user_navigation_options
   - core_course_externalcore_course_external::get_user_navigation_options

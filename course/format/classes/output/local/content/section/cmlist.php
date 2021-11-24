@@ -43,7 +43,7 @@ class cmlist implements renderable, templatable {
     /** @var course_format the course format class */
     protected $format;
 
-    /** @var section_format the course section class */
+    /** @var section_info the course section class */
     protected $section;
 
     /** @var array optional display options */

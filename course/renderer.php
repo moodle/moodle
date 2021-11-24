@@ -595,7 +595,7 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function course_section_cm_name(cm_info $mod, $displayoptions = array()) {
         debugging(
-            'course_section_cm_name is deprecated. Use core_courseformat\output\local\content\cm\\cmname class instead.',
+            'course_section_cm_name is deprecated. Use core_courseformat\\output\\local\\content\\cm\\cmname class instead.',
             DEBUG_DEVELOPER
         );
 
@@ -677,7 +677,7 @@ class core_course_renderer extends plugin_renderer_base {
     public function course_section_cm_name_title(cm_info $mod, $displayoptions = array()) {
 
         debugging(
-            'course_section_cm_name_title is deprecated. Use core_courseformat\\output\\local\\cm\\title classes instead.',
+            'course_section_cm_name_title is deprecated. Use core_courseformat\\output\\local\\cm\\title class instead.',
             DEBUG_DEVELOPER
         );
 
@@ -879,7 +879,7 @@ class core_course_renderer extends plugin_renderer_base {
     public function course_section_cm($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = []) {
 
         debugging(
-            'course_section_cm is deprecated. Use core_courseformat\output\content\cm output classes instead.',
+            'course_section_cm is deprecated. Use core_courseformat\\output\\content\\cm output class instead.',
             DEBUG_DEVELOPER
         );
 
@@ -948,7 +948,7 @@ class core_course_renderer extends plugin_renderer_base {
     public function course_section_cm_list($course, $section, $sectionreturn = null, $displayoptions = []) {
         global $USER;
 
-        debugging('course_section_cm_list is deprecated. Use core_course\\output\\section_format\\cmlist '.
+        debugging('course_section_cm_list is deprecated. Use core_courseformat\\output\\local\\content\\section\\cmlist '.
                 'classes instead.', DEBUG_DEVELOPER);
 
         $output = '';
