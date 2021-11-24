@@ -1254,8 +1254,9 @@ class global_navigation extends navigation_node {
             return;
         }
 
-        if (get_home_page() == HOMEPAGE_SITE) {
-            // We are using the site home for the root element
+        $homepage = get_home_page();
+        if ($homepage == HOMEPAGE_SITE) {
+            // We are using the site home for the root element.
             $properties = array(
                 'key' => 'home',
                 'type' => navigation_node::TYPE_SYSTEM,
@@ -1263,8 +1264,17 @@ class global_navigation extends navigation_node {
                 'action' => new moodle_url('/'),
                 'icon' => new pix_icon('i/home', '')
             );
+        } else if ($homepage == HOMEPAGE_MYCOURSES) {
+            // We are using the user's course summary page for the root element.
+            $properties = array(
+                'key' => 'mycourses',
+                'type' => navigation_node::TYPE_SYSTEM,
+                'text' => get_string('mycourses'),
+                'action' => new moodle_url('/my/courses.php'),
+                'icon' => new pix_icon('i/course', '')
+            );
         } else {
-            // We are using the users my moodle for the root element
+            // We are using the users my moodle for the root element.
             $properties = array(
                 'key' => 'myhome',
                 'type' => navigation_node::TYPE_SYSTEM,
