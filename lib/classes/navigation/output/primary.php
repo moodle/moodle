@@ -204,7 +204,6 @@ class primary implements renderable, templatable {
                     'itemtype' => 'submenu-link',
                     'submenuid' => $langsubmenuid,
                     'title' => get_string('language'),
-                    'pixicon' => 'i/language',
                     'divider' => false,
                     'submenulink' => true,
                 ];
@@ -226,8 +225,7 @@ class primary implements renderable, templatable {
             }
         }
 
-        // Add dividers after the first item and before the last item.
-        $modifiedarray[0]->divider = true;
+        // Add divider before the last item.
         $modifiedarray[count($modifiedarray) - 2]->divider = true;
         $usermenudata['items'] = $modifiedarray;
         $usermenudata['submenus'] = array_values($submenusdata);

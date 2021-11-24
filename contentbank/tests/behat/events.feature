@@ -15,7 +15,7 @@ Feature: Confirm content bank events are triggered
     And the following "contentbank content" exist:
       | contextlevel | reference | contenttype     | user  | contentname | filepath                                   |
       | Course       | C1        | contenttype_h5p | admin | Existing    | /h5p/tests/fixtures/filltheblanks.h5p      |
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"

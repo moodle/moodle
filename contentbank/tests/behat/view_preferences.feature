@@ -50,7 +50,7 @@ Feature: Store the content bank view preference
     And I should not see "Last modified"
 
   Scenario: Display the number of times a content is used in file details view
-    Given I follow "Dashboard" in the user menu
+    Given I follow "Dashboard"
     And I follow "Manage private files..."
     And I click on "Add..." "button"
     And I select "Content bank" repository in file picker

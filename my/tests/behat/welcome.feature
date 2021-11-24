@@ -18,7 +18,7 @@ Feature: Welcome message
     And I press "Log in"
     And I should see "Math 101" in the "page-header" "region"
     And I should not see "Welcome, Fei!" in the "page-header" "region"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     Then I should see "Welcome, Fei!" in the "page-header" "region"
 
   @javascript

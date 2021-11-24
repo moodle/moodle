@@ -20,7 +20,7 @@ Feature: Content bank use editor feature
     Then the "[data-action=Add-content]" "css_element" should be disabled
 
   Scenario: Users can see the Add button if there is content type available for creation
-    Given I follow "Dashboard" in the user menu
+    Given I follow "Dashboard"
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
@@ -39,7 +39,7 @@ Feature: Content bank use editor feature
     And I should see "Fill in the Blanks"
 
   Scenario: Users can edit content if they have the required permission
-    Given I follow "Dashboard" in the user menu
+    Given I follow "Dashboard"
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
