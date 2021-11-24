@@ -594,11 +594,11 @@ function lti_get_launch_data($instance, $nonce = '') {
             $endpoint = trim($instance->securetoolurl);
         }
 
-        $endpoint = lti_ensure_url_is_https($endpoint);
-    } else {
-        if (!strstr($endpoint, '://')) {
-            $endpoint = 'http://' . $endpoint;
+        if ($endpoint !== '') {
+            $endpoint = lti_ensure_url_is_https($endpoint);
         }
+    } else if ($endpoint !== '' && !strstr($endpoint, '://')) {
+        $endpoint = 'http://' . $endpoint;
     }
 
     $orgid = lti_get_organizationid($typeconfig);
@@ -3523,7 +3523,8 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
     }
     $r .= "</form>\n";
 
-    if ( ! $debug ) {
+    // Auto-submit the form if endpoint is set.
+    if ($endpoint !== '' && !$debug) {
         $r .= " <script type=\"text/javascript\"> \n" .
             "  //<![CDATA[ \n" .
             "    document.ltiLaunchForm.submit(); \n" .
