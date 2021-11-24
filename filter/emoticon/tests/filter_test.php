@@ -34,6 +34,47 @@ require_once($CFG->dirroot . '/filter/emoticon/filter.php'); // Include the code
 class filter_emoticon_testcase extends advanced_testcase {
 
     /**
+     * Test that filter ignores nolink/pre element, and processes remaining text
+     *
+     * @param string $input
+     * @param string $expectedprefix
+     *
+     * @dataProvider filter_emoticon_filtered_provider
+     */
+    public function test_filter_emoticon_filtered(string $input, string $expectedprefix): void {
+        $this->resetAfterTest();
+
+        $filteredtext = (new testable_filter_emoticon())->filter($input, [
+            'originalformat' => FORMAT_HTML,
+        ]);
+
+        $this->assertStringStartsWith($expectedprefix, $filteredtext);
+        $this->assertStringEndsWith($this->get_converted_content_for_emoticon('(n)'), $filteredtext);
+    }
+
+    /**
+     * Data provider for {@see test_filter_emoticon_filtered}
+     *
+     * @return string[]
+     */
+    public function filter_emoticon_filtered_provider(): array {
+        return [
+            'FORMAT_HTML is filtered' => [
+                'input' => 'Hello(n)',
+                'expectedprefix' => 'Hello',
+            ],
+            'Nested nolink should not be processed, emoticon postfix should be' => [
+                'input' => '<span class="nolink"><span>(n)</span>(n)</span>(n)',
+                'expectedprefix' => '<span class="nolink"><span>(n)</span>(n)</span>',
+            ],
+            'Nested pre should not be processed, emoticon postfix should be' => [
+                'input' => '<pre><pre>(n)</pre>(n)</pre>(n)',
+                'expectedprefix' => '<pre><pre>(n)</pre>(n)</pre>',
+            ],
+        ];
+    }
+
+    /**
      * Tests the filter doesn't affect nolink classes.
      *
      * @dataProvider filter_emoticon_provider
@@ -48,7 +89,7 @@ class filter_emoticon_testcase extends advanced_testcase {
     }
 
     /**
-     * The data provider for filter emoticon tests.
+     * The data provider for filter emoticon tests, containing input that is not expected to be filtered
      *
      * @return  array
      */
@@ -70,11 +111,6 @@ class filter_emoticon_testcase extends advanced_testcase {
                 'format' => FORMAT_PLAIN,
                 'expected' => $grr,
             ],
-            'FORMAT_HTML is filtered' => [
-                'input' => $grr,
-                'format' => FORMAT_HTML,
-                'expected' => $this->get_converted_content_for_emoticon($grr),
-            ],
             'Script tag should not be processed' => [
                 'input' => "<script language='javascript'>alert('{$grr}');</script>",
                 'format' => FORMAT_HTML,
@@ -90,11 +126,6 @@ class filter_emoticon_testcase extends advanced_testcase {
                 'format' => FORMAT_HTML,
                 'expected' => '<span class="nolink"><span>(n)</span>(n)</span>',
             ],
-            'Nested nolink should not be processed but following emoticon' => [
-                'input' => '<span class="nolink"><span>(n)</span>(n)</span>(n)',
-                'format' => FORMAT_HTML,
-                'expected' => '<span class="nolink"><span>(n)</span>(n)</span>' . $this->get_converted_content_for_emoticon('(n)'),
-            ],
             'Basic pre should not be processed' => [
                 'input' => '<pre>(n)</pre>',
                 'format' => FORMAT_HTML,
@@ -104,11 +135,6 @@ class filter_emoticon_testcase extends advanced_testcase {
                 'input' => '<pre><pre>(n)</pre>(n)</pre>',
                 'format' => FORMAT_HTML,
                 'expected' => '<pre><pre>(n)</pre>(n)</pre>',
-            ],
-            'Nested pre should not be processed but following emoticon' => [
-                'input' => '<pre><pre>(n)</pre>(n)</pre>(n)',
-                'format' => FORMAT_HTML,
-                'expected' => '<pre><pre>(n)</pre>(n)</pre>' . $this->get_converted_content_for_emoticon('(n)'),
             ],
         ];
     }

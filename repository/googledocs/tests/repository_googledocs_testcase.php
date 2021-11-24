@@ -35,14 +35,14 @@ abstract class repository_googledocs_testcase extends \advanced_testcase {
     protected function create_folder_content_node_array(string $id, string $name, string $path,
             string $modified = ''): array {
 
-        global $OUTPUT;
+        global $CFG, $OUTPUT;
 
         return [
             'id' => $id,
             'title' => $name,
             'path' => repository_googledocs\helper::build_node_path($id, $name, $path),
             'date' => $modified,
-            'thumbnail' => $OUTPUT->image_url(file_folder_icon(64))->out(false),
+            'thumbnail' => "{$CFG->wwwroot}/theme/image.php/_s/boost/core/1/" . file_folder_icon(64),
             'thumbnail_height' => 64,
             'thumbnail_width' => 64,
             'children' => [],
