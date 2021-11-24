@@ -81,7 +81,7 @@ class core_renderer extends \core_renderer {
         }
 
         // The user context currently has images and buttons. Other contexts may follow.
-        if (isset($headerinfo['user']) || $context->contextlevel == CONTEXT_USER) {
+        if ((isset($headerinfo['user']) || $context->contextlevel == CONTEXT_USER) && $this->page->pagetype !== 'my-index') {
             if (isset($headerinfo['user'])) {
                 $user = $headerinfo['user'];
             } else {
@@ -177,12 +177,6 @@ class core_renderer extends \core_renderer {
             $heading = $this->heading($this->page->heading, $contextheader->headinglevel, 'h2');
         } else {
             $heading = $this->heading($contextheader->heading, $contextheader->headinglevel, 'h2');
-        }
-
-        $showheader = empty($this->page->layout_options['nocontextheader']);
-        if (!$showheader) {
-            // Return the heading wrapped in an sr-only element so it is only visible to screen-readers.
-            return html_writer::div($heading, 'sr-only');
         }
 
         // All the html stuff goes here.
