@@ -198,6 +198,10 @@ class meeting_test extends \advanced_testcase {
      * @covers ::can_join
      */
     public function test_can_join_with_dates(int $type, ?string $groupname, int $groupmode, array $canjoin, array $dates) {
+        // Apply the data provider relative values to now.
+        array_walk($dates, function(&$val) {
+            $val = time() + $val;
+        });
         $this->resetAfterTest();
         [$meeting, $useringroup, $usernotingroup, $groupid, $activity] =
             $this->prepare_meeting($type, $groupname, $groupmode, true, $dates);
@@ -283,14 +287,14 @@ class meeting_test extends \advanced_testcase {
                 'groupname' => null,
                 'groupmode' => NOGROUPS,
                 'canjoin' => ['useringroup' => false, 'usernotingroup' => false],
-                'dates' => ['openingtime' => time() - 7200, 'closingtime' => time() - 3600]
+                'dates' => ['openingtime' => -7200, 'closingtime' => -3600]
             ],
             'Instance Type ALL - No Group - Open in future' => [
                 'type' => instance::TYPE_ALL,
                 'groupname' => null,
                 'groupmode' => NOGROUPS,
                 'canjoin' => ['useringroup' => false, 'usernotingroup' => false],
-                'dates' => ['openingtime' => time() + 3600, 'closingtime' => time() + 7200]
+                'dates' => ['openingtime' => 3600, 'closingtime' => 7200]
             ],
         ];
     }
