@@ -45,7 +45,6 @@ class qtype_essay_edit_form extends question_edit_form {
                 get_string('responseformat', 'qtype_essay'), $qtype->response_formats());
         $mform->setDefault('responseformat', $this->get_default_value('responseformat', 'editor'));
 
-
         $mform->addElement('select', 'responserequired',
                 get_string('responserequired', 'qtype_essay'), $qtype->response_required_options());
         $mform->setDefault('responserequired', $this->get_default_value('responserequired', 1));
@@ -80,7 +79,7 @@ class qtype_essay_edit_form extends question_edit_form {
 
         $mform->addElement('select', 'attachments',
                 get_string('allowattachments', 'qtype_essay'), $qtype->attachment_options());
-         $mform->setDefault('attachments', $this->get_default_value('attachments', 0));
+        $mform->setDefault('attachments', $this->get_default_value('attachments', 0));
 
         $mform->addElement('select', 'attachmentsrequired',
                 get_string('attachmentsrequired', 'qtype_essay'), $qtype->attachments_required_options());
@@ -165,7 +164,7 @@ class qtype_essay_edit_form extends question_edit_form {
 
         // Don't allow the teacher to require more attachments than they allow; as this would
         // create a condition that it's impossible for the student to meet.
-        if ($fromform['attachments'] != -1 && $fromform['attachments'] < $fromform['attachmentsrequired'] ) {
+        if ($fromform['attachments'] > 0 && $fromform['attachments'] < $fromform['attachmentsrequired'] ) {
             $errors['attachmentsrequired']  = get_string('mustrequirefewer', 'qtype_essay');
         }
 
