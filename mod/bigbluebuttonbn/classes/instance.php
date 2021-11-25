@@ -110,7 +110,7 @@ class instance {
         $cmtable = new \core\dml\table('course_modules', 'cm', 'cm');
         $cmfrom = $cmtable->get_from_sql();
 
-        $bbbtable = new \core\dml\table('bigbluebuttonbn', 'bbb', 'bbb');
+        $bbbtable = new \core\dml\table('bigbluebuttonbn', 'bbb', 'b');
         $bbbselect = $bbbtable->get_field_select();
         $bbbfrom = $bbbtable->get_from_sql();
 
@@ -155,7 +155,7 @@ EOF;
         $cmtable = new \core\dml\table('course_modules', 'cm', 'cm');
         $cmfrom = $cmtable->get_from_sql();
 
-        $bbbtable = new \core\dml\table('bigbluebuttonbn', 'bbb', 'bbb');
+        $bbbtable = new \core\dml\table('bigbluebuttonbn', 'bbb', 'b');
         $bbbselect = $bbbtable->get_field_select();
         $bbbfrom = $bbbtable->get_from_sql();
 
@@ -241,7 +241,7 @@ EOF;
         $cmtable = new \core\dml\table('course_modules', 'cm', 'cm');
         $cmfrom = $cmtable->get_from_sql();
 
-        $bbbtable = new \core\dml\table('bigbluebuttonbn', 'bbb', 'bbb');
+        $bbbtable = new \core\dml\table('bigbluebuttonbn', 'bbb', 'b');
         $bbbselect = $bbbtable->get_field_select();
         $bbbfrom = $bbbtable->get_from_sql();
 
