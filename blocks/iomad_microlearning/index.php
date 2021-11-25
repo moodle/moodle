@@ -23,4 +23,4 @@
 
 require_once(dirname(__FILE__) . '/../../config.php');
 
-redirect(new moodle_url('/blocks/iomad_microlearning/microlearning.php'));
+redirect(new moodle_url('/blocks/iomad_microlearning/threads.php'));

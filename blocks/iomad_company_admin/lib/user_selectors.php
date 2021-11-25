@@ -1794,6 +1794,7 @@ class current_company_thread_user_selector extends company_user_selector_base {
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];
         $this->threadid = $options['threadid'];
+        $this->groupid = $options['groupid'];
         $this->departmentid = $options['departmentid'];
 
         parent::__construct($name, $options);
@@ -1811,6 +1812,7 @@ class current_company_thread_user_selector extends company_user_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
         $params['threadid'] = $this->threadid;
+        $params['groupid'] = $this->groupid;
 
         // Deal with departments.
         $departmentlist = company::get_all_subdepartments($this->departmentid);
@@ -1819,7 +1821,12 @@ class current_company_thread_user_selector extends company_user_selector_base {
             $departmentsql = " AND cu.departmentid in (".implode(',', array_keys($departmentlist)).")";
         }
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $groupsql = "";
+        if ($this->groupid != "-1") {
+            $groupsql = " AND groupid = :groupid ";
+        }
+
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
@@ -1832,6 +1839,7 @@ class current_company_thread_user_selector extends company_user_selector_base {
                    SELECT DISTINCT userid
                    FROM {microlearning_thread_user}
                    WHERE threadid=:threadid
+                   $groupsql
                  )";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
@@ -1847,6 +1855,20 @@ class current_company_thread_user_selector extends company_user_selector_base {
 
         if (empty($availableusers)) {
             return array();
+        }
+
+        //  Add the group details.
+        foreach ($availableusers as $id => $user) {
+            if ($threadgroup = $DB->get_record_sql("
+                SELECT DISTINCT tg.name 
+                FROM {microlearning_thread_group} tg
+                JOIN {microlearning_thread_user} tu ON (tg.id = tu.groupid)
+                WHERE tu.userid = $user->id
+                AND tu.threadid = :threadid",
+                ['userid' => $user->id,
+                 'threadid' => $this->threadid])) {
+                    $availableusers[$id]->email = $user->email . ", " . format_string($threadgroup->name);
+            }
         }
 
         if ($search) {
@@ -1924,7 +1946,7 @@ class potential_company_thread_user_selector extends company_user_selector_base 
         // No site admins.
         $userfilter .= " AND u.id NOT IN (" .$CFG->siteadmins .") ";
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u

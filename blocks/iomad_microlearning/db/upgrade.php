@@ -85,5 +85,37 @@ function xmldb_block_iomad_microlearning_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2019120800, 'iomad_microlearning');
     }
 
+    if ($oldversion < 2021102500) {
+
+        // Define table microlearning_thread_group to be created.
+        $table = new xmldb_table('microlearning_thread_group');
+
+        // Adding fields to table microlearning_thread_group.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('threadid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('companyid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table microlearning_thread_group.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for microlearning_thread_group.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define field groupid to be added to microlearning_thread_user.
+        $table = new xmldb_table('microlearning_thread_user');
+        $field = new xmldb_field('groupid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0', 'nuggetid');
+
+        // Conditionally launch add field groupid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad_microlearning savepoint reached.
+        upgrade_block_savepoint(true, 2021102500, 'iomad_microlearning');
+    }
+
     return $result;
 }

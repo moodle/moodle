@@ -352,7 +352,7 @@ class microlearning {
 
     }
 
-    public static function get_schedules($threadinfo, $nuggets, $startdate = null, $fromnuggetid = 0) {
+    public static function get_schedules($threadinfo, $nuggets, $startdate = null, $fromnuggetid = 0, $fromnext = false) {
         global $DB, $CFG;
 
         $returndata = new stdclass();
@@ -368,6 +368,9 @@ class microlearning {
         $reminder1array = array();
         $reminder2array = array();
         $found = false;
+        if (empty($threadinfor->defaultdue)) {
+            $threadinfo->defaultdue = 0;
+        }
 
         foreach ($nuggets as $nugget) {
             // if we are passed a nugget ID we need to go from that one only.
@@ -483,7 +486,7 @@ class microlearning {
 
     }
 
-    public static function add_user_to_thread($threadid, $userid) {
+    public static function add_user_to_thread($threadid, $userid, $groupid = 0, $scheduletype = 0) {
         global $DB, $USER;
 
         // check the user is valid.
@@ -499,11 +502,23 @@ class microlearning {
         // start transaction.
         $transaction = $DB->start_delegated_transaction();
         $errors = false;
+        $starttime = null;
+
+        // If 
+        if (!empty($scheduletype)) {
+            if ($scheduletype == 1) {
+                // We want midnight last night.
+                $starttime = time() - (time() % 86400);
+            } else {
+                // We want the next scheduled time.
+                $starttime = self::get_next_scheduled($threadid);
+            }
+        }
 
         // Get the thread nuggets.
         $nuggets = $DB->get_records('microlearning_nugget', array('threadid' => $threadid));
         if (empty($threadinfo->halt_until_fulfilled)) {
-            $scheduleinfo = self::get_schedules($threadinfo, $nuggets);
+            $scheduleinfo = self::get_schedules($threadinfo, $nuggets, $starttime);
         } else {
             // We want midnight last night.
             $starttime = time() - (time() % 86400);
@@ -517,6 +532,7 @@ class microlearning {
             $schedulerec = new stdclass();
             $schedulerec->userid = $userid;
             $schedulerec->threadid = $threadid;
+            $schedulerec->groupid = $groupid;
             $schedulerec->nuggetid = $nugget->id;
             $schedulerec->schedule_date = $scheduleinfo->schedulearray[$nugget->id];
             $schedulerec->due_date = $scheduleinfo->duedatearray[$nugget->id];
@@ -671,7 +687,7 @@ class microlearning {
         return $menuthreads;
     }
 
-    public static function assign_thread_to_user($user, $threadid, $companyid) {
+    public static function assign_thread_to_user($user, $threadid, $companyid, $groupid = 0, $scheduletype = 0) {
         global $DB, $USER;
 
         // Is the user valid.
@@ -690,7 +706,7 @@ class microlearning {
         }
 
         // All OK so do the work.
-        self::add_user_to_thread($threadid, $user->id);
+        self::add_user_to_thread($threadid, $user->id, $groupid, $scheduletype);
 
         // Fire an event for this.
         $eventother = array('companyid' => $companyid);
@@ -927,6 +943,28 @@ class microlearning {
                 }
             }
         }
+    }
+
+    private static function get_next_scheduled($threadid) {
+        global $DB;
+
+        // Get the thread info.
+        $thread = $DB->get_record('microlearning_thread', ['id' => $threadid]);
+
+        $now = time();
+        $send = $thread->startdate;
+
+        // We need to have a positive value or we get stuck in a loop.
+        if (empty($thread->releaseinterval)) {
+            $thread->releaseinterval = 86400;
+        }
+         
+        while ($send < $now) {
+            $send = $send + $thread->releaseinterval + $thread->message_time;
+            $send = $send - $thread->message_time;
+        }
+
+        return $send;
     }
 
     public static function cron() {

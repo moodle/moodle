@@ -157,7 +157,7 @@ $threadtable->sort_default_column='name';
 
 echo $output->header();
 
-echo $output->threads_list_buttons(new moodle_url('thread_edit.php'), new moodle_url('thread_import.php'));
+echo $output->threads_list_buttons(new moodle_url('thread_edit.php'), new moodle_url('thread_import.php'), new moodle_url('groups.php'), new moodle_url('group_import.php'));
 
 $threadtable->out(30, true);
 

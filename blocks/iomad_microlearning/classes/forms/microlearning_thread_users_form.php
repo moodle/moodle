@@ -41,10 +41,12 @@ class microlearning_thread_users_form extends \company_moodleform {
     protected $companydepartment = 0;
     protected $subhierarchieslist = null;
     protected $parentlevel = null;
+    protected $groupid = 0;
     protected $groups = null;
     protected $company = null;
+    protected $scheduletypes = null;
 
-    public function __construct($actionurl, $context, $companyid, $departmentid, $threadid) {
+    public function __construct($actionurl, $context, $companyid, $departmentid, $threadid, $groupid) {
         global $USER, $DB;
         $this->selectedcompany = $companyid;
         $this->selectedthread = $threadid;
@@ -69,6 +71,12 @@ class microlearning_thread_users_form extends \company_moodleform {
             $this->departmentid = $departmentid;
         }
         $this->thread = $DB->get_record('microlearning_thread', array('id' => $threadid));
+        $this->groups = $DB->get_records_menu('microlearning_thread_group', ['threadid' => $threadid], 'name', 'id,name');
+        $this->groups = [0 => get_string('none'), '-1' => get_string('all')] + $this->groups;
+        $this->scheduletypes = [get_string('standard', 'block_iomad_microlearning'),
+                                get_string('starttoday', 'block_iomad_microlearning'),
+                                get_string('startnextscheduled', 'block_iomad_microlearning')];
+        $this->groupid = $groupid;
 
         parent::__construct($actionurl);
     }
@@ -78,6 +86,7 @@ class microlearning_thread_users_form extends \company_moodleform {
             $options = array('context' => $this->context,
                              'companyid' => $this->selectedcompany,
                              'threadid' => $this->thread->id,
+                             'groupid' => $this->groupid,
                              'departmentid' => $this->departmentid,
                              'subdepartments' => $this->subhierarchieslist,
                              'parentdepartmentid' => $this->parentlevel,
@@ -112,6 +121,17 @@ class microlearning_thread_users_form extends \company_moodleform {
         if (!empty($this->thread)) {
             $this->_form->addElement('hidden', 'threadid', $this->thread->id);
         }
+
+        // Add the group selector.
+        $mform->addElement('select', 'groupid', get_string('group', 'block_iomad_microlearning'), $this->groups, ['onchange' => 'this.form.submit()']);
+        $mform->addHelpButton('groupid', 'group', 'block_iomad_microlearning');
+        $mform->setDefault('groupid', $this->groupid);
+
+        // Add the group selector.
+        $mform->addElement('select', 'scheduletype', get_string('scheduletype', 'block_iomad_microlearning'), $this->scheduletypes);
+        $mform->addHelpButton('scheduletype','scheduletype', 'block_iomad_microlearning');
+
+        // Add the user selectors.
         $this->create_user_selectors();
 
         // Adding the elements in the definition_after_data function rather than in the
@@ -205,7 +225,7 @@ class microlearning_thread_users_form extends \company_moodleform {
                         } else {
                             $duedate = 0;
                         }
-                        \microlearning::assign_thread_to_user($adduser, $this->thread->id, $this->selectedcompany);
+                        \microlearning::assign_thread_to_user($adduser, $this->thread->id, $this->selectedcompany, $data->groupid, $data->scheduletype);
                     }
                 }
 
