@@ -155,25 +155,6 @@ class core_renderer extends \core_renderer {
             $prefix = get_string('modulename', $this->page->activityname);
         }
 
-        if ($this->should_display_main_logo($headinglevel)) {
-            $sitename = format_string($SITE->fullname, true, ['context' => \context_course::instance(SITEID)]);
-            // Logo.
-            $html = html_writer::div(
-                html_writer::empty_tag('img', [
-                    'src' => $this->get_logo_url(null, 150),
-                    'alt' => get_string('logoof', '', $sitename),
-                    'class' => 'img-fluid'
-                ]),
-                'logo'
-            );
-            // Heading.
-            if (!isset($heading)) {
-                $html .= $this->heading($this->page->heading, $headinglevel, 'sr-only');
-            } else {
-                $html .= $this->heading($heading, $headinglevel, 'sr-only');
-            }
-            return $html;
-        }
 
         $contextheader = new \context_header($heading, $headinglevel, $imagedata, $userbuttons, $prefix);
         return $this->render_context_header($contextheader);

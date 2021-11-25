@@ -98,9 +98,6 @@ class context_header implements \renderable, \templatable {
      */
     protected function get_logo_data(\renderer_base $output): array {
         global $SITE;
-        if (!$output->should_display_main_logo($this->headinglevel)) {
-            return [];
-        }
 
         $sitename = format_string($SITE->fullname, true, ['context' => \context_course::instance(SITEID)]);
         if (!isset($heading)) {

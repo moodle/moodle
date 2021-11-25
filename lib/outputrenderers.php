@@ -386,17 +386,18 @@ class renderer_base {
      */
     public function should_display_navbar_logo() {
         $logo = $this->get_compact_logo_url();
-        return !empty($logo) && !$this->should_display_main_logo();
+        return !empty($logo);
     }
 
     /**
      * Whether we should display the main logo.
-     *
+     * @deprecated since Moodle 4.0
+     * @todo final deprecation. To be removed in Moodle 4.4 MDL-73165.
      * @param int $headinglevel The heading level we want to check against.
      * @return bool
      */
     public function should_display_main_logo($headinglevel = 1) {
-
+        debugging('should_display_main_logo() is deprecated and will be removed in Moodle 4.4.', DEBUG_DEVELOPER);
         // Only render the logo if we're on the front page or login page and the we have a logo.
         $logo = $this->get_logo_url();
         if ($headinglevel == 1 && !empty($logo)) {
@@ -4258,25 +4259,6 @@ EOD;
             }
         }
 
-        if ($this->should_display_main_logo($headinglevel)) {
-            $sitename = format_string($SITE->fullname, true, ['context' => context_course::instance(SITEID)]);
-            // Logo.
-            $html = html_writer::div(
-                html_writer::empty_tag('img', [
-                    'src' => $this->get_logo_url(null, 150),
-                    'alt' => get_string('logoof', '', $sitename),
-                    'class' => 'img-fluid'
-                ]),
-                'logo'
-            );
-            // Heading.
-            if (!isset($heading)) {
-                $html .= $this->heading($this->page->heading, $headinglevel, 'sr-only');
-            } else {
-                $html .= $this->heading($heading, $headinglevel, 'sr-only');
-            }
-            return $html;
-        }
 
         $contextheader = new context_header($heading, $headinglevel, $imagedata, $userbuttons);
         return $this->render_context_header($contextheader);

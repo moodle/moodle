@@ -2,6 +2,7 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 4.0 ===
+* The $OUTPUT->should_display_main_logo() function has been deprecated and should no longer be used.
 * New method flexible_table::set_columnsattributes() has been introduced to add column attributes applied in every cell.
 * New method flexible_table::get_row_cells_html() has been introduced, extracted from flexible_table::get_row_html
   so it can be overriden individually.
