@@ -29,6 +29,7 @@
         "isactive": 1,
         "current": 1,
         "visible": 1,
+        "hasrectrictions": 0,
         "cms": [
             {
                 "id": 10,
@@ -63,7 +64,10 @@
     role="treeitem"
     aria-owns="courseindexcollapse{{number}}"
 >
-    <div class="courseindex-item d-flex {{^visible}}dimmed{{/visible}} courseindex-section-title"
+    <div class="courseindex-item d-flex
+            {{^visible}}dimmed{{/visible}}
+            {{#hasrestrictions}}rectrictions{{/hasrestrictions}}
+            courseindex-section-title"
         id="courseindexsection{{number}}"
         data-for="section_item"
     >
@@ -76,12 +80,12 @@
         >
             <span class="collapsed-icon icon-no-margin mr-1"
                 data-toggle="tooltip" title="{{#str}} expand, core {{/str}}">
-                {{#pix}} t/collapsed, core {{/pix}}
+                {{#pix}} t/collapsedchevron, core {{/pix}}
                 <span class="sr-only">{{#str}} expand, core {{/str}}</span>
             </span>
             <span class="expanded-icon icon-no-margin mr-1"
                 data-toggle="tooltip" title="{{#str}} collapse, core {{/str}}">
-                {{#pix}} t/expanded, core {{/pix}}
+                {{#pix}} t/expandedchevron, core {{/pix}}
                 <span class="sr-only">{{#str}} collapse, core {{/str}}</span>
             </span>
         </a>
@@ -93,17 +97,19 @@
         >
             {{{title}}}
         </a>
-        <span class="current-badge badge badge-primary ml-2 px-2">
+        <span class="current-badge badge badge-primary ml-2 px-2 rounded-pill">
             {{highlighted}}
+        </span>
+        <span class="courseindex-locked ml-1" data-for="cm_name">
+            {{#pix}} t/locked, core {{/pix}}
         </span>
         <span class="dragicon ml-auto">{{#pix}}i/dragdrop{{/pix}}</span>
     </div>
     <div id="courseindexcollapse{{number}}"
         class="courseindex-item-content collapse {{#isactive}}show{{/isactive}}"
         aria-labelledby="courseindexsection{{number}}"
-        role="group"
     >
-        <ul class="courseindex-sectioncontent unlist" data-for="cmlist" data-id="{{id}}">
+        <ul class="courseindex-sectioncontent unlist" data-for="cmlist" data-id="{{id}}" role="group">
             {{#cms}}
             {{> core_courseformat/local/courseindex/cm }}
             {{/cms}}

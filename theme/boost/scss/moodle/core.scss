@@ -12,6 +12,9 @@ $collapse-list-item-padding-x: 1rem !default;
 $collapse-list-item-hover-bg: theme-color-level('info', -11) !default;
 $collapse-list-item-hover-border: theme-color-level('info', -9) !default;
 
+$thin-scroll-bg-thumb: $gray-600 !default;
+$thin-scroll-bg-hover: $gray-700 !default;
+
 $font-size-xs: ($font-size-base * .75) !default;
 
 #region-main {
@@ -2814,6 +2817,34 @@ $scrollbar-track: lighten($primary, 40%);
         border-right: $border-width solid $white;
     }
 }
+
+// Thin scrollbars.
+@mixin thin-scrolls($bg-track) {
+
+    // Firefox.
+    scrollbar-width: thin;
+    scrollbar-color: $thin-scroll-bg-thumb $bg-track;
+
+    // Chrome, Edge and Safari.
+    &::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $bg-track;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $thin-scroll-bg-thumb;
+        border-radius: 20px;
+        border: 3px solid $bg-track;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: $thin-scroll-bg-hover;
+    }
+}
+
 // Generic dropzones and dragging styles.
 
 body.dragging {

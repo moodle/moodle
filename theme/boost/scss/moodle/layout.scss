@@ -52,45 +52,57 @@
     }
 }
 
-.drawer-left-toggle {
-    position: fixed;
-    top: calc(#{$navbar-height} + 0.5rem);
-    left: 0;
-    z-index: 2;
-    .btn {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        padding: 0.375rem;
-        width: 2.5rem;
-        color: $white;
-        background-color: $primary;
-        .icon {
-            width: auto;
-            height: auto;
+.drawer-toggles {
+
+    .drawer-toggler {
+        position: fixed;
+        top: calc(#{$navbar-height} + 0.7rem);
+        z-index: 2;
+        .btn {
+            border-radius: 200px;
+            padding: 16px;
+            background-color: $gray-300;
+            .icon {
+                width: auto;
+                height: auto;
+            }
+            transition: padding 200ms;
+        }
+    }
+
+    .drawer-left-toggle {
+        left: 0;
+        .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            padding-right: 14px;
+            padding-left: 10px;
+
+            &:hover {
+                padding-left: 20px;
+            }
+        }
+    }
+
+    .drawer-right-toggle {
+        right: 0;
+        .btn {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            padding-right: 10px;
+            padding-left: 14px;
+
+            &:hover {
+                padding-right: 20px;
+            }
         }
     }
 }
+
 #page.drawers.show-drawer-left .drawer-left-toggle {
     display: none;
 }
-.drawer-right-toggle {
-    position: fixed;
-    top: calc(#{$navbar-height} + 0.5rem);
-    right: 0;
-    z-index: 2;
-    .btn {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        padding: 0.375rem;
-        width: 2.5rem;
-        color: $white;
-        background-color: $primary;
-        .icon {
-            width: auto;
-            height: auto;
-        }
-    }
-}
+
 #page.drawers.show-drawer-right .drawer-right-toggle {
     display: none;
 }
@@ -99,10 +111,11 @@
     //the scroll to top button
     .drawer-toggles {
         z-index: 100;
-    }
-    .drawer-right-toggle,
-    .drawer-left-toggle {
-        top: calc(100vh / 2 - 1rem);
+
+        .drawer-right-toggle,
+        .drawer-left-toggle {
+            top: calc(99vh - (#{$navbar-height} * 2));
+        }
     }
     #page.drawers.scroll-down {
         .drawer-right-toggle {

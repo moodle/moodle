@@ -60,7 +60,7 @@ Feature: See the competencies for an activity
     And I click on "Rate" "button"
     And I set the field "Rating" to "A"
     And I click on "Rate" "button" in the ".competency-grader" "css_element"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "User competency summary" "dialogue"
     And I click on "PageName1" "autocomplete_selection"
     And I should see "Test-Comp1"
     And I should see "Test-Comp2"

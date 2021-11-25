@@ -21,7 +21,7 @@
     {
         "drawerclasses": "drawer drawer-right",
         "drawertrigger": "toggleblocks",
-        "drawerheading": "Blocks",
+        "tooltipplacement": "right",
         "drawerconent": "Content for the blocks region"
     }
 }}
@@ -35,8 +35,15 @@
     }} data-close-on-resize="{{$drawercloseonresize}}0{{/drawercloseonresize}}"{{!
     }}>
     <div class="drawerheader">
-        {{$drawerheading}}{{/drawerheading}}
-        <button class="btn drawertoggle icon-no-margin" data-toggle="drawers" data-action="closedrawer" data-target="{{$id}}{{/id}}">
+        <button
+            class="btn drawertoggle icon-no-margin hidden"
+            data-toggler="drawers"
+            data-action="closedrawer"
+            data-target="{{$id}}{{/id}}"
+            data-toggle="tooltip"
+            data-placement="{{$tooltipplacement}}right{{/tooltipplacement}}"
+            title="{{#str}}closedrawer, core{{/str}}"
+        >
             {{#pix}}e/cancel, core, {{#str}}closedrawer, core{{/str}}{{/pix}}
         </button>
     </div>

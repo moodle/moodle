@@ -358,6 +358,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/block' => 'fa-ban',
             'core:t/block_to_dock_rtl' => 'fa-chevron-right',
             'core:t/block_to_dock' => 'fa-chevron-left',
+            'core:t/blocks_drawer' => 'fa-chevron-left',
             'core:t/calc_off' => 'fa-calculator', // TODO: Change to better icon once we have stacked icon support or more icons.
             'core:t/calc' => 'fa-calculator',
             'core:t/check' => 'fa-check',
@@ -397,6 +398,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/groups' => 'fa-user-circle',
             'core:t/groupv' => 'fa-user-circle-o',
             'core:t/hide' => 'fa-eye',
+            'core:t/index_drawer' => 'fa-list',
             'core:t/left' => 'fa-arrow-left',
             'core:t/less' => 'fa-caret-up',
             'core:t/locked' => 'fa-lock',

@@ -460,6 +460,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | This privacy policy | 1    |          | full text3 | short text3 | active   | loggedin |
       | This guests policy  | 0    |          | full text4 | short text4 | active   | guest    |
     And I am on site homepage
+    And I change window size to "large"
     And I follow "Log in"
     When I press "Log in as a guest"
     Then I should see "If you continue browsing this website, you agree to our policies"
@@ -472,11 +473,11 @@ Feature: User must accept policy managed by this plugin when logging in and sign
     # Confirm when clicking on the policy links, the policy content is displayed.
     When I click on "This site policy" "link"
     Then I should see "full text2"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "This site policy" "dialogue"
     And I should not see "full text2"
     When I click on "This guests policy" "link"
     Then I should see "full text4"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "This guests policy" "dialogue"
     And I should not see "full text4"
     # Confirm when agreeing to policies the pop-up is no longer displayed.
     When I follow "Continue"

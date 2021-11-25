@@ -92,7 +92,7 @@ Feature: Manage analytics models
     And I should see "Configuration"
     And I click on "View" "link"
     And I should see "Log extra info"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "Log extra info" "dialogue"
     And I navigate to "Analytics > Analytics models" in site administration
     # Execute scheduled analysis
     And I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"

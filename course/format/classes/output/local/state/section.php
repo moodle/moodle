@@ -20,6 +20,7 @@ use core_courseformat\base as course_format;
 use section_info;
 use renderable;
 use stdClass;
+use context_course;
 
 /**
  * Contains the ajax update section structure.
@@ -54,6 +55,7 @@ class section implements renderable {
      * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
+        global $CFG;
 
         $format = $this->format;
         $course = $format->get_course();
@@ -87,6 +89,17 @@ class section implements renderable {
             'isactive' => $isactive,
             'contentexpanded' => $contentexpanded
         ];
+
+        // If the section availability restrictions must be displayed.
+        $canviewhidden = has_capability(
+            'moodle/course:viewhiddenactivities',
+            context_course::instance($course->id)
+        );
+        if (!empty($CFG->enableavailability) && $canviewhidden) {
+            $data->hasrestrictions = !empty($section->availableinfo);
+        } else {
+            $data->hasrestrictions = false;
+        }
 
         if (empty($modinfo->sections[$section->section])) {
             return $data;

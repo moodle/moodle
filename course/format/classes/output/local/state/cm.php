@@ -71,7 +71,7 @@ class cm implements renderable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
-        global $USER;
+        global $USER, $CFG;
 
         $format = $this->format;
         $section = $this->section;
@@ -90,6 +90,15 @@ class cm implements renderable {
         // Check the user access type to this cm.
         $info = new info_module($cm);
         $data->accessvisible = ($data->visible && $info->is_available_for_all());
+
+        // Check if restriction access are visible to the user.
+        $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $cm->context);
+        if (!empty($CFG->enableavailability) && $canviewhidden) {
+            // Some users can see restrictions even if it does not apply to them.
+            $data->hascmrectrictions = !empty($cm->availableinfo);
+        } else {
+            $data->hascmrectrictions = !$data->accessvisible || !$cm->uservisible;
+        }
 
         // Add url if the activity is compatible.
         $url = $cm->url;
