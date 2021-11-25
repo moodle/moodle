@@ -104,12 +104,20 @@ $event->trigger();
 
 echo $OUTPUT->header();
 if ($courseid != SITEID) {
+    $backurl = new moodle_url('/user/view.php', ['id' => $userid, 'course' => $courseid]);
+    echo $OUTPUT->single_button($backurl, get_string('back'), 'get', ['class' => 'mb-3']);
+
     $userheading = array(
             'heading' => fullname($user, has_capability('moodle/site:viewfullnames', $PAGE->context)),
             'user' => $user,
             'usercontext' => $personalcontext,
         );
     echo $OUTPUT->context_header($userheading, 2);
+    if ($mode === 'today') {
+        echo $OUTPUT->heading(get_string('todaylogs', 'moodle'), 2, 'main mt-4 mb-4');
+    } else {
+        echo $OUTPUT->heading(get_string('alllogs', 'moodle'), 2, 'main mt-4 mb-4');
+    }
 }
 
 // Time to filter records from.
