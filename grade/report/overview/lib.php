@@ -279,17 +279,24 @@ class grade_report_overview extends grade_report {
                 $finalgrade = $coursedata['finalgrade'];
                 $courseitem = $coursedata['courseitem'];
 
-                $coursename = format_string(get_course_display_name_for_list($course), true, array('context' => $coursecontext));
-                // Link to the activity report version of the user grade report.
-                if ($activitylink) {
-                    $courselink = html_writer::link(new moodle_url('/course/user.php', array('mode' => 'grade', 'id' => $course->id,
-                        'user' => $this->user->id)), $coursename);
-                } else {
-                    $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id,
-                        'userid' => $this->user->id, 'group' => $this->gpr->groupid)), $coursename);
+                $coursenamelink = format_string(get_course_display_name_for_list($course), true, ['context' => $coursecontext]);
+
+                // Link to the course grade report pages (performing same capability checks as the pages themselves).
+                if ($activitylink && has_capability('gradereport/' . $CFG->grade_profilereport .':view', $coursecontext)) {
+                    $coursenamelink = html_writer::link(new moodle_url('/course/user.php', [
+                        'mode' => 'grade',
+                        'id' => $course->id,
+                        'user' => $this->user->id,
+                    ]), $coursenamelink);
+                } else if (!$activitylink && has_capability('gradereport/user:view', $coursecontext)) {
+                    $coursenamelink = html_writer::link(new moodle_url('/grade/report/user/index.php', [
+                        'id' => $course->id,
+                        'userid' => $this->user->id,
+                        'group' => $this->gpr->groupid,
+                    ]), $coursenamelink);
                 }
 
-                $data = array($courselink, grade_format_gradevalue($finalgrade, $courseitem, true));
+                $data = [$coursenamelink, grade_format_gradevalue($finalgrade, $courseitem, true)];
 
                 if ($this->showrank['any']) {
                     if ($this->showrank[$course->id] && !is_null($finalgrade)) {
