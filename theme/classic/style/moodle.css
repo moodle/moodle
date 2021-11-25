@@ -14666,7 +14666,9 @@ span.editinstructions {
 
 @media (min-width: 576px) {
   [data-region="drawer"] {
-    padding: 20px 20px; } }
+    padding: 20px 20px; }
+  .jsenabled .btn-footer-popover {
+    transition: 0.2s; } }
 
 #nav-drawer {
   right: auto;
@@ -20080,6 +20082,8 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
       margin-left: 0;
       margin-right: 315px;
       padding-right: 1rem; }
+      .jsenabled #page.drawers.show-drawer-right .btn-footer-popover {
+        right: calc(315px + 2rem); }
     #page.drawers.show-drawer-left.show-drawer-right {
       margin-left: 285px;
       margin-right: 315px; } }

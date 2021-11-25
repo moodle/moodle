@@ -165,6 +165,9 @@
             margin-left: 0;
             margin-right: $drawer-right-width;
             padding-right: 1rem;
+            .jsenabled & .btn-footer-popover {
+                right: calc(#{$drawer-right-width} + 2rem);
+            }
         }
         &.show-drawer-left.show-drawer-right {
             margin-left: $drawer-left-width;
