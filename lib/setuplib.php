@@ -1706,7 +1706,7 @@ function get_request_storage_directory($exceptiononerror = true, bool $forcecrea
  * @param   bool    $forcecreate Force creation of a new parent directory
  * @return  string  The full path to directory if successful, false if not; may throw exception
  */
-function make_request_directory($exceptiononerror = true, bool $forcecreate = false) {
+function make_request_directory(bool $exceptiononerror = true, bool $forcecreate = false) {
     $basedir = get_request_storage_directory($exceptiononerror, $forcecreate);
     return make_unique_writable_directory($basedir, $exceptiononerror);
 }
