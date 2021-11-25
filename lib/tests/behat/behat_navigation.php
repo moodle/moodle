@@ -627,7 +627,7 @@ class behat_navigation extends behat_base {
             }
             return [$component, $name];
         } else {
-            throw new coding_exception('The page name most be in the form ' .
+            throw new coding_exception('The page name must be in the form ' .
                     '"{page-name}" for core pages, or "{component} > {page-name}" ' .
                     'for pages belonging to other components. ' .
                     'For example "Admin notifications" or "mod_quiz > View".');
