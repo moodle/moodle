@@ -54,6 +54,7 @@ $PAGE->set_pagelayout('mycourses');
 $PAGE->has_secondary_navigation_setter(false);
 
 $PAGE->set_pagetype('my-index');
+$PAGE->blocks->add_region('content');
 $PAGE->set_subpage($currentpage->id);
 $PAGE->set_title(get_string('mycourses'));
 $PAGE->set_heading(get_string('mycourses'));

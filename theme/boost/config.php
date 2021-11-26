@@ -81,8 +81,7 @@ $THEME->layouts = [
     // My courses page.
     'mycourses' => array(
         'file' => 'columns2.php',
-        'regions' => array('content'),
-        'defaultregion' => 'content',
+        'regions' => array()
     ),
     // My dashboard page.
     'mydashboard' => array(
