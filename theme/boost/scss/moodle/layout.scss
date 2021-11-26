@@ -157,18 +157,18 @@
         left: 0;
         right: 0;
         &.show-drawer-left {
-            margin-left: $drawer-width;
+            margin-left: $drawer-left-width;
             margin-right: 0;
             padding-left: 1rem;
         }
         &.show-drawer-right {
             margin-left: 0;
-            margin-right: $drawer-width;
+            margin-right: $drawer-right-width;
             padding-right: 1rem;
         }
         &.show-drawer-left.show-drawer-right {
-            margin-left: $drawer-width;
-            margin-right: $drawer-width;
+            margin-left: $drawer-left-width;
+            margin-right: $drawer-right-width;
         }
     }
 }

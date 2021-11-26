@@ -14696,7 +14696,7 @@ body.drawer-ease {
 
 @media (min-width: 768px) {
   body.drawer-open-right {
-    margin-right: 285px; } }
+    margin-right: 315px; } }
 
 [data-region=right-hand-drawer] {
   display: flex;
@@ -14745,17 +14745,18 @@ body.drawer-ease {
   position: fixed;
   height: 100vh;
   top: 0; }
-  .drawer.drawer-left, .drawer.drawer-right {
-    width: 285px;
-    max-width: 285px; }
   .drawer.drawer-right {
-    right: calc(-285px + -10px); }
+    width: 315px;
+    max-width: 315px;
+    right: calc(-315px + -10px); }
     .drawer.drawer-right.show {
       right: 0; }
     .drawer.drawer-right .drawertoggle {
       margin-left: auto;
       margin-right: 5px; }
   .drawer.drawer-left {
+    width: 285px;
+    max-width: 285px;
     left: calc(-285px + -10px); }
     .drawer.drawer-left.show {
       left: 0; }
@@ -14793,17 +14794,18 @@ body.drawer-ease {
     position: fixed;
     height: 100vh;
     top: 0; }
-    .drawer-md.drawer-left, .drawer-md.drawer-right {
-      width: 285px;
-      max-width: 285px; }
     .drawer-md.drawer-right {
-      right: calc(-285px + -10px); }
+      width: 315px;
+      max-width: 315px;
+      right: calc(-315px + -10px); }
       .drawer-md.drawer-right.show {
         right: 0; }
       .drawer-md.drawer-right .drawertoggle {
         margin-left: auto;
         margin-right: 5px; }
     .drawer-md.drawer-left {
+      width: 285px;
+      max-width: 285px;
       left: calc(-285px + -10px); }
       .drawer-md.drawer-left.show {
         left: 0; }
@@ -14824,17 +14826,18 @@ body.drawer-ease {
     position: fixed;
     height: 100vh;
     top: 0; }
-    .drawer-sm.drawer-left, .drawer-sm.drawer-right {
-      width: 285px;
-      max-width: 285px; }
     .drawer-sm.drawer-right {
-      right: calc(-285px + -10px); }
+      width: 315px;
+      max-width: 315px;
+      right: calc(-315px + -10px); }
       .drawer-sm.drawer-right.show {
         right: 0; }
       .drawer-sm.drawer-right .drawertoggle {
         margin-left: auto;
         margin-right: 5px; }
     .drawer-sm.drawer-left {
+      width: 285px;
+      max-width: 285px;
       left: calc(-285px + -10px); }
       .drawer-sm.drawer-left.show {
         left: 0; }
@@ -20131,11 +20134,11 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
       padding-left: 1rem; }
     #page.drawers.show-drawer-right {
       margin-left: 0;
-      margin-right: 285px;
+      margin-right: 315px;
       padding-right: 1rem; }
     #page.drawers.show-drawer-left.show-drawer-right {
       margin-left: 285px;
-      margin-right: 285px; } }
+      margin-right: 315px; } }
 
 .drawercontrolbuttons {
   margin-top: 92px; }
