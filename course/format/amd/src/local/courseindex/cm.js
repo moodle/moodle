@@ -79,14 +79,21 @@ export default class Component extends DndCmItem {
     stateReady(state) {
         this.configDragDrop(this.id);
         const cm = state.cm.get(this.id);
+        const course = state.course;
         // Refresh completion icon.
         this._refreshCompletion({
             state,
             element: cm,
         });
-        // Check if this we are displaying this activity id page.
+        // Check if the current url is the cm url.
+        if (window.location.href == cm.url || window.location.href == `${course.baseurl}#${cm.anchor}`) {
+            this.reactive.dispatch('setPageItem', 'cm', this.id);
+            this.element.scrollIntoView({block: "center"});
+        }
+        // Check if this we are displaying this activity page.
         if (Config.contextid != Config.courseContextId && Config.contextInstanceId == this.id) {
-            this.element.classList.add(this.classes.PAGEITEM);
+            this.reactive.dispatch('setPageItem', 'cm', this.id, true);
+            this.element.scrollIntoView({block: "center"});
         }
         // Add anchor logic if the element is not user visible.
         if (!cm.uservisible) {
@@ -108,6 +115,7 @@ export default class Component extends DndCmItem {
             {watch: `cm[${this.id}]:deleted`, handler: this.remove},
             {watch: `cm[${this.id}]:updated`, handler: this._refreshCm},
             {watch: `cm[${this.id}].completionstate:updated`, handler: this._refreshCompletion},
+            {watch: `course.pageItem:updated`, handler: this._refreshPageItem},
         ];
     }
 
@@ -125,6 +133,23 @@ export default class Component extends DndCmItem {
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
         this.element.classList.toggle(this.classes.RESTRICTIONS, element.hascmrectrictions ?? false);
         this.locked = element.locked;
+    }
+
+    /**
+     * Handle a page item update.
+     *
+     * @param {Object} details the update details
+     * @param {Object} details.element the course state data.
+     */
+    _refreshPageItem({element}) {
+        if (!element.pageItem) {
+            return;
+        }
+        const isPageId = (element.pageItem.type == 'cm' && element.pageItem.id == this.id);
+        this.element.classList.toggle(this.classes.PAGEITEM, isPageId);
+        if (isPageId && !this.reactive.isEditing) {
+            this.element.scrollIntoView({block: "nearest"});
+        }
     }
 
     /**
@@ -166,7 +191,12 @@ export default class Component extends DndCmItem {
         const cm = this.reactive.get('cm', this.id);
         // If the user cannot access the element but the element is present in the page
         // the new url should be an anchor link.
-        if (document.getElementById(cm.anchor)) {
+        const element = document.getElementById(cm.anchor);
+        if (element) {
+            // Marc the element as page item once the event is handled.
+            setTimeout(() => {
+                this.reactive.dispatch('setPageItem', 'cm', cm.id);
+            }, 50);
             return;
         }
         // If the element is not present in the page we need to go to the specific section.

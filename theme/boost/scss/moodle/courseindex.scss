@@ -15,14 +15,16 @@ $courseindex-item-current: $primary !default;
     @include hover-focus() {
         color: $courseindex-link-hover-color;
 
-        .courseindex-link {
+        .courseindex-link,
+        .courseindex-chevron {
             color: $courseindex-link-hover-color;
             cursor: pointer;
         }
         &.dimmed {
             color: $courseindex-link-hover-color;
 
-            .courseindex-link {
+            .courseindex-link,
+            .courseindex-chevron {
                 color: $courseindex-link-hover-color;
             }
         }
@@ -54,7 +56,8 @@ $courseindex-item-current: $primary !default;
             padding-right: 4px;
         }
 
-        .courseindex-link {
+        .courseindex-link,
+        .courseindex-chevron {
             color: $courseindex-link-color;
             @include hover-focus() {
                 color: $courseindex-link-hover-color;
@@ -75,7 +78,8 @@ $courseindex-item-current: $primary !default;
         &.dimmed {
             color: $courseindex-link-dimmed-color;
 
-            .courseindex-link {
+            .courseindex-link,
+            .courseindex-chevron {
                 color: $courseindex-link-dimmed-color;
             }
         }
@@ -94,8 +98,12 @@ $courseindex-item-current: $primary !default;
         &.pageitem {
             background-color: $courseindex-item-page-bg;
             color: $courseindex-link-hover-color;
+            scroll-margin: 6rem;
             a {
                 color: $courseindex-link-hover-color;
+            }
+            .courseindex-link {
+                text-shadow: 0 1px 0 rgba($courseindex-link-hover-color, .3);
             }
         }
 
