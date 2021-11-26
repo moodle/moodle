@@ -144,17 +144,11 @@ class behat_backup extends behat_base {
         $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", get_string('import'));
 
         // Select the course.
-        $exception = new ExpectationException('"' . $fromcourse . '" course not found in the list of courses to import from',
-            $this->getSession());
-
-        // The argument should be converted to an xpath literal.
         $fromcourse = behat_context_helper::escape($fromcourse);
         $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' ics-results ')]" .
             "/descendant::tr[contains(., $fromcourse)]" .
             "/descendant::input[@type='radio']";
-        $radionode = $this->find('xpath', $xpath, $exception);
-        $radiofield = new behat_form_field($this->getSession(), $radionode);
-        $radiofield->set_value(1);
+        $this->execute('behat_forms::i_set_the_field_with_xpath_to', [$xpath, 1]);
 
         $this->execute("behat_forms::press_button", get_string('continue'));
 
