@@ -45,7 +45,7 @@ $file = '/' . min_clean_param($file, 'SAFEPATH');
 [$unused, $component, $module] = explode('/', $file, 3);
 
 // When running a lazy load, we only deal with one file so we can just return the working sourcemap.
-$jsfiles = core_requirejs::find_one_amd_module($component, $module, false);
+$jsfiles = core_requirejs::find_one_amd_module($component, $module);
 $jsfile = reset($jsfiles);
 
 $mapfile = $jsfile . '.map';
