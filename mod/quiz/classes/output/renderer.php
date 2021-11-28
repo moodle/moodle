@@ -563,8 +563,8 @@ class renderer extends plugin_renderer_base {
                 'value' => '0', 'id' => 'timeup']);
         $output .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey',
                 'value' => sesskey()]);
-        $output .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'scrollpos',
-                'value' => '', 'id' => 'scrollpos']);
+        $output .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'mdlscrollto',
+                'value' => '', 'id' => 'mdlscrollto']);
 
         // Add a hidden field with questionids. Do this at the end of the form, so
         // if you navigate before the form has finished loading, it does not wipe all
@@ -622,9 +622,14 @@ class renderer extends plugin_renderer_base {
     public function redo_question_button($slot, $disabled) {
         $attributes = ['type' => 'submit', 'name' => 'redoslot' . $slot,
                 'value' => get_string('redoquestion', 'quiz'),
-                'class' => 'mod_quiz-redo_question_button btn btn-secondary'];
+                'class' => 'mod_quiz-redo_question_button btn btn-secondary',
+                'id' => 'redoslot' . $slot . '-submit',
+                'data-savescrollposition' => 'true',
+            ];
         if ($disabled) {
             $attributes['disabled'] = 'disabled';
+        } else {
+            $this->page->requires->js_call_amd('core_question/question_engine', 'initSubmitButton', [$attributes['id']]);
         }
         return html_writer::div(html_writer::empty_tag('input', $attributes));
     }

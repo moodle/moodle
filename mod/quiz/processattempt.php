@@ -45,7 +45,7 @@ $previous      = optional_param('previous',      false, PARAM_BOOL);
 $next          = optional_param('next',          false, PARAM_BOOL);
 $finishattempt = optional_param('finishattempt', false, PARAM_BOOL);
 $timeup        = optional_param('timeup',        0,      PARAM_BOOL); // True if form was submitted by timer.
-$scrollpos     = optional_param('scrollpos',     '',     PARAM_RAW);
+$mdlscrollto   = optional_param('mdlscrollto', '', PARAM_RAW);
 $cmid          = optional_param('cmid', null, PARAM_INT);
 
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
@@ -62,8 +62,8 @@ if ($page == -1) {
     $nexturl = $attemptobj->summary_url();
 } else {
     $nexturl = $attemptobj->attempt_url(null, $page);
-    if ($scrollpos !== '') {
-        $nexturl->param('scrollpos', $scrollpos);
+    if ($mdlscrollto !== '') {
+        $nexturl->param('mdlscrollto', $mdlscrollto);
     }
 }
 
