@@ -34,8 +34,7 @@ Feature: Users can be defined as key holders in courses where self enrolment is 
   @javascript
   Scenario: The key holder name is displayed on site home page
     Given I log in as "admin"
-    And I am on "Course 1" course homepage
-    When I add "Self enrolment" enrolment method with:
+    When I add "Self enrolment" enrolment method in "Course 1" with:
       | Custom instance name | Test student enrolment |
       | Enrolment key | moodle_rules |
     And I log out

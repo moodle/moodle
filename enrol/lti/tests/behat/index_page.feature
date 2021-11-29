@@ -24,8 +24,8 @@ Feature: Check that the page listing the shared external tools is functioning as
 
   Scenario: I want to edit an external tool
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I turn editing mode on
+    And I am on the "Course 1" "enrolment methods" page
     And I select "Publish as LTI tool" from the "Add method" singleselect
     And I set the following fields to these values:
       | Custom instance name | Assignment - LTI |

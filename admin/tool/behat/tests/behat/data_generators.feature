@@ -57,8 +57,7 @@ Feature: Set up contextual data for tests
       | Grouping 1 | C1 | GG1 |
       | Grouping 2 | C1 | GG2 |
     When I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     Then I should see "Group 1"
     And I should see "Group 2"
     And I select "Groupings" from the "jump" singleselect
@@ -86,8 +85,7 @@ Feature: Set up contextual data for tests
       | mod/forum:editanypost | Allow | student | Course | C1 |
       | mod/forum:replynews | Prevent | editingteacher | Course | C1 |
     When I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Permissions" in current page administration
+    And I am on the "Course 1" "permissions" page
     And I set the field "Advanced role override" to "Student (1)"
     Then "mod/forum:editanypost" capability has "Allow" permission
     And I press "Cancel"
@@ -254,8 +252,7 @@ Feature: Set up contextual data for tests
       | grouping | group |
       | GG1 | G1 |
     When I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     Then the "groups" select box should contain "Group 1 (1)"
     And the "groups" select box should contain "Group 2 (1)"
     And I set the field "groups" to "Group 1 (1)"

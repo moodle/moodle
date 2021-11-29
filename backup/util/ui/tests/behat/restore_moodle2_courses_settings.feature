@@ -99,8 +99,7 @@ Feature: Restore Moodle 2 course backups with different user data settings
     Given I navigate to "Courses > Backups > General restore defaults" in site administration
     And I set the field "s_restore_restore_general_users" to ""
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I navigate to "Restore" in current page administration
+    And I am on the "Course 1" "restore" page
     # "User data" marks the user data field for the section
     # "-" marks the user data field for the data activity
     And I restore "test_backup.mbz" backup into a new course using this options:
@@ -116,8 +115,7 @@ Feature: Restore Moodle 2 course backups with different user data settings
     Given I navigate to "Courses > Backups > General restore defaults" in site administration
     And I set the field "s_restore_restore_general_users" to ""
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I navigate to "Restore" in current page administration
+    And I am on the "Course 1" "restore" page
     When I restore "test_backup.mbz" backup into a new course using this options:
       | Settings |  Include enrolled users | 0 |
     Then I should see "Test database name"

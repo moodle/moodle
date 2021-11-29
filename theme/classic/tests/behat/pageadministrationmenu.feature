@@ -28,7 +28,7 @@ Feature: Page administration menu
     And I should see "Updating: Choice"
     And I navigate to course participants
     And I should see the page administration menu
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I am on the "Course 1" "Enrolment methods" page
     And I should see "Enrolment methods"
     And I log out
 

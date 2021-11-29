@@ -22,8 +22,7 @@ Feature: Chat with no calendar capabilites
       | intro                         | Test chat description |
       | section                       | 1                     |
     And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Permissions" in current page administration
+    And I am on the "Course 1" "permissions" page
     And I override the system permissions of "Teacher" role with:
       | capability | permission |
       | moodle/calendar:manageentries | Prohibit |

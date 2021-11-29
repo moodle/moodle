@@ -25,8 +25,7 @@ Feature: Signing up for a course with a fee enrolment method
   @javascript
   Scenario: Student can see the payment prompt on the course enrolment page
     When I log in as "manager1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I am on the "Course 1" "enrolment methods" page
     And I select "Enrolment on payment" from the "Add method" singleselect
     And I set the following fields to these values:
       | Payment account | Account1 |

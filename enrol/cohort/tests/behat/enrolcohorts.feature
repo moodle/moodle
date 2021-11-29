@@ -19,9 +19,7 @@ Feature: Enrol multiple cohorts
   @javascript
   Scenario: Add multiple cohorts to the course
     When I log in as "teacher001"
-    And I am on "Course 001" course homepage
-    And I navigate to course participants
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I am on the "Course 001" "enrolment methods" page
     And I select "Cohort sync" from the "Add method" singleselect
     And I open the autocomplete suggestions list
     And I click on "Alpha1" item in the autocomplete list

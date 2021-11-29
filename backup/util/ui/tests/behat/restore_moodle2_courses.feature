@@ -66,7 +66,7 @@ Feature: Restore Moodle 2 course backups
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum post backup name |
       | Description | Test forum post backup description |
-    And I navigate to "Restore" in current page administration
+    And I am on the "Course 1" "restore" page
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
       | Schema | Section 3 | 0 |
     Then I should see "Course 1"
@@ -169,8 +169,7 @@ Feature: Restore Moodle 2 course backups
     When I backup "Course 1" course using this options:
       | Initial |  Include enrolled users | 0 |
       | Confirmation | Filename | test_backup.mbz |
-    And I am on "Course 2" course homepage
-    And I navigate to "Restore" in current page administration
+    And I am on the "Course 2" "restore" page
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
       | Schema | Overwrite course configuration | Yes |
     And I navigate to "Settings" in current page administration
@@ -198,8 +197,7 @@ Feature: Restore Moodle 2 course backups
     When I backup "Course 1" course using this options:
       | Initial |  Include enrolled users | 0 |
       | Confirmation | Filename | test_backup.mbz |
-    And I am on "Course 2" course homepage
-    And I navigate to "Restore" in current page administration
+    And I am on the "Course 2" "restore" page
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
       | Schema | Overwrite course configuration | No |
     And I navigate to "Settings" in current page administration
@@ -227,8 +225,7 @@ Feature: Restore Moodle 2 course backups
     When I backup "Course 1" course using this options:
       | Initial |  Include enrolled users | 0 |
       | Confirmation | Filename | test_backup.mbz |
-    And I am on "Course 4" course homepage
-    And I navigate to "Restore" in current page administration
+    And I am on the "Course 4" "restore" page
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
       | Schema | Overwrite course configuration | No |
     And I navigate to "Settings" in current page administration
@@ -254,7 +251,7 @@ Feature: Restore Moodle 2 course backups
       | Confirmation | Filename | test_backup.mbz |
     When I restore "test_backup.mbz" backup into a new course using this options:
       | Settings | Include permission overrides | 1 |
-    Then I navigate to "Users > Permissions" in current page administration
+    Then I am on the "Course 1 copy 1" "permissions" page
     And I should see "Non-editing teacher (1)"
     And I set the field "Advanced role override" to "Non-editing teacher (1)"
     And "enrol/manual:enrol" capability has "Allow" permission
@@ -268,5 +265,5 @@ Feature: Restore Moodle 2 course backups
       | Confirmation | Filename | test_backup.mbz |
     When I restore "test_backup.mbz" backup into a new course using this options:
       | Settings | Include permission overrides | 0 |
-    Then I navigate to "Users > Permissions" in current page administration
+    Then I am on the "Course 1 copy 1" "permissions" page
     And I should see "Non-editing teacher (0)"

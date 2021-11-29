@@ -21,8 +21,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
   @javascript
   Scenario: Self-enrolment enabled as guest
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I add "Self enrolment" enrolment method with:
+    And I add "Self enrolment" enrolment method in "Course 1" with:
       | Custom instance name | Test student enrolment |
     And I log out
     When I am on "Course 1" course homepage
@@ -33,8 +32,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
 
   Scenario: Self-enrolment enabled
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I add "Self enrolment" enrolment method with:
+    When I add "Self enrolment" enrolment method in "Course 1" with:
       | Custom instance name | Test student enrolment |
     And I log out
     And I log in as "student1"
@@ -45,8 +43,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
 
   Scenario: Self-enrolment enabled requiring an enrolment key
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I add "Self enrolment" enrolment method with:
+    When I add "Self enrolment" enrolment method in "Course 1" with:
       | Custom instance name | Test student enrolment |
       | Enrolment key | moodle_rules |
     And I log out
@@ -66,13 +63,11 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
 
   Scenario: Self-enrolment enabled requiring a group enrolment key
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I add "Self enrolment" enrolment method with:
+    When I add "Self enrolment" enrolment method in "Course 1" with:
       | Custom instance name | Test student enrolment |
       | Enrolment key | moodle_rules |
       | Use group enrolment keys | Yes |
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group 1 |
@@ -91,8 +86,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
   @javascript
   Scenario: Edit a self-enrolled user's enrolment from the course participants page
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I add "Self enrolment" enrolment method with:
+    When I add "Self enrolment" enrolment method in "Course 1" with:
       | Custom instance name | Test student enrolment |
     And I log out
     And I log in as "student1"
@@ -112,8 +106,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
   @javascript
   Scenario: Unenrol a self-enrolled student from the course participants page
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I add "Self enrolment" enrolment method with:
+    When I add "Self enrolment" enrolment method in "Course 1" with:
       | Custom instance name | Test student enrolment |
     And I log out
     And I log in as "student1"
@@ -133,7 +126,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     Given the "multilang" filter is "on"
     And the "multilang" filter applies to "content and headings"
     And I am on the "C1" "Course" page logged in as "teacher1"
-    When I add "Self enrolment" enrolment method with:
+    When I add "Self enrolment" enrolment method in "Course 1" with:
       | Custom instance name | Test student enrolment |
     And I am on "Course 1" course homepage
     And I navigate to "Settings" in current page administration

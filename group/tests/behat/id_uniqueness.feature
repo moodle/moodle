@@ -15,8 +15,7 @@ Feature: Uniqueness of Group ID number
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
 
   Scenario: Group ID number uniqueness
     Given I press "Create group"

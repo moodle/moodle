@@ -179,8 +179,7 @@ Feature: Content bank use editor feature
       | contextlevel | reference | contenttype     | user     | contentname       | filepath                              |
       | Course       | C1        | contenttype_h5p | admin    | filltheblanks.h5p | /h5p/tests/fixtures/filltheblanks.h5p |
       | Course       | C1        | contenttype_h5p | teacher1 | ipsums.h5p        | /h5p/tests/fixtures/ipsums.h5p        |
-    And I am on "Course 1" course homepage
-    And I navigate to "Copy course" in current page administration
+    And I am on the "Course 1" "course copy" page
     And I set the following fields to these values:
       | Course full name  | Copy |
       | Course short name | Copy |

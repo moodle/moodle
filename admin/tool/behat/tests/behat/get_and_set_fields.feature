@@ -33,8 +33,7 @@ Feature: Verify that all form fields values can be get and set
       | activity | course | idnumber | name | intro | firstpagetitle | wikimode | visible |
       | wiki | C1 | wiki1 | Test this one | Test this one | Test this one | collaborative | 0 |
     And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    And I am on the "Course 1" "reset" page
     # Select (multi-select) - Checking "the select box should contain".
     And I expand all fieldsets
     And the "Unenrol users" select box should contain "No roles"
@@ -147,8 +146,7 @@ Feature: Verify that all form fields values can be get and set
 
   @javascript
   Scenario: with JS enabled all form fields getters and setters works as expected
-    Then I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    Then I am on the "Course 1" "groups" page
     # Select (multi-select & AJAX) - Checking "I set the field" and "select box should contain".
     And I set the field "groups" to "Group 2"
     And the "members" select box should contain "Student 2 (s2@example.com)"

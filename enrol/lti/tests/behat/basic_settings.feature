@@ -30,8 +30,7 @@ Feature: Check that settings are adhered to when creating an enrolment plugin
 
   Scenario: As an admin set site-wide settings for the enrolment plugin and ensure they are used
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I am on the "Course 1" "enrolment methods" page
     And I select "Publish as LTI tool" from the "Add method" singleselect
     When I expand all fieldsets
     Then the field "Email display" matches value "Allow everyone to see my email address"
