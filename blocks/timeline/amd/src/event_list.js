@@ -28,7 +28,8 @@ define(
     'core/templates',
     'core/str',
     'core/user_date',
-    'block_timeline/calendar_events_repository'
+    'block_timeline/calendar_events_repository',
+    'core/pending'
 ],
 function(
     $,
@@ -36,7 +37,8 @@ function(
     Templates,
     Str,
     UserDate,
-    CalendarEventsRepository
+    CalendarEventsRepository,
+    Pending
 ) {
 
     var SECONDS_IN_DAY = 60 * 60 * 24;
@@ -215,6 +217,7 @@ function(
      * @param {object} additionalConfig Additional config options to pass to pagedContentFactory.
      */
     var init = function(root, additionalConfig = {}) {
+        const pendingPromise = new Pending('block/timeline:event-init');
         root = $(root);
 
         courseview = !!additionalConfig.courseview;
@@ -286,6 +289,8 @@ function(
                 });
 
                 return html;
+            }).then(() => {
+                return pendingPromise.resolve();
             })
             .catch(Notification.exception);
     };
