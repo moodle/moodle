@@ -751,4 +751,185 @@ class secondary extends view {
             }
         }
     }
+
+    /**
+     * Takes the given navigation nodes and searches for children and formats it all into an array in a format to be used by a
+     * url_select element.
+     *
+     * @param navigation_node[] $navigationnodes Navigation nodes to format into a menu.
+     * @param bool $forceheadings Whether the returned array should be forced to use headings.
+     * @return array|null A url select element for navigating through the navigation nodes.
+     */
+    public static function create_menu_element(array $navigationnodes, bool $forceheadings = false): ?array {
+        if (empty($navigationnodes)) {
+            return null;
+        }
+
+        // If one item, do we put this into a url_select?
+        if (count($navigationnodes) < 2) {
+            // Check if there are children.
+            $navnode = array_shift($navigationnodes);
+            $menudata = [];
+            if (!$navnode->has_children()) {
+                // Just one item.
+                if (!$navnode->has_action()) {
+                    return null;
+                }
+                $menudata[$navnode->action->out(false)] = static::format_node_text($navnode);
+            } else {
+                if (static::does_menu_need_headings($navnode) || $forceheadings) {
+                    // Let's do headings.
+                    $menudata = static::get_headings_nav_array($navnode);
+                } else {
+                    // Simple flat nav.
+                    $menudata = static::get_flat_nav_array($navnode);
+                }
+            }
+            return $menudata;
+        } else {
+            // We have more than one navigation node to handle. Put each node in it's own heading.
+            $menudata = [];
+            $titledata = [];
+            foreach ($navigationnodes as $navigationnode) {
+                if ($navigationnode->has_children()) {
+                    $menuarray = [];
+                    // Add a heading and flatten out everything else.
+                    if ($navigationnode->has_action()) {
+                        $menuarray[static::format_node_text($navigationnode)][$navigationnode->action->out(false)] =
+                            static::format_node_text($navigationnode);
+                        $menuarray[static::format_node_text($navigationnode)] += static::get_whole_tree_flat($navigationnode);
+                    } else {
+                        $menuarray[static::format_node_text($navigationnode)] = static::get_whole_tree_flat($navigationnode);
+                    }
+
+                    $titledata += $menuarray;
+                } else {
+                    // Add with no heading.
+                    if (!$navigationnode->has_action()) {
+                        return null;
+                    }
+                    $menudata[$navigationnode->action->out(false)] = static::format_node_text($navigationnode);
+                }
+            }
+            $menudata += [$titledata];
+            return $menudata;
+        }
+    }
+
+    /**
+     * Recursively goes through the provided navigation node and returns a flat version.
+     *
+     * @param navigation_node $navigationnode The navigationnode.
+     * @return array The whole tree flat.
+     */
+    protected static function get_whole_tree_flat(navigation_node $navigationnode): array {
+        $nodes = [];
+        foreach ($navigationnode->children as $child) {
+            if ($child->has_action()) {
+                $nodes[$child->action->out()] = $child->text;
+            }
+            if ($child->has_children()) {
+                $childnodes = static::get_whole_tree_flat($child);
+                $nodes = array_merge($nodes, $childnodes);
+            }
+        }
+        return $nodes;
+    }
+
+    /**
+     * Checks to see if the provided navigation node has children and determines if we want headings for a url select element.
+     *
+     * @param navigation_node  $navigationnode  The navigation node we are checking.
+     * @return bool Whether we want headings or not.
+     */
+    protected static function does_menu_need_headings(navigation_node $navigationnode): bool {
+        if (!$navigationnode->has_children()) {
+            return false;
+        }
+        foreach ($navigationnode->children as $child) {
+            if ($child->has_children()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Takes the navigation node and returns it in a flat fashion. This is not recursive.
+     *
+     * @param navigation_node $navigationnode The navigation node that we want to format into an array in a flat structure.
+     * @return array The flat navigation array.
+     */
+    protected static function get_flat_nav_array(navigation_node $navigationnode): array {
+        $menuarray = [];
+        if ($navigationnode->has_action()) {
+            $menuarray[$navigationnode->action->out(false)] = static::format_node_text($navigationnode);
+        }
+
+        foreach ($navigationnode->children as $child) {
+            if ($child->has_action()) {
+                $menuarray[$child->action->out(false)] = static::format_node_text($child);
+            }
+        }
+        return $menuarray;
+    }
+
+    /**
+     * For any navigation node that we have determined needs headings we return a more tree like array structure.
+     *
+     * @param navigation_node $navigationnode The navigation node to use for the formatted array structure.
+     * @return array The headings navigation array structure.
+     */
+    protected static function get_headings_nav_array(navigation_node $navigationnode): array {
+        $menublock = [];
+        // We know that this single node has headings, so grab this for the first heading.
+        $firstheading = [];
+        if ($navigationnode->has_action()) {
+            $firstheading[static::format_node_text($navigationnode)][$navigationnode->action->out(false)] =
+                static::format_node_text($navigationnode);
+            $firstheading[static::format_node_text($navigationnode)] += static::get_more_child_nodes($navigationnode, $menublock);
+        } else {
+            $firstheading[static::format_node_text($navigationnode)] = static::get_more_child_nodes($navigationnode, $menublock);
+        }
+         return [$firstheading + $menublock];
+    }
+
+    /**
+     * Recursively goes and gets all children nodes.
+     *
+     * @param navigation_node $node The node to get the children of.
+     * @param array $menublock Used to put all child nodes in its own container.
+     * @return array The additional child nodes.
+     */
+    protected static function get_more_child_nodes(navigation_node $node, array &$menublock): array {
+        $nodes = [];
+        foreach ($node->children as $child) {
+            if (!$child->has_children()) {
+                if (!$child->has_action()) {
+                    continue;
+                }
+                $nodes[$child->action->out(false)] = static::format_node_text($child);
+            } else {
+                $newarray = [];
+                if ($child->has_action()) {
+                    $newarray[static::format_node_text($child)][$child->action->out(false)] = static::format_node_text($child);
+                    $newarray[static::format_node_text($child)] += static::get_more_child_nodes($child, $menublock);
+                } else {
+                    $newarray[static::format_node_text($child)] = static::get_more_child_nodes($child, $menublock);
+                }
+                $menublock += $newarray;
+            }
+        }
+        return $nodes;
+    }
+
+    /**
+     * Returns the navigation node text in a string.
+     *
+     * @param navigation_node $navigationnode The navigationnode to return the text string of.
+     * @return string The navigation node text string.
+     */
+    protected static function format_node_text(navigation_node $navigationnode): string {
+        return (is_a($navigationnode->text, 'lang_string')) ? $navigationnode->text->out() : $navigationnode->text;
+    }
 }
