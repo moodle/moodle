@@ -14660,15 +14660,19 @@ span.editinstructions {
   -webkit-overflow-scrolling: touch;
   z-index: 999;
   background-color: #f2f2f2;
-  -webkit-transition: right 0.5s ease, left 0.5s ease;
-  -moz-transition: right 0.5s ease, left 0.5s ease;
   transition: right 0.5s ease, left 0.5s ease; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-region="drawer"] {
+      transition: none; } }
 
 @media (min-width: 576px) {
   [data-region="drawer"] {
     padding: 20px 20px; }
   .jsenabled .btn-footer-popover {
-    transition: 0.2s; } }
+    transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease; } }
+  @media (min-width: 576px) and (prefers-reduced-motion: reduce) {
+    .jsenabled .btn-footer-popover {
+      transition: none; } }
 
 #nav-drawer {
   right: auto;
@@ -14697,9 +14701,10 @@ span.editinstructions {
   margin-top: 0; }
 
 body.drawer-ease {
-  -webkit-transition: margin-left 0.5s ease, margin-right 0.5s ease;
-  -moz-transition: margin-left 0.5s ease, margin-right 0.5s ease;
   transition: margin-left 0.5s ease, margin-right 0.5s ease; }
+  @media (prefers-reduced-motion: reduce) {
+    body.drawer-ease {
+      transition: none; } }
 
 @media (min-width: 768px) {
   body:not(.uses-drawers).drawer-open-left {
@@ -14761,6 +14766,9 @@ body.drawer-ease {
   position: fixed;
   height: 100vh;
   top: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .drawer {
+      transition: none; } }
   .drawer.drawer-right {
     width: 315px;
     max-width: 315px;
@@ -14809,7 +14817,12 @@ body.drawer-ease {
     z-index: 1050;
     position: fixed;
     height: 100vh;
-    top: 0; }
+    top: 0; } }
+  @media (max-width: 991.98px) and (prefers-reduced-motion: reduce) {
+    .drawer-md {
+      transition: none; } }
+
+@media (max-width: 991.98px) {
     .drawer-md.drawer-right {
       width: 315px;
       max-width: 315px;
@@ -14841,7 +14854,12 @@ body.drawer-ease {
     z-index: 1050;
     position: fixed;
     height: 100vh;
-    top: 0; }
+    top: 0; } }
+  @media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
+    .drawer-sm {
+      transition: none; } }
+
+@media (max-width: 767.98px) {
     .drawer-sm.drawer-right {
       width: 315px;
       max-width: 315px;
@@ -19972,6 +19990,9 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   margin: 0;
   opacity: 1;
   background-color: #fff; }
+  @media (prefers-reduced-motion: reduce) {
+    .layout.fullscreen {
+      transition: none; } }
   .layout.fullscreen > div {
     height: 100%;
     width: 100%; }
@@ -20073,7 +20094,12 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     height: calc(100vh - 50px);
     margin-top: 50px;
     left: 0;
-    right: 0; }
+    right: 0; } }
+  @media (min-width: 992px) and (prefers-reduced-motion: reduce) {
+    #page.drawers {
+      transition: none; } }
+
+@media (min-width: 992px) {
     #page.drawers.show-drawer-left {
       margin-left: 285px;
       margin-right: 0;
