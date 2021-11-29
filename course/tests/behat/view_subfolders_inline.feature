@@ -16,7 +16,7 @@ Feature: View subfolders in a course in-line
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Folder" to section "3" and I fill the form with:
+    And I add a "Folder" to section "2" and I fill the form with:
       | Name | Test folder |
       | Display folder contents | On a separate page |
       | Show subfolders expanded | |
