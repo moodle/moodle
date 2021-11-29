@@ -7,3 +7,17 @@
 #block-region-side-pre .block_timeline h6.event-action a.btn {
     width: auto;
 }
+
+.block_timeline .timeline-action-button {
+    margin-left: auto;
+}
+
+@media (max-width: 480px) {
+    .block_timeline .timeline-name {
+        width: 100%;
+    }
+
+    .block_timeline .timeline-action-button {
+        margin-left: 0;
+    }
+}

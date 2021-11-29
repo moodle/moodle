@@ -271,7 +271,7 @@ function(
                     loadingPlaceholder.addClass('hidden');
 
                     if (!data.loadedAll) {
-                        Templates.render(TEMPLATES.MORE_ACTIVITIES_BUTTON, {}).then(function(html) {
+                        Templates.render(TEMPLATES.MORE_ACTIVITIES_BUTTON, {courseview}).then(function(html) {
                             eventListContent.append(html);
                             setLastTimestamp(root, data.lastTimeStamp);
                             // Init the event handler.
