@@ -821,7 +821,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function standard_footer_html() {
-        global $CFG, $SCRIPT;
+        global $CFG;
 
         $output = '';
         if (during_initial_install()) {
@@ -862,7 +862,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function debug_footer_html() {
-        global $CFG;
+        global $CFG, $SCRIPT;
         $output = '';
 
         if (during_initial_install()) {
