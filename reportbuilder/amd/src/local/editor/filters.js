@@ -117,7 +117,8 @@ export const init = initialized => {
             Notification.saveCancelPromise(
                 getString('deletefilter', 'core_reportbuilder', filterName),
                 getString('deletefilterconfirm', 'core_reportbuilder', filterName),
-                getString('delete', 'core')
+                getString('delete', 'core'),
+                {triggerElement: reportRemoveFilter}
             ).then(() => {
                 const pendingPromise = new Pending('core_reportbuilder/filters:remove');
 
