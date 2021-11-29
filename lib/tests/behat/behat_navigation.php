@@ -736,11 +736,20 @@ class behat_navigation extends behat_base {
      * Recognised page names are:
      * | Page type                  | Identifier meaning        | description                          |
      * | Category                   | category idnumber         | List of courses in that category.    |
-     * | Course                     | course shortname          | Main course home pag                 |
+     * | Course                     | course shortname          | Main course home page                |
      * | Activity                   | activity idnumber         | Start page for that activity         |
      * | Activity editing           | activity idnumber         | Edit settings page for that activity |
      * | [modname] Activity         | activity name or idnumber | Start page for that activity         |
      * | [modname] Activity editing | activity name or idnumber | Edit settings page for that activity |
+     * | Backup                     | course shortname          | Course to backup                     |
+     * | Import                     | course shortname          | Course import from                   |
+     * | Restore                    | course shortname          | Course to restore from               |
+     * | Reset                      | course shortname          | Course to reset                      |
+     * | Course copy                | course shortname          | Course to copy                       |
+     * | Groups                     | course shortname          | Groups page for the course           |
+     * | Permissions                | course shortname          | Permissions page for the course      |
+     * | Enrolment methods          | course shortname          | Enrolment methods for the course     |
+     * | Enrolled users             | course shortname          | The main participants page           |
      *
      * Examples:
      *
@@ -787,6 +796,71 @@ class behat_navigation extends behat_base {
                 return new moodle_url('/course/modedit.php', [
                     'update' => $cm->id,
                 ]);
+            case 'backup':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                return new moodle_url('/backup/backup.php', ['id' => $courseid]);
+            case 'import':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                return new moodle_url('/backup/import.php', ['id' => $courseid]);
+            case 'restore':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                $context = context_course::instance($courseid);
+                return new moodle_url('/backup/restorefile.php', ['contextid' => $context->id]);
+            case 'reset':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                return new moodle_url('/course/reset.php', ['id' => $courseid]);
+            case 'course copy':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                return new moodle_url('/backup/copy.php', ['id' => $courseid]);
+            case 'groups':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                return new moodle_url('/group/index.php', ['id' => $courseid]);
+            case 'permissions':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                $context = context_course::instance($courseid);
+                return new moodle_url('/admin/roles/permissions.php', ['contextid' => $context->id]);
+            case 'enrolment methods':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                return new moodle_url('/enrol/instances.php', ['id' => $courseid]);
+            case 'enrolled users':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                return new moodle_url('/user/index.php', ['id' => $courseid]);
         }
 
         $parts = explode(' ', $type);
