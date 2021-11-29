@@ -18,6 +18,7 @@ namespace core\navigation\views;
 
 use navigation_node;
 use ReflectionMethod;
+use moodle_url;
 
 /**
  * Class core_secondary_testcase
@@ -738,6 +739,8 @@ class secondary_test extends \advanced_testcase {
      */
     public function test_get_overflow_menu_data(string $selectedurl, bool $expectednull, bool $emptynode = false) {
         global $PAGE;
+
+        $this->resetAfterTest();
         // Custom nodes - mimicing nodes added via 3rd party plugins.
         $structure = [
             'parentnode1' => [
@@ -752,6 +755,11 @@ class secondary_test extends \advanced_testcase {
             ],
             'parentnode2' => "/view/module.php"
         ];
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = \context_course::instance($course->id);
+        $PAGE->set_context($context);
+
         $PAGE->set_url($selectedurl);
         navigation_node::override_active_url(new \moodle_url($selectedurl));
         $node = $this->generate_node_tree_construct($structure, 'primarynode');
@@ -813,6 +821,97 @@ class secondary_test extends \advanced_testcase {
                 '/course/settings.php',
                 true
             ],
+        ];
+    }
+
+    /**
+     * Test the course administration settings return an overflow menu.
+     *
+     * @dataProvider test_get_overflow_menu_data_course_admin_provider
+     * @param string $url Url of the page we are testing.
+     * @param string $contextidentifier id or contextid or something similar.
+     * @param bool $expected The expected return. True to return the overflow menu otherwise false for nothing.
+     */
+    public function test_get_overflow_menu_data_course_admin(string $url, string $contextidentifier, bool $expected): void {
+        global $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $pagecourse = $this->getDataGenerator()->create_course();
+        $contextrecord = \context_course::instance($pagecourse->id, MUST_EXIST);
+
+        $id = ($contextidentifier == 'contextid') ? $contextrecord->id : $pagecourse->id;
+
+        $pageurl = new \moodle_url($url, [$contextidentifier => $id]);
+        $PAGE->set_url($pageurl);
+        navigation_node::override_active_url($pageurl);
+        $PAGE->set_course($pagecourse);
+        $PAGE->set_context($contextrecord);
+
+        $node = new secondary($PAGE);
+        $node->initialise();
+        $result = $node->get_overflow_menu_data();
+        if ($expected) {
+            $this->assertInstanceOf('url_select', $result);
+            $this->assertTrue($pageurl->compare($result->selected));
+        } else {
+            $this->assertNull($result);
+        }
+    }
+
+    /**
+     * Data provider for the other half of the method thing
+     *
+     * @return array Provider information.
+     */
+    public function test_get_overflow_menu_data_course_admin_provider(): array {
+        return [
+            "Backup page returns overflow" => [
+                '/backup/backup.php',
+                'id',
+                true
+            ],
+            "Restore course page returns overflow" => [
+                '/backup/restorefile.php',
+                'contextid',
+                true
+            ],
+            "Import course page returns overflow" => [
+                '/backup/import.php',
+                'id',
+                true
+            ],
+            "Course copy page returns overflow" => [
+                '/backup/copy.php',
+                'id',
+                true
+            ],
+            "Course reset page returns overflow" => [
+                '/course/reset.php',
+                'id',
+                true
+            ],
+            // The following pages should not return the overflow menu.
+            "Course page returns nothing" => [
+                '/course/view.php',
+                'id',
+                false
+            ],
+            "Question bank should return nothing" => [
+                '/question/edit.php',
+                'courseid',
+                false
+            ],
+            "Reports should return nothing" => [
+                '/report/log/index.php',
+                'id',
+                false
+            ],
+            "Participants page should return nothing" => [
+                '/user/index.php',
+                'id',
+                false
+            ]
         ];
     }
 }
