@@ -110,8 +110,29 @@ class participants_action_bar implements \renderable {
             }
         }
 
-        // TODO: Implement MDL-72930.
+        // Need to do some funky code here to find out if we have added third party navigation nodes.
+        $thirdpartynodearray = $this->get_thirdparty_node_array() ?: [];
+        $formattedcontent = array_merge($formattedcontent, $thirdpartynodearray);
         return $formattedcontent;
+    }
+
+    /**
+     * Gets an array of third party navigation nodes in an array formatted for a url_select element.
+     *
+     * @return array|null The thirdparty node array.
+     */
+    protected function get_thirdparty_node_array(): ?array {
+        $results = [];
+
+        $flatnodes = array_merge(...(array_values($this->get_ordered_nodes())));
+
+        foreach ($this->node->children as $child) {
+            if (array_search($child->key, $flatnodes) === false) {
+                $results[] = $child;
+            }
+        }
+
+        return \core\navigation\views\secondary::create_menu_element($results, true);
     }
 
     /**
