@@ -36,10 +36,12 @@ class course_selector extends base {
      * @param MoodleQuickForm $mform
      */
     public function setup_form(MoodleQuickForm $mform): void {
+        $operatorlabel = get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header());
         $options = [
             'multiple' => true,
         ];
-        $mform->addElement('course', $this->name . '_values', get_string('selectcourses', 'core_reportbuilder'), $options)
+
+        $mform->addElement('course', $this->name . '_values', $operatorlabel, $options)
             ->setHiddenLabel(true);
     }
 

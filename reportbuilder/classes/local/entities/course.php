@@ -327,7 +327,7 @@ class course extends base {
         $filters[] = (new filter(
             course_selector::class,
             'courseselector',
-            new lang_string('courses'),
+            new lang_string('courseselect', 'core_reportbuilder'),
             $this->get_entity_name(),
             "{$tablealias}.id"
         ))
