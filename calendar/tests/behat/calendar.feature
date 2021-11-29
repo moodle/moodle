@@ -73,8 +73,9 @@ Feature: Perform basic calendar functionality
   @javascript
   Scenario: Create a group event
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I create a calendar event with form data:
+    And I follow "Full calendar"
+    And I set the field "course" to "C1"
+    And I create a calendar event:
       | Type of event | group |
       | Group         | Group 1 |
       | Event title | Really awesome event! |
@@ -139,12 +140,13 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Module events editing
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
     And the following "activities" exist:
       | activity | course | idnumber | name        | intro                   | timeopen      | timeclose     |
       | choice   | C1     | choice1  | Test choice | Test choice description | ##today## | ##today##  |
     When I follow "Full calendar"
+    And I set the field "course" to "C1"
     Then I should see "Test choice opens"
     And I should see "Test choice closes"
     When I click on "Test choice opens" "link"
@@ -186,8 +188,8 @@ Feature: Perform basic calendar functionality
     When I am viewing site calendar
     And I click on "New event" "button"
     Then the field "Type of event" matches value "User"
-    And I am on "Course 1" course homepage
-    And I follow "Full calendar"
+    And I click on "Close" "button"
+    And I set the field "course" to "C1"
     When I click on "New event" "button"
     Then the field "Type of event" matches value "Course"
 
