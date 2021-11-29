@@ -1307,11 +1307,6 @@ class calendar_information {
             $filters->title = get_string('eventskey', 'calendar');
             $renderer->add_pretend_calendar_block($filters, BLOCK_POS_RIGHT);
         }
-        $block = new block_contents;
-        $block->content = $renderer->fake_block_threemonths($this);
-        $block->footer = '';
-        $block->title = get_string('monthlyview', 'calendar');
-        $renderer->add_pretend_calendar_block($block, BLOCK_POS_RIGHT);
     }
 
     /**

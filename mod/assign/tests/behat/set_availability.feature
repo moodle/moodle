@@ -56,9 +56,8 @@ Feature: Set availability dates for an assignment
     And I log out
 
     And I am on the "C1" Course page logged in as student1
-    And I follow "Full calendar"
-    When I hover over day "2" of this month in the calendar
-    Then I should see "C1: Assignment name is due"
+    When I hover over day "2" of this month in the mini-calendar block
+    Then I should see "Assignment name is due"
 
   @_file_upload
   Scenario: Student can submit an assignment before the due date
