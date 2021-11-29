@@ -47,7 +47,11 @@ class behat_grading extends behat_base {
      */
     public function i_go_to_advanced_grading_page($activityname) {
 
-        $this->execute("behat_general::i_click_on_in_the", [$this->escape($activityname), 'link', 'page', 'region']);
+        try {
+            $this->execute("behat_general::i_click_on_in_the", [$this->escape($activityname), 'link', 'page', 'region']);
+        } catch (Exception $e) {
+            $this->execute('behat_navigation::go_to_breadcrumb_location', $this->escape($activityname));
+        }
 
         $this->execute('behat_navigation::i_navigate_to_in_current_page_administration',
             get_string('gradingmanagement', 'grading'));

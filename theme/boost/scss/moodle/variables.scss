@@ -29,3 +29,8 @@ $box-shadow-drawer-left: -0.25rem .25rem .8rem rgba($black, .025) !default;
 $box-shadow-drawer-right: 0 .25rem .8rem rgba($black, .025) !default;
 
 $moremenu-height: 60px !default;
+
+$primary-light-background: theme-color-level('primary', -12) !default;
+$primary-light-border: theme-color-level('primary', -2) !default;
+$primary-light-color: $body-color;
+$primary-light-hover: theme-color-level('primary', -10) !default;

@@ -27,7 +27,7 @@ Feature: A Teacher can comment in a question
   Scenario: Add a comment in question
     Given I log in as "teacher1"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I set the field "Select a category" to "Test questions"
     And I should see "0" on the comments column
     When I click "0" on the row on the comments column
@@ -41,7 +41,7 @@ Feature: A Teacher can comment in a question
   Scenario: Delete a comment from question
     Given I log in as "teacher1"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I set the field "Select a category" to "Test questions"
     And I should see "0" on the comments column
     When I click "0" on the row on the comments column
@@ -60,7 +60,7 @@ Feature: A Teacher can comment in a question
   Scenario: Preview question with comments
     Given I log in as "teacher1"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I set the field "Select a category" to "Test questions"
     And I choose "Preview" action for "First question" in the question bank
     Then I should see "Save comment"
@@ -86,7 +86,7 @@ Feature: A Teacher can comment in a question
     And I log out
     Then I log in as "teacher1"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I set the field "Select a category" to "Test questions"
     And I choose "Preview" action for "First question" in the question bank
     Then I should not see "Save comment"
@@ -104,7 +104,7 @@ Feature: A Teacher can comment in a question
     And I log out
     Then I log in as "teacher2"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I set the field "Select a category" to "Test questions"
     And I choose "Preview" action for "First question" in the question bank
     Then I should not see "Save comment"

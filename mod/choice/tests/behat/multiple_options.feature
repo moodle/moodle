@@ -45,7 +45,6 @@ Feature: Multiple option choice response
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Choice name"
-    And I click on "Actions menu" "link"
     And I follow "Settings"
     And I set the following fields to these values:
       | Limit 1 | 1 |

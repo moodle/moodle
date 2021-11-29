@@ -144,6 +144,11 @@ $title = $course->shortname . ': ' . format_string($quiz->name);
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 $output = $PAGE->get_renderer('mod_quiz');
+// MDL-71915 Will remove this place holder.
+if (defined('BEHAT_SITE_RUNNING')) {
+    $PAGE->has_secondary_navigation_setter(false);
+}
+$PAGE->add_header_action($OUTPUT->region_main_settings_menu());
 
 // Print table with existing attempts.
 if ($attempts) {

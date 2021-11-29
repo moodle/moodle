@@ -49,7 +49,7 @@ Feature: Manage data registry defaults
     And the field "categoryid" matches value "Not set (use the default value)"
     And the field "purposeid" matches value "Not set (use the default value)"
     And I should see "3 years"
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     And I click on "Physics 101" "link"
     And I wait until the page is ready
@@ -80,7 +80,7 @@ Feature: Manage data registry defaults
     Then the field "categoryid" matches value "Category 2"
     And the field "purposeid" matches value "Purpose 2"
     And I should see "5 years"
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     # Physics 101 is also a category, so it will get the category default.
     And I click on "Physics 101" "link"
@@ -102,7 +102,7 @@ Feature: Manage data registry defaults
     Then the field "categoryid" matches value "Category 2"
     And the field "purposeid" matches value "Purpose 2"
     And I should see "5 years"
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     # Physics 101 is also a category, so it will get the category default.
     And I click on "Physics 101" "link"
@@ -138,7 +138,7 @@ Feature: Manage data registry defaults
     Given I set the category and purpose for the course "Physics 101" to "Category 2" and "Purpose 2"
     And I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Set defaults" "link"
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the "#region-main" "css_element"
     And I should see "Inherit"
     And I should not see "Add a new module default"
     And I press "Edit"
@@ -150,7 +150,7 @@ Feature: Manage data registry defaults
     And I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Science and technology" "link"
     And I wait until the page is ready
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     And I click on "Physics 101" "link"
     And I wait until the page is ready
@@ -168,7 +168,7 @@ Feature: Manage data registry defaults
     Given I set the category and purpose for the course "Physics 101" to "Category 2" and "Purpose 2"
     And I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Set defaults" "link"
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the "#region-main" "css_element"
     And I should see "Inherit"
     And I should not see "Add a new module default"
     And I press "Edit"
@@ -181,7 +181,7 @@ Feature: Manage data registry defaults
     And I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Science and technology" "link"
     And I wait until the page is ready
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     And I click on "Physics 101" "link"
     And I wait until the page is ready
@@ -211,7 +211,7 @@ Feature: Manage data registry defaults
     And I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Science and technology" "link"
     And I wait until the page is ready
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     And I click on "Physics 101" "link"
     And I wait until the page is ready
@@ -240,7 +240,7 @@ Feature: Manage data registry defaults
     And I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Science and technology" "link"
     And I wait until the page is ready
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     And I click on "Physics 101" "link"
     And I wait until the page is ready
@@ -273,7 +273,7 @@ Feature: Manage data registry defaults
     And I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Science and technology" "link"
     And I wait until the page is ready
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     And I click on "Physics 101" "link"
     And I wait until the page is ready
@@ -303,7 +303,7 @@ Feature: Manage data registry defaults
     And I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Science and technology" "link"
     And I wait until the page is ready
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     And I click on "Physics 101" "link"
     And I wait until the page is ready
@@ -331,7 +331,7 @@ Feature: Manage data registry defaults
     And I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Science and technology" "link"
     And I wait until the page is ready
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     And I click on "Physics 101" "link"
     And I wait until the page is ready
@@ -360,7 +360,7 @@ Feature: Manage data registry defaults
     And I navigate to "Users > Privacy and policies > Data registry" in site administration
     And I click on "Science and technology" "link"
     And I wait until the page is ready
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".data-registry" "css_element"
     And I wait until the page is ready
     And I click on "Physics 101" "link"
     And I wait until the page is ready

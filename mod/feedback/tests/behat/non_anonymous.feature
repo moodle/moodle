@@ -53,7 +53,7 @@ Feature: Non anonymous feedback
     And I set the following fields to these values:
       | Yes of course | 1 |
     And I press "Submit your answers"
-    And I should not see "Submitted answers"
+    And I should not see "Analysis"
     And I press "Continue"
 
   @javascript
@@ -75,7 +75,7 @@ Feature: Non anonymous feedback
     And I set the following fields to these values:
       | Not at all | 1 |
     And I press "Submit your answers"
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And I should see "Submitted answers: 2"
     And I should see "Questions: 1"
     # And I should not see "multichoice2" # TODO MDL-29303 do not show labels to users who can not edit feedback
@@ -92,7 +92,6 @@ Feature: Non anonymous feedback
     And I click on "," "link" in the "Username 1" "table_row"
     And I should see "(Username 1)"
     And I should see "Yes of course"
-    And I follow "Back"
     And I log out
 
   @javascript
@@ -119,7 +118,7 @@ Feature: Non anonymous feedback
     And I set the following fields to these values:
       | Not at all | 1 |
     And I press "Submit your answers"
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And I should see "Submitted answers: 2"
     And I should see "Questions: 1"
     # And I should not see "multichoice2" # TODO MDL-29303

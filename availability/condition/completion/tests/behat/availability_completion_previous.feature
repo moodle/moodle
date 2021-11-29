@@ -42,6 +42,7 @@ Feature: Confirm that availability_completion works with previous activity setti
 
     # Remove Page 2 and check Page3 depends now on Page1.
     When I turn editing mode on
+    And I change window size to "large"
     And I delete "Page2" activity
     And I turn editing mode off
     Then I should see "Not available unless: The activity Page1 is marked complete" in the "region-main" "region"
@@ -92,6 +93,7 @@ Feature: Confirm that availability_completion works with previous activity setti
 
     # Test if I disable completion tracking on Page2 section 5 depends on Page2.
     When I turn editing mode on
+    And I change window size to "large"
     When I open "Page2" actions menu
     And I click on "Edit settings" "link" in the "Page2" activity
     And I set the following fields to these values:
@@ -120,6 +122,7 @@ Feature: Confirm that availability_completion works with previous activity setti
 
     # Remove Page 2 and check Section 4 depends now on Page1.
     When I turn editing mode on
+    And I change window size to "large"
     And I delete "Page2" activity
     And I turn editing mode off
     Then I should see "Not available unless: The activity Page1 is marked complete" in the "region-main" "region"
@@ -160,6 +163,7 @@ Feature: Confirm that availability_completion works with previous activity setti
   Scenario: Test previous activities on empty sections
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
+    And I change window size to "large"
 
     # Set section 2 restriction to Previous Activity with completion.
     When I edit the section "2"

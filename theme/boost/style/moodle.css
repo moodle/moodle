@@ -14603,7 +14603,8 @@ span.editinstructions {
 .automatic-completion-conditions .badge {
   font-size: 100%; }
 
-.activity-add {
+.activity-add,
+.block-add {
   border-radius: 0.25rem;
   color: #3584c9;
   background-color: #f5f9fc;
@@ -14612,13 +14613,17 @@ span.editinstructions {
   border-style: dashed;
   width: 100%;
   border-radius: 4px; }
-  .activity-add hr {
+  .activity-add hr,
+  .block-add hr {
     border-top-color: #3077b5; }
-  .activity-add .alert-link {
+  .activity-add .alert-link,
+  .block-add .alert-link {
     color: #2a69a1; }
-  .activity-add .pluscontainer {
+  .activity-add .pluscontainer,
+  .block-add .pluscontainer {
     border: 1px solid #3584c9; }
-  .activity-add:hover {
+  .activity-add:hover,
+  .block-add:hover {
     cursor: pointer;
     background-color: #cfe2f2; }
 

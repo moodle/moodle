@@ -36,7 +36,8 @@ Feature: Teacher can view and filter activity completion data by group and activ
   Scenario: Teacher can view the activity completion report using filtering and sorting options.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Activity completion" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Activity completion" from the "Report type" singleselect
     Then "My quiz B" "link" should appear before "My quiz A" "link"
     And I should see "My assignment"
     And I should see "My page"

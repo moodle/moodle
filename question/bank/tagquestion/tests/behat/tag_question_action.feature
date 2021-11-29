@@ -22,14 +22,14 @@ Feature: Use the qbank plugin manager page for tagquestion
     And I should see "Tag question"
     And I click on "Disable" "link" in the "Tag question" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
-    And I click on "#action-menu-toggle-2" "css_element" in the "First question" "table_row"
+    And I navigate to "Question bank" in current page administration
+    And I click on "#action-menu-toggle-1" "css_element" in the "First question" "table_row"
     Then I should not see "Manage tags"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Tag question" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
-    And I click on "#action-menu-toggle-2" "css_element" in the "First question" "table_row"
+    And I navigate to "Question bank" in current page administration
+    And I click on "#action-menu-toggle-1" "css_element" in the "First question" "table_row"
     And I should see "Manage tags"
 
   Scenario: Enable/disable tagquestion section from question edit form
@@ -38,12 +38,12 @@ Feature: Use the qbank plugin manager page for tagquestion
     And I should see "Tag question"
     And I click on "Disable" "link" in the "Tag question" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I choose "Edit question" action for "First question" in the question bank
     Then I should not see "Tags" in the "region-main" "region"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Tag question" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I choose "Edit question" action for "First question" in the question bank
     And I should see "Tags" in the "region-main" "region"

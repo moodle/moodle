@@ -129,16 +129,14 @@ Feature: Upload users
     And I press "Upload users"
     And I should see "Users created: 4"
     And I press "Continue"
-    And I log out
     # Boost check.
-    And I log in as "jonest"
-    And I am on "Maths" course homepage
-    And "Calendar" "link" should be visible
-    And I log out
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I click on ".icon[title=Edit]" "css_element" in the "jonest@example.com" "table_row"
+    And I should see "Boost"
     # Classic check.
-    And I log in as "reznor"
-    And I am on "Maths" course homepage
-    And "Calendar" "link" should not be visible
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I click on ".icon[title=Edit]" "css_element" in the "reznor@example.com" "table_row"
+    And I should see "Classic"
 
   @javascript
   Scenario: Upload users setting their user theme when allowuserthemes is false

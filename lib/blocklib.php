@@ -837,12 +837,23 @@ class block_manager {
         }
     }
 
-    public function add_block_at_end_of_default_region($blockname) {
+    /**
+     * When passed a block name create a new instance of the block in the specified region.
+     *
+     * @param string $blockname Name of the block to add.
+     * @param null|string $blockregion If defined add the new block to the specified region.
+     */
+    public function add_block_at_end_of_default_region($blockname, $blockregion = null) {
         if (empty($this->birecordsbyregion)) {
             // No blocks or block regions exist yet.
             return;
         }
-        $defaulregion = $this->get_default_region();
+
+        if ($blockregion === null) {
+            $defaulregion = $this->get_default_region();
+        } else {
+            $defaulregion = $blockregion;
+        }
 
         $lastcurrentblock = end($this->birecordsbyregion[$defaulregion]);
         if ($lastcurrentblock) {
@@ -1458,6 +1469,8 @@ class block_manager {
         global $CFG, $PAGE, $OUTPUT;
 
         $blocktype = optional_param('bui_addblock', null, PARAM_PLUGIN);
+        $blockregion = optional_param('bui_blockregion', null, PARAM_TEXT);
+
         if ($blocktype === null) {
             return false;
         }
@@ -1519,7 +1532,7 @@ class block_manager {
             throw new moodle_exception('cannotaddthisblocktype', '', $this->page->url->out(), $blocktype);
         }
 
-        $this->add_block_at_end_of_default_region($blocktype);
+        $this->add_block_at_end_of_default_region($blocktype, $blockregion);
 
         // If the page URL was a guess, it will contain the bui_... param, so we must make sure it is not there.
         $this->page->ensure_param_not_in_url('bui_addblock');

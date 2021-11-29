@@ -17,7 +17,8 @@ Feature: Access permission to content Bank
 
   Scenario: Admins access content bank
     Given I log in as "admin"
-    Then "Content bank" "link" should exist
+    And I am on "Course 1" course homepage
+    Then "Content bank" "link" should exist in current page administration
 
   Scenario: Editing teachers can access content bank at course level
     Given I log in as "teacher1"

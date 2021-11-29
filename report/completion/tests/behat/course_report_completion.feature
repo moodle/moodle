@@ -26,7 +26,8 @@ Feature: In a course administration page, navigate through report page, test for
       | id_criteria_self | 1 |
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    When I navigate to "Reports > Course completion" in current page administration
+    When I navigate to "Reports" in current page administration
+    And I select "Course completion" from the "Report type" singleselect
     Then "Report" "field" should exist
     And the "Report" select box should contain "Course completion"
     And the field "Report" matches value "Course completion"

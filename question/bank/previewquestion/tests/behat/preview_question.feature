@@ -25,7 +25,7 @@ Feature: A teacher can preview questions in the question bank
       | Test questions   | numerical | Test question to be previewed |
     And I log in as "teacher1"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     When I choose "Preview" action for "Test question to be previewed" in the question bank
 
   Scenario: Question preview shows the question and other information

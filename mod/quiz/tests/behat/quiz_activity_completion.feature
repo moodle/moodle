@@ -75,7 +75,8 @@ Feature: View activity completion in the quiz activity
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Activity completion" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Activity completion" from the "Report type" singleselect
     And "<expectedactivitycompletion>" "icon" should exist in the "Student 1" "table_row"
 
     Examples:

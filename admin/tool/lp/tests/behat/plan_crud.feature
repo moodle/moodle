@@ -152,7 +152,7 @@ Feature: Manage plearning plan
     And I create a course with:
       | Course full name | New course fullname |
       | Course short name | New course shortname |
-    And I follow "Competencies"
+    And I navigate to "Competencies" in current page administration
     And I press "Add competencies to course"
     And "Competency picker" "dialogue" should be visible
     And I select "comp1" of the competency tree

@@ -87,7 +87,7 @@ Feature: Feedbacks in courses with groups
       | I don't know | 1 |
     # View analysis, user1 should only see one group - group 1
     And I am on the "Course feedback" "feedback activity" page logged in as user1
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And I should see "Separate groups: Group 1"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
@@ -95,7 +95,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # View analysis, user3 should only see one group - group 2
     And I am on the "Course feedback" "feedback activity" page logged in as user3
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And I should see "Separate groups: Group 2"
     And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
@@ -103,7 +103,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # View analysis, user2 should see a group selector and be able to change the group but not view all.
     And I am on the "Course feedback" "feedback activity" page logged in as user2
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And the field "Separate groups" matches value "Group 1"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
@@ -116,7 +116,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # User without group can see all participants only
     And I am on the "Course feedback" "feedback activity" page logged in as user7
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And I should see "Separate groups: All participants"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"
@@ -165,7 +165,7 @@ Feature: Feedbacks in courses with groups
     And I log in as "user1" and complete feedback "Course anon feedback" in course "Course 1" with:
       | Not at all | 1 |
     And I am on the "Course anon feedback" "feedback activity" page logged in as user1
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And I should see "There are insufficient responses for this group"
     And I should not see "Yes of course"
     And I log out
@@ -183,7 +183,7 @@ Feature: Feedbacks in courses with groups
       | I don't know | 1 |
     # View analysis, user1 should only see one group - group 1
     And I am on the "Course anon feedback" "feedback activity" page logged in as user1
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And I should see "Separate groups: Group 1"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
@@ -191,7 +191,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # View analysis, user3 should only see one group - group 2
     And I am on the "Course anon feedback" "feedback activity" page logged in as user3
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And I should see "Separate groups: Group 2"
     And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
@@ -199,7 +199,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # View analysis, user2 should see a group selector and be able to change the group but not view all.
     And I am on the "Course anon feedback" "feedback activity" page logged in as user2
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And the field "Separate groups" matches value "Group 1"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
@@ -212,7 +212,7 @@ Feature: Feedbacks in courses with groups
     And I log out
     # User without group can see all participants only
     And I am on the "Course anon feedback" "feedback activity" page logged in as user7
-    And I follow "Submitted answers"
+    And I follow "Analysis"
     And I should see "Separate groups: All participants"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"

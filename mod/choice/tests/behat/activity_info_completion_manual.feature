@@ -53,7 +53,8 @@ Feature: Manual completion in the choice activity
   @javascript
   Scenario: Overriding a manual choice completion for a user to done
     Given I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "Reports > Activity completion" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Activity completion" from the "Report type" singleselect
     And I click on "Student 1, What to drink?: Not completed" "link"
     And I press "Save changes"
     And I log out
@@ -69,7 +70,8 @@ Feature: Manual completion in the choice activity
     And I wait until the page is ready
     And I log out
     And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "Reports > Activity completion" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Activity completion" from the "Report type" singleselect
     And I click on "Student 1, What to drink?: Completed" "link"
     And I press "Save changes"
     And I log out

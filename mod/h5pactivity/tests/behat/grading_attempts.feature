@@ -48,7 +48,7 @@ Feature: Change grading options in an H5P activity
 
   @javascript
   Scenario: Default grading is max attempt grade
-    Given I am on the "Awesome H5P package" "h5pactivity activity" page logged in as teacher1
+    Given I am on the "Course 1" course page logged in as teacher1
     When I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:

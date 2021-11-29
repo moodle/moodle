@@ -58,6 +58,10 @@ class secondary extends view {
                 'outcomes' => 2.2,
                 'coursecompletion' => 6,
                 'filtermanagement' => 9,
+                'unenrolself' => 10,
+                'coursetags' => 11,
+                'download' => 12,
+                'contextlocking' => 13,
             ],
         ];
         $nodes['navigation'] = [
