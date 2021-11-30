@@ -188,7 +188,7 @@ Feature: Perform basic calendar functionality
     When I am viewing site calendar
     And I click on "New event" "button"
     Then the field "Type of event" matches value "User"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "New event" "dialogue"
     And I set the field "course" to "C1"
     When I click on "New event" "button"
     Then the field "Type of event" matches value "Course"
