@@ -177,9 +177,9 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $task = reset($tasks);
         $task->set_minute('1');
         $task->set_hour('2');
-        $task->set_month('3');
-        $task->set_day_of_week('4');
-        $task->set_day('5');
+        $task->set_day('3');
+        $task->set_month('4');
+        $task->set_day_of_week('5');
         $task->set_customised('1');
         \core\task\manager::configure_scheduled_task($task);
 
@@ -230,9 +230,9 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Edit a task to simulate a change in its definition (as if it was not customised).
         $task->set_minute('1');
         $task->set_hour('2');
-        $task->set_month('3');
-        $task->set_day_of_week('4');
-        $task->set_day('5');
+        $task->set_day('3');
+        $task->set_month('4');
+        $task->set_day_of_week('5');
         \core\task\manager::configure_scheduled_task($task);
 
         // Fetch the task out for comparison.
@@ -562,16 +562,16 @@ class core_scheduled_task_testcase extends advanced_testcase {
                         'min'   => '10',
                         'hour'  => '13',
                         'day'   => '1',
-                        'week'  => '2',
-                        'month' => '4',
+                        'month' => '2',
+                        'week'  => '4',
                         'disabled' => 0,
                     ),
                     '\core\task\scheduled_test2_task' => array(
                         'min'   => '*',
                         'hour'  => '*',
                         'day'   => '*',
-                        'week'  => '*',
                         'month' => '*',
+                        'week'  => '*',
                         'disabled' => 1,
                     ),
                 )
@@ -592,16 +592,16 @@ class core_scheduled_task_testcase extends advanced_testcase {
                         'min'   => '1',
                         'hour'  => '2',
                         'day'   => '3',
-                        'week'  => '4',
-                        'month' => '5',
+                        'month' => '4',
+                        'week'  => '5',
                         'disabled' => 0,
                     ),
                     '\core\task\scheduled_test2_task' => array(
                         'min'   => '1',
                         'hour'  => '2',
                         'day'   => '3',
-                        'week'  => '4',
-                        'month' => '5',
+                        'month' => '4',
+                        'week'  => '5',
                         'disabled' => 0,
                     ),
                 )
