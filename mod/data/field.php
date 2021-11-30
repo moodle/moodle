@@ -349,6 +349,7 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
 } else {                                              /// Display the main listing of all fields
     $fieldactionbar = $actionbar->get_fields_action_bar(true, true, true);
     data_print_header($course, $cm, $data, 'fields', $fieldactionbar);
+    echo $OUTPUT->heading(get_string('managefields', 'data'), 2);
 
     if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {
         echo $OUTPUT->notification(get_string('nofieldindatabase','data'));  // nothing in database
