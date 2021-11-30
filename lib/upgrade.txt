@@ -128,6 +128,26 @@ completely removed from Moodle core too.
   -get_safe_orderby() - where a single sort parameter is required.
   -get_safe_orderby_multiple() - where multiple sort parameters are required.
 * Added the cleanstr mustache template helper to clean strings after loading them from language packs.
+* The following behat functions have been modified to work with the new navigation
+  - i_add_the_block
+  - the_add_block_selector_should_contain_block
+  - the_add_block_selector_should_contain_block
+  - go_to_the_current_course_activity_completion_report
+  - i_navigate_to_course_participants
+  - i_go_to_advanced_grading_page
+  - i_navigate_to_in_the_course_gradebook
+  - should_exist_in_current_page_administration
+  - should_not_exist_in_current_page_administration
+  - go_to_main_course_page
+  - select_on_administration_page
+  - find_header_administration_menu
+  - select_from_administration_menu
+  - i_edit_the_lesson
+  - i_add_a_question_filling_the_form_with
+
+* The following behat step has been deprecated
+  - i_select_from_flat_navigation_drawer
+
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
