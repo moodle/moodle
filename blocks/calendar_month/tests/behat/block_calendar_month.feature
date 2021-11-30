@@ -82,13 +82,11 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I turn editing mode on
     And I add the "Calendar" block
     And I click on "Full calendar" "link"
-    And I click on "New event" "button"
-    And I set the following fields to these values:
-      | id_eventtype | Group |
-      | id_name | Group Event |
-    And I set the following fields to these values:
-      | Group | Group 1 |
-    And I press "Save"
+    And I set the field "course" to "C1"
+    And I create a calendar event:
+      | Type of event | group       |
+      | Group         | Group 1     |
+      | Event title   | Group Event |
     And I log out
     Then I log in as "student1"
     And I am on "Course 1" course homepage
