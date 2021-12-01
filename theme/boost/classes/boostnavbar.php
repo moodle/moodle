@@ -189,10 +189,12 @@ class boostnavbar implements \renderable {
 
     /**
      * Remove items that are categories or have no actions associated with them.
+     *
+     * The only exception is the last item in the list which may not have a link but needs to be displayed.
      */
     protected function remove_no_link_items(): void {
         foreach ($this->items as $key => $value) {
-            if (!$value->has_action() || $value->type == \navigation_node::TYPE_SECTION) {
+            if (!$value->is_last() && (!$value->has_action() || $value->type == \navigation_node::TYPE_SECTION)) {
                 unset($this->items[$key]);
             }
         }
