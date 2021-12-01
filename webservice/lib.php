@@ -187,7 +187,7 @@ class webservice {
             $event->add_record_snapshot('external_tokens', $token);
             $event->set_legacy_logdata(array(SITEID, 'webservice', 'user suspended', '', $user->username));
             $event->trigger();
-            throw new webservice_access_exception('Refused web service access for suspended username: ' . $user->username);
+            throw new moodle_exception('wsaccessusersuspended', 'moodle', '', $user->username);
         }
 
         //check if the auth method is nologin (in this case refuse connection)
@@ -198,7 +198,7 @@ class webservice {
             $event->add_record_snapshot('external_tokens', $token);
             $event->set_legacy_logdata(array(SITEID, 'webservice', 'nologin auth attempt with web service', '', $user->username));
             $event->trigger();
-            throw new webservice_access_exception('Refused web service access for nologin authentication username: ' . $user->username);
+            throw new moodle_exception('wsaccessusernologin', 'moodle', '', $user->username);
         }
 
         //Check if the user password is expired
@@ -1071,7 +1071,7 @@ abstract class webservice_server implements webservice_server_interface {
             $event->set_legacy_logdata(array(SITEID, '', '', '', get_string('wsaccessuserdeleted', 'webservice',
                 $user->username) . " - ".getremoteaddr(), 0, $user->id));
             $event->trigger();
-            throw new webservice_access_exception('Refused web service access for deleted username: ' . $user->username);
+            throw new moodle_exception('wsaccessuserdeleted', 'webservice', '', $user->username);
         }
 
         //only confirmed user should be able to call web service
@@ -1095,7 +1095,7 @@ abstract class webservice_server implements webservice_server_interface {
             $event->set_legacy_logdata(array(SITEID, '', '', '', get_string('wsaccessusersuspended', 'webservice',
                 $user->username) . " - ".getremoteaddr(), 0, $user->id));
             $event->trigger();
-            throw new webservice_access_exception('Refused web service access for suspended username: ' . $user->username);
+            throw new moodle_exception('wsaccessusersuspended', 'webservice', '', $user->username);
         }
 
         //retrieve the authentication plugin if no previously done
@@ -1114,7 +1114,7 @@ abstract class webservice_server implements webservice_server_interface {
                 $event->set_legacy_logdata(array(SITEID, '', '', '', get_string('wsaccessuserexpired', 'webservice',
                     $user->username) . " - ".getremoteaddr(), 0, $user->id));
                 $event->trigger();
-                throw new webservice_access_exception('Refused web service access for password expired username: ' . $user->username);
+                throw new moodle_exception('wsaccessuserexpired', 'webservice', '', $user->username);
             }
         }
 
@@ -1127,7 +1127,7 @@ abstract class webservice_server implements webservice_server_interface {
             $event->set_legacy_logdata(array(SITEID, '', '', '', get_string('wsaccessusernologin', 'webservice',
                 $user->username) . " - ".getremoteaddr(), 0, $user->id));
             $event->trigger();
-            throw new webservice_access_exception('Refused web service access for nologin authentication username: ' . $user->username);
+            throw new moodle_exception('wsaccessusernologin', 'webservice', '', $user->username);
         }
 
         // now fake user login, the session is completely empty too
