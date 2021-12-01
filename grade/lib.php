@@ -3244,5 +3244,23 @@ abstract class grade_helper {
         }
         return $result;
     }
+
+    /**
+     * Resets all static caches.
+     *
+     * @return void
+     */
+    public static function reset_caches() {
+        self::$managesetting = null;
+        self::$gradereports = null;
+        self::$gradereportpreferences = null;
+        self::$scaleinfo = null;
+        self::$outcomeinfo = null;
+        self::$letterinfo = null;
+        self::$importplugins = null;
+        self::$exportplugins = null;
+        self::$pluginstrings = null;
+        self::$aggregationstrings = null;
+    }
 }
 
