@@ -58,7 +58,8 @@ $itemids = array(0 => get_string('allgradeitems', 'gradereport_history')) + $ite
 
 $output = $PAGE->get_renderer('gradereport_history');
 $graders = \gradereport_history\helper::get_graders($course->id);
-$params = array('course' => $course, 'itemids' => $itemids, 'graders' => $graders, 'userbutton' => null);
+$params = ['course' => $course, 'itemids' => $itemids, 'graders' => $graders,
+        'userbutton' => null, 'userfullnames' => ''];
 $mform = new \gradereport_history\filter_form(null, $params);
 $filters = array();
 if ($data = $mform->get_data()) {
@@ -85,7 +86,7 @@ $names = array();
 foreach ($table->get_selected_users() as $key => $user) {
     $names[$key] = fullname($user);
 }
-$filters['userfullnames'] = implode(',', $names);
+$userfullnames = implode(', ', $names);
 
 // Set up js.
 \gradereport_history\helper::init_js($course->id, $names);
@@ -94,7 +95,8 @@ $filters['userfullnames'] = implode(',', $names);
 $button = new \gradereport_history\output\user_button($PAGE->url, get_string('selectusers', 'gradereport_history'), 'get');
 
 $userbutton = $output->render($button);
-$params = array('course' => $course, 'itemids' => $itemids, 'graders' => $graders, 'userbutton' => $userbutton);
+$params = ['course' => $course, 'itemids' => $itemids, 'graders' => $graders,
+        'userbutton' => $userbutton, 'userfullnames' => $userfullnames];
 $mform = new \gradereport_history\filter_form(null, $params);
 $mform->set_data($filters);
 

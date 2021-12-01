@@ -58,11 +58,22 @@ Feature: A teacher checks the grade history report in a course
       | Student 1          | Rewarding assignment          | 60.00          | 80.00         | Teacher 2 |
       | Student 2          | The greatest assignment ever  | 50.00          | 70.00         | Teacher 2 |
       | Student 2          | Rewarding assignment          | 60.00          | 80.00         | Teacher 2 |
+    # Test filtering by student - display of several users.
+    And I press "Select users"
+    And I click on "Student 1" "checkbox"
+    And I click on "Student 2" "checkbox"
+    And I press "Finish selecting users"
+    And I should see "Student 1, Student 2"
+    And I press "Submit"
+    And I should see "Student 1, Student 2"
     # Test filtering by student.
     And I press "Select users"
-    And I set the field with xpath "//form/input[@class='usp-search-field']" to "Student 1"
-    And I click on "Search" "button" in the "//div[@class='usp-search']" "xpath_element"
-    And I set the field with xpath "//div[@class='usp-checkbox']/input" to "1"
+    And I set the field with xpath "//form/input[@class='usp-search-field']" to "Student 2"
+    And I click on "Search" "button" in the "Select users" "dialogue"
+    And I should see "Student 2" in the "Select users" "dialogue"
+    And I should not see "Student 1" in the "Select users" "dialogue"
+    # Deselect.
+    And I click on "Student 2" "checkbox"
     And I press "Finish selecting users"
     And I press "Submit"
     And the following should exist in the "gradereport_history" table:

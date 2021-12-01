@@ -519,7 +519,8 @@ class tablelog extends \table_sql implements \renderable {
 
             $idlist = explode(',', $this->filters->userids);
             list($where, $params) = $DB->get_in_or_equal($idlist);
-            return $DB->get_records_select('user', "id $where", $params);
+            [$order] = users_order_by_sql();
+            return $DB->get_records_select('user', "id $where", $params, $order);
 
         }
         return $idlist;

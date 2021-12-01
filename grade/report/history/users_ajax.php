@@ -70,7 +70,6 @@ foreach ($users as $user) {
 }
 
 $outcome->success = true;
-
 echo $OUTPUT->header();
 echo json_encode($outcome);
 echo $OUTPUT->footer();
