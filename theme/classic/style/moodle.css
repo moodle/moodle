@@ -16642,22 +16642,6 @@ body.jsenabled .questionflag input[type=checkbox] {
 #page-mod-quiz-edit div.questionbank .categoryinfo {
   padding: 0.3em 0; }
 
-#page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer {
-  padding: 0; }
-  #page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer strong {
-    display: block; }
-  #page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer hr,
-  #page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer br {
-    display: none; }
-  #page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer strong {
-    margin-left: -0.3em; }
-  #page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer strong label {
-    margin-left: 0.3em; }
-  #page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer input {
-    margin-left: 0; }
-  #page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer input + input {
-    margin-left: 5px; }
-
 .questionbankwindow .module {
   width: auto; }
 

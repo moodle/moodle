@@ -975,16 +975,6 @@ table#categoryquestions {
     font-size: 100%;
 }
 
-.modulespecificbuttonscontainer {
-    padding-left: 0.3em;
-    padding-right: 0.3em;
-}
-
-.questionbankformforpopup .modulespecificbuttonscontainer {
-    padding-top: 10px;
-    padding-left: 0;
-}
-
 .quizquestionlistcontrols {
     text-align: center;
 }
