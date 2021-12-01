@@ -164,3 +164,6 @@ mediapluginswfnote,core_admin
 createuserandpass,core
 supplyinfo,core
 monthlyview,core_calendar
+evidence,core_badges
+recipientdetails,core_badges
+recipientidentificationproblem,core_badges
