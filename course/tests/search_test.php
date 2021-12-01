@@ -542,6 +542,8 @@ class course_search_testcase extends advanced_testcase {
      * Document accesses for customfield area.
      */
     public function test_customfield_access() {
+        global $DB;
+
         $this->resetAfterTest();
 
         // Returns the instance as long as the area is supported.
@@ -550,25 +552,62 @@ class course_search_testcase extends advanced_testcase {
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
 
-        $course1 = self::getDataGenerator()->create_course();
-        $course2 = self::getDataGenerator()->create_course(array('visible' => 0));
-        $course3 = self::getDataGenerator()->create_course();
+        // Create our custom field.
+        $customfieldcategory = $this->getDataGenerator()->create_custom_field_category([]);
+        $customfield = $this->getDataGenerator()->create_custom_field([
+            'categoryid' => $customfieldcategory->get('id'),
+            'type' => 'text',
+            'shortname' => 'myfield',
+        ]);
+
+        // Create courses, each containing our custom field.
+        $course1 = $this->getDataGenerator()->create_course(['customfield_myfield' => 'Lionel']);
+        $course2 = $this->getDataGenerator()->create_course(['customfield_myfield' => 'Rick', 'visible' => 0]);
+        $course3 = $this->getDataGenerator()->create_course(['customfield_myfield' => 'Jack']);
 
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'teacher');
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id, 'student');
         $this->getDataGenerator()->enrol_user($user1->id, $course2->id, 'teacher');
         $this->getDataGenerator()->enrol_user($user2->id, $course2->id, 'student');
 
-        $this->setUser($user1);
-        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course1->id));
-        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course2->id));
-        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course3->id));
+        // Prevent users viewing course lists.
+        $userrole = $DB->get_field('role', 'id', ['shortname' => 'user'], MUST_EXIST);
+        assign_capability('moodle/category:viewcourselist', CAP_PREVENT, $userrole, context_system::instance()->id, true);
+
+        // The following assertions check whether each user can view the indexed customfield data record.
+        $course1data = \core_customfield\data::get_record([
+            'fieldid' => $customfield->get('id'),
+            'instanceid' => $course1->id,
+        ]);
+        $course2data = \core_customfield\data::get_record([
+            'fieldid' => $customfield->get('id'),
+            'instanceid' => $course2->id,
+        ]);
+        $course3data = \core_customfield\data::get_record([
+            'fieldid' => $customfield->get('id'),
+            'instanceid' => $course3->id,
+        ]);
+
+        // Admin user should see all present custom fields.
+        $this->setAdminUser();
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course1data->get('id')));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course2data->get('id')));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course3data->get('id')));
         $this->assertEquals(\core_search\manager::ACCESS_DELETED, $searcharea->check_access(-123));
 
+        // First user (teacher) should see all those in the courses they are teaching.
+        $this->setUser($user1);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course1data->get('id')));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course2data->get('id')));
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($course3data->get('id')));
+        $this->assertEquals(\core_search\manager::ACCESS_DELETED, $searcharea->check_access(-123));
+
+        // Second user (student) should see all those in visible courses they are studying.
         $this->setUser($user2);
-        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course1->id));
-        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($course2->id));
-        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course3->id));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($course1data->get('id')));
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($course2data->get('id')));
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($course3data->get('id')));
+        $this->assertEquals(\core_search\manager::ACCESS_DELETED, $searcharea->check_access(-123));
     }
 
     /**
