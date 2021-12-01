@@ -35,12 +35,16 @@
         <div class="d-flex justify-content-between mb-2">
             <small class="text-muted text-nowrap text-uppercase">{{entityname}} &bull; {{name}}</small>
             <span class="text-nowrap">
-                <a data-action="report-remove-column" class="nomargin" href="#">
-                    {{#pix}}e/cancel, core, {{#str}}deletecolumn, core_reportbuilder, {{{name}}}{{/str}}{{/pix}}
-                </a>
+                <button class="btn btn-link p-0"
+                        data-action="report-remove-column"
+                        type="button"
+                        title="{{#str}}deletecolumn, core_reportbuilder, {{{name}}}{{/str}}"
+                        aria-label="{{#str}}deletecolumn, core_reportbuilder, {{{name}}}{{/str}}">
+                    {{#pix}}e/cancel, core{{/pix}}
+                </button>
             </span>
         </div>
-        <h5 class="text-nowrap">{{{headingeditable}}}</h5>
+        <h3 class="h5 text-nowrap">{{{headingeditable}}}</h3>
         <small class="text-muted text-nowrap">{{{aggregationeditable}}}</small>
     </div>
 </div>

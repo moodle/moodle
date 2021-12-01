@@ -29,16 +29,16 @@
     }
 }}
 <div class="card reportbuilder-toggle-card mb-2">
-    <div class="card-header p-0" id="{{$id}}{{/id}}-heading">
+    <div class="card-header p-0">
         <div class="d-flex align-items-center bg-light mb-0 p-1">
             <div class="ml-3">
                 <span class="mr-1">{{$header}}{{/header}}</span> {{$helpicon}}{{/helpicon}}
             </div>
             <button class="btn toggle-card-button nomargin ml-auto {{$collapsed}}{{/collapsed}}"
                     data-toggle="collapse"
-                    data-target="#{{$id}}{{/id}}"
+                    data-target="#{{$id}}{{uniqid}}{{/id}}"
                     aria-expanded="true"
-                    aria-controls="{{$id}}{{/id}}"
+                    aria-controls="{{$id}}{{uniqid}}{{/id}}"
                     title="{{#str}}showhide, core_reportbuilder, {{$header}}{{/header}}{{/str}}"
             >
                 <span class="collapsed-icon-container"><i class="toggle-card-icon fa fa-lg fa-angle-down"></i></span>
@@ -46,7 +46,7 @@
             </button>
         </div>
     </div>
-    <div id="{{$id}}{{/id}}" class="collapse {{$collapsed}}show{{/collapsed}}" aria-labelledby="{{$id}}{{/id}}-heading">
+    <div id="{{$id}}{{uniqid}}{{/id}}" class="collapse {{$collapsed}}show{{/collapsed}}">
         <div class="card-body p-0">
             {{$body}}{{/body}}
         </div>

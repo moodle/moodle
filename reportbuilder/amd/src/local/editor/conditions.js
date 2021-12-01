@@ -52,6 +52,9 @@ const reloadSettingsConditionsRegion = (reportElement, templateContext) => {
     return Templates.renderForPromise('core_reportbuilder/local/settings/conditions', {conditions: templateContext})
         .then(({html, js}) => {
             Templates.replaceNode(settingsConditionsRegion, html, js + templateContext.javascript);
+            // Re-focus the add condition element after reloading the region.
+            const reportAddCondition = reportElement.querySelector(reportSelectors.actions.reportAddCondition);
+            reportAddCondition?.focus();
             initConditionsForm(reportElement);
             return pendingPromise.resolve();
         });

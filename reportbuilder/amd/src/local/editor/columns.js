@@ -156,7 +156,10 @@ export const init = (initialized) => {
             getString('columnaggregated', 'core_reportbuilder', columnHeader.dataset.columnName)
                 .then(addToast)
                 .then(() => {
-                    dispatchEvent(reportEvents.tableReload, {}, reportElement);
+                    // Pass preserveTriggerElement parameter so columnAggregationLink will be focused after the report reload.
+                    const columnAggregationLink = `[data-itemtype="columnaggregation"][data-itemid="`
+                        + `${columnAggregation.dataset.itemid}"] > a`;
+                    dispatchEvent(reportEvents.tableReload, {preserveTriggerElement: columnAggregationLink}, reportElement);
                     return;
                 })
                 .catch(Notification.exception);

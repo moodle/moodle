@@ -79,7 +79,7 @@ Feature: Manage custom report filters
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     When I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Filters'" "button"
-    And I click on "Delete filter 'Email address'" "link"
+    And I click on "Delete filter 'Email address'" "button"
     And I click on "Delete" "button" in the "Delete filter 'Email address'" "dialogue"
     Then I should see "Deleted filter 'Email address'"
     And I should see "There are no filters selected" in the "[data-region='active-filters']" "css_element"

@@ -77,9 +77,13 @@
                                     {{{headingeditable}}}
                                 </div>
                             </div>
-                            <a data-action="report-remove-filter" class="ml-auto" href="#">
-                                {{#pix}}e/cancel, core, {{#str}}deletefilter, core_reportbuilder, {{{heading}}}{{/str}}{{/pix}}
-                            </a>
+                            <button class="btn btn-link p-0 ml-auto"
+                                    type="button"
+                                    data-action="report-remove-filter"
+                                    title="{{#str}}deletefilter, core_reportbuilder, {{{heading}}}{{/str}}"
+                                    aria-label="{{#str}}deletefilter, core_reportbuilder, {{{heading}}}{{/str}}">
+                                {{#pix}}e/cancel, core{{/pix}}
+                            </button>
                         </li>
                     {{/activefilters}}
                 </ul>

@@ -60,6 +60,14 @@ export const init = () => {
 
         await setPageNumber(tableRoot, pageNumber, false)
             .then(refreshTableContent)
+            .then(() => {
+                // TODO: Refactor this after MDL-73130 lands.
+                const preserveTriggerElement = event.detail?.preserveTriggerElement;
+                if (preserveTriggerElement) {
+                    reportElement.querySelector(preserveTriggerElement)?.focus();
+                }
+                return;
+            })
             .catch(Notification.exception);
     });
 

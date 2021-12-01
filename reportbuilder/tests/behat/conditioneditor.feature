@@ -60,7 +60,7 @@ Feature: Manage custom report conditions
       | Email address operator | Does not contain |
       | Email address value    | user02           |
     And I click on "Apply" "button" in the "[data-region='settings-conditions']" "css_element"
-    And I click on "Delete condition 'Email address'" "link"
+    And I click on "Delete condition 'Email address'" "button"
     And I click on "Delete" "button" in the "Delete condition 'Email address'" "dialogue"
     Then I should see "Deleted condition 'Email address'"
     And I should see "There are no conditions selected" in the "[data-region='settings-conditions']" "css_element"

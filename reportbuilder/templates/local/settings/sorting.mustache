@@ -54,7 +54,11 @@
                         {{>core/drag_handle}}
                         {{#sorticon}}
                             <span class="float-right">
-                                <button class="btn btn-link p-0" data-action="report-toggle-sort-direction" title="{{{title}}}"
+                                <button id="toggle-sort-direction-{{id}}"
+                                        class="btn btn-link p-0"
+                                        data-action="report-toggle-sort-direction"
+                                        title="{{{title}}}"
+                                        aria-label="{{{title}}}"
                                         {{^sortenabled}}disabled{{/sortenabled}}>
                                     {{#sorticon}}{{#pix}}{{key}}, {{component}}{{/pix}}{{/sorticon}}
                                 </button>
