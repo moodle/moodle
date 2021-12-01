@@ -126,5 +126,18 @@ class block_myoverview extends block_base {
             return false;
         }
     }
+
+    /**
+     * Hide the block header on the my courses page.
+     *
+     * @return boolean
+     */
+    public function hide_header() {
+        if ($this->page->blocks->is_known_region(BLOCK_POS_LEFT) || $this->page->blocks->is_known_region(BLOCK_POS_RIGHT)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
 
