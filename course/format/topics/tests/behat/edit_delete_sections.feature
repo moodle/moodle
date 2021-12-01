@@ -79,13 +79,13 @@ Feature: Sections can be edited and deleted in topics format
 
   @javascript
   Scenario: Adding sections at the end of a topics format
-    When I click on "Add topic after" "link" in the "Topic 5" "section"
+    When I click on "Add topic" "link" in the "Topic 5" "section"
     Then I should see "Topic 6" in the "Topic 6" "section"
     And I should see "Test choice name" in the "Topic 5" "section"
 
   @javascript
   Scenario: Adding sections between topics in topics format
-    When I click on "Add topic after" "link" in the "Topic 4" "section"
+    When I click on "Add topic" "link" in the "Topic 4" "section"
     Then I should see "Topic 6" in the "Topic 6" "section"
     And I should not see "Test choice name" in the "Topic 5" "section"
     And I should see "Test choice name" in the "Topic 6" "section"
