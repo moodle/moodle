@@ -5,6 +5,7 @@ information provided here is intended especially for developers.
 
 * Final deprecation of the following webservice:
   * core_enrol_edit_user_enrolment
+* External function core_enrol_external::get_users_courses now returns the last time a course was modified (timemodified field)
 
 === 3.11 ===
 
