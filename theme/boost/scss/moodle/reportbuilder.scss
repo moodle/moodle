@@ -1,5 +1,5 @@
 /**
-* Reportbuilder table.
+* Reportbuilder.
 */
 
 /* Table */
@@ -85,6 +85,9 @@
 * Custom Reports.
 */
 
+$rb-left-sidebar-width: 250px;
+$rb-right-sidebar-width: 350px;
+
 .reportbuilder-report-container {
     @extend .flex-fill;
     min-width: 0;
@@ -109,8 +112,8 @@
 
 /* Sidebar menu */
 .reportbuilder-sidebar-menu {
-    @include media-breakpoint-up(md) {
-        width: 250px;
+    @include media-breakpoint-up(lg) {
+        width: $rb-left-sidebar-width;
         flex-shrink: 0;
     }
     .card-body .list-group-item {
@@ -123,15 +126,16 @@
     }
 }
 .reportbuilder-sidebar-menu-cards {
-    max-height: 60vh;
     overflow-y: auto;
     @include reportbuilder-scrollbar;
 }
 
-/* Customreport settings */
+/* Settings sidebar */
 .reportbuilder-sidebar-settings {
-    @include media-breakpoint-up(md) {
-        width: 350px;
+    overflow-y: auto;
+    @include reportbuilder-scrollbar;
+    @include media-breakpoint-up(lg) {
+        width: $rb-right-sidebar-width;
         flex-shrink: 0;
     }
     .list-group-item {
@@ -191,6 +195,57 @@
     }
 }
 
+/* Reportbuilder full page styles. */
+@include media-breakpoint-up(lg) {
+    $tabs-height: 83px;
+    $sidebar-margin-top: $navbar-height + $tabs-height + 20px;
+    .path-admin-reportbuilder.pagelayout-popup {
+        // Fix for behat-site defined in theme/boost/scss/moodle/debug.scss:7 is not needed. Override it.
+        &.behat-site .fixed-top {
+            position: fixed;
+        }
+        #region-main {
+            border: none;
+            padding: 0;
+        }
+        #maincontent {
+            visibility: hidden;
+        }
+        .dynamictabs .nav-tabs {
+            position: fixed;
+            z-index: $zindex-fixed;
+            width: calc(100% - 35px);
+            padding-top: 1.25rem;
+            background-color: $white;
+            box-shadow: 0 1.25rem 0 $white; // Small hack to simulate padding bottom after nav-tabs border.
+        }
+        .dynamictabs .tab-content {
+            padding-top: $tabs-height;
+        }
+        .reportbuilder-sidebar-menu {
+            position: fixed;
+            .reportbuilder-sidebar-menu-cards {
+                max-height: calc(100vh - #{$sidebar-margin-top} - 52px); // 52px corresponds to "search" input size.
+            }
+        }
+        .reportbuilder-sidebar-settings {
+            position: fixed;
+            right: 30px;
+            max-height: calc(100vh - #{$sidebar-margin-top});
+        }
+        .reportbuilder-report[data-editing] .reportbuilder-report-container {
+            max-height: calc(100vh - #{$sidebar-margin-top});
+            overflow-y: auto;
+            @include reportbuilder-scrollbar;
+            margin-left: calc(#{$rb-left-sidebar-width} + 1rem);
+            margin-right: calc(#{$rb-right-sidebar-width} + 1rem);
+        }
+        .reportbuilder-audiences-container {
+            margin-left: calc(#{$rb-left-sidebar-width} + 1rem);
+        }
+    }
+}
+
 /* Toggle cards. */
 .reportbuilder-toggle-card {
     .card-header {
@@ -212,7 +267,6 @@
         .expanded-icon-container {
             display: inline-block;
         }
-
         &.collapsed {
             .collapsed-icon-container {
                 display: inline-block;

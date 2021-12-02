@@ -9,8 +9,7 @@ Feature: Manage custom report filters
       | name      | source                                   | default |
       | My report | core_user\reportbuilder\datasource\users | 0       |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
-    When I click on "Show/hide settings sidebar" "button"
-    And I click on "Show/hide 'Filters'" "button"
+    When I click on "Show/hide 'Filters'" "button"
     Then I should see "There are no filters selected" in the "[data-region='active-filters']" "css_element"
     And I set the field "Select a filter" to "Email address"
     And I should see "Added filter 'Email address'"
@@ -25,11 +24,9 @@ Feature: Manage custom report filters
       | report    | uniqueidentifier |
       | My report | user:email       |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
-    And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Filters'" "button"
     When I set the field "Rename filter 'Email address'" to "My Email filter"
     And I reload the page
-    And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Filters'" "button"
     Then I should see "My Email filter" in the "[data-region='active-filters']" "css_element"
 
@@ -43,11 +40,9 @@ Feature: Manage custom report filters
       | report    | uniqueidentifier |
       | My report | user:email       |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
-    And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Filters'" "button"
     When I set the field "Rename filter 'Email address'" to "<span class=\"multilang\" lang=\"en\">English</span><span class=\"multilang\" lang=\"es\">Spanish</span>"
     And I reload the page
-    And I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Filters'" "button"
     Then I should see "English" in the "[data-region='active-filters']" "css_element"
     And I should not see "Spanish" in the "[data-region='active-filters']" "css_element"
@@ -62,8 +57,7 @@ Feature: Manage custom report filters
       | My report | user:email       |
       | My report | user:country     |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
-    When I click on "Show/hide settings sidebar" "button"
-    And I click on "Show/hide 'Filters'" "button"
+    When I click on "Show/hide 'Filters'" "button"
     And I click on "Move filter 'Country'" "button"
     And I click on "After \"Full name\"" "link" in the "Move filter 'Country'" "dialogue"
     Then I should see "Moved filter 'Country'"
@@ -77,7 +71,6 @@ Feature: Manage custom report filters
       | report    | uniqueidentifier |
       | My report | user:email       |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
-    When I click on "Show/hide settings sidebar" "button"
     And I click on "Show/hide 'Filters'" "button"
     And I click on "Delete filter 'Email address'" "button"
     And I click on "Delete" "button" in the "Delete filter 'Email address'" "dialogue"
@@ -147,8 +140,7 @@ Feature: Manage custom report filters
     And I should see "user2@example.com" in the ".reportbuilder-table" "css_element"
     And I should see "user3@example.com" in the ".reportbuilder-table" "css_element"
     # Set a condition to the report.
-    When I click on "Show/hide settings sidebar" "button"
-    And I click on "Show/hide 'Conditions'" "button"
+    When I click on "Show/hide 'Conditions'" "button"
     And I set the following fields in the "Email address" "core_reportbuilder > Condition" to these values:
       | Email address operator | Is not equal to   |
       | Email address value    | user3@example.com |

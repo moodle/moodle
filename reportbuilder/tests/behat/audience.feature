@@ -185,7 +185,7 @@ Feature: Configure access to reports based on intended audience
       | Report source         | Users           |
       | Include default setup | 1               |
     And I click on "Save" "button" in the "New report" "dialogue"
-    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I click on "Close 'My user1 report' editor" "button"
     And I should see "My user1 report"
     And I log out
     And I log in as "admin"

@@ -27,6 +27,8 @@ import 'core/inplace_editable';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import Templates from 'core/templates';
+import {get_string as getString} from 'core/str';
+import {add as addToast} from 'core/toast';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {init as columnsEditorInit} from 'core_reportbuilder/local/editor/columns';
 import {init as conditionsEditorInit} from 'core_reportbuilder/local/editor/conditions';
@@ -34,6 +36,7 @@ import {init as filtersEditorInit} from 'core_reportbuilder/local/editor/filters
 import {init as sortingEditorInit} from 'core_reportbuilder/local/editor/sorting';
 import {init as cardviewEditorInit} from 'core_reportbuilder/local/editor/card_view';
 import {getReport} from 'core_reportbuilder/local/repository/reports';
+import {createReportModal} from 'core_reportbuilder/local/repository/modals';
 
 let initialized = false;
 
@@ -76,6 +79,24 @@ export const init = () => {
                 })
                 .then(() => pendingPromise.resolve())
                 .catch(Notification.exception);
+        }
+
+        // Edit report details modal.
+        const reportEdit = event.target.closest(reportSelectors.actions.reportEdit);
+        if (reportEdit) {
+            event.preventDefault();
+
+            const reportModal = createReportModal(event.target, getString('editreportdetails', 'core_reportbuilder'),
+                reportEdit.dataset.reportId);
+            reportModal.addEventListener(reportModal.events.FORM_SUBMITTED, () => {
+                getString('reportupdated', 'core_reportbuilder')
+                    .then(addToast)
+                    .then(() => {
+                        return window.location.reload();
+                    })
+                    .catch(Notification.exception);
+            });
+            reportModal.show();
         }
     });
 
