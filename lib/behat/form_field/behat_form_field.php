@@ -123,7 +123,7 @@ class behat_form_field implements behat_session_interface {
         try {
             $instance->field->keyPress($char, $modifier);
             $instance->field->keyUp($char, $modifier);
-        } catch (WebDriver\Exception $e) {
+        } catch (\Facebook\WebDriver\Exception\WebDriverException $e) {
             // If the JS handler attached to keydown or keypress destroys the element
             // the later events may trigger errors because form element no longer exist
             // or is not visible. Ignore such exceptions here.
