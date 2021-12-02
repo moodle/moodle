@@ -276,7 +276,6 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
             throw new \moodle_exception('errorpredictwrongformat', 'analytics', '', json_last_error_msg());
         }
 
-
         if ($resultobj->status != 0) {
             $resultobj = $this->format_error_info($resultobj);
         }
@@ -337,7 +336,7 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
             // We need an extra request to get the resources generated during the evaluation process.
 
             // Directory to temporarly store the evaluation log zip returned by the server.
-            $evaluationtmpdir = make_request_directory('mlbackend_python_evaluationlog');
+            $evaluationtmpdir = make_request_directory();
             $evaluationzippath = $evaluationtmpdir . DIRECTORY_SEPARATOR . 'evaluationlog.zip';
 
             $requestparams = ['uniqueid' => $uniqueid, 'dirhash' => $this->hash_dir($outputdir),
@@ -377,7 +376,7 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      */
     public function export(string $uniqueid, string $modeldir) : string {
 
-        $exporttmpdir = make_request_directory('mlbackend_python_export');
+        $exporttmpdir = make_request_directory();
 
         if (!$this->useserver) {
             // Use the local file system.
@@ -717,7 +716,7 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      */
     private function zip_dir(string $dir) {
 
-        $ziptmpdir = make_request_directory('mlbackend_python');
+        $ziptmpdir = make_request_directory();
         $ziptmpfile = $ziptmpdir . DIRECTORY_SEPARATOR . 'mlbackend.zip';
 
         $files = get_directory_list($dir);
