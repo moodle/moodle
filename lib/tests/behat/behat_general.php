@@ -27,12 +27,12 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode;
-use Behat\Mink\Exception\DriverException as DriverException;
-use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
-use Behat\Mink\Exception\ExpectationException as ExpectationException;
-use WebDriver\Exception\NoSuchElement as NoSuchElement;
-use WebDriver\Exception\StaleElementReference as StaleElementReference;
+use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Exception\ExpectationException;
+use Facebook\WebDriver\Exception\NoSuchElementException;
+use Facebook\WebDriver\Exception\StaleElementReferenceException;
 
 /**
  * Cross component steps definitions.
@@ -121,9 +121,9 @@ class behat_general extends behat_base {
         // Wrapped in try & catch in case the redirection has already been executed.
         try {
             $content = $metarefresh->getAttribute('content');
-        } catch (NoSuchElement $e) {
+        } catch (NoSuchElementException $e) {
             return true;
-        } catch (StaleElementReference $e) {
+        } catch (StaleElementReferenceException $e) {
             return true;
         }
 
@@ -661,7 +661,7 @@ class behat_general extends behat_base {
                             throw new ExpectationException('"' . $args['text'] . '" text was found in the page',
                                 $context->getSession());
                         }
-                    } catch (WebDriver\Exception\NoSuchElement $e) {
+                    } catch (NoSuchElementException $e) {
                         // Do nothing just return, as element is no more on page.
                         return true;
                     } catch (ElementNotFoundException $e) {
