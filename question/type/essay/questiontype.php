@@ -78,7 +78,12 @@ class qtype_essay extends question_type {
         $options->minwordlimit = isset($formdata->minwordenabled) ? $formdata->minwordlimit : null;
         $options->maxwordlimit = isset($formdata->maxwordenabled) ? $formdata->maxwordlimit : null;
         $options->attachments = $formdata->attachments;
-        $options->attachmentsrequired = $formdata->attachmentsrequired;
+        if ((int)$formdata->attachments === 0 && $formdata->attachmentsrequired > 0) {
+            // Adjust the value for the field 'attachmentsrequired' when the field 'attachments' is set to 'No'.
+            $options->attachmentsrequired = 0;
+        } else {
+            $options->attachmentsrequired = $formdata->attachmentsrequired;
+        }
         if (!isset($formdata->filetypeslist)) {
             $options->filetypeslist = null;
         } else {
