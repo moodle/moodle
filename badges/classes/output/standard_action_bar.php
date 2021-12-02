@@ -96,6 +96,10 @@ class standard_action_bar extends base_action_bar {
             $buttons[$key] = $button->export_for_template($output);
         }
 
-        return ['buttons' => $buttons];
+        $data = ['buttons' => $buttons];
+        $additional = $this->get_third_party_nav_action($output);
+        $data += $additional ?: [];
+
+        return $data;
     }
 }

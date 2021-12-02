@@ -17,8 +17,10 @@
 namespace core_badges\output;
 
 use renderable;
-use templatable;
+use renderer_base;
 use moodle_page;
+use navigation_node;
+use templatable;
 
 /**
  * Abstract class for the badges tertiary navigation. The class initialises the page and type class variables.
@@ -50,4 +52,52 @@ abstract class base_action_bar implements renderable, templatable {
      * @return string
      */
     abstract public function get_template(): string;
+
+    /**
+     * Gets additional third party navigation nodes for display.
+     *
+     * @param renderer_base $output  The output
+     * @return array All that sweet third party navigation action.
+     */
+    public function get_third_party_nav_action(renderer_base $output): array {
+        $badgenode = $this->page->settingsnav->find('coursebadges', navigation_node::TYPE_CONTAINER);
+        if (!$badgenode) {
+            return [];
+        }
+        $leftovernodes = [];
+        foreach ($badgenode->children as $key => $value) {
+            if (array_search($value->key, $this->expected_items()) === false) {
+                $leftovernodes[] = $value;
+            }
+        }
+        $result = \core\navigation\views\secondary::create_menu_element($leftovernodes);
+
+        if ($result == false) {
+            return [];
+        } else {
+            $data ['thirdpartybutton'] = true;
+            if (count($result) == 1) {
+                // Return a button.
+                $link = key($result);
+                $text = current($result);
+                $data['thirdpartynodes'] = ['link' => $link, 'text' => $text];
+            } else {
+                // Return a url_select.
+                $selectobject = new \url_select($result, $this->page->url, get_string('othernavigation', 'badges'));
+                $data['thirdpartynodes'] = $selectobject->export_for_template($output);
+                $data['thirdpartybutton'] = false;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Expected navigation node keys for badges.
+     *
+     * @return array default badge navigation node keys.
+     */
+    protected function expected_items(): array {
+        return ['coursebadges', 'newbadge'];
+    }
 }
