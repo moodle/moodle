@@ -10,7 +10,7 @@ Feature: Primary navigation
       | user1    | User      | One      | user1@example.com |
 
   @javascript @theme_boost
-  Scenario Outline: Admin sets defaulthomepage to 0,1 and verify the landing page and site home link
+  Scenario Outline: Admin sets defaulthomepage and verify the landing page and site home link
     Given I log in as "admin"
     And the following config values are set as admin:
       | defaulthomepage | <defaulthomepageset> |
@@ -22,9 +22,10 @@ Feature: Primary navigation
       | defaulthomepageset | homepage    |  sitehome  |   linkelement                                                                                               |
       |   0                | Home        |   Home     |  //a[contains(@class, 'nav-link active') and contains(@tabindex, 0) and not(contains(@href, 'redirect=0'))] |
       |   1                | Dashboard   |   Home     |  //a[contains(@class, 'nav-link') and contains(@tabindex, 0) and (contains(@href, 'redirect=0'))]          |
+      |   3                | My courses  |   Home     |  //a[contains(@class, 'nav-link') and contains(@tabindex, 0) and (contains(@href, 'redirect=0'))]          |
 
   @javascript @theme_boost
-  Scenario Outline: Admin sets defaulthomepage to 2 and verify the landing page based on user preference set
+  Scenario Outline: Admin sets defaulthomepage to user preference and verifies the landing page based on it
     Given I log in as "admin"
     And I navigate to "Appearance > Navigation" in site administration
     And I set the field "Home page for users" to "User preference"
@@ -43,3 +44,4 @@ Feature: Primary navigation
       | userpreference | homepage    |
       |   Site         | Home        |
       |   Dashboard    | Dashboard   |
+      |   My courses   | My courses  |

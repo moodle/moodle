@@ -188,6 +188,7 @@ preferences,moodle|/user/preferences.php|t/preferences',
     $choices = array(
         HOMEPAGE_SITE => new lang_string('site'),
         HOMEPAGE_MY => new lang_string('mymoodle', 'admin'),
+        HOMEPAGE_MYCOURSES => new lang_string('mycourses', 'admin'),
         HOMEPAGE_USER => new lang_string('userpreference', 'admin')
     );
     $temp->add(new admin_setting_configselect('defaulthomepage', new lang_string('defaulthomepage', 'admin'),

@@ -34,7 +34,10 @@ require_once($CFG->libdir .'/filelib.php');
 redirect_if_major_upgrade_required();
 
 $urlparams = array();
-if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY) && optional_param('redirect', 1, PARAM_BOOL) === 0) {
+if (!empty($CFG->defaulthomepage) &&
+        ($CFG->defaulthomepage == HOMEPAGE_MY || $CFG->defaulthomepage == HOMEPAGE_MYCOURSES) &&
+        optional_param('redirect', 1, PARAM_BOOL) === 0
+) {
     $urlparams['redirect'] = 0;
 }
 $PAGE->set_url('/', $urlparams);
@@ -71,6 +74,8 @@ if (get_home_page() != HOMEPAGE_SITE) {
         set_user_preference('user_home_page_preference', HOMEPAGE_SITE);
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY) && $redirect === 1) {
         redirect($CFG->wwwroot .'/my/');
+    } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES) && $redirect === 1) {
+        redirect($CFG->wwwroot .'/my/courses.php');
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER)) {
         $frontpagenode = $PAGE->settingsnav->find('frontpage', null);
         if ($frontpagenode) {

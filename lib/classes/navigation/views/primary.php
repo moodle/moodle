@@ -43,7 +43,8 @@ class primary extends view {
             null, 'home', new \pix_icon('i/home', ''));
         if (isloggedin() ) {
             if (!isguestuser()) {
-                if (get_home_page() == HOMEPAGE_MY) {
+                $homepage = get_home_page();
+                if ($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES) {
                     // We need to stop automatic redirection.
                     $sitehome->action->param('redirect', '0');
                 }

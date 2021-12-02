@@ -1338,7 +1338,8 @@ class global_navigation extends navigation_node {
             $this->rootnodes['home'] = $this->add(get_string('sitehome'), new moodle_url('/'),
                 self::TYPE_SETTING, null, 'home', new pix_icon('i/home', ''));
             $this->rootnodes['home']->showinflatnavigation = true;
-            if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY)) {
+            if (!empty($CFG->defaulthomepage) &&
+                    ($CFG->defaulthomepage == HOMEPAGE_MY || $CFG->defaulthomepage == HOMEPAGE_MYCOURSES)) {
                 // We need to stop automatic redirection
                 $this->rootnodes['home']->action->param('redirect', '0');
             }
@@ -4916,7 +4917,8 @@ class settings_navigation extends navigation_node {
             // This should be set to false as we don't want to show this to the user. It's only for generating the correct
             // breadcrumb.
             $dashboard->display = false;
-            if (get_home_page() == HOMEPAGE_MY) {
+            $homepage = get_home_page();
+            if (($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES)) {
                 $dashboard->mainnavonly = true;
             }
 
