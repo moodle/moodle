@@ -118,6 +118,10 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I set the field "ajaxgrade" to "33"
     And I set the field "ajaxfeedback" to "Student 2 VU feedback"
     And I press the enter key
+    And I click on student "Student 2" for grade item "Item SU"
+    And I set the field "ajaxgrade" to "Very good"
+    And I set the field "ajaxfeedback" to "Student 2 SU feedback"
+    And I press the enter key
     And I click on student "Student 3" for grade item "Item VL"
     And I should not see a grade field for "Student 3" and grade item "Item VL"
     And I should not see a feedback field for "Student 3" and grade item "Item VL"
@@ -125,10 +129,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I should not see a grade field for "Student 3" and grade item "Item TU"
     And I should see a feedback field for "Student 3" and grade item "Item TU"
     And I set the field "ajaxfeedback" to "Student 3 TU feedback"
-    And I press the enter key
-    And I click on student "Student 2" for grade item "Item SU"
-    And I set the field "ajaxgrade" to "Very good"
-    And I set the field "ajaxfeedback" to "Student 2 SU feedback"
     And I press the enter key
     # Reload grader report:
     And I navigate to "View > User report" in the course gradebook
