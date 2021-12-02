@@ -58,6 +58,11 @@ class boostnavbar implements \renderable {
         $this->remove('myhome'); // Dashboard.
         $this->remove('home');
 
+        // Remove 'My courses' if we are in the module context.
+        if ($this->page->context->contextlevel == CONTEXT_MODULE) {
+            $this->remove('mycourses');
+        }
+
         if (!is_null($this->get_item('root'))) { // We are in site administration.
             // Remove the 'Site administration' navbar node as it already exists in the primary navigation menu.
             $this->remove('root');
