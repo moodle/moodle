@@ -298,7 +298,7 @@ const hideCourse = (root, courseId) => {
     setCourseHiddenState(courseId, true);
 
     // Remove the course from this view as it is now hidden and thus not covered by this view anymore.
-    // Do only if we are not in "All" view mode where really all courses are shown.
+    // Do only if we are not in "All (including archived)" view mode where really all courses are shown.
     if (filters.grouping !== GROUPINGS.GROUPING_ALLINCLUDINGHIDDEN) {
         hideElement(root, courseId);
     }
@@ -321,7 +321,7 @@ const showCourse = (root, courseId) => {
     setCourseHiddenState(courseId, null);
 
     // Remove the course from this view as it is now shown again and thus not covered by this view anymore.
-    // Do only if we are not in "All" view mode where really all courses are shown.
+    // Do only if we are not in "All (including archived)" view mode where really all courses are shown.
     if (filters.grouping !== GROUPINGS.GROUPING_ALLINCLUDINGHIDDEN) {
         hideElement(root, courseId);
     }
