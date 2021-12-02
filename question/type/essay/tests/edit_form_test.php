@@ -65,8 +65,12 @@ class qtype_essay_edit_form_test extends advanced_testcase {
         $fakequestion->attachmentsrequired = 3;
         $fakequestion->filetypeslist = '';
 
-        $form = new $classname(new moodle_url('/'), $fakequestion, $category,
-                new question_edit_contexts($syscontext));
+        $form = new $classname(
+            new moodle_url('/'),
+            $fakequestion,
+            $category,
+            new question_edit_contexts($syscontext)
+        );
 
         return [$form, $category];
     }
@@ -82,13 +86,15 @@ class qtype_essay_edit_form_test extends advanced_testcase {
     public function test_attachments_validation(int $allowed, int $required, array $expected): void {
         list($form, $category) = $this->get_form('qtype_essay_edit_form');
         $submitteddata = [
-                'category' => $category->id,
-                'questiontext' => ['text' => 'please writer an assay about ...',
-                        'format' => FORMAT_HTML],
-                'responseformat' => 'editorfilepicker',
-                'responserequired' => '1',
-                'attachments' => $allowed,
-                'attachmentsrequired' => $required,
+            'category' => $category->id,
+            'questiontext' => [
+                'text' => 'please writer an assay about ...',
+                'format' => FORMAT_HTML,
+            ],
+            'responseformat' => 'editorfilepicker',
+            'responserequired' => '1',
+            'attachments' => $allowed,
+            'attachmentsrequired' => $required,
         ];
         $errors = $form->validation($submitteddata, []);
         $this->assertArrayNotHasKey('attachments', $errors);
@@ -105,20 +111,20 @@ class qtype_essay_edit_form_test extends advanced_testcase {
         $valid = [];
         $invalid = ['attachmentsrequired' => get_string('mustrequirefewer', 'qtype_essay')];
         return [
-                'Attachments allowed=0, required=0, valid' => [0, 0, $valid],
-                'Attachments allowed=0, required=1, invalid, so required is set to 0 when saving' => [0, 1, $valid],
-                'Attachments allowed=0, required=2, invalid, so required is set to 0 when saving' => [0, 2, $valid],
-                'Attachments allowed=0, required=3, invalid, so required is set to 0 when saving' => [0, 3, $valid],
+            'Attachments allowed=0, required=0, valid' => [0, 0, $valid],
+            'Attachments allowed=0, required=1, invalid, so required is set to 0 when saving' => [0, 1, $valid],
+            'Attachments allowed=0, required=2, invalid, so required is set to 0 when saving' => [0, 2, $valid],
+            'Attachments allowed=0, required=3, invalid, so required is set to 0 when saving' => [0, 3, $valid],
 
-                'Attachments allowed=1, required=0, valid' => [1, 0, $valid],
-                'Attachments allowed=1, required=1, valid' => [1, 1, $valid],
-                'Attachments allowed=1, required=2, invalid' => [1, 2, $invalid],
+            'Attachments allowed=1, required=0, valid' => [1, 0, $valid],
+            'Attachments allowed=1, required=1, valid' => [1, 1, $valid],
+            'Attachments allowed=1, required=2, invalid' => [1, 2, $invalid],
 
-                'Attachments allowed=2, required=3, invalid' => [2, 3, $invalid],
+            'Attachments allowed=2, required=3, invalid' => [2, 3, $invalid],
 
-                'Attachments allowed=3, required=4, invalid' => [3, 4, $invalid],
+            'Attachments allowed=3, required=4, invalid' => [3, 4, $invalid],
 
-                'Attachments allowed=-1, required=4, valid' => [-1, 4, $valid],
+            'Attachments allowed=-1, required=4, valid' => [-1, 4, $valid],
         ];
     }
 }
