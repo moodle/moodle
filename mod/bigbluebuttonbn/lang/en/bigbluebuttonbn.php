@@ -569,6 +569,7 @@ $string['event_recording_unpublished'] = 'Recording unpublished';
 $string['event_recording_protected'] = 'Recording protected';
 $string['event_recording_unprotected'] = 'Recording unprotected';
 $string['event_live_session'] = 'Live session event';
+$string['event_unknown'] = 'Unknown event';
 
 $string['instance_type_default'] = 'Room/Activity with recordings';
 $string['instance_type_room_only'] = 'Room/Activity only';
@@ -576,6 +577,7 @@ $string['instance_type_recording_only'] = 'Recordings only';
 
 $string['messageprovider:instance_updated'] = 'BigBlueButton meeting updated';
 $string['messageprovider:recording_ready'] = 'BigBlueButton recording ready to view';
+$string['new_bigblubuttonbn_activities'] = 'BigBlueButton activity';
 $string['notification_instance_created_intro'] = 'The <a href="{$a->link}">{$a->name}</a> BigBlueButton activity has been created.';
 $string['notification_instance_created_small'] = 'A new BigBlueButton meeting named {$a->name} was created';
 $string['notification_instance_created_subject'] = 'A new BigBlueButton meeting activity has been created';

@@ -460,4 +460,29 @@ EOF;
             [self::EVENT_CALLBACK, '%recordid%', "%$recordid%", "%$callbacktype%"]);
         return $count;
     }
+
+    /**
+     * Log event to string that can be internationalised via get_string.
+     */
+    const LOG_TO_STRING = [
+        self::EVENT_JOIN => 'event_meeting_joined',
+        self::EVENT_PLAYED => 'event_recording_viewed',
+        self::EVENT_IMPORT => 'event_recording_imported',
+        self::EVENT_ADD => 'event_activity_created',
+        self::EVENT_DELETE => 'event_activity_deleted',
+        self::EVENT_EDIT => 'event_activity_updated',
+        self::EVENT_SUMMARY => 'event_meeting_summary',
+        self::EVENT_LOGOUT => 'event_meeting_left',
+        self::EVENT_MEETING_START => 'event_meeting_joined',
+    ];
+
+    /**
+     * Get the event name (human friendly version)
+     *
+     * @param object $log object as returned by get_user_completion_logs_with_userfields
+     */
+    public static function get_printable_event_name(object $log) {
+        $logstringname = self::LOG_TO_STRING[$log->log] ?? 'event_unknown';
+        return get_string($logstringname, 'mod_bigbluebuttonbn');
+    }
 }
