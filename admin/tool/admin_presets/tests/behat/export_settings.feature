@@ -20,11 +20,11 @@ Feature: I can add a new preset with current settings
     And I click on "Create preset" "button"
     And I should see "Current"
     And I open the action menu in "Current" "table_row"
-    When I choose "Apply" in the open action menu
+    When I choose "Review settings and apply" in the open action menu
     And I should not see "Setting changes"
     And I click on "Continue" "button"
     And the following config values are set as admin:
       | enableportfolios | 1 |
     And I open the action menu in "Current" "table_row"
-    And I choose "Apply" in the open action menu
+    And I choose "Review settings and apply" in the open action menu
     Then I should see "Setting changes"

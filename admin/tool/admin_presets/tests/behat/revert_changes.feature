@@ -5,7 +5,7 @@ Feature: I can revert changes after a load
     Given I log in as "admin"
     And I navigate to "Site admin presets" in site administration
     And I open the action menu in "Starter" "table_row"
-    And I choose "Apply" in the open action menu
+    And I choose "Review settings and apply" in the open action menu
     And I should see "Setting changes"
     And I click on "Apply" "button"
     And I click on "Continue" "button"

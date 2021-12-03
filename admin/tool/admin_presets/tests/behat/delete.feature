@@ -12,12 +12,12 @@ Feature: Admin preset deletion
     Given I should see "Starter"
     And I should see "Full"
     And I should see "Custom preset"
-    When I open the action menu in "Starter" "table_row"
+    When I open the action menu in "Custom preset" "table_row"
+    And I should see "Delete"
+    And I open the action menu in "Full" "table_row"
     Then I should not see "Delete"
     And I open the action menu in "Starter" "table_row"
     And I should not see "Delete"
-    And I open the action menu in "Custom preset" "table_row"
-    And I should see "Delete"
 
   Scenario: Custom preset settings can be deleted
     Given I should see "Custom preset"
@@ -37,7 +37,7 @@ Feature: Admin preset deletion
 
   Scenario: Delete preset that has been applied
     Given I open the action menu in "Custom preset" "table_row"
-    And I choose "Apply" in the open action menu
+    And I choose "Review settings and apply" in the open action menu
     And I click on "Apply" "button"
     And I navigate to "Site admin presets" in site administration
     When I open the action menu in "Custom preset" "table_row"
