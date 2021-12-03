@@ -26,7 +26,7 @@ Feature: Automatic deletion of groups and groupings
       | Group name | Group (with ID) |
       | Group ID number | An ID |
     And I press "Save changes"
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And I press "Create grouping"
     And I set the following fields to these values:
       | Grouping name | Grouping (without ID) |
@@ -36,7 +36,7 @@ Feature: Automatic deletion of groups and groupings
       | Grouping name | Grouping (with ID) |
       | Grouping ID number | An ID |
     And I press "Save changes"
-    And I follow "Groups"
+    And I select "Groups" from the "jump" singleselect
 
   @javascript
   Scenario: Delete groups and groupings with and without ID numbers
@@ -48,7 +48,7 @@ Feature: Automatic deletion of groups and groupings
     And I press "Delete selected group"
     And I press "Yes"
     And the "groups" select box should not contain "Group (with ID) (0)"
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And I click on "Delete" "link" in the "Grouping (without ID)" "table_row"
     And I press "Yes"
     And I should not see "Grouping (without ID)"
@@ -72,7 +72,7 @@ Feature: Automatic deletion of groups and groupings
     And I press "Delete selected group"
     And I press "Yes"
     And I should not see "Group (without ID)"
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And "Delete" "link" should not exist in the "Grouping (with ID)" "table_row"
     And I click on "Delete" "link" in the "Grouping (without ID)" "table_row"
     And I press "Yes"

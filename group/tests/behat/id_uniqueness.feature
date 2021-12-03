@@ -42,7 +42,7 @@ Feature: Uniqueness of Group ID number
     And I press "Cancel"
 
   Scenario: Grouping ID number uniqueness
-    Given I follow "Groupings"
+    Given I select "Groupings" from the "jump" singleselect
     And I press "Create grouping"
     And I set the following fields to these values:
       | Grouping name | Grouping 1 |

@@ -250,7 +250,7 @@ Feature: Test category management actions
     # Redirect
     And I should see "Assign roles in Category: Cat 1"
     And I should see "Please choose a role to assign"
-    And I click on "Back to Category: Cat 1" "link"
+    And I click on "Back" "button"
     # Redirect
     And I should see the "Course categories and courses" management page
     And "Cat 1" "link" should exist in the "#category-listing" "css_element"

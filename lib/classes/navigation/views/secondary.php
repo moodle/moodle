@@ -54,6 +54,13 @@ class secondary extends view {
             ],
             self::TYPE_SETTING => [
                 'editsettings' => 0,
+                'review' => 1.1,
+                'manageinstances' => 1.2,
+                'groups' => 1.3,
+                'override' => 1.4,
+                'roles' => 1.5,
+                'permissions' => 1.6,
+                'otherusers' => 1.7,
                 'gradebooksetup' => 2.1,
                 'outcomes' => 2.2,
                 'coursecompletion' => 6,

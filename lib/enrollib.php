@@ -433,13 +433,15 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
 
     $usersnode = $coursenode->add(get_string('users'), null, navigation_node::TYPE_CONTAINER, null, 'users');
 
-    if ($course->id != SITEID) {
-        // list all participants - allows assigning roles, groups, etc.
-        if (has_capability('moodle/course:enrolreview', $coursecontext)) {
-            $url = new moodle_url('/user/index.php', array('id'=>$course->id));
-            $usersnode->add(get_string('enrolledusers', 'enrol'), $url, navigation_node::TYPE_SETTING, null, 'review', new pix_icon('i/enrolusers', ''));
-        }
+    // List all participants - allows assigning roles, groups, etc.
+    // Have this available even in the site context as the page is still accessible from the frontpage.
+    if (has_capability('moodle/course:enrolreview', $coursecontext)) {
+        $url = new moodle_url('/user/index.php', array('id' => $course->id));
+        $usersnode->add(get_string('enrolledusers', 'enrol'), $url, navigation_node::TYPE_SETTING,
+            null, 'review', new pix_icon('i/enrolusers', ''));
+    }
 
+    if ($course->id != SITEID) {
         // manage enrol plugin instances
         if (has_capability('moodle/course:enrolconfig', $coursecontext) or has_capability('moodle/course:enrolreview', $coursecontext)) {
             $url = new moodle_url('/enrol/instances.php', array('id'=>$course->id));

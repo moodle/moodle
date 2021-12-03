@@ -186,6 +186,7 @@ if ($canconfig and $action and confirm_sesskey()) {
 
 
 echo $OUTPUT->header();
+echo $OUTPUT->render_participants_tertiary_nav($course);
 echo $OUTPUT->heading(get_string('enrolmentinstances', 'enrol'));
 
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');

@@ -204,6 +204,9 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
 }
 
 echo $OUTPUT->header();
+if ($context->contextlevel == CONTEXT_COURSE && $course) {
+    echo $OUTPUT->render_participants_tertiary_nav($course);
+}
 echo $OUTPUT->heading($title);
 
 $adminurl = new moodle_url('/admin/');

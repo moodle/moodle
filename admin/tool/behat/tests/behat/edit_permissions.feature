@@ -42,7 +42,7 @@ Feature: Edit capabilities
       | mod/forum:editanypost | Prevent |
       | mod/forum:addquestion | Allow |
     When I set the field "Advanced role override" to "Student (3)"
-    And I press "Go"
+    And I click on "Go" "button" in the "div.advancedoverride" "css_element"
     Then "mod/forum:deleteanypost" capability has "Prohibit" permission
     And "mod/forum:editanypost" capability has "Prevent" permission
     And "mod/forum:addquestion" capability has "Allow" permission

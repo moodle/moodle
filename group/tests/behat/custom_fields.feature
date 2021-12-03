@@ -34,12 +34,12 @@ Feature: Custom profile fields in groups
     And I navigate to "Users > Groups" in current page administration
 
     # Check the Overview page.
-    And I follow "Overview"
+    And I select "Overview" from the "jump" singleselect
     And "Robin Hood (user1, fox)" "text" should exist in the "Canines" "table_row"
     And "Little John (user2, bear)" "text" should exist in the "No group" "table_row"
 
     # Check the groups page.
-    And I follow "Groups"
+    And I select "Groups" from the "jump" singleselect
     And I set the field "groups" to "Canines"
     And I should see "Robin Hood (user1, fox)"
     And I should not see "Little John (user2, bear)"
