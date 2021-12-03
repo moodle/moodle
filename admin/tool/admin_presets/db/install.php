@@ -52,6 +52,7 @@ function xmldb_tool_admin_presets_install() {
     helper::add_item($presetid, 'showdataretentionsummary', '0', 'tool_dataprivacy');
     helper::add_item($presetid, 'forum_maxattachments', '3');
     helper::add_item($presetid, 'customusermenuitems', 'grades,grades|/grade/report/mygrades.php|t/grades
+calendar,core_calendar|/calendar/view.php?view=month|i/calendar
 preferences,moodle|/user/preferences.php|t/preferences');
 
     // Modules: Hide chat, database, external tool (lti), IMS content package (imscp), lesson, SCORM, survey, wiki, workshop.
@@ -160,6 +161,7 @@ preferences,moodle|/user/preferences.php|t/preferences');
     helper::add_item($presetid, 'forum_maxattachments', '9');
     // In that case, the indentation coding style can't follow the rules to guarantee the setting value is created properly.
     helper::add_item($presetid, 'customusermenuitems', 'grades,grades|/grade/report/mygrades.php|t/grades
+calendar,core_calendar|/calendar/view.php?view=month|i/calendar
 messages,message|/message/index.php|t/message
 preferences,moodle|/user/preferences.php|t/preferences'
     );

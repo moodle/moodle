@@ -8,7 +8,7 @@ Feature: I can apply presets
     Given I navigate to "Site admin presets" in site administration
     And I should see "Full"
     And I open the action menu in "Full" "table_row"
-    When I choose "Apply" in the open action menu
+    When I choose "Review settings and apply" in the open action menu
     Then I should not see "Setting changes"
 
   Scenario: Applying Starter Moodle preset changes status and settings
@@ -28,7 +28,7 @@ Feature: I can apply presets
     When I navigate to "Site admin presets" in site administration
     And I should see "Starter"
     And I open the action menu in "Starter" "table_row"
-    And I choose "Apply" in the open action menu
+    And I choose "Review settings and apply" in the open action menu
     And I should see "Setting changes"
 #   We are not testing all the settings, just one of each type.
     And I should see "Enable badges" in the "Setting changes" "table"
@@ -63,13 +63,13 @@ Feature: I can apply presets
     And I click on "Create preset" "button"
     And I should see "Current"
     And I open the action menu in "Current" "table_row"
-    When I choose "Apply" in the open action menu
+    When I choose "Review settings and apply" in the open action menu
     And I should not see "Setting changes"
     And I click on "Continue" "button"
     And the following config values are set as admin:
       | enabled | 0 | core_competency |
     And I open the action menu in "Current" "table_row"
-    And I choose "Apply" in the open action menu
+    And I choose "Review settings and apply" in the open action menu
     Then I should see "Setting changes"
     And I should see "Enable competencies" in the "core_competency" "table_row"
     And I click on "Apply" "button"
