@@ -94,6 +94,18 @@ abstract class base {
     }
 
     /**
+     * Returns current status for a pluginname.
+     *
+     * @param string $pluginname The plugin name to check.
+     * @return int The current status (enabled, disabled...) of $pluginname.
+     */
+    public static function get_enabled_plugin(string $pluginname): int {
+        $enabledplugins = static::get_enabled_plugins();
+        $value = $enabledplugins && array_key_exists($pluginname, $enabledplugins);
+        return (int) $value;
+    }
+
+    /**
      * Gathers and returns the information about all plugins of the given type,
      * either on disk or previously installed.
      *

@@ -147,6 +147,11 @@ completely removed from Moodle core too.
 * The following behat step has been deprecated
   - i_select_from_flat_navigation_drawer
 * The type for the "message" field in the external_warnings() structure has been changed from PARAM_TEXT to PARAM_RAW
+* A new parameter $displayoptions has been added to the core_renderer::confirm() to allow better customization for confirming page
+such as the title and strings for continue and cancel buttons.
+* The method get_enabled_plugin($pluginname) has been added to the core_plugininfo\base class. It has a default implementation for
+all the plugininfo classes and it can be overwritten when required (like it has been done with filter). This method returns the
+current value for a pluginname depending on its status (enabled, disabled, other...).
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.

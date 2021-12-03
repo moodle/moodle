@@ -1,0 +1,24 @@
+.admin_presets_tree_name {
+    padding: 0 0 4px 2px;
+}
+
+.admin_presets_tree_value {
+    border: 1px solid #ccc;
+    padding: 0 0 4px 2px;
+}
+
+.admin_presets_error {
+    color: red;
+    text-align: center;
+}
+
+.admin_presets_success {
+    color: green;
+    text-align: center;
+}
+
+.adminpreset_appdescription {
+    font-size: small;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
