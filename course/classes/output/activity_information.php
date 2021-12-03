@@ -172,6 +172,8 @@ class activity_information implements renderable, templatable {
             $detail->key = $key;
             $detail->statuscomplete = in_array($detail->status, [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS]);
             $detail->statuscompletefail = $detail->status == COMPLETION_COMPLETE_FAIL;
+            // This is not used by core themes but may be needed in custom themes.
+            $detail->statuscompletepass = $detail->status == COMPLETION_COMPLETE_PASS;
             $detail->statusincomplete = $detail->status == COMPLETION_INCOMPLETE;
 
             // Add an accessible description to be used for title and aria-label attributes for overridden completion details.
