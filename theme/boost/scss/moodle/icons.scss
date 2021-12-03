@@ -135,7 +135,8 @@ $iconsizes: map-merge((
     background-color: $gray-100;
     border-radius: 4px;
     padding: 0.7rem;
-    .activityicon {
+    .activityicon,
+    .icon {
         margin: 0;
         height: 24px;
         width: 24px;
@@ -145,7 +146,8 @@ $iconsizes: map-merge((
 @each $type, $value in $activity-icon-colors {
     .activityiconcontainer.#{$type} {
         background-color: $value;
-        .activityicon {
+        .activityicon,
+        .icon {
             filter: brightness(0) invert(1);
         }
     }
