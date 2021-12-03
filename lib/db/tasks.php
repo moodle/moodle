@@ -419,4 +419,13 @@ $tasks = array(
         'dayofweek' => '*',
         'month' => '*',
     ),
+    array(
+        'classname' => 'core_reportbuilder\task\send_schedules',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ),
 );

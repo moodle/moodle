@@ -18,11 +18,17 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\helpers;
 
+use context_user;
 use core_plugin_manager;
+use core_user;
 use invalid_parameter_exception;
 use stdClass;
+use stored_file;
+use core\message\message;
 use core\plugininfo\dataformat;
+use core_reportbuilder\local\models\audience as audience_model;
 use core_reportbuilder\local\models\schedule as model;
+use core_reportbuilder\table\custom_report_table_view;
 
 /**
  * Helper class for report schedule related methods
@@ -34,7 +40,7 @@ use core_reportbuilder\local\models\schedule as model;
 class schedule {
 
     /**
-     * Create report schedule
+     * Create report schedule, calculate when it should be next sent
      *
      * @param stdClass $data
      * @return model
@@ -42,9 +48,10 @@ class schedule {
     public static function create_schedule(stdClass $data): model {
         $data->name = trim($data->name);
 
-        // TODO: Calculate next send.
+        $schedule = (new model(0, $data));
+        $schedule->set('timenextsend', self::calculate_next_send_time($schedule));
 
-        return (new model(0, $data))->create();
+        return $schedule->create();
     }
 
     /**
@@ -66,9 +73,9 @@ class schedule {
             $data['name'] = trim($data['name']);
         }
 
-        $schedule->set_many($data)->update();
-
-        // TODO: Calculate next send.
+        $schedule->set_many($data);
+        $schedule->set('timenextsend', self::calculate_next_send_time($schedule))
+            ->update();
 
         return $schedule;
     }
@@ -89,6 +96,207 @@ class schedule {
         }
 
         return $schedule->set('enabled', $enabled)->update();
+    }
+
+    /**
+     * Return array of users who match the audience records added to the given schedule
+     *
+     * @param model $schedule
+     * @return stdClass[]
+     */
+    public static function get_schedule_report_users(model $schedule): array {
+        global $DB;
+
+        $audienceids = (array) json_decode($schedule->get('audiences'));
+
+        // Retrieve all selected audience records for the schedule.
+        [$audienceselect, $audienceparams] = $DB->get_in_or_equal($audienceids, SQL_PARAMS_NAMED, 'aid', true, true);
+        $audiences = audience_model::get_records_select("id {$audienceselect}", $audienceparams);
+        if (count($audiences) === 0) {
+            return [];
+        }
+
+        // Now convert audiences to SQL for user retrieval.
+        [$wheres, $params] = audience::user_audience_sql($audiences);
+
+        $sql = 'SELECT u.*
+                  FROM {user} u
+                 WHERE ' . implode(' OR ', $wheres);
+
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    /**
+     * Return count of schedule report rows
+     *
+     * @param model $schedule
+     * @return int
+     */
+    public static function get_schedule_report_count(model $schedule): int {
+        global $DB;
+
+        $table = custom_report_table_view::create($schedule->get('reportid'));
+        $table->setup();
+
+        return $DB->count_records_sql($table->countsql, $table->countparams);
+    }
+
+    /**
+     * Generate stored file instance for given schedule, in user draft
+     *
+     * @param model $schedule
+     * @return stored_file
+     */
+    public static function get_schedule_report_file(model $schedule): stored_file {
+        $table = custom_report_table_view::create($schedule->get('reportid'));
+
+        $table->setup();
+        $table->query_db(0, false);
+
+        // Create our schedule report stored file.
+        $context = context_user::instance($schedule->get('usercreated'));
+        $filerecord = [
+            'contextid' => $context->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => file_get_unused_draft_itemid(),
+            'filepath' => '/',
+            'filename' => clean_filename($schedule->get_formatted_name()),
+        ];
+
+        $storedfile = \core\dataformat::write_data_to_filearea(
+            $filerecord,
+            $schedule->get('format'),
+            $table->headers,
+            $table->rawdata,
+            static function(stdClass $record) use ($table): array {
+                return $table->format_row($record);
+            }
+        );
+
+        $table->close_recordset();
+
+        return $storedfile;
+    }
+
+    /**
+     * Check whether given schedule needs to be sent
+     *
+     * @param model $schedule
+     * @return bool
+     */
+    public static function should_send_schedule(model $schedule): bool {
+        if (!$schedule->get('enabled')) {
+            return false;
+        }
+
+        $timenow = time();
+
+        // Ensure we've reached the initial scheduled start time.
+        $timescheduled = $schedule->get('timescheduled');
+        if ($timescheduled > $timenow) {
+            return false;
+        }
+
+         return $schedule->get('timenextsend') <= $timenow;
+    }
+
+    /**
+     * Calculate the next time a schedule should be sent, based on it's recurrence and when it was initially scheduled. Ensures
+     * returned value is after the current date
+     *
+     * @param model $schedule
+     * @param int|null $timenow Time to use for calculation (defaults to current time)
+     * @return int
+     */
+    public static function calculate_next_send_time(model $schedule, ?int $timenow = null): int {
+        global $CFG;
+
+        $timenow = $timenow ?? time();
+
+        $recurrence = $schedule->get('recurrence');
+        $timescheduled = $schedule->get('timescheduled');
+
+        // If no recurrence is set or we haven't reached last sent date, return early.
+        if ($recurrence === model::RECURRENCE_NONE || $timescheduled > $timenow) {
+            return $timescheduled;
+        }
+
+        // Extract attributes from date (year, month, day, hours, minutes).
+        [
+            'year' => $year,
+            'mon' => $month,
+            'mday' => $day,
+            'wday' => $dayofweek,
+            'hours' => $hour,
+            'minutes' => $minute,
+        ] = usergetdate($timescheduled, $CFG->timezone);
+
+        switch ($recurrence) {
+            case model::RECURRENCE_DAILY:
+                $day += 1;
+            break;
+            case model::RECURRENCE_WEEKDAYS:
+                $day += 1;
+
+                $calendar = \core_calendar\type_factory::get_calendar_instance();
+                $weekend = get_config('core', 'calendar_weekend');
+
+                // Increment day until day of week falls on a weekday.
+                while ((bool) ($weekend & (1 << (++$dayofweek % $calendar->get_num_weekdays())))) {
+                    $day++;
+                }
+            break;
+            case model::RECURRENCE_WEEKLY:
+                $day += 7;
+            break;
+            case model::RECURRENCE_MONTHLY:
+                $month += 1;
+            break;
+            case model::RECURRENCE_ANNUALLY:
+                $year += 1;
+            break;
+        }
+
+        // We need to recursively increment the timestamp until we get one after the current time.
+        $timestamp = make_timestamp($year, $month, $day, $hour, $minute, 0, $CFG->timezone);
+        if ($timestamp < $timenow) {
+            // Ensure we don't modify anything in the original model.
+            $scheduleclone = new model(0, $schedule->to_record());
+
+            return self::calculate_next_send_time(
+                $scheduleclone->set('timescheduled', $timestamp), $timenow);
+        } else {
+            return $timestamp;
+        }
+    }
+
+    /**
+     * Send schedule message to user
+     *
+     * @param model $schedule
+     * @param stdClass $user
+     * @param stored_file $attachment
+     * @return bool
+     */
+    public static function send_schedule_message(model $schedule, stdClass $user, stored_file $attachment): bool {
+        $message = new message();
+        $message->component = 'moodle';
+        $message->name = 'reportbuilderschedule';
+        $message->courseid = SITEID;
+        $message->userfrom = core_user::get_noreply_user();
+        $message->userto = $user;
+        $message->subject = $schedule->get('subject');
+        $message->fullmessage = $schedule->get('message');
+        $message->fullmessageformat = $schedule->get('messageformat');
+        $message->fullmessagehtml = $message->fullmessage;
+        $message->smallmessage = $message->fullmessage;
+
+        // Attach report to outgoing message.
+        $message->attachment = $attachment;
+        $message->attachname = $attachment->get_filename();
+
+        return (bool) message_send($message);
     }
 
     /**

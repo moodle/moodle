@@ -22,6 +22,7 @@ use core_reportbuilder_generator;
 use external_api;
 use externallib_advanced_testcase;
 use core_reportbuilder\report_access_exception;
+use core_reportbuilder\task\send_schedule;
 use core_user\reportbuilder\datasource\users;
 
 defined('MOODLE_INTERNAL') || die();
@@ -56,7 +57,14 @@ class send_test extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(send::execute_returns(), $result);
         $this->assertTrue($result);
 
-        // TODO: something.
+        // Assert our adhoc-task was created.
+        $tasks = \core\task\manager::get_adhoc_tasks(send_schedule::class);
+        $this->assertCount(1, $tasks);
+
+        $this->assertEquals((object) [
+            'reportid' => $report->get('id'),
+            'scheduleid' => $schedule->get('id'),
+        ], reset($tasks)->get_custom_data());
     }
 
     /**

@@ -23,6 +23,7 @@ use external_function_parameters;
 use external_value;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
+use core_reportbuilder\task\send_schedule;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -71,9 +72,13 @@ class send extends external_api {
         self::validate_context($report->get_context());
         permission::require_can_edit_report($report->get_report_persistent());
 
-        // TODO: something.
+        $sendschedule = new send_schedule();
+        $sendschedule->set_custom_data([
+            'reportid' => $reportid,
+            'scheduleid' => $scheduleid,
+        ]);
 
-        return true;
+        return (bool) \core\task\manager::queue_adhoc_task($sendschedule);
     }
 
     /**
