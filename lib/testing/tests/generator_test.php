@@ -47,6 +47,11 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertInstanceOf('mod_quiz_generator', $generator);
     }
 
+    public function test_get_default_generator() {
+        $generator = $this->getDataGenerator()->get_plugin_generator('block_somethingthatdoesnotexist');
+        $this->assertInstanceOf('default_block_generator', $generator);
+    }
+
     /**
      * Test plugin generator, with no component directory.
      *
