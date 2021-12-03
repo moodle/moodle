@@ -287,6 +287,9 @@ class event_exporter_base extends exporter {
                 'type' => event_action_exporter::read_properties_definition(),
                 'optional' => true,
             ],
+            'purpose' => [
+                'type' => PARAM_TEXT
+            ],
         ];
     }
 
@@ -327,6 +330,12 @@ class event_exporter_base extends exporter {
             $values['normalisedeventtype'] = 'other';
         }
         $values['normalisedeventtypetext'] = $stringexists ? get_string($identifier, 'calendar') : '';
+
+        $purpose = 'none';
+        if ($moduleproxy) {
+            $purpose = plugin_supports('mod', $moduleproxy->get('modname'), FEATURE_MOD_PURPOSE, 'none');
+        }
+        $values['purpose'] = $purpose;
 
         $values['icon'] = $iconexporter->export($output);
 
