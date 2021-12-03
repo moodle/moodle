@@ -31,5 +31,10 @@ $observers = array(
     array(
         'eventname' => '\mod_workshop\event\course_module_viewed',
         'callback'  => '\workshopallocation_scheduled\observer::workshop_viewed',
+    ),
+
+    array(
+        'eventname' => '\mod_workshop\event\phase_automatically_switched',
+        'callback' => '\workshopallocation_scheduled\observer::phase_automatically_switched'
     )
 );
