@@ -571,8 +571,16 @@ function url_guess_icon($fullurl, $size = null) {
         return null;
     }
 
-    $moodleurl = new moodle_url($fullurl);
-    $fullurl = $moodleurl->out_omit_querystring();
+    try {
+        // There can be some cases where the url is invalid making parse_url() to return false.
+        // That will make moodle_url class to throw an exception, so we need to catch the exception to prevent errors.
+        $moodleurl = new moodle_url($fullurl);
+        $fullurl = $moodleurl->out_omit_querystring();
+    } catch (\moodle_exception $e) {
+        // If an exception is thrown, means the url is invalid. No need to log exception.
+        return null;
+    }
+
     $icon = file_extension_icon($fullurl, $size);
     $htmlicon = file_extension_icon('.htm', $size);
     $unknownicon = file_extension_icon('', $size);
