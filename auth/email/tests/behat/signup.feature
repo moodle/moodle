@@ -11,7 +11,7 @@ Feature: User must accept policy when logging in and signing up
     And I am on site homepage
     And I follow "Log in"
     When I click on "Create new account" "link"
-    Then I should not see "I understand and agree"
+    Then I should not see "I understand and agree. (Be aware that this acknowledgement may not include optional site policies.). (Be aware that this acknowledgement may not include optional site policies.)"
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
@@ -41,7 +41,7 @@ Feature: User must accept policy when logging in and signing up
     And I am on site homepage
     And I follow "Log in"
     When I click on "Create new account" "link"
-    Then the field "I understand and agree" matches value "0"
+    Then the field "I understand and agree. (Be aware that this acknowledgement may not include optional site policies.). (Be aware that this acknowledgement may not include optional site policies.)" matches value "0"
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
@@ -49,7 +49,7 @@ Feature: User must accept policy when logging in and signing up
       | Email (again) | user1@address.invalid |
       | First name    | User1                 |
       | Surname       | L1                    |
-      | I understand and agree | 1            |
+      | I understand and agree. (Be aware that this acknowledgement may not include optional site policies.) | 1            |
     And I press "Create my new account"
     And I should see "Confirm your account"
     And I should see "An email should have been sent to your address at user1@address.invalid"
