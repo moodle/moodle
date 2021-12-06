@@ -514,9 +514,7 @@ class secondary_test extends \advanced_testcase {
         $secondary = new secondary($PAGE);
         $secondary->add_node($this->generate_node_tree_construct($structure, 'primarynode'));
         $selectednode = $secondary->find($selected, null);
-        $method = new ReflectionMethod('core\navigation\views\secondary', 'get_menu_array');
-        $method->setAccessible(true);
-        $response = $method->invoke($secondary, $selectednode);
+        $response = \core\navigation\views\secondary::create_menu_element([$selectednode]);
 
         $this->assertSame($expected, $response);
     }
@@ -544,7 +542,7 @@ class secondary_test extends \advanced_testcase {
             "Fetch information from a node with children" => [
                 'child2',
                 [
-                    'https://www.example.com/moodle/test.php' => 'child2',
+                    'https://www.example.com/moodle/test.php' => 'child2.3',
                     'https://www.example.com/moodle/view/course.php?child=2' => 'child2.1',
                     'https://www.example.com/moodle/view/admin.php?child=2' => 'child2.2'
                 ],
@@ -557,21 +555,17 @@ class secondary_test extends \advanced_testcase {
                 'parentnode1',
                 [
                     [
+                        'parentnode1' => [
+                            'https://www.example.com/moodle/my' => 'child1'
+                        ],
                         'child2' => [
                             'https://www.example.com/moodle/test.php' => 'child2',
                             'https://www.example.com/moodle/view/course.php?child=2' => 'child2.1',
                             'https://www.example.com/moodle/view/admin.php?child=2' => 'child2.2',
-                        ]
-                    ],
-                    [
+                        ],
                         'child3' => [
                             'https://www.example.com/moodle/view/course.php?child=3' => 'child3.1',
                             'https://www.example.com/moodle/view/admin.php?child=3' => 'child3.2'
-                        ]
-                    ],
-                    [
-                        'parentnode1' => [
-                            'https://www.example.com/moodle/my' => 'child1'
                         ]
                     ]
                 ],
@@ -653,78 +647,6 @@ class secondary_test extends \advanced_testcase {
             "No navigation node returned when node has children but no actions available." => [
                 "child1",
                 null
-            ],
-        ];
-    }
-
-    /**
-     * Test for get_additional_child_nodes
-     *
-     * @param string $selectedkey
-     * @param array $expected
-     * @dataProvider test_get_additional_child_nodes_provider
-     */
-    public function test_get_additional_child_nodes(string $selectedkey, array $expected) {
-        global $PAGE;
-        $structure = [
-            'parentnode1' => [
-                'child1' => '/my',
-                'child2' => [
-                    'action' => '/test.php',
-                    'children' => [
-                        'child2.1' => '/view/course.php?child=2',
-                        'child2.2' => '/view/admin.php?child=2',
-                    ]
-                ],
-                'child3' => [
-                    'child3.1' => '/view/course.php?child=3',
-                    'child3.2' => '/view/admin.php?child=3',
-                ]
-            ],
-            'parentnode2' => "/view/module.php"
-        ];
-
-        $secondary = new secondary($PAGE);
-        $nodes = $this->generate_node_tree_construct($structure, 'primarynode');
-        $selectednode = $nodes->find($selectedkey, null);
-        $method = new ReflectionMethod('core\navigation\views\secondary', 'get_additional_child_nodes');
-        $method->setAccessible(true);
-        $response = $method->invoke($secondary, $selectednode);
-
-        $this->assertSame($expected, $response);
-    }
-
-    /**
-     * Provider for test_get_additional_child_nodes
-     *
-     * @return array[]
-     */
-    public function test_get_additional_child_nodes_provider(): array {
-        return [
-            "Get nodes with deep nested children" => [
-                "parentnode1",
-                [
-                    'https://www.example.com/moodle/my' => 'child1',
-                    'https://www.example.com/moodle/test.php' => 'child2',
-                    'https://www.example.com/moodle/view/course.php?child=2' => 'child2.1',
-                    'https://www.example.com/moodle/view/admin.php?child=2' => 'child2.2',
-                    'https://www.example.com/moodle/view/course.php?child=3' => 'child3.1',
-                    'https://www.example.com/moodle/view/admin.php?child=3' => 'child3.2',
-                ]
-            ],
-            "Get children from parent without action " => [
-                "child3",
-                [
-                    'https://www.example.com/moodle/view/course.php?child=3' => 'child3.1',
-                    'https://www.example.com/moodle/view/admin.php?child=3' => 'child3.2'
-                ]
-            ],
-            "Get children from parent with action " => [
-                "child2",
-                [
-                    'https://www.example.com/moodle/view/course.php?child=2' => 'child2.1',
-                    'https://www.example.com/moodle/view/admin.php?child=2' => 'child2.2'
-                ]
             ],
         ];
     }
