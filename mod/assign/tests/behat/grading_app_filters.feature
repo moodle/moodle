@@ -42,7 +42,7 @@ Feature: In an assignment, teachers can change filters in the grading app
     And I should not see "Test assignment name &amp;"
     And I set the field "allocatedmarker" to "Marker 1"
     And I set the field "workflowstate" to "In marking"
-    And I set the field "Notify students" to "0"
+    And I set the field "Notify student" to "0"
     And I press "Save changes"
 
     And I am on the "Test assignment name &" Activity page
@@ -62,7 +62,7 @@ Feature: In an assignment, teachers can change filters in the grading app
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "allocatedmarker" to "Marker 1"
     And I set the field "workflowstate" to "In marking"
-    And I set the field "Notify students" to "0"
+    And I set the field "Notify student" to "0"
     And I press "Save changes"
 
     And I am on the "Test assignment name &" Activity page

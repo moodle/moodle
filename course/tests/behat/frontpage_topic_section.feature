@@ -1,5 +1,5 @@
 @core @core_course
-Feature: Front page topic section
+Feature: Site home topic section
   In order to show a display activities in the frontpage
   As an admin
   I need to edit the frontpage topic section

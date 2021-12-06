@@ -9,7 +9,7 @@ Feature: Course summary block used on the frontpage
     And I am on site homepage
     And I turn editing mode on
     And I add the "Course/site summary" block
-    And I navigate to "Front page > Front page settings" in site administration
+    And I navigate to "Site home > Site home settings" in site administration
     And I set the following fields to these values:
       | summary | Proved the summary block works! |
     And I press "Save changes"

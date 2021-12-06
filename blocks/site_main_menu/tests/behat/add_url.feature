@@ -58,7 +58,7 @@ Feature: Add URL to main menu block
     And I add the "Main menu" block
     And I configure the "Main menu" block
     And I set the following fields to these values:
-      | Page contexts | Display on the front page and any pages added to the front page |
+      | Page contexts | Display on the site home and any pages added to the site home. |
     And I press "Save changes"
     And I add a "URL" to section "0" and I fill the form with:
       | Name         | reference link        |

@@ -63,7 +63,7 @@ Feature: Anonymous feedback
   @javascript
   Scenario: Complete anonymous feedback and view analysis on the front page as an authenticated user
     And I log in as "admin"
-    And I set the following system permissions of "Authenticated user on frontpage" role:
+    And I set the following system permissions of "Authenticated user on site home" role:
       | capability                   | permission |
       | mod/feedback:viewanalysepage | Allow      |
     And I log out
