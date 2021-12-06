@@ -20,6 +20,7 @@
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_rss\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +36,7 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_rss_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Basic setup for these tests.
@@ -153,7 +154,7 @@ class core_rss_testcase extends provider_testcase {
         $this->assertEquals($expected, $actual);
 
         // The list of users for system context should not return any users.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist);
         $this->assertCount(0, $userlist);
@@ -204,7 +205,7 @@ class core_rss_testcase extends provider_testcase {
         $this->assertCount(1, $userlist2);
 
         // User data should be only removed in the user context.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         // Add userlist2 to the approved user list in the system context.
         $approvedlist = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
         // Delete user1 data using delete_data_for_user.

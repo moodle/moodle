@@ -22,14 +22,15 @@
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace gradingform_guide\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-use \core_privacy\tests\provider_testcase;
-use \core_privacy\local\request\writer;
-use \gradingform_guide\privacy\provider;
+use core_privacy\tests\provider_testcase;
+use core_privacy\local\request\writer;
+use gradingform_guide\privacy\provider;
 
 /**
  * Privacy tests for gradingform_guide.
@@ -38,7 +39,7 @@ use \gradingform_guide\privacy\provider;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradingform_guide_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Ensure that export_user_preferences returns no data if the user has no data.
@@ -65,7 +66,7 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
 
         // Validate exported data.
         provider::export_user_preferences($user->id);
-        $context = context_user::instance($user->id);
+        $context = \context_user::instance($user->id);
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $prefs = $writer->get_user_preferences('gradingform_guide');
@@ -90,7 +91,7 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
 
         $this->setUser($user);
 
-        $modulecontext = context_module::instance($module->cmid);
+        $modulecontext = \context_module::instance($module->cmid);
         $controller = $this->get_test_guide($modulecontext);
 
         // In the situation of mod_assign this would be the id from assign_grades.
@@ -128,7 +129,7 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
 
         $this->setUser($user);
 
-        $modulecontext = context_module::instance($module->cmid);
+        $modulecontext = \context_module::instance($module->cmid);
         $controller = $this->get_test_guide($modulecontext);
 
         // In the situation of mod_assign this would be the id from assign_grades.
@@ -174,7 +175,7 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
      * @param context_module $context
      * @return gradingform_guide_controller
      */
-    protected function get_test_guide(context_module $context): gradingform_guide_controller {
+    protected function get_test_guide(\context_module $context): \gradingform_guide_controller {
         $generator = \testing_util::get_data_generator();
         $guidegenerator = $generator->get_plugin_generator('gradingform_guide');
 
@@ -193,7 +194,7 @@ class gradingform_guide_privacy_testcase extends provider_testcase {
      * @return array
      */
     protected function get_test_form_data(
-        gradingform_guide_controller $controller,
+        \gradingform_guide_controller $controller,
         int $itemid,
         float $spellingscore,
         string $spellingremark,

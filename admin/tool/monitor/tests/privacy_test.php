@@ -22,13 +22,14 @@
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_monitor\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \tool_monitor\privacy\provider;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\approved_userlist;
-use \core_privacy\tests\provider_testcase;
+use tool_monitor\privacy\provider;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\tests\provider_testcase;
 
 /**
  * Privacy test for the event monitor
@@ -38,7 +39,7 @@ use \core_privacy\tests\provider_testcase;
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_monitor_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Set up method.
@@ -115,7 +116,7 @@ class tool_monitor_privacy_testcase extends provider_testcase {
 
         $this->setUser($user2);
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = 0;
         $record->userid = $user2->id;
         $record->ruleid = $rule->id;
@@ -164,7 +165,7 @@ class tool_monitor_privacy_testcase extends provider_testcase {
         // Create a subscription with user2.
         $this->setUser($user2);
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = 0;
         $record->userid = $user2->id;
         $record->ruleid = $rule->id;
@@ -251,7 +252,7 @@ class tool_monitor_privacy_testcase extends provider_testcase {
         $subscription3 = $monitorgenerator->create_subscription($subscription3);
 
         // Try a different context first.
-        provider::delete_data_for_all_users_in_context(context_system::instance());
+        provider::delete_data_for_all_users_in_context(\context_system::instance());
 
         // Get all of the monitor rules.
         $dbrules = $DB->get_records('tool_monitor_rules');

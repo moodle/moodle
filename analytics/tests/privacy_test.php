@@ -21,8 +21,9 @@
  * @copyright 2018 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_analytics\privacy;
 
-use \core_analytics\privacy\provider;
+use core_analytics\privacy\provider;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\approved_contextlist;
@@ -42,7 +43,7 @@ require_once(__DIR__ . '/fixtures/test_target_course_users.php');
  * @copyright 2018 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_analytics_privacy_model_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     public function setUp(): void {
 

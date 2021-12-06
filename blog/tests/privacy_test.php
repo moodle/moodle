@@ -23,6 +23,7 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_blog\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -45,7 +46,7 @@ require_once($CFG->dirroot . '/comment/lib.php');
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_blog_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -61,7 +62,7 @@ class core_blog_privacy_testcase extends provider_testcase {
         $cm2a = $dg->create_module('page', ['course' => $c2]);
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
+        $u1ctx = \context_user::instance($u1->id);
 
         // Blog share a table with notes, so throw data in there and make sure it doesn't get reported.
         $dg->get_plugin_generator('core_notes')->create_instance(['userid' => $u1->id, 'courseid' => $c3->id]);
@@ -78,23 +79,23 @@ class core_blog_privacy_testcase extends provider_testcase {
 
         // Create a blog post associated with c1.
         $post = $this->create_post(['userid' => $u1->id, 'courseid' => $c1->id]);
-        $entry = new blog_entry($post->id);
-        $entry->add_association(context_course::instance($c1->id)->id);
+        $entry = new \blog_entry($post->id);
+        $entry->add_association(\context_course::instance($c1->id)->id);
         $contextids = provider::get_contexts_for_userid($u1->id)->get_contextids();
         $this->assertCount(2, $contextids);
         $this->assertTrue(in_array($u1ctx->id, $contextids));
-        $this->assertTrue(in_array(context_course::instance($c1->id)->id, $contextids));
+        $this->assertTrue(in_array(\context_course::instance($c1->id)->id, $contextids));
         $this->assertEmpty(provider::get_contexts_for_userid($u2->id)->get_contextids());
 
         // Create a blog post associated with cm2a.
         $post = $this->create_post(['userid' => $u1->id, 'courseid' => $c2->id]);
-        $entry = new blog_entry($post->id);
-        $entry->add_association(context_module::instance($cm2a->cmid)->id);
+        $entry = new \blog_entry($post->id);
+        $entry->add_association(\context_module::instance($cm2a->cmid)->id);
         $contextids = provider::get_contexts_for_userid($u1->id)->get_contextids();
         $this->assertCount(3, $contextids);
         $this->assertTrue(in_array($u1ctx->id, $contextids));
-        $this->assertTrue(in_array(context_course::instance($c1->id)->id, $contextids));
-        $this->assertTrue(in_array(context_module::instance($cm2a->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_course::instance($c1->id)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($cm2a->cmid)->id, $contextids));
         $this->assertEmpty(provider::get_contexts_for_userid($u2->id)->get_contextids());
 
         // User 2 comments on u1's post.
@@ -104,8 +105,8 @@ class core_blog_privacy_testcase extends provider_testcase {
         $contextids = provider::get_contexts_for_userid($u1->id)->get_contextids();
         $this->assertCount(3, $contextids);
         $this->assertTrue(in_array($u1ctx->id, $contextids));
-        $this->assertTrue(in_array(context_course::instance($c1->id)->id, $contextids));
-        $this->assertTrue(in_array(context_module::instance($cm2a->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_course::instance($c1->id)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($cm2a->cmid)->id, $contextids));
         $contextids = provider::get_contexts_for_userid($u2->id)->get_contextids();
         $this->assertCount(1, $contextids);
         $this->assertTrue(in_array($u1ctx->id, $contextids));
@@ -115,18 +116,18 @@ class core_blog_privacy_testcase extends provider_testcase {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $u1 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
+        $u1ctx = \context_user::instance($u1->id);
 
         $this->assertEmpty(provider::get_contexts_for_userid($u1->id)->get_contextids());
 
         // Create a blog post associated with c1. It should always return both the course and user context.
         $post = $this->create_post(['userid' => $u1->id, 'courseid' => $c1->id]);
-        $entry = new blog_entry($post->id);
-        $entry->add_association(context_course::instance($c1->id)->id);
+        $entry = new \blog_entry($post->id);
+        $entry->add_association(\context_course::instance($c1->id)->id);
         $contextids = provider::get_contexts_for_userid($u1->id)->get_contextids();
         $this->assertCount(2, $contextids);
         $this->assertTrue(in_array($u1ctx->id, $contextids));
-        $this->assertTrue(in_array(context_course::instance($c1->id)->id, $contextids));
+        $this->assertTrue(in_array(\context_course::instance($c1->id)->id, $contextids));
     }
 
     /**
@@ -136,14 +137,14 @@ class core_blog_privacy_testcase extends provider_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
-        $c1ctx = context_course::instance($course->id);
+        $c1ctx = \context_course::instance($course->id);
 
         $post = $this->create_post(['userid' => $user1->id, 'courseid' => $course->id]);
-        $entry = new blog_entry($post->id);
+        $entry = new \blog_entry($post->id);
         $entry->add_association($c1ctx->id);
 
         // Add a comment from user 2.
-        $comment = $this->get_comment_object(context_user::instance($user1->id), $entry->id);
+        $comment = $this->get_comment_object(\context_user::instance($user1->id), $entry->id);
         $this->setUser($user2);
         $comment->add('Nice blog post');
 
@@ -154,10 +155,10 @@ class core_blog_privacy_testcase extends provider_testcase {
 
         // Add an association for a module.
         $cm1a = $this->getDataGenerator()->create_module('page', ['course' => $course]);
-        $cm1ctx = context_module::instance($cm1a->cmid);
+        $cm1ctx = \context_module::instance($cm1a->cmid);
 
         $post2 = $this->create_post(['userid' => $user2->id, 'courseid' => $course->id]);
-        $entry2 = new blog_entry($post2->id);
+        $entry2 = new \blog_entry($post2->id);
         $entry2->add_association($cm1ctx->id);
 
         $userlist = new \core_privacy\local\request\userlist($cm1ctx, 'core_blog');
@@ -172,10 +173,10 @@ class core_blog_privacy_testcase extends provider_testcase {
     public function test_get_users_in_context_user_context() {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
-        $u1ctx = context_user::instance($user1->id);
+        $u1ctx = \context_user::instance($user1->id);
 
         $post = $this->create_post(['userid' => $user1->id]);
-        $entry = new blog_entry($post->id);
+        $entry = new \blog_entry($post->id);
 
         // Add a comment from user 2.
         $comment = $this->get_comment_object($u1ctx, $entry->id);
@@ -193,7 +194,7 @@ class core_blog_privacy_testcase extends provider_testcase {
      */
     public function test_get_users_in_context_external_blog() {
         $user1 = $this->getDataGenerator()->create_user();
-        $u1ctx = context_user::instance($user1->id);
+        $u1ctx = \context_user::instance($user1->id);
         $extu1 = $this->create_external_blog(['userid' => $user1->id]);
 
         $userlist = new \core_privacy\local\request\userlist($u1ctx, 'core_blog');
@@ -215,13 +216,13 @@ class core_blog_privacy_testcase extends provider_testcase {
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
 
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
-        $cm1actx = context_module::instance($cm1a->cmid);
-        $cm1bctx = context_module::instance($cm1b->cmid);
-        $cm2actx = context_module::instance($cm2a->cmid);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
+        $cm1actx = \context_module::instance($cm1a->cmid);
+        $cm1bctx = \context_module::instance($cm1b->cmid);
+        $cm2actx = \context_module::instance($cm2a->cmid);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         // Blog share a table with notes, so throw data in there and make sure it doesn't get deleted.
         $this->assertFalse($DB->record_exists('post', ['courseid' => $c1->id, 'userid' => $u1->id, 'module' => 'notes']));
@@ -233,36 +234,36 @@ class core_blog_privacy_testcase extends provider_testcase {
         $extu2 = $this->create_external_blog(['userid' => $u2->id]);
 
         // Create a set of posts.
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id])->id);
         $commentedon = $entry;
-        $entry = new blog_entry($this->create_post(['userid' => $u2->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u2->id])->id);
 
         // Two course associations for u1.
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
         $entry->add_association($c1ctx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
         $entry->add_association($c1ctx->id);
 
         // Two module associations with cm1a, and 1 with cm1b for u1.
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
         $entry->add_association($cm1actx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
         $entry->add_association($cm1actx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
         $entry->add_association($cm1bctx->id);
 
         // One association for u2 in c1, cm1a and cm2a.
-        $entry = new blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c1->id])->id);
         $entry->add_association($c1ctx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c1->id])->id);
         $entry->add_association($cm1actx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c2->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c2->id])->id);
         $entry->add_association($cm2actx->id);
 
         // One association for u1 in c2 and cm2a.
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c2->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c2->id])->id);
         $entry->add_association($c2ctx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c2->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c2->id])->id);
         $entry->add_association($cm2actx->id);
 
         // Add comments.
@@ -380,10 +381,10 @@ class core_blog_privacy_testcase extends provider_testcase {
 
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
 
         // Create a blog entry for user, associated with course.
-        $entry = new blog_entry($this->create_post(['userid' => $user->id, 'courseid' => $course->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $user->id, 'courseid' => $course->id])->id);
         $entry->add_association($context->id);
 
         // Generate list of contexts for user.
@@ -413,45 +414,45 @@ class core_blog_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
-        $cm1actx = context_module::instance($cm1a->cmid);
-        $cm1bctx = context_module::instance($cm1b->cmid);
-        $cm2actx = context_module::instance($cm2a->cmid);
-        $u1ctx = context_user::instance($u1->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
+        $cm1actx = \context_module::instance($cm1a->cmid);
+        $cm1bctx = \context_module::instance($cm1b->cmid);
+        $cm2actx = \context_module::instance($cm2a->cmid);
+        $u1ctx = \context_user::instance($u1->id);
 
         // Create two external blogs.
         $extu1 = $this->create_external_blog(['userid' => $u1->id]);
         $extu2 = $this->create_external_blog(['userid' => $u2->id]);
 
         // Create a set of posts.
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id])->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u2->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u2->id])->id);
 
         // Course associations for u1 and u2.
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
         $entry->add_association($c1ctx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
         $entry->add_association($c1ctx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c1->id])->id);
         $entry->add_association($c1ctx->id);
 
         // Module associations for u1 and u2.
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
         $entry->add_association($cm1actx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
         $entry->add_association($cm1actx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id])->id);
         $entry->add_association($cm1bctx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c1->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c1->id])->id);
         $entry->add_association($cm1actx->id);
 
         // Foreign associations for u1, u2.
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c2->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c2->id])->id);
         $entry->add_association($c2ctx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c2->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c2->id])->id);
         $entry->add_association($c2ctx->id);
-        $entry = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $cm2a->id])->id);
+        $entry = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $cm2a->id])->id);
         $entry->add_association($cm2actx->id);
 
         // Validate what we've got.
@@ -547,31 +548,31 @@ class core_blog_privacy_testcase extends provider_testcase {
         $cm1b = $dg->create_module('page', ['course' => $c1]);
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $c1ctx = context_course::instance($c1->id);
-        $cm1actx = context_module::instance($cm1a->cmid);
-        $cm1bctx = context_module::instance($cm1b->cmid);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $cm1actx = \context_module::instance($cm1a->cmid);
+        $cm1bctx = \context_module::instance($cm1b->cmid);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         // System entries.
-        $e1 = new blog_entry($this->create_post(['userid' => $u1->id, 'subject' => 'Hello world!',
+        $e1 = new \blog_entry($this->create_post(['userid' => $u1->id, 'subject' => 'Hello world!',
             'publishstate' => 'public'])->id);
-        $e2 = new blog_entry($this->create_post(['userid' => $u1->id, 'subject' => 'Hi planet!',
+        $e2 = new \blog_entry($this->create_post(['userid' => $u1->id, 'subject' => 'Hi planet!',
             'publishstate' => 'draft'])->id);
-        $e3 = new blog_entry($this->create_post(['userid' => $u2->id, 'subject' => 'Ignore me'])->id);
+        $e3 = new \blog_entry($this->create_post(['userid' => $u2->id, 'subject' => 'Ignore me'])->id);
 
         // Create a blog entry associated with contexts.
-        $e4 = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id, 'subject' => 'Course assoc'])->id);
+        $e4 = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id, 'subject' => 'Course assoc'])->id);
         $e4->add_association($c1ctx->id);
-        $e4b = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id, 'subject' => 'Course assoc 2'])->id);
+        $e4b = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id, 'subject' => 'Course assoc 2'])->id);
         $e4b->add_association($c1ctx->id);
-        $e5 = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id, 'subject' => 'Module assoc',
+        $e5 = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id, 'subject' => 'Module assoc',
             'publishstate' => 'public'])->id);
         $e5->add_association($cm1actx->id);
-        $e5b = new blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id, 'subject' => 'C/CM assoc'])->id);
+        $e5b = new \blog_entry($this->create_post(['userid' => $u1->id, 'courseid' => $c1->id, 'subject' => 'C/CM assoc'])->id);
         $e5b->add_association($c1ctx->id);
         $e5b->add_association($cm1actx->id);
-        $e6 = new blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c1->id, 'subject' => 'Module assoc'])->id);
+        $e6 = new \blog_entry($this->create_post(['userid' => $u2->id, 'courseid' => $c1->id, 'subject' => 'Module assoc'])->id);
         $e6->add_association($cm1actx->id);
 
         // External blogs.
@@ -580,11 +581,11 @@ class core_blog_privacy_testcase extends provider_testcase {
         $ex3 = $this->create_external_blog(['userid' => $u2->id, 'url' => 'https://example.com', 'name' => 'Ignore me']);
 
         // Attach tags.
-        core_tag_tag::set_item_tags('core', 'post', $e1->id, $u1ctx, ['Beer', 'Golf']);
-        core_tag_tag::set_item_tags('core', 'blog_external', $ex1->id, $u1ctx, ['Car', 'Golf']);
-        core_tag_tag::set_item_tags('core', 'post', $e3->id, $u2ctx, ['ITG']);
-        core_tag_tag::set_item_tags('core', 'blog_external', $ex3->id, $u2ctx, ['DDR']);
-        core_tag_tag::set_item_tags('core', 'dontfindme', $e1->id, $u1ctx, ['Lone tag']);
+        \core_tag_tag::set_item_tags('core', 'post', $e1->id, $u1ctx, ['Beer', 'Golf']);
+        \core_tag_tag::set_item_tags('core', 'blog_external', $ex1->id, $u1ctx, ['Car', 'Golf']);
+        \core_tag_tag::set_item_tags('core', 'post', $e3->id, $u2ctx, ['ITG']);
+        \core_tag_tag::set_item_tags('core', 'blog_external', $ex3->id, $u2ctx, ['DDR']);
+        \core_tag_tag::set_item_tags('core', 'dontfindme', $e1->id, $u1ctx, ['Lone tag']);
 
         // Attach comments.
         $comment = $this->get_comment_object($u1ctx, $e1->id);
@@ -745,10 +746,10 @@ class core_blog_privacy_testcase extends provider_testcase {
         $u4 = $this->getDataGenerator()->create_user();
         $u5 = $this->getDataGenerator()->create_user();
 
-        $u1ctx = context_user::instance($u1->id);
+        $u1ctx = \context_user::instance($u1->id);
 
         $post = $this->create_post(['userid' => $u1->id]);
-        $entry = new blog_entry($post->id);
+        $entry = new \blog_entry($post->id);
 
         $comment = $this->get_comment_object($u1ctx, $entry->id);
         $this->setUser($u1);
@@ -785,8 +786,8 @@ class core_blog_privacy_testcase extends provider_testcase {
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
 
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $post = $this->create_external_blog(['userid' => $u1->id, 'url' => 'https://moodle.org', 'name' => 'Moodle RSS']);
         $post2 = $this->create_external_blog(['userid' => $u2->id, 'url' => 'https://moodle.com', 'name' => 'Some other thing']);
@@ -811,19 +812,19 @@ class core_blog_privacy_testcase extends provider_testcase {
         $course = $this->getDataGenerator()->create_course();
         $module = $this->getDataGenerator()->create_module('page', ['course' => $course]);
 
-        $u1ctx = context_user::instance($u1->id);
-        $u3ctx = context_user::instance($u3->id);
-        $c1ctx = context_course::instance($course->id);
-        $cm1ctx = context_module::instance($module->cmid);
+        $u1ctx = \context_user::instance($u1->id);
+        $u3ctx = \context_user::instance($u3->id);
+        $c1ctx = \context_course::instance($course->id);
+        $cm1ctx = \context_module::instance($module->cmid);
 
         // Blog with course association.
         $post1 = $this->create_post(['userid' => $u1->id, 'courseid' => $course->id]);
-        $entry1 = new blog_entry($post1->id);
+        $entry1 = new \blog_entry($post1->id);
         $entry1->add_association($c1ctx->id);
 
         // Blog with module association.
         $post2 = $this->create_post(['userid' => $u3->id, 'courseid' => $course->id]);
-        $entry2 = new blog_entry($post2->id);
+        $entry2 = new \blog_entry($post2->id);
         $entry2->add_association($cm1ctx->id);
 
         $comment = $this->get_comment_object($u1ctx, $entry1->id);
@@ -870,7 +871,7 @@ class core_blog_privacy_testcase extends provider_testcase {
      */
     protected function create_post(array $params) {
         global $DB;
-        $post = new stdClass();
+        $post = new \stdClass();
         $post->module = 'blog';
         $post->courseid = 0;
         $post->subject = 'the test post';
@@ -895,7 +896,7 @@ class core_blog_privacy_testcase extends provider_testcase {
      */
     protected function create_external_blog(array $params) {
         global $DB;
-        $post = new stdClass();
+        $post = new \stdClass();
         $post->name = 'test external';
         $post->description = 'the description';
         $post->url = 'http://example.com';
@@ -918,14 +919,14 @@ class core_blog_privacy_testcase extends provider_testcase {
      * @param string $area The area.
      * @return comment
      */
-    protected function get_comment_object(context $context, $itemid) {
-        $args = new stdClass();
+    protected function get_comment_object(\context $context, $itemid) {
+        $args = new \stdClass();
         $args->context = $context;
         $args->course = get_course(SITEID);
         $args->area = 'format_blog';
         $args->itemid = $itemid;
         $args->component = 'blog';
-        $comment = new comment($args);
+        $comment = new \comment($args);
         $comment->set_post_permission(true);
         return $comment;
     }

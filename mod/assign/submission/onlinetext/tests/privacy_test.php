@@ -21,6 +21,7 @@
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace assignsubmission_onlinetext\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,7 +34,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/privacy_test.php');
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignsubmission_online_privacy_testcase extends \mod_assign\tests\privacy_test {
+class privacy_test extends \mod_assign\privacy\privacy_test {
 
     /**
      * Convenience function for creating feedback data.
@@ -48,7 +49,7 @@ class assignsubmission_online_privacy_testcase extends \mod_assign\tests\privacy
 
         $this->setUser($student->id);
         $submission = $assign->get_user_submission($student->id, true);
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->onlinetext_editor = array(
             'itemid' => file_get_unused_draft_itemid(),
             'text' => $text,

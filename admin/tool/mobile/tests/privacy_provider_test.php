@@ -21,6 +21,8 @@
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_mobile\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
 use core_privacy\local\request\writer;
@@ -35,7 +37,7 @@ use tool_mobile\privacy\provider;
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_mobile_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Basic setup for these tests.

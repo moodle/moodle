@@ -23,6 +23,7 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace logstore_legacy\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -46,7 +47,7 @@ require_once(__DIR__ . '/fixtures/event.php');
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class logstore_legacy_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -58,9 +59,9 @@ class logstore_legacy_privacy_testcase extends provider_testcase {
         $u3 = $this->getDataGenerator()->create_user();
         $c1 = $this->getDataGenerator()->create_course();
         $cm1 = $this->getDataGenerator()->create_module('url', ['course' => $c1]);
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $cm1ctx = context_module::instance($cm1->cmid);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $cm1ctx = \context_module::instance($cm1->cmid);
 
         $this->enable_logging();
         $manager = get_log_manager(true);
@@ -96,11 +97,11 @@ class logstore_legacy_privacy_testcase extends provider_testcase {
         $u3 = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $module = $this->getDataGenerator()->create_module('url', ['course' => $course]);
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($course->id);
-        $cm1ctx = context_module::instance($module->cmid);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($course->id);
+        $cm1ctx = \context_module::instance($module->cmid);
 
-        $userctx = context_user::instance($u1->id);
+        $userctx = \context_user::instance($u1->id);
 
         $this->enable_logging();
         $manager = get_log_manager(true);
@@ -161,10 +162,10 @@ class logstore_legacy_privacy_testcase extends provider_testcase {
         $c1 = $this->getDataGenerator()->create_course();
         $c2 = $this->getDataGenerator()->create_course();
         $cm1 = $this->getDataGenerator()->create_module('url', ['course' => $c1]);
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
-        $cm1ctx = context_module::instance($cm1->cmid);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
+        $cm1ctx = \context_module::instance($cm1->cmid);
 
         $this->enable_logging();
         $manager = get_log_manager(true);
@@ -238,10 +239,10 @@ class logstore_legacy_privacy_testcase extends provider_testcase {
         $c1 = $this->getDataGenerator()->create_course();
         $c2 = $this->getDataGenerator()->create_course();
         $cm1 = $this->getDataGenerator()->create_module('url', ['course' => $c1]);
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
-        $cm1ctx = context_module::instance($cm1->cmid);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
+        $cm1ctx = \context_module::instance($cm1->cmid);
 
         $this->enable_logging();
         $manager = get_log_manager(true);
@@ -317,11 +318,11 @@ class logstore_legacy_privacy_testcase extends provider_testcase {
         $u3 = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $module = $this->getDataGenerator()->create_module('url', ['course' => $course]);
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($course->id);
-        $cm1ctx = context_module::instance($module->cmid);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($course->id);
+        $cm1ctx = \context_module::instance($module->cmid);
 
-        $userctx = context_user::instance($u1->id);
+        $userctx = \context_user::instance($u1->id);
 
         $this->enable_logging();
         $manager = get_log_manager(true);
@@ -377,10 +378,10 @@ class logstore_legacy_privacy_testcase extends provider_testcase {
         $c1 = $this->getDataGenerator()->create_course();
         $c2 = $this->getDataGenerator()->create_course();
         $cm1 = $this->getDataGenerator()->create_module('url', ['course' => $c1]);
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
-        $cm1ctx = context_module::instance($cm1->cmid);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
+        $cm1ctx = \context_module::instance($cm1->cmid);
 
         $this->enable_logging();
         $manager = get_log_manager(true);

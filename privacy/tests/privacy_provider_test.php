@@ -21,17 +21,18 @@
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\manager;
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\metadata\types\type;
-use \core_privacy\local\metadata\types\database_table;
-use \core_privacy\local\metadata\types\external_location;
-use \core_privacy\local\metadata\types\plugin_type_link;
-use \core_privacy\local\metadata\types\subsystem_link;
-use \core_privacy\local\metadata\types\user_preference;
+use core_privacy\manager;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\metadata\types\type;
+use core_privacy\local\metadata\types\database_table;
+use core_privacy\local\metadata\types\external_location;
+use core_privacy\local\metadata\types\plugin_type_link;
+use core_privacy\local\metadata\types\subsystem_link;
+use core_privacy\local\metadata\types\user_preference;
 
 /**
  * Unit tests for all Privacy Providers.
@@ -39,7 +40,7 @@ use \core_privacy\local\metadata\types\user_preference;
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_testcase extends advanced_testcase {
+class privacy_provider_test extends \advanced_testcase {
     /**
      * Returns a list of frankenstyle names of core components (plugins and subsystems).
      *
@@ -260,10 +261,10 @@ class provider_testcase extends advanced_testcase {
      *
      * Returns fields that have foreign key to user table and fields that are named 'userid'.
      *
-     * @param xmldb_table $table
+     * @param \xmldb_table $table
      * @return array
      */
-    protected function get_userid_fields(xmldb_table $table) {
+    protected function get_userid_fields(\xmldb_table $table) {
         $userfields = [];
 
         // Find all fields that have a foreign key to 'id' field in 'user' table.
@@ -295,7 +296,7 @@ class provider_testcase extends advanced_testcase {
         $tables = [];
 
         foreach ($dbman->get_install_xml_files() as $filename) {
-            $xmldbfile = new xmldb_file($filename);
+            $xmldbfile = new \xmldb_file($filename);
             if (!$xmldbfile->loadXMLStructure()) {
                 continue;
             }

@@ -22,6 +22,7 @@
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_calendar\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -29,12 +30,12 @@ global $CFG;
 require_once($CFG->dirroot . '/calendar/lib.php');
 require_once($CFG->dirroot . '/calendar/tests/externallib_test.php');
 
-use \core_calendar\privacy\provider;
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\writer;
-use \core_privacy\tests\provider_testcase;
-use \core_privacy\local\request\approved_userlist;
+use core_calendar\privacy\provider;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\writer;
+use core_privacy\tests\provider_testcase;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for calendar/classes/privacy/provider
@@ -42,7 +43,7 @@ use \core_privacy\local\request\approved_userlist;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Overriding setUp() function to always reset after tests.
@@ -73,11 +74,11 @@ class core_calendar_privacy_testcase extends provider_testcase {
         $course3group = $this->getDataGenerator()->create_group($grouprecord);
 
         // Get contexts.
-        $usercontext = context_user::instance($user->id);
-        $categorycontext = context_coursecat::instance($category->id);
-        $course1context = context_course::instance($course1->id);
-        $course2context = context_course::instance($course2->id);
-        $course3context = context_course::instance($course3->id);
+        $usercontext = \context_user::instance($user->id);
+        $categorycontext = \context_coursecat::instance($category->id);
+        $course1context = \context_course::instance($course1->id);
+        $course2context = \context_course::instance($course2->id);
+        $course3context = \context_course::instance($course3->id);
 
         // Add Category Calendar Events for Category.
         $this->create_test_standard_calendar_event('category', $user->id, time(), '', $category->id);
@@ -97,8 +98,8 @@ class core_calendar_privacy_testcase extends provider_testcase {
         $params['assignsubmission_onlinetext_enabled'] = 1;
         $instance = $generator->create_instance($params);
         $cm = get_coursemodule_from_instance('assign', $instance->id);
-        $modulecontext = context_module::instance($cm->id);
-        $assign = new assign($modulecontext, $cm, $course2);
+        $modulecontext = \context_module::instance($cm->id);
+        $assign = new \assign($modulecontext, $cm, $course2);
         $this->create_test_action_calendar_event('duedate', $course2->id, $instance->id, 'assign', $user->id, time());
         $this->create_test_action_calendar_event('gradingduedate', $course2->id, $instance->id, 'assign', $user->id, time());
 
@@ -163,8 +164,8 @@ class core_calendar_privacy_testcase extends provider_testcase {
         $params['assignsubmission_onlinetext_enabled'] = 1;
         $instance = $generator->create_instance($params);
         $cm = get_coursemodule_from_instance('assign', $instance->id);
-        $modulecontext = context_module::instance($cm->id);
-        $assign = new assign($modulecontext, $cm, $course2);
+        $modulecontext = \context_module::instance($cm->id);
+        $assign = new \assign($modulecontext, $cm, $course2);
         $event5 = $this->create_test_action_calendar_event('duedate', $course2->id, $instance->id, 'assign', $user->id, time());
 
         // Add a Calendar Subscription and Group Calendar Event to Course 3.
@@ -289,7 +290,7 @@ class core_calendar_privacy_testcase extends provider_testcase {
 
         // Test the user preferences export contains 1 user preference record for the User.
         provider::export_user_preferences($user->id);
-        $contextuser = context_user::instance($user->id);
+        $contextuser = \context_user::instance($user->id);
         $writer = writer::with_context($contextuser);
         $this->assertTrue($writer->has_any_data());
 
@@ -315,8 +316,8 @@ class core_calendar_privacy_testcase extends provider_testcase {
         $course2 = $this->getDataGenerator()->create_course();
 
         // Get contexts.
-        $course1context = context_course::instance($course1->id);
-        $course2context = context_course::instance($course2->id);
+        $course1context = \context_course::instance($course1->id);
+        $course2context = \context_course::instance($course2->id);
 
         // Add a Course Calendar Event by User 1 for Course 1 and Course 2.
         $this->setUser($user1);
@@ -340,8 +341,8 @@ class core_calendar_privacy_testcase extends provider_testcase {
         $params['assignsubmission_onlinetext_enabled'] = 1;
         $instance = $generator->create_instance($params);
         $cm = get_coursemodule_from_instance('assign', $instance->id);
-        $modulecontext = context_module::instance($cm->id);
-        $assign = new assign($modulecontext, $cm, $course2);
+        $modulecontext = \context_module::instance($cm->id);
+        $assign = new \assign($modulecontext, $cm, $course2);
         $this->create_test_action_calendar_event('duedate', $course2->id, $instance->id, 'assign', $user2->id, time());
         $this->create_test_action_calendar_event('gradingduedate', $course2->id, $instance->id, 'assign', $user2->id, time());
 
@@ -449,23 +450,23 @@ class core_calendar_privacy_testcase extends provider_testcase {
 
         // Create user1 to create Calendar Events and Subscriptions.
         $user1 = $this->getDataGenerator()->create_user();
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         // Create user2 to create Calendar Events and Subscriptions.
         $user2 = $this->getDataGenerator()->create_user();
-        $usercontext2 = context_user::instance($user2->id);
+        $usercontext2 = \context_user::instance($user2->id);
         // Create user3 to create Calendar Events and Subscriptions.
         $user3 = $this->getDataGenerator()->create_user();
-        $usercontext3 = context_user::instance($user3->id);
+        $usercontext3 = \context_user::instance($user3->id);
 
         // Create a Category and Courses to assign Calendar Events and Subscriptions.
         $category = $this->getDataGenerator()->create_category();
-        $categorycontext = context_coursecat::instance($category->id);
+        $categorycontext = \context_coursecat::instance($category->id);
         $course1 = $this->getDataGenerator()->create_course();
-        $course1context = context_course::instance($course1->id);
+        $course1context = \context_course::instance($course1->id);
         $course2 = $this->getDataGenerator()->create_course();
-        $course2context = context_course::instance($course2->id);
+        $course2context = \context_course::instance($course2->id);
         $course3 = $this->getDataGenerator()->create_course();
-        $course3context = context_course::instance($course3->id);
+        $course3context = \context_course::instance($course3->id);
         $grouprecord = (object)[
             'courseid' => $course3->id,
             'name' => 'test_group'
@@ -505,8 +506,8 @@ class core_calendar_privacy_testcase extends provider_testcase {
         $params['assignsubmission_onlinetext_enabled'] = 1;
         $instance = $generator->create_instance($params);
         $cm = get_coursemodule_from_instance('assign', $instance->id);
-        $modulecontext = context_module::instance($cm->id);
-        $assign = new assign($modulecontext, $cm, $course2);
+        $modulecontext = \context_module::instance($cm->id);
+        $assign = new \assign($modulecontext, $cm, $course2);
         $this->setUser($user2);
         $this->create_test_action_calendar_event('duedate', $course2->id, $instance->id,
                 'assign', $user2->id, time());
@@ -571,23 +572,23 @@ class core_calendar_privacy_testcase extends provider_testcase {
 
         // Create user1 to create Calendar Events and Subscriptions.
         $user1 = $this->getDataGenerator()->create_user();
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         // Create user2 to create Calendar Events and Subscriptions.
         $user2 = $this->getDataGenerator()->create_user();
-        $usercontext2 = context_user::instance($user2->id);
+        $usercontext2 = \context_user::instance($user2->id);
         // Create user3 to create Calendar Events and Subscriptions.
         $user3 = $this->getDataGenerator()->create_user();
-        $usercontext3 = context_user::instance($user3->id);
+        $usercontext3 = \context_user::instance($user3->id);
 
         // Create a Category and Courses to assign Calendar Events and Subscriptions.
         $category = $this->getDataGenerator()->create_category();
-        $categorycontext = context_coursecat::instance($category->id);
+        $categorycontext = \context_coursecat::instance($category->id);
         $course1 = $this->getDataGenerator()->create_course();
-        $course1context = context_course::instance($course1->id);
+        $course1context = \context_course::instance($course1->id);
         $course2 = $this->getDataGenerator()->create_course();
-        $course2context = context_course::instance($course2->id);
+        $course2context = \context_course::instance($course2->id);
         $course3 = $this->getDataGenerator()->create_course();
-        $course3context = context_course::instance($course3->id);
+        $course3context = \context_course::instance($course3->id);
         $grouprecord = (object)[
             'courseid' => $course3->id,
             'name' => 'test_group'
@@ -627,8 +628,8 @@ class core_calendar_privacy_testcase extends provider_testcase {
         $params['assignsubmission_onlinetext_enabled'] = 1;
         $instance = $generator->create_instance($params);
         $cm = get_coursemodule_from_instance('assign', $instance->id);
-        $modulecontext = context_module::instance($cm->id);
-        $assign = new assign($modulecontext, $cm, $course2);
+        $modulecontext = \context_module::instance($cm->id);
+        $assign = new \assign($modulecontext, $cm, $course2);
         $this->setUser($user2);
         $this->create_test_action_calendar_event('duedate', $course2->id, $instance->id,
             'assign', $user2->id, time());
@@ -770,7 +771,7 @@ class core_calendar_privacy_testcase extends provider_testcase {
             'timestart' => $time,
             'visible' => 1
         ];
-        return calendar_event::create($event, false);
+        return \calendar_event::create($event, false);
     }
 
     /**
@@ -800,7 +801,7 @@ class core_calendar_privacy_testcase extends provider_testcase {
             'timestart' => $time,
             'visible' => 1
         ];
-        return calendar_event::create($event, false);
+        return \calendar_event::create($event, false);
     }
 
     /**

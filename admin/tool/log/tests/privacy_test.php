@@ -23,6 +23,7 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_log\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -49,7 +50,7 @@ require_once($CFG->dirroot . '/admin/tool/log/store/standard/tests/fixtures/even
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_log_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -60,7 +61,7 @@ class tool_log_privacy_testcase extends provider_testcase {
         $admin = \core_user::get_user(2);
         $u1 = $this->getDataGenerator()->create_user();
         $c1 = $this->getDataGenerator()->create_course();
-        $c1ctx = context_course::instance($c1->id);
+        $c1ctx = \context_course::instance($c1->id);
 
         $this->enable_logging();
         $manager = get_log_manager(true);
@@ -77,7 +78,7 @@ class tool_log_privacy_testcase extends provider_testcase {
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
         $c1 = $this->getDataGenerator()->create_course();
-        $c1ctx = context_course::instance($c1->id);
+        $c1ctx = \context_course::instance($c1->id);
 
         $this->enable_logging();
         $manager = get_log_manager(true);
@@ -111,7 +112,7 @@ class tool_log_privacy_testcase extends provider_testcase {
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
         $c1 = $this->getDataGenerator()->create_course();
-        $c1ctx = context_course::instance($c1->id);
+        $c1ctx = \context_course::instance($c1->id);
 
         $this->enable_logging();
         $manager = get_log_manager(true);
@@ -144,7 +145,7 @@ class tool_log_privacy_testcase extends provider_testcase {
         $admin = \core_user::get_user(2);
         $u1 = $this->getDataGenerator()->create_user();
         $c1 = $this->getDataGenerator()->create_course();
-        $c1ctx = context_course::instance($c1->id);
+        $c1ctx = \context_course::instance($c1->id);
 
         $path = [get_string('privacy:path:logs', 'tool_log'), get_string('pluginname', 'logstore_standard')];
         $this->enable_logging();

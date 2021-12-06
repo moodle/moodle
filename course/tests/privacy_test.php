@@ -21,13 +21,14 @@
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_course\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/completion/tests/fixtures/completion_creation.php');
 
-use \core_privacy\local\request\transform;
+use core_privacy\local\request\transform;
 
 /**
  * Unit tests for course/classes/privacy/policy
@@ -35,9 +36,9 @@ use \core_privacy\local\request\transform;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_course_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
-    use completion_creation;
+    use \completion_creation;
 
     /**
      * Test getting the appropriate context for the userid. This should only ever
@@ -177,9 +178,9 @@ class core_course_privacy_testcase extends \core_privacy\tests\provider_testcase
 
         // Create a course and a single module.
         $course1 = $this->getDataGenerator()->create_course(['fullname' => 'Course 1', 'shortname' => 'C1']);
-        $context1 = context_course::instance($course1->id);
+        $context1 = \context_course::instance($course1->id);
         $modassign = $this->getDataGenerator()->create_module('assign', ['course' => $course1->id, 'name' => 'assign test 1']);
-        $assigncontext = context_module::instance($modassign->cmid);
+        $assigncontext = \context_module::instance($modassign->cmid);
 
         // Now, let's assume during user info export, only the coursemodule context is returned in the contextlist_collection.
         $user = $this->getDataGenerator()->create_user();
@@ -207,9 +208,9 @@ class core_course_privacy_testcase extends \core_privacy\tests\provider_testcase
 
         // Create a course and a single module.
         $course1 = $this->getDataGenerator()->create_course(['fullname' => 'Course 1', 'shortname' => 'C1', 'format' => 'site']);
-        $context1 = context_course::instance($course1->id);
+        $context1 = \context_course::instance($course1->id);
         $modassign = $this->getDataGenerator()->create_module('assign', ['course' => $course1->id, 'name' => 'assign test 1']);
-        $assigncontext = context_module::instance($modassign->cmid);
+        $assigncontext = \context_module::instance($modassign->cmid);
 
         // Now, assume during user info export, that both module and course contexts are returned in the contextlist_collection.
         $user = $this->getDataGenerator()->create_user();

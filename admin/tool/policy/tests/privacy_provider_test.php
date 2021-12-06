@@ -22,6 +22,7 @@
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_policy\privacy;
 
 use core_privacy\local\metadata\collection;
 use tool_policy\privacy\provider;
@@ -38,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /** @var stdClass The user object. */
     protected $user;
 
@@ -59,7 +60,7 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
 
         // Create manager user.
         $this->manager = $generator->create_user();
-        $this->syscontext = context_system::instance();
+        $this->syscontext = \context_system::instance();
         $rolemanagerid = create_role('Policy manager', 'policymanager', 'Can manage policy documents');
         assign_capability('tool/policy:managedocs', CAP_ALLOW, $rolemanagerid, $this->syscontext->id);
         assign_capability('tool/policy:acceptbehalf', CAP_ALLOW, $rolemanagerid, $this->syscontext->id);

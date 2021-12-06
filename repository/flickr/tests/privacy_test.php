@@ -21,12 +21,14 @@
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace repository_flickr\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-use \repository_flickr\privacy\provider;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\writer;
-use \core_privacy\tests\provider_testcase;
+use repository_flickr\privacy\provider;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\writer;
+use core_privacy\tests\provider_testcase;
 
 /**
  * Unit tests for repository/flickr/privacy/provider
@@ -34,7 +36,7 @@ use \core_privacy\tests\provider_testcase;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repository_flickr_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
     /**
      * Overriding setUp() function to always reset after tests.
      */
@@ -54,7 +56,7 @@ class repository_flickr_privacy_testcase extends provider_testcase {
         $contextlist = provider::get_contexts_for_userid($user->id);
         $approvedcontextlist = new approved_contextlist($user, 'repository_flickr', $contextlist->get_contextids());
         $user = $approvedcontextlist->get_user();
-        $contextuser = context_user::instance($user->id);
+        $contextuser = \context_user::instance($user->id);
 
         // Test exporting of Flickr repository user preferences *without* OAuth token/secret preference configured.
         provider::export_user_preferences($user->id);

@@ -22,6 +22,7 @@
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_files\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +38,7 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_files_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Test getting the context for the user ID related to this plugin.

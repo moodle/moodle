@@ -22,16 +22,17 @@
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_role\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_role\privacy\provider;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\writer;
-use \core_privacy\tests\provider_testcase;
-use \core_privacy\local\request\transform;
-use \tool_cohortroles\api;
-use \core_privacy\local\request\approved_userlist;
+use core_role\privacy\provider;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\writer;
+use core_privacy\tests\provider_testcase;
+use core_privacy\local\request\transform;
+use tool_cohortroles\api;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Privacy test for core_role
@@ -39,7 +40,7 @@ use \core_privacy\local\request\approved_userlist;
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_role_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
     /**
      * Test to check export_user_preferences.
      * returns user preferences data.

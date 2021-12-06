@@ -21,8 +21,10 @@
  * @copyright   2018 Simey Lameze <simey@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_glossary\privacy;
 
 use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\deletion_criteria;
 use mod_glossary\privacy\provider;
 
@@ -39,7 +41,7 @@ require_once($CFG->dirroot . '/rating/lib.php');
  * @copyright 2018 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /** @var stdClass The student object. */
     protected $student;
 
@@ -73,7 +75,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->glossary = $glossary;
 
         $cm = get_coursemodule_from_instance('glossary', $glossary->id);
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
 
         // Create a student which will add an entry to a glossary.
         $student = $generator->create_user();
@@ -93,7 +95,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $comment->add('Hello, it\'s me!');
 
         // Attach tags.
-        core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge1->id, $context, ['Beer', 'Golf']);
+        \core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge1->id, $context, ['Beer', 'Golf']);
     }
 
     /**
@@ -128,7 +130,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $contextlist = provider::get_contexts_for_userid($this->student->id);
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
-        $cmcontext = context_module::instance($cm->id);
+        $cmcontext = \context_module::instance($cm->id);
         $this->assertEquals($cmcontext->id, $contextforuser->id);
     }
 
@@ -138,7 +140,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
     public function test_get_users_in_context() {
         $component = 'mod_glossary';
         $cm = get_coursemodule_from_instance('glossary', $this->glossary->id);
-        $cmcontext = context_module::instance($cm->id);
+        $cmcontext = \context_module::instance($cm->id);
 
         $userlist = new \core_privacy\local\request\userlist($cmcontext, $component);
         provider::get_users_in_context($userlist);
@@ -158,7 +160,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
      */
     public function test_export_for_context() {
         $cm = get_coursemodule_from_instance('glossary', $this->glossary->id);
-        $cmcontext = context_module::instance($cm->id);
+        $cmcontext = \context_module::instance($cm->id);
 
         // Export all of the data for the context.
         $writer = \core_privacy\local\request\writer::with_context($cmcontext);
@@ -180,7 +182,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $generator = $this->getDataGenerator();
         $cm = get_coursemodule_from_instance('glossary', $this->glossary->id);
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
         // Create another student who will add an entry the glossary activity.
         $student2 = $generator->create_user();
         $generator->enrol_user($student2->id, $this->course->id, 'student');
@@ -193,7 +195,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->plugingenerator->create_category($this->glossary, ['cat1'], [$ge3]);
         $count = $DB->count_records('glossary_entries_categories', ['entryid' => $ge3->id]);
         $this->assertEquals(1, $count);
-        core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge3->id, $context, ['Pizza', 'Noodles']);
+        \core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge3->id, $context, ['Pizza', 'Noodles']);
 
         // As a teacher, rate student 2 entry.
         $this->setUser($this->teacher);
@@ -245,9 +247,9 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $ge1 = $this->plugingenerator->create_content($this->glossary, ['concept' => 'first user glossary entry', 'approved' => 1]);
         $this->plugingenerator->create_content($glossary2, ['concept' => 'first user second glossary entry', 'approved' => 1]);
 
-        $context1 = context_module::instance($cm1->id);
-        $context2 = context_module::instance($cm2->id);
-        core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge1->id, $context1, ['Parmi', 'Sushi']);
+        $context1 = \context_module::instance($cm1->id);
+        $context2 = \context_module::instance($cm2->id);
+        \core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge1->id, $context1, ['Parmi', 'Sushi']);
 
         $this->setUser($student2);
         $ge3 = $this->plugingenerator->create_content($this->glossary, ['concept' => 'second user glossary entry',
@@ -256,7 +258,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $comment = $this->get_comment_object($context1, $ge3->id);
         $comment->add('User 2 comment');
 
-        core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge3->id, $context1, ['Pizza', 'Noodles']);
+        \core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge3->id, $context1, ['Pizza', 'Noodles']);
 
         // As a teacher, rate student 2's entry.
         $this->setUser($this->teacher);
@@ -329,9 +331,9 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $ge2 = $this->plugingenerator->create_content($glossary2, ['concept' => 'first user second glossary entry',
                 'approved' => 1], ['two']);
 
-        $context1 = context_module::instance($cm1->id);
-        $context2 = context_module::instance($cm2->id);
-        core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge1->id, $context1, ['Parmi', 'Sushi']);
+        $context1 = \context_module::instance($cm1->id);
+        $context2 = \context_module::instance($cm2->id);
+        \core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge1->id, $context1, ['Parmi', 'Sushi']);
 
         $this->setUser($student2);
         $ge3 = $this->plugingenerator->create_content($this->glossary, ['concept' => 'second user glossary entry',
@@ -342,8 +344,8 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $comment = $this->get_comment_object($context2, $ge2->id);
         $comment->add('User 2 comment 2');
 
-        core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge3->id, $context1, ['Pizza', 'Noodles']);
-        core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge2->id, $context2, ['Potato', 'Kumara']);
+        \core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge3->id, $context1, ['Pizza', 'Noodles']);
+        \core_tag_tag::set_item_tags('mod_glossary', 'glossary_entries', $ge2->id, $context2, ['Potato', 'Kumara']);
 
         // As a teacher, rate student 2's entry.
         $this->setUser($this->teacher);
@@ -384,7 +386,7 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertEquals(1, $ratingcount);
 
         // Perform deletion within context 1 for both students.
-        $approveduserlist = new core_privacy\local\request\approved_userlist($context1, 'mod_glossary',
+        $approveduserlist = new approved_userlist($context1, 'mod_glossary',
                 [$this->student->id, $student2->id]);
         provider::delete_data_for_users($approveduserlist);
 
@@ -428,15 +430,15 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
      * @param int $itemid The item ID.
      * @return comment
      */
-    protected function get_comment_object(context $context, $itemid) {
-        $args = new stdClass();
+    protected function get_comment_object(\context $context, $itemid) {
+        $args = new \stdClass();
 
         $args->context = $context;
         $args->course = get_course(SITEID);
         $args->area = 'glossary_entry';
         $args->itemid = $itemid;
         $args->component = 'mod_glossary';
-        $comment = new comment($args);
+        $comment = new \comment($args);
         $comment->set_post_permission(true);
 
         return $comment;
@@ -449,16 +451,16 @@ class mod_glossary_privacy_provider_testcase extends \core_privacy\tests\provide
      * @param int $itemid The item ID.
      * @return rating object
      */
-    protected function get_rating_object(context $context, $itemid) {
+    protected function get_rating_object(\context $context, $itemid) {
         global $USER;
 
-        $ratingoptions = new stdClass;
+        $ratingoptions = new \stdClass;
         $ratingoptions->context = $context;
         $ratingoptions->ratingarea = 'entry';
         $ratingoptions->component = 'mod_glossary';
         $ratingoptions->itemid  = $itemid;
         $ratingoptions->scaleid = 2;
         $ratingoptions->userid  = $USER->id;
-        return new rating($ratingoptions);
+        return new \rating($ratingoptions);
     }
 }

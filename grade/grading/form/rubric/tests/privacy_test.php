@@ -22,8 +22,7 @@
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace gradingform_rubric;
+namespace gradingform_rubric\privacy;
 
 use core_privacy\tests\provider_testcase;
 use core_privacy\local\request\writer;

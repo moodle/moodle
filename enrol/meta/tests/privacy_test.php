@@ -22,6 +22,7 @@
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace enrol_meta\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +36,7 @@ use enrol_meta\privacy\provider;
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class enrol_meta_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Enable enrol_meta plugin.
@@ -147,7 +148,7 @@ class enrol_meta_privacy_testcase extends \core_privacy\tests\provider_testcase 
                                      WHERE g.courseid = ?", [$course1->id])
         );
 
-        $coursecontext1 = context_course::instance($course1->id);
+        $coursecontext1 = \context_course::instance($course1->id);
         provider::delete_data_for_all_users_in_context($coursecontext1);
         $this->assertEquals(
             0,
@@ -189,8 +190,8 @@ class enrol_meta_privacy_testcase extends \core_privacy\tests\provider_testcase 
         );
 
         $this->setUser($user1);
-        $coursecontext1 = context_course::instance($course1->id);
-        $coursecontext2 = context_course::instance($course2->id);
+        $coursecontext1 = \context_course::instance($course1->id);
+        $coursecontext2 = \context_course::instance($course2->id);
         $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist($user1, 'enrol_meta',
                 [$coursecontext1->id]);
         provider::delete_data_for_user($approvedcontextlist);
@@ -238,7 +239,7 @@ class enrol_meta_privacy_testcase extends \core_privacy\tests\provider_testcase 
                                      WHERE g.courseid = ?", [$course1->id])
         );
 
-        $coursecontext1 = context_course::instance($course1->id);
+        $coursecontext1 = \context_course::instance($course1->id);
 
         $approveduserlist = new \core_privacy\local\request\approved_userlist($coursecontext1, 'enrol_meta',
                 [$user1->id, $user2->id]);

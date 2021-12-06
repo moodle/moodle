@@ -21,6 +21,7 @@
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace assignfeedback_comments\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +35,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/privacy_test.php');
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\privacy_test {
+class privacy_test extends \mod_assign\privacy\privacy_test {
 
     /**
      * Convenience function for creating feedback data.
@@ -64,7 +65,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\privacy
 
         $this->setUser($teacher);
 
-        $context = context_user::instance($teacher->id);
+        $context = \context_user::instance($teacher->id);
 
         $draftitemid = file_get_unused_draft_itemid();
         file_prepare_draft_area($draftitemid, $context->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
@@ -183,7 +184,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\privacy
         $feedbackcomments = $plugin1->get_feedback_comments($grade2->id);
         $this->assertNotEmpty($feedbackcomments);
 
-        $fs = new file_storage();
+        $fs = new \file_storage();
         $files = $fs->get_area_files($assign->get_context()->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
             ASSIGNFEEDBACK_COMMENTS_FILEAREA);
         // 4 including directories.
@@ -191,7 +192,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\privacy
 
         // Delete all comments for this context.
         $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign);
-        assignfeedback_comments\privacy\provider::delete_feedback_for_context($requestdata);
+        provider::delete_feedback_for_context($requestdata);
 
         // Check that the data is now gone.
         $feedbackcomments = $plugin1->get_feedback_comments($grade1->id);
@@ -199,7 +200,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\privacy
         $feedbackcomments = $plugin1->get_feedback_comments($grade2->id);
         $this->assertEmpty($feedbackcomments);
 
-        $fs = new file_storage();
+        $fs = new \file_storage();
         $files = $fs->get_area_files($assign->get_context()->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
             ASSIGNFEEDBACK_COMMENTS_FILEAREA);
         $this->assertEquals(0, count($files));
@@ -236,7 +237,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\privacy
         $feedbackcomments = $plugin1->get_feedback_comments($grade2->id);
         $this->assertNotEmpty($feedbackcomments);
 
-        $fs = new file_storage();
+        $fs = new \file_storage();
         $files = $fs->get_area_files($assign->get_context()->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
             ASSIGNFEEDBACK_COMMENTS_FILEAREA);
         // 4 including directories.
@@ -244,7 +245,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\privacy
 
         // Delete all comments for this grade object.
         $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $grade1, [], $user1);
-        assignfeedback_comments\privacy\provider::delete_feedback_for_grade($requestdata);
+        provider::delete_feedback_for_grade($requestdata);
 
         // These comments should be empty.
         $feedbackcomments = $plugin1->get_feedback_comments($grade1->id);
@@ -254,7 +255,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\privacy
         $feedbackcomments = $plugin1->get_feedback_comments($grade2->id);
         $this->assertNotEmpty($feedbackcomments);
 
-        $fs = new file_storage();
+        $fs = new \file_storage();
         $files = $fs->get_area_files($assign->get_context()->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
             ASSIGNFEEDBACK_COMMENTS_FILEAREA);
         // 2 files that were not deleted.
@@ -313,7 +314,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\privacy
         $feedbackcomments = $plugin5->get_feedback_comments($grade5->id);
         $this->assertNotEmpty($feedbackcomments);
 
-        $fs = new file_storage();
+        $fs = new \file_storage();
         // 6 including directories for assign 1.
         // 4 including directories for assign 2.
         $this->assertCount(6, $fs->get_area_files($assign1->get_context()->id,
@@ -324,7 +325,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\privacy
         $deletedata = new \mod_assign\privacy\assign_plugin_request_data($assign1->get_context(), $assign1);
         $deletedata->set_userids([$user1->id, $user3->id]);
         $deletedata->populate_submissions_and_grades();
-        assignfeedback_comments\privacy\provider::delete_feedback_for_grades($deletedata);
+        provider::delete_feedback_for_grades($deletedata);
 
         // Check that grade 1 and grade 3 have been removed.
         $feedbackcomments = $plugin1->get_feedback_comments($grade1->id);

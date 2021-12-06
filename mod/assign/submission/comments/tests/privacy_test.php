@@ -21,11 +21,14 @@
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace assignsubmission_comments\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/tests/privacy_test.php');
+
+use mod_assign\privacy\useridlist;
 
 /**
  * Unit tests for mod/assign/submission/comments/classes/privacy/
@@ -33,7 +36,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/privacy_test.php');
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignsubmission_comments_privacy_testcase extends \mod_assign\tests\privacy_test {
+class privacy_test extends \mod_assign\privacy\privacy_test {
 
     /**
      * Convenience function for creating feedback data.
@@ -50,7 +53,7 @@ class assignsubmission_comments_privacy_testcase extends \mod_assign\tests\priva
         $plugin = $assign->get_submission_plugin_by_type('comments');
 
         $context = $assign->get_context();
-        $options = new stdClass();
+        $options = new \stdClass();
         $options->area = 'submission_comments';
         $options->course = $assign->get_course();
         $options->context = $context;
@@ -59,7 +62,7 @@ class assignsubmission_comments_privacy_testcase extends \mod_assign\tests\priva
         $options->showcount = true;
         $options->displaycancel = true;
 
-        $comment = new comment($options);
+        $comment = new \comment($options);
         $comment->set_post_permission(true);
 
         $this->setUser($student);
@@ -129,7 +132,7 @@ class assignsubmission_comments_privacy_testcase extends \mod_assign\tests\priva
         $this->setUser($user2);
         $comment->add($teachercomment);
 
-        $useridlist = new mod_assign\privacy\useridlist($user2->id, $assign->get_instance()->id);
+        $useridlist = new useridlist($user2->id, $assign->get_instance()->id);
         \assignsubmission_comments\privacy\provider::get_student_user_ids($useridlist);
         $this->assertEquals($user1->id, $useridlist->get_userids()[0]->id);
     }

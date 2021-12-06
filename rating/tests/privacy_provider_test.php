@@ -22,14 +22,15 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_rating\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/rating/lib.php');
 
-use \core_rating\privacy\provider;
-use \core_privacy\local\request\writer;
+use core_rating\privacy\provider;
+use core_privacy\local\request\writer;
 
 /**
  * Unit tests for the core_rating implementation of the Privacy API.
@@ -37,7 +38,7 @@ use \core_privacy\local\request\writer;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_rating_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Rate something as a user.
@@ -51,7 +52,7 @@ class core_rating_privacy_testcase extends \core_privacy\tests\provider_testcase
      */
     protected function rate_as_user($userid, $component, $ratingarea, $itemid, $context, $score) {
         // Rate the courses.
-        $rm = new rating_manager();
+        $rm = new \rating_manager();
         $ratingoptions = (object) [
             'component'   => $component,
             'ratingarea'  => $ratingarea,
@@ -82,7 +83,7 @@ class core_rating_privacy_testcase extends \core_privacy\tests\provider_testcase
         $u3 = $this->getDataGenerator()->create_user();
 
         // Rate the courses.
-        $rm = new rating_manager();
+        $rm = new \rating_manager();
         $ratingoptions = (object) [
             'component'   => 'core_course',
             'ratingarea'  => 'course',
@@ -170,7 +171,7 @@ class core_rating_privacy_testcase extends \core_privacy\tests\provider_testcase
         $u3 = $this->getDataGenerator()->create_user();
 
         // Rate the courses.
-        $rm = new rating_manager();
+        $rm = new \rating_manager();
         $ratingoptions = (object) [
             'component'   => 'core_course',
             'ratingarea'  => 'course',
@@ -257,7 +258,7 @@ class core_rating_privacy_testcase extends \core_privacy\tests\provider_testcase
         $u3 = $this->getDataGenerator()->create_user();
 
         // Rate the courses.
-        $rm = new rating_manager();
+        $rm = new \rating_manager();
         $ratingoptions = (object) [
             'component'   => 'core_course',
             'ratingarea'  => 'course',
@@ -362,21 +363,21 @@ class core_rating_privacy_testcase extends \core_privacy\tests\provider_testcase
 
         // Delete all ratings in course1.
         $expectedratingscount = $DB->count_records('rating');
-        core_rating\privacy\provider::delete_ratings(\context_course::instance($course1->id));
+        provider::delete_ratings(\context_course::instance($course1->id));
         $expectedratingscount -= 1;
         $this->assertEquals($expectedratingscount, $DB->count_records('rating'));
 
         // Delete ratings in course2 specifying wrong component.
-        core_rating\privacy\provider::delete_ratings(\context_course::instance($course2->id), 'other_component');
+        provider::delete_ratings(\context_course::instance($course2->id), 'other_component');
         $this->assertEquals($expectedratingscount, $DB->count_records('rating'));
 
         // Delete ratings in course2 specifying correct component.
-        core_rating\privacy\provider::delete_ratings(\context_course::instance($course2->id), 'core_course');
+        provider::delete_ratings(\context_course::instance($course2->id), 'core_course');
         $expectedratingscount -= 2;
         $this->assertEquals($expectedratingscount, $DB->count_records('rating'));
 
         // Delete user ratings specifyng all attributes.
-        core_rating\privacy\provider::delete_ratings(\context_user::instance($u3->id), 'core_user', 'user', $u3->id);
+        provider::delete_ratings(\context_user::instance($u3->id), 'core_user', 'user', $u3->id);
         $expectedratingscount -= 2;
         $this->assertEquals($expectedratingscount, $DB->count_records('rating'));
     }
@@ -410,7 +411,7 @@ class core_rating_privacy_testcase extends \core_privacy\tests\provider_testcase
         // Delete ratings in course1.
         list($sql, $params) = $DB->get_in_or_equal([$course1->id, $course2->id], SQL_PARAMS_NAMED);
         $expectedratingscount = $DB->count_records('rating');
-        core_rating\privacy\provider::delete_ratings_select(\context_course::instance($course1->id),
+        provider::delete_ratings_select(\context_course::instance($course1->id),
             'core_course', 'course', $sql, $params);
         $expectedratingscount -= 1;
         $this->assertEquals($expectedratingscount, $DB->count_records('rating'));

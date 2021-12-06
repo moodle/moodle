@@ -22,14 +22,15 @@
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_cohortroles\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\approved_contextlist;
-use \tool_cohortroles\api;
-use \tool_cohortroles\privacy\provider;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\approved_contextlist;
+use tool_cohortroles\api;
+use tool_cohortroles\privacy\provider;
 use core_privacy\local\request\approved_userlist;
 
 /**
@@ -38,7 +39,7 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Overriding setUp() function to always reset after tests.
@@ -61,7 +62,7 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         // Create course category.
         $coursecategory = $this->getDataGenerator()->create_category();
         $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
-        $systemctx = context_system::instance();
+        $systemctx = \context_system::instance();
         // Create course.
         $course = $this->getDataGenerator()->create_course();
         $coursectx = \context_course::instance($course->id);
@@ -102,7 +103,7 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         // Create course category.
         $coursecategory = $this->getDataGenerator()->create_category();
         $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
-        $systemctx = context_system::instance();
+        $systemctx = \context_system::instance();
         // Create course.
         $course = $this->getDataGenerator()->create_course();
         $coursectx = \context_course::instance($course->id);
@@ -154,7 +155,7 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         // Create course category.
         $coursecategory = $this->getDataGenerator()->create_category();
         $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
-        $systemctx = context_system::instance();
+        $systemctx = \context_system::instance();
 
         $this->setup_test_scenario_data($user->id, $systemctx, 1);
         $this->setup_test_scenario_data($user->id, $coursecategoryctx, 1, 'Sausage roll 2',
@@ -170,7 +171,7 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         $this->assertCount(2, $contexts);
 
         // Make sure the user data is only being deleted in within the system and course category context.
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
         // Delete all the User's records in mdl_tool_cohortroles table by the user context.
         provider::delete_data_for_all_users_in_context($usercontext);
 
@@ -213,7 +214,7 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         // Create course category.
         $coursecategory = $this->getDataGenerator()->create_category();
         $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
-        $systemctx = context_system::instance();
+        $systemctx = \context_system::instance();
 
         $this->setup_test_scenario_data($user->id, $systemctx, 1);
         $this->setup_test_scenario_data($user->id, $coursecategoryctx, 1, 'Sausage roll 2',
@@ -229,7 +230,7 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         $this->assertCount(2, $contexts);
 
         // Make sure the user data is only being deleted in within the system and the course category contexts.
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
         // Delete all the User's records in mdl_tool_cohortroles table by the specified approved context list.
         $approvedcontextlist = new approved_contextlist($user, 'tool_cohortroles', [$usercontext->id]);
         provider::delete_data_for_user($approvedcontextlist);
@@ -255,12 +256,12 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
 
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
 
         // Create course category.
         $coursecategory = $this->getDataGenerator()->create_category();
         $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
-        $systemctx = context_system::instance();
+        $systemctx = \context_system::instance();
 
         $this->setAdminUser();
 
@@ -301,12 +302,12 @@ class tool_cohortroles_privacy_testcase extends \core_privacy\tests\provider_tes
         $user2 = $this->getDataGenerator()->create_user();
         // Create user3.
         $user3 = $this->getDataGenerator()->create_user();
-        $usercontext3 = context_user::instance($user3->id);
+        $usercontext3 = \context_user::instance($user3->id);
 
         // Create course category.
         $coursecategory = $this->getDataGenerator()->create_category();
         $coursecategoryctx = \context_coursecat::instance($coursecategory->id);
-        $systemctx = context_system::instance();
+        $systemctx = \context_system::instance();
 
         $this->setAdminUser();
 

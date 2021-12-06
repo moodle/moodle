@@ -21,6 +21,7 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace quiz_responses\privacy;
 
 use core_privacy\local\metadata\collection;
 use quiz_responses\privacy\provider;
@@ -39,7 +40,7 @@ require_once($CFG->dirroot . '/question/engine/questionattempt.php');
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_responses_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * When no preference exists, there should be no export.
      */
@@ -123,7 +124,7 @@ class quiz_responses_privacy_provider_testcase extends \core_privacy\tests\provi
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        set_user_preference('quiz_report_responses_which_tries', question_attempt::FIRST_TRY);
+        set_user_preference('quiz_report_responses_which_tries', \question_attempt::FIRST_TRY);
 
         provider::export_user_preferences($USER->id);
 

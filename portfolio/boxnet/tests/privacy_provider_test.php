@@ -21,6 +21,7 @@
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace portfolio_boxnet\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class portfolio_boxnet_privacy_provider_test extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      *  Verify that a collection of metadata is returned for this component and that it just links to an external location.

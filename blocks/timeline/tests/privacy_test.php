@@ -22,11 +22,12 @@
  * @copyright  2018 Peter Dias <peter@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace block_timeline\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\request\writer;
-use \block_timeline\privacy\provider;
+use core_privacy\local\request\writer;
+use block_timeline\privacy\provider;
 
 /**
  * Unit tests for the block_timeline implementation of the privacy API.
@@ -34,7 +35,7 @@ use \block_timeline\privacy\provider;
  * @copyright  2018 Peter Dias <peter@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_timeline_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Ensure that export_user_preferences returns no data if the user has not visited the myoverview block.

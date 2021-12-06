@@ -21,6 +21,7 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_forum\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,7 +30,7 @@ global $CFG;
 require_once(__DIR__ . '/generator_trait.php');
 require_once($CFG->dirroot . '/rating/lib.php');
 
-use \mod_forum\privacy\provider;
+use mod_forum\privacy\provider;
 
 /**
  * Tests for the forum implementation of the Privacy Provider API.
@@ -37,7 +38,7 @@ use \mod_forum\privacy\provider;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     // Include the privacy subcontext_info trait.
     // This includes the subcontext builders.
@@ -45,7 +46,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
     // Include the mod_forum test helpers.
     // This includes functions to create forums, users, discussions, and posts.
-    use mod_forum_tests_generator_trait;
+    use \mod_forum_tests_generator_trait;
 
     // Include the privacy helper trait for the ratings API.
     use \core_rating\phpunit\privacy_helper;
@@ -499,8 +500,8 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $context = \context_module::instance($cm->id);
 
         // Rate the other users content.
-        $rm = new rating_manager();
-        $ratingoptions = new stdClass;
+        $rm = new \rating_manager();
+        $ratingoptions = new \stdClass;
         $ratingoptions->context = $context;
         $ratingoptions->component = 'mod_forum';
         $ratingoptions->ratingarea = 'post';
@@ -569,8 +570,8 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $context = \context_module::instance($cm->id);
 
         // Other users rate my content.
-        $rm = new rating_manager();
-        $ratingoptions = new stdClass;
+        $rm = new \rating_manager();
+        $ratingoptions = new \stdClass;
         $ratingoptions->context = $context;
         $ratingoptions->component = 'mod_forum';
         $ratingoptions->ratingarea = 'post';
@@ -1140,7 +1141,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
             // Rate the other users content.
             if ($post->userid != $user->id) {
                 $ratedposts[$post->id] = $post;
-                $rm = new rating_manager();
+                $rm = new \rating_manager();
                 $ratingoptions = (object) [
                     'context' => $context,
                     'component' => 'mod_forum',
@@ -1199,7 +1200,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         }
 
         // All ratings should have been deleted.
-        $rm = new rating_manager();
+        $rm = new \rating_manager();
         foreach ($postsinforum as $post) {
             $ratings = $rm->get_all_ratings_for_item((object) [
                 'context' => $context,
@@ -1243,7 +1244,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         }
 
         // Ratings should not have been deleted.
-        $rm = new rating_manager();
+        $rm = new \rating_manager();
         foreach ($postsinforum as $post) {
             if (!isset($ratedposts[$post->id])) {
                 continue;
@@ -1364,7 +1365,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
                 // Rate the other users content.
                 if ($post->userid != $user->id) {
                     $ratedposts[$post->id] = $post;
-                    $rm = new rating_manager();
+                    $rm = new \rating_manager();
                     $ratingoptions = (object) [
                         'context' => $context,
                         'component' => 'mod_forum',
@@ -1579,7 +1580,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
                 // Rate the other users content.
                 if ($post->userid != $user->id) {
                     $ratedposts[$post->id] = $post;
-                    $rm = new rating_manager();
+                    $rm = new \rating_manager();
                     $ratingoptions = (object) [
                         'context' => $context,
                         'component' => 'mod_forum',
@@ -1768,7 +1769,7 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
         list($fd1, $fp1) = $this->helper_post_to_forum($forum, $author);
 
         // Rate the other users content.
-        $rm = new rating_manager();
+        $rm = new \rating_manager();
         $ratingoptions = (object) [
             'context' => $context,
             'component' => 'mod_forum',

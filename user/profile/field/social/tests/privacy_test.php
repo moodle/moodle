@@ -21,10 +21,11 @@
  * @copyright 2020 Bas Brands <bas@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace profilefield_social\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\tests\provider_testcase;
+use core_privacy\tests\provider_testcase;
 use profilefield_social\privacy\provider;
 use core_privacy\local\request\approved_userlist;
 
@@ -34,7 +35,7 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2020 Bas Brands <bas@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class profilefield_social_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Basic setup for these tests.
@@ -59,7 +60,7 @@ class profilefield_social_testcase extends provider_testcase {
         $userfielddata = $DB->get_records('user_info_data', array('userid' => $user->id));
         // Confirm we got the right number of user field data.
         $this->assertCount(1, $userfielddata);
-        $context = context_user::instance($user->id);
+        $context = \context_user::instance($user->id);
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertEquals($context, $contextlist->current());
     }
@@ -76,7 +77,7 @@ class profilefield_social_testcase extends provider_testcase {
         $checkboxprofilefieldid = $this->add_profile_field($categoryid, 'checkbox');
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
-        $context = context_user::instance($user->id);
+        $context = \context_user::instance($user->id);
         // Add social user info data.
         $this->add_user_info_data($user->id, $socialprofilefieldid, '#icq-1294923');
         // Add checkbox user info data.
@@ -104,7 +105,7 @@ class profilefield_social_testcase extends provider_testcase {
         $checkboxprofilefieldid = $this->add_profile_field($categoryid, 'checkbox');
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
-        $context = context_user::instance($user->id);
+        $context = \context_user::instance($user->id);
         // Add social user info data.
         $this->add_user_info_data($user->id, $socialprofilefieldid, '#icq-1294923');
         // Add checkbox user info data.
@@ -132,7 +133,7 @@ class profilefield_social_testcase extends provider_testcase {
         $checkboxprofilefieldid = $this->add_profile_field($categoryid, 'checkbox');
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
-        $context = context_user::instance($user->id);
+        $context = \context_user::instance($user->id);
         // Add social user info data.
         $this->add_user_info_data($user->id, $socialprofilefieldid, '#icq-1294923');
         // Add checkbox user info data.
@@ -163,7 +164,7 @@ class profilefield_social_testcase extends provider_testcase {
 
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
         // The list of users should not return anything yet (related data still haven't been created).
         $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
         provider::get_users_in_context($userlist);
@@ -179,7 +180,7 @@ class profilefield_social_testcase extends provider_testcase {
         $this->assertEquals($expected, $actual);
 
         // The list of users for system context should not return any users.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist);
         $this->assertCount(0, $userlist);
@@ -199,10 +200,10 @@ class profilefield_social_testcase extends provider_testcase {
 
         // Create user1.
         $user1 = $this->getDataGenerator()->create_user();
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         // Create user2.
         $user2 = $this->getDataGenerator()->create_user();
-        $usercontext2 = context_user::instance($user2->id);
+        $usercontext2 = \context_user::instance($user2->id);
 
         $this->add_user_info_data($user1->id, $profilefieldid, 'test data');
         $this->add_user_info_data($user2->id, $profilefieldid, 'test data');
@@ -240,7 +241,7 @@ class profilefield_social_testcase extends provider_testcase {
         $this->assertCount(1, $userlist2);
 
         // User data should be only removed in the user context.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         // Add userlist2 to the approved user list in the system context.
         $approvedlist = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
         // Delete user1 data using delete_data_for_user.

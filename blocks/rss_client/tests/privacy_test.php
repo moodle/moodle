@@ -20,12 +20,13 @@
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace block_rss_client\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\tests\provider_testcase;
-use \block_rss_client\privacy\provider;
-use \core_privacy\local\request\approved_userlist;
+use core_privacy\tests\provider_testcase;
+use block_rss_client\privacy\provider;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for blocks\rss_client\classes\privacy\provider.php
@@ -33,7 +34,7 @@ use \core_privacy\local\request\approved_userlist;
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_rss_client_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Basic setup for these tests.
@@ -48,7 +49,7 @@ class block_rss_client_testcase extends provider_testcase {
     public function test_get_contexts_for_userid() {
 
         $user = $this->getDataGenerator()->create_user();
-        $context = context_user::instance($user->id);
+        $context = \context_user::instance($user->id);
 
         $this->add_rss_feed($user);
 
@@ -63,7 +64,7 @@ class block_rss_client_testcase extends provider_testcase {
     public function test_export_user_data() {
 
         $user = $this->getDataGenerator()->create_user();
-        $context = context_user::instance($user->id);
+        $context = \context_user::instance($user->id);
 
         $this->add_rss_feed($user);
         $this->add_rss_feed($user);
@@ -90,7 +91,7 @@ class block_rss_client_testcase extends provider_testcase {
 
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
 
         $userlist = new \core_privacy\local\request\userlist($usercontext, $component);
         provider::get_users_in_context($userlist);
@@ -106,7 +107,7 @@ class block_rss_client_testcase extends provider_testcase {
         $this->assertEquals($expected, $actual);
 
         // The list of users within the system context should be empty.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist2 = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist2);
         $this->assertCount(0, $userlist2);
@@ -119,9 +120,9 @@ class block_rss_client_testcase extends provider_testcase {
         $component = 'block_rss_client';
 
         $user1 = $this->getDataGenerator()->create_user();
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         $user2 = $this->getDataGenerator()->create_user();
-        $usercontext2 = context_user::instance($user2->id);
+        $usercontext2 = \context_user::instance($user2->id);
 
         $this->add_rss_feed($user1);
         $this->add_rss_feed($user2);
@@ -158,7 +159,7 @@ class block_rss_client_testcase extends provider_testcase {
         $this->assertCount(1, $userlist2);
 
         // Convert $userlist2 into an approved_contextlist in the system context.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $approvedlist2 = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
         // Delete using delete_data_for_user.
         provider::delete_data_for_users($approvedlist2);
@@ -176,7 +177,7 @@ class block_rss_client_testcase extends provider_testcase {
         global $DB;
 
         $user = $this->getDataGenerator()->create_user();
-        $context = context_user::instance($user->id);
+        $context = \context_user::instance($user->id);
 
         $this->add_rss_feed($user);
 
@@ -198,7 +199,7 @@ class block_rss_client_testcase extends provider_testcase {
         global $DB;
 
         $user = $this->getDataGenerator()->create_user();
-        $context = context_user::instance($user->id);
+        $context = \context_user::instance($user->id);
 
         $this->add_rss_feed($user);
 

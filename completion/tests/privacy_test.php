@@ -22,6 +22,7 @@
  * @copyright   2018 Adrian Greeve <adriangreeve.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_completion\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,9 +36,9 @@ require_once($CFG->dirroot . '/completion/tests/fixtures/completion_creation.php
  * @copyright   2018 Adrian Greeve <adriangreeve.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_completion_privacy_test extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
-    use completion_creation;
+    use \completion_creation;
 
     /**
      * Test joining course completion data to an sql statement.

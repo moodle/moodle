@@ -22,12 +22,13 @@
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_favourites\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\tests\provider_testcase;
-use \core_favourites\privacy\provider;
-use \core_privacy\local\request\transform;
+use core_privacy\tests\provider_testcase;
+use core_favourites\privacy\provider;
+use core_privacy\local\request\transform;
 
 /**
  * Unit tests for favourites/classes/privacy/provider
@@ -51,8 +52,8 @@ class privacy_test extends provider_testcase {
         $user2context = \context_user::instance($user2->id);
         $course1 = self::getDataGenerator()->create_course();
         $course2 = self::getDataGenerator()->create_course();
-        $course1context = context_course::instance($course1->id);
-        $course2context = context_course::instance($course2->id);
+        $course1context = \context_course::instance($course1->id);
+        $course2context = \context_course::instance($course2->id);
         return [$user1, $user2, $user1context, $user2context, $course1context, $course2context];
     }
 
@@ -65,7 +66,7 @@ class privacy_test extends provider_testcase {
         // Favourite 2 courses for user1 and 1 course for user2, all at the site context.
         $ufservice1 = \core_favourites\service_factory::get_service_for_user_context($user1context);
         $ufservice2 = \core_favourites\service_factory::get_service_for_user_context($user2context);
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $ufservice1->create_favourite('core_course', 'courses', $course1context->instanceid, $systemcontext);
         $ufservice1->create_favourite('core_course', 'courses', $course2context->instanceid, $systemcontext);
         $ufservice2->create_favourite('core_course', 'courses', $course2context->instanceid, $systemcontext);
@@ -145,7 +146,7 @@ class privacy_test extends provider_testcase {
         // Favourite 2 courses for user1 and 1 course for user2, all at the site context.
         $ufservice1 = \core_favourites\service_factory::get_service_for_user_context($user1context);
         $ufservice2 = \core_favourites\service_factory::get_service_for_user_context($user2context);
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $ufservice1->create_favourite('core_course', 'courses', $course1context->instanceid, $systemcontext);
         $ufservice1->create_favourite('core_course', 'courses', $course2context->instanceid, $systemcontext);
         $ufservice2->create_favourite('core_course', 'courses', $course2context->instanceid, $systemcontext);
@@ -188,7 +189,7 @@ class privacy_test extends provider_testcase {
         list($user1, $user2, $user1context, $user2context, $course1context, $course2context) = $this->set_up_courses_and_users();
 
         // Favourite 2 courses for user1 and 1 course for user2.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $ufservice1 = \core_favourites\service_factory::get_service_for_user_context($user1context);
         $ufservice2 = \core_favourites\service_factory::get_service_for_user_context($user2context);
         $ufservice1->create_favourite('core_course', 'courses', $course1context->instanceid, $systemcontext);

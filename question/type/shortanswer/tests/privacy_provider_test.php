@@ -21,9 +21,10 @@
  * @copyright  2021 The Open university
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace qtype_shortanswer\privacy;
 
 use core_privacy\local\metadata\collection;
-use \core_privacy\local\request\user_preference_provider;
+use core_privacy\local\request\user_preference_provider;
 use qtype_shortanswer\privacy\provider;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\transform;
@@ -40,7 +41,7 @@ require_once($CFG->dirroot . '/question/type/shortanswer/classes/privacy/provide
  * @copyright  2021 The Open university
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_shortanswer_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     // Include the privacy helper which has assertions on it.
 
     public function test_get_metadata() {

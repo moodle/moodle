@@ -22,6 +22,7 @@
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace enrol_flatfile\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +38,7 @@ use enrol_flatfile\privacy\provider;
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class enrol_flatfile_privacy_testcase extends provider_testcase {
+class privacy_provider_test extends provider_testcase {
 
     /** @var \stdClass $user1 a test user.*/
     protected $user1;
@@ -276,9 +277,9 @@ class enrol_flatfile_privacy_testcase extends provider_testcase {
         $course1 = $this->getDataGenerator()->create_course(['idnumber' => 'c1']);
         $course2 = $this->getDataGenerator()->create_course(['idnumber' => 'c2']);
         $course3 = $this->getDataGenerator()->create_course(['idnumber' => 'c3']);
-        $this->coursecontext1 = context_course::instance($course1->id);
-        $this->coursecontext2 = context_course::instance($course2->id);
-        $this->coursecontext3 = context_course::instance($course3->id);
+        $this->coursecontext1 = \context_course::instance($course1->id);
+        $this->coursecontext2 = \context_course::instance($course2->id);
+        $this->coursecontext3 = \context_course::instance($course3->id);
 
         $now = time();
         $future = $now + 60 * 60 * 5;
@@ -292,7 +293,7 @@ class enrol_flatfile_privacy_testcase extends provider_testcase {
                  add,student,u1,c3,$future,$farfuture";
         file_put_contents($file, $data);
 
-        $trace = new null_progress_trace();
+        $trace = new \null_progress_trace();
         $this->enable_plugin();
         $flatfileplugin = enrol_get_plugin('flatfile');
         $flatfileplugin->set_config('location', $file);

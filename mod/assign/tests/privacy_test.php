@@ -22,17 +22,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_assign\tests;
+namespace mod_assign\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-use \core_privacy\tests\provider_testcase;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\approved_contextlist;
-use \mod_assign\privacy\provider;
+use core_privacy\tests\provider_testcase;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\approved_contextlist;
+use mod_assign\privacy\provider;
 
 /**
  * Unit tests for mod/assign/classes/privacy/

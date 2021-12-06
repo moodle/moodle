@@ -21,14 +21,15 @@
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_repository\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\approved_contextlist;
-use \core_repository\privacy\provider;
-use \core_privacy\local\request\approved_userlist;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\approved_contextlist;
+use core_repository\privacy\provider;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for the core_repository implementation of the privacy API.
@@ -36,7 +37,7 @@ use \core_privacy\local\request\approved_userlist;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_repository_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Overriding setUp() function to always reset after tests.
@@ -99,7 +100,7 @@ class core_repository_privacy_testcase extends \core_privacy\tests\provider_test
 
         // Test the repository_instances data is exported at the User context level.
         $user = $approvedcontextlist->get_user();
-        $contextuser = context_user::instance($user->id);
+        $contextuser = \context_user::instance($user->id);
         $writer = writer::with_context($contextuser);
         $this->assertTrue($writer->has_any_data());
     }
@@ -191,7 +192,7 @@ class core_repository_privacy_testcase extends \core_privacy\tests\provider_test
         $this->assertEquals($expected, $actual);
 
         // The list of users for system context should not return any users.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist);
         $this->assertCount(0, $userlist);
@@ -246,7 +247,7 @@ class core_repository_privacy_testcase extends \core_privacy\tests\provider_test
         $this->assertCount(1, $userlist2);
 
         // User data should be only removed in the user context.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         // Add userlist2 to the approved user list in the system context.
         $approvedlist = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
         // Delete user1 data using delete_data_for_user.

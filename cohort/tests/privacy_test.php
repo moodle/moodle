@@ -22,6 +22,7 @@
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_cohort\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +38,7 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_cohort_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Basic setup for these tests.

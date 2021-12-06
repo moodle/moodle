@@ -21,10 +21,11 @@
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace fileconverter_googledrive\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\tests\provider_testcase;
+use core_privacy\tests\provider_testcase;
 
 /**
  * Unit tests for files/converter/googledrive/classes/privacy/provider.php
@@ -32,7 +33,7 @@ use \core_privacy\tests\provider_testcase;
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class fileconverter_googledrive_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Test getting the context for the user ID related to this plugin.

@@ -21,6 +21,7 @@
  * @copyright 2020 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace quiz_grading\privacy;
 
 use core_privacy\local\metadata\collection;
 use quiz_grading\privacy\provider;
@@ -35,7 +36,7 @@ require_once($CFG->dirroot . '/question/engine/questionattempt.php');
 /**
  * Privacy provider tests class.
  */
-class quiz_grading_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * When no preference exists, there should be no export.
      */

@@ -23,6 +23,7 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_chat\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -45,7 +46,7 @@ require_once($CFG->dirroot . '/mod/chat/lib.php');
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_chat_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -88,13 +89,13 @@ class mod_chat_privacy_testcase extends provider_testcase {
         // Check contexts for user 1.
         $contextids = provider::get_contexts_for_userid($u1->id)->get_contextids();
         $this->assertCount(2, $contextids);
-        $this->assertTrue(in_array(context_module::instance($chat1a->cmid)->id, $contextids));
-        $this->assertTrue(in_array(context_module::instance($chat1b->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($chat1a->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($chat1b->cmid)->id, $contextids));
 
         $contextids = provider::get_contexts_for_userid($u2->id)->get_contextids();
         $this->assertCount(2, $contextids);
-        $this->assertTrue(in_array(context_module::instance($chat1b->cmid)->id, $contextids));
-        $this->assertTrue(in_array(context_module::instance($chat2a->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($chat1b->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($chat2a->cmid)->id, $contextids));
     }
 
     /**
@@ -132,9 +133,9 @@ class mod_chat_privacy_testcase extends provider_testcase {
         $chatuser = $this->login_user_in_course_chat($u2, $c2, $chat2a);
         chat_send_chatmessage($chatuser, 'What\'s happening here?');
 
-        $context1a = context_module::instance($chat1a->cmid);
-        $context1b = context_module::instance($chat1b->cmid);
-        $context2a = context_module::instance($chat2a->cmid);
+        $context1a = \context_module::instance($chat1a->cmid);
+        $context1b = \context_module::instance($chat1b->cmid);
+        $context2a = \context_module::instance($chat2a->cmid);
 
         $userlist1a = new \core_privacy\local\request\userlist($context1a, $component);
         $userlist1b = new \core_privacy\local\request\userlist($context1b, $component);
@@ -172,8 +173,8 @@ class mod_chat_privacy_testcase extends provider_testcase {
 
         $chat1a = $dg->create_module('chat', ['course' => $c1]);
         $chat1b = $dg->create_module('chat', ['course' => $c1]);
-        $chat1actx = context_module::instance($chat1a->cmid);
-        $chat1bctx = context_module::instance($chat1b->cmid);
+        $chat1actx = \context_module::instance($chat1a->cmid);
+        $chat1bctx = \context_module::instance($chat1b->cmid);
 
         $u1chat1a = $this->login_user_in_course_chat($u1, $c1, $chat1a);
         $u2chat1a = $this->login_user_in_course_chat($u2, $c1, $chat1a);
@@ -196,7 +197,7 @@ class mod_chat_privacy_testcase extends provider_testcase {
         $this->assert_has_data_in_chat($u2, $chat1b);
 
         // No change.
-        provider::delete_data_for_all_users_in_context(context_course::instance($c1->id));
+        provider::delete_data_for_all_users_in_context(\context_course::instance($c1->id));
         $this->assert_has_data_in_chat($u1, $chat1a);
         $this->assert_has_data_in_chat($u2, $chat1a);
         $this->assert_has_data_in_chat($u1, $chat1b);
@@ -220,8 +221,8 @@ class mod_chat_privacy_testcase extends provider_testcase {
 
         $chat1a = $dg->create_module('chat', ['course' => $c1]);
         $chat1b = $dg->create_module('chat', ['course' => $c1]);
-        $chat1actx = context_module::instance($chat1a->cmid);
-        $chat1bctx = context_module::instance($chat1b->cmid);
+        $chat1actx = \context_module::instance($chat1a->cmid);
+        $chat1bctx = \context_module::instance($chat1b->cmid);
 
         $u1chat1a = $this->login_user_in_course_chat($u1, $c1, $chat1a);
         $u2chat1a = $this->login_user_in_course_chat($u2, $c1, $chat1a);
@@ -270,7 +271,7 @@ class mod_chat_privacy_testcase extends provider_testcase {
         $u3 = $dg->create_user();
 
         $chat1 = $dg->create_module('chat', ['course' => $c1]);
-        $chat1context = context_module::instance($chat1->cmid);
+        $chat1context = \context_module::instance($chat1->cmid);
 
         $u1chat1 = $this->login_user_in_course_chat($u1, $c1, $chat1);
         $u2chat1 = $this->login_user_in_course_chat($u2, $c1, $chat1);
@@ -322,8 +323,8 @@ class mod_chat_privacy_testcase extends provider_testcase {
 
         $chat1a = $dg->create_module('chat', ['course' => $c1]);
         $chat1b = $dg->create_module('chat', ['course' => $c1]);
-        $chat1actx = context_module::instance($chat1a->cmid);
-        $chat1bctx = context_module::instance($chat1b->cmid);
+        $chat1actx = \context_module::instance($chat1a->cmid);
+        $chat1bctx = \context_module::instance($chat1b->cmid);
 
         $u1chat1a = $this->login_user_in_course_chat($u1, $c1, $chat1a);
         $u2chat1a = $this->login_user_in_course_chat($u2, $c1, $chat1a);

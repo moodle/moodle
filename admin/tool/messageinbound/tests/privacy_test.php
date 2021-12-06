@@ -23,6 +23,7 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_messageinbound\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -44,7 +45,7 @@ use tool_messageinbound\privacy\provider;
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_messageinbound_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         global $CFG;
@@ -60,8 +61,8 @@ class tool_messageinbound_privacy_testcase extends provider_testcase {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $contexts = provider::get_contexts_for_userid($u1->id)->get_contexts();
         $this->assertCount(1, $contexts);
@@ -81,9 +82,9 @@ class tool_messageinbound_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
-        $u3ctx = context_user::instance($u3->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
+        $u3ctx = \context_user::instance($u3->id);
 
         $addressmanager = new \core\message\inbound\address_manager();
         $addressmanager->set_handler('\tool_messageinbound\message\inbound\invalid_recipient_handler');
@@ -122,8 +123,8 @@ class tool_messageinbound_privacy_testcase extends provider_testcase {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $addressmanager = new \core\message\inbound\address_manager();
         $addressmanager->set_handler('\tool_messageinbound\message\inbound\invalid_recipient_handler');
@@ -166,8 +167,8 @@ class tool_messageinbound_privacy_testcase extends provider_testcase {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $addressmanager = new \core\message\inbound\address_manager();
         $addressmanager->set_handler('\tool_messageinbound\message\inbound\invalid_recipient_handler');
@@ -214,8 +215,8 @@ class tool_messageinbound_privacy_testcase extends provider_testcase {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $addressmanager = new \core\message\inbound\address_manager();
         $addressmanager->set_handler('\tool_messageinbound\message\inbound\invalid_recipient_handler');
@@ -246,8 +247,8 @@ class tool_messageinbound_privacy_testcase extends provider_testcase {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $addressmanager = new \core\message\inbound\address_manager();
         $addressmanager->set_handler('\tool_messageinbound\message\inbound\invalid_recipient_handler');

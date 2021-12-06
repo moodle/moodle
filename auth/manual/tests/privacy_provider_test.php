@@ -21,15 +21,16 @@
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace auth_manual\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot.'/auth/manual/auth.php');
 
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\transform;
-use \auth_manual\privacy\provider;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\transform;
+use auth_manual\privacy\provider;
 
 /**
  * Unit tests for the auth_manual implementation of the privacy API.
@@ -37,9 +38,9 @@ use \auth_manual\privacy\provider;
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class auth_manual_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
-    /** @var auth_plugin_manual Keeps the authentication plugin. */
+    /** @var \auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;
 
     /**
@@ -47,7 +48,7 @@ class auth_manual_privacy_testcase extends \core_privacy\tests\provider_testcase
      */
     public function setUp(): void {
         $this->resetAfterTest(true);
-        $this->authplugin = new auth_plugin_manual();
+        $this->authplugin = new \auth_plugin_manual();
     }
 
     /**

@@ -23,6 +23,7 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_competency\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG, $DB;
@@ -46,7 +47,7 @@ use core_competency\privacy\provider;
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_competency_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -67,9 +68,9 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
 
-        $sysctx = context_system::instance();
-        $cat1ctx = context_coursecat::instance($cat1->id);
-        $cat2ctx = context_coursecat::instance($cat2->id);
+        $sysctx = \context_system::instance();
+        $cat1ctx = \context_coursecat::instance($cat1->id);
+        $cat2ctx = \context_coursecat::instance($cat2->id);
 
         // Test recovery through framework context.
         $this->setUser($u1);
@@ -124,9 +125,9 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
 
-        $sysctx = context_system::instance();
-        $cat1ctx = context_coursecat::instance($cat1->id);
-        $cat2ctx = context_coursecat::instance($cat2->id);
+        $sysctx = \context_system::instance();
+        $cat1ctx = \context_coursecat::instance($cat1->id);
+        $cat2ctx = \context_coursecat::instance($cat2->id);
 
         // Add frameworks.
         $this->setUser($u1);
@@ -181,9 +182,9 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u4 = $dg->create_user();
         $cohort = $dg->create_cohort();
 
-        $sysctx = context_system::instance();
-        $cat1ctx = context_coursecat::instance($cat1->id);
-        $cat2ctx = context_coursecat::instance($cat2->id);
+        $sysctx = \context_system::instance();
+        $cat1ctx = \context_coursecat::instance($cat1->id);
+        $cat2ctx = \context_coursecat::instance($cat2->id);
 
         $f1 = $ccg->create_framework();
         $f2 = $ccg->create_framework(['contextid' => $cat1ctx->id]);
@@ -244,9 +245,9 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u4 = $dg->create_user();
         $cohort = $dg->create_cohort();
 
-        $sysctx = context_system::instance();
-        $cat1ctx = context_coursecat::instance($cat1->id);
-        $cat2ctx = context_coursecat::instance($cat2->id);
+        $sysctx = \context_system::instance();
+        $cat1ctx = \context_coursecat::instance($cat1->id);
+        $cat2ctx = \context_coursecat::instance($cat2->id);
 
         $f1 = $ccg->create_framework();
         $f2 = $ccg->create_framework(['contextid' => $cat1ctx->id]);
@@ -305,8 +306,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -356,8 +357,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -399,8 +400,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $m2 = $dg->create_module('choice', ['course' => $c1]);
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $m1ctx = context_module::instance($m1->cmid);
-        $m2ctx = context_module::instance($m2->cmid);
+        $m1ctx = \context_module::instance($m1->cmid);
+        $m2ctx = \context_module::instance($m2->cmid);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -432,8 +433,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $m2 = $dg->create_module('choice', ['course' => $c1]);
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $m1ctx = context_module::instance($m1->cmid);
-        $m2ctx = context_module::instance($m2->cmid);
+        $m1ctx = \context_module::instance($m1->cmid);
+        $m2ctx = \context_module::instance($m2->cmid);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -467,7 +468,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
-        $u0ctx = context_user::instance($u0->id);
+        $u0ctx = \context_user::instance($u0->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -503,7 +504,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
-        $u0ctx = context_user::instance($u0->id);
+        $u0ctx = \context_user::instance($u0->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -540,7 +541,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u6 = $dg->create_user();
         $u7 = $dg->create_user();
         $u8 = $dg->create_user();
-        $u0ctx = context_user::instance($u0->id);
+        $u0ctx = \context_user::instance($u0->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -618,7 +619,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u6 = $dg->create_user();
         $u7 = $dg->create_user();
         $u8 = $dg->create_user();
-        $u0ctx = context_user::instance($u0->id);
+        $u0ctx = \context_user::instance($u0->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -666,11 +667,11 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
 
-        $c1ctx = context_course::instance($c1->id);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
-        $u3ctx = context_user::instance($u3->id);
-        $u4ctx = context_user::instance($u4->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
+        $u3ctx = \context_user::instance($u3->id);
+        $u4ctx = \context_user::instance($u4->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -715,11 +716,11 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
 
-        $c1ctx = context_course::instance($c1->id);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
-        $u3ctx = context_user::instance($u3->id);
-        $u4ctx = context_user::instance($u4->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
+        $u3ctx = \context_user::instance($u3->id);
+        $u4ctx = \context_user::instance($u4->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -762,9 +763,9 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        $c1ctx = context_course::instance($c1->id);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -933,8 +934,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -1028,8 +1029,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        $c1ctx = context_course::instance($c1->id);
-        $u1ctx = context_user::instance($u1->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -1198,8 +1199,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -1295,9 +1296,9 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        $c1ctx = context_course::instance($c1->id);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -1432,8 +1433,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $m1 = $dg->create_module('page', ['course' => $c1]);
         $m2 = $dg->create_module('page', ['course' => $c1]);
 
-        $m1ctx = context_module::instance($m1->cmid);
-        $m2ctx = context_module::instance($m2->cmid);
+        $m1ctx = \context_module::instance($m1->cmid);
+        $m2ctx = \context_module::instance($m2->cmid);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -1489,8 +1490,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
 
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -1580,8 +1581,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -1638,9 +1639,9 @@ class core_competency_privacy_testcase extends provider_testcase {
         $cat1 = $dg->create_category();
         $cat2 = $dg->create_category();
 
-        $cat1ctx = context_coursecat::instance($cat1->id);
-        $cat2ctx = context_coursecat::instance($cat2->id);
-        $sysctx = context_system::instance();
+        $cat1ctx = \context_coursecat::instance($cat1->id);
+        $cat2ctx = \context_coursecat::instance($cat2->id);
+        $sysctx = \context_system::instance();
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
@@ -1828,7 +1829,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u8 = $dg->create_user();
 
         $dg->role_assign($DB->get_field('role', 'id', ['archetype' => 'manager'], IGNORE_MULTIPLE), $u6->id);
-        $u0ctx = context_user::instance($u0->id);
+        $u0ctx = \context_user::instance($u0->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -2003,7 +2004,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u4 = $dg->create_user();
         $u5 = $dg->create_user();
 
-        $u0ctx = context_user::instance($u0->id);
+        $u0ctx = \context_user::instance($u0->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -2160,7 +2161,7 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
 
-        $u0ctx = context_user::instance($u0->id);
+        $u0ctx = \context_user::instance($u0->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -2235,8 +2236,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -2396,8 +2397,8 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -2502,9 +2503,9 @@ class core_competency_privacy_testcase extends provider_testcase {
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
 
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
-        $u3ctx = context_user::instance($u3->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
+        $u3ctx = \context_user::instance($u3->id);
 
         $f = $ccg->create_framework();
         $comp1 = $ccg->create_competency(['competencyframeworkid' => $f->get('id')]);
@@ -2595,7 +2596,7 @@ class core_competency_privacy_testcase extends provider_testcase {
     protected function assert_contextlist(contextlist $contextlist, $expectedcontextsorids) {
         $contextids = array_unique($contextlist->get_contextids());
         $expectedids = array_unique(array_map(function($item) {
-            return $item instanceof context ? $item->id : $id;
+            return $item instanceof \context ? $item->id : $id;
         }, $expectedcontextsorids));
         $this->assert_array_match($contextids, $expectedids);
     }

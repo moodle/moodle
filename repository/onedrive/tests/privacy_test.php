@@ -21,19 +21,21 @@
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace repository_onedrive\privacy;
+
 defined('MOODLE_INTERNAL') || die();
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\approved_userlist;
-use \repository_onedrive\privacy\provider;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use repository_onedrive\privacy\provider;
 /**
  * Unit tests for the repository_onedrive implementation of the privacy API.
  *
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repository_onedrive_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Overriding setUp() function to always reset after tests.
@@ -202,7 +204,7 @@ class repository_onedrive_privacy_testcase extends \core_privacy\tests\provider_
 
         // Test the repository_onedrive_access data is exported at the User context level.
         $user = $approvedcontextlist->get_user();
-        $contextuser = context_user::instance($user->id);
+        $contextuser = \context_user::instance($user->id);
         $writer = writer::with_context($contextuser);
         $this->assertTrue($writer->has_any_data());
     }

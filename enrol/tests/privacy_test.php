@@ -21,6 +21,7 @@
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_enrol\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,8 +29,8 @@ use core_enrol\privacy\provider;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\provider_testcase;
-use \core_privacy\local\request\transform;
-use \core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Privacy test for the core_enrol.
@@ -39,7 +40,7 @@ use \core_privacy\local\request\approved_userlist;
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_enrol_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
     /**
      * Check that a course context is returned if there is any user data for this user.
      */
@@ -186,9 +187,9 @@ class core_enrol_privacy_testcase extends provider_testcase {
         $component = 'core_enrol';
 
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
 
         $userlist1 = new \core_privacy\local\request\userlist($coursecontext, $component);
         provider::get_users_in_context($userlist1);
@@ -223,9 +224,9 @@ class core_enrol_privacy_testcase extends provider_testcase {
         $user3 = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
-        $coursecontext1 = context_course::instance($course1->id);
-        $coursecontext2 = context_course::instance($course2->id);
-        $systemcontext = context_system::instance();
+        $coursecontext1 = \context_course::instance($course1->id);
+        $coursecontext2 = \context_course::instance($course2->id);
+        $systemcontext = \context_system::instance();
 
         // Enrol user1 into course1.
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id,  null, 'manual');

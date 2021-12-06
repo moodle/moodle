@@ -21,8 +21,9 @@
  * @copyright 2018 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace search_simpledb\privacy;
 
-use \search_simpledb\privacy\provider;
+use search_simpledb\privacy\provider;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 
@@ -39,7 +40,7 @@ require_once($CFG->dirroot . '/search/tests/fixtures/mock_search_area.php');
  * @copyright 2018 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class privacy_model_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     public function setUp(): void {
         global $DB;
@@ -56,9 +57,9 @@ class privacy_model_testcase extends \core_privacy\tests\provider_testcase {
         // search component to it.
 
         $this->engine = new \search_simpledb\engine();
-        $this->search = testable_core_search::instance($this->engine);
+        $this->search = \testable_core_search::instance($this->engine);
         $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
-        $this->search->add_search_area($areaid, new core_mocksearch\search\mock_search_area());
+        $this->search->add_search_area($areaid, new \core_mocksearch\search\mock_search_area());
 
         $this->generator = self::getDataGenerator()->get_plugin_generator('core_search');
         $this->generator->setup();

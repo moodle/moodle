@@ -21,6 +21,7 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_question\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\deletion_criteria;
@@ -41,10 +42,10 @@ require_once(__DIR__ . '/../engine/tests/helpers.php');
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_question_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     // Include the privacy helper which has assertions on it.
-    use core_question_privacy_helper;
+    use \core_question_privacy_helper;
 
     /**
      * Prepare a question attempt.
@@ -55,14 +56,14 @@ class core_question_privacy_provider_testcase extends \core_privacy\tests\provid
         // Create a question with a usage from the current user.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
-        $quba = question_engine::make_questions_usage_by_activity('core_question_preview', context_system::instance());
+        $quba = \question_engine::make_questions_usage_by_activity('core_question_preview', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $questiondata = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
-        $question = question_bank::load_question($questiondata->id);
+        $question = \question_bank::load_question($questiondata->id);
         $quba->add_question($question);
         $quba->start_all_questions();
 
-        question_engine::save_questions_usage_by_activity($quba);
+        \question_engine::save_questions_usage_by_activity($quba);
 
         return $quba;
     }
@@ -79,14 +80,14 @@ class core_question_privacy_provider_testcase extends \core_privacy\tests\provid
         // Create a question with a usage from the current user.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
-        $quba = question_engine::make_questions_usage_by_activity('core_question_preview', context_system::instance());
+        $quba = \question_engine::make_questions_usage_by_activity('core_question_preview', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $questiondata = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
-        $question = question_bank::load_question($questiondata->id);
+        $question = \question_bank::load_question($questiondata->id);
         $quba->add_question($question);
         $quba->start_all_questions();
 
-        question_engine::save_questions_usage_by_activity($quba);
+        \question_engine::save_questions_usage_by_activity($quba);
 
         // Set the user.
         $testuser = $this->getDataGenerator()->create_user();
@@ -112,13 +113,13 @@ class core_question_privacy_provider_testcase extends \core_privacy\tests\provid
         // Create a question with a usage from the current user.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
-        $quba = question_engine::make_questions_usage_by_activity('core_question_preview', context_system::instance());
+        $quba = \question_engine::make_questions_usage_by_activity('core_question_preview', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
 
         $questiondata = $questiongenerator->create_question('truefalse', 'true', ['category' => $cat->id]);
-        $quba->add_question(question_bank::load_question($questiondata->id));
+        $quba->add_question(\question_bank::load_question($questiondata->id));
         $questiondata = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
-        $quba->add_question(question_bank::load_question($questiondata->id));
+        $quba->add_question(\question_bank::load_question($questiondata->id));
 
         // Set the user and answer the questions.
         $testuser = $this->getDataGenerator()->create_user();
@@ -129,7 +130,7 @@ class core_question_privacy_provider_testcase extends \core_privacy\tests\provid
         $quba->process_action(2, ['answer' => 'cat']);
         $quba->finish_all_questions();
 
-        question_engine::save_questions_usage_by_activity($quba);
+        \question_engine::save_questions_usage_by_activity($quba);
 
         $context = $quba->get_owning_context();
 

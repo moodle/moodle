@@ -23,6 +23,7 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_grades\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -44,7 +45,7 @@ require_once($CFG->libdir . '/gradelib.php');
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_grades_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -70,18 +71,18 @@ class core_grades_privacy_testcase extends provider_testcase {
         $u10 = $dg->create_user();
         $u11 = $dg->create_user();
 
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         // Create some stuff.
-        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
-        $gc1a = new grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
-        $gc1b = new grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
-        $gc2a = new grade_category($dg->create_grade_category(['courseid' => $c2->id]), false);
-        $go2 = new grade_outcome($dg->create_grade_outcome(['courseid' => $c2->id, 'shortname' => 'go2',
+        $gi1a = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi1b = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi2a = new \grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gc1a = new \grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
+        $gc1b = new \grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
+        $gc2a = new \grade_category($dg->create_grade_category(['courseid' => $c2->id]), false);
+        $go2 = new \grade_outcome($dg->create_grade_outcome(['courseid' => $c2->id, 'shortname' => 'go2',
             'fullname' => 'go2']), false);
 
         // Nothing as of now.
@@ -90,15 +91,15 @@ class core_grades_privacy_testcase extends provider_testcase {
             $this->assertEmpty($contexts);
         }
 
-        $go0 = new grade_outcome(['shortname' => 'go0', 'fullname' => 'go0', 'usermodified' => $u1->id]);
+        $go0 = new \grade_outcome(['shortname' => 'go0', 'fullname' => 'go0', 'usermodified' => $u1->id]);
         $go0->insert();
-        $go1 = new grade_outcome(['shortname' => 'go1', 'fullname' => 'go1', 'courseid' => $c1->id, 'usermodified' => $u11->id]);
+        $go1 = new \grade_outcome(['shortname' => 'go1', 'fullname' => 'go1', 'courseid' => $c1->id, 'usermodified' => $u11->id]);
         $go1->insert();
 
         // Create scales.
-        $s1 = new grade_scale(['name' => 's1', 'scale' => 'a,b', 'userid' => $u7->id, 'courseid' => 0, 'description' => '']);
+        $s1 = new \grade_scale(['name' => 's1', 'scale' => 'a,b', 'userid' => $u7->id, 'courseid' => 0, 'description' => '']);
         $s1->insert();
-        $s2 = new grade_scale(['name' => 's2', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c1->id, 'description' => '']);
+        $s2 = new \grade_scale(['name' => 's2', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c1->id, 'description' => '']);
         $s2->insert();
 
         // User 2 creates history.
@@ -190,15 +191,15 @@ class core_grades_privacy_testcase extends provider_testcase {
         $u5 = $dg->create_user();
         $u6 = $dg->create_user();
 
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         // Create some stuff.
-        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
-        $gi2b = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gi1a = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi1b = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi2a = new \grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gi2b = new \grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
 
         // Nothing as of now.
         foreach ([$u1, $u2, $u3, $u4, $u5, $u6] as $u) {
@@ -232,7 +233,7 @@ class core_grades_privacy_testcase extends provider_testcase {
         $this->assertCount(3, $contexts);
         $this->assertArrayHasKey($c1ctx->id, $contexts);
         $this->assertArrayHasKey($c2ctx->id, $contexts);
-        $this->assertArrayHasKey(context_user::instance($u2->id)->id, $contexts);
+        $this->assertArrayHasKey(\context_user::instance($u2->id)->id, $contexts);
         $contexts = array_flip(provider::get_contexts_for_userid($u3->id)->get_contextids());
         $this->assertCount(1, $contexts);
         $this->assertArrayHasKey($c1ctx->id, $contexts);
@@ -242,10 +243,10 @@ class core_grades_privacy_testcase extends provider_testcase {
         $contexts = array_flip(provider::get_contexts_for_userid($u5->id)->get_contextids());
         $this->assertCount(2, $contexts);
         $this->assertArrayHasKey($c2ctx->id, $contexts);
-        $this->assertArrayHasKey(context_user::instance($u2->id)->id, $contexts);
+        $this->assertArrayHasKey(\context_user::instance($u2->id)->id, $contexts);
         $contexts = array_flip(provider::get_contexts_for_userid($u6->id)->get_contextids());
         $this->assertCount(1, $contexts);
-        $this->assertArrayHasKey(context_user::instance($u2->id)->id, $contexts);
+        $this->assertArrayHasKey(\context_user::instance($u2->id)->id, $contexts);
     }
 
     /**
@@ -269,29 +270,29 @@ class core_grades_privacy_testcase extends provider_testcase {
         $u10 = $dg->create_user();
         $u11 = $dg->create_user();
 
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         // Create some stuff.
-        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
-        $gc1a = new grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
-        $gc1b = new grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
-        $gc2a = new grade_category($dg->create_grade_category(['courseid' => $c2->id]), false);
-        $go2 = new grade_outcome($dg->create_grade_outcome(['courseid' => $c2->id, 'shortname' => 'go2',
+        $gi1a = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi1b = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi2a = new \grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gc1a = new \grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
+        $gc1b = new \grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
+        $gc2a = new \grade_category($dg->create_grade_category(['courseid' => $c2->id]), false);
+        $go2 = new \grade_outcome($dg->create_grade_outcome(['courseid' => $c2->id, 'shortname' => 'go2',
             'fullname' => 'go2']), false);
 
-        $go0 = new grade_outcome(['shortname' => 'go0', 'fullname' => 'go0', 'usermodified' => $u1->id]);
+        $go0 = new \grade_outcome(['shortname' => 'go0', 'fullname' => 'go0', 'usermodified' => $u1->id]);
         $go0->insert();
-        $go1 = new grade_outcome(['shortname' => 'go1', 'fullname' => 'go1', 'courseid' => $c1->id, 'usermodified' => $u11->id]);
+        $go1 = new \grade_outcome(['shortname' => 'go1', 'fullname' => 'go1', 'courseid' => $c1->id, 'usermodified' => $u11->id]);
         $go1->insert();
 
         // Create scales.
-        $s1 = new grade_scale(['name' => 's1', 'scale' => 'a,b', 'userid' => $u7->id, 'courseid' => 0, 'description' => '']);
+        $s1 = new \grade_scale(['name' => 's1', 'scale' => 'a,b', 'userid' => $u7->id, 'courseid' => 0, 'description' => '']);
         $s1->insert();
-        $s2 = new grade_scale(['name' => 's2', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c1->id, 'description' => '']);
+        $s2 = new \grade_scale(['name' => 's2', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c1->id, 'description' => '']);
         $s2->insert();
 
         // User 2 creates history.
@@ -359,15 +360,15 @@ class core_grades_privacy_testcase extends provider_testcase {
         $u5 = $dg->create_user();
         $u6 = $dg->create_user();
 
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
-        $u2ctx = context_user::instance($u2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         // Create some stuff.
-        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
-        $gi2b = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gi1a = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi1b = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi2a = new \grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gi2b = new \grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
 
         // User 1 is graded in course 1.
         $gi1a->update_final_grade($u1->id, 1, 'test');
@@ -405,7 +406,7 @@ class core_grades_privacy_testcase extends provider_testcase {
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
 
-        $fs = new file_storage();
+        $fs = new \file_storage();
 
         $dg = $this->getDataGenerator();
 
@@ -413,22 +414,22 @@ class core_grades_privacy_testcase extends provider_testcase {
         $c2 = $dg->create_course();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         $a1 = $dg->create_module('assign', ['course' => $c1->id]);
         $a2 = $dg->create_module('assign', ['course' => $c1->id]);
         $a3 = $dg->create_module('assign', ['course' => $c2->id]);
         $a4 = $dg->create_module('assign', ['course' => $c2->id]);
 
-        $a1context = context_module::instance($a1->cmid);
-        $a2context = context_module::instance($a2->cmid);
-        $a3context = context_module::instance($a3->cmid);
-        $a4context = context_module::instance($a4->cmid);
+        $a1context = \context_module::instance($a1->cmid);
+        $a2context = \context_module::instance($a2->cmid);
+        $a3context = \context_module::instance($a3->cmid);
+        $a4context = \context_module::instance($a4->cmid);
 
         // Create some stuff.
-        $gi1a = new grade_item($dg->create_grade_item(
+        $gi1a = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c1->id,
                 'itemtype' => 'mod',
@@ -436,7 +437,7 @@ class core_grades_privacy_testcase extends provider_testcase {
                 'iteminstance' => $a1->id
             ]
         ), false);
-        $gi1b = new grade_item($dg->create_grade_item(
+        $gi1b = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c1->id,
                 'itemtype' => 'mod',
@@ -444,7 +445,7 @@ class core_grades_privacy_testcase extends provider_testcase {
                 'iteminstance' => $a2->id
             ]
         ), false);
-        $gi2a = new grade_item($dg->create_grade_item(
+        $gi2a = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c2->id,
                 'itemtype' => 'mod',
@@ -452,7 +453,7 @@ class core_grades_privacy_testcase extends provider_testcase {
                 'iteminstance' => $a3->id
             ]
         ), false);
-        $gi2b = new grade_item($dg->create_grade_item(
+        $gi2b = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c2->id,
                 'itemtype' => 'mod',
@@ -645,7 +646,7 @@ class core_grades_privacy_testcase extends provider_testcase {
     public function test_delete_data_for_user() {
         global $DB;
 
-        $fs = new file_storage();
+        $fs = new \file_storage();
 
         $dg = $this->getDataGenerator();
 
@@ -653,23 +654,23 @@ class core_grades_privacy_testcase extends provider_testcase {
         $c2 = $dg->create_course();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         $a1 = $dg->create_module('assign', ['course' => $c1->id]);
         $a2 = $dg->create_module('assign', ['course' => $c1->id]);
         $a3 = $dg->create_module('assign', ['course' => $c2->id]);
         $a4 = $dg->create_module('assign', ['course' => $c2->id]);
 
-        $a1context = context_module::instance($a1->cmid);
-        $a2context = context_module::instance($a2->cmid);
-        $a3context = context_module::instance($a3->cmid);
-        $a4context = context_module::instance($a4->cmid);
+        $a1context = \context_module::instance($a1->cmid);
+        $a2context = \context_module::instance($a2->cmid);
+        $a3context = \context_module::instance($a3->cmid);
+        $a4context = \context_module::instance($a4->cmid);
 
         // Create some stuff.
-        $gi1a = new grade_item($dg->create_grade_item(
+        $gi1a = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c1->id,
                 'itemtype' => 'mod',
@@ -677,7 +678,7 @@ class core_grades_privacy_testcase extends provider_testcase {
                 'iteminstance' => $a1->id
             ]
         ), false);
-        $gi1b = new grade_item($dg->create_grade_item(
+        $gi1b = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c1->id,
                 'itemtype' => 'mod',
@@ -685,7 +686,7 @@ class core_grades_privacy_testcase extends provider_testcase {
                 'iteminstance' => $a2->id
             ]
         ), false);
-        $gi2a = new grade_item($dg->create_grade_item(
+        $gi2a = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c2->id,
                 'itemtype' => 'mod',
@@ -693,7 +694,7 @@ class core_grades_privacy_testcase extends provider_testcase {
                 'iteminstance' => $a3->id
             ]
         ), false);
-        $gi2b = new grade_item($dg->create_grade_item(
+        $gi2b = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c2->id,
                 'itemtype' => 'mod',
@@ -903,16 +904,16 @@ class core_grades_privacy_testcase extends provider_testcase {
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         // Create some stuff.
-        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
-        $gi2b = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gi1a = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi1b = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi2a = new \grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gi2b = new \grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
 
         $gi1a->update_final_grade($u1->id, 1, 'test');
         $gi1a->update_final_grade($u2->id, 1, 'test');
@@ -979,19 +980,19 @@ class core_grades_privacy_testcase extends provider_testcase {
         $ua2 = $dg->create_user();
         $ua3 = $dg->create_user();
 
-        $ug1ctx = context_user::instance($ug1->id);
-        $ug2ctx = context_user::instance($ug2->id);
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $ug1ctx = \context_user::instance($ug1->id);
+        $ug2ctx = \context_user::instance($ug2->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         $rootpath = [get_string('grades', 'core_grades')];
         $relatedtomepath = array_merge($rootpath, [get_string('privacy:path:relatedtome', 'core_grades')]);
 
         // Create the course minimal stuff.
-        grade_category::fetch_course_category($c1->id);
-        $ci1 = grade_item::fetch_course_item($c1->id);
-        grade_category::fetch_course_category($c2->id);
-        $ci2 = grade_item::fetch_course_item($c2->id);
+        \grade_category::fetch_course_category($c1->id);
+        $ci1 = \grade_item::fetch_course_item($c1->id);
+        \grade_category::fetch_course_category($c2->id);
+        $ci2 = \grade_item::fetch_course_item($c2->id);
 
         $this->add_feedback_file_to_copy();
 
@@ -1005,7 +1006,7 @@ class core_grades_privacy_testcase extends provider_testcase {
         $a1 = $dg->create_module('assign', ['course' => $c1->id]);
 
         // Create data that will sit in the user context because we will delete the grate item.
-        $gi1 = new grade_item($dg->create_grade_item(
+        $gi1 = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c1->id,
                 'itemtype' => 'mod',
@@ -1040,7 +1041,7 @@ class core_grades_privacy_testcase extends provider_testcase {
         // Create another set for another user.
         $a2 = $dg->create_module('assign', ['course' => $c2->id]);
         $a3 = $dg->create_module('assign', ['course' => $c2->id]);
-        $gi2a = new grade_item($dg->create_grade_item(
+        $gi2a = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c2->id,
                 'itemtype' => 'mod',
@@ -1048,7 +1049,7 @@ class core_grades_privacy_testcase extends provider_testcase {
                 'iteminstance' => $a2->id
             ]
         ), false);
-        $gi2b = new grade_item($dg->create_grade_item(
+        $gi2b = new \grade_item($dg->create_grade_item(
             [
                 'courseid' => $c2->id,
                 'itemtype' => 'mod',
@@ -1289,15 +1290,15 @@ class core_grades_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        $u1ctx = context_user::instance($u1->id);
-        $c1ctx = context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $c1ctx = \context_course::instance($c1->id);
 
         $rootpath = [get_string('grades', 'core_grades')];
 
         // Create another set for another user.
-        $gi1 = new grade_item($dg->create_grade_item(['courseid' => $c1->id, 'scaleid' => $scale->id]), false);
+        $gi1 = new \grade_item($dg->create_grade_item(['courseid' => $c1->id, 'scaleid' => $scale->id]), false);
         $gi1->update_final_grade($u1->id, 1, 'test', '', FORMAT_PLAIN, $u2->id);
-        $gi2 = new grade_item($dg->create_grade_item(['courseid' => $c1->id, 'scaleid' => $scale->id]), false);
+        $gi2 = new \grade_item($dg->create_grade_item(['courseid' => $c1->id, 'scaleid' => $scale->id]), false);
         $gi2->update_final_grade($u1->id, 3, 'test', '', FORMAT_PLAIN, $u2->id);
 
         // Export user's data.
@@ -1305,7 +1306,7 @@ class core_grades_privacy_testcase extends provider_testcase {
         provider::export_user_data(new approved_contextlist($u1, 'core_grades', [$c1ctx->id]));
         $data = writer::with_context($c1ctx)->get_data($rootpath);
         $this->assertCount(3, $data->grades);
-        $this->assertEquals(grade_item::fetch_course_item($c1->id)->get_name(), $data->grades[0]['item']);
+        $this->assertEquals(\grade_item::fetch_course_item($c1->id)->get_name(), $data->grades[0]['item']);
         $this->assertEquals($gi1->get_name(), $data->grades[1]['item']);
         $this->assertEquals(1, $data->grades[1]['grade']);
         $this->assertEquals('Awesome', $data->grades[1]['grade_formatted']);
@@ -1330,15 +1331,15 @@ class core_grades_privacy_testcase extends provider_testcase {
         $u9 = $dg->create_user();
         $u10 = $dg->create_user();
 
-        $sysctx = context_system::instance();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
-        $u3ctx = context_user::instance($u3->id);
-        $u4ctx = context_user::instance($u4->id);
-        $u5ctx = context_user::instance($u5->id);
-        $u6ctx = context_user::instance($u6->id);
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $sysctx = \context_system::instance();
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
+        $u3ctx = \context_user::instance($u3->id);
+        $u4ctx = \context_user::instance($u4->id);
+        $u5ctx = \context_user::instance($u5->id);
+        $u6ctx = \context_user::instance($u6->id);
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         $rootpath = [get_string('grades', 'core_grades')];
         $relatedtomepath = array_merge($rootpath, [get_string('privacy:path:relatedtome', 'core_grades')]);
@@ -1347,26 +1348,26 @@ class core_grades_privacy_testcase extends provider_testcase {
         $updateactionstr = get_string('privacy:request:historyactionupdate', 'core_grades');
 
         // Create some stuff.
-        $gi1a = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi1b = new grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
-        $gi2a = new grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
-        $gc1a = new grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
-        $gc1b = new grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
-        $gc2a = new grade_category($dg->create_grade_category(['courseid' => $c2->id]), false);
-        $go2 = new grade_outcome($dg->create_grade_outcome(['courseid' => $c2->id, 'shortname' => 'go2',
+        $gi1a = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi1b = new \grade_item($dg->create_grade_item(['courseid' => $c1->id]), false);
+        $gi2a = new \grade_item($dg->create_grade_item(['courseid' => $c2->id]), false);
+        $gc1a = new \grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
+        $gc1b = new \grade_category($dg->create_grade_category(['courseid' => $c1->id]), false);
+        $gc2a = new \grade_category($dg->create_grade_category(['courseid' => $c2->id]), false);
+        $go2 = new \grade_outcome($dg->create_grade_outcome(['courseid' => $c2->id, 'shortname' => 'go2',
             'fullname' => 'go2']), false);
 
-        $go0 = new grade_outcome(['shortname' => 'go0', 'fullname' => 'go0', 'usermodified' => $u1->id]);
+        $go0 = new \grade_outcome(['shortname' => 'go0', 'fullname' => 'go0', 'usermodified' => $u1->id]);
         $go0->insert();
-        $go1 = new grade_outcome(['shortname' => 'go1', 'fullname' => 'go1', 'courseid' => $c1->id, 'usermodified' => $u1->id]);
+        $go1 = new \grade_outcome(['shortname' => 'go1', 'fullname' => 'go1', 'courseid' => $c1->id, 'usermodified' => $u1->id]);
         $go1->insert();
 
         // Create scales.
-        $s1 = new grade_scale(['name' => 's1', 'scale' => 'a,b', 'userid' => $u7->id, 'courseid' => 0, 'description' => '']);
+        $s1 = new \grade_scale(['name' => 's1', 'scale' => 'a,b', 'userid' => $u7->id, 'courseid' => 0, 'description' => '']);
         $s1->insert();
-        $s2 = new grade_scale(['name' => 's2', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c1->id, 'description' => '']);
+        $s2 = new \grade_scale(['name' => 's2', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c1->id, 'description' => '']);
         $s2->insert();
-        $s3 = new grade_scale(['name' => 's3', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c2->id, 'description' => '']);
+        $s3 = new \grade_scale(['name' => 's3', 'scale' => 'a,b', 'userid' => $u8->id, 'courseid' => $c2->id, 'description' => '']);
         $s3->insert();
 
         // User 2 creates history.
@@ -1568,7 +1569,7 @@ class core_grades_privacy_testcase extends provider_testcase {
      * @param context $context The context.
      * @return void
      */
-    protected function assert_context_has_no_data(context $context) {
+    protected function assert_context_has_no_data(\context $context) {
         $rootpath = [get_string('grades', 'core_grades')];
         $relatedtomepath = array_merge($rootpath, [get_string('privacy:path:relatedtome', 'core_grades')]);
 
