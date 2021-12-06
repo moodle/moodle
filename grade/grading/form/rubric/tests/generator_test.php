@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tests\gradingform_rubric;
+namespace gradingform_rubric;
 
 use advanced_testcase;
 use context_module;
