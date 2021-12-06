@@ -24,6 +24,8 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -47,7 +49,14 @@ class core_badges_renderer extends plugin_renderer_base {
                     $bname = s($badge->name);
                 }
                 if (!empty($badge->image)) {
-                    $imageurl = $badge->image;
+                    if (is_object($badge->image)) {
+                        if (!empty($badge->image->caption)) {
+                            $badge->imagecaption = $badge->image->caption;
+                        }
+                        $imageurl = $badge->image->id;
+                    } else {
+                        $imageurl = $badge->image;
+                    }
                 }
                 if (isset($badge->assertion->badge->name)) {
                     $bname = s($badge->assertion->badge->name);
