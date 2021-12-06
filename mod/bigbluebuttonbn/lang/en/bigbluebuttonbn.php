@@ -129,7 +129,7 @@ $string['config_general_description'] = 'These settings are <b>always</b> used';
 $string['config_server_url'] = 'BigBlueButton Server URL';
 $string['config_server_url_description'] = 'The URL of your BigBlueButton server must end with /bigbluebutton/. (This default URL is for a BigBlueButton server provided by Blindside Networks that you can use for testing.)';
 $string['config_shared_secret'] = 'BigBlueButton Shared Secret';
-$string['config_shared_secret_description'] = 'The security salt of your BigBlueButton server.  (This default salt is for a BigBlueButton server provided by Blindside Networks that you can use for testing.)';
+$string['config_shared_secret_description'] = 'The security secret of your BigBlueButton server. (This default secret is for a BigBlueButton server provided by Blindside Networks that you can use for testing.)';
 
 $string['config_recording'] = 'Configuration for "Record meeting" feature';
 $string['config_recording_description'] = 'These settings are feature specific';
@@ -315,7 +315,7 @@ $string['index_confirm_end'] = 'Do you wish to end the virtual class?';
 $string['index_disabled'] = 'disabled';
 $string['index_enabled'] = 'enabled';
 $string['index_ending'] = 'Ending the virtual classroom ... please wait';
-$string['index_error_checksum'] = 'A checksum error occurred. Make sure you entered the correct salt.';
+$string['index_error_checksum'] = 'A checksum error occurred. Make sure you entered the correct secret.';
 $string['index_error_forciblyended'] = 'Unable to join this meeting because it has been manually ended.';
 $string['index_error_unable_display'] = 'Unable to display the meetings. Please check the url of the BigBlueButton server AND check to see if the BigBlueButton server is running.';
 $string['index_heading_actions'] = 'Actions';
