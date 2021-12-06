@@ -34,7 +34,7 @@ namespace core\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\event\contentbank_content_viewed
  */
-class contentbank_content_viewed_testcase extends \advanced_testcase {
+class contentbank_content_viewed_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

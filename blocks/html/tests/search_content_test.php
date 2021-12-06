@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_content_testcase extends \advanced_testcase {
+class search_content_test extends \advanced_testcase {
 
     /**
      * Creates an HTML block on a course.

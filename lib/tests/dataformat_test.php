@@ -35,7 +35,7 @@ use core_component;
  * @copyright  2020 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dataformat_testcase extends \advanced_testcase {
+class dataformat_test extends \advanced_testcase {
 
     /**
      * Data provider to return array of dataformat types

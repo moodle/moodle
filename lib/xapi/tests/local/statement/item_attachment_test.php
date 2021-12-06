@@ -36,7 +36,7 @@ use core_xapi\xapi_exception;
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class item_attachment_testcase extends advanced_testcase {
+class item_attachment_test extends advanced_testcase {
 
     /**
      * Test item creation.

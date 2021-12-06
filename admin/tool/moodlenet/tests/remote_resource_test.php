@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class tool_moodlenet_remote_resource_testcase, providing test cases for the remote_resource class.
  */
-class tool_moodlenet_remote_resource_testcase extends \advanced_testcase {
+class remote_resource_test extends \advanced_testcase {
 
     /**
      * Test getters.

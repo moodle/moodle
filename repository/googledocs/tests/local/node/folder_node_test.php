@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/repository/googledocs/tests/repository_googledocs
  * @copyright  2021 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class folder_node_testcase extends \repository_googledocs_testcase {
+class folder_node_test extends \repository_googledocs_testcase {
 
     /**
      * Test create_node_array().
