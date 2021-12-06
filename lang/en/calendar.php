@@ -187,6 +187,7 @@ $string['monthnext'] = 'Next month';
 $string['monthprev'] = 'Previous month';
 $string['monththis'] = 'This month';
 $string['more'] = 'More';
+$string['moreevents'] = '{$a} more';
 $string['namewithsource'] = '{$a->name} ({$a->source})';
 $string['never'] = 'Never';
 $string['newevent'] = 'New event';

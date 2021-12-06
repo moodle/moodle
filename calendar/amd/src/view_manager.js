@@ -31,7 +31,114 @@ import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
 import SummaryModal from 'core_calendar/summary_modal';
 import CustomEvents from 'core/custom_interaction_events';
+import {get_string as getString} from 'core/str';
 import Pending from 'core/pending';
+import {prefetchStrings} from 'core/prefetch';
+
+/**
+ * Limit number of events per day
+ *
+ */
+const LIMIT_DAY_EVENTS = 5;
+
+/**
+ * Hide day events if more than 5.
+ *
+ */
+export const foldDayEvents = () => {
+    const root = $(CalendarSelectors.elements.monthDetailed);
+    const days = root.find(CalendarSelectors.day);
+    if (days.length === 0) {
+        return;
+    }
+    days.each(function() {
+        const dayContainer = $(this);
+        const eventsSelector = `${CalendarSelectors.elements.dateContent} ul li[data-event-eventtype]`;
+        const filteredEventsSelector = `${CalendarSelectors.elements.dateContent} ul li[data-event-filtered="true"]`;
+        const moreEventsSelector = `${CalendarSelectors.elements.dateContent} [data-action="view-more-events"]`;
+        const events = dayContainer.find(eventsSelector);
+        if (events.length === 0) {
+            return;
+        }
+
+        const filteredEvents = dayContainer.find(filteredEventsSelector);
+        const numberOfFiltered = filteredEvents.length;
+        const numberOfEvents = events.length - numberOfFiltered;
+
+        let count = 1;
+        events.each(function() {
+            const event = $(this);
+            const isNotFiltered = event.attr('data-event-filtered') !== 'true';
+            const offset = (numberOfEvents === LIMIT_DAY_EVENTS) ? 0 : 1;
+            if (isNotFiltered) {
+                if (count > LIMIT_DAY_EVENTS - offset) {
+                    event.attr('data-event-folded', 'true');
+                    event.hide();
+                } else {
+                    event.attr('data-event-folded', 'false');
+                    event.show();
+                    count++;
+                }
+            } else {
+                // It's being filtered out.
+                event.attr('data-event-folded', 'false');
+            }
+        });
+
+        const moreEventsLink = dayContainer.find(moreEventsSelector);
+        if (numberOfEvents > LIMIT_DAY_EVENTS) {
+            const numberOfHiddenEvents = numberOfEvents - LIMIT_DAY_EVENTS + 1;
+            moreEventsLink.show();
+            getString('moreevents', 'calendar', numberOfHiddenEvents).then(str => {
+                const link = moreEventsLink.find('strong a');
+                moreEventsLink.attr('data-event-folded', 'false');
+                link.text(str);
+                return str;
+            }).fail();
+        } else {
+            moreEventsLink.hide();
+        }
+    });
+};
+
+/**
+ * Register and handle month calendar events.
+ *
+ * @param {string} pendingId pending id.
+ */
+export const registerEventListenersForMonthDetailed = (pendingId) => {
+    const events = `${CalendarEvents.viewUpdated}`;
+    $('body').on(events, function(e) {
+        foldDayEvents(e);
+    });
+    foldDayEvents();
+    $('body').on(CalendarEvents.filterChanged, function(e, data) {
+        const root = $(CalendarSelectors.elements.monthDetailed);
+        const pending = new Pending(pendingId);
+        const target = root.find(CalendarSelectors.eventType[data.type]);
+        const transitionPromise = $.Deferred();
+        if (data.hidden) {
+            transitionPromise.then(function() {
+                target.attr('data-event-filtered', 'true');
+                return target.hide().promise();
+            }).fail();
+        } else {
+            transitionPromise.then(function() {
+                target.attr('data-event-filtered', 'false');
+                return target.show().promise();
+            }).fail();
+        }
+
+        transitionPromise.then(function() {
+            foldDayEvents();
+            return;
+        })
+        .always(pending.resolve)
+        .fail();
+
+        transitionPromise.resolve();
+    });
+};
 
 /**
  * Register event listeners for the module.
@@ -213,7 +320,11 @@ export const reloadCurrentMonth = (root, courseId = 0, categoryId = 0) => {
     courseId = courseId || root.find(CalendarSelectors.wrapper).data('courseid');
     categoryId = categoryId || root.find(CalendarSelectors.wrapper).data('categoryid');
 
-    return refreshMonthContent(root, year, month, courseId, categoryId, null, '', day);
+    return refreshMonthContent(root, year, month, courseId, categoryId, null, '', day).
+        then((...args) => {
+            $('body').trigger(CalendarEvents.courseChanged, [year, month, courseId, categoryId]);
+            return args;
+        });
 };
 
 
@@ -449,5 +560,12 @@ const renderEventSummaryModal = (eventId) => {
 };
 
 export const init = (root, view) => {
+    prefetchStrings('calendar', ['moreevents']);
+    foldDayEvents();
     registerEventListeners(root, view);
+    const calendarTable = root.find(CalendarSelectors.elements.monthDetailed);
+    if (calendarTable.length) {
+        const pendingId = `month-detailed-${calendarTable.id}-filterChanged`;
+        registerEventListenersForMonthDetailed(calendarTable, pendingId);
+    }
 };

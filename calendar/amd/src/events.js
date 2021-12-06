@@ -33,6 +33,7 @@ define([], function() {
         monthChanged: 'calendar-events:month_changed',
         moveEvent: 'calendar-events:move_event',
         filterChanged: 'calendar-events:filter_changed',
+        courseChanged: 'calendar-events:course_changed',
         viewUpdated: 'calendar-events:view_updated',
     };
 });
