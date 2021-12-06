@@ -124,7 +124,7 @@ $nuggettable->sort_default_column='nuggetorder';
 
 echo $output->header();
 
-echo $output->threads_list_buttons(new moodle_url('thread_edit.php'), new moodle_url('thread_import.php'), new moodle_url('groups.php'), new moodle_url('group_import.php'));
+echo $output->threads_buttons(new moodle_url('nuggets.php', ['threadid' => $threadid]));
 
 $nuggettable->out(30, true);
 
