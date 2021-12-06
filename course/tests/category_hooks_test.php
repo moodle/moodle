@@ -35,7 +35,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * Functional test for class core_course_category methods invoking hooks.
  */
-class core_course_category_hooks_testcase extends \advanced_testcase {
+class category_hooks_test extends \advanced_testcase {
 
     protected function setUp(): void {
         $this->resetAfterTest();

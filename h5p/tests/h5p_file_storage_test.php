@@ -43,7 +43,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @runTestsInSeparateProcesses
  */
-class h5p_file_storage_testcase extends \advanced_testcase {
+class h5p_file_storage_test extends \advanced_testcase {
 
     /** @var \core_h5p\file_storage H5P file storage instance */
     protected $h5p_file_storage;

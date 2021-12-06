@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_viewed_testcase extends advanced_testcase {
+class report_viewed_test extends advanced_testcase {
 
     /**
      * Test report_viewed event.

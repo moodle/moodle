@@ -44,7 +44,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  * @copyright Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity_custom_completion_test extends advanced_testcase {
+class custom_completion_test extends advanced_testcase {
 
     // Use the generator helper.
     use \mod_assign_test_generator;

@@ -36,7 +36,7 @@ use stdClass;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grader_testcase extends \advanced_testcase {
+class grader_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

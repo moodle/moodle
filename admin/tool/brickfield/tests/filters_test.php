@@ -26,7 +26,7 @@ use tool_brickfield\local\tool\filter;
  * @author     Jay Churchward (jay.churchward@poetopensource.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_test extends \advanced_testcase {
+class filters_test extends \advanced_testcase {
     public function test_constructor() {
         $this->resetAfterTest();
 

@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @runTestsInSeparateProcesses
  */
-class h5p_core_testcase extends \advanced_testcase {
+class h5p_core_test extends \advanced_testcase {
 
     protected function setUp(): void {
         global $CFG;

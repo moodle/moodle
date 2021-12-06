@@ -37,7 +37,7 @@ global $CFG;
  * @copyright 2017 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filetypes_util_testcase extends advanced_testcase {
+class filetypes_util_test extends advanced_testcase {
 
     /**
      * Test normalizing list of extensions.

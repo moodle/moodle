@@ -27,7 +27,7 @@ use core\plugininfo\qbank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \qbank_previewquestion\helper
  */
-class qbank_preview_helper_test extends \advanced_testcase {
+class helper_test extends \advanced_testcase {
 
     /**
      * @var bool|\context|\context_course $context

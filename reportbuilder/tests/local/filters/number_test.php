@@ -31,7 +31,7 @@ use core_reportbuilder\local\report\filter;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class number_testcase extends advanced_testcase {
+class number_test extends advanced_testcase {
 
     /**
      * Data provider for {@see test_get_sql_filter_simple}
