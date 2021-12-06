@@ -236,7 +236,12 @@ class user_profile_fields {
      * @return string
      */
     public static function format_profile_field($value, stdClass $row, profile_field_base $field): string {
+        // Special handling of checkboxes, we want to display their boolean state rather than the input element itself.
+        if (is_a($field, 'profile_field_checkbox')) {
+            return format::boolean_as_text($value);
+        }
+
         $field->data = $value;
-        return $field->display_data();
+        return (string) $field->display_data();
     }
 }
