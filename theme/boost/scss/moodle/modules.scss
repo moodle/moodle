@@ -10,11 +10,64 @@ select {
 }
 
 .path-mod {
-    div.activity-information {
-        border-bottom: $border-width solid $table-border-color;
-        padding-top: map-get($spacers, 2);
+    .activity-header {
+        background-color: $gray-100;
+        margin-bottom: map-get($spacers, 3);
+        padding-left: map-get($spacers, 3);
+        padding-right: map-get($spacers, 3);
+
+        @include border-radius();
+
+        & > div:last-child > div:last-child {
+            border-bottom: 0;
+        }
+    }
+    .activity-information {
+
+        .activity-dates {
+            padding-top: map-get($spacers, 3);
+            padding-bottom: map-get($spacers, 3);
+            border-bottom: $border-width solid $border-color;
+        }
+        .completion-info {
+            padding-top: map-get($spacers, 3);
+            padding-bottom: map-get($spacers, 3);
+            border-bottom: $border-width solid $border-color;
+        }
+    }
+    .activity-description {
+        padding-top: map-get($spacers, 3);
         padding-bottom: map-get($spacers, 3);
-        margin-bottom: map-get($spacers, 2);
+        & > .box.py-3 {
+            padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
+            padding-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
+        }
+        & > .box.py-3:empty {
+            display: none;
+        }
+    }
+    .automatic-completion-conditions .badge {
+        font-size: 80%;
+        padding: map-get($spacers, 2);
+        margin-top: map-get($spacers, 1);
+        mix-blend-mode: multiply;
+        &.badge-light {
+            background-color: $gray-200 !important; /* stylelint-disable-line declaration-no-important */
+        }
+
+        .icon {
+            width: 0.7rem;
+            height: 0.7rem;
+            font-size: 0.7rem;
+        }
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+    .activity-description .no-overflow p:last-child {
+        padding-bottom: 0;
+        margin-bottom: 0;
     }
 }
 
