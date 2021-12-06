@@ -22,6 +22,7 @@
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mnetservice_enrol\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +39,7 @@ use core_privacy\local\request\approved_userlist;
  * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mnetservice_enrol_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /** @var stdClass the mnet host we are using to test. */
     protected $mnethost;
@@ -55,7 +56,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
         global $DB;
 
         // Add a mnet host.
-        $this->mnethost = new stdClass();
+        $this->mnethost = new \stdClass();
         $this->mnethost->name = 'A mnet host';
         $this->mnethost->public_key = 'A random public key!';
         $this->mnethost->id = $DB->insert_record('mnet_host', $this->mnethost);
@@ -200,7 +201,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
 
         // Create a user.
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
 
         // Create user2.
         $user2 = $this->getDataGenerator()->create_user();
@@ -222,7 +223,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
         $this->assertTrue(in_array($user->id, $userlist->get_userids()));
 
         // The list of users within the system context should be empty.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist2 = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist2);
         $this->assertCount(0, $userlist2);
@@ -238,10 +239,10 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
 
         // Create user1.
         $user1 = $this->getDataGenerator()->create_user();
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         // Create user2.
         $user2 = $this->getDataGenerator()->create_user();
-        $usercontext2 = context_user::instance($user2->id);
+        $usercontext2 = \context_user::instance($user2->id);
 
         // Create a test MNet service enrol enrolments.
         $remotecourseid = 101;
@@ -281,7 +282,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
         $this->assertCount(1, $userlist2);
 
         // Convert $userlist2 into an approved_contextlist in the system context.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $approvedlist3 = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
         // Delete using delete_data_for_user.
         provider::delete_data_for_users($approvedlist3);
@@ -303,7 +304,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
         global $DB;
 
         // Create a test MNet service enrol enrolments.
-        $this->enrolment                  = new stdclass();
+        $this->enrolment                  = new \stdClass();
         $this->enrolment->hostid          = $this->mnethost->id;
         $this->enrolment->userid          = $userid;
         $this->enrolment->remotecourseid  = $remotecourseid;
@@ -324,7 +325,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
         global $DB;
 
         // Create a Dummy Remote Course to test.
-        $course                 = new stdclass();
+        $course                 = new \stdClass();
         $course->hostid         = $this->mnethost->id;
         $course->remoteid       = $remoteid;
         $course->categoryid     = 1;

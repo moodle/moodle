@@ -21,13 +21,14 @@
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_message\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_message\privacy\provider;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\transform;
-use \core_message\tests\helper as testhelper;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\transform;
+use core_message\tests\helper as testhelper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_message_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test for provider::get_metadata().
@@ -292,7 +293,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // Create course.
         $course1 = $this->getDataGenerator()->create_course();
-        $coursecontext1 = context_course::instance($course1->id);
+        $coursecontext1 = \context_course::instance($course1->id);
 
         // Enrol users to courses.
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
@@ -393,7 +394,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
         $this->assertEquals(
-                context_user::instance($user1->id)->id,
+                \context_user::instance($user1->id)->id,
                 $contextforuser->id);
 
         // Test for the receiver.
@@ -401,7 +402,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
         $this->assertEquals(
-                context_user::instance($user2->id)->id,
+                \context_user::instance($user2->id)->id,
                 $contextforuser->id);
     }
 
@@ -431,7 +432,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
         $this->assertEquals(
-                context_user::instance($user1->id)->id,
+                \context_user::instance($user1->id)->id,
                 $contextforuser->id);
 
         // Test for the user who is the contact.
@@ -439,7 +440,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
         $this->assertEquals(
-                context_user::instance($user2->id)->id,
+                \context_user::instance($user2->id)->id,
                 $contextforuser->id);
     }
 
@@ -469,7 +470,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
         $this->assertEquals(
-                context_user::instance($user1->id)->id,
+                \context_user::instance($user1->id)->id,
                 $contextforuser->id);
 
         // Test for the user receiving the contact request.
@@ -477,7 +478,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
         $this->assertEquals(
-                context_user::instance($user2->id)->id,
+                \context_user::instance($user2->id)->id,
                 $contextforuser->id);
     }
 
@@ -507,7 +508,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
         $this->assertEquals(
-                context_user::instance($user1->id)->id,
+                \context_user::instance($user1->id)->id,
                 $contextforuser->id);
 
         // Test for the user who is blocked.
@@ -515,7 +516,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
         $this->assertEquals(
-                context_user::instance($user2->id)->id,
+                \context_user::instance($user2->id)->id,
                 $contextforuser->id);
     }
 
@@ -541,7 +542,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         \core_message\api::add_contact($user1->id, $user3->id);
         \core_message\api::add_contact($user1->id, $user4->id);
 
-        $user1context = context_user::instance($user1->id);
+        $user1context = \context_user::instance($user1->id);
 
         $this->export_context_data_for_user($user1->id, $user1context, 'core_message');
 
@@ -584,7 +585,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         \core_message\api::create_contact_request($user3->id, $user1->id);
         \core_message\api::create_contact_request($user1->id, $user4->id);
 
-        $user1context = context_user::instance($user1->id);
+        $user1context = \context_user::instance($user1->id);
 
         $this->export_context_data_for_user($user1->id, $user1context, 'core_message');
 
@@ -629,7 +630,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         \core_message\api::block_user($user1->id, $user3->id);
         \core_message\api::block_user($user1->id, $user4->id);
 
-        $user1context = context_user::instance($user1->id);
+        $user1context = \context_user::instance($user1->id);
 
         $this->export_context_data_for_user($user1->id, $user1context, 'core_message');
 
@@ -688,7 +689,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         \core_message\api::delete_message($user1->id, $m2);
         \core_message\api::delete_message($user1->id, $m5);
 
-        $user1context = context_user::instance($user1->id);
+        $user1context = \context_user::instance($user1->id);
 
         $this->export_context_data_for_user($user1->id, $user1context, 'core_message');
 
@@ -898,7 +899,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->create_notification($user2->id, $user3->id, $now + (2 * DAYSECS));
         $this->create_notification($user3->id, $user2->id, $now + (1 * DAYSECS));
 
-        $user1context = context_user::instance($user1->id);
+        $user1context = \context_user::instance($user1->id);
 
         $this->export_context_data_for_user($user1->id, $user1context, 'core_message');
 
@@ -930,7 +931,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $now = time();
         $timeread = $now - DAYSECS;
 
-        $user1context = context_user::instance($user1->id);
+        $user1context = \context_user::instance($user1->id);
 
         // Create contacts.
         \core_message\api::add_contact($user1->id, $user2->id);
@@ -1097,7 +1098,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be 5 notifications (3 from create_notification and 2 from create_contact_request).
         $this->assertEquals(5, $DB->count_records('notifications'));
 
-        $user1context = context_user::instance($user1->id);
+        $user1context = \context_user::instance($user1->id);
         $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'core_message',
             [$user1context->id]);
         provider::delete_data_for_user($contextlist);
@@ -1153,7 +1154,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
         $this->remove_user_self_conversation($user->id);
 
         $userlist = new \core_privacy\local\request\userlist($usercontext, 'core_message');
@@ -1171,8 +1172,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $user1context = context_user::instance($user1->id);
-        $user2context = context_user::instance($user2->id);
+        $user1context = \context_user::instance($user1->id);
+        $user2context = \context_user::instance($user2->id);
 
         // Delete user self-conversations.
         $this->remove_user_self_conversation($user1->id);
@@ -1212,8 +1213,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $user1context = context_user::instance($user1->id);
-        $user2context = context_user::instance($user2->id);
+        $user1context = \context_user::instance($user1->id);
+        $user2context = \context_user::instance($user2->id);
 
         // Delete user self-conversations.
         $this->remove_user_self_conversation($user1->id);
@@ -1253,8 +1254,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $user1context = context_user::instance($user1->id);
-        $user2context = context_user::instance($user2->id);
+        $user1context = \context_user::instance($user1->id);
+        $user2context = \context_user::instance($user2->id);
 
         // Delete user self-conversations.
         $this->remove_user_self_conversation($user1->id);
@@ -1294,8 +1295,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $user1context = context_user::instance($user1->id);
-        $user2context = context_user::instance($user2->id);
+        $user1context = \context_user::instance($user1->id);
+        $user2context = \context_user::instance($user2->id);
 
         // Delete user self-conversations.
         $this->remove_user_self_conversation($user1->id);
@@ -1335,8 +1336,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $user1context = context_user::instance($user1->id);
-        $user2context = context_user::instance($user2->id);
+        $user1context = \context_user::instance($user1->id);
+        $user2context = \context_user::instance($user2->id);
 
         // Delete user self-conversations.
         $this->remove_user_self_conversation($user1->id);
@@ -1431,7 +1432,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // There should be three notifications + two for the contact requests.
         $this->assertEquals(5, $DB->count_records('notifications'));
 
-        $user1context = context_user::instance($user1->id);
+        $user1context = \context_user::instance($user1->id);
         $approveduserlist = new \core_privacy\local\request\approved_userlist($user1context, 'core_message',
                 [$user1->id, $user2->id]);
         provider::delete_data_for_users($approveduserlist);
@@ -2842,7 +2843,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         }
 
         // Ok, send the message.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->useridfrom = $useridfrom;
         $record->conversationid = $conversationid;
         $record->subject = 'No subject';
@@ -2881,7 +2882,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
             $timecreated = time();
         }
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->useridfrom = $useridfrom;
         $record->useridto = $useridto;
         $record->subject = 'No subject';

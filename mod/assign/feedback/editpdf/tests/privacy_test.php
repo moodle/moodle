@@ -21,6 +21,7 @@
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace assignfeedback_editpdf\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,8 +29,8 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 require_once($CFG->dirroot . '/mod/assign/tests/privacy_test.php');
 
-use \assignfeedback_editpdf\page_editor;
-use \mod_assign\privacy\assign_plugin_request_data;
+use assignfeedback_editpdf\page_editor;
+use mod_assign\privacy\assign_plugin_request_data;
 
 /**
  * Unit tests for mod/assign/feedback/editpdf/classes/privacy/
@@ -37,7 +38,7 @@ use \mod_assign\privacy\assign_plugin_request_data;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignfeedback_editpdf_privacy_testcase extends \mod_assign\tests\privacy_test {
+class privacy_test extends \mod_assign\privacy\privacy_test {
 
     public function setUp(): void {
         // Skip this test if ghostscript is not supported.

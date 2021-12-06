@@ -21,6 +21,7 @@
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace assignfeedback_file\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +37,7 @@ use mod_assign\privacy\assign_plugin_request_data;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignfeedback_file_privacy_testcase extends \mod_assign\tests\privacy_test {
+class privacy_test extends \mod_assign\privacy\privacy_test {
 
     /**
      * Convenience function for creating feedback data.
@@ -65,7 +66,7 @@ class assignfeedback_file_privacy_testcase extends \mod_assign\tests\privacy_tes
 
         $this->setUser($teacher);
 
-        $context = context_user::instance($teacher->id);
+        $context = \context_user::instance($teacher->id);
 
         $draftitemid = file_get_unused_draft_itemid();
         file_prepare_draft_area($draftitemid, $context->id, 'assignfeedback_file', 'feedback_files', 1);
@@ -83,7 +84,7 @@ class assignfeedback_file_privacy_testcase extends \mod_assign\tests\privacy_tes
         $file = $fs->create_file_from_string($dummy, $feedbacktext);
 
         // Create formdata.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->{'files_' . $teacher->id . '_filemanager'} = $draftitemid;
 
         $plugin = $assign->get_feedback_plugin_by_type('file');

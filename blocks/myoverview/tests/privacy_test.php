@@ -21,16 +21,19 @@
  * @copyright  2018 Peter Dias <peter@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace block_myoverview\privacy;
+
 defined('MOODLE_INTERNAL') || die();
-use \core_privacy\local\request\writer;
-use \block_myoverview\privacy\provider;
+
+use core_privacy\local\request\writer;
+use block_myoverview\privacy\provider;
 /**
  * Unit tests for the block_myoverview implementation of the privacy API.
  *
  * @copyright  2018 Peter Dias <peter@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_myoverview_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that export_user_preferences returns no data if the user has not visited the myoverview block.
      */

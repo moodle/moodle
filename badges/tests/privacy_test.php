@@ -23,6 +23,7 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_badges\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -46,7 +47,7 @@ require_once($CFG->libdir . '/badgeslib.php');
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_badges_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -61,9 +62,9 @@ class core_badges_privacy_testcase extends provider_testcase {
         $u5 = $dg->create_user();
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $c2ctx = context_course::instance($c2->id);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $c2ctx = \context_course::instance($c2->id);
 
         // Assert that we find contexts where we created/modified a badge.
         $this->create_badge(['usercreated' => $u1->id, 'usermodified' => $u5->id]);
@@ -103,12 +104,12 @@ class core_badges_privacy_testcase extends provider_testcase {
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
         $c1 = $dg->create_course();
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
-        $u3ctx = context_user::instance($u3->id);
-        $u4ctx = context_user::instance($u4->id);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
+        $u3ctx = \context_user::instance($u3->id);
+        $u4ctx = \context_user::instance($u4->id);
         $b1 = $this->create_badge();
         $b2 = $this->create_badge(['type' => BADGE_TYPE_COURSE, 'courseid' => $c1->id]);
 
@@ -134,12 +135,12 @@ class core_badges_privacy_testcase extends provider_testcase {
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
         $c1 = $dg->create_course();
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
-        $u3ctx = context_user::instance($u3->id);
-        $u4ctx = context_user::instance($u4->id);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
+        $u3ctx = \context_user::instance($u3->id);
+        $u4ctx = \context_user::instance($u4->id);
         $b1 = $this->create_badge();
         $b2 = $this->create_badge(['type' => BADGE_TYPE_COURSE, 'courseid' => $c1->id]);
 
@@ -174,10 +175,10 @@ class core_badges_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
         $c1 = $dg->create_course();
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $b1 = $this->create_badge(['usercreated' => $u1->id, 'usermodified' => $u2->id]);
         $b2 = $this->create_badge(['usercreated' => $u2->id, 'usermodified' => $u1->id,
@@ -232,10 +233,10 @@ class core_badges_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
         $c1 = $dg->create_course();
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $b1 = $this->create_badge(['usercreated' => $u1->id, 'usermodified' => $u2->id]);
         $b2 = $this->create_badge(['usercreated' => $u2->id, 'usermodified' => $u1->id,
@@ -301,10 +302,10 @@ class core_badges_privacy_testcase extends provider_testcase {
         $u2 = $dg->create_user();
         $u3 = $dg->create_user();
         $c1 = $dg->create_course();
-        $sysctx = context_system::instance();
-        $c1ctx = context_course::instance($c1->id);
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $sysctx = \context_system::instance();
+        $c1ctx = \context_course::instance($c1->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $b1 = $this->create_badge(['usercreated' => $u3->id]);
         $this->endorse_badge(['badgeid' => $b1->id]);
@@ -446,19 +447,19 @@ class core_badges_privacy_testcase extends provider_testcase {
 
         // Create course1.
         $course1 = $this->getDataGenerator()->create_course();
-        $coursecontext1 = context_course::instance($course1->id);
+        $coursecontext1 = \context_course::instance($course1->id);
         // Create course2.
         $course2 = $this->getDataGenerator()->create_course();
-        $coursecontext2 = context_course::instance($course2->id);
+        $coursecontext2 = \context_course::instance($course2->id);
         // Create user1.
         $user1 = $this->getDataGenerator()->create_user();
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         // Create user2.
         $user2 = $this->getDataGenerator()->create_user();
-        $usercontext2 = context_user::instance($user2->id);
+        $usercontext2 = \context_user::instance($user2->id);
         // Create user3.
         $user3 = $this->getDataGenerator()->create_user();
-        $usercontext3 = context_user::instance($user3->id);
+        $usercontext3 = \context_user::instance($user3->id);
 
         // The list of users in usercontext1 should not return anything yet (related data still haven't been created).
         $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
@@ -469,7 +470,7 @@ class core_badges_privacy_testcase extends provider_testcase {
         provider::get_users_in_context($userlist2);
         $this->assertCount(0, $userlist2);
         // The list of users in systemcontext should not return anything yet (related data still haven't been created).
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist3 = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist3);
         $this->assertCount(0, $userlist3);
@@ -516,19 +517,19 @@ class core_badges_privacy_testcase extends provider_testcase {
 
         // Create course1.
         $course1 = $this->getDataGenerator()->create_course();
-        $coursecontext1 = context_course::instance($course1->id);
+        $coursecontext1 = \context_course::instance($course1->id);
         // Create course2.
         $course2 = $this->getDataGenerator()->create_course();
-        $coursecontext2 = context_course::instance($course2->id);
+        $coursecontext2 = \context_course::instance($course2->id);
         // Create user1.
         $user1 = $this->getDataGenerator()->create_user();
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         // Create user2.
         $user2 = $this->getDataGenerator()->create_user();
-        $usercontext2 = context_user::instance($user2->id);
+        $usercontext2 = \context_user::instance($user2->id);
         // Create user3.
         $user3 = $this->getDataGenerator()->create_user();
-        $usercontext3 = context_user::instance($user3->id);
+        $usercontext3 = \context_user::instance($user3->id);
 
         $this->create_badge(['usercreated' => $user1->id, 'usermodified' => $user2->id]);
         $badge1 = $this->create_badge(['usercreated' => $user2->id, 'type' => BADGE_TYPE_COURSE, 'courseid' => $course1->id]);
@@ -560,7 +561,7 @@ class core_badges_privacy_testcase extends provider_testcase {
         $this->assertTrue(in_array($user3->id, $userlist2->get_userids()));
 
         // The list of users for system context should return users.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist3 = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist3);
         $this->assertCount(2, $userlist3);
@@ -593,7 +594,7 @@ class core_badges_privacy_testcase extends provider_testcase {
         $this->assertCount(2, $userlist2);
 
         // The list of users for system context should return the previous users.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist3 = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist3);
         $this->assertCount(2, $userlist3);
@@ -717,13 +718,13 @@ class core_badges_privacy_testcase extends provider_testcase {
      * @return object
      */
     protected function create_criteria_badge($badgeid, array $params = []) {
-        $badge = new badge($badgeid);
+        $badge = new \badge($badgeid);
         if (empty($badge->criteria)) {
-            $overall = award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id]);
+            $overall = \award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id]);
             $overall->save(['agg' => BADGE_CRITERIA_AGGREGATION_ALL]);
         }
 
-        $criteria = award_criteria::build([
+        $criteria = \award_criteria::build([
             'badgeid' => $badge->id,
             'criteriatype' => BADGE_CRITERIA_TYPE_BADGE,
         ]);
@@ -734,7 +735,7 @@ class core_badges_privacy_testcase extends provider_testcase {
         }
 
         $criteria->save($params);
-        $badge = new badge($badgeid);
+        $badge = new \badge($badgeid);
         return $badge->criteria[BADGE_CRITERIA_TYPE_BADGE];
     }
 
@@ -748,13 +749,13 @@ class core_badges_privacy_testcase extends provider_testcase {
     protected function create_criteria_manual($badgeid, array $params = []) {
         global $DB;
 
-        $badge = new badge($badgeid);
+        $badge = new \badge($badgeid);
         if (empty($badge->criteria)) {
-            $overall = award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id]);
+            $overall = \award_criteria::build(['criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id]);
             $overall->save(['agg' => BADGE_CRITERIA_AGGREGATION_ALL]);
         }
 
-        $criteria = award_criteria::build([
+        $criteria = \award_criteria::build([
             'badgeid' => $badge->id,
             'criteriatype' => BADGE_CRITERIA_TYPE_MANUAL,
         ]);
@@ -767,7 +768,7 @@ class core_badges_privacy_testcase extends provider_testcase {
         }
 
         $criteria->save($params);
-        $badge = new badge($badgeid);
+        $badge = new \badge($badgeid);
         return $badge->criteria[BADGE_CRITERIA_TYPE_MANUAL];
     }
 

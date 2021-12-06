@@ -22,16 +22,17 @@
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_grading\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-use \core_privacy\tests\provider_testcase;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\transform;
-use \core_privacy\local\request\writer;
-use \core_grading\privacy\provider;
+use core_privacy\tests\provider_testcase;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\writer;
+use core_grading\privacy\provider;
 
 /**
  * Privacy tests for core_grading.
@@ -39,7 +40,7 @@ use \core_grading\privacy\provider;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_grading_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /** @var stdClass User without data. */
     protected $user0;
@@ -271,7 +272,7 @@ class core_grading_privacy_testcase extends provider_testcase {
 
         $this->setUser($user);
 
-        $modulecontext = context_module::instance($module->cmid);
+        $modulecontext = \context_module::instance($module->cmid);
         $controller = $guidegenerator->get_test_guide($modulecontext);
 
         // In the situation of mod_assign this would be the id from assign_grades.
@@ -309,7 +310,7 @@ class core_grading_privacy_testcase extends provider_testcase {
 
         $this->setUser($user);
 
-        $modulecontext = context_module::instance($module->cmid);
+        $modulecontext = \context_module::instance($module->cmid);
         $controller = $guidegenerator->get_test_guide($modulecontext);
 
         // In the situation of mod_assign this would be the id from assign_grades.
@@ -364,7 +365,7 @@ class core_grading_privacy_testcase extends provider_testcase {
 
         $this->setUser($user1);
 
-        $modulecontext = context_module::instance($module->cmid);
+        $modulecontext = \context_module::instance($module->cmid);
         $controller = $guidegenerator->get_test_guide($modulecontext);
 
         // In the situation of mod_assign this would be the id from assign_grades.
@@ -443,7 +444,7 @@ class core_grading_privacy_testcase extends provider_testcase {
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
 
         // Create some assignment instances.
         $params = (object)array(
@@ -453,13 +454,13 @@ class core_grading_privacy_testcase extends provider_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $instance0 = $generator->create_instance($params);
         $cm0 = get_coursemodule_from_instance('assign', $instance0->id);
-        $this->instancecontext0 = context_module::instance($cm0->id);
+        $this->instancecontext0 = \context_module::instance($cm0->id);
         $instance1 = $generator->create_instance($params);
         $cm1 = get_coursemodule_from_instance('assign', $instance1->id);
-        $this->instancecontext1 = context_module::instance($cm1->id);
+        $this->instancecontext1 = \context_module::instance($cm1->id);
         $instance2 = $generator->create_instance($params);
         $cm2 = get_coursemodule_from_instance('assign', $instance2->id);
-        $this->instancecontext2 = context_module::instance($cm2->id);
+        $this->instancecontext2 = \context_module::instance($cm2->id);
 
         // Create fake grading areas.
         $fakearea1 = (object)array(

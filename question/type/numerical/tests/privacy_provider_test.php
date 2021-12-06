@@ -21,14 +21,18 @@
  * @copyright  2021 The Open university
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace qtype_numerical\privacy;
 
 use core_privacy\local\metadata\collection;
-use \core_privacy\local\request\user_preference_provider;
+use core_privacy\local\request\user_preference_provider;
 use qtype_numerical\privacy\provider;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\transform;
 
 defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 
 /**
  * Privacy provider tests class.
@@ -37,12 +41,12 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2021 The Open university
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_numerical_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     // Include the privacy helper which has assertions on it.
 
     public function test_get_metadata() {
         $collection = new \core_privacy\local\metadata\collection('qtype_numerical');
-        $actual = \qtype_numerical\privacy\provider::get_metadata($collection);
+        $actual = provider::get_metadata($collection);
         $this->assertEquals($collection, $actual);
     }
 
@@ -91,22 +95,22 @@ class qtype_numerical_privacy_provider_testcase extends \core_privacy\tests\prov
         return [
                 'default mark 1.5' => ['defaultmark', 1.5, 1.5],
                 'penalty 20%' => ['penalty', 0.2000000, '20%'],
-                'unitrole only numerical' => ['unitrole', qtype_numerical::UNITNONE,
+                'unitrole only numerical' => ['unitrole', \qtype_numerical::UNITNONE,
                         get_string('onlynumerical', 'qtype_numerical')],
-                'unitrole many numerical' => ['unitrole', qtype_numerical::UNITOPTIONAL,
+                'unitrole many numerical' => ['unitrole', \qtype_numerical::UNITOPTIONAL,
                         get_string('manynumerical', 'qtype_numerical')],
-                'unitrole unit graded' => ['unitrole', qtype_numerical::UNITGRADED,
+                'unitrole unit graded' => ['unitrole', \qtype_numerical::UNITGRADED,
                         get_string('unitgraded', 'qtype_numerical')],
                 'unit penalty 0' => ['unitpenalty', 0.01, 0.01],
-                'unit grading types response grade' => ['unitgradingtypes', qtype_numerical::UNITGRADEDOUTOFMARK,
+                'unit grading types response grade' => ['unitgradingtypes', \qtype_numerical::UNITGRADEDOUTOFMARK,
                         get_string('decfractionofresponsegrade', 'qtype_numerical')],
-                'unit grading types question grade' => ['unitgradingtypes', qtype_numerical::UNITGRADEDOUTOFMAX,
+                'unit grading types question grade' => ['unitgradingtypes', \qtype_numerical::UNITGRADEDOUTOFMAX,
                         get_string('decfractionofquestiongrade', 'qtype_numerical')],
-                'multichoice display editable unit text' => ['multichoicedisplay', qtype_numerical::UNITINPUT,
+                'multichoice display editable unit text' => ['multichoicedisplay', \qtype_numerical::UNITINPUT,
                         get_string('editableunittext', 'qtype_numerical')],
-                'multichoice display radio buttons' => ['multichoicedisplay', qtype_numerical::UNITRADIO,
+                'multichoice display radio buttons' => ['multichoicedisplay', \qtype_numerical::UNITRADIO,
                         get_string('unitchoice', 'qtype_numerical')],
-                'multichoice display select menu' => ['multichoicedisplay', qtype_numerical::UNITSELECT,
+                'multichoice display select menu' => ['multichoicedisplay', \qtype_numerical::UNITSELECT,
                         get_string('unitselect', 'qtype_numerical')],
                 'unitsleft left example' => ['unitsleft', '1', get_string('leftexample', 'qtype_numerical')],
                 'unitsleft left example' => ['unitsleft', '0', get_string('rightexample', 'qtype_numerical')]

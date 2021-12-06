@@ -22,11 +22,12 @@
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_my\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\request\writer;
-use \core_my\privacy\provider;
+use core_privacy\local\request\writer;
+use core_my\privacy\provider;
 
 /**
  * Unit tests for the core_my implementation of the privacy API.
@@ -34,7 +35,7 @@ use \core_my\privacy\provider;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_my_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test for provider::test_export_user_preferences().
@@ -61,7 +62,7 @@ class core_my_privacy_testcase extends \core_privacy\tests\provider_testcase {
 
         // Test the user preferences export contains 1 user preference record for the User.
         provider::export_user_preferences($user->id);
-        $contextuser = context_user::instance($user->id);
+        $contextuser = \context_user::instance($user->id);
         $writer = writer::with_context($contextuser);
         $this->assertTrue($writer->has_any_data());
 

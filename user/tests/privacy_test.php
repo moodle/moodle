@@ -21,6 +21,7 @@
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_user\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -38,7 +39,7 @@ require_once($CFG->dirroot . "/user/lib.php");
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_user_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Check that context information is returned correctly.
@@ -50,8 +51,8 @@ class core_user_privacy_testcase extends provider_testcase {
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
 
-        $context = context_user::instance($user->id);
-        $contextlist = \core_user\privacy\provider::get_contexts_for_userid($user->id);
+        $context = \context_user::instance($user->id);
+        $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertSame($context, $contextlist->current());
     }
 
@@ -73,11 +74,11 @@ class core_user_privacy_testcase extends provider_testcase {
         $approvedlist = new \core_privacy\local\request\approved_contextlist($user, 'core_user', [$context->id]);
 
         $writer = \core_privacy\local\request\writer::with_context($context);
-        \core_user\privacy\provider::export_user_data($approvedlist);
+        provider::export_user_data($approvedlist);
 
         // Make sure that the password history only returns a count.
         $history = $writer->get_data([get_string('privacy:passwordhistorypath', 'user')]);
-        $objectcount = new ArrayObject($history);
+        $objectcount = new \ArrayObject($history);
         // This object should only have one property.
         $this->assertCount(1, $objectcount);
         $this->assertEquals(1, $history->password_history_count);
@@ -158,7 +159,7 @@ class core_user_privacy_testcase extends provider_testcase {
         $this->create_data_for_user($user, $course);
         $this->create_data_for_user($user2, $course);
 
-        \core_user\privacy\provider::delete_data_for_all_users_in_context(context_user::instance($user->id));
+        provider::delete_data_for_all_users_in_context(\context_user::instance($user->id));
 
         // These tables should not have any user data for $user. Only for $user2.
         $records = $DB->get_records('user_password_history');
@@ -228,10 +229,10 @@ class core_user_privacy_testcase extends provider_testcase {
         $this->create_data_for_user($user2, $course);
 
         // Provide multiple different context to check that only the correct user is deleted.
-        $contexts = [context_user::instance($user->id)->id, context_user::instance($user2->id)->id, context_system::instance()->id];
+        $contexts = [\context_user::instance($user->id)->id, \context_user::instance($user2->id)->id, \context_system::instance()->id];
         $approvedlist = new \core_privacy\local\request\approved_contextlist($user, 'core_user', $contexts);
 
-        \core_user\privacy\provider::delete_data_for_user($approvedlist);
+        provider::delete_data_for_user($approvedlist);
 
         // These tables should not have any user data for $user. Only for $user2.
         $records = $DB->get_records('user_password_history');
@@ -299,7 +300,7 @@ class core_user_privacy_testcase extends provider_testcase {
         $this->assertEquals($expected, $actual);
 
         // The list of users for system context should not return any users.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist);
         $this->assertCount(0, $userlist);

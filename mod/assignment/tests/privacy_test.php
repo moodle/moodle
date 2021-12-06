@@ -22,16 +22,17 @@
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_assignment\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../lib.php');
 
-use \mod_assignment\privacy\provider;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\transform;
-use \core_privacy\local\request\writer;
-use \core_privacy\tests\provider_testcase;
+use mod_assignment\privacy\provider;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\writer;
+use core_privacy\tests\provider_testcase;
 
 /**
  * Privacy test for the event monitor
@@ -41,7 +42,7 @@ use \core_privacy\tests\provider_testcase;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assignment_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * @var int array   Array of test student ids associated for Course 1.
@@ -152,7 +153,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
             $this->mark_assignment_submission($submission->assignment, $submission->id, $teacher1, 50);
         }
 
-        $c1ass1ctx = context_module::instance($course1assignment1->cmid);
+        $c1ass1ctx = \context_module::instance($course1assignment1->cmid);
         $userlist = new \core_privacy\local\request\userlist($c1ass1ctx, 'mod_assignment');
 
         provider::get_users_in_context($userlist);
@@ -163,7 +164,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
         // Make sure that student 3 is not in the returned userids.
         $this->assertFalse(in_array($student3->id, $userids));
         // Try with the course context.
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $userlist = new \core_privacy\local\request\userlist($coursecontext, 'mod_assignment');
         provider::get_users_in_context($userlist);
         $this->assertEmpty($userlist->get_userids());
@@ -195,7 +196,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
         $contexts = $contextlist->get_contexts();
 
         // Context 1 - Course 1's Assignment 1 -- (onlinetext).
-        $context = context_module::instance($this->course1assignments['ass1']->cmid);
+        $context = \context_module::instance($this->course1assignments['ass1']->cmid);
         $this->assertContains($context, $contexts);
 
         $writer = writer::with_context($context);
@@ -218,7 +219,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
         }
 
         // Context 2 - Course 1's Assignment 2 -- (single file upload).
-        $context = context_module::instance($this->course1assignments['ass2']->cmid);
+        $context = \context_module::instance($this->course1assignments['ass2']->cmid);
         $this->assertContains($context, $contexts);
 
         $writer = writer::with_context($context);
@@ -237,7 +238,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
         }
 
         // Context 3 - Course 2's Assignment 1 -- (offline).
-        $context = context_module::instance($this->course2assignments['ass1']->cmid);
+        $context = \context_module::instance($this->course2assignments['ass1']->cmid);
         $this->assertContains($context, $contexts);
 
         $writer = writer::with_context($context);
@@ -252,7 +253,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
         }
 
         // Context 4 - Course 2's Assignment 2 -- (multiple file upload).
-        $context = context_module::instance($this->course2assignments['ass2']->cmid);
+        $context = \context_module::instance($this->course2assignments['ass2']->cmid);
         $this->assertContains($context, $contexts);
 
         $writer = writer::with_context($context);
@@ -294,7 +295,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
         $contexts = $contextlist->get_contexts();
 
         // Context 1 - Course 1's Assignment 1 -- (onlinetext).
-        $context = context_module::instance($this->course1assignments['ass1']->cmid);
+        $context = \context_module::instance($this->course1assignments['ass1']->cmid);
         $this->assertContains($context, $contexts);
 
         $writer = writer::with_context($context);
@@ -307,7 +308,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
         $this->assertEquals("<p>Course 1 - Ass 1: " . $student1->id . "</p>", $submission->data1);
 
         // Context 2 - Course 1's Assignment 2 -- (single file upload).
-        $context = context_module::instance($this->course1assignments['ass2']->cmid);
+        $context = \context_module::instance($this->course1assignments['ass2']->cmid);
         $this->assertContains($context, $contexts);
 
         $writer = writer::with_context($context);
@@ -334,7 +335,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
         $contexts = $contextlist->get_contexts();
 
         // Context 1 - Course 2's Assignment 1 -- (offline).
-        $context = context_module::instance($this->course2assignments['ass1']->cmid);
+        $context = \context_module::instance($this->course2assignments['ass1']->cmid);
         $this->assertContains($context, $contexts);
 
         $writer = writer::with_context($context);
@@ -347,7 +348,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
         $this->assertEquals("<p>Course 2 - Ass 1: " . $student2->id . "</p>", $submission->data1);
 
         // Context 2 - Course 2's Assignment 2 -- (multiple file upload).
-        $context = context_module::instance($this->course2assignments['ass2']->cmid);
+        $context = \context_module::instance($this->course2assignments['ass2']->cmid);
         $this->assertContains($context, $contexts);
 
         $writer = writer::with_context($context);
@@ -451,7 +452,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
                 'assignmenttype' => 'uploadsingle'
             ]
         );
-        $context = context_module::instance($course1assignment->cmid);
+        $context = \context_module::instance($course1assignment->cmid);
 
         // Student one submission.
         $this->add_file_assignment_submission(
@@ -660,7 +661,7 @@ class mod_assignment_privacy_testcase extends provider_testcase {
 
         // Create a file submission with the test pdf.
         $this->setUser($user->id);
-        $context = context_module::instance($assignment->cmid);
+        $context = \context_module::instance($assignment->cmid);
 
         $fs = get_file_storage();
         $sourcefile = $CFG->dirroot . '/mod/assign/feedback/editpdf/tests/fixtures/submission.pdf';

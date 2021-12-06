@@ -22,13 +22,14 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace editor_atto\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\request\writer;
-use \core_privacy\local\request\approved_contextlist;
-use \editor_atto\privacy\provider;
-use \core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\approved_contextlist;
+use editor_atto\privacy\provider;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for the editor_atto implementation of the privacy API.
@@ -36,7 +37,7 @@ use \core_privacy\local\request\approved_userlist;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class editor_atto_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * One test to check fetch and export of all drafts.
      */

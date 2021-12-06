@@ -22,6 +22,7 @@
  * @copyright   2018 David Mudrák <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_workshop\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +37,7 @@ use core_privacy\tests\provider_testcase;
  * @copyright 2018 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_workshop_privacy_provider_testcase extends provider_testcase {
+class privacy_provider_test extends provider_testcase {
 
     /** @var testing_data_generator */
     protected $generator;
@@ -183,9 +184,9 @@ class mod_workshop_privacy_provider_testcase extends provider_testcase {
         $cm12 = get_coursemodule_from_instance('workshop', $this->workshop12->id);
         $cm21 = get_coursemodule_from_instance('workshop', $this->workshop21->id);
 
-        $context11 = context_module::instance($cm11->id);
-        $context12 = context_module::instance($cm12->id);
-        $context21 = context_module::instance($cm21->id);
+        $context11 = \context_module::instance($cm11->id);
+        $context12 = \context_module::instance($cm12->id);
+        $context21 = \context_module::instance($cm21->id);
 
         // Student1 has data in workshop11 (author + self reviewer), workshop12 (author) and workshop21 (reviewer).
         $contextlist = \mod_workshop\privacy\provider::get_contexts_for_userid($this->student1->id);
@@ -214,9 +215,9 @@ class mod_workshop_privacy_provider_testcase extends provider_testcase {
         $cm12 = get_coursemodule_from_instance('workshop', $this->workshop12->id);
         $cm21 = get_coursemodule_from_instance('workshop', $this->workshop21->id);
 
-        $context11 = context_module::instance($cm11->id);
-        $context12 = context_module::instance($cm12->id);
-        $context21 = context_module::instance($cm21->id);
+        $context11 = \context_module::instance($cm11->id);
+        $context12 = \context_module::instance($cm12->id);
+        $context21 = \context_module::instance($cm21->id);
 
         // Users in the workshop11.
         $userlist11 = new \core_privacy\local\request\userlist($context11, 'mod_workshop');

@@ -22,6 +22,7 @@
  * @copyright   2018 David Mudrák <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace workshopallocation_manual\privacy;
 
 use core_privacy\local\request\writer;
 
@@ -33,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2018 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class workshopallocation_manual_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * When no preference exists, there should be no export.

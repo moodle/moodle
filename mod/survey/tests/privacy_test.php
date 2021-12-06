@@ -23,6 +23,7 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_survey\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -45,7 +46,7 @@ require_once($CFG->dirroot . '/mod/survey/lib.php');
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_survey_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -75,15 +76,15 @@ class mod_survey_privacy_testcase extends provider_testcase {
 
         $contextids = provider::get_contexts_for_userid($u1->id)->get_contextids();
         $this->assertCount(3, $contextids);
-        $this->assertTrue(in_array(context_module::instance($cm1a->cmid)->id, $contextids));
-        $this->assertTrue(in_array(context_module::instance($cm2a->cmid)->id, $contextids));
-        $this->assertTrue(in_array(context_module::instance($cm2b->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($cm1a->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($cm2a->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($cm2b->cmid)->id, $contextids));
 
         $contextids = provider::get_contexts_for_userid($u2->id)->get_contextids();
         $this->assertCount(3, $contextids);
-        $this->assertTrue(in_array(context_module::instance($cm1a->cmid)->id, $contextids));
-        $this->assertTrue(in_array(context_module::instance($cm1b->cmid)->id, $contextids));
-        $this->assertTrue(in_array(context_module::instance($cm1c->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($cm1a->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($cm1b->cmid)->id, $contextids));
+        $this->assertTrue(in_array(\context_module::instance($cm1c->cmid)->id, $contextids));
     }
 
     /**
@@ -98,9 +99,9 @@ class mod_survey_privacy_testcase extends provider_testcase {
         $cm1a = $dg->create_module('survey', ['template' => 1, 'course' => $c1]);
         $cm1b = $dg->create_module('survey', ['template' => 2, 'course' => $c1]);
         $cm2 = $dg->create_module('survey', ['template' => 1, 'course' => $c2]);
-        $cm1acontext = context_module::instance($cm1a->cmid);
-        $cm1bcontext = context_module::instance($cm1b->cmid);
-        $cm2context = context_module::instance($cm2->cmid);
+        $cm1acontext = \context_module::instance($cm1a->cmid);
+        $cm1bcontext = \context_module::instance($cm1b->cmid);
+        $cm2context = \context_module::instance($cm2->cmid);
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
@@ -169,7 +170,7 @@ class mod_survey_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1c->id]));
 
         // Deleting the course does nothing.
-        provider::delete_data_for_all_users_in_context(context_course::instance($c1->id));
+        provider::delete_data_for_all_users_in_context(\context_course::instance($c1->id));
         $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1a->id]));
         $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1c->id]));
         $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u2->id, 'survey' => $cm1a->id]));
@@ -179,7 +180,7 @@ class mod_survey_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1a->id]));
         $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1c->id]));
 
-        provider::delete_data_for_all_users_in_context(context_module::instance($cm1c->cmid));
+        provider::delete_data_for_all_users_in_context(\context_module::instance($cm1c->cmid));
         $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1a->id]));
         $this->assertFalse($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1c->id]));
         $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u2->id, 'survey' => $cm1a->id]));
@@ -189,7 +190,7 @@ class mod_survey_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1a->id]));
         $this->assertFalse($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1c->id]));
 
-        provider::delete_data_for_all_users_in_context(context_module::instance($cm1a->cmid));
+        provider::delete_data_for_all_users_in_context(\context_module::instance($cm1a->cmid));
         $this->assertFalse($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1a->id]));
         $this->assertFalse($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1c->id]));
         $this->assertFalse($DB->record_exists('survey_answers', ['userid' => $u2->id, 'survey' => $cm1a->id]));
@@ -230,9 +231,9 @@ class mod_survey_privacy_testcase extends provider_testcase {
         $this->assertTrue($DB->record_exists('survey_analysis', ['userid' => $u2->id, 'survey' => $cm1c->id]));
 
         provider::delete_data_for_user(new approved_contextlist($u1, 'mod_survey', [
-            context_course::instance($c1->id)->id,
-            context_module::instance($cm1a->cmid)->id,
-            context_module::instance($cm1b->cmid)->id,
+            \context_course::instance($c1->id)->id,
+            \context_module::instance($cm1a->cmid)->id,
+            \context_module::instance($cm1b->cmid)->id,
         ]));
         $this->assertFalse($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1a->id]));
         $this->assertTrue($DB->record_exists('survey_answers', ['userid' => $u1->id, 'survey' => $cm1c->id]));
@@ -256,8 +257,8 @@ class mod_survey_privacy_testcase extends provider_testcase {
         $cm1a = $dg->create_module('survey', ['template' => 1, 'course' => $c1]);
         $cm1b = $dg->create_module('survey', ['template' => 2, 'course' => $c1]);
         $cm1c = $dg->create_module('survey', ['template' => 2, 'course' => $c1]);
-        $cm1acontext = context_module::instance($cm1a->cmid);
-        $cm1bcontext = context_module::instance($cm1b->cmid);
+        $cm1acontext = \context_module::instance($cm1a->cmid);
+        $cm1bcontext = \context_module::instance($cm1b->cmid);
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
@@ -315,9 +316,9 @@ class mod_survey_privacy_testcase extends provider_testcase {
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        $s1actx = context_module::instance($s1a->cmid);
-        $s1bctx = context_module::instance($s1b->cmid);
-        $s1cctx = context_module::instance($s1c->cmid);
+        $s1actx = \context_module::instance($s1a->cmid);
+        $s1bctx = \context_module::instance($s1b->cmid);
+        $s1cctx = \context_module::instance($s1c->cmid);
 
         $this->answer_survey($s1a, $u1, $c1, $s1actx);
         $this->answer_survey($s1b, $u1, $c1, $s1bctx);
@@ -376,7 +377,7 @@ class mod_survey_privacy_testcase extends provider_testcase {
      * @param context_module $context The module context.
      * @return void
      */
-    protected function answer_survey($survey, $user, $course, context_module $context) {
+    protected function answer_survey($survey, $user, $course, \context_module $context) {
         global $USER;
 
         $userid = $user->id;

@@ -22,10 +22,11 @@
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace theme_boost\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \theme_boost\privacy\provider;
+use theme_boost\privacy\provider;
 
 /**
  * Unit tests for theme_boost/classes/privacy/policy
@@ -33,7 +34,7 @@ use \theme_boost\privacy\provider;
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class theme_boost_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test for provider::test_export_user_preferences().
@@ -50,7 +51,7 @@ class theme_boost_privacy_testcase extends \core_privacy\tests\provider_testcase
 
         // Test the user preferences export contains 1 user preference record for the User.
         provider::export_user_preferences($user->id);
-        $contextuser = context_user::instance($user->id);
+        $contextuser = \context_user::instance($user->id);
         $writer = \core_privacy\local\request\writer::with_context($contextuser);
         $this->assertTrue($writer->has_any_data());
 
@@ -65,7 +66,7 @@ class theme_boost_privacy_testcase extends \core_privacy\tests\provider_testcase
 
         // Test the user preferences export contains 1 user preference record for the User.
         provider::export_user_preferences($user->id);
-        $contextuser = context_user::instance($user->id);
+        $contextuser = \context_user::instance($user->id);
         $writer = \core_privacy\local\request\writer::with_context($contextuser);
         $this->assertTrue($writer->has_any_data());
 

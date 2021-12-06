@@ -20,10 +20,11 @@
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace ltiservice_gradebookservices\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\tests\provider_testcase;
+use core_privacy\tests\provider_testcase;
 
 /**
  * Unit tests for ltiservice_gradebookservices privacy provider.
@@ -31,7 +32,7 @@ use \core_privacy\tests\provider_testcase;
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ltiservice_gradebookservices_privacy_provider_testcase extends provider_testcase {
+class privacy_provider_test extends provider_testcase {
 
     /**
      * Basic setup for these tests.

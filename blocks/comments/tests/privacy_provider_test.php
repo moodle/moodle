@@ -21,6 +21,7 @@
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace block_comments\privacy;
 
 use core_privacy\local\metadata\collection;
 use block_comments\privacy\provider;
@@ -34,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_comments_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /** @var stdClass A student who is only enrolled in course1. */
     protected $student1;
@@ -74,8 +75,8 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
         $generator->enrol_user($this->student12->id,  $this->course2->id, $studentrole->id);
 
         // Comment block on course pages.
-        $block = $this->add_comments_block_in_context(context_course::instance($this->course1->id));
-        $block = $this->add_comments_block_in_context(context_course::instance($this->course2->id));
+        $block = $this->add_comments_block_in_context(\context_course::instance($this->course1->id));
+        $block = $this->add_comments_block_in_context(\context_course::instance($this->course2->id));
     }
 
     /**
@@ -84,8 +85,8 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
      * @param string $text The comment's text.
      * @param context $context The context on which we want to put the comment.
      */
-    protected function add_comment($text, context $context) {
-        $args = new stdClass;
+    protected function add_comment($text, \context $context) {
+        $args = new \stdClass;
         $args->context = $context;
         $args->area = 'page_comments';
         $args->itemid = 0;
@@ -94,7 +95,7 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
         $args->notoggle = true;
         $args->autostart = true;
         $args->displaycancel = false;
-        $comment = new comment($args);
+        $comment = new \comment($args);
 
         $comment->add($text);
     }
@@ -106,7 +107,7 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
      * @return block_base The created block instance.
      * @throws coding_exception
      */
-    protected function add_comments_block_in_context(context $context) {
+    protected function add_comments_block_in_context(\context $context) {
         global $DB;
 
         $course = null;
@@ -185,7 +186,7 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
      */
     public function test_get_contexts_for_userid_no_comment() {
         $this->setUser($this->student1);
-        $coursecontext1 = context_course::instance($this->course1->id);
+        $coursecontext1 = \context_course::instance($this->course1->id);
         $this->add_comment('New comment', $coursecontext1);
 
         $this->setUser($this->student2);
@@ -197,8 +198,8 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
      * Test for provider::get_contexts_for_userid().
      */
     public function test_get_contexts_for_userid() {
-        $coursecontext1 = context_course::instance($this->course1->id);
-        $coursecontext2 = context_course::instance($this->course2->id);
+        $coursecontext1 = \context_course::instance($this->course1->id);
+        $coursecontext2 = \context_course::instance($this->course2->id);
 
         $this->setUser($this->student12);
         $this->add_comment('New comment', $coursecontext1);
@@ -216,8 +217,8 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
      * Test for provider::export_user_data() when the user has not posted any comments.
      */
     public function test_export_for_context_no_comment() {
-        $coursecontext1 = context_course::instance($this->course1->id);
-        $coursecontext2 = context_course::instance($this->course2->id);
+        $coursecontext1 = \context_course::instance($this->course1->id);
+        $coursecontext2 = \context_course::instance($this->course2->id);
 
         $this->setUser($this->student1);
         $this->add_comment('New comment', $coursecontext1);
@@ -235,8 +236,8 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
      * Test for provider::export_user_data().
      */
     public function test_export_for_context() {
-        $coursecontext1 = context_course::instance($this->course1->id);
-        $coursecontext2 = context_course::instance($this->course2->id);
+        $coursecontext1 = \context_course::instance($this->course1->id);
+        $coursecontext2 = \context_course::instance($this->course2->id);
 
         $this->setUser($this->student12);
         $this->add_comment('New comment', $coursecontext1);
@@ -255,8 +256,8 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
 
-        $coursecontext1 = context_course::instance($this->course1->id);
-        $coursecontext2 = context_course::instance($this->course2->id);
+        $coursecontext1 = \context_course::instance($this->course1->id);
+        $coursecontext2 = \context_course::instance($this->course2->id);
 
         $this->setUser($this->student1);
         $this->add_comment('New comment', $coursecontext1);
@@ -310,7 +311,7 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
 
         $submission = $assign->get_user_submission($this->student1->id, true);
 
-        $options = new stdClass();
+        $options = new \stdClass();
         $options->area = 'submission_comments';
         $options->course = $assign->get_course();
         $options->context = $assigncontext;
@@ -319,7 +320,7 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
         $options->showcount = true;
         $options->displaycancel = true;
 
-        $comment = new comment($options);
+        $comment = new \comment($options);
         $comment->set_post_permission(true);
 
         $this->setUser($this->student1);
@@ -361,8 +362,8 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
     public function test_delete_data_for_user() {
         global $DB;
 
-        $coursecontext1 = context_course::instance($this->course1->id);
-        $coursecontext2 = context_course::instance($this->course2->id);
+        $coursecontext1 = \context_course::instance($this->course1->id);
+        $coursecontext2 = \context_course::instance($this->course2->id);
 
         $this->setUser($this->student1);
         $this->add_comment('New comment', $coursecontext1);
@@ -426,7 +427,7 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
 
         $submission = $assign->get_user_submission($this->student1->id, true);
 
-        $options = new stdClass();
+        $options = new \stdClass();
         $options->area = 'submission_comments';
         $options->course = $assign->get_course();
         $options->context = $assigncontext;
@@ -435,7 +436,7 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
         $options->showcount = true;
         $options->displaycancel = true;
 
-        $comment = new comment($options);
+        $comment = new \comment($options);
         $comment->set_post_permission(true);
 
         $this->setUser($this->student1);
@@ -474,8 +475,8 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
     public function test_get_users_in_context() {
         $component = 'block_comments';
 
-        $coursecontext1 = context_course::instance($this->course1->id);
-        $coursecontext2 = context_course::instance($this->course2->id);
+        $coursecontext1 = \context_course::instance($this->course1->id);
+        $coursecontext2 = \context_course::instance($this->course2->id);
 
         $userlist1 = new \core_privacy\local\request\userlist($coursecontext1, $component);
         provider::get_users_in_context($userlist1);
@@ -511,8 +512,8 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
     public function test_delete_data_for_users() {
         $component = 'block_comments';
 
-        $coursecontext1 = context_course::instance($this->course1->id);
-        $coursecontext2 = context_course::instance($this->course2->id);
+        $coursecontext1 = \context_course::instance($this->course1->id);
+        $coursecontext2 = \context_course::instance($this->course2->id);
 
         $this->setUser($this->student12);
         $this->add_comment('New comment', $coursecontext1);
@@ -563,7 +564,7 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
 
         $submission = $assign->get_user_submission($this->student1->id, true);
 
-        $options = new stdClass();
+        $options = new \stdClass();
         $options->area = 'submission_comments';
         $options->course = $assign->get_course();
         $options->context = $assigncontext;
@@ -572,7 +573,7 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
         $options->showcount = true;
         $options->displaycancel = true;
 
-        $comment = new comment($options);
+        $comment = new \comment($options);
         $comment->set_post_permission(true);
 
         $this->setUser($this->student1);

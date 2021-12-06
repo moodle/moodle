@@ -22,11 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.6
  */
+namespace block_recentlyaccesseditems\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-use \block_recentlyaccesseditems\privacy\provider;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\approved_userlist;
+use block_recentlyaccesseditems\privacy\provider;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Block Recently accessed items privacy provider tests.
@@ -36,7 +38,7 @@ use \core_privacy\local\request\approved_userlist;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.6
  */
-class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test getting the context for the user ID related to this plugin.
@@ -46,9 +48,9 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $generator = $this->getDataGenerator();
 
         $student = $generator->create_user();
-        $studentcontext = context_user::instance($student->id);
+        $studentcontext = \context_user::instance($student->id);
         $teacher = $generator->create_user();
-        $teachercontext = context_user::instance($teacher->id);
+        $teachercontext = \context_user::instance($teacher->id);
 
         // Enrol users in course and add course items.
         $course = $generator->create_course();
@@ -65,12 +67,12 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
 
         // Generate some recent activity for both users.
         $this->setUser($student);
-        $event = \mod_forum\event\course_module_viewed::create(['context' => context_module::instance($forum->cmid),
+        $event = \mod_forum\event\course_module_viewed::create(['context' => \context_module::instance($forum->cmid),
                     'objectid' => $forum->id]);
         $event->trigger();
 
         $this->setUser($teacher);
-        $event = \mod_chat\event\course_module_viewed::create(['context' => context_module::instance($chat->cmid),
+        $event = \mod_chat\event\course_module_viewed::create(['context' => \context_module::instance($chat->cmid),
                     'objectid' => $chat->id]);
         $event->trigger();
 
@@ -93,9 +95,9 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $component = 'block_recentlyaccesseditems';
 
         $student = $generator->create_user();
-        $studentcontext = context_user::instance($student->id);
+        $studentcontext = \context_user::instance($student->id);
         $teacher = $generator->create_user();
-        $teachercontext = context_user::instance($teacher->id);
+        $teachercontext = \context_user::instance($teacher->id);
 
         // Enrol users in course and add course items.
         $course = $generator->create_course();
@@ -114,18 +116,18 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
 
         // Generate some recent activity for both users.
         $this->setUser($student);
-        $event = \mod_forum\event\course_module_viewed::create(['context' => context_module::instance($forum->cmid),
+        $event = \mod_forum\event\course_module_viewed::create(['context' => \context_module::instance($forum->cmid),
                     'objectid' => $forum->id]);
         $event->trigger();
-        $event = \mod_chat\event\course_module_viewed::create(['context' => context_module::instance($chat->cmid),
+        $event = \mod_chat\event\course_module_viewed::create(['context' => \context_module::instance($chat->cmid),
                     'objectid' => $chat->id]);
         $event->trigger();
 
         $this->setUser($teacher);
-        $event = \mod_forum\event\course_module_viewed::create(['context' => context_module::instance($forum->cmid),
+        $event = \mod_forum\event\course_module_viewed::create(['context' => \context_module::instance($forum->cmid),
                     'objectid' => $forum->id]);
         $event->trigger();
-        $event = \mod_chat\event\course_module_viewed::create(['context' => context_module::instance($chat->cmid),
+        $event = \mod_chat\event\course_module_viewed::create(['context' => \context_module::instance($chat->cmid),
                     'objectid' => $chat->id]);
         $event->trigger();
 
@@ -174,7 +176,7 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $component = 'block_recentlyaccesseditems';
 
         $student = $generator->create_user();
-        $studentcontext = context_user::instance($student->id);
+        $studentcontext = \context_user::instance($student->id);
 
         // Enrol user in course and add course items.
         $course = $generator->create_course();
@@ -184,10 +186,10 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
 
         // Generate some recent activity.
         $this->setUser($student);
-        $event = \mod_forum\event\course_module_viewed::create(['context' => context_module::instance($forum->cmid),
+        $event = \mod_forum\event\course_module_viewed::create(['context' => \context_module::instance($forum->cmid),
                 'objectid' => $forum->id]);
         $event->trigger();
-        $event = \mod_chat\event\course_module_viewed::create(['context' => context_module::instance($chat->cmid),
+        $event = \mod_chat\event\course_module_viewed::create(['context' => \context_module::instance($chat->cmid),
                 'objectid' => $chat->id]);
         $event->trigger();
 
@@ -209,7 +211,7 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $this->assertTrue($writer->has_any_data());
 
         delete_course($course, false);
-        $sc = context_user::instance($student->id);
+        $sc = \context_user::instance($student->id);
         $approvedlist = new approved_contextlist($student, $component, [$sc->id]);
         provider::export_user_data($approvedlist);
         $writer = \core_privacy\local\request\writer::with_context($sc);
@@ -227,7 +229,7 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $component = 'block_recentlyaccesseditems';
 
         $student = $generator->create_user();
-        $studentcontext = context_user::instance($student->id);
+        $studentcontext = \context_user::instance($student->id);
 
         // Enrol user in course and add course items.
         $course = $generator->create_course();
@@ -237,10 +239,10 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
 
         // Generate some recent activity.
         $this->setUser($student);
-        $event = \mod_forum\event\course_module_viewed::create(['context' => context_module::instance($forum->cmid),
+        $event = \mod_forum\event\course_module_viewed::create(['context' => \context_module::instance($forum->cmid),
                 'objectid' => $forum->id]);
         $event->trigger();
-        $event = \mod_chat\event\course_module_viewed::create(['context' => context_module::instance($chat->cmid),
+        $event = \mod_chat\event\course_module_viewed::create(['context' => \context_module::instance($chat->cmid),
                 'objectid' => $chat->id]);
         $event->trigger();
 
@@ -273,7 +275,7 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $generator = $this->getDataGenerator();
 
         $student = $generator->create_user();
-        $studentcontext = context_user::instance($student->id);
+        $studentcontext = \context_user::instance($student->id);
         $teacher = $generator->create_user();
 
         // Enrol users in course and add course items.
@@ -287,10 +289,10 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $users = [$student, $teacher];
         foreach ($users as $user) {
             $this->setUser($user);
-            $event = \mod_forum\event\course_module_viewed::create(['context' => context_module::instance($forum->cmid),
+            $event = \mod_forum\event\course_module_viewed::create(['context' => \context_module::instance($forum->cmid),
                         'objectid' => $forum->id]);
             $event->trigger();
-            $event = \mod_chat\event\course_module_viewed::create(['context' => context_module::instance($chat->cmid),
+            $event = \mod_chat\event\course_module_viewed::create(['context' => \context_module::instance($chat->cmid),
                         'objectid' => $chat->id]);
             $event->trigger();
         }
@@ -308,7 +310,7 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $this->assertEquals(2, $result);
 
         // Attempt system context deletion (should have no effect).
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         provider::delete_data_for_all_users_in_context($systemcontext);
 
         $params = ['courseid' => $course->id];
@@ -342,9 +344,9 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $component = 'block_recentlyaccesseditems';
 
         $student = $generator->create_user();
-        $studentcontext = context_user::instance($student->id);
+        $studentcontext = \context_user::instance($student->id);
         $teacher = $generator->create_user();
-        $teachercontext = context_user::instance($teacher->id);
+        $teachercontext = \context_user::instance($teacher->id);
 
         // Enrol users in course and add course items.
         $course = $generator->create_course();
@@ -357,10 +359,10 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $users = [$student, $teacher];
         foreach ($users as $user) {
             $this->setUser($user);
-            $event = \mod_forum\event\course_module_viewed::create(['context' => context_module::instance($forum->cmid),
+            $event = \mod_forum\event\course_module_viewed::create(['context' => \context_module::instance($forum->cmid),
                         'objectid' => $forum->id]);
             $event->trigger();
-            $event = \mod_chat\event\course_module_viewed::create(['context' => context_module::instance($chat->cmid),
+            $event = \mod_chat\event\course_module_viewed::create(['context' => \context_module::instance($chat->cmid),
                         'objectid' => $chat->id]);
             $event->trigger();
         }
@@ -378,7 +380,7 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $this->assertEquals(2, $result);
 
         // Attempt system context deletion (should have no effect).
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $approvedlist = new approved_contextlist($teacher, $component, [$systemcontext->id]);
         provider::delete_data_for_user($approvedlist);
 
@@ -422,9 +424,9 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $component = 'block_recentlyaccesseditems';
 
         $student = $generator->create_user();
-        $studentcontext = context_user::instance($student->id);
+        $studentcontext = \context_user::instance($student->id);
         $teacher = $generator->create_user();
-        $teachercontext = context_user::instance($teacher->id);
+        $teachercontext = \context_user::instance($teacher->id);
 
         // Enrol users in course and add course items.
         $course = $generator->create_course();
@@ -437,10 +439,10 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $users = [$student, $teacher];
         foreach ($users as $user) {
             $this->setUser($user);
-            $event = \mod_forum\event\course_module_viewed::create(['context' => context_module::instance($forum->cmid),
+            $event = \mod_forum\event\course_module_viewed::create(['context' => \context_module::instance($forum->cmid),
                         'objectid' => $forum->id]);
             $event->trigger();
-            $event = \mod_chat\event\course_module_viewed::create(['context' => context_module::instance($chat->cmid),
+            $event = \mod_chat\event\course_module_viewed::create(['context' => \context_module::instance($chat->cmid),
                         'objectid' => $chat->id]);
             $event->trigger();
         }
@@ -458,7 +460,7 @@ class block_recentlyaccesseditems_privacy_testcase extends \core_privacy\tests\p
         $this->assertEquals(2, $result);
 
         // Attempt system context deletion (should have no effect).
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $approvedlist = new approved_userlist($systemcontext, $component, [$student->id, $teacher->id]);
         provider::delete_data_for_users($approvedlist);
 

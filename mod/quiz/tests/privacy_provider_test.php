@@ -21,6 +21,7 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_quiz\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\deletion_criteria;
@@ -40,9 +41,9 @@ require_once($CFG->dirroot . '/question/tests/privacy_helper.php');
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
-    use core_question_privacy_helper;
+    use \core_question_privacy_helper;
 
     /**
      * Test that a user who has no data gets no contexts
@@ -245,10 +246,10 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         // Run as the user and make an attempt on the quiz.
         $this->setUser($user);
         $starttime = time();
-        $quizobj = quiz::create($quiz->id, $user->id);
+        $quizobj = \quiz::create($quiz->id, $user->id);
         $context = $quizobj->get_context();
 
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
         // Start the attempt.
@@ -257,7 +258,7 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Answer the questions.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
 
         $tosubmit = [
             1 => ['answer' => 'frog'],
@@ -267,7 +268,7 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         $attemptobj->process_submitted_actions($starttime, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
         $attemptobj->process_finish($starttime, false);
 
@@ -428,10 +429,10 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         $this->setUser($user);
 
         $starttime = time();
-        $quizobj = quiz::create($quiz->id, $user->id);
+        $quizobj = \quiz::create($quiz->id, $user->id);
         $context = $quizobj->get_context();
 
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
         // Start the attempt.
@@ -440,7 +441,7 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Answer the questions.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
 
         $tosubmit = [
             1 => ['answer' => 'frog'],
@@ -450,7 +451,7 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         $attemptobj->process_submitted_actions($starttime, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($starttime, false);
 
         $this->setUser();
@@ -488,7 +489,7 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
 
         // Fetch users - user1 and user2 should be returned.
         $userlist = new \core_privacy\local\request\userlist($context, 'mod_quiz');
-        \mod_quiz\privacy\provider::get_users_in_context($userlist);
+        provider::get_users_in_context($userlist);
         $this->assertEqualsCanonicalizing(
                 [$user->id, $anotheruser->id],
                 $userlist->get_userids());

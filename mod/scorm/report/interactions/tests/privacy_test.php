@@ -22,6 +22,7 @@
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace scormreport_interactions\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +35,7 @@ use scormreport_interactions\privacy\provider;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class scormreport_interactions_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Basic setup for these tests.

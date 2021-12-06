@@ -21,6 +21,7 @@
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_backup\privacy;
 
 use core_backup\privacy\provider;
 use core_privacy\local\request\approved_userlist;
@@ -33,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test getting the context for the user ID related to this plugin.
@@ -69,7 +70,7 @@ class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertCount(1, $contextlist);
         $contextforuser = $contextlist->current();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $this->assertEquals($context->id, $contextforuser->id);
     }
 
@@ -145,7 +146,7 @@ class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider
         ];
         $DB->insert_record('backup_controllers', $bcdata3);
 
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
 
         // Export all of the data for the context.
         $this->export_context_data_for_user($user1->id, $coursecontext, 'core_backup');
@@ -220,7 +221,7 @@ class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider
         $this->assertEquals(2, $count);
 
         // Delete data based on context.
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         provider::delete_data_for_all_users_in_context($coursecontext);
 
         // After deletion, the operations for that course should have been deleted.
@@ -284,9 +285,9 @@ class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider
         $count = $DB->count_records('backup_controllers', ['itemid' => $course->id]);
         $this->assertEquals(2, $count);
 
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'core_backup',
-            [context_system::instance()->id, $coursecontext->id]);
+            [\context_system::instance()->id, $coursecontext->id]);
         provider::delete_data_for_user($contextlist);
 
         // After deletion, the backup operation for the user should have been deleted.
@@ -316,7 +317,7 @@ class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider
         $user = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $activitycontext = \context_module::instance($activity->cmid);
 
         // The list of users for course context should return the user.
@@ -384,7 +385,7 @@ class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider
         $this->assertEquals($expected, $actual);
 
         // The list of users for system context should not return any users.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist);
         $this->assertCount(0, $userlist);
@@ -402,10 +403,10 @@ class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider
 
         // Create course1.
         $course1 = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course1->id);
+        $coursecontext = \context_course::instance($course1->id);
         // Create course2.
         $course2 = $this->getDataGenerator()->create_course();
-        $coursecontext2 = context_course::instance($course2->id);
+        $coursecontext2 = \context_course::instance($course2->id);
         // Create an activity.
         $activity = $this->getDataGenerator()->create_module('chat', ['course' => $course1->id]);
         $activitycontext = \context_module::instance($activity->cmid);
@@ -526,7 +527,7 @@ class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider
         $this->assertCount(0, $userlist3);
 
         // User data should be only removed in the course context and module context.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         // Add userlist2 to the approved user list in the system context.
         $approvedlist = new approved_userlist($systemcontext, $component, $userlist2->get_userids());
         // Delete user1 data using delete_data_for_user.

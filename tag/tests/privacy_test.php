@@ -22,16 +22,17 @@
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_tag\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/tag/lib.php');
 
-use \core_privacy\tests\provider_testcase;
-use \core_privacy\local\request\writer;
-use \core_tag\privacy\provider;
-use \core_privacy\local\request\approved_userlist;
+use core_privacy\tests\provider_testcase;
+use core_privacy\local\request\writer;
+use core_tag\privacy\provider;
+use core_privacy\local\request\approved_userlist;
 
 /**
  * Unit tests for tag/classes/privacy/policy
@@ -39,7 +40,7 @@ use \core_privacy\local\request\approved_userlist;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_tag_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Check the exporting of tags for a user id in a context.
@@ -55,12 +56,12 @@ class core_tag_privacy_testcase extends provider_testcase {
 
         // Create a course to tag.
         $course = $this->getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $subcontext = [];
 
         // Create three dummy tags and tag instances.
         $dummytags = [ 'Tag 1', 'Tag 2', 'Tag 3' ];
-        core_tag_tag::set_item_tags('core_course', 'course', $course->id, context_course::instance($course->id),
+        \core_tag_tag::set_item_tags('core_course', 'course', $course->id, \context_course::instance($course->id),
                                     $dummytags, $user->id);
 
         // Get the tag instances that should have been created.
@@ -70,7 +71,7 @@ class core_tag_privacy_testcase extends provider_testcase {
         // Check tag instances match the component and context.
         foreach ($taginstances as $taginstance) {
             $this->assertEquals('core_course', $taginstance->component);
-            $this->assertEquals(context_course::instance($course->id)->id, $taginstance->contextid);
+            $this->assertEquals(\context_course::instance($course->id)->id, $taginstance->contextid);
         }
 
         // Retrieve tags only for this user.
@@ -98,26 +99,26 @@ class core_tag_privacy_testcase extends provider_testcase {
 
         // Create a course to tag.
         $course1 = $this->getDataGenerator()->create_course();
-        $context1 = context_course::instance($course1->id);
+        $context1 = \context_course::instance($course1->id);
         $course2 = $this->getDataGenerator()->create_course();
-        $context2 = context_course::instance($course2->id);
+        $context2 = \context_course::instance($course2->id);
 
         // Tag courses.
-        core_tag_tag::set_item_tags('core_course', 'course', $course1->id, $context1, ['Tag 1', 'Tag 2', 'Tag 3']);
-        core_tag_tag::set_item_tags('core_course', 'course', $course2->id, $context2, ['Tag 1', 'Tag 2']);
+        \core_tag_tag::set_item_tags('core_course', 'course', $course1->id, $context1, ['Tag 1', 'Tag 2', 'Tag 3']);
+        \core_tag_tag::set_item_tags('core_course', 'course', $course2->id, $context2, ['Tag 1', 'Tag 2']);
 
         $expectedtagcount = $DB->count_records('tag_instance');
         // Delete tags for course1.
-        core_tag\privacy\provider::delete_item_tags($context1, 'core_course', 'course');
+        provider::delete_item_tags($context1, 'core_course', 'course');
         $expectedtagcount -= 3;
         $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
 
         // Delete tags for course2. Use wrong itemid.
-        core_tag\privacy\provider::delete_item_tags($context2, 'core_course', 'course', $course1->id);
+        provider::delete_item_tags($context2, 'core_course', 'course', $course1->id);
         $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
 
         // Use correct itemid.
-        core_tag\privacy\provider::delete_item_tags($context2, 'core_course', 'course', $course2->id);
+        provider::delete_item_tags($context2, 'core_course', 'course', $course2->id);
         $expectedtagcount -= 2;
         $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
     }
@@ -131,23 +132,23 @@ class core_tag_privacy_testcase extends provider_testcase {
         $this->resetAfterTest(true);
         // Create a course to tag.
         $course = $this->getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
 
         // Create a user to perform tagging.
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
         // Tag courses.
-        core_tag_tag::set_item_tags('core_course', 'course', $course->id, $context, ['Tag 1', 'Tag 2'], $user->id);
+        \core_tag_tag::set_item_tags('core_course', 'course', $course->id, $context, ['Tag 1', 'Tag 2'], $user->id);
         $expectedtagcount = $DB->count_records('tag_instance');
 
         // Delete tags for course. Use wrong userid.
-        core_tag\privacy\provider::delete_item_tags($context, 'core_course', 'course', null, 1);
+        provider::delete_item_tags($context, 'core_course', 'course', null, 1);
         $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
 
         $expectedtagcount -= 2;
         // Delete tags for course. Use correct userid.
-        core_tag\privacy\provider::delete_item_tags($context, 'core_course', 'course', null, $user->id);
+        provider::delete_item_tags($context, 'core_course', 'course', null, $user->id);
         $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
     }
 
@@ -161,23 +162,23 @@ class core_tag_privacy_testcase extends provider_testcase {
 
         // Create a course to tag.
         $course1 = $this->getDataGenerator()->create_course();
-        $context1 = context_course::instance($course1->id);
+        $context1 = \context_course::instance($course1->id);
         $course2 = $this->getDataGenerator()->create_course();
-        $context2 = context_course::instance($course2->id);
+        $context2 = \context_course::instance($course2->id);
 
         // Tag courses.
-        core_tag_tag::set_item_tags('core_course', 'course', $course1->id, $context1, ['Tag 1', 'Tag 2', 'Tag 3']);
-        core_tag_tag::set_item_tags('core_course', 'course', $course2->id, $context2, ['Tag 1', 'Tag 2']);
+        \core_tag_tag::set_item_tags('core_course', 'course', $course1->id, $context1, ['Tag 1', 'Tag 2', 'Tag 3']);
+        \core_tag_tag::set_item_tags('core_course', 'course', $course2->id, $context2, ['Tag 1', 'Tag 2']);
 
         $expectedtagcount = $DB->count_records('tag_instance');
         // Delete tags for course1.
         list($sql, $params) = $DB->get_in_or_equal([$course1->id, $course2->id], SQL_PARAMS_NAMED);
-        core_tag\privacy\provider::delete_item_tags_select($context1, 'core_course', 'course', $sql, $params);
+        provider::delete_item_tags_select($context1, 'core_course', 'course', $sql, $params);
         $expectedtagcount -= 3;
         $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
 
         // Delete tags for course2.
-        core_tag\privacy\provider::delete_item_tags_select($context2, 'core_course', 'course', $sql, $params);
+        provider::delete_item_tags_select($context2, 'core_course', 'course', $sql, $params);
         $expectedtagcount -= 2;
         $this->assertEquals($expectedtagcount, $DB->count_records('tag_instance'));
     }
@@ -199,10 +200,10 @@ class core_tag_privacy_testcase extends provider_testcase {
 
         $this->setAdminUser();
 
-        $tag = core_tag_tag::get_by_name(0, 'computers', '*');
+        $tag = \core_tag_tag::get_by_name(0, 'computers', '*');
         $tag->update(['description' => '<img src="@@PLUGINFILE@@/computer.jpg">']);
         get_file_storage()->create_file_from_string([
-            'contextid' => context_system::instance()->id,
+            'contextid' => \context_system::instance()->id,
             'component' => 'tag',
             'filearea' => 'description',
             'itemid' => $tag->id,
@@ -215,7 +216,7 @@ class core_tag_privacy_testcase extends provider_testcase {
 
     public function test_export_item_tags() {
         list($user1, $user2) = $this->set_up_tags();
-        $this->assertEquals([context_system::instance()->id],
+        $this->assertEquals([\context_system::instance()->id],
             provider::get_contexts_for_userid($user1->id)->get_contextids());
         $this->assertEmpty(provider::get_contexts_for_userid($user2->id)->get_contextids());
     }
@@ -223,7 +224,7 @@ class core_tag_privacy_testcase extends provider_testcase {
     public function test_delete_data_for_user() {
         global $DB;
         list($user1, $user2) = $this->set_up_tags();
-        $context = context_system::instance();
+        $context = \context_system::instance();
         $this->assertEquals(2, $DB->count_records('tag', []));
         $this->assertEquals(0, $DB->count_records('tag', ['userid' => 0]));
         provider::delete_data_for_user(new \core_privacy\local\request\approved_contextlist($user2, 'core_tag', [$context->id]));
@@ -240,10 +241,10 @@ class core_tag_privacy_testcase extends provider_testcase {
         list($user1, $user2) = $this->set_up_tags();
         $this->assertEquals(2, $DB->count_records('tag', []));
         $this->assertEquals(3, $DB->count_records('tag_instance', []));
-        provider::delete_data_for_all_users_in_context(context_course::instance($course->id));
+        provider::delete_data_for_all_users_in_context(\context_course::instance($course->id));
         $this->assertEquals(2, $DB->count_records('tag', []));
         $this->assertEquals(3, $DB->count_records('tag_instance', []));
-        provider::delete_data_for_all_users_in_context(context_system::instance());
+        provider::delete_data_for_all_users_in_context(\context_system::instance());
         $this->assertEquals(0, $DB->count_records('tag', []));
         $this->assertEquals(0, $DB->count_records('tag_instance', []));
     }
@@ -251,13 +252,13 @@ class core_tag_privacy_testcase extends provider_testcase {
     public function test_export_data_for_user() {
         global $DB;
         list($user1, $user2) = $this->set_up_tags();
-        $context = context_system::instance();
+        $context = \context_system::instance();
         provider::export_user_data(new \core_privacy\local\request\approved_contextlist($user2, 'core_tag', [$context->id]));
         $this->assertFalse(writer::with_context($context)->has_any_data());
 
         $tagids = array_values(array_map(function($tag) {
             return $tag->id;
-        }, core_tag_tag::get_by_name_bulk(core_tag_collection::get_default(), ['Birdwatching', 'Computers'])));
+        }, \core_tag_tag::get_by_name_bulk(\core_tag_collection::get_default(), ['Birdwatching', 'Computers'])));
 
         provider::export_user_data(new \core_privacy\local\request\approved_contextlist($user1, 'core_tag', [$context->id]));
         $writer = writer::with_context($context);
@@ -280,7 +281,7 @@ class core_tag_privacy_testcase extends provider_testcase {
         $component = 'core_tag';
 
         $user1 = $this->set_up_tags()[0];
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
 
         $userlist1 = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist1);
@@ -290,7 +291,7 @@ class core_tag_privacy_testcase extends provider_testcase {
         $this->assertEquals($expected, $actual);
 
         // The list of users within the a context other than system context should be empty.
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         $userlist2 = new \core_privacy\local\request\userlist($usercontext1, $component);
         provider::get_users_in_context($userlist2);
         $this->assertCount(0, $userlist2);
@@ -303,9 +304,9 @@ class core_tag_privacy_testcase extends provider_testcase {
         $component = 'core_tag';
 
         list($user1, $user2) = $this->set_up_tags();
-        $usercontext1 = context_user::instance($user1->id);
+        $usercontext1 = \context_user::instance($user1->id);
         $user3 = $this->getDataGenerator()->create_user();
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
 
         $this->setUser($user2);
         useredit_update_interests($user2, ['basketball']);

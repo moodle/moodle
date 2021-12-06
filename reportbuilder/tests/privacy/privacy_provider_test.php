@@ -39,7 +39,7 @@ use core_reportbuilder\local\models\report;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+class privacy_provider_test extends provider_testcase {
 
     /**
      * Test provider metadata

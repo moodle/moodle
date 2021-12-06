@@ -21,6 +21,7 @@
  * @copyright   2019 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_customfield\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +37,7 @@ use core_customfield\privacy\provider;
  * @copyright   2019 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_customfield_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Generate data.
@@ -116,8 +117,8 @@ class core_customfield_privacy_testcase extends provider_testcase {
         list($sql, $params) = $DB->get_in_or_equal([$courses[1]->id, $courses[2]->id], SQL_PARAMS_NAMED);
         $r = provider::get_customfields_data_contexts('core_course', 'course', '=0',
             $sql, $params);
-        $this->assertEqualsCanonicalizing([context_course::instance($courses[1]->id)->id,
-            context_course::instance($courses[2]->id)->id],
+        $this->assertEqualsCanonicalizing([\context_course::instance($courses[1]->id)->id,
+            \context_course::instance($courses[2]->id)->id],
             $r->get_contextids());
     }
 
@@ -128,7 +129,7 @@ class core_customfield_privacy_testcase extends provider_testcase {
         $this->generate_test_data();
 
         $r = provider::get_customfields_configuration_contexts('core_course', 'course');
-        $this->assertEquals([context_system::instance()->id], $r->get_contextids());
+        $this->assertEquals([\context_system::instance()->id], $r->get_contextids());
     }
 
     /**
@@ -147,7 +148,7 @@ class core_customfield_privacy_testcase extends provider_testcase {
         $invalidfieldid = $cffields[21]->get('id');
         $DB->update_record('customfield_field', ['id' => $invalidfieldid, 'type' => 'invalid']);
 
-        $context = context_course::instance($courses[1]->id);
+        $context = \context_course::instance($courses[1]->id);
         $contextlist = new approved_contextlist($USER, 'core_customfield', [$context->id]);
         provider::export_customfields_data($contextlist, 'core_course', 'course', '=0', '=:i', ['i' => $courses[1]->id]);
         /** @var core_privacy\tests\request\content_writer $writer */
@@ -185,7 +186,7 @@ class core_customfield_privacy_testcase extends provider_testcase {
             'courses' => $courses,
         ] = $this->generate_test_data();
 
-        $approvedcontexts = new approved_contextlist($USER, 'core_course', [context_course::instance($courses[1]->id)->id]);
+        $approvedcontexts = new approved_contextlist($USER, 'core_course', [\context_course::instance($courses[1]->id)->id]);
         provider::delete_customfields_data($approvedcontexts, 'core_course', 'course');
         $this->assertEmpty($DB->get_records('customfield_data', ['instanceid' => $courses[1]->id]));
         $this->assertNotEmpty($DB->get_records('customfield_data', ['instanceid' => $courses[2]->id]));
@@ -213,7 +214,7 @@ class core_customfield_privacy_testcase extends provider_testcase {
 
         // A little hack here, modify customfields configuration so they have different itemids.
         $DB->update_record('customfield_category', ['id' => $catid2, 'itemid' => 1]);
-        $contextlist = new approved_contextlist($USER, 'core_course', [context_system::instance()->id]);
+        $contextlist = new approved_contextlist($USER, 'core_course', [\context_system::instance()->id]);
         provider::delete_customfields_configuration($contextlist, 'core_course', 'course', '=:i', ['i' => 1]);
 
         // Make sure everything for category $catid2 is gone but present for $catid1.
@@ -249,7 +250,7 @@ class core_customfield_privacy_testcase extends provider_testcase {
         $this->assertNotEmpty($DB->get_records_select('customfield_data', 'fieldid ' . $fsql, $fparams));
 
         // A little hack here, modify customfields configuration so they have different contexts.
-        $context = context_user::instance($USER->id);
+        $context = \context_user::instance($USER->id);
         $DB->update_record('customfield_category', ['id' => $catid2, 'contextid' => $context->id]);
         provider::delete_customfields_configuration_for_context('core_course', 'course', $context);
 
@@ -278,7 +279,7 @@ class core_customfield_privacy_testcase extends provider_testcase {
         ] = $this->generate_test_data();
 
         provider::delete_customfields_data_for_context('core_course', 'course',
-            context_course::instance($courses[1]->id));
+            \context_course::instance($courses[1]->id));
         $fids2 = $DB->get_fieldset_select('customfield_field', 'id', '1=1', []);
         list($fsql, $fparams) = $DB->get_in_or_equal($fids2, SQL_PARAMS_NAMED);
         $fparams['course1'] = $courses[1]->id;

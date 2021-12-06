@@ -23,12 +23,14 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_lesson\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use core_privacy\tests\provider_testcase;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use mod_lesson\privacy\provider;
@@ -42,7 +44,7 @@ use mod_lesson\privacy\provider;
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lesson_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         global $PAGE;
@@ -65,9 +67,9 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $cm1 = $dg->create_module('lesson', ['course' => $c1]);
         $cm2 = $dg->create_module('lesson', ['course' => $c1]);
         $cm3 = $dg->create_module('lesson', ['course' => $c1]);
-        $cm1ctx = context_module::instance($cm1->cmid);
-        $cm2ctx = context_module::instance($cm2->cmid);
-        $cm3ctx = context_module::instance($cm3->cmid);
+        $cm1ctx = \context_module::instance($cm1->cmid);
+        $cm2ctx = \context_module::instance($cm2->cmid);
+        $cm3ctx = \context_module::instance($cm3->cmid);
 
         $this->create_attempt($cm1, $u1);
         $this->create_grade($cm2, $u2);
@@ -126,8 +128,8 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $cm1 = $dg->create_module('lesson', ['course' => $c1]);
         $cm2 = $dg->create_module('lesson', ['course' => $c1]);
 
-        $cm1ctx = context_module::instance($cm1->cmid);
-        $cm2ctx = context_module::instance($cm2->cmid);
+        $cm1ctx = \context_module::instance($cm1->cmid);
+        $cm2ctx = \context_module::instance($cm2->cmid);
 
         $this->create_attempt($cm1, $u1);
         $this->create_grade($cm1, $u2);
@@ -141,7 +143,7 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $this->create_branch($cm2, $u6);
         $this->create_override($cm2, $u6);
 
-        $context = context_module::instance($cm1->cmid);
+        $context = \context_module::instance($cm1->cmid);
         $userlist = new \core_privacy\local\request\userlist($context, $component);
         provider::get_users_in_context($userlist);
         $userids = $userlist->get_userids();
@@ -153,7 +155,7 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         sort($actual);
         $this->assertEquals($expected, $actual);
 
-        $context = context_module::instance($cm2->cmid);
+        $context = \context_module::instance($cm2->cmid);
         $userlist = new \core_privacy\local\request\userlist($context, $component);
         provider::get_users_in_context($userlist);
         $userids = $userlist->get_userids();
@@ -173,10 +175,10 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $cm2 = $dg->create_module('lesson', ['course' => $c1]);
         $cm3 = $dg->create_module('lesson', ['course' => $c1]);
 
-        $c1ctx = context_course::instance($c1->id);
-        $cm1ctx = context_module::instance($cm1->cmid);
-        $cm2ctx = context_module::instance($cm2->cmid);
-        $cm3ctx = context_module::instance($cm3->cmid);
+        $c1ctx = \context_course::instance($c1->id);
+        $cm1ctx = \context_module::instance($cm1->cmid);
+        $cm2ctx = \context_module::instance($cm2->cmid);
+        $cm3ctx = \context_module::instance($cm3->cmid);
 
         $this->create_attempt($cm1, $u1);
         $this->create_grade($cm1, $u1);
@@ -231,17 +233,17 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $assertcm2nochange();
 
         // Delete the course: no change.
-        provider::delete_data_for_all_users_in_context(context_course::instance($c1->id));
+        provider::delete_data_for_all_users_in_context(\context_course::instance($c1->id));
         $assertcm1nochange();
         $assertcm2nochange();
 
         // Delete another module: no change.
-        provider::delete_data_for_all_users_in_context(context_module::instance($cm3->cmid));
+        provider::delete_data_for_all_users_in_context(\context_module::instance($cm3->cmid));
         $assertcm1nochange();
         $assertcm2nochange();
 
         // Delete cm1: no change in cm2.
-        provider::delete_data_for_all_users_in_context(context_module::instance($cm1->cmid));
+        provider::delete_data_for_all_users_in_context(\context_module::instance($cm1->cmid));
         $assertcm2nochange();
         $this->assertFalse($DB->record_exists('lesson_attempts', ['userid' => $u1->id, 'lessonid' => $cm1->id]));
         $this->assertFalse($DB->record_exists('lesson_grades', ['userid' => $u1->id, 'lessonid' => $cm1->id]));
@@ -266,10 +268,10 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $cm2 = $dg->create_module('lesson', ['course' => $c1]);
         $cm3 = $dg->create_module('lesson', ['course' => $c1]);
 
-        $c1ctx = context_course::instance($c1->id);
-        $cm1ctx = context_module::instance($cm1->cmid);
-        $cm2ctx = context_module::instance($cm2->cmid);
-        $cm3ctx = context_module::instance($cm3->cmid);
+        $c1ctx = \context_course::instance($c1->id);
+        $cm1ctx = \context_module::instance($cm1->cmid);
+        $cm2ctx = \context_module::instance($cm2->cmid);
+        $cm3ctx = \context_module::instance($cm3->cmid);
 
         $this->create_attempt($cm1, $u1);
         $this->create_grade($cm1, $u1);
@@ -323,17 +325,17 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $assertu2nochange();
 
         // Delete the course: no change.
-        provider::delete_data_for_user(new approved_contextlist($u1, 'mod_lesson', [context_course::instance($c1->id)->id]));
+        provider::delete_data_for_user(new approved_contextlist($u1, 'mod_lesson', [\context_course::instance($c1->id)->id]));
         $assertu1nochange();
         $assertu2nochange();
 
         // Delete another module: no change.
-        provider::delete_data_for_user(new approved_contextlist($u1, 'mod_lesson', [context_module::instance($cm3->cmid)->id]));
+        provider::delete_data_for_user(new approved_contextlist($u1, 'mod_lesson', [\context_module::instance($cm3->cmid)->id]));
         $assertu1nochange();
         $assertu2nochange();
 
         // Delete u1 in cm1: no change for u2 and in cm2.
-        provider::delete_data_for_user(new approved_contextlist($u1, 'mod_lesson', [context_module::instance($cm1->cmid)->id]));
+        provider::delete_data_for_user(new approved_contextlist($u1, 'mod_lesson', [\context_module::instance($cm1->cmid)->id]));
         $assertu2nochange();
         $this->assertFalse($DB->record_exists('lesson_attempts', ['userid' => $u1->id, 'lessonid' => $cm1->id]));
         $this->assertFalse($DB->record_exists('lesson_grades', ['userid' => $u1->id, 'lessonid' => $cm1->id]));
@@ -360,8 +362,8 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $cm1 = $dg->create_module('lesson', ['course' => $c1]);
         $cm2 = $dg->create_module('lesson', ['course' => $c1]);
         $cm3 = $dg->create_module('lesson', ['course' => $c1]);
-        $context1 = context_module::instance($cm1->cmid);
-        $context3 = context_module::instance($cm3->cmid);
+        $context1 = \context_module::instance($cm1->cmid);
+        $context3 = \context_module::instance($cm3->cmid);
 
         $this->create_attempt($cm1, $u1);
         $this->create_grade($cm1, $u1);
@@ -408,7 +410,7 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $assertnochange($u2, $cm2);
 
         // Delete another module: no change.
-        $approveduserlist = new core_privacy\local\request\approved_userlist($context3, 'mod_lesson', [$u1->id]);
+        $approveduserlist = new approved_userlist($context3, 'mod_lesson', [$u1->id]);
         provider::delete_data_for_users($approveduserlist);
 
         $assertnochange($u1, $cm1);
@@ -417,7 +419,7 @@ class mod_lesson_privacy_testcase extends provider_testcase {
         $assertnochange($u2, $cm2);
 
         // Delete cm1 for u1: no change for u2 and in cm2.
-        $approveduserlist = new core_privacy\local\request\approved_userlist($context1, 'mod_lesson', [$u1->id]);
+        $approveduserlist = new approved_userlist($context1, 'mod_lesson', [$u1->id]);
         provider::delete_data_for_users($approveduserlist);
 
         $assertdeleted($u1, $cm1);
@@ -434,8 +436,8 @@ class mod_lesson_privacy_testcase extends provider_testcase {
 
         $cm1 = $dg->create_module('lesson', ['course' => $c1]);
         $cm2 = $dg->create_module('lesson', ['course' => $c1]);
-        $cm1ctx = context_module::instance($cm1->cmid);
-        $cm2ctx = context_module::instance($cm2->cmid);
+        $cm1ctx = \context_module::instance($cm1->cmid);
+        $cm2ctx = \context_module::instance($cm2->cmid);
 
         $now = time();
         $this->create_override($cm1, $u1); // All null.
@@ -505,8 +507,8 @@ class mod_lesson_privacy_testcase extends provider_testcase {
 
         $cm1 = $dg->create_module('lesson', ['course' => $c1]);
         $cm2 = $dg->create_module('lesson', ['course' => $c1]);
-        $cm1ctx = context_module::instance($cm1->cmid);
-        $cm2ctx = context_module::instance($cm2->cmid);
+        $cm1ctx = \context_module::instance($cm1->cmid);
+        $cm2ctx = \context_module::instance($cm2->cmid);
 
         $now = time();
         $this->create_grade($cm2, $u1, ['grade' => 33.33, 'completed' => $now - 3600]);
@@ -546,8 +548,8 @@ class mod_lesson_privacy_testcase extends provider_testcase {
 
         $cm1 = $dg->create_module('lesson', ['course' => $c1]);
         $cm2 = $dg->create_module('lesson', ['course' => $c1]);
-        $cm1ctx = context_module::instance($cm1->cmid);
-        $cm2ctx = context_module::instance($cm2->cmid);
+        $cm1ctx = \context_module::instance($cm1->cmid);
+        $cm2ctx = \context_module::instance($cm2->cmid);
 
         $now = time();
         $this->create_timer($cm2, $u1, ['starttime' => $now - 2000, 'lessontime' => $now + 3600, 'completed' => 0,
@@ -600,8 +602,8 @@ class mod_lesson_privacy_testcase extends provider_testcase {
 
         $cm1 = $dg->create_module('lesson', ['course' => $c1]);
         $cm2 = $dg->create_module('lesson', ['course' => $c1]);
-        $cm1ctx = context_module::instance($cm1->cmid);
-        $cm2ctx = context_module::instance($cm2->cmid);
+        $cm1ctx = \context_module::instance($cm1->cmid);
+        $cm2ctx = \context_module::instance($cm2->cmid);
 
         $page1 = $lg->create_content($cm1);
         $page2 = $lg->create_question_truefalse($cm1);

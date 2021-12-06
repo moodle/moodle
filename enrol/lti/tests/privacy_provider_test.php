@@ -21,6 +21,7 @@
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace enrol_lti\privacy;
 
 use enrol_lti\privacy\provider;
 
@@ -33,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * @var stdClass The user
@@ -87,8 +88,8 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
         $this->assertCount(2, $contextlist);
 
-        $coursectx = context_course::instance($this->course->id);
-        $activityctx = context_module::instance($this->activity->cmid);
+        $coursectx = \context_course::instance($this->course->id);
+        $activityctx = \context_module::instance($this->activity->cmid);
         $expectedids = [$coursectx->id, $activityctx->id];
 
         $actualids = $contextlist->get_contextids();
@@ -99,7 +100,7 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
      * Test for provider::export_user_data().
      */
     public function test_export_for_context() {
-        $coursecontext = context_course::instance($this->course->id);
+        $coursecontext = \context_course::instance($this->course->id);
         $cmcontext = \context_module::instance($this->activity->cmid);
 
         // Export all of the data for the course context.
@@ -139,7 +140,7 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $this->assertEquals(4, $count);
 
         // Delete data based on context.
-        $coursecontext = context_course::instance($this->course->id);
+        $coursecontext = \context_course::instance($this->course->id);
         provider::delete_data_for_all_users_in_context($coursecontext);
 
         $ltiusers = $DB->get_records('enrol_lti_users');
@@ -155,14 +156,14 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
     public function test_delete_data_for_user() {
         global $DB;
 
-        $cmcontext = context_module::instance($this->activity->cmid);
-        $coursecontext = context_course::instance($this->course->id);
+        $cmcontext = \context_module::instance($this->activity->cmid);
+        $coursecontext = \context_course::instance($this->course->id);
 
         $count = $DB->count_records('enrol_lti_users');
         $this->assertEquals(4, $count);
 
         $contextlist = new \core_privacy\local\request\approved_contextlist($this->user, 'enrol_lti',
-            [context_system::instance()->id, $coursecontext->id, $cmcontext->id]);
+            [\context_system::instance()->id, $coursecontext->id, $cmcontext->id]);
         provider::delete_data_for_user($contextlist);
 
         $ltiusers = $DB->get_records('enrol_lti_users');
@@ -207,7 +208,7 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
      * Test for provider::get_users_in_context() when the context is a course.
      */
     public function test_get_users_in_context_course() {
-        $coursecontext = context_course::instance($this->course->id);
+        $coursecontext = \context_course::instance($this->course->id);
         $userlist = new \core_privacy\local\request\userlist($coursecontext, 'enrol_paypal');
         provider::get_users_in_context($userlist);
 
@@ -220,7 +221,7 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
      * Test for provider::get_users_in_context() when the context is an activity.
      */
     public function test_get_users_in_context_activity() {
-        $activityctx = context_module::instance($this->activity->cmid);
+        $activityctx = \context_module::instance($this->activity->cmid);
         $userlist = new \core_privacy\local\request\userlist($activityctx, 'enrol_paypal');
         provider::get_users_in_context($userlist);
 
@@ -235,7 +236,7 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
     public function test_delete_data_for_users_course() {
         global $DB;
 
-        $coursecontext = context_course::instance($this->course->id);
+        $coursecontext = \context_course::instance($this->course->id);
 
         $count = $DB->count_records('enrol_lti_users');
         $this->assertEquals(4, $count);
@@ -265,7 +266,7 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
     public function test_delete_data_for_users_activity() {
         global $DB;
 
-        $cmcontext = context_module::instance($this->activity->cmid);
+        $cmcontext = \context_module::instance($this->activity->cmid);
 
         $count = $DB->count_records('enrol_lti_users');
         $this->assertEquals(4, $count);

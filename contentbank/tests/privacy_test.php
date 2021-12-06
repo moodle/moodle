@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_contentbank;
+namespace core_contentbank\privacy;
 
 use stdClass;
 use context_system;

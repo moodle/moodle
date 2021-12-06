@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace quizaccess_seb\privacy;
+
 use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
@@ -41,8 +43,8 @@ require_once(__DIR__ . '/test_helper_trait.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_provider_testcase extends provider_testcase {
-    use quizaccess_seb_test_helper_trait;
+class privacy_provider_test extends provider_testcase {
+    use \quizaccess_seb_test_helper_trait;
 
     /**
      * Setup the user, the quiz and ensure that the user is the last user to modify the SEB quiz settings.
@@ -77,7 +79,7 @@ class quizaccess_seb_provider_testcase extends provider_testcase {
 
         $contexts = provider::get_contexts_for_userid($this->user->id);
         $contextids = $contexts->get_contextids();
-        $this->assertEquals(context_module::instance($this->quiz->cmid)->id, reset($contextids));
+        $this->assertEquals(\context_module::instance($this->quiz->cmid)->id, reset($contextids));
     }
 
     /**
@@ -98,7 +100,7 @@ class quizaccess_seb_provider_testcase extends provider_testcase {
     public function test_export_user_data() {
         $this->setup_test_data();
 
-        $context = context_module::instance($this->quiz->cmid);
+        $context = \context_module::instance($this->quiz->cmid);
 
         // Add another course_module of a differenty type - doing this lets us
         // test that the data exporter is correctly limiting its selection to
@@ -161,7 +163,7 @@ class quizaccess_seb_provider_testcase extends provider_testcase {
         $this->setup_test_data();
 
         // Create empty userlist with quiz module context.
-        $userlist = new userlist(context_module::instance($this->quiz->cmid), 'quizaccess_seb');
+        $userlist = new userlist(\context_module::instance($this->quiz->cmid), 'quizaccess_seb');
 
         // Test that the userlist is populated with expected user/s.
         provider::get_users_in_context($userlist);
@@ -174,7 +176,7 @@ class quizaccess_seb_provider_testcase extends provider_testcase {
     public function test_delete_data_for_users() {
         $this->setup_test_data();
 
-        $approveduserlist = new approved_userlist(context_module::instance($this->quiz->cmid),
+        $approveduserlist = new approved_userlist(\context_module::instance($this->quiz->cmid),
                 'quizaccess_seb', [$this->user->id]);
 
         // Test data exists.
@@ -195,7 +197,7 @@ class quizaccess_seb_provider_testcase extends provider_testcase {
     public function test_delete_data_for_user() {
         $this->setup_test_data();
 
-        $context = context_module::instance($this->quiz->cmid);
+        $context = \context_module::instance($this->quiz->cmid);
         $approvedcontextlist = new approved_contextlist($this->user,
                 'quizaccess_seb', [$context->id]);
 
@@ -217,7 +219,7 @@ class quizaccess_seb_provider_testcase extends provider_testcase {
     public function test_delete_data_for_all_users_in_context() {
         $this->setup_test_data();
 
-        $context = context_module::instance($this->quiz->cmid);
+        $context = \context_module::instance($this->quiz->cmid);
 
         // Test data exists.
         $record = quiz_settings::get_record(['quizid' => $this->quiz->id]);

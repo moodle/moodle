@@ -22,13 +22,14 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_usertours\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\writer;
-use \tool_usertours\tour;
-use \tool_usertours\privacy\provider;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\writer;
+use tool_usertours\tour;
+use tool_usertours\privacy\provider;
 
 /**
  * Unit tests for the tool_usertours implementation of the privacy API.
@@ -36,7 +37,7 @@ use \tool_usertours\privacy\provider;
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_usertours_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Helper method for creating a tour

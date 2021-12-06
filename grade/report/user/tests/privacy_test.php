@@ -22,12 +22,13 @@
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace gradereport_user\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\writer;
-use \gradereport_user\privacy\provider;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\writer;
+use gradereport_user\privacy\provider;
 
 /**
  * Unit tests for the gradereport_user implementation of the privacy API.
@@ -35,7 +36,7 @@ use \gradereport_user\privacy\provider;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradereport_user_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Basic setup for these tests.
@@ -67,7 +68,7 @@ class gradereport_user_privacy_testcase extends \core_privacy\tests\provider_tes
 
         // Validate exported data.
         provider::export_user_preferences($user->id);
-        $context = context_user::instance($user->id);
+        $context = \context_user::instance($user->id);
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $prefs = $writer->get_user_preferences('gradereport_user');

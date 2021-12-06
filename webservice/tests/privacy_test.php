@@ -23,6 +23,7 @@
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_webservice\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -45,7 +46,7 @@ require_once($CFG->dirroot . '/webservice/lib.php');
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_webservice_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -58,10 +59,10 @@ class core_webservice_privacy_testcase extends provider_testcase {
         $u3 = $dg->create_user();
         $u4 = $dg->create_user();
         $u5 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
-        $u3ctx = context_user::instance($u3->id);
-        $u5ctx = context_user::instance($u5->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
+        $u3ctx = \context_user::instance($u3->id);
+        $u5ctx = \context_user::instance($u5->id);
 
         $s = $this->create_service();
         $this->create_token(['userid' => $u1->id]);
@@ -95,8 +96,8 @@ class core_webservice_privacy_testcase extends provider_testcase {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $s = $this->create_service();
         $this->create_token(['userid' => $u1->id, 'creatorid' => $u2->id]);
@@ -131,8 +132,8 @@ class core_webservice_privacy_testcase extends provider_testcase {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $s = $this->create_service();
         $this->create_token(['userid' => $u1->id, 'creatorid' => $u2->id]);
@@ -166,8 +167,8 @@ class core_webservice_privacy_testcase extends provider_testcase {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
-        $u1ctx = context_user::instance($u1->id);
-        $u2ctx = context_user::instance($u2->id);
+        $u1ctx = \context_user::instance($u1->id);
+        $u2ctx = \context_user::instance($u2->id);
 
         $path = [get_string('webservices', 'core_webservice')];
         $yearago = time() - YEARSECS;
@@ -238,19 +239,19 @@ class core_webservice_privacy_testcase extends provider_testcase {
         $component = 'core_webservice';
         // Create user u1.
         $u1 = $this->getDataGenerator()->create_user();
-        $u1ctx = context_user::instance($u1->id);
+        $u1ctx = \context_user::instance($u1->id);
         // Create user u2.
         $u2 = $this->getDataGenerator()->create_user();
-        $u2ctx = context_user::instance($u2->id);
+        $u2ctx = \context_user::instance($u2->id);
         // Create user u3.
         $u3 = $this->getDataGenerator()->create_user();
-        $u3ctx = context_user::instance($u3->id);
+        $u3ctx = \context_user::instance($u3->id);
         // Create user u4.
         $u4 = $this->getDataGenerator()->create_user();
-        $u4ctx = context_user::instance($u4->id);
+        $u4ctx = \context_user::instance($u4->id);
         // Create user u5.
         $u5 = $this->getDataGenerator()->create_user();
-        $u5ctx = context_user::instance($u5->id);
+        $u5ctx = \context_user::instance($u5->id);
 
         // The lists of users for each user context ($u1ctx, $u2ctx, etc.) should be empty.
         // Related user data have not been created yet.
@@ -308,7 +309,7 @@ class core_webservice_privacy_testcase extends provider_testcase {
         $this->assertCount(0, $userlist5);
 
         // The list of users should only return users in the user context.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $userlist6 = new \core_privacy\local\request\userlist($systemcontext, $component);
         provider::get_users_in_context($userlist6);
         $this->assertCount(0, $userlist6);
@@ -322,19 +323,19 @@ class core_webservice_privacy_testcase extends provider_testcase {
         $component = 'core_webservice';
         // Create user u1.
         $u1 = $this->getDataGenerator()->create_user();
-        $u1ctx = context_user::instance($u1->id);
+        $u1ctx = \context_user::instance($u1->id);
         // Create user u2.
         $u2 = $this->getDataGenerator()->create_user();
-        $u2ctx = context_user::instance($u2->id);
+        $u2ctx = \context_user::instance($u2->id);
         // Create user u3.
         $u3 = $this->getDataGenerator()->create_user();
-        $u3ctx = context_user::instance($u3->id);
+        $u3ctx = \context_user::instance($u3->id);
         // Create user u4.
         $u4 = $this->getDataGenerator()->create_user();
-        $u4ctx = context_user::instance($u4->id);
+        $u4ctx = \context_user::instance($u4->id);
         // Create user u5.
         $u5 = $this->getDataGenerator()->create_user();
-        $u5ctx = context_user::instance($u5->id);
+        $u5ctx = \context_user::instance($u5->id);
 
         // Create a webservice.
         $s = $this->create_service();
@@ -402,7 +403,7 @@ class core_webservice_privacy_testcase extends provider_testcase {
         $this->assertCount(1, $userlist5);
 
         // User data should only be removed in the user context.
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $approvedlist = new approved_userlist($systemcontext, $component, $userlist5->get_userids());
         // Delete using delete_data_for_user.
         provider::delete_data_for_users($approvedlist);

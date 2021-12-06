@@ -22,6 +22,7 @@
  * @copyright  2018 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_wiki\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -42,7 +43,7 @@ require_once($CFG->dirroot.'/mod/wiki/locallib.php');
  * @copyright  2018 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_wiki_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /** @var array */
     protected $users = [];
@@ -149,10 +150,10 @@ class mod_wiki_privacy_testcase extends provider_testcase {
         ];
 
         $this->contexts = [
-            1 => context_module::instance($cm1->cmid),
-            2 => context_module::instance($cm2->cmid),
-            3 => context_module::instance($cm3->cmid),
-            4 => context_module::instance($cm4->cmid),
+            1 => \context_module::instance($cm1->cmid),
+            2 => \context_module::instance($cm2->cmid),
+            3 => \context_module::instance($cm3->cmid),
+            4 => \context_module::instance($cm4->cmid),
         ];
 
         $this->pagepaths = [
@@ -231,7 +232,7 @@ class mod_wiki_privacy_testcase extends provider_testcase {
 
         $fs = get_file_storage();
         return $fs->create_file_from_string([
-            'contextid' => context_module::instance($wiki->cmid)->id,
+            'contextid' => \context_module::instance($wiki->cmid)->id,
             'component' => 'mod_wiki',
             'filearea' => 'attachments',
             'itemid' => $subwikiid,
@@ -498,14 +499,14 @@ class mod_wiki_privacy_testcase extends provider_testcase {
             JOIN {wiki} w ON cm.instance = w.id
             JOIN {wiki_subwikis} s ON s.wikiid = w.id
             WHERE s.id=?', ['wiki', $page->subwikiid]);
-        $context = context_module::instance($record->id);
-        $args = new stdClass;
+        $context = \context_module::instance($record->id);
+        $args = new \stdClass;
         $args->context = $context;
         $args->courseid = $record->course;
         $args->area = 'wiki_page';
         $args->itemid = $page->id;
         $args->component = 'mod_wiki';
-        $comment = new comment($args);
+        $comment = new \comment($args);
         $comment->set_post_permission(true);
         $comment->add($text);
         return $comment;

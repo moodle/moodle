@@ -21,6 +21,7 @@
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_comment\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -28,7 +29,9 @@ global $CFG;
 require_once($CFG->dirroot . '/comment/locallib.php');
 require_once($CFG->dirroot . '/comment/lib.php');
 
-use \core_privacy\tests\provider_testcase;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\tests\provider_testcase;
+use core_privacy\tests\request\approved_contextlist;
 
 /**
  * Unit tests for comment/classes/privacy/policy
@@ -36,7 +39,7 @@ use \core_privacy\tests\provider_testcase;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_comment_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     protected function setUp(): void {
         $this->resetAfterTest();
@@ -47,7 +50,7 @@ class core_comment_privacy_testcase extends provider_testcase {
      */
     public function test_export_comments() {
         $course = $this->getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
 
         $comment = $this->get_comment_object($context, $course);
 
@@ -69,7 +72,7 @@ class core_comment_privacy_testcase extends provider_testcase {
         // Retrieve comments only for user1.
         $this->setUser($user1);
         $writer = \core_privacy\local\request\writer::with_context($context);
-        \core_comment\privacy\provider::export_comments($context, 'block_comments', 'page_comments', 0, []);
+        provider::export_comments($context, 'block_comments', 'page_comments', 0, []);
 
         $data = $writer->get_data([get_string('commentsubcontext', 'core_comment')]);
         $exportedcomments = $data->comments;
@@ -80,7 +83,7 @@ class core_comment_privacy_testcase extends provider_testcase {
         $this->assertEquals($comments[$user1->id], format_string($comment->content, FORMAT_PLAIN));
 
         // Retrieve comments from any user.
-        \core_comment\privacy\provider::export_comments($context, 'block_comments', 'page_comments', 0, [], false);
+        provider::export_comments($context, 'block_comments', 'page_comments', 0, [], false);
 
         $data = $writer->get_data([get_string('commentsubcontext', 'core_comment')]);
         $exportedcomments = $data->comments;
@@ -101,8 +104,8 @@ class core_comment_privacy_testcase extends provider_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
 
-        $coursecontext1 = context_course::instance($course1->id);
-        $coursecontext2 = context_course::instance($course2->id);
+        $coursecontext1 = \context_course::instance($course1->id);
+        $coursecontext2 = \context_course::instance($course2->id);
 
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
@@ -143,7 +146,7 @@ class core_comment_privacy_testcase extends provider_testcase {
         $DB->insert_record('comments', $record);
 
         // Delete only for the first context. All records in the comments table for this context should be removed.
-        \core_comment\privacy\provider::delete_comments_for_all_users($coursecontext1, 'block_comments', 'page_comments', 0);
+        provider::delete_comments_for_all_users($coursecontext1, 'block_comments', 'page_comments', 0);
         // No records left here.
         $this->assertCount(0, $comment1->get_comments());
         // All of the records are left intact here.
@@ -169,8 +172,8 @@ class core_comment_privacy_testcase extends provider_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
 
-        $coursecontext1 = context_course::instance($course1->id);
-        $coursecontext2 = context_course::instance($course2->id);
+        $coursecontext1 = \context_course::instance($course1->id);
+        $coursecontext2 = \context_course::instance($course2->id);
 
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
@@ -212,7 +215,7 @@ class core_comment_privacy_testcase extends provider_testcase {
 
         // Delete only for the first context. All records in the comments table for this context should be removed.
         list($sql, $params) = $DB->get_in_or_equal([0, 1, 2, 3], SQL_PARAMS_NAMED);
-        \core_comment\privacy\provider::delete_comments_for_all_users_select($coursecontext1,
+        provider::delete_comments_for_all_users_select($coursecontext1,
             'block_comments', 'page_comments', $sql, $params);
         // No records left here.
         $this->assertCount(0, $comment1->get_comments());
@@ -240,9 +243,9 @@ class core_comment_privacy_testcase extends provider_testcase {
         $course2 = $this->getDataGenerator()->create_course();
         $course3 = $this->getDataGenerator()->create_course();
 
-        $coursecontext1 = context_course::instance($course1->id);
-        $coursecontext2 = context_course::instance($course2->id);
-        $coursecontext3 = context_course::instance($course3->id);
+        $coursecontext1 = \context_course::instance($course1->id);
+        $coursecontext2 = \context_course::instance($course2->id);
+        $coursecontext3 = \context_course::instance($course3->id);
 
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
@@ -285,9 +288,9 @@ class core_comment_privacy_testcase extends provider_testcase {
         $DB->insert_record('comments', $record);
 
         // Delete the comments for user 1.
-        $approvedcontextlist = new core_privacy\tests\request\approved_contextlist($user1, 'block_comments',
+        $approvedcontextlist = new approved_contextlist($user1, 'block_comments',
                 [$coursecontext1->id, $coursecontext2->id]);
-        \core_comment\privacy\provider::delete_comments_for_user($approvedcontextlist, 'block_comments', 'page_comments', 0);
+        provider::delete_comments_for_user($approvedcontextlist, 'block_comments', 'page_comments', 0);
 
         // No comments left in comments 1 as only user 1 commented there.
         $this->assertCount(0, $comment1->get_comments());
@@ -323,9 +326,9 @@ class core_comment_privacy_testcase extends provider_testcase {
         $course2 = $this->getDataGenerator()->create_course();
         $course3 = $this->getDataGenerator()->create_course();
 
-        $coursecontext1 = context_course::instance($course1->id);
-        $coursecontext2 = context_course::instance($course2->id);
-        $coursecontext3 = context_course::instance($course3->id);
+        $coursecontext1 = \context_course::instance($course1->id);
+        $coursecontext2 = \context_course::instance($course2->id);
+        $coursecontext3 = \context_course::instance($course3->id);
 
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
@@ -374,14 +377,14 @@ class core_comment_privacy_testcase extends provider_testcase {
         // Delete the comments for users 1 and 2 in all 3 contexts.
         $approvedusers = [$user1->id, $user2->id];
 
-        $approveduserlist = new core_privacy\local\request\approved_userlist($coursecontext1, 'block_comments', $approvedusers);
-        \core_comment\privacy\provider::delete_comments_for_users($approveduserlist, 'block_comments', 'page_comments');
+        $approveduserlist = new approved_userlist($coursecontext1, 'block_comments', $approvedusers);
+        provider::delete_comments_for_users($approveduserlist, 'block_comments', 'page_comments');
 
-        $approveduserlist = new core_privacy\local\request\approved_userlist($coursecontext2, 'block_comments', $approvedusers);
-        \core_comment\privacy\provider::delete_comments_for_users($approveduserlist, 'block_comments', 'page_comments');
+        $approveduserlist = new approved_userlist($coursecontext2, 'block_comments', $approvedusers);
+        provider::delete_comments_for_users($approveduserlist, 'block_comments', 'page_comments');
 
-        $approveduserlist = new core_privacy\local\request\approved_userlist($coursecontext3, 'block_comments', $approvedusers);
-        \core_comment\privacy\provider::delete_comments_for_users($approveduserlist, 'block_comments', 'page_comments');
+        $approveduserlist = new approved_userlist($coursecontext3, 'block_comments', $approvedusers);
+        provider::delete_comments_for_users($approveduserlist, 'block_comments', 'page_comments');
 
         // No comments left in comments 1 as only user 1 commented there.
         $this->assertCount(0, $comment1->get_comments());
@@ -420,13 +423,13 @@ class core_comment_privacy_testcase extends provider_testcase {
      */
     protected function get_comment_object($context, $course) {
         // Comment on course page.
-        $args = new stdClass;
+        $args = new \stdClass;
         $args->context = $context;
         $args->course = $course;
         $args->area = 'page_comments';
         $args->itemid = 0;
         $args->component = 'block_comments';
-        $comment = new comment($args);
+        $comment = new \comment($args);
         $comment->set_post_permission(true);
         return $comment;
     }

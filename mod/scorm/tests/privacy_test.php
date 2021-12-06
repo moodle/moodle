@@ -22,6 +22,7 @@
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_scorm\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +38,7 @@ use core_privacy\tests\provider_testcase;
  * @copyright  2018 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_scorm_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /** @var stdClass User without any AICC/SCORM attempt. */
     protected $student0;
