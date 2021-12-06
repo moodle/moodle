@@ -56,6 +56,9 @@ $PAGE->set_pagelayout('report');
 
 require_capability('mod/scorm:viewreport', $contextmodule);
 
+// Activate the secondary nav tab.
+navigation_node::override_active_url(new moodle_url('/mod/scorm/report.php', ['id' => $id]));
+
 if (count($reportlist) < 1) {
     print_error('erroraccessingreport', 'scorm');
 }
@@ -86,9 +89,9 @@ if (empty($noheader)) {
     $PAGE->navbar->add($strreport, new moodle_url('/mod/scorm/report.php', array('id' => $cm->id)));
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($scorm->name));
-    $currenttab = 'reports';
-    require($CFG->dirroot . '/mod/scorm/tabs.php');
+    if (!$PAGE->has_secondary_navigation()) {
+        echo $OUTPUT->heading(format_string($scorm->name));
+    }
 }
 
 // Open the selected Scorm report and display it.

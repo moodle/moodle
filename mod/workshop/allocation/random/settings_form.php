@@ -96,7 +96,7 @@ class workshop_random_allocator_form extends moodleform {
             $mform->addElement('checkbox', 'addselfassessment', get_string('addselfassessment', 'workshopallocation_random'));
         }
 
-        $this->add_action_buttons();
+        $this->add_action_buttons(false);
     }
 
     /**

@@ -43,6 +43,7 @@ $PAGE->set_url($workshop->exassess_url($assessment->id));
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('assessingexample', 'workshop'));
+$PAGE->set_secondary_active_tab('modulepage');
 $currenttab = 'assessment';
 
 $canmanage  = has_capability('mod/workshop:manageexamples', $workshop->context);
@@ -133,7 +134,9 @@ if ($mform->is_cancelled()) {
 // output starts here
 $output = $PAGE->get_renderer('mod_workshop');      // workshop renderer
 echo $output->header();
-echo $output->heading(format_string($workshop->name));
+if (!$PAGE->has_secondary_navigation()) {
+    echo $output->heading(format_string($workshop->name));
+}
 echo $output->heading(get_string('assessedexample', 'workshop'), 3);
 
 $example = $workshop->get_example_by_id($example->id);     // reload so can be passed to the renderer

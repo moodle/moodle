@@ -75,7 +75,7 @@ Feature: Using the activity grade form element
       | Group mode | No groups |
     And I log out
     And I am on the "Test forum name" "forum activity" page logged in as student1
-    And I click on "Add a new discussion topic" "link"
+    And I click on "Add discussion topic" "link"
     And I set the following fields to these values:
       | Subject  | Discussion subject |
       | Message | Discussion message |
@@ -135,7 +135,7 @@ Feature: Using the activity grade form element
     And I press "Save and return to course"
     And I log out
     And I am on the "Test forum name" "forum activity" page logged in as student1
-    And I click on "Add a new discussion topic" "link"
+    And I click on "Add discussion topic" "link"
     And I set the following fields to these values:
       | Subject  | Discussion subject |
       | Message | Discussion message |

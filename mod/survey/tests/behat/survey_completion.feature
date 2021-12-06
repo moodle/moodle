@@ -62,7 +62,7 @@ Feature: A teacher can use activity completion to track a student progress
     And the "Submit answers" completion condition of "Test survey name" is displayed as "todo"
     And I follow "Test survey name"
     And the "Submit answers" completion condition of "Test survey name" is displayed as "todo"
-    And I press "Click here to continue"
+    And I press "Submit"
     And I am on "Course 1" course homepage
     And the "Submit answers" completion condition of "Test survey name" is displayed as "done"
     And I follow "Test survey name"

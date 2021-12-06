@@ -1828,3 +1828,22 @@ function mod_scorm_core_calendar_get_event_action_string(string $eventtype): str
 
     return get_string($identifier, 'scorm', $modulename);
 }
+
+/**
+ * This function extends the settings navigation block for the site.
+ *
+ * It is safe to rely on PAGE here as we will only ever be within the module
+ * context when this is called
+ *
+ * @param navigation_node $settings navigation_node object.
+ * @param navigation_node $scormnode navigation_node object.
+ * @return void
+ */
+function scorm_extend_settings_navigation(navigation_node $settings, navigation_node $scormnode): void {
+    global $PAGE;
+
+    if (has_capability('mod/scorm:viewreport', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/scorm/report.php', ['id' => $PAGE->cm->id]);
+        $scormnode->add(get_string("reports", "scorm"), $url, navigation_node::TYPE_CUSTOM, null, 'scormreport');
+    }
+}

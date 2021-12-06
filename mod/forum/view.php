@@ -158,17 +158,27 @@ if (!empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forum
     rss_add_http_header($forum->get_context(), 'mod_forum', $forumrecord, $rsstitle);
 }
 
+// Output starts from here.
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($forum->get_name()), 2);
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading(format_string($forum->get_name()), 2);
+}
 
 // Render the activity information.
 $completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
 $activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
 echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
 
+// Fetch the current groupid.
+$groupid = groups_get_activity_group($cm, true) ?: null;
+
 if (!$istypesingle && !empty($forum->get_intro())) {
     echo $OUTPUT->box(format_module_intro('forum', $forumrecord, $cm->id), 'generalbox', 'intro');
 }
+
+$rendererfactory = mod_forum\local\container::get_renderer_factory();
+// The elements for view action are rendered and added to the page.
+echo forum_activity_actionbar($forum, $groupid, $course, $search);
 
 if ($sortorder) {
     set_user_preference('forum_discussionlistsortorder', $sortorder);
@@ -176,9 +186,6 @@ if ($sortorder) {
 
 $sortorder = get_user_preferences('forum_discussionlistsortorder', $discussionlistvault::SORTORDER_LASTPOST_DESC);
 
-// Fetch the current groupid.
-$groupid = groups_get_activity_group($cm, true) ?: null;
-$rendererfactory = mod_forum\local\container::get_renderer_factory();
 switch ($forum->get_type()) {
     case 'single':
         $forumgradeitem = forum_gradeitem::load_from_forum_entity($forum);
@@ -243,7 +250,7 @@ switch ($forum->get_type()) {
         $discussionsrenderer = $rendererfactory->get_blog_discussion_list_renderer($forum);
         // Blog forums always show discussions newest first.
         echo $discussionsrenderer->render($USER, $cm, $groupid, $discussionlistvault::SORTORDER_CREATED_DESC,
-            $pageno, $pagesize);
+            $pageno, $pagesize, null, false);
 
         if (!$CFG->forum_usermarksread && forum_tp_is_tracked($forumrecord, $USER)) {
             $discussions = mod_forum_get_discussion_summaries($forum, $USER, $groupid, null, $pageno, $pagesize);
@@ -255,7 +262,7 @@ switch ($forum->get_type()) {
         break;
     default:
         $discussionsrenderer = $rendererfactory->get_discussion_list_renderer($forum);
-        echo $discussionsrenderer->render($USER, $cm, $groupid, $sortorder, $pageno, $pagesize, $displaymode);
+        echo $discussionsrenderer->render($USER, $cm, $groupid, $sortorder, $pageno, $pagesize, $displaymode, false);
 }
 
 echo $OUTPUT->footer();

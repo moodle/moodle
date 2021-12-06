@@ -92,33 +92,19 @@
     $strseemoredetail = get_string("seemoredetail", "survey");
     $strnotes = get_string("notes", "survey");
 
-    switch ($action) {
-        case 'download':
-            $PAGE->navbar->add(get_string('downloadresults', 'survey'));
-            break;
-        case 'summary':
-        case 'scales':
-        case 'questions':
-            $PAGE->navbar->add($strreport);
-            $PAGE->navbar->add(${'str'.$action});
-            break;
-        case 'students':
-            $PAGE->navbar->add($strreport);
-            $PAGE->navbar->add(get_string('participants'));
-            break;
-        case '':
-            $PAGE->navbar->add($strreport);
-            $PAGE->navbar->add($strsummary);
-            break;
-        default:
-            $PAGE->navbar->add($strreport);
-            break;
-    }
-
     $PAGE->set_title("$course->shortname: ".format_string($survey->name));
     $PAGE->set_heading($course->fullname);
+
+    // Activate the secondary nav tab.
+    navigation_node::override_active_url(new moodle_url('/mod/survey/report.php', ['id' => $id, 'action' => 'summary']));
+
+    $actionbar = new \mod_survey\output\actionbar($id, $action, $url);
     echo $OUTPUT->header();
+if (!$PAGE->has_secondary_navigation()) {
     echo $OUTPUT->heading(format_string($survey->name));
+}
+    $renderer = $PAGE->get_renderer('mod_survey');
+    echo $renderer->response_actionbar($actionbar);
 
 /// Check to see if groups are being used in this survey
     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
@@ -151,30 +137,6 @@
     }
 
     $groupingid = $cm->groupingid;
-
-    echo $OUTPUT->box_start("generalbox boxaligncenter");
-    if ($showscales) {
-        echo "<a href=\"report.php?action=summary&amp;id=$id\">$strsummary</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=scales&amp;id=$id\">$strscales</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=questions&amp;id=$id\">$strquestions</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&amp;id=$id\">".get_string('participants')."</a>";
-        if (has_capability('mod/survey:download', $context)) {
-            echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&amp;id=$id\">$strdownload</a>";
-        }
-        if (empty($action)) {
-            $action = "summary";
-        }
-    } else {
-        echo "<a href=\"report.php?action=questions&amp;id=$id\">$strquestions</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&amp;id=$id\">".get_string('participants')."</a>";
-        if (has_capability('mod/survey:download', $context)) {
-            echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&amp;id=$id\">$strdownload</a>";
-        }
-        if (empty($action)) {
-            $action = "questions";
-        }
-    }
-    echo $OUTPUT->box_end();
 
     echo $OUTPUT->spacer(array('height'=>30, 'width'=>30, 'br'=>true)); // should be done with CSS instead
 
@@ -519,4 +481,3 @@
 
     }
     echo $OUTPUT->footer();
-

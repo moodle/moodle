@@ -130,14 +130,14 @@ Feature: Select content bank files using the content bank files repository
 
   Scenario: Non-editing teacher can not see the content bank repository
     Given I am on the Forum "Forum activity" page logged in as teacher2
-    And I click on "Add a new discussion topic" "link"
+    And I click on "Add discussion topic" "link"
     And I click on "Link" "button"
     When I click on "Browse repositories..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"
 
   Scenario: Student can not see the content bank repository
     Given I am on the Forum "Forum activity" page logged in as student
-    And I click on "Add a new discussion topic" "link"
+    And I click on "Add discussion topic" "link"
     And I click on "Link" "button"
     When I click on "Browse repositories..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"

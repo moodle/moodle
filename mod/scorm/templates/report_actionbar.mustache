@@ -1,0 +1,63 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_scorm/report_actionbar
+    Actions bar for the reports page UI.
+    Classes required for JS:
+    * none
+    Data attributes required for JS:
+    * none
+    Context variables required for this template:
+    * see mod/scorm/classes/output/actionbar.php
+    Example context (json):
+    {
+        "scormreports": {
+            "id": "url_select_test",
+            "options": [
+                {"name": "Basic Report", "value": "/mod/scorm/report.php?id=69&mode=basic"},
+                {"name": "Graph Report", "value": "/mod/scorm/report.php?id=69&mode=graphs"},
+                {"name": "Interactions Report", "value": "/mod/scorm/report.php?id=69&mode=interactions"},
+                {"name": "Objectives Report", "value": "/mod/scorm/report.php?id=69&mode=objectives"}
+            ]
+        },
+        "candownload": true,
+        "downloadods": "http://localhost/moodle/mod/scorm/report.php?id=143&mode=basic&attemptsmode=0&sesskey=AmfcC7riSb&download=ODS",
+        "downloadexcel": "http://localhost/moodle/mod/scorm/report.php?id=143&mode=basic&attemptsmode=0&sesskey=AmfcC7riSb&download=Excel",
+        "downloadtext": "http://localhost/moodle/mod/scorm/report.php?id=143&mode=basic&attemptsmode=0&sesskey=AmfcC7riSb&download=CSV"
+    }
+}}
+<div class="container-fluid mb-3">
+    <div class="row justify-content-between">
+        <div class="mr-5">
+            {{#scormreports}}
+                {{>core/url_select}}
+            {{/scormreports}}
+        </div>
+        <div class="mr-5">
+            {{#candownload}}
+                <div class="dropdown show">
+                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{#str}} download {{/str}}
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="{{ downloadods }}">{{#str}} downloadods {{/str}}</a>
+                        <a class="dropdown-item" href="{{ downloadexcel }}">{{#str}} downloadexcel {{/str}}</a>
+                        <a class="dropdown-item" href="{{ downloadtext }}">{{#str}} downloadtext {{/str}}</a>
+                    </div>
+                </div>
+            {{/candownload}}
+        </div>
+    </div>
+</div>

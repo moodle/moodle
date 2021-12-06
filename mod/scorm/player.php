@@ -83,6 +83,8 @@ if ($displaymode !== '') {
     $url->param('display', $displaymode);
 }
 $PAGE->set_url($url);
+$PAGE->set_secondary_active_tab("modulepage");
+
 $forcejs = get_config('scorm', 'forcejavascript');
 if (!empty($forcejs)) {
     $PAGE->add_body_class('forcejavascript');
@@ -191,7 +193,7 @@ if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js')) {
 }
 
 echo $OUTPUT->header();
-if (!empty($scorm->displayactivityname)) {
+if (!empty($scorm->displayactivityname) && !$PAGE->has_secondary_navigation()) {
     echo $OUTPUT->heading(format_string($scorm->name));
 }
 
@@ -203,7 +205,11 @@ $PAGE->requires->string_for_js('popupsblocked', 'scorm');
 
 $name = false;
 
-echo html_writer::start_div('', array('id' => 'scormpage'));
+$scrompagestyle = "margin-top: 1em";
+if ($mode === 'normal') {
+    $scrompagestyle = "margin-top: 3em";
+}
+echo html_writer::start_div('', array('id' => 'scormpage', 'style' => $scrompagestyle));
 echo html_writer::start_div('', array('id' => 'tocbox'));
 echo html_writer::div(html_writer::tag('script', '', array('id' => 'external-scormapi', 'type' => 'text/JavaScript')), '',
                         array('id' => 'scormapi-parent'));

@@ -417,7 +417,7 @@ class discussion {
             if ($this->capabilitymanager->must_post_before_viewing_discussion($user, $discussion)) {
                 $notifications[] = (new notification(
                     get_string('qandanotify', 'forum')
-                ))->set_show_closebutton(true);
+                ))->set_show_closebutton(true)->set_extra_classes(['mt-3']);
             }
         }
 

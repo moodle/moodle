@@ -71,6 +71,7 @@ $starredonly = optional_param('starredonly', false, PARAM_BOOL); // Include only
 
 $PAGE->set_pagelayout('standard');
 $PAGE->set_url($FULLME); //TODO: this is very sloppy --skodak
+$PAGE->set_secondary_active_tab("coursehome");
 
 if (empty($search)) {   // Check the other parameters instead
     if (!empty($words)) {
@@ -166,7 +167,9 @@ if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $per
     $PAGE->set_title($strsearchresults);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($strforums, 2);
+    if (!$PAGE->has_secondary_navigation()) {
+        echo $OUTPUT->heading($strforums, 2);
+    }
     echo $OUTPUT->heading($strsearchresults, 3);
     echo $OUTPUT->heading(get_string("noposts", "forum"), 4);
 
@@ -220,7 +223,9 @@ echo html_writer::link($url, get_string('advancedsearch', 'forum').'...');
 
 echo '</div>';
 
-echo $OUTPUT->heading($strforums, 2);
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading($strforums, 2);
+}
 echo $OUTPUT->heading("$strsearchresults: $totalcount", 3);
 
 $url = new moodle_url('search.php', array('search' => $search, 'id' => $course->id, 'perpage' => $perpage));

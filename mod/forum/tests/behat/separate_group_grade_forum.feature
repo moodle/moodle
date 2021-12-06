@@ -88,13 +88,13 @@ Feature: I can grade a students by group with separate groups
     And I log out
     When I am on the "Test Forum 1" "forum activity" page logged in as student1
     And I select "Group A" from the "Separate groups" singleselect
-    And I click on "Add a new discussion topic" "link"
+    And I click on "Add discussion topic" "link"
     And I set the following fields to these values:
       | Subject  | Discussion subject A |
       | Message | Discussion message A |
     And I press "Post to forum"
     And I select "Group C" from the "Separate groups" singleselect
-    And I click on "Add a new discussion topic" "link"
+    And I click on "Add discussion topic" "link"
     And I set the following fields to these values:
       | Subject  | Discussion subject C |
       | Message | Discussion message C |

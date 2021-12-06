@@ -1,0 +1,42 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_scorm/report_actionbar
+    Actions bar for the user reports page UI.
+    Classes required for JS:
+    * none
+    Data attributes required for JS:
+    * none
+    Context variables required for this template:
+    * see mod/scorm/classes/output/userreportsactionbar.php
+    Example context (json):
+    {
+        "userreport": {
+            "id": "url_select_test",
+            "options": [
+                {"name": "Learning objects", "value": "/mod/scorm/report/userreport.php?id=70&user=13&attempt=1"},
+                {"name": "Interactions", "value": "/mod/scorm/report/userreportinteractions.php?id=70&user=13&attempt=1"}
+            ]
+        },
+        "backurl": "http://localhost/moodle/mod/scorm/report.php?id=70&mode=interactions"
+    }
+}}
+<div class="container-fluid mb-3">
+    <div class="row">
+        <a class="btn btn-secondary mr-2" href="{{backurl}}">{{#str}}back, core {{/str}}</a>
+        {{#userreport}}
+            {{>core/url_select}}
+        {{/userreport}}
+    </div>
+</div>

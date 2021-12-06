@@ -20,6 +20,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_forum\local\entities\forum as forum_entity;
+
 defined('MOODLE_INTERNAL') || die();
 
 /** Include required files */
@@ -2599,6 +2601,22 @@ function forum_search_form($course, $search='') {
     return $output->render($forumsearch);
 }
 
+/**
+ * Retrieve HTML for the page action
+ *
+ * @param forum_entity|null $forum The forum entity.
+ * @param mixed $groupid false if groups not used, int if groups used, 0 means all groups
+ * @param stdClass $course The course object.
+ * @param string $search The search string.
+ * @return string rendered HTML string.
+ */
+function forum_activity_actionbar(?forum_entity $forum, $groupid, stdClass $course, string $search=''): string {
+    global $PAGE;
+
+    $actionbar = new mod_forum\output\forum_actionbar($forum, $course, $groupid, $search);
+    $output = $PAGE->get_renderer('mod_forum');
+    return $output->render($actionbar);
+}
 
 /**
  * @global object
@@ -5472,22 +5490,6 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         $discussionid = $params['d'];
     }
 
-    // Display all forum reports user has access to.
-    if (isloggedin() && !isguestuser()) {
-        $reportnames = array_keys(core_component::get_plugin_list('forumreport'));
-
-        foreach ($reportnames as $reportname) {
-            if (has_capability("forumreport/{$reportname}:view", $PAGE->cm->context)) {
-                $reportlinkparams = [
-                    'courseid' => $forumobject->course,
-                    'forumid' => $forumobject->id,
-                ];
-                $reportlink = new moodle_url("/mod/forum/report/{$reportname}/index.php", $reportlinkparams);
-                $forumnode->add(get_string('nodetitle', "forumreport_{$reportname}"), $reportlink, navigation_node::TYPE_CONTAINER);
-            }
-        }
-    }
-
     // For some actions you need to be enrolled, being admin is not enough sometimes here.
     $enrolled = is_enrolled($PAGE->cm->context, $USER, '', false);
     $activeenrolled = is_enrolled($PAGE->cm->context, $USER, '', true);
@@ -5500,6 +5502,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     if ($canmanage) {
         $mode = $forumnode->add(get_string('subscriptionmode', 'forum'), null, navigation_node::TYPE_CONTAINER);
         $mode->add_class('subscriptionmode');
+        $mode->set_show_in_secondary_navigation(false);
 
         // Optional subscription mode.
         $allowchoicestring = get_string('subscriptionoptional', 'forum');
@@ -5594,34 +5597,25 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         }
     }
 
-    if ($cansubscribe) {
-        if (\mod_forum\subscriptions::is_subscribed($USER->id, $forumobject, null, $PAGE->cm)) {
-            $linktext = get_string('unsubscribe', 'forum');
-        } else {
-            $linktext = get_string('subscribe', 'forum');
-        }
-        $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'sesskey'=>sesskey()));
-        $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
-
-        if (isset($discussionid)) {
-            if (\mod_forum\subscriptions::is_subscribed($USER->id, $forumobject, $discussionid, $PAGE->cm)) {
-                $linktext = get_string('unsubscribediscussion', 'forum');
-            } else {
-                $linktext = get_string('subscribediscussion', 'forum');
-            }
-            $url = new moodle_url('/mod/forum/subscribe.php', array(
-                    'id' => $forumobject->id,
-                    'sesskey' => sesskey(),
-                    'd' => $discussionid,
-                    'returnurl' => $PAGE->url->out(),
-                ));
-            $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
-        }
+    if (has_capability('mod/forum:viewsubscribers', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/forum/subscribers.php', ['id' => $forumobject->id, 'edit' => 'off']);
+        $forumnode->add(get_string('subscriptions', 'forum'), $url, navigation_node::TYPE_SETTING, null, 'forumsubscriptions');
     }
 
-    if (has_capability('mod/forum:viewsubscribers', $PAGE->cm->context)){
-        $url = new moodle_url('/mod/forum/subscribers.php', array('id'=>$forumobject->id));
-        $forumnode->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
+    // Display all forum reports user has access to.
+    if (isloggedin() && !isguestuser()) {
+        $reportnames = array_keys(core_component::get_plugin_list('forumreport'));
+
+        foreach ($reportnames as $reportname) {
+            if (has_capability("forumreport/{$reportname}:view", $PAGE->cm->context)) {
+                $reportlinkparams = [
+                    'courseid' => $forumobject->course,
+                    'forumid' => $forumobject->id,
+                ];
+                $reportlink = new moodle_url("/mod/forum/report/{$reportname}/index.php", $reportlinkparams);
+                $forumnode->add(get_string('reports'), $reportlink, navigation_node::TYPE_CONTAINER);
+            }
+        }
     }
 
     if ($enrolled && forum_tp_can_track_forums($forumobject)) { // keep tracking info for users with suspended enrolments

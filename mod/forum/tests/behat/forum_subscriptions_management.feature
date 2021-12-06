@@ -29,26 +29,12 @@ Feature: A teacher can control the subscription to a forum
     When I log in as "teacher"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Subscription mode | Auto subscription |
-    And I press "Save and return to course"
-    And I follow "Test forum name"
-    And I follow "Show/edit current subscribers"
-    Then ".userselector" "css_element" should not exist
-    And "Manage subscribers" "button" should exist
-    And I press "Manage subscribers"
-    And ".userselector" "css_element" should exist
-    And "Finish managing subscriptions" "button" should exist
-    And I press "Finish managing subscriptions"
-    And ".userselector" "css_element" should not exist
-    And "Manage subscribers" "button" should exist
-    And I press "Manage subscribers"
-    And ".userselector" "css_element" should exist
-    And "Finish managing subscriptions" "button" should exist
-    And I press "Finish managing subscriptions"
-    And ".userselector" "css_element" should not exist
-    And "Manage subscribers" "button" should exist
+    And I navigate to "Subscriptions" in current page administration
+    Then I select "Manage subscribers" from the "Subscribers" singleselect
+    And "Add" "button" should exist
+    And "Remove" "button" should exist
+    And I select "View subscribers" from the "Subscribers" singleselect
+    And the "Subscribers" select box should contain "View subscribers"
 
   @javascript
   Scenario Outline: Toggle forum subscription mode via settings navigation

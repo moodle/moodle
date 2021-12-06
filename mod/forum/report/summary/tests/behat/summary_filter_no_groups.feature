@@ -50,7 +50,7 @@ Feature: Groups report filter is not available if no groups exist
       | teacher1 | forum1 | discussion1 | D1 other course | ## 1 week ago ## |
       | teacher1 | forum1 | discussion2 | D2 other course | ## 4 days ago ## |
     When I am on the forum1C1 "forum activity" page logged in as teacher1
-    And I navigate to "Forum summary report" in current page administration
+    And I navigate to "Reports" in current page administration
     Then "Groups" "button" should not exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions |

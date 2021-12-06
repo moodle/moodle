@@ -42,6 +42,7 @@ if ($page !== 0) {
     $url->param('showall', $showall);
 }
 $PAGE->set_url($url);
+$PAGE->set_secondary_active_tab("modulepage");
 
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
 $attemptobj->preload_all_attempt_step_users();

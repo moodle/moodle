@@ -995,16 +995,16 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
                                                         'action' => $CFG->wwwroot.'/mod/scorm/player.php',
                                                         'class' => 'container'));
         if ($scorm->hidebrowse == 0) {
-            print_string('mode', 'scorm');
-            echo ': '.html_writer::empty_tag('input', array('type' => 'radio', 'id' => 'b', 'name' => 'mode',
-                    'value' => 'browse', 'class' => 'mr-1')).
-                        html_writer::label(get_string('browse', 'scorm'), 'b');
-            echo html_writer::empty_tag('input', array('type' => 'radio',
-                                                        'id' => 'n', 'name' => 'mode',
-                                                        'value' => 'normal', 'checked' => 'checked',
-                                                        'class' => 'mx-1')).
-                    html_writer::label(get_string('normal', 'scorm'), 'n');
-
+            echo html_writer::empty_tag('button',
+                [
+                    'class' => 'btn btn-secondary mr-1', 'name' => 'mode',
+                    'type' => 'submit', 'id' => 'b', 'value' => 'browse']) .
+                    get_string('browse', 'scorm') . html_writer::end_tag('button');
+            echo html_writer::empty_tag('button',
+                [
+                    'class' => 'btn btn-primary mx-1', 'name' => 'mode',
+                    'type' => 'submit', 'id' => 'n', 'value' => 'normal']) .
+                    get_string('enter', 'scorm') . html_writer::end_tag('button');
         } else {
             echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'mode', 'value' => 'normal'));
         }
@@ -1026,8 +1026,6 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'scoid', 'value' => $launchsco));
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'cm', 'value' => $cm->id));
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'currentorg', 'value' => $orgidentifier));
-        echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('enter', 'scorm'),
-                'class' => 'btn btn-primary'));
         echo html_writer::end_tag('form');
         echo html_writer::end_div();
     }

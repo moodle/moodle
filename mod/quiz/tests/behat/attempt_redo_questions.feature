@@ -34,7 +34,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript
   Scenario: After completing a question, there is a redo question button that restarts the question
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I press "Attempt quiz now"
+    When I follow "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I press "Try another question like this one"
@@ -44,7 +44,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript
   Scenario: The redo question button is visible but disabled for teachers
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I press "Attempt quiz now"
+    When I follow "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I log out
@@ -56,7 +56,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript
   Scenario: The redo question buttons are no longer visible after the attempt is submitted.
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I press "Attempt quiz now"
+    When I follow "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I press "Finish attempt ..."
@@ -67,7 +67,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript @_switch_window
   Scenario: Teachers reviewing can see all the questions attempted in a slot
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I press "Attempt quiz now"
+    When I follow "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I press "Try another question like this one"
@@ -96,7 +96,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript
   Scenario: Redoing question 1 should save any changes to question 2 on the same page
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I press "Attempt quiz now"
+    When I follow "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I click on "True" "radio" in the "Second question" "question"
@@ -119,7 +119,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
       | slot | actualquestion |
       | 1    | TF1            |
     And I am on the "Quiz 2" "mod_quiz > View" page logged in as "student"
-    When I press "Continue the last attempt"
+    When I follow "Attempt quiz"
     And I should see "First question"
     And I click on "False" "radio"
     And I click on "Check" "button"

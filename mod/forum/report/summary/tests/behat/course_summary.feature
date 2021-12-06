@@ -56,7 +56,7 @@ Feature: Course level forum summary report
 
   Scenario: Course forum summary report can be viewed by teacher and contains accurate data
     When I am on the forum2 "forum activity" page logged in as teacher1
-    And I navigate to "Forum summary report" in current page administration
+    And I navigate to "Reports" in current page administration
     And I should see "Export posts"
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |                                 |                                |
@@ -91,7 +91,7 @@ Feature: Course level forum summary report
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Forum summary report" in current page administration
+    And I navigate to "Reports" in current page administration
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |                                 |                                 |
       | First name / Surname | -2-         | -3-     | Earliest post                   | Most recent post                |

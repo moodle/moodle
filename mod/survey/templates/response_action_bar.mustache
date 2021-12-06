@@ -1,0 +1,72 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_survey/response_action_bar
+    Actions bar for the reports page UI.
+    Classes required for JS:
+    * none
+    Context variables required for this template:
+    * see mod/survey/classes/output/actionbar.php
+    Example context (json):
+    {
+        "download": {
+            "link": "http://foobar",
+            "text": "foobar site",
+            "urlselect": {
+                "id": "url_select123",
+                "sesskey": "sesskey",
+                "action": "http://localhost/moodle/course/jumpto.php",
+                "disabled": false,
+                "formid": "surveyresponseselect",
+                "classes": "urlselect",
+                "options": [
+                    {
+                        "name": "Summary",
+                        "value": "/mod/survey/report.php?id=12&action=summary",
+                        "selected": true
+                    },
+                    {
+                        "name": "Scales",
+                        "value": "/mod/survey/report.php?id=12&action=scales",
+                        "selected": false
+                    },
+                    {
+                        "name": "Questions",
+                        "value": "/mod/survey/report.php?id=12&action=questions",
+                        "selected": false
+                    },
+                    {
+                        "name": "Participants",
+                        "value": "/mod/survey/report.php?id=12&action=students",
+                        "selected": false
+                    }
+                ]
+            }
+        }
+    }
+}}
+<div class="container-fluid">
+    <div class="row justify-content-between">
+        <div class="col-xs-6 float-left">
+        {{#urlselect}}
+            {{>core/url_select}}
+        {{/urlselect}}
+        </div>
+        {{#download}}
+        <div class="col-sm-6 float-right">
+            <a class="btn btn-secondary float-right" href="{{link}}">{{text}}</a>
+        </div>
+        {{/download}}
+    </div>
+</div>

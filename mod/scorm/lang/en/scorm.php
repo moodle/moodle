@@ -213,7 +213,7 @@ $string['indicator:socialbreadth_help'] = 'This indicator is based on the social
 $string['indicator:socialbreadthdef'] = 'SCORM social';
 $string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the SCORM activities during this analysis interval (Levels = No participation, Participant alone)';
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
-$string['info'] = 'Info';
+
 $string['interactions'] = 'Interactions';
 $string['masteryoverride'] = 'Mastery score overrides status';
 $string['masteryoverride_help'] = 'If enabled and a mastery score is provided, when LMSFinish is called and a raw score has been set, status will be recalculated using the raw score and mastery score and any status provided by the SCORM (including "incomplete") will be overridden.';
@@ -458,3 +458,6 @@ $string['youmustselectastatus'] = 'You must select a status to require';
 
 // Deprecated since Moodle 3.8.
 $string['duedate'] = 'Due date';
+
+// Deprecated since Moodle 4.0.
+$string['info'] = 'Info';
