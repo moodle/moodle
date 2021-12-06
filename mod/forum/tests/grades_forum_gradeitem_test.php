@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tests\mod_forum\grades;
+namespace mod_forum\grade;
 
 use core_grades\component_gradeitem;
 use mod_forum\grades\forum_gradeitem as gradeitem;

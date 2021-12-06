@@ -22,7 +22,7 @@
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tests\core_course;
+namespace core_course;
 
 defined('MOODLE_INTERNAL') || die();
 

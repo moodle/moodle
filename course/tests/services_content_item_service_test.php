@@ -22,12 +22,12 @@
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tests\course;
+namespace core_course;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_course\local\service\content_item_service;
-use \core_course\local\repository\content_item_readonly_repository;
+use core_course\local\service\content_item_service;
+use core_course\local\repository\content_item_readonly_repository;
 
 /**
  * The tests for the content_item_service class.

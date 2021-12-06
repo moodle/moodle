@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tests\gradingform_guide;
+namespace gradingform_guide;
 
 use context_module;
 use gradingform_controller;
