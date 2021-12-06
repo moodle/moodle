@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Question statistics';
-$string['privacy:metadata'] = 'Question statistics plugin does not store any user data.';
+$string['privacy:metadata'] = 'The Question statistics question bank plugin does not store any user data.';
 
 // Columns.
 $string['facility_index'] = 'Facility index';
@@ -34,7 +34,7 @@ $string['discriminative_efficiency'] = 'Discriminative efficiency';
 $string['discrimination_index'] = 'Need for revision';
 
 // Text format.
-$string['verylikely'] = 'very likely';
-$string['likely'] = 'likely';
-$string['unlikely'] = 'unlikely';
+$string['verylikely'] = 'Very likely';
+$string['likely'] = 'Likely';
+$string['unlikely'] = 'Unlikely';
 $string['na'] = 'N/A';

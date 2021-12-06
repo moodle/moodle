@@ -492,10 +492,10 @@ $string['savingchanges'] = 'Saving changes...';
 $string['saveoverrideandstay'] = 'Save and enter another override';
 $string['scale'] = 'Scale';
 $string['search:activity'] = 'Assignment - activity information';
-$string['sendstudentnotificationsdefault'] = 'Default setting for "Notify students"';
-$string['sendstudentnotificationsdefault_help'] = 'Set the default value for the "Notify students" checkbox on the grading form.';
-$string['sendstudentnotifications'] = 'Notify students';
-$string['sendstudentnotifications_help'] = 'If enabled, students receive a message about the updated grade or feedback. If marking workflow is enabled in this assignment, notifications will not be sent until the grade is "Released".';
+$string['sendstudentnotificationsdefault'] = 'Default for \'Notify student\'';
+$string['sendstudentnotificationsdefault_help'] = 'When grading each student, should \'Notify student\' be ticked by default?';
+$string['sendstudentnotifications'] = 'Notify student';
+$string['sendstudentnotifications_help'] = 'Tick this box to send a notification about the updated grade or feedback. If the assignment uses a marking workflow, or the grades are hidden in the grader report, then the notification will not be sent until the grade is released.';
 $string['sendnotifications'] = 'Notify graders about submissions';
 $string['sendnotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an assignment, early, on time and late. Message methods are configurable.';
 $string['selectlink'] = 'Select...';
@@ -514,8 +514,8 @@ $string['showrecentsubmissions'] = 'Show recent submissions';
 $string['status'] = 'Status';
 $string['studentnotificationworkflowstateerror'] = 'Marking workflow state must be \'Released\' to notify students.';
 $string['submissionattachments'] = 'Only show files during submission.';
-$string['submissionattachments_help'] = 'When enabled files will only be shown on submission screen.
-When disabled files will be shown on both assignment view and submission screens.';
+$string['submissionattachments_help'] = 'When enabled, files will only be shown on the submission screen.
+When disabled, files will be shown on both assignment view and submission screens.';
 $string['confirmstart'] = 'Your submission will have a time limit of {$a}. When you start, the timer will begin to count down and cannot be paused. You must finish your submission before it expires. Are you sure you wish to start now? ';
 $string['submissioncopiedtext'] = 'You have made a copy of your previous
 assignment submission for \'{$a->assignment}\'

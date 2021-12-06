@@ -24,7 +24,7 @@
  */
 
 $string['pluginname'] = 'Question usage';
-$string['privacy:metadata'] = 'Question usage plugin does not store any user data.';
+$string['privacy:metadata'] = 'The Question usage question bank plugin does not store any user data.';
 $string['questionusage'] = 'Usage';
 $string['usageheader'] = 'Question usage';
 

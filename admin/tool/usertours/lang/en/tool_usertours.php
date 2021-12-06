@@ -104,8 +104,7 @@ Some example values include:
 * /mod/forum/view.php% - to match the forum discussion list
 * /user/profile.php% - to match the user profile page
 
-If you wish to display a tour on the Site Home page, you can use the value: "FRONTPAGE".
-';
+If you wish to display a tour on the site home, you can use the value: "FRONTPAGE".';
 $string['placement'] = 'Placement';
 $string['pluginname'] = 'User tours';
 $string['resettouronpage'] = 'Reset user tour on this page';
@@ -168,7 +167,7 @@ $string['tour1_content_welcome'] = 'Welcome to the Boost theme. If you\'ve upgra
 $string['tour1_title_navigation'] = 'Navigation';
 $string['tour1_content_navigation'] = 'Major navigation is now through this nav drawer. The contents update depending on where you are in the site. Use the button at the top to hide or show it.';
 $string['tour1_title_customisation'] = 'Customisation';
-$string['tour1_content_customisation'] = 'To customise the look of your site and the front page, use the settings menu in the corner of this header. Try turning editing on right now.';
+$string['tour1_content_customisation'] = 'To customise the look of your site and the site home, use the settings menu in the corner of this header. Try turning editing on right now.';
 $string['tour1_title_blockregion'] = 'Block region';
 $string['tour1_content_blockregion'] = 'There is still a block region over here. We recommend removing the Navigation and Administration blocks completely, as all the functionality is elsewhere in the Boost theme.';
 $string['tour1_title_addingblocks'] = 'Adding blocks';
