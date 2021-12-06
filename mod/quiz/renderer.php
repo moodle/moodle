@@ -1399,16 +1399,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Get rendered HTML for the action area of the results page.
-     *
-     * @param \mod_quiz\output\resultsaction $resultsaction resultsaction object.
-     * @return string rendered HTML string from the template.
-     */
-    public function get_results_action(\mod_quiz\output\resultsaction $resultsaction): string {
-        return $this->render_from_template('mod_quiz/quiz_results_action', $resultsaction->export_for_template($this));
-    }
-
-    /**
      * Get rendered HTML for the action area of the overrides page.
      *
      * @param \mod_quiz\output\overridesaction $overridesaction the overridesaction object.
