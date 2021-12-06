@@ -1310,7 +1310,9 @@ class manager {
             return;
         }
 
-        if (defined('READ_ONLY_SESSION') && READ_ONLY_SESSION && !empty($CFG->enable_read_only_sessions)) {
+        $readonlysession = defined('READ_ONLY_SESSION') && READ_ONLY_SESSION;
+        $readonlydebugging = !empty($CFG->enable_read_only_sessions) || !empty($CFG->enable_read_only_sessions_debug);
+        if ($readonlysession && $readonlydebugging) {
             return;
         }
 
