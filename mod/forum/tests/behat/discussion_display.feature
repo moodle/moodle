@@ -18,21 +18,15 @@ Feature: Students can choose from 4 discussion display options and their choice 
       | course   | C1              |
       | activity | forum           |
       | name     | Test forum name |
-    And I am on the "Course 1" course page logged in as admin
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 1 |
-      | Message | Discussion contents 1, first message |
-    And I reply "Discussion 1" post from "Test forum name" forum with:
-      | Subject | Reply 1 to discussion 1 |
-      | Message | Discussion contents 1, second message |
-    And I am on the "Course 1" course page
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 2 |
-      | Message | Discussion contents 2, first message |
-    And I reply "Discussion 2" post from "Test forum name" forum with:
-      | Subject | Reply 1 to discussion 2 |
-      | Message | Discussion contents 2, second message |
-    And I log out
+      | idnumber | forum           |
+    And the following "mod_forum > discussions" exist:
+      | forum | name | subject | message |
+      | forum | Discussion 1 | Discussion 1 | Discussion contents 1, first message |
+      | forum | Discussion 2 | Discussion 2 | Discussion contents 2, first message |
+    And the following "mod_forum > posts" exist:
+      | parentsubject | subject | message |
+      | Discussion 1 | Reply 1 to discussion 1 | Discussion contents 1, second message |
+      | Discussion 2 | Reply 1 to discussion 2 | Discussion contents 2, second message |
 
   Scenario: Display replies flat, with oldest first
     Given I am on the "Course 1" course page logged in as student1
