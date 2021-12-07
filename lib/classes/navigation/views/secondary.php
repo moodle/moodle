@@ -216,65 +216,6 @@ class secondary extends view {
     }
 
     /**
-     * Recursively goes and gets all children nodes.
-     *
-     * @param navigation_node $node The node to get the children of.
-     * @return array The additional child nodes.
-     */
-    protected function get_additional_child_nodes(navigation_node $node): array {
-        $nodes = [];
-        foreach ($node->children as $child) {
-            if ($child->has_action()) {
-                $nodes[$child->action->out()] = $child->text;
-            }
-            if ($child->has_children()) {
-                $childnodes = $this->get_additional_child_nodes($child);
-                $nodes = array_merge($nodes, $childnodes);
-            }
-        }
-        return $nodes;
-    }
-
-    /**
-     * Returns an array of sections, actions, and text for a url select menu.
-     *
-     * @param navigation_node $node The node to use for a url select menu.
-     * @return array The menu array.
-     */
-    protected function get_menu_array(navigation_node $node): array {
-        $urldata = [];
-
-        // Check that children have children.
-        $additionalchildren = false;
-        $initialchildren = [];
-        if ($node->has_action()) {
-            $initialchildren[$node->action->out()] = $node->text;
-        }
-        foreach ($node->children as $child) {
-            $additionalnode = [];
-            if ($child->has_action()) {
-                $additionalnode[$child->action->out()] = $child->text;
-            }
-
-            if ($child->has_children()) {
-                $additionalchildren = true;
-                $text = (is_a($child->text, 'lang_string')) ? $child->text->out() : $child->text;
-                $urldata[][$text] = $additionalnode + $this->get_additional_child_nodes($child);
-            } else {
-                $initialchildren += $additionalnode;
-            }
-        }
-        if ($additionalchildren) {
-            $text = (is_a($node->text, 'lang_string')) ? $node->text->out() : $node->text;
-            $urldata[][$text] = $initialchildren;
-        } else {
-            $urldata = $initialchildren;
-        }
-
-        return $urldata;
-    }
-
-    /**
      * Returns a node with the action being from the first found child node that has an action (Recursive).
      *
      * @param navigation_node $node The part of the node tree we are checking.
@@ -514,7 +455,7 @@ class secondary extends view {
             if (is_null($courseoverflownode)) {
                 return null;
             }
-            $menuarray = $this->get_menu_array($courseoverflownode);
+            $menuarray = static::create_menu_element([$courseoverflownode]);
             if ($activenode->key != 'courseadmin') {
                 $inmenu = false;
                 foreach ($menuarray as $key => $value) {
@@ -576,9 +517,9 @@ class secondary extends view {
         if (!isset($menunode) || !$menunode->has_children()) {
             return null;
         }
-        $selectdata = $this->get_menu_array($menunode);
-        $urlselect = new url_select($selectdata, $matchednode->action->out(), null);
-        $urlselect->set_label(get_string('browsesettingindex', 'course'), ['class' => 'sr_only']);
+        $selectdata = static::create_menu_element([$menunode], false);
+        $urlselect = new url_select($selectdata, $matchednode->action->out(false), null);
+        $urlselect->set_label(get_string('browsesettingindex', 'course'), ['class' => 'sr-only']);
         return $urlselect;
     }
 
