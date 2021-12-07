@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="behat.moodle.parameters"></parameter>
+        <parameter key="moodle.context.initializer.class">Moodle\BehatExtension\Context\Initializer\MoodleAwareInitializer</parameter>
+        <parameter key="moodle.context.contextclass.classresolver.class">Moodle\BehatExtension\Context\ContextClass\ClassResolver</parameter>
+        <parameter key="behat.mink.selector.handler.class">Behat\Mink\Selector\SelectorsHandler</parameter>
+    </parameters>
+
+    <services>
+        <!-- Moodle context initializer -->
+        <service id="moodle.context.initializer" class="%moodle.context.initializer.class%">
+            <argument>%behat.moodle.parameters%</argument>
+            <tag name="context.initializer" />
+        </service>
+
+        <!-- Moodle class resolver for behat context -->
+        <service id="moodle.context.contextclass.classresolver" class="%moodle.context.contextclass.classresolver.class%">
+            <argument>%behat.moodle.parameters%</argument>
+            <tag name="context.class_resolver" />
+        </service>
+    </services>
+</container>
