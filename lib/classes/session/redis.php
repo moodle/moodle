@@ -193,7 +193,7 @@ class redis extends handler {
 
             try {
 
-                $delay = rand(100000, 500000);
+                $delay = rand(100, 500);
 
                 // One second timeout was chosen as it is long for connection, but short enough for a user to be patient.
                 if (!$this->connection->connect($this->host, $this->port, 1, null, $delay)) {
