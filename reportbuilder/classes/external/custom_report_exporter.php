@@ -30,6 +30,7 @@ use core_reportbuilder\table\custom_report_table_filterset;
 use core_reportbuilder\table\custom_report_table_view;
 use core_reportbuilder\table\custom_report_table_view_filterset;
 use core_reportbuilder\local\helpers\report as report_helper;
+use core_table\local\filter\integer_filter;
 
 /**
  * Custom report exporter class
@@ -78,6 +79,7 @@ class custom_report_exporter extends persistent_exporter {
      */
     protected static function define_related(): array {
         return [
+            'pagesize' => 'int?',
         ];
     }
 
@@ -119,8 +121,12 @@ class custom_report_exporter extends persistent_exporter {
             $table = custom_report_table::create($this->persistent->get('id'));
             $table->set_filterset(new custom_report_table_filterset());
         } else {
+            // We store the pagesize within the table filterset so that it's available between AJAX requests.
+            $filterset = new custom_report_table_view_filterset();
+            $filterset->add_filter(new integer_filter('pagesize', null, [$this->related['pagesize']]));
+
             $table = custom_report_table_view::create($this->persistent->get('id'), $this->download);
-            $table->set_filterset(new custom_report_table_view_filterset());
+            $table->set_filterset($filterset);
 
             // Generate filters form if report contains any filters.
             $source = $this->persistent->get('source');
