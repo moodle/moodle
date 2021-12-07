@@ -6,8 +6,18 @@
     "homepage": "https://moodle.org",
     "require-dev": {
         "phpunit/phpunit": "8.5.*",
-        "moodlehq/behat-extension": "3.310.3",
-        "mikey179/vfsstream": "^1.6"
+        "mikey179/vfsstream": "^1.6",
+        "behat/mink": "~1.8",
+        "behat/mink-extension": "~2.3",
+        "behat/mink-goutte-driver": "~1.2",
+        "symfony/process": "^4.0 || ^5.0",
+        "behat/behat": "3.8.*",
+        "oleg-andreyev/mink-phpwebdriver": "^1.0"
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "Moodle\\BehatExtension": "lib/behat/extension/"
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
