@@ -202,7 +202,7 @@ class completion_test extends \advanced_testcase {
         $event = reset($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\mod_bigbluebuttonbn\event\activity_viewed', $event);
+        $this->assertInstanceOf('\mod_bigbluebuttonbn\event\course_module_viewed', $event);
         $this->assertEquals($bbactivitycontext, $event->get_context());
         $url = new \moodle_url('/mod/bigbluebuttonbn/view.php', ['id' => $bbactivitycontext->instanceid]);
         $this->assertEquals($url, $event->get_url());
