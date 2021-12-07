@@ -209,15 +209,6 @@ abstract class system_report extends base {
     }
 
     /**
-     * Default 'per page' size. Can be overridden by system reports to define a different paging value
-     *
-     * @return int
-     */
-    public function get_default_per_page(): int {
-        return self::DEFAULT_PAGESIZE;
-    }
-
-    /**
      * Called before rendering each row. Can be overridden to pre-fetch/create objects and store them in the class, which can
      * later be used in column and action callbacks
      *
