@@ -1334,6 +1334,7 @@ $string['moodledocs'] = 'Moodle Docs';
 $string['moodledocslink'] = 'Help and documentation';
 $string['moodleversion'] = 'Moodle version';
 $string['moodlerelease'] = 'Moodle release';
+$string['moodleservicesandsupport'] = 'Services and support';
 $string['more'] = 'more';
 $string['morehelp'] = 'More help';
 $string['morehelpaboutmodule'] = 'More help about the {$a} activity';
