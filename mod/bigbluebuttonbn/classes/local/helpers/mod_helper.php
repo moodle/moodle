@@ -122,9 +122,6 @@ class mod_helper {
         if (!isset($bigbluebuttonbn->lockonjoinconfigurable)) {
             $bigbluebuttonbn->lockonjoinconfigurable = 0;
         }
-        if (!isset($bigbluebuttonbn->recordings_validate_url)) {
-            $bigbluebuttonbn->recordings_validate_url = 1;
-        }
     }
 
     /**

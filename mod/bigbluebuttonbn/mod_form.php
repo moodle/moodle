@@ -511,15 +511,6 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
      */
     private function bigbluebuttonbn_mform_add_block_room_recordings(MoodleQuickForm &$mform, array $cfg): void {
         $recordingsettings = false;
-        $field = ['type' => 'hidden', 'name' => 'recordings_html', 'data_type' => PARAM_INT,
-            'description_key' => null];
-        if ($cfg['recordings_html_editable']) {
-            $field['type'] = 'checkbox';
-            $field['description_key'] = 'mod_form_field_recordings_html';
-            $recordingsettings = true;
-        }
-        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['recordings_html_default']);
         $field = ['type' => 'hidden', 'name' => 'recordings_deleted', 'data_type' => PARAM_INT,
             'description_key' => null];
         if ($cfg['recordings_deleted_editable']) {
@@ -569,7 +560,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             $mform->addElement('header', 'room', get_string('mod_form_block_room', 'bigbluebuttonbn'));
             $this->bigbluebuttonbn_mform_add_block_room_room($mform, $cfg);
         }
-        if ($cfg['recordings_html_editable'] || $cfg['recordings_deleted_editable'] ||
+        if ($cfg['recordings_deleted_editable'] ||
             $cfg['recordings_imported_editable'] || $cfg['recordings_preview_editable']) {
             $mform->addElement('header', 'recordings', get_string('mod_form_block_recordings', 'bigbluebuttonbn'));
             $this->bigbluebuttonbn_mform_add_block_room_recordings($mform, $cfg);

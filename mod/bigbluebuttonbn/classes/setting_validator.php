@@ -75,15 +75,12 @@ class setting_validator {
      */
     public static function section_show_recordings_shown() {
         global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['recordings_html_default']) ||
-                !isset($CFG->bigbluebuttonbn['recordings_html_editable']) ||
-                !isset($CFG->bigbluebuttonbn['recordings_deleted_default']) ||
+        return (!isset($CFG->bigbluebuttonbn['recordings_deleted_default']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_deleted_editable']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_imported_default']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_imported_editable']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_preview_default']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_preview_editable']) ||
-                !isset($CFG->bigbluebuttonbn['recordings_validate_url']) ||
                 !isset($CFG->bigbluebuttonbn['recording_protect_editable'])
               );
     }
