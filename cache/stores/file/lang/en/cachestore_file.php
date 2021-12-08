@@ -28,6 +28,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['asyncpurge'] = 'Asynchronously purge directory';
+$string['asyncpurge_help'] = 'If enabled, new directory is created with cache revision and old directory will be deleted Asynchronously via schedule task';
 $string['autocreate'] = 'Auto create directory';
 $string['autocreate_help'] = 'If enabled the directory specified in path will be automatically created if it does not already exist.';
 $string['path'] = 'Cache path';
@@ -45,6 +47,7 @@ It is advisable to only turn this on if the following is true:
 
 * If you know the number of items in the cache is going to be small enough that it won\'t cause issues on the file system you are running with.
 * The data being cached is not expensive to generate. If it is then sticking with the default may still be the better option as it reduces the chance of issues.';
+$string['task_asyncpurge'] = 'Asynchronously purge file store old cache revision directories';
 
 /**
  * This is is like the file store, but designed for siutations where:
