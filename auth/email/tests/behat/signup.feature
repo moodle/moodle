@@ -11,7 +11,7 @@ Feature: User must accept policy when logging in and signing up
     And I am on site homepage
     And I follow "Log in"
     When I click on "Create new account" "link"
-    Then I should not see "I understand and agree. (Be aware that this acknowledgement may not include optional site policies.). (Be aware that this acknowledgement may not include optional site policies.)"
+    Then I should not see "I understand and agree. (Be aware that this acknowledgement may not include optional site policies.)"
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
@@ -41,7 +41,7 @@ Feature: User must accept policy when logging in and signing up
     And I am on site homepage
     And I follow "Log in"
     When I click on "Create new account" "link"
-    Then the field "I understand and agree. (Be aware that this acknowledgement may not include optional site policies.). (Be aware that this acknowledgement may not include optional site policies.)" matches value "0"
+    Then the field "I understand and agree. (Be aware that this acknowledgement may not include optional site policies.)" matches value "0"
     And I set the following fields to these values:
       | Username      | user1                 |
       | Password      | user1                 |
