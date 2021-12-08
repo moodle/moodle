@@ -479,7 +479,14 @@ class redis extends handler {
                 // phpcs:ignore
                 error_log("Cannot obtain session lock for sid: $id within $this->acquiretimeout seconds. " .
                     "It is likely another page ($whohaslock) has a long session lock, or the session lock was never released.");
-                throw new exception("Unable to obtain session lock");
+                $acquiretimeout = format_time($this->acquiretimeout);
+                $lockexpire = format_time($this->lockexpire);
+                $a = (object)[
+                    'id' => substr($id, 0, 10),
+                    'acquiretimeout' => $acquiretimeout,
+                    'whohaslock' => $whohaslock,
+                    'lockexpire' => $lockexpire];
+                throw new exception("sessioncannotobtainlock", 'error', '', $a);
             }
 
             if ($this->time() < $startlocktime + 5) {
