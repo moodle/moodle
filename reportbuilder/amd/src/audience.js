@@ -26,7 +26,8 @@
 import Templates from 'core/templates';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {prefetchStrings} from 'core/prefetch';
+import {get_string as getString} from 'core/str';
 import DynamicForm from 'core_form/dynamicform';
 import {add as addToast} from 'core/toast';
 import {deleteAudience} from 'core_reportbuilder/local/repository/audiences';
@@ -148,25 +149,23 @@ const initAudienceCardForm = audienceCard => {
 const deleteAudienceCard = audienceCard => {
     const audienceTitle = audienceCard.dataset.title;
 
-    getStrings([
-        {key: 'deleteaudience', component: 'core_reportbuilder', param: audienceTitle},
-        {key: 'deleteaudienceconfirm', component: 'core_reportbuilder', param: audienceTitle},
-        {key: 'delete', component: 'moodle'},
-    ]).then(([confirmTitle, confirmText, confirmButton]) => {
-        Notification.confirm(confirmTitle, confirmText, confirmButton, null, () => {
-            const pendingPromise = new Pending('core_reportbuilder/audience:delete');
+    Notification.saveCancelPromise(
+        getString('deleteaudience', 'core_reportbuilder', audienceTitle),
+        getString('deleteaudienceconfirm', 'core_reportbuilder', audienceTitle),
+        getString('delete', 'core')
+    ).then(() => {
+        const pendingPromise = new Pending('core_reportbuilder/audience:delete');
 
-            deleteAudience(reportId, audienceCard.dataset.instanceid)
-                .then(() => getString('audiencedeleted', 'core_reportbuilder', audienceTitle))
-                .then(addToast)
-                .then(() => {
-                    removeAudienceCard(audienceCard);
-                    return pendingPromise.resolve();
-                })
-                .catch(Notification.exception);
-        });
+        return deleteAudience(reportId, audienceCard.dataset.instanceid)
+            .then(() => addToast(getString('audiencedeleted', 'core_reportbuilder', audienceTitle)))
+            .then(() => {
+                removeAudienceCard(audienceCard);
+                return pendingPromise.resolve();
+            })
+            .catch(Notification.exception);
+    }).catch(() => {
         return;
-    }).catch(Notification.exception);
+    });
 };
 
 /**
@@ -215,6 +214,18 @@ let initialized = false;
  * @param {Number} contextid
  */
 export const init = (id, contextid) => {
+    prefetchStrings('core_reportbuilder', [
+        'audienceadded',
+        'audiencedeleted',
+        'audiencesaved',
+        'deleteaudience',
+        'deleteaudienceconfirm',
+    ]);
+
+    prefetchStrings('core', [
+        'delete',
+    ]);
+
     reportId = id;
     contextId = contextid;
 

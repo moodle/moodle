@@ -29,9 +29,10 @@ import 'core/inplace_editable';
 import {eventTypes as inplaceEditableEvents} from 'core/local/inplace_editable/events';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
+import {prefetchStrings} from 'core/prefetch';
 import {publish} from 'core/pubsub';
 import SortableList from 'core/sortable_list';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {get_string as getString} from 'core/str';
 import {add as addToast} from 'core/toast';
 import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
@@ -39,11 +40,24 @@ import {addColumn, deleteColumn, reorderColumn} from 'core_reportbuilder/local/r
 import {getColumnSorting} from 'core_reportbuilder/local/repository/sorting';
 
 /**
- * Initialise module
+ * Initialise module, prefetch all required strings
  *
  * @param {Boolean} initialized Ensure we only add our listeners once
  */
-export const init = (initialized) => {
+export const init = initialized => {
+    prefetchStrings('core_reportbuilder', [
+        'columnadded',
+        'columnaggregated',
+        'columndeleted',
+        'columnmoved',
+        'deletecolumn',
+        'deletecolumnconfirm',
+    ]);
+
+    prefetchStrings('core', [
+        'delete',
+    ]);
+
     if (initialized) {
         return;
     }
@@ -78,26 +92,24 @@ export const init = (initialized) => {
             const columnHeader = reportRemoveColumn.closest(reportSelectors.regions.columnHeader);
             const columnName = columnHeader.dataset.columnName;
 
-            getStrings([
-                {key: 'deletecolumn', component: 'core_reportbuilder', param: columnName},
-                {key: 'deletecolumnconfirm', component: 'core_reportbuilder', param: columnName},
-                {key: 'delete', component: 'moodle'},
-            ]).then(([confirmTitle, confirmText, confirmButton]) => {
-                Notification.confirm(confirmTitle, confirmText, confirmButton, null, () => {
-                    const pendingPromise = new Pending('core_reportbuilder/columns:remove');
+            Notification.saveCancelPromise(
+                getString('deletecolumn', 'core_reportbuilder', columnName),
+                getString('deletecolumnconfirm', 'core_reportbuilder', columnName),
+                getString('delete', 'core')
+            ).then(() => {
+                const pendingPromise = new Pending('core_reportbuilder/columns:remove');
 
-                    deleteColumn(reportElement.dataset.reportId, columnHeader.dataset.columnId)
-                        .then(data => publish(reportEvents.publish.reportColumnsUpdated, data))
-                        .then(() => getString('columndeleted', 'core_reportbuilder', columnName))
-                        .then(addToast)
-                        .then(() => {
-                            dispatchEvent(reportEvents.tableReload, {preservePagination: true}, reportElement);
-                            return pendingPromise.resolve();
-                        })
-                        .catch(Notification.exception);
-                });
+                return deleteColumn(reportElement.dataset.reportId, columnHeader.dataset.columnId)
+                    .then(data => publish(reportEvents.publish.reportColumnsUpdated, data))
+                    .then(() => addToast(getString('columndeleted', 'core_reportbuilder', columnName)))
+                    .then(() => {
+                        dispatchEvent(reportEvents.tableReload, {preservePagination: true}, reportElement);
+                        return pendingPromise.resolve();
+                    })
+                    .catch(Notification.exception);
+            }).catch(() => {
                 return;
-            }).catch(Notification.exception);
+            });
         }
     });
 
