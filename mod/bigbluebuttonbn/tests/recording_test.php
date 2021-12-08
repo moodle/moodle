@@ -253,4 +253,52 @@ class recording_test extends \advanced_testcase {
         }, $recordings);
         $this->assertContains($recordingname, $recordingnames);
     }
+
+    /**
+     * Simple recording with breakoutroom fetcher test
+     *
+     * @return void
+     */
+    public function test_recordings_breakoutroom() {
+        $this->resetAfterTest();
+        $this->initialise_mock_server();
+        [$context, $cm, $bbbactivity] = $this->create_instance();
+        $instance = instance::get_from_instanceid($bbbactivity->id);
+        $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
+        $mainmeeting = $bbbgenerator->create_meeting([
+                'instanceid' => $instance->get_instance_id(),
+                'groupid' => $instance->get_group_id(),
+        ]);
+        // This creates a meeting to receive the recordings (specific to the mock server implementation). See recording_proxy_test.
+        $bbbgenerator->create_meeting([
+                'instanceid' => $instance->get_instance_id(),
+                'groupid' => $instance->get_group_id(),
+                'isBreakout' => true,
+                'sequence' => 1
+        ]);
+        $bbbgenerator->create_meeting([
+                'instanceid' => $instance->get_instance_id(),
+                'groupid' => $instance->get_group_id(),
+                'isBreakout' => true,
+                'sequence' => 2
+        ]);
+        // For now only recording from the main room have been created.
+        $this->create_recordings_for_instance($instance,
+                [
+                        ['name' => 'Recording 1'],
+                ]
+        );
+        $recordings = recording::get_recordings_for_instance($instance);
+        $this->assertCount(1, $recordings);
+
+        // Now the breakoutroom recordings appears.
+        $this->create_recordings_for_instance($instance,
+                [
+                        ['name' => 'Recording 2', 'isBreakout' => true, 'sequence' => 1],
+                        ['name' => 'Recording 3', 'isBreakout' => true, 'sequence' => 2]
+                ]
+        );
+        $recordings = recording::get_recordings_for_instance($instance);
+        $this->assertCount(3, $recordings);
+    }
 }

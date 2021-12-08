@@ -117,8 +117,6 @@ class recording extends persistent {
         bool $includeimported = false,
         bool $onlyimported = false
     ): array {
-        global $DB;
-
         [$selects, $params] = self::get_basic_select_from_parameters(false, $includeimported, $onlyimported);
         $selects[] = "bigbluebuttonbnid = :bbbid";
         $params['bbbid'] = $instance->get_instance_id();
@@ -802,12 +800,37 @@ class recording extends persistent {
 
         $foundcount = 0;
         foreach ($metadatas as $recordingid => $metadata) {
-            mtrace("==> Found updated metadata for {$recordingid}. Updating local cache.");
+            mtrace("==> Found metadata for {$recordingid}.");
             $id = array_search($recordingid, $recordingids);
-
+            if (!$id) {
+                // Recording was not found, skip.
+                mtrace("===> Skip as fetched recording was not found.");
+                continue;
+            }
+            // Recording was found, update status.
+            mtrace("===> Update local cache as fetched recording was found.");
             $recording = new self(0, $recordings[$id], $metadata);
             $recording->set_status(self::RECORDING_STATUS_PROCESSED);
             $foundcount++;
+
+            // Iterate breakout recordings (if any) and update status.
+            foreach ($metadata['breakouts'] as $breakoutrecordingid => $breakoutmetadata) {
+                $breakoutrecording = self::get_record(['recordingid' => $breakoutrecordingid]);
+                if (!$breakoutrecording) {
+                    $breakoutrecording = new recording(0,
+                        (object) [
+                            'courseid' => $recording->get('courseid'),
+                            'bigbluebuttonbnid' => $recording->get('bigbluebuttonbnid'),
+                            'groupid' => $recording->get('groupid'),
+                            'recordingid' => $breakoutrecordingid
+                        ],
+                        $breakoutmetadata
+                    );
+                    $breakoutrecording->create();
+                }
+                $breakoutrecording->set_status(self::RECORDING_STATUS_PROCESSED);
+                $foundcount++;
+            }
         }
 
         mtrace("=> Finished processing recordings. Updated status for {$foundcount} / {$recordingcount} recordings.");

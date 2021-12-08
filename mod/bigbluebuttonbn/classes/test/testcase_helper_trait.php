@@ -160,17 +160,18 @@ trait testcase_helper_trait {
      * @return array
      * @throws \coding_exception
      */
-    protected function create_recordings_for_instance(instance $instance, array $recordingdata = []): array {
+    protected function create_recordings_for_instance(instance $instance, array $recordingdata = [],
+        $additionalmeetingdata = []): array {
         $recordings = [];
         $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
         // Create the meetings on the mock server, so like this we can find the recordings.
         $meeting = new meeting($instance);
         if (!$meeting->is_running()) {
-            $bbbgenerator->create_meeting([
+            $additionalmeetingdata = array_merge([
                 'instanceid' => $instance->get_instance_id(),
                 'groupid' => $instance->get_group_id()
-
-            ]);
+            ], $additionalmeetingdata);
+            $bbbgenerator->create_meeting($additionalmeetingdata);
         }
         foreach ($recordingdata as $rindex => $data) {
             $recordings[] = $bbbgenerator->create_recording(
