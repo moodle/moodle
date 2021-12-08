@@ -5,7 +5,7 @@
         top: 0;
         left: 0;
         z-index: $zindex-modal-backdrop;
-        transition: 0.5s;
+        @include transition(0.5s);
         width: 100vw;
         margin: 0;
         opacity: 1;
@@ -151,7 +151,7 @@
     #page.drawers {
         position: relative;
         overflow-y: auto;
-        transition: 0.2s;
+        @include transition(0.2s);
         height: calc(100vh - #{$navbar-height});
         margin-top: $navbar-height;
         left: 0;
@@ -165,6 +165,9 @@
             margin-left: 0;
             margin-right: $drawer-right-width;
             padding-right: 1rem;
+            .jsenabled & .btn-footer-popover {
+                right: calc(#{$drawer-right-width} + 2rem);
+            }
         }
         &.show-drawer-left.show-drawer-right {
             margin-left: $drawer-left-width;
