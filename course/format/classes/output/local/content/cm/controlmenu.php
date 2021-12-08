@@ -82,7 +82,7 @@ class controlmenu implements renderable, templatable {
 
         $mod = $this->mod;
 
-        $menu = $this->get_action_menu();
+        $menu = $this->get_action_menu($output);
 
         if (empty($menu)) {
             return new stdClass();
@@ -106,10 +106,10 @@ class controlmenu implements renderable, templatable {
      * Generate the aciton menu element.
      *
      * This method is public in case some block needs to modify the menu before output it.
-     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
      * @return aciton_menu the activity action menu
      */
-    public function get_action_menu(): ?action_menu {
+    public function get_action_menu(\renderer_base $output): ?action_menu {
 
         if (!empty($this->menu)) {
             return $this->menu;
@@ -126,7 +126,8 @@ class controlmenu implements renderable, templatable {
         // Convert control array into an action_menu.
         $menu = new action_menu();
         $menu->set_alignment(action_menu::TR, action_menu::BR);
-        $menu->set_menu_trigger(get_string('edit'));
+        $icon = $output->pix_icon('i/menu', get_string('edit'));
+        $menu->set_menu_trigger($icon, 'btn btn-icon d-flex align-items-center justify-content-center');
 
         $menu->attributes['class'] .= ' section-cm-edit-actions commands';
 

@@ -103,13 +103,7 @@ class availability implements renderable, templatable {
 
         $info = [];
         if (!$section->visible) {
-            if ($canviewhidden) {
-                $info[] = $this->availability_info(get_string('hiddenfromstudents'), 'ishidden');
-            } else {
-                // We are here because of the setting "Hidden sections are shown as not available".
-                // Student can not see the section contents but can see its name.
-                $info[] = $this->availability_info(get_string('notavailable'), 'ishidden');
-            }
+            $info = [];
         } else if (!$section->uservisible) {
             if ($section->availableinfo) {
                 // Note: We only get to this function if availableinfo is non-empty,

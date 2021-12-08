@@ -13789,10 +13789,10 @@ body:not(.editing) .sitetopic ul.section {
   padding-right: 200px; }
 
 .editing .section .activity .editing_move {
-  /* Move the move icon to the start of the line */
   position: absolute;
-  left: 0;
-  top: 0; }
+  display: flex;
+  left: 5px;
+  top: 5px; }
 
 .editing .section .activity .mod-indent-outer {
   /**
@@ -13800,6 +13800,12 @@ body:not(.editing) .sitetopic ul.section {
                  * absolute positioned move icon.
                  */
   padding-left: 2rem; }
+
+.editing .activity .editing_move_activity {
+  position: absolute;
+  display: flex;
+  left: 5px;
+  top: 5px; }
 
 .editing .course-content .stateready .section .spinner {
   display: none; }
@@ -13854,14 +13860,14 @@ body:not(.editing) .sitetopic ul.section {
   .section .activity.modtype_label.label.hasinfo i:last-child {
     margin-bottom: 0; }
 
-.section li.activity {
+.section li.activity:not(.activity-wrapper) {
   padding: 0.2em;
   clear: both; }
-  .section li.activity.hasinfo {
+  .section li.activity:not(.activity-wrapper).hasinfo {
     border-bottom: 1px solid #dee2e6;
     padding-top: 1rem;
     padding-bottom: 1rem; }
-    .section li.activity.hasinfo:last-child {
+    .section li.activity:not(.activity-wrapper).hasinfo:last-child {
       border-bottom: 0;
       padding-bottom: 0; }
 
@@ -13874,17 +13880,17 @@ body:not(.editing) .sitetopic ul.section {
 .section .activity .activityinstance .groupinglabel {
   padding-left: 30px; }
 
-.section .activity .availabilityinfo,
-.section .activity .contentafterlink {
+.section.main:not(.course-section) .activity .availabilityinfo,
+.section.main:not(.course-section) .activity .contentafterlink {
   margin-top: 0.5em;
   margin-left: 30px; }
 
 .section .activity .contentafterlink p {
   margin: .5em 0; }
 
-.editing .section .activity:hover,
-.editing .section .activity.action-menu-shown,
-.editing .section .sectionname:hover {
+.editing .section.main:not(.course-section) .activity:hover,
+.editing .section.main:not(.course-section) .activity.action-menu-shown,
+.editing .section.main:not(.course-section) .sectionname:hover {
   background-color: rgba(0, 0, 0, 0.03); }
 
 .course-content .current {
@@ -13951,15 +13957,15 @@ body:not(.editing) .sitetopic ul.section {
 .course-content .single-section .section-navigation .mdl-bottom {
   margin-top: 0; }
 
-.course-content ul li.section.main {
+.course-content ul li.section.main:not(.course-section) {
   border-bottom: 1px solid #dee2e6;
   margin-top: 0; }
-  .course-content ul li.section.main:last-child {
+  .course-content ul li.section.main:not(.course-section):last-child {
     border-bottom: 0; }
 
-.course-content ul li.section.hidden .sectionname > span,
-.course-content ul li.section.hidden .content > div.summary,
-.course-content ul li.section.hidden .activity .activityinstance {
+.course-content ul li.section.hidden:not(.course-section) .sectionname > span,
+.course-content ul li.section.hidden:not(.course-section) .content > div.summary,
+.course-content ul li.section.hidden:not(.course-section) .activity .activityinstance {
   color: #6a737b; }
 
 .course-content ul.topics,
@@ -14003,24 +14009,24 @@ body:not(.editing) .sitetopic ul.section {
   display: none; }
 
 @media (max-width: 767.98px) {
-  .course-content li.section ul {
+  .course-content li.section:not(.course-section) ul {
     padding-left: 0; } }
 
-.course-content li.section ul {
+.course-content li.section:not(.course-section) ul {
   list-style: disc; }
-  .course-content li.section ul ul {
+  .course-content li.section:not(.course-section) ul ul {
     list-style: circle; }
-    .course-content li.section ul ul ul {
+    .course-content li.section:not(.course-section) ul ul ul {
       list-style: square; }
 
-.course-content li.section li.activity ul {
+.course-content li.section:not(.course-section) li.activity ul {
   list-style: disc; }
-  .course-content li.section li.activity ul ul {
+  .course-content li.section:not(.course-section) li.activity ul ul {
     list-style: circle; }
-    .course-content li.section li.activity ul ul ul {
+    .course-content li.section:not(.course-section) li.activity ul ul ul {
       list-style: square; }
 
-.course-content li.section .right > .icon:first-child {
+.course-content li.section:not(.course-section) .right > .icon:first-child {
   /* Remove the spacer icon. */
   display: none; }
 
@@ -14066,8 +14072,8 @@ body:not(.editing) .sitetopic ul.section {
 .path-course-view .single-section .completionprogress {
   margin-right: 5px; }
 
-.path-site li.activity > div,
-.path-course-view li.activity > div {
+.path-site li.activity > div:not(.activity-item),
+.path-course-view li.activity > div:not(.activity-item) {
   position: relative;
   padding: 0 16px 0 0;
   /* to accommodate the floated completion icon with highlighting */ }
@@ -14644,6 +14650,170 @@ span.editinstructions {
 
 #changenumsections {
   border-top: 1px solid #3584c9; }
+
+.section-collapsemenu .collapseall {
+  display: block; }
+
+.section-collapsemenu .expandall {
+  display: none; }
+
+.section-collapsemenu.collapsed .collapseall {
+  display: none; }
+
+.section-collapsemenu.collapsed .expandall {
+  display: block; }
+
+.course-section {
+  list-style: none;
+  padding-left: 0;
+  border-bottom: 1px solid #dee2e6; }
+  .course-section:last-child {
+    border-bottom: 0; }
+  .course-section .sectionbadges .badge {
+    margin-left: 0.5rem; }
+  .course-section .course-section-header.draggable {
+    cursor: move; }
+  .course-section .section_action_menu .dropdown-toggle::after {
+    display: none; }
+  .course-section .inplaceeditable {
+    display: flex;
+    align-items: center; }
+  .course-section.section-summary {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    border-radius: 0.3rem; }
+  .course-section .section-summary-activities .activity-count {
+    color: #6a737b;
+    font-size: 0.8203125rem;
+    margin: 3px;
+    white-space: nowrap;
+    display: inline-block; }
+
+.activity-item .activityiconcontainer {
+  width: 50px;
+  height: 50px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+  padding: 0.7rem; }
+  .activity-item .activityiconcontainer .activityicon {
+    margin: 0;
+    height: 24px;
+    width: 24px; }
+
+.description .course-description-item {
+  background-color: #f8f9fa;
+  padding-left: 1rem;
+  padding-right: 1rem; }
+  .description .course-description-item .description-inner {
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    border-bottom: 1px solid #dee2e6; }
+    .description .course-description-item .description-inner p:last-child {
+      padding-bottom: 0;
+      margin-bottom: 0; }
+  .description .course-description-item:first-child {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem; }
+    .description .course-description-item:first-child .description-inner {
+      padding-top: 0; }
+  .description .course-description-item:last-child {
+    padding-bottom: 1rem;
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem; }
+    .description .course-description-item:last-child .description-inner {
+      padding-bottom: 0;
+      border-bottom: 0; }
+
+.activity-item {
+  position: relative;
+  margin: 0.5rem 0;
+  border-radius: 0.3rem; }
+  .activity-item:not(.activityinline) {
+    border: 1px solid #dee2e6;
+    padding: 1rem; }
+  .activity-item.activityinline {
+    padding: 1rem 0; }
+  .activity-item.hiddenactivity {
+    background-color: #f8f9fa; }
+    .activity-item.hiddenactivity .description .course-description-item,
+    .activity-item.hiddenactivity .activityiconcontainer,
+    .activity-item.hiddenactivity .badge {
+      mix-blend-mode: multiply; }
+  .activity-item .activity-actions .actions {
+    position: relative; }
+  .activity-item .activity-actions .dropdown-toggle::after {
+    display: none; }
+  .activity-item .inplaceeditable {
+    display: flex;
+    flex: 0 1 auto;
+    max-width: 100%; }
+  .activity-item .inplaceeditable .quickeditlink,
+  .activity-item .afterlink {
+    margin: 1.5rem 0 0.2rem 0.5rem; }
+  .activity-item .action-menu-item {
+    display: flex;
+    align-items: center; }
+  .activity-item .action-menu-item .filler {
+    display: none; }
+  .activity-item .no-overflow {
+    width: 100%; }
+  @media (max-width: 767.98px) {
+    .activity-item .badge {
+      white-space: normal;
+      text-align: left; } }
+  @media (min-width: 768px) {
+    .activity-item .automatic-completion-conditions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end; }
+    .activity-item:not(.activityinline) {
+      padding: 1.5rem; }
+    .activity-item .activity-info,
+    .activity-item .activity-actions {
+      margin-left: auto;
+      padding-left: 0.5rem;
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; } }
+
+.editing .activity-item {
+  cursor: move; }
+  .editing .activity-item .a {
+    cursor: pointer; }
+  .editing .activity-item:hover {
+    color: #1d2125;
+    background-color: #f5f9fc;
+    border-color: #3584c9; }
+    .editing .activity-item:hover hr {
+      border-top-color: #3077b5; }
+    .editing .activity-item:hover .alert-link {
+      color: #070808; }
+    .editing .activity-item:hover .description .course-description-item,
+    .editing .activity-item:hover .activityiconcontainer,
+    .editing .activity-item:hover .badge {
+      mix-blend-mode: multiply; }
+
+.section .draggable .activity-item .dragicon {
+  display: none; }
+
+.automatic-completion-conditions .badge {
+  font-size: 80%;
+  padding: 0.5rem;
+  margin-top: 0.25rem; }
+  .automatic-completion-conditions .badge .icon {
+    width: 0.7rem;
+    height: 0.7rem;
+    font-size: 0.7rem; }
+  .automatic-completion-conditions .badge:first-child {
+    margin-top: 0; }
 
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target {

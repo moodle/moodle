@@ -15,19 +15,25 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_courseformat/local/content/section/summary
+    @template core_courseformat/local/content/cm/badges
 
-    Displays the course section summary.
+    Convenience mustache to displays if an activity is in hidden or stealth mode.
+
+    Format plugins are free to implement an alternative inplace editable for activities.
 
     Example context (json):
     {
-        "summarytext": "Summary text!"
+        "modhiddenfromstudents" : "1",
+        "modstealth" : "1"
     }
 }}
-{{#summarytext}}
-    <div class="course-description-item summarytext">
-        <div class="description-inner">
-            {{{summarytext}}}
-        </div>
+{{#modhiddenfromstudents}}
+    <div class="my-1 d-flex align-items-center">
+        <span class="badge badge-pill badge-warning">{{#str}}hiddenfromstudents{{/str}}</span>
     </div>
-{{/summarytext}}
+{{/modhiddenfromstudents}}
+{{#modstealth}}
+    <div class="my-1 d-flex align-items-center">
+        <span class="badge badge-pill badge-warning">{{#str}}hiddenoncoursepage{{/str}}</span>
+    </div>
+{{/modstealth}}

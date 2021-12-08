@@ -1958,41 +1958,6 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
         );
     }
 
-    // Groupmode.
-    if ($hasmanageactivities && !$mod->coursegroupmodeforce) {
-        if (plugin_supports('mod', $mod->modname, FEATURE_GROUPS, false)) {
-            if ($mod->effectivegroupmode == SEPARATEGROUPS) {
-                $nextgroupmode = VISIBLEGROUPS;
-                $grouptitle = $str->groupsseparate;
-                $actionname = 'groupsseparate';
-                $nextactionname = 'groupsvisible';
-                $groupimage = 'i/groups';
-            } else if ($mod->effectivegroupmode == VISIBLEGROUPS) {
-                $nextgroupmode = NOGROUPS;
-                $grouptitle = $str->groupsvisible;
-                $actionname = 'groupsvisible';
-                $nextactionname = 'groupsnone';
-                $groupimage = 'i/groupv';
-            } else {
-                $nextgroupmode = SEPARATEGROUPS;
-                $grouptitle = $str->groupsnone;
-                $actionname = 'groupsnone';
-                $nextactionname = 'groupsseparate';
-                $groupimage = 'i/groupn';
-            }
-
-            $actions[$actionname] = new action_menu_link_primary(
-                new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $nextgroupmode)),
-                new pix_icon($groupimage, '', 'moodle', array('class' => 'iconsmall')),
-                $grouptitle,
-                array('class' => 'editing_'. $actionname, 'data-action' => $nextactionname,
-                    'aria-live' => 'assertive', 'data-sectionreturn' => $sr)
-            );
-        } else {
-            $actions['nogroupsupport'] = new action_menu_filler();
-        }
-    }
-
     // Assign.
     if (has_capability('moodle/role:assign', $modcontext)){
         $actions['assign'] = new action_menu_link_secondary(

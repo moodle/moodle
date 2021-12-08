@@ -435,7 +435,7 @@ class format_topics extends core_courseformat\base {
         $renderer = $PAGE->get_renderer('format_topics');
 
         if (!($section instanceof section_info)) {
-            $modinfo = $this->get_modinfo();
+            $modinfo = course_modinfo::instance($this->courseid);
             $section = $modinfo->get_section_info($section->section);
         }
         $elementclass = $this->get_output_classname('content\\section\\availability');

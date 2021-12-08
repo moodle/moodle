@@ -51,6 +51,7 @@ export default class Component extends BaseComponent {
             CM: `[data-for='cmitem']`,
             TOGGLER: `[data-action="togglecoursecontentsection"]`,
             COLLAPSE: `[data-toggle="collapse"]`,
+            TOGGLEALL: `[data-toggle="toggleall"]`,
             // Formats can override the activity tag but a default one is needed to create new elements.
             ACTIVITYTAG: 'li',
             SECTIONTAG: 'li',
@@ -92,11 +93,20 @@ export default class Component extends BaseComponent {
 
     /**
      * Initial state ready method.
+     *
+     * @param {Object} state the state data
      */
-    stateReady() {
+    stateReady(state) {
         this._indexContents();
         // Activate section togglers.
         this.addEventListener(this.element, 'click', this._sectionTogglers);
+
+        // Collapse/Expand all sections button.
+        const toogleAll = this.getElement(this.selectors.TOGGLEALL);
+        if (toogleAll) {
+            this.addEventListener(toogleAll, 'click', this._allSectionToggler);
+            this._refreshAllSectionsToggler(state);
+        }
 
         if (this.reactive.supportComponents) {
             // Actions are only available in edit mode.
@@ -149,6 +159,30 @@ export default class Component extends BaseComponent {
     }
 
     /**
+     * Handle the collapse/expand all sections button.
+     *
+     * Toggler click is delegated to the main course content element because new sections can
+     * appear at any moment and this way we prevent accidental double bindings.
+     *
+     * @param {Event} event the triggered event
+     */
+    _allSectionToggler(event) {
+        event.preventDefault();
+
+        const target = event.target.closest(this.selectors.TOGGLEALL);
+        const isAllCollapsed = target.classList.contains(this.classes.COLLAPSED);
+
+        const course = this.reactive.get('course');
+        this.reactive.dispatch(
+            'sectionPreferences',
+            course.sectionlist ?? [],
+            {
+                contentexpanded: isAllCollapsed,
+            }
+        );
+    }
+
+    /**
      * Return the component watchers.
      *
      * @returns {Array} of watchers
@@ -185,9 +219,10 @@ export default class Component extends BaseComponent {
      * Update section collapsed.
      *
      * @param {object} args
+     * @param {Object} args.state The state data
      * @param {Object} args.element The element to update
      */
-    _refreshSectionCollapsed({element}) {
+    _refreshSectionCollapsed({state, element}) {
         const target = this.getElement(this.selectors.SECTION, element.id);
         if (!target) {
             throw new Error(`Unknown section with ID ${element.id}`);
@@ -198,6 +233,35 @@ export default class Component extends BaseComponent {
 
         if (element.contentexpanded === isCollapsed) {
             toggler.click();
+        }
+
+        this._refreshAllSectionsToggler(state);
+    }
+
+    /**
+     * Refresh the collapse/expand all sections element.
+     *
+     * @param {Object} state The state data
+     */
+    _refreshAllSectionsToggler(state) {
+        const target = this.getElement(this.selectors.TOGGLEALL);
+        if (!target) {
+            return;
+        }
+        // Check if we have all sections collapsed/expanded.
+        let allcollapsed = true;
+        let allexpanded = true;
+        state.section.forEach(
+            section => {
+                allcollapsed = allcollapsed && !section.contentexpanded;
+                allexpanded = allexpanded && section.contentexpanded;
+            }
+        );
+        if (allcollapsed) {
+            target.classList.add(this.classes.COLLAPSED);
+        }
+        if (allexpanded) {
+            target.classList.remove(this.classes.COLLAPSED);
         }
     }
 

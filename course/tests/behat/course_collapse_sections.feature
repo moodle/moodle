@@ -68,7 +68,7 @@ Feature: Collapse course sections
     And I should see "Available until" in the "#section-4 .availabilityinfo" "css_element"
     And I should see "2013" in the "#section-4 .availabilityinfo" "css_element"
     And I should not see "Forum 4"
-    And I should see "Not available" in the "#section-5 .availabilityinfo" "css_element"
+    And I should see "Not available" in the "#section-5" "css_element"
     And I should not see "Forum 5"
     When I click on "#collapssesection3" "css_element"
     And I should see "Assignment 1" in the "region-main" "region"
@@ -84,7 +84,6 @@ Feature: Collapse course sections
     And I should not see "Book 2" in the "region-main" "region"
     And I should not see "Book 3" in the "region-main" "region"
     And I should not see "Available until" in the "#section-4 .availabilityinfo" "css_element"
-    And I should not see "Not available" in the "#section-5 .availabilityinfo" "css_element"
     And I click on "#collapssesection1" "css_element"
     And I click on "#collapssesection2" "css_element"
     And I click on "#collapssesection3" "css_element"
@@ -95,7 +94,6 @@ Feature: Collapse course sections
     And I should see "Book 2" in the "region-main" "region"
     And I should see "Book 3" in the "region-main" "region"
     And I should see "Available until" in the "#section-4 .availabilityinfo" "css_element"
-    And I should see "Not available" in the "#section-5 .availabilityinfo" "css_element"
 
   @javascript
   Scenario: Expand/collapse sections for Weeks format.
@@ -113,7 +111,7 @@ Feature: Collapse course sections
     And I should see "Available until" in the "#section-4 .availabilityinfo" "css_element"
     And I should see "2013" in the "#section-4 .availabilityinfo" "css_element"
     And I should see "Forum 4"
-    And I should see "Hidden from students" in the "#section-5 .availabilityinfo" "css_element"
+    And I should see "Hidden from students" in the "#section-5" "css_element"
     And I should see "Forum 5"
     When I click on "#collapssesection3" "css_element"
     And I should see "Assignment 1" in the "region-main" "region"
@@ -129,7 +127,7 @@ Feature: Collapse course sections
     And I should not see "Book 2" in the "region-main" "region"
     And I should not see "Book 3" in the "region-main" "region"
     And I should not see "Available until" in the "#section-4 .availabilityinfo" "css_element"
-    And I should not see "Not available" in the "#section-5 .availabilityinfo" "css_element"
+    And I should not see "Not available" in the "#section-5" "css_element"
     And I click on "#collapssesection1" "css_element"
     And I click on "#collapssesection2" "css_element"
     And I click on "#collapssesection3" "css_element"
@@ -142,7 +140,7 @@ Feature: Collapse course sections
     And I should see "Available until" in the "#section-4 .availabilityinfo" "css_element"
     And I should see "2013" in the "#section-4 .availabilityinfo" "css_element"
     And I should see "Forum 4"
-    And I should see "Hidden from students" in the "#section-5 .availabilityinfo" "css_element"
+    And I should see "Hidden from students" in the "#section-5" "css_element"
     And I should see "Forum 5"
 
   @javascript
@@ -164,7 +162,7 @@ Feature: Collapse course sections
     And I should see "Available until" in the "#section-4 .availabilityinfo" "css_element"
     And I should see "2013" in the "#section-4 .availabilityinfo" "css_element"
     And I should see "Forum 4"
-    And I should see "Hidden from students" in the "#section-5 .availabilityinfo" "css_element"
+    And I should see "Hidden from students" in the "#section-5" "css_element"
     And I should see "Forum 5"
 
   @javascript
@@ -189,5 +187,5 @@ Feature: Collapse course sections
     And I should see "Available until" in the "#section-4 .availabilityinfo" "css_element"
     And I should see "2013" in the "#section-4 .availabilityinfo" "css_element"
     And I should not see "Forum 4"
-    And I should see "Not available" in the "#section-5 .availabilityinfo" "css_element"
+    And I should see "Not available" in the "#section-5" "css_element"
     And I should not see "Forum 5"

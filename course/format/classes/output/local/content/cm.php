@@ -25,6 +25,7 @@
 namespace core_courseformat\output\local\content;
 
 use cm_info;
+use context_module;
 use core\activity_dates;
 use core_completion\cm_completion_details;
 use core_courseformat\base as course_format;
@@ -124,7 +125,7 @@ class cm implements renderable, templatable {
         // Grouping activity.
         $groupinglabel = $mod->get_grouping_label($displayoptions['textclasses']);
 
-        $activityinfodata = null;
+        $activityinfodata = (object) ['hasdates' => false, 'hascompletion' => false];
         // - There are activity dates to be shown; or
         // - Completion info needs to be displayed
         //   * The activity tracks completion; AND
@@ -154,15 +155,20 @@ class cm implements renderable, templatable {
             $this->displayoptions
         );
 
+        $modavailability = $availability->export_for_template($output);
+
         $data = (object)[
             'cmname' => $cmname->export_for_template($output),
             'grouping' => $groupinglabel,
             'afterlink' => $mod->afterlink,
             'altcontent' => $mod->get_formatted_content(['overflowdiv' => true, 'noclean' => true]),
-            'modavailability' => $availability->export_for_template($output),
+            'modavailability' => $mod->visible ? $modavailability : null,
+            'modname' => get_string('pluginname', 'mod_' . $mod->modname),
             'url' => $mod->url,
             'activityinfo' => $activityinfodata,
+            'activityname' => $mod->get_formatted_name(),
             'textclasses' => $displayoptions['textclasses'],
+            'classlist' => []
         ];
 
         if (!empty($mod->indent) && $format->uses_indentation()) {
@@ -172,11 +178,31 @@ class cm implements renderable, templatable {
             }
         }
 
-        if (!empty($data->cmname)) {
-            $data->hasname = true;
-        }
+        $data->altcontent = (empty($data->altcontent)) ? false : $data->altcontent;
+
+        $data->hasname = !empty($data->cmname['displayvalue']);
+
         if (!empty($data->url)) {
             $data->hasurl = true;
+        }
+
+        if (!$mod->visible) {
+            // This module is hidden but current user has capability to see it.
+            $data->modhiddenfromstudents = true;
+        } else if ($mod->is_stealth()) {
+            // This module is available but is normally not displayed on the course page
+            // (this user can see it because they can manage it).
+            $data->modstealth = true;
+        }
+
+        if ($mod->modname == 'label' &&
+            !$modavailability->hasmodavailability &&
+            !$activityinfodata->hascompletion &&
+            !isset($data->modhiddenfromstudents) &&
+            !isset($data->modstealth) &&
+            !$format->show_editor()
+            ) {
+            $data->modinline = true;
         }
 
         $returnsection = $format->get_section_number();
@@ -191,13 +217,15 @@ class cm implements renderable, templatable {
             );
             $data->controlmenu = $controlmenu->export_for_template($output);
 
-            // Move and select options.
             if ($format->supports_components()) {
                 $data->moveicon = $output->pix_icon('i/dragdrop', '', 'moodle', ['class' => 'editing_move dragicon']);
             } else {
                 // Add the legacy YUI move link.
                 $data->moveicon = course_get_cm_move($mod, $returnsection);
             }
+
+            // Move and select options.
+            $modcontext = context_module::instance($mod->id);
         }
 
         return $data;
@@ -206,10 +234,6 @@ class cm implements renderable, templatable {
     /**
      * Returns the CSS classes for the activity name/content
      *
-     * For items which are hidden, unavailable or stealth but should be displayed
-     * to current user ($mod->is_visible_on_course_page()), we show those as dimmed.
-     * Students will also see as dimmed activities names that are not yet available
-     * but should still be displayed (without link) with availability info.
      */
     protected function load_classes() {
 
@@ -222,23 +246,10 @@ class cm implements renderable, templatable {
             $conditionalhidden = !$info->is_available_for_all();
             $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
                 has_capability('moodle/course:viewhiddenactivities', $mod->context);
-            if ($accessiblebutdim) {
-                $linkclasses .= ' dimmed';
-                $textclasses .= ' dimmed_text';
-                if ($conditionalhidden) {
-                    $linkclasses .= ' conditionalhidden';
-                    $textclasses .= ' conditionalhidden';
-                }
+            if ($accessiblebutdim && $conditionalhidden) {
+                $linkclasses .= ' conditionalhidden';
+                $textclasses .= ' conditionalhidden';
             }
-            if ($mod->is_stealth()) {
-                // Stealth activity is the one that is not visible on course page.
-                // It still may be displayed to the users who can manage it.
-                $linkclasses .= ' stealth';
-                $textclasses .= ' stealth';
-            }
-        } else {
-            $linkclasses .= ' dimmed';
-            $textclasses .= ' dimmed dimmed_text';
         }
         $this->linkclasses = $linkclasses;
         $this->textclasses = $textclasses;

@@ -106,6 +106,8 @@ class title implements renderable, templatable {
             'instancename' => $mod->get_formatted_name(),
             'uservisible' => $mod->uservisible,
             'icon' => $mod->get_icon_url(),
+            'modname' => $mod->modname,
+            'pluginname' => get_string('pluginname', 'mod_' . $mod->modname),
             'linkclasses' => $displayoptions['linkclasses'],
             'textclasses' => $displayoptions['textclasses'],
         ];

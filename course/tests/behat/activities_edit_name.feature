@@ -34,7 +34,7 @@ Feature: Edit activity name in-place
     And I should see "Good news"
     And I should not see "Test forum name"
     # Cancel renaming
-    And I click on "Edit title" "link" in the "//div[contains(@class,'activityinstance') and contains(.,'Good news')]" "xpath_element"
+    And I click on "Edit title" "link" in the "[data-value='Good news']" "css_element"
     And I type "Terrible news"
     And I press the escape key
     And "New name for activity Good news" "field" should not exist
