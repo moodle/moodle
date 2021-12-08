@@ -25,8 +25,6 @@
 
 namespace mod_quiz\question\bank;
 
-use coding_exception;
-
 /**
  * Subclass to customise the view of the question bank for the quiz editing screen.
  *
@@ -58,32 +56,77 @@ class custom_view extends \core_question\local\bank\view {
         $this->quiz = $quiz;
     }
 
-    protected function wanted_columns(): array {
-        $quizquestionbankcolumns = [
-            'mod_quiz\\question\\bank\\add_action_column',
-            'core_question\\local\\bank\\checkbox_column',
-            'qbank_viewquestiontype\\question_type_column',
-            'mod_quiz\\question\\bank\\question_name_text_column',
-            'qbank_previewquestion\\preview_action_column',
+    protected function get_question_bank_plugins(): array {
+        $questionbankclasscolumns = [];
+        $corequestionbankcolumns = [
+            'add_action_column',
+            'checkbox_column',
+            'question_type_column',
+            'question_name_text_column',
+            'preview_action_column'
         ];
 
-        foreach ($quizquestionbankcolumns as $fullname) {
-            if (!class_exists($fullname)) {
-                throw new coding_exception('Invalid quiz question bank column', $fullname);
-            }
-            $this->requiredcolumns[$fullname] = new $fullname($this);
+        if (question_get_display_preference('qbshowtext', 0, PARAM_BOOL, new \moodle_url(''))) {
+            $corequestionbankcolumns[] = 'question_text_row';
         }
-        return $this->requiredcolumns;
+
+        foreach ($corequestionbankcolumns as $fullname) {
+            $shortname = $fullname;
+            if (class_exists('mod_quiz\\question\\bank\\' . $fullname)) {
+                $fullname = 'mod_quiz\\question\\bank\\' . $fullname;
+                $questionbankclasscolumns[$shortname] = new $fullname($this);
+            } else if (class_exists('core_question\\local\\bank\\' . $fullname)) {
+                $fullname = 'core_question\\local\\bank\\' . $fullname;
+                $questionbankclasscolumns[$shortname] = new $fullname($this);
+            } else {
+                $questionbankclasscolumns[$shortname] = '';
+            }
+        }
+        $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
+        foreach ($plugins as $componentname => $plugin) {
+            $pluginentrypointobject = new $plugin();
+            $plugincolumnobjects = $pluginentrypointobject->get_question_columns($this);
+            // Don't need the plugins without column objects.
+            if (empty($plugincolumnobjects)) {
+                unset($plugins[$componentname]);
+                continue;
+            }
+            foreach ($plugincolumnobjects as $columnobject) {
+                $columnname = $columnobject->get_column_name();
+                foreach ($corequestionbankcolumns as $key => $corequestionbankcolumn) {
+                    if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
+                        unset($questionbankclasscolumns[$columnname]);
+                        continue;
+                    }
+                    // Check if it has custom preference selector to view/hide.
+                    if ($columnobject->has_preference() && !$columnobject->get_preference()) {
+                        continue;
+                    }
+                    if ($corequestionbankcolumn === $columnname) {
+                        $questionbankclasscolumns[$columnname] = $columnobject;
+                    }
+                }
+            }
+        }
+
+        // Mitigate the error in case of any regression.
+        foreach ($questionbankclasscolumns as $shortname => $questionbankclasscolumn) {
+            if (empty($questionbankclasscolumn)) {
+                unset($questionbankclasscolumns[$shortname]);
+            }
+        }
+
+        return $questionbankclasscolumns;
     }
 
     protected function heading_column(): string {
-        return 'mod_quiz\\question\\bank\\question_name_text_column';
+        return 'question_name_text_column';
     }
 
     protected function default_sort(): array {
         return [
-            'qbank_viewquestiontype\\question_type_column' => 1,
-            'mod_quiz\\question\\bank\\question_name_text_column' => 1,
+            'question_type_column' => 1,
+            'question_name_text_column' => 1,
         ];
     }
 

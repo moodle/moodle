@@ -219,6 +219,10 @@ if ($cm !== null) {
 
 $toform->inpopup = $inpopup;
 
+// Prepare custom fields data.
+$customfieldhandler = qbank_customfields\customfield\question_handler::create();
+$customfieldhandler->instance_form_before_set_data($toform);
+
 $mform->set_data($toform);
 
 if ($mform->is_cancelled()) {
@@ -280,6 +284,9 @@ if ($mform->is_cancelled()) {
         core_tag_tag::set_item_tags('core_question', 'question', $question->id,
                 context_course::instance($fromform->courseid), $fromform->coursetags, 0);
     }
+
+    // Update custom fields if there are any of them in the form.
+    $customfieldhandler->instance_form_save($fromform);
 
     // Purge this question from the cache.
     question_bank::notify_question_edited($question->id);

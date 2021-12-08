@@ -232,6 +232,7 @@ abstract class column_base {
     protected function get_classes(): string {
         $classes = $this->get_extra_classes();
         $classes[] = $this->get_name();
+        $classes[] = 'pr-3';
         return implode(' ', $classes);
     }
 
@@ -242,6 +243,17 @@ abstract class column_base {
      * @return string column name.
      */
     abstract public function get_name();
+
+    /**
+     * Get the name of this column. This must be unique.
+     * When using the inherited class to make many columns from one parent,
+     * ensure each instance returns a unique value.
+     *
+     * @return string The unique name;
+     */
+    public function get_column_name() {
+        return (new \ReflectionClass($this))->getShortName();
+    }
 
     /**
      * Any extra class names you would like applied to every cell in this column.

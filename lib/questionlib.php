@@ -377,6 +377,10 @@ function question_delete_question($questionid) {
     // Delete all tag instances.
     core_tag_tag::remove_all_item_tags('core_question', 'question', $question->id);
 
+    // Delete the custom filed data for the question.
+    $customfieldhandler = qbank_customfields\customfield\question_handler::create();
+    $customfieldhandler->delete_instance($question->id);
+
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question',
             array('parent' => $questionid), '', 'id, qtype')) {

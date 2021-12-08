@@ -186,7 +186,7 @@ Feature: Edit quiz page - adding things
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then the "Add selected questions to the quiz" "button" should be disabled
-    And I click on "Essay 03" "checkbox"
+    And I click on "Select" "checkbox" in the "Essay 03" "table_row"
     Then the "Add selected questions to the quiz" "button" should be enabled
     And I click on "Add to quiz" "link" in the "Essay 03" "table_row"
     And I should see "Essay 03" on quiz page "1"

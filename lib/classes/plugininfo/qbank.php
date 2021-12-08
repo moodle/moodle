@@ -46,6 +46,10 @@ class qbank extends base {
         return new \moodle_url('/admin/settings.php', ['section' => 'manageqbanks']);
     }
 
+    public function get_settings_section_name() {
+        return $this->type . '_' . $this->name;
+    }
+
     public static function get_plugins($type, $typerootdir, $typeclass, $pluginman): array {
         global $CFG;
 

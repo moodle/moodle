@@ -125,6 +125,11 @@ abstract class question_definition {
     public $hints = array();
 
     /**
+     * @var array of array of \core_customfield\data_controller objects indexed by fieldid for the questions custom fields.
+     */
+    public $customfields = array();
+
+    /**
      * Constructor. Normally to get a question, you call
      * {@link question_bank::load_question()}, but questions can be created
      * directly, for example in unit test code.

@@ -222,6 +222,11 @@ abstract class question_edit_form extends question_wizard_form {
             $this->add_tag_fields($mform);
         }
 
+        // Add custom fields to the form.
+        $customfieldhandler = qbank_customfields\customfield\question_handler::create();
+        $customfieldhandler->set_parent_context($this->categorycontext); // For question handler only.
+        $customfieldhandler->instance_form_definition($mform, empty($this->question->id) ? 0 : $this->question->id);
+
         if (!empty($this->question->id)) {
             $mform->addElement('header', 'createdmodifiedheader',
                     get_string('createdmodifiedheader', 'question'));
@@ -283,6 +288,16 @@ abstract class question_edit_form extends question_wizard_form {
      */
     protected function definition_inner($mform) {
         // By default, do nothing.
+    }
+
+    /**
+     * Tweak the form with values provided by custom fields in use.
+     */
+    public function definition_after_data() {
+        $mform = $this->_form;
+
+        $customfieldhandler = qbank_customfields\customfield\question_handler::create();
+        $customfieldhandler->instance_form_definition_after_data($mform, empty($this->question->id) ? 0 : $this->question->id);
     }
 
     /**
@@ -854,6 +869,10 @@ abstract class question_edit_form extends question_wizard_form {
                 $errors['idnumber'] = get_string('idnumbertaken', 'error');
             }
         }
+
+        // Add the custom field validation.
+        $customfieldhandler = core_course\customfield\course_handler::create();
+        $errors  = array_merge($errors, $customfieldhandler->instance_form_validation($fromform, $files));
 
         return $errors;
     }
