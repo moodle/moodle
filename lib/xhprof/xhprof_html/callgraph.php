@@ -29,15 +29,6 @@
  * @author Changhao Jiang (cjiang@facebook.com)
  */
 
-// Start moodle modification: moodleize this script.
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
-require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');
-require_login();
-require_capability('moodle/site:config', context_system::instance());
-raise_memory_limit(MEMORY_HUGE);
-\core\session\manager::write_close();
-// End moodle modification.
-
 // by default assume that xhprof_html & xhprof_lib directories
 // are at the same level.
 $GLOBALS['XHPROF_LIB_ROOT'] = dirname(__FILE__) . '/../xhprof_lib';
@@ -56,8 +47,8 @@ $params = array(// run id param
                 // parents/children functions of it will be shown.
                 'func' => array(XHPROF_STRING_PARAM, ''),
 
-                // image type, can be 'jpg', 'gif', 'ps', 'png'
-                'type' => array(XHPROF_STRING_PARAM, 'png'),
+                // image type, can be 'jpg', 'gif', 'ps', 'png', 'svg'
+                'type' => array(XHPROF_STRING_PARAM, 'svg'),
 
                 // only functions whose exclusive time over the total time
                 // is larger than this threshold will be shown.
@@ -87,10 +78,7 @@ if (!array_key_exists($type, $xhprof_legal_image_types)) {
   $type = $params['type'][1]; // default image type.
 }
 
-// Start moodle modification: use own XHProfRuns implementation.
-// $xhprof_runs_impl = new XHProfRuns_Default();
-$xhprof_runs_impl = new moodle_xhprofrun();
-// End moodle modification.
+$xhprof_runs_impl = new XHProfRuns_Default();
 
 if (!empty($run)) {
   // single run call graph image generation
