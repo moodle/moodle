@@ -120,13 +120,14 @@ class custom_view extends \core_question\local\bank\view {
     }
 
     protected function heading_column(): string {
-        return 'question_name_text_column';
+        return 'mod_quiz\\question\\bank\\question_name_text_column';
     }
 
     protected function default_sort(): array {
+        // Using the extended class for quiz specific sort.
         return [
-            'question_type_column' => 1,
-            'question_name_text_column' => 1,
+            'qbank_viewquestiontype\\question_type_column' => 1,
+            'mod_quiz\\question\\bank\\question_name_text_column' => 1,
         ];
     }
 
