@@ -5174,7 +5174,7 @@ class settings_navigation extends navigation_node {
         }
         // Security keys.
         if ($currentuser && $enablemanagetokens) {
-            $url = new moodle_url('/user/managetoken.php', array('sesskey'=>sesskey()));
+            $url = new moodle_url('/user/managetoken.php');
             $useraccount->add(get_string('securitykeys', 'webservice'), $url, self::TYPE_SETTING);
         }
 
