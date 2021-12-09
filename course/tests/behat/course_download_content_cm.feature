@@ -29,30 +29,30 @@ Feature: Activities content download can be controlled
       | downloadcoursecontentallowed | 1 |
     And I log out
 
-  Scenario: "Include in course downloads (if that feature is enabled)" field default is set to "Yes" if nothing has been set
+  Scenario: "Include in course content download" field default is set to "Yes" if nothing has been set
     Given I am on the Page1 "Page Activity editing" page logged in as admin
-    Then the field "Include in course downloads (if that feature is enabled)" matches value "Yes"
+    Then the field "Include in course content download" matches value "Yes"
 
-  Scenario: "Include in course downloads (if that feature is enabled)" field is not visible if course content is disabled on site level
+  Scenario: "Include in course content download" field is not visible if course content is disabled on site level
     Given I log in as "admin"
     And the following config values are set as admin:
       | downloadcoursecontentallowed | 0 |
     And I am on the Page1 "Page Activity editing" page
-    Then "Include in course downloads (if that feature is enabled)" "select" should not exist
+    Then "Include in course content download" "select" should not exist
 
-  Scenario: "Include in course downloads (if that feature is enabled)" field is visible even if course content is disabled on course level
+  Scenario: "Include in course content download" field is visible even if course content is disabled on course level
     Given I log in as "admin"
     And I am on "Course 1" course homepage
     And I navigate to "Settings" in current page administration
     When I set the field "Enable download course content" to "No"
     And I press "Save and display"
     And I am on the Page1 "Page Activity editing" page
-    Then "Include in course downloads (if that feature is enabled)" "select" should exist
+    Then "Include in course content download" "select" should exist
 
-  Scenario: "Include in course downloads (if that feature is enabled)" field should be visible but not editable for users without configuredownloadcontent capability
+  Scenario: "Include in course content download" field should be visible but not editable for users without configuredownloadcontent capability
     Given I log in as "manager1"
     And I am on the Folder1 "Folder Activity editing" page
-    And "Include in course downloads (if that feature is enabled)" "field" should exist
+    And "Include in course content download" "field" should exist
     And I log out
     And I log in as "admin"
     When I set the following system permissions of "Manager" role:
@@ -61,6 +61,6 @@ Feature: Activities content download can be controlled
     And I log out
     And I log in as "manager1"
     And I am on the Folder1 "Folder Activity editing" page
-    Then I should see "Include in course downloads (if that feature is enabled)"
+    Then I should see "Include in course content download"
     And I should see "No"
-    And "Include in course downloads (if that feature is enabled)" "select" should not exist
+    And "Include in course content download" "select" should not exist

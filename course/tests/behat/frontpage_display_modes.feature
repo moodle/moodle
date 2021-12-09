@@ -1,5 +1,5 @@
 @core @core_course
-Feature: Front page displays items in different modes
+Feature: Site home displays items in different modes
   In order to show a clean and clear list of the site categories and course
   As an admin
   I need to set different frontpage display modes
@@ -27,7 +27,7 @@ Feature: Front page displays items in different modes
   @javascript
   Scenario: Displays a list of categories
     When I set the following administration settings values:
-      | Front page items when logged in | List of categories |
+      | Site home items when logged in | List of categories |
       | Maximum category depth | 2 |
     And I am on site homepage
     Then I should see "Category A" in the "region-main" "region"
@@ -43,7 +43,7 @@ Feature: Front page displays items in different modes
   @javascript
   Scenario: Displays a combo list
     When I set the following administration settings values:
-      | Front page items when logged in | Combo list |
+      | Site home items when logged in | Combo list |
       | Maximum category depth | 2 |
     And I am on site homepage
     Then I should see "Category A" in the "region-main" "region"

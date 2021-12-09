@@ -124,7 +124,7 @@ $string['qrcodetypelogin'] = 'QR code with automatic login';
 $string['readingthisemailgettheapp'] = 'Reading this in an email? <a href="{$a}">Download the mobile app and receive notifications on your mobile device</a>.';
 $string['remoteaddons'] = 'Remote add-ons';
 $string['scanqrcode'] = 'Scan QR code';
-$string['selfsignedoruntrustedcertificatewarning'] = 'It seems that the HTTPS certificate is self-signed or not trusted. The mobile app will only work with trusted sites. Please, use any online SSL checker tool to further diagnose the problem. If these tools indicate that you certificate is OK, you can ignore this warning.';
+$string['selfsignedoruntrustedcertificatewarning'] = 'It seems that the HTTPS certificate is self-signed or not trusted. The mobile app will only work with trusted sites. Please use any online SSL checker to diagnose the problem. If it indicates that your certificate is OK, you can ignore this warning.';
 $string['setuplink'] = 'App download page';
 $string['setuplink_desc'] = 'URL of page with options to download the mobile app from the App Store and Google Play. The app download page link is displayed in the page footer and in a user\'s profile. Leave blank to not display a link.';
 $string['smartappbanners'] = 'App Banners';

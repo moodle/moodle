@@ -111,12 +111,12 @@ Feature: Show statistics in question bank
     And I select "Questions" from the "questionbankactionselect" singleselect
     When I navigate to "Question bank" in current page administration
     And I select "Questions" from the "questionbankactionselect" singleselect
-    And I should see "likely" in the "TF1" "table_row"
-    And I should see "unlikely" in the "TF2" "table_row"
-    And I should see "unlikely" in the "TF3" "table_row"
-    And I should see "likely" in the "TF4" "table_row"
-    And I should see "likely" in the ".alert-warning" "css_element"
-    And I should see "unlikely" in the ".alert-success" "css_element"
+    And I should see "Likely" in the "TF1" "table_row"
+    And I should see "Unlikely" in the "TF2" "table_row"
+    And I should see "Unlikely" in the "TF3" "table_row"
+    And I should see "Likely" in the "TF4" "table_row"
+    And I should see "Likely" in the ".alert-warning" "css_element"
+    And I should see "Unlikely" in the ".alert-success" "css_element"
 
   Scenario: View discrimination index in question bank, bad questions
     Given user "student1" has attempted "Quiz 2" with responses:
@@ -134,9 +134,9 @@ Feature: Show statistics in question bank
     When I am on the "Course 1" course page logged in as admin
     When I navigate to "Question bank" in current page administration
     And I select "Questions" from the "questionbankactionselect" singleselect
-    And I should see "likely" in the "TF1" "table_row"
-    And I should see "very likely" in the "TF2" "table_row"
-    And I should see "very likely" in the "TF3" "table_row"
-    And I should see "likely" in the "TF4" "table_row"
-    And I should see "very likely" in the ".alert-danger" "css_element"
-    And I should see "likely" in the ".alert-warning" "css_element"
+    And I should see "Likely" in the "TF1" "table_row"
+    And I should see "Very likely" in the "TF2" "table_row"
+    And I should see "Very likely" in the "TF3" "table_row"
+    And I should see "Likely" in the "TF4" "table_row"
+    And I should see "Very likely" in the ".alert-danger" "css_element"
+    And I should see "Likely" in the ".alert-warning" "css_element"

@@ -81,7 +81,7 @@ Feature: Enable Block Completion in a course using activity completion
     And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student" "table_row"
     And I set the field "Grade out of 100" to "53"
-    And I set the field "Notify students" to "0"
+    And I set the field "Notify student" to "0"
     And I press "Save changes"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Course completion status" block
@@ -115,7 +115,7 @@ Feature: Enable Block Completion in a course using activity completion
     And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student" "table_row"
     And I set the field "Grade out of 100" to "49"
-    And I set the field "Notify students" to "0"
+    And I set the field "Notify student" to "0"
     And I press "Save changes"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Course completion status" block

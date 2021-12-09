@@ -55,12 +55,12 @@ $string['check_embed_details'] = '<p>Unlimited object embedding is very dangerou
 $string['check_embed_error'] = 'Unlimited object embedding enabled - this is very dangerous for the majority of servers.';
 $string['check_embed_name'] = 'Allow EMBED and OBJECT';
 $string['check_embed_ok'] = 'Unlimited object embedding is not allowed.';
-$string['check_frontpagerole_details'] = '<p>The default frontpage role is given to all registered users for frontpage activities. Please make sure no risky capabilities are allowed for this role.</p>
+$string['check_frontpagerole_details'] = '<p>The default site home role is given to all authenticated users for site home activities. Please make sure no risky capabilities are allowed for this role.</p>
 <p>It is recommended that a special role is created for this purpose and a legacy type role is not used.</p>';
-$string['check_frontpagerole_error'] = 'Incorrectly defined frontpage role "{$a}" detected!';
-$string['check_frontpagerole_name'] = 'Frontpage role';
-$string['check_frontpagerole_notset'] = 'Frontpage role is not set.';
-$string['check_frontpagerole_ok'] = 'Frontpage role definition is OK.';
+$string['check_frontpagerole_error'] = 'Incorrectly defined site home role "{$a}" detected!';
+$string['check_frontpagerole_name'] = 'Site home role';
+$string['check_frontpagerole_notset'] = 'Site home role is not set.';
+$string['check_frontpagerole_ok'] = 'Site home role definition is OK.';
 $string['check_crawlers_details'] = '<p>The "Open to search engines" setting enables search engines to enter courses with guest access. There is no point in enabling this setting if guest login is not allowed.</p>';
 $string['check_crawlers_error'] = 'Search engine access is allowed but guest access is disabled.';
 $string['check_crawlers_info'] = 'Search engines may enter as guests.';
