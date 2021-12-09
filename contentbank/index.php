@@ -51,6 +51,7 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('contentbank');
+$PAGE->set_secondary_active_tab('contentbank');
 
 // Get all contents managed by active plugins where the user has permission to render them.
 $contenttypes = [];

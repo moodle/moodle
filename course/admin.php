@@ -38,6 +38,7 @@ $PAGE->set_pagelayout('incourse');
 if ($courseid == $SITE->id) {
     $title = get_string('frontpagesettings');
     $node = $PAGE->settingsnav->find('frontpage', navigation_node::TYPE_SETTING);
+    $PAGE->set_primary_active_tab('home');
 } else {
     $title = get_string('courseadministration');
     $node = $PAGE->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);

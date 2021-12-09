@@ -102,7 +102,13 @@ $PAGE->set_docs_path('');
 $editing = $PAGE->user_is_editing();
 $PAGE->set_title($SITE->fullname);
 $PAGE->set_heading($SITE->fullname);
-$PAGE->has_secondary_navigation_setter(false);
+if (has_capability('moodle/course:update', context_system::instance())) {
+    $PAGE->has_secondary_navigation_setter(true);
+    $PAGE->set_secondary_active_tab('coursehome');
+} else {
+    $PAGE->has_secondary_navigation_setter(false);
+}
+
 $courserenderer = $PAGE->get_renderer('core', 'course');
 
 if ($hassiteconfig) {
