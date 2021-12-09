@@ -133,7 +133,7 @@ class user_profile_fields {
                 ->add_join("LEFT JOIN {user_info_data} {$userinfotablealias} " .
                     "ON {$userinfotablealias}.userid = {$this->usertablefieldalias} " .
                     "AND {$userinfotablealias}.fieldid = {$profilefield->fieldid}")
-                ->add_field("{$userinfotablealias}.data", 'profilefield_' . $profilefield->field->shortname)
+                ->add_field("{$userinfotablealias}.data")
                 ->set_type($this->get_user_field_type($profilefield->field->datatype))
                 ->add_callback([$this, 'format_profile_field'], $profilefield);
 
