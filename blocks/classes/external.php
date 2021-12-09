@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
+require_once("$CFG->dirroot/my/lib.php");
 
 /**
  * Blocks external functions
