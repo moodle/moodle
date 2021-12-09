@@ -105,6 +105,8 @@ if (!file_exists($CFG->dirroot . $docsdir)) {
 }
 // Load the content after the footer that contains the JS for this page.
 $page = file_get_contents($docspage);
+$jsdocurl = new moodle_url('/admin/tool/componentlibrary/jsdocspage.php');
+$page = str_replace('http://JSDOC', $jsdocurl, $page);
 $page = str_replace('http://MOODLEROOT', $thispageurl, $page);
 $page = str_replace('MOODLEIMAGEDIR', new moodle_url('/admin/tool/componentlibrary/content/static'), $page);
 $filtered = str_replace('MOODLEROOT', $thispageurl, $page);

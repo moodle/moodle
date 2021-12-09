@@ -1,0 +1,52 @@
+{{- /*
+  Link to JS Documentation created by `grunt jsdoc`.
+
+  Usage: `jsdoc [args]`
+
+  `args` are required:
+    module: the name of the amd module to be linked
+    class: the name of the class to be linked
+    event: the name of an AMD event to link to within the module
+
+    Examples:
+
+        Link to an 'core/toast' module:
+        {{< jsdoc module="core/toast" >}}
+
+        Link to the 'events' class:
+        {{< jsdoc class="events" >}}
+
+        Link to the 'fieldValidationFailed' event in the 'core_form/events' module:
+        {{< jsdoc module="core_form/events" event="fieldValidationFailed" >}}
+
+*/ -}}
+
+{{- $filelink := "" -}}
+{{- $linktext := "" -}}
+
+{{- if .Get "module" -}}
+    {{- $modulename := .Get "module" -}}
+    {{- $linktext := $modulename -}}
+
+    {{- with .Get "module" -}}
+        {{- $filelink = printf "module-%s.html" (replace $modulename "/" "_") -}}
+    {{- end -}}
+
+    {{- if .Get "event" -}}
+        {{- with .Get "event" -}}
+            {{- $filelink = printf "%s#~event:%s" $filelink . -}}
+            {{- $linktext = printf "event:%s" . -}}
+        {{- end -}}
+    {{- end -}}
+
+    <a href="http://JSDOC/{{ $filelink }}" target="_blank">{{ $linktext }}</a>
+{{- end -}}
+
+{{- with .Get "class" -}}
+    {{- $filelink = printf "%s.html" (replace . "/" "_") -}}
+    {{- $linktext = . -}}
+
+    <a href="http://JSDOC/{{ $filelink }}" target="_blank">{{ $linktext }}</a>
+{{- end -}}
+
+{{- /* Strip trailing newline. */ -}}
