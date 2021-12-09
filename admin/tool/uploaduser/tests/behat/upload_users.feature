@@ -33,8 +33,7 @@ Feature: Upload users
     And I should see "Tom Jones"
     And I should see "Trent Reznor"
     And I should see "reznor@example.com"
-    And I am on "Maths" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Maths" "groups" page
     And I set the field "groups" to "Section 1 (1)"
     And the "members" select box should contain "Tom Jones (jonest@example.com)"
 

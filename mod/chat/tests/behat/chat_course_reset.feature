@@ -38,8 +38,7 @@ Feature: Chat reset
       | chattime[hour]      | 12 |
       | chattime[minute]    | 00 |
     And I press "Save and display"
-    And I am on "Course 1" course homepage
-    When I navigate to "Reset" in current page administration
+    And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
       | reset_start_date[enabled] | 1  |
       | reset_start_date[day]       | 1 |

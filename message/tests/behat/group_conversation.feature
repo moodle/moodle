@@ -92,8 +92,7 @@ Feature: Create conversations for course's groups
 
   Scenario: Check group conversation members are synced when a new group member is added
     Given I log in as "teacher1"
-    Then I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    Then I am on the "Course 1" "groups" page
     And I add "Student 4 (student4@example.com)" user to "Group 1" group members
     And I add "Student 4 (student4@example.com)" user to "Group 2" group members
     And I open messaging

@@ -30,8 +30,8 @@ Feature: Custom profile fields in groups
 
   @javascript
   Scenario: Check the custom profile fields show up and can be searched on
-    When I am on the "C1" "Course" page logged in as "admin"
-    And I navigate to "Users > Groups" in current page administration
+    When I am logged in as "admin"
+    And I am on the "Course 1" "groups" page
 
     # Check the Overview page.
     And I select "Overview" from the "jump" singleselect

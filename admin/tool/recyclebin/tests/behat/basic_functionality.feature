@@ -77,8 +77,7 @@ Feature: Basic recycle bin functionality
     And I wait to be redirected
     And I go to the courses management page
     And I should see "Course 2" in the "#course-listing" "css_element"
-    And I am on "Course 2" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 2" "groups" page
     And I select "Overview" from the "jump" singleselect
     And "Student 1" "text" should exist in the "Group A" "table_row"
     And "Student 2" "text" should exist in the "Group A" "table_row"

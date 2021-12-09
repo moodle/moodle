@@ -15,8 +15,7 @@ Feature: Automatic updating of groups and groupings
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group (without ID) |
@@ -71,8 +70,7 @@ Feature: Automatic updating of groups and groupings
       | moodle/course:changeidnumber | Prevent |
     And I log out
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I set the field "groups" to "Group (with ID)"
     When I press "Edit group settings"
     Then the "idnumber" "field" should be readonly
@@ -108,8 +106,7 @@ Feature: Automatic updating of groups and groupings
       | teacher1 | C2 | editingteacher |
     And I log out
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I set the field "groups" to "Group (with ID)"
     And I press "Edit group settings"
     And I set the following fields to these values:
@@ -133,8 +130,7 @@ Feature: Automatic updating of groups and groupings
       | Enrolment key | Abcdef-2 |
     And I press "Save changes"
     And I should not see "This enrolment key is already used for another group."
-    And I am on "Course 2" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 2" "groups" page
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group A |

@@ -2854,7 +2854,8 @@ function grade_button($type, $courseid, $object) {
 function grade_extend_settings($plugininfo, $courseid) {
     global $PAGE;
 
-    $gradenode = $PAGE->settingsnav->prepend(get_string('gradeadministration', 'grades'), null, navigation_node::TYPE_CONTAINER);
+    $gradenode = $PAGE->settingsnav->prepend(get_string('gradeadministration', 'grades'), null, navigation_node::TYPE_CONTAINER,
+        null, 'gradeadmin');
 
     $strings = array_shift($plugininfo);
 

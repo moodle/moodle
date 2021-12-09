@@ -79,6 +79,9 @@
                         <div class="region_main_settings_menu_proxy"></div>
                     {{/hasregionmainsettingsmenu}}
                     {{{ output.course_content_header }}}
+                    {{#overflow}}
+                        {{> core/url_select}}
+                    {{/overflow}}
                     {{{ output.main_content }}}
                     {{{ output.activity_navigation }}}
                     {{{ output.course_content_footer }}}

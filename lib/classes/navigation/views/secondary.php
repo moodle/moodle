@@ -17,6 +17,7 @@
 namespace core\navigation\views;
 
 use navigation_node;
+use url_select;
 
 /**
  * Class secondary_navigation_view.
@@ -35,6 +36,9 @@ class secondary extends view {
 
     /** @var int The maximum limit of navigation nodes displayed in the secondary navigation */
     const MAX_DISPLAYED_NAV_NODES = 5;
+
+    /** @var navigation_node The course overflow node. */
+    protected $courseoverflownode = null;
 
     /**
      * Defines the default structure for the secondary nav in a course context.
@@ -252,13 +256,15 @@ class secondary extends view {
 
             if ($child->has_children()) {
                 $additionalchildren = true;
-                $urldata[][$child->text] = $additionalnode + $this->get_additional_child_nodes($child);
+                $text = (is_a($child->text, 'lang_string')) ? $child->text->out() : $child->text;
+                $urldata[][$text] = $additionalnode + $this->get_additional_child_nodes($child);
             } else {
                 $initialchildren += $additionalnode;
             }
         }
         if ($additionalchildren) {
-            $urldata[][$node->text] = $initialchildren;
+            $text = (is_a($node->text, 'lang_string')) ? $node->text->out() : $node->text;
+            $urldata[][$text] = $initialchildren;
         } else {
             $urldata = $initialchildren;
         }
@@ -327,6 +333,30 @@ class secondary extends view {
     }
 
     /**
+     * Returns a list of all expected nodes in the course administration.
+     *
+     * @return array An array of keys for navigation nodes in the course administration.
+     */
+    protected function get_expected_course_admin_nodes(): array {
+        $expectednodes = [];
+        foreach ($this->get_default_course_mapping()['settings'] as $value) {
+            foreach ($value as $nodekey => $notused) {
+                $expectednodes[] = $nodekey;
+            }
+        }
+        foreach ($this->get_default_course_mapping()['navigation'] as $value) {
+            foreach ($value as $nodekey => $notused) {
+                $expectednodes[] = $nodekey;
+            }
+        }
+        $othernodes = ['users', 'gradeadmin', 'coursereports', 'coursebadges'];
+        $leftovercourseadminnodes = ['backup', 'restore', 'import', 'copy', 'reset'];
+        $expectednodes = array_merge($expectednodes, $othernodes);
+        $expectednodes = array_merge($expectednodes, $leftovercourseadminnodes);
+        return $expectednodes;
+    }
+
+    /**
      * Load the course secondary navigation. Since we are sourcing all the info from existing objects that already do
      * the relevant checks, we don't do it again here.
      */
@@ -345,17 +375,9 @@ class secondary extends view {
         $nodesordered += $this->get_leaf_nodes($navigation, $nodes['navigation'] ?? []);
         $this->add_ordered_nodes($nodesordered);
 
-        $coursecontext = \context_course::instance($course->id);
-        if (has_capability('moodle/course:update', $coursecontext)) {
-            // All additional nodes will be available under the 'Course admin' page.
-            $text = get_string('courseadministration');
-            $url = new \moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
-            $this->add($text, $url, null, null, 'courseadmin', new \pix_icon('t/edit', $text));
-        }
-
         // Try to get any custom nodes defined by a user which may include containers.
-        $expectedcourseadmin = ['editsettings', 'coursecompletion', 'users', 'coursereports', 'gradebooksetup', 'coursebadges',
-            'backup', 'restore', 'import', 'copy', 'reset', 'questionbank'];
+        $expectedcourseadmin = $this->get_expected_course_admin_nodes();
+
         foreach ($settingsnav->children as $value) {
             if ($value->key == 'courseadmin') {
                 foreach ($value->children as $other) {
@@ -363,12 +385,76 @@ class secondary extends view {
                         $othernode = $this->get_first_action_for_node($other);
                         // Get the first node and check whether it's been added already.
                         if ($othernode && !$this->get($othernode->key)) {
-                            $this->add_node(clone $othernode);
+                            $this->add_node($othernode);
+                        } else {
+                            $this->add_node($other);
                         }
                     }
                 }
             }
         }
+
+        $coursecontext = \context_course::instance($course->id);
+        if (has_capability('moodle/course:update', $coursecontext)) {
+            $overflownode = $this->get_course_overflow_nodes();
+            if (is_null($overflownode)) {
+                return;
+            }
+            $actionnode = $this->get_first_action_for_node($overflownode);
+            // All additional nodes will be available under the 'Course admin' page.
+            $text = get_string('courseadministration');
+            $this->add($text, $actionnode->action, null, null, 'courseadmin', new \pix_icon('t/edit', $text));
+        }
+    }
+
+    /**
+     * Gets the overflow navigation nodes for the course administration category.
+     *
+     * @return navigation_node  The course overflow nodes.
+     */
+    protected function get_course_overflow_nodes(): ?navigation_node {
+        global $SITE;
+
+        // This gets called twice on some pages, and so trying to create this navigation node twice results in no children being
+        // present the second time this is called.
+        if (isset($this->courseoverflownode)) {
+            return $this->courseoverflownode;
+        }
+
+        // Start with getting the base node for the front page or the course.
+        $node = null;
+        if ($this->page->course == $SITE->id) {
+            $node = $this->page->settingsnav->find('frontpage', navigation_node::TYPE_SETTING);
+        } else {
+            $node = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
+        }
+        $coursesettings = $node->get_children_key_list();
+        $thissettings = $this->get_children_key_list();
+        $diff = array_diff($coursesettings, $thissettings);
+
+        // Remove our specific created elements (user - participants, badges - coursebadges, grades - gradebooksetup).
+        $shortdiff = array_filter($diff, function($value) {
+            return !($value == 'users' || $value == 'coursebadges' || $value == 'gradebooksetup');
+        });
+
+        // Permissions may be in play here that ultimately will show no overflow.
+        if (empty($shortdiff)) {
+            return null;
+        }
+
+        $firstitem = array_shift($shortdiff);
+        $navnode = $node->get($firstitem);
+        foreach ($shortdiff as $key) {
+            $courseadminnodes = $node->get($key);
+            if ($courseadminnodes) {
+                if ($courseadminnodes->parent->key == $node->key) {
+                    $navnode->add_node($courseadminnodes);
+                }
+            }
+        }
+        $this->courseoverflownode = $navnode;
+        return $navnode;
+
     }
 
     /**
@@ -398,28 +484,100 @@ class secondary extends view {
 
     /**
      * Returns a url_select object with overflow navigation nodes.
+     * This looks to see if the current page is within the course administration, or some other page that requires an overflow
+     * select object.
      *
-     * @return \url_select|null The overflow menu data.
+     * @return url_select|null The overflow menu data.
      */
-    public function get_overflow_menu_data(): ?\url_select {
+    public function get_overflow_menu_data(): ?url_select {
         $activenode = $this->find_active_node();
-        if ($activenode && $activenode->has_action() && $activenode->has_children() && $activenode->key != 'coursehome') {
-            // This needs to be expanded to does the active node have children and does the page url match any of the children.
-            $menunode = $this->page->settingsnav->find($activenode->key, null);
-            if ($menunode instanceof navigation_node) {
-                // Loop through all children and try and find a match to the current url.
-                $matchednode = $this->nodes_match_current_url($menunode);
-                if (is_null($matchednode)) {
-                    return null;
-                }
-                if (!isset($menunode) || !$menunode->has_children()) {
-                    return null;
-                }
-                $selectdata = $this->get_menu_array($menunode);
-                return new \url_select($selectdata, $matchednode->action->out(), null);
+        $incourseadmin = false;
+
+        if (!$activenode) {
+            // Could be in the course admin section.
+            $courseadmin = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
+            if (!$courseadmin) {
+                return null;
             }
+
+            $activenode = $courseadmin->find_active_node();
+            if (!$activenode) {
+                return null;
+            }
+            $incourseadmin = true;
         }
-        return null;
+
+        if ($activenode->key == 'courseadmin' || $incourseadmin) {
+            $courseoverflownode = $this->get_course_overflow_nodes();
+            if (is_null($courseoverflownode)) {
+                return null;
+            }
+            $menuarray = $this->get_menu_array($courseoverflownode);
+            if ($activenode->key != 'courseadmin') {
+                $inmenu = false;
+                foreach ($menuarray as $key => $value) {
+                    if ($this->page->url->out(false) == $key) {
+                        $inmenu = true;
+                    }
+                }
+                if (!$inmenu) {
+                    return null;
+                }
+            }
+            $menuselect = new url_select($menuarray, $this->page->url, null);
+            $menuselect->set_label(get_string('browsecourseadminindex', 'course'), ['class' => 'sr-only']);
+            return $menuselect;
+        } else {
+            return $this->get_other_overflow_menu_data($activenode);
+        }
+    }
+
+    /**
+     * Gets overflow menu data for third party plugin settings.
+     *
+     * @param navigation_node $activenode The node to gather the children for to put into the overflow menu.
+     * @return url_select|null The overflow menu in a url_select object.
+     */
+    protected function get_other_overflow_menu_data(navigation_node $activenode): ?url_select {
+        if (!$activenode->has_action()) {
+            return null;
+        }
+
+        if (!$activenode->has_children()) {
+            return null;
+        }
+
+        // If the setting is extending the course navigation then the page being redirected to should be in the course context.
+        // It was decided on the issue that put this code here that plugins that extend the course navigation should have the pages
+        // that are redirected to, be in the course context or module context depending on which callback was used.
+        // Third part plugins were checked to see if any existing plugins had settings in a system context and none were found.
+        // The request of third party developers is to keep their settings within the specified context.
+        if ($this->page->context->contextlevel != CONTEXT_COURSE && $this->page->context->contextlevel != CONTEXT_MODULE) {
+            return null;
+        }
+
+        // These areas have their own code to retrieve added plugin navigation nodes.
+        if ($activenode->key == 'coursehome' || $activenode->key == 'questionbank' || $activenode->key == 'coursereports') {
+            return null;
+        }
+
+        $menunode = $this->page->settingsnav->find($activenode->key, null);
+
+        if (!$menunode instanceof navigation_node) {
+            return null;
+        }
+        // Loop through all children and try and find a match to the current url.
+        $matchednode = $this->nodes_match_current_url($menunode);
+        if (is_null($matchednode)) {
+            return null;
+        }
+        if (!isset($menunode) || !$menunode->has_children()) {
+            return null;
+        }
+        $selectdata = $this->get_menu_array($menunode);
+        $urlselect = new url_select($selectdata, $matchednode->action->out(), null);
+        $urlselect->set_label(get_string('browsesettingindex', 'course'), ['class' => 'sr_only']);
+        return $urlselect;
     }
 
     /**

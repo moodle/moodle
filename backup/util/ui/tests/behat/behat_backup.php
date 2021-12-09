@@ -28,6 +28,7 @@
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../../../lib/behat/behat_field_manager.php');
 require_once(__DIR__ . '/../../../../../lib/tests/behat/behat_navigation.php');
+require_once(__DIR__ . '/../../../../../lib/behat/form_field/behat_form_field.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
@@ -55,15 +56,8 @@ class behat_backup extends behat_base {
         // We can not use other steps here as we don't know where the provided data
         // table elements are used, and we need to catch exceptions contantly.
 
-        // Go to homepage.
-        $this->execute('behat_general::i_visit', ['/?redirect=0']);
-        $this->execute("behat_general::wait_until_the_page_is_ready");
-
-        // Click the course link.
-        $this->execute("behat_general::click_link", $backupcourse);
-
-        // Click the backup link.
-        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", get_string('backup'));
+        // Navigate to the course backup page.
+        $this->execute("behat_navigation::i_am_on_page_instance", [$backupcourse, 'backup']);
 
         // Initial settings.
         $this->fill_backup_restore_form($this->get_step_options($options, "Initial"));
@@ -97,14 +91,8 @@ class behat_backup extends behat_base {
         // We can not use other steps here as we don't know where the provided data
         // table elements are used, and we need to catch exceptions contantly.
 
-        // Go to homepage.
-        $this->execute('behat_general::i_visit', ['/?redirect=0']);
-
-        // Click the course link.
-        $this->execute("behat_general::click_link", $backupcourse);
-
-        // Click the backup link.
-        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", get_string('backup'));
+        // Navigate to the course backup page.
+        $this->execute("behat_navigation::i_am_on_page_instance", [$backupcourse, 'backup']);
 
         // Initial settings.
         $this->execute("behat_forms::press_button", get_string('jumptofinalstep', 'backup'));
@@ -133,15 +121,8 @@ class behat_backup extends behat_base {
         // We can not use other steps here as we don't know where the provided data
         // table elements are used, and we need to catch exceptions contantly.
 
-        // Go to homepage.
-        $this->execute('behat_general::i_visit', ['/?redirect=0']);
-        $this->execute("behat_general::wait_until_the_page_is_ready");
-
-        // Click the course link.
-        $this->execute("behat_general::click_link", $tocourse);
-
-        // Click the import link.
-        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", get_string('import'));
+        // Navigate to the course import page.
+        $this->execute("behat_navigation::i_am_on_page_instance", [$tocourse, 'import']);
 
         // Select the course.
         $fromcourse = behat_context_helper::escape($fromcourse);

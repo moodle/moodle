@@ -46,8 +46,7 @@ Feature: Assign reset
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I follow "View all submissions"
     And I should see "Submitted for grading"
-    And I am on "Course 1" course homepage
-    When I navigate to "Reset" in current page administration
+    When I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all submissions | 1  |
     And I press "Reset course"
@@ -72,8 +71,7 @@ Feature: Assign reset
         | duedate[minute]    | 00 |
     And I press "Save"
     And I should see "Sam1 Student1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    When I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all user overrides | 1  |
     And I press "Reset course"
@@ -98,8 +96,7 @@ Feature: Assign reset
         | duedate[minute]    | 00 |
     And I press "Save"
     And I should see "Group 1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all group overrides | 1  |
     And I press "Reset course"
@@ -120,8 +117,7 @@ Feature: Assign reset
     And I select "Reveal student identities" from the "Grading action" singleselect
     And I press "Continue"
     And I should see "Sam1 Student1"
-    And I am on "Course 1" course homepage
-    When I navigate to "Reset" in current page administration
+    When I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all submissions | 1 |
     And I press "Reset course"

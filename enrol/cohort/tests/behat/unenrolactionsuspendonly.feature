@@ -28,16 +28,13 @@ Feature: Unenrol action to disable course enrolment
   @javascript @skip_chrome_zerosize
   Scenario: Removing the user from the cohort will suspend the enrolment but keep the role
     When I log in as "teacher001"
-    And I am on "Course 001" course homepage
-    And I navigate to course participants
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I am on the "Course 001" "enrolment methods" page
     And I select "Cohort sync" from the "Add method" singleselect
     And I open the autocomplete suggestions list
     Then "System cohort" "autocomplete_suggestions" should exist
     And I set the field "Cohort" to "System cohort"
     And I press "Add method"
-    And I am on "Course 001" course homepage
-    And I navigate to "Users > Enrolled users" in current page administration
+    And I am on the "Course 001" "enrolled users" page
     And I should see "student001@example.com"
     And I should see "student002@example.com"
     And I should see "student003@example.com"
@@ -63,16 +60,13 @@ Feature: Unenrol action to disable course enrolment
   @javascript @skip_chrome_zerosize
   Scenario: Deleting non-empty cohort will suspend the enrolment but keep the role
     When I log in as "teacher001"
-    And I am on "Course 001" course homepage
-    And I navigate to course participants
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I am on the "Course 001" "enrolment methods" page
     And I select "Cohort sync" from the "Add method" singleselect
     And I open the autocomplete suggestions list
     Then "System cohort" "autocomplete_suggestions" should exist
     And I set the field "Cohort" to "System cohort"
     And I press "Add method"
-    And I am on "Course 001" course homepage
-    And I navigate to "Users > Enrolled users" in current page administration
+    And I am on the "Course 001" "enrolled users" page
     And I should see "student001@example.com"
     And I should see "student002@example.com"
     And I should see "student003@example.com"
