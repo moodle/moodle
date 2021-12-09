@@ -87,9 +87,9 @@ $string['phpversionhelp'] = '<p>O Moodle requer uma versão PHP de pelo menos 5.
 <p>Você deve atualizar o PHP ou migrar para um host com uma versão mais recente do PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Você está vendo esa página pois instalou com sucesso o pacote<strong>{$a->packname} {$a->packversion}</strong>. Parabéns!';
-$string['welcomep30'] = 'Esta versão do <strong>{$a->installername}</strong> inclui as aplicações para a criação de um ambiente em que <strong>Moodle</strong> possa operar:';
+$string['welcomep30'] = 'Esta versão do <strong>{$a->installername}</strong> inclui as aplicações para a criação de um ambiente em que o <strong>Moodle</strong> possa operar:';
 $string['welcomep40'] = 'O pacote inclui também o <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'O uso das aplicações incluídas neste pacote é regulamentado pelas respectivas licenças. O instalador completo <strong>{$a->installername}</strong> é <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> e é distribuído com uma licença <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'As seguinte páginas guiam passo a passo a configuração de <strong>Moodle</strong> no seu computador. Você pode usar a configuração padrão ou alterá-las de acordo com as suas necessidades.';
-$string['welcomep70'] = 'Clicar o botão "Próxima" abaixo para continuar a configuração de <strong>Moodle</strong>.';
+$string['welcomep70'] = 'Clique no botão "Próximo" abaixo para continuar a configuração do <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Endereço web';
