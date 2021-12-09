@@ -552,7 +552,6 @@ $string['view_recording_yui_rows'] = 'Rows';
 $string['view_recording_yui_show_all'] = 'Show all';
 
 $string['event_activity_created'] = 'Activity created';
-$string['event_activity_viewed'] = 'Activity viewed';
 $string['event_activity_deleted'] = 'Activity deleted';
 $string['event_activity_updated'] = 'Activity updated';
 $string['event_meeting_created'] = 'Meeting created';

@@ -23,26 +23,17 @@ namespace mod_bigbluebuttonbn\event;
  * @copyright 2010 onwards, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity_viewed extends base
+class course_module_viewed extends \core\event\course_module_viewed
 {
     /**
      * Init method.
      * @param string $crud
      * @param int $edulevel
      */
-    protected function init($crud = 'r', $edulevel = self::LEVEL_PARTICIPATING) {
-        parent::init($crud, $edulevel);
-        $this->description = "The user with id '##userid' viewed the bigbluebuttonbn activity " .
-            "with id '##objectid' for the course id '##courseid'.";
-    }
-
-    /**
-     * Return event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('event_activity_viewed', 'bigbluebuttonbn');
+    protected function init() {
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['objecttable'] = 'bigbluebuttonbn';
     }
 
     /**
