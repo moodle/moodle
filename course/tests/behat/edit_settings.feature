@@ -15,6 +15,8 @@ Feature: Edit course settings
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following config values are set as admin:
+      | courselistshortnames | 1 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I navigate to "Settings" in current page administration
@@ -23,10 +25,12 @@ Feature: Edit course settings
       | Course short name | Edited course shortname |
       | Course summary | Edited course summary |
     And I press "Save and display"
+    And I am on site homepage
     Then I should not see "Course 1"
     And I should not see "C1"
     And I should see "Edited course fullname"
     And I should see "Edited course shortname"
+    And I am on "Edited course fullname" course homepage
     And I navigate to "Settings" in current page administration
     And the field "Course full name" matches value "Edited course fullname"
     And the field "Course short name" matches value "Edited course shortname"

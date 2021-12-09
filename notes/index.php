@@ -127,6 +127,9 @@ if ($course->id == SITEID) {
 echo $OUTPUT->header();
 
 if ($course->id != SITEID) {
+    $backurl = new moodle_url('/user/view.php', ['id' => $userid, 'course' => $courseid]);
+    echo $OUTPUT->single_button($backurl, get_string('back'), 'get', ['class' => 'mb-3']);
+
     $headerinfo = array('heading' => fullname($user), 'user' => $user);
     echo $OUTPUT->context_header($headerinfo, 2);
 }

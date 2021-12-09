@@ -69,7 +69,8 @@ Feature: Award badges with separate groups
     # Non-editing teacher can award the badge
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
     And I press "Award badge"
-    And I follow "Manage badges"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge"
     And I should see "Recipients (1)"
     And I log out

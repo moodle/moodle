@@ -27,14 +27,17 @@ class boostnavbar implements \renderable {
 
     /** @var array The individual items of the navbar. */
     protected $items = [];
+    /** @var moodle_page The current moodle page. */
+    protected $page;
 
     /**
      * Takes a navbar object and picks the necessary parts for display.
      *
-     * @param \navbar $navbar The navigation bar.
+     * @param \moodle_page $page The current moodle page.
      */
-    public function __construct(\navbar $navbar) {
-        foreach ($navbar->get_items() as $item) {
+    public function __construct(\moodle_page $page) {
+        $this->page = $page;
+        foreach ($this->page->navbar->get_items() as $item) {
             $this->items[] = $item;
         }
         $this->prepare_nodes_for_boost();
@@ -46,8 +49,19 @@ class boostnavbar implements \renderable {
     protected function prepare_nodes_for_boost(): void {
         global $PAGE;
 
+        // Don't show the navigation if we are in the course context.
+        if ($this->page->context->contextlevel == CONTEXT_COURSE) {
+            $this->clear_items();
+            return;
+        }
+
         $this->remove('myhome'); // Dashboard.
         $this->remove('home');
+
+        // Remove 'My courses' if we are in the module context.
+        if ($this->page->context->contextlevel == CONTEXT_MODULE) {
+            $this->remove('mycourses');
+        }
 
         if (!is_null($this->get_item('root'))) { // We are in site administration.
             // Remove the 'Site administration' navbar node as it already exists in the primary navigation menu.

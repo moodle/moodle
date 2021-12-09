@@ -73,12 +73,16 @@ $PAGE->set_title("$course->shortname: $stractivityreport");
 $PAGE->set_heading($pageheading);
 echo $OUTPUT->header();
 if ($courseid != SITEID) {
+    $backurl = new moodle_url('/user/view.php', ['id' => $userid, 'course' => $courseid]);
+    echo $OUTPUT->single_button($backurl, get_string('back'), 'get', ['class' => 'mb-3']);
+
     echo $OUTPUT->context_header(
             array(
             'heading' => $userfullname,
             'user' => $user,
             'usercontext' => $personalcontext
         ), 2);
+    echo $OUTPUT->heading(get_string('statistics', 'moodle'), 2, 'main mt-4 mb-4');
 }
 
 // Trigger a user report viewed event.

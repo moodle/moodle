@@ -217,6 +217,7 @@ if (empty($result->posts)) {
     // Display a page letting the user know that there's nothing to display;
     $PAGE->set_title($pagetitle);
     if ($isspecificcourse) {
+        $PAGE->set_secondary_active_tab('participants');
         $PAGE->set_heading($pageheading);
     } else if ($canviewuser) {
         $PAGE->set_heading(fullname($user));
@@ -224,6 +225,10 @@ if (empty($result->posts)) {
         $PAGE->set_heading($SITE->fullname);
     }
     echo $OUTPUT->header();
+    if (isset($courseid) && $courseid != SITEID) {
+        $backurl = new moodle_url('/user/view.php', ['id' => $userid, 'course' => $courseid]);
+        echo $OUTPUT->single_button($backurl, get_string('back'), 'get', ['class' => 'mb-3']);
+    }
     if (!$isspecificcourse) {
         echo $OUTPUT->heading($pagetitle);
     } else {
@@ -309,9 +314,15 @@ if (isset($courseid) && $courseid != SITEID) {
         $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
                 array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
     }
+    $PAGE->set_secondary_active_tab('participants');
 }
 
 echo $OUTPUT->header();
+
+if (isset($courseid) && $courseid != SITEID) {
+    $backurl = new moodle_url('/user/view.php', ['id' => $userid, 'course' => $courseid]);
+    echo $OUTPUT->single_button($backurl, get_string('back'), 'get', ['class' => 'mb-3']);
+}
 echo html_writer::start_tag('div', array('class' => 'user-content'));
 
 if ($isspecificcourse) {
@@ -321,6 +332,10 @@ if ($isspecificcourse) {
         'usercontext' => $usercontext
     );
     echo $OUTPUT->context_header($userheading, 2);
+    $coursename = format_string($course->fullname, true, array('context' => $coursecontext));
+    $heading = $mode === 'posts' ? get_string('postsmadeincourse', 'mod_forum', $coursename) :
+        get_string('discussionsstartedincourse', 'mod_forum', $coursename);
+    echo $OUTPUT->heading($heading, 2, 'main mt-4 mb-4');
 } else {
     echo $OUTPUT->heading($inpageheading);
 }
