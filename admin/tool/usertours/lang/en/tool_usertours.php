@@ -99,8 +99,7 @@ Some example values include:
 * /mod/forum/view.php% - to match the forum discussion list
 * /user/profile.php% - to match the user profile page
 
-If you wish to display a tour on the Site Home page, you can use the value: "FRONTPAGE".
-';
+If you wish to display a tour on the site home, you can use the value: "FRONTPAGE".';
 $string['placement'] = 'Placement';
 $string['pluginname'] = 'User tours';
 $string['previousstep'] = 'Previous';

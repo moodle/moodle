@@ -31,7 +31,7 @@ Feature: Check that the assignment grade can be updated correctly
     Then I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
-    And I set the field "Notify students" to "0"
+    And I set the field "Notify student" to "0"
     And I press "Save changes"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
@@ -67,7 +67,7 @@ Feature: Check that the assignment grade can be updated correctly
     When I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
-    And I set the field "Notify students" to "0"
+    And I set the field "Notify student" to "0"
     And I press "Save changes"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"

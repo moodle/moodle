@@ -115,7 +115,7 @@ Feature: View activity completion in the assignment activity
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Vinnie Student1" "table_row"
     And I set the field "Grade out of 100" to "33"
-    And I set the field "Notify students" to "0"
+    And I set the field "Notify student" to "0"
     And I press "Save changes"
     And I follow "View all submissions"
     And I log out
