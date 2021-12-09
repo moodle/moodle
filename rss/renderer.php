@@ -35,12 +35,10 @@ class core_rss_renderer extends plugin_renderer_base {
      * @return string html
      */
     public function user_reset_rss_token_confirmation() {
-        global $CFG;
-        $managetokenurl = $CFG->wwwroot."/user/managetoken.php?sesskey=" . sesskey();
-        $optionsyes = array('action' => 'resetrsstoken', 'confirm' => 1, 'sesskey' => sesskey());
-        $optionsno  = array('section' => 'webservicetokens', 'sesskey' => sesskey());
+        $managetokenurl = '/user/managetoken.php';
+        $optionsyes = ['action' => 'resetrsstoken', 'confirm' => 1];
         $formcontinue = new single_button(new moodle_url($managetokenurl, $optionsyes), get_string('reset'));
-        $formcancel = new single_button(new moodle_url($managetokenurl, $optionsno), get_string('cancel'), 'get');
+        $formcancel = new single_button(new moodle_url($managetokenurl), get_string('cancel'), 'get');
         $html = $this->output->confirm(get_string('resettokenconfirmsimple', 'webservice'), $formcontinue, $formcancel);
         return $html;
     }
@@ -69,8 +67,9 @@ class core_rss_renderer extends plugin_renderer_base {
         $table->data  = array();
 
         if (!empty($token)) {
-            $reset = "<a href=\"".$CFG->wwwroot."/user/managetoken.php?sesskey=".sesskey().
-                    "&amp;action=resetrsstoken\">".get_string('reset')."</a>";
+            $reset = html_writer::link(new moodle_url('/user/managetoken.php', [
+                'action' => 'resetrsstoken',
+            ]), get_string('reset'));
 
             $table->data[] = array($token, $reset);
 
