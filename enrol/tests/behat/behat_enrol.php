@@ -40,41 +40,6 @@ use Behat\Gherkin\Node\TableNode as TableNode;
 class behat_enrol extends behat_base {
 
     /**
-     * Adds the specified enrolment method to the current course filling the form with the provided data.
-     *
-     * @Given /^I add "(?P<enrolment_method_name_string>(?:[^"]|\\")*)" enrolment method with:$/
-     * @param string $enrolmethod
-     * @param TableNode $table
-     */
-    public function i_add_enrolment_method_with($enrolmethod, TableNode $table) {
-        // Navigate to enrolment method page.
-        $parentnodes = get_string('users', 'admin');
-        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration",
-            array($parentnodes .' > '. get_string('type_enrol_plural', 'plugin'))
-        );
-
-        // Select enrolment method.
-        $this->execute('behat_forms::i_select_from_the_singleselect',
-            array($this->escape($enrolmethod), get_string('addinstance', 'enrol'))
-        );
-
-        // Wait again, for page to reloaded.
-        $this->execute('behat_general::i_wait_to_be_redirected');
-
-        // Set form fields.
-        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $table);
-
-        // Ensure we get button in focus, before pressing button.
-        if ($this->running_javascript()) {
-            $this->execute('behat_general::i_press_named_key', ['', 'tab']);
-        }
-
-        // Save changes.
-        $this->execute("behat_forms::press_button", get_string('addinstance', 'enrol'));
-
-    }
-
-    /**
      * Add the specified enrolment method to the specified course filling the form with the provided data.
      *
      * @Given /^I add "(?P<enrolment_method_name_string>(?:[^"]|\\")*)" enrolment method in "(?P<course_identifier_string>(?:[^"]|\\")*)" with:$/
