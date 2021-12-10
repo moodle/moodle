@@ -68,6 +68,7 @@
             {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
             {{$drawerstate}}show-drawer-left{{/drawerstate}}
             {{$tooltipplacement}}right{{/tooltipplacement}}
+            {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}}
         {{/ theme_boost/drawer}}
     {{/courseindex}}
     {{#hasblocks}}
@@ -85,6 +86,7 @@
             {{$drawerstate}}show-drawer-right{{/drawerstate}}
             {{$tooltipplacement}}left{{/tooltipplacement}}
             {{$drawercloseonresize}}1{{/drawercloseonresize}}
+            {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
         {{/ theme_boost/drawer}}
     {{/hasblocks}}
     <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}}">
@@ -93,7 +95,7 @@
                 {{#courseindex}}
                     <div class="drawer-toggler drawer-left-toggle open-nav">
                         <button
-                            class="shadow-sm btn icon-no-margin"
+                            class="btn icon-no-margin"
                             data-toggler="drawers"
                             data-action="toggle"
                             data-target="theme_boost-drawers-courseindex"
@@ -109,7 +111,7 @@
                 {{#hasblocks}}
                     <div class="drawer-toggler drawer-right-toggle ml-auto">
                         <button
-                            class="shadow-sm btn icon-no-margin"
+                            class="btn icon-no-margin"
                             data-toggler="drawers"
                             data-action="toggle"
                             data-target="theme_boost-drawers-blocks"

@@ -96,9 +96,13 @@
             border-radius: 200px;
             padding: 16px;
             background-color: $gray-300;
+            box-shadow: $box-shadow-sm;
             .icon {
                 width: auto;
                 height: auto;
+            }
+            &:focus {
+                box-shadow: $input-btn-focus-box-shadow;
             }
             transition: padding 200ms;
         }
