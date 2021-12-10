@@ -2058,6 +2058,7 @@ class assign {
             $participants[$userid]->submitted = false;
             $participants[$userid]->requiregrading = false;
             $participants[$userid]->grantedextension = false;
+            $participants[$userid]->submissionstatus = '';
         }
 
         foreach ($records as $userid => $submissioninfo) {
@@ -2065,6 +2066,7 @@ class assign {
             $submitted = false;
             $requiregrading = false;
             $grantedextension = false;
+            $submissionstatus = !empty($submissioninfo->status) ? $submissioninfo->status : '';
 
             if (!empty($submissioninfo->stime) && $submissioninfo->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
                 $submitted = true;
@@ -2083,6 +2085,7 @@ class assign {
             $participants[$userid]->submitted = $submitted;
             $participants[$userid]->requiregrading = $requiregrading;
             $participants[$userid]->grantedextension = $grantedextension;
+            $participants[$userid]->submissionstatus = $submissionstatus;
             if ($this->get_instance()->teamsubmission) {
                 $group = $this->get_submission_group($userid);
                 if ($group) {
