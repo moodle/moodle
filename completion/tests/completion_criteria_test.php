@@ -24,7 +24,7 @@ namespace core_completion;
  * @copyright 2021 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_completion_criteria_testcase extends \advanced_testcase {
+class completion_criteria_test extends \advanced_testcase {
 
     /**
      * Test setup.

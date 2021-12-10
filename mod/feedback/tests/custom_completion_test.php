@@ -44,7 +44,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity_custom_completion_test extends advanced_testcase {
+class custom_completion_test extends advanced_testcase {
 
     /**
      * Data provider for get_state().

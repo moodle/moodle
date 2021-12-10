@@ -35,7 +35,7 @@ use context_module;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_instance_list_viewed_testcase extends advanced_testcase {
+class course_module_instance_list_viewed_test extends advanced_testcase {
 
     /**
      * Test course_module_instance_list_viewed event.

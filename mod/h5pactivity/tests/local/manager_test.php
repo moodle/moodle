@@ -35,7 +35,7 @@ use stdClass;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_testcase extends \advanced_testcase {
+class manager_test extends \advanced_testcase {
 
     /**
      * Test for static create methods.

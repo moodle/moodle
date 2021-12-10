@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tests\core_course;
+namespace core_course;
 
 use context_user;
 use context_course;
@@ -31,7 +31,7 @@ use core_course\cache\course_image;
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_image_cache_testcase extends \advanced_testcase {
+class course_image_cache_test extends \advanced_testcase {
 
     /**
      * Initial setup.

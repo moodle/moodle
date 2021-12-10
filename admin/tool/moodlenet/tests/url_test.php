@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class tool_moodlenet_url_testcase, providing test cases for the url class.
  */
-class tool_moodlenet_url_testcase extends \advanced_testcase {
+class url_test extends \advanced_testcase {
 
     /**
      * Test the parsing to host + path components.

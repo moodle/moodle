@@ -202,6 +202,9 @@
     <testsuite name="core_contentbank_testsuite">
       <directory suffix="_test.php">contentbank/tests</directory>
     </testsuite>
+    <testsuite name="core_payment_testsuite">
+      <directory suffix="_test.php">payment/tests</directory>
+    </testsuite>
 
     <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from
         phpunit.xml.dist with up-to-date list of plugins in current install-->

@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class skip_future_documents_iterator_testcase extends \basic_testcase {
+class skip_future_documents_iterator_test extends \basic_testcase {
 
     /**
      * Test normal case with all documents in the past.

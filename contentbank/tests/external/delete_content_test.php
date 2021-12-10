@@ -43,7 +43,7 @@ use externallib_advanced_testcase;
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class delete_content_testcase extends externallib_advanced_testcase {
+class delete_content_test extends externallib_advanced_testcase {
 
     /**
      * Test the behaviour of delete_content().

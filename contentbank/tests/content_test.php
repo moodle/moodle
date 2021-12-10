@@ -39,7 +39,7 @@ use contenttype_testable\contenttype as contenttype;
  * @coversDefaultClass \core_contentbank\content
  *
  */
-class core_contenttype_content_testcase extends \advanced_testcase {
+class content_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

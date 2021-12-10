@@ -22,7 +22,7 @@
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tests\core_course;
+namespace core_course;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +35,7 @@ use core_course\local\repository\content_item_readonly_repository;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exporters_course_content_items_testcase extends \advanced_testcase {
+class exporters_content_items_test extends \advanced_testcase {
 
     /**
      * Test confirming the collection of content_items can be exported for a course.

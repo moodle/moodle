@@ -43,7 +43,7 @@ use stdClass;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class handler_testcase extends \advanced_testcase {
+class handler_test extends \advanced_testcase {
 
     /**
      * Generate a valid scenario for each tests.

@@ -36,7 +36,7 @@ use core\plugininfo\paygw;
  * @copyright  2020 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class accounts_testcase extends advanced_testcase {
+class helper_test extends advanced_testcase {
 
     protected function enable_paypal_gateway(): bool {
         if (!array_key_exists('paypal', \core_component::get_plugin_list('paygw'))) {
@@ -169,7 +169,7 @@ class accounts_testcase extends advanced_testcase {
      * @param float $surcharge
      * @param string $expected
      */
-    public function test_get_rounded_cost(float $amount, string $currency, float $surcharge, string $expected) {
+    public function test_get_rounded_cost(float $amount, string $currency, float $surcharge, float $expected) {
         $this->assertEquals($expected, helper::get_rounded_cost($amount, $currency, $surcharge));
     }
 
@@ -183,6 +183,20 @@ class accounts_testcase extends advanced_testcase {
      * @param string $expected
      */
     public function test_get_cost_as_string(float $amount, string $currency, float $surcharge, string $expected) {
+        // Some old ICU versions have a bug, where they don't follow the CLDR and they are
+        // missing the non-breaking-space between the currency abbreviation and the value.
+        // i.e. it returns AUD50 instead of AU\xc2\xa050). See the following issues @ ICU:
+        // - https://unicode-org.atlassian.net/browse/ICU-6560
+        // - https://unicode-org.atlassian.net/browse/ICU-8853
+        // - https://unicode-org.atlassian.net/browse/ICU-8840
+        // It has been detected that versions prior to ICU-61.1 / ICU-62.1 come with this
+        // problem. Noticeably Travis images (as of December 2021) use buggy ICU-60.1.
+        // So, here, we are going to dynamically verify the behaviour and skip the
+        // test when buggy one is found. No need to apply this to code as dar as the real
+        // formatting is not critical for the functionality (just small glitch).
+        if ('IRR5' === (new \NumberFormatter('en-AU', \NumberFormatter::CURRENCY))->formatCurrency(5, 'IRR')) {
+            $this->markTestSkipped('Old ICU libraries behavior (ICU < 62), skipping this tests');
+        }
         $this->assertEquals($expected, helper::get_cost_as_string($amount, $currency, $surcharge));
     }
 }
