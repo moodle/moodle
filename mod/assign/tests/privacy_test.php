@@ -40,7 +40,7 @@ use \mod_assign\privacy\provider;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assign_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /**
      * Convenience method for creating a submission.

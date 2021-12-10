@@ -40,7 +40,7 @@ use core_reportbuilder\local\helpers\user_filter_manager;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_testcase extends advanced_testcase {
+class user_test extends advanced_testcase {
 
     /**
      * Load required classes

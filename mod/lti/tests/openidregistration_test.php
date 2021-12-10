@@ -47,7 +47,7 @@ use mod_lti\local\ltiopenid\registration_helper;
 /**
  * OpenId LTI Registration library tests
  */
-class mod_lti_openidregistrationlib_testcase extends \advanced_testcase {
+class openidregistration_test extends \advanced_testcase {
 
     /**
      * @var string A has-it-all client registration.

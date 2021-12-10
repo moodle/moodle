@@ -34,7 +34,7 @@ namespace core\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\event\grade_item_deleted
  */
-class grade_item_deleted_testcase extends \advanced_testcase {
+class grade_item_deleted_test extends \advanced_testcase {
 
     /**
      * Test the grade item deleted event.

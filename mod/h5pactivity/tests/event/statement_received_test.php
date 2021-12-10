@@ -34,7 +34,7 @@ use context_module;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class statement_received_testcase extends advanced_testcase {
+class statement_received_test extends advanced_testcase {
 
     /**
      * Test statement_recieved event.

@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tests\core_course;
+namespace core_course;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,11 +31,12 @@ global $CFG;
 require_once($CFG->dirroot . '/course/tests/fixtures/mock_hooks.php');
 
 use PHPUnit\Framework\MockObject\MockObject;
+use core_course\test\mock_hooks;
 
 /**
  * Functional test for class core_course_category methods invoking hooks.
  */
-class core_course_category_hooks_testcase extends \advanced_testcase {
+class category_hooks_test extends \advanced_testcase {
 
     protected function setUp(): void {
         $this->resetAfterTest();

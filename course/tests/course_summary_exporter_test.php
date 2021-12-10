@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tests\core_course;
+namespace core_course;
 
 use core_course\external\course_summary_exporter;
 use context_user;
@@ -29,7 +29,7 @@ use context_course;
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_summary_exporter_testcase extends \advanced_testcase {
+class course_summary_exporter_test extends \advanced_testcase {
 
     /**
      * Test that if no course overview images uploaded get_course_image returns false.

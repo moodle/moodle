@@ -31,7 +31,7 @@ use core_reportbuilder\local\report\filter;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_fields_testcase extends advanced_testcase {
+class custom_fields_test extends advanced_testcase {
 
     /**
      * Generate a course with customfields

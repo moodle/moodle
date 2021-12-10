@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/privacy_test.php');
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignsubmission_online_privacy_testcase extends \mod_assign\tests\mod_assign_privacy_testcase {
+class assignsubmission_online_privacy_testcase extends \mod_assign\tests\privacy_test {
 
     /**
      * Convenience function for creating feedback data.

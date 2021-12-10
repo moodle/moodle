@@ -22,12 +22,12 @@
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tests\course;
+namespace core_course;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_course\local\service\content_item_service;
-use \core_course\local\repository\content_item_readonly_repository;
+use core_course\local\service\content_item_service;
+use core_course\local\repository\content_item_readonly_repository;
 
 /**
  * The tests for the content_item_service class.
@@ -35,7 +35,7 @@ use \core_course\local\repository\content_item_readonly_repository;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class services_content_item_service_testcase extends \advanced_testcase {
+class services_content_item_service_test extends \advanced_testcase {
 
     /**
      * Test confirming that content items are returned by the service.

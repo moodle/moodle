@@ -30,7 +30,7 @@ namespace enrol_fee\payment;
  *
  * @coversDefaultClass service_provider
  */
-class service_provider_testcase extends \advanced_testcase {
+class service_provider_test extends \advanced_testcase {
 
     /**
      * Test for service_provider::get_payable().

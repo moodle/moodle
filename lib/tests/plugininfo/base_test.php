@@ -35,7 +35,7 @@ use testable_plugininfo_base;
 /**
  * Tests of the basic API of the plugin manager.
  */
-class base_testcase extends \advanced_testcase {
+class base_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.

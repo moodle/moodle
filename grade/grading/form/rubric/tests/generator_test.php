@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tests\gradingform_rubric;
+namespace gradingform_rubric;
 
 use advanced_testcase;
 use context_module;
@@ -38,7 +38,7 @@ use gradingform_controller;
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_testcase extends advanced_testcase {
+class generator_test extends advanced_testcase {
 
     /**
      * Test rubric creation.

@@ -30,7 +30,7 @@ use core_reportbuilder\local\report\filter;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_selector_testcase extends advanced_testcase {
+class course_selector_test extends advanced_testcase {
 
     /**
      * Test getting filter SQL

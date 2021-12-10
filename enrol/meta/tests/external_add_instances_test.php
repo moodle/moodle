@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2021 WKS KV Bildung
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_instances_testcase extends \externallib_advanced_testcase {
+class external_add_instances_test extends \externallib_advanced_testcase {
 
     /**
      * Test setup

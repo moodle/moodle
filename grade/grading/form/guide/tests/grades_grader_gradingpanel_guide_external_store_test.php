@@ -42,7 +42,7 @@ use moodle_exception;
  * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class store_test extends advanced_testcase {
+class grades_grader_gradingpanel_guide_external_store_test extends advanced_testcase {
 
     public static function setupBeforeClass(): void {
         global $CFG;

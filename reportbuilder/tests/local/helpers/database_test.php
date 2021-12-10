@@ -30,7 +30,7 @@ use core_user;
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class database_testcase extends advanced_testcase {
+class database_test extends advanced_testcase {
 
     /**
      * Test generating table alias and parameter names

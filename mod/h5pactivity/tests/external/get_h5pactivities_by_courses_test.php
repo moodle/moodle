@@ -44,7 +44,7 @@ use context_module;
  * @copyright  2020 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_h5pactivities_by_courses_testcase extends externallib_advanced_testcase {
+class get_h5pactivities_by_courses_test extends externallib_advanced_testcase {
 
     /**
      * Test test_get_h5pactivities_by_courses user student.
