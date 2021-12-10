@@ -92,6 +92,10 @@ abstract class question_edit_form extends question_wizard_form {
     public $fileoptions;
     /** @var object instance of question type */
     public $instance;
+    /** @var object instance of custom field */
+    protected $customfieldhandler;
+    /** @var bool custom field plugin enabled or disabled*/
+    protected $customfieldpluginenabled = true;
 
     public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
         global $DB;
@@ -109,6 +113,10 @@ abstract class question_edit_form extends question_wizard_form {
 
         $this->category = $category;
         $this->categorycontext = context::instance_by_id($category->contextid);
+
+        if (!\core\plugininfo\qbank::is_plugin_enabled('qbank_customfields')) {
+            $this->customfieldpluginenabled = false;
+        }
 
         parent::__construct($submiturl, null, 'post', '', ['data-qtype' => $this->qtype()], $formeditable);
     }
@@ -222,10 +230,12 @@ abstract class question_edit_form extends question_wizard_form {
             $this->add_tag_fields($mform);
         }
 
-        // Add custom fields to the form.
-        $customfieldhandler = qbank_customfields\customfield\question_handler::create();
-        $customfieldhandler->set_parent_context($this->categorycontext); // For question handler only.
-        $customfieldhandler->instance_form_definition($mform, empty($this->question->id) ? 0 : $this->question->id);
+        if ($this->customfieldpluginenabled) {
+            // Add custom fields to the form.
+            $this->customfieldhandler = qbank_customfields\customfield\question_handler::create();
+            $this->customfieldhandler->set_parent_context($this->categorycontext); // For question handler only.
+            $this->customfieldhandler->instance_form_definition($mform, empty($this->question->id) ? 0 : $this->question->id);
+        }
 
         if (!empty($this->question->id)) {
             $mform->addElement('header', 'createdmodifiedheader',
@@ -295,9 +305,10 @@ abstract class question_edit_form extends question_wizard_form {
      */
     public function definition_after_data() {
         $mform = $this->_form;
-
-        $customfieldhandler = qbank_customfields\customfield\question_handler::create();
-        $customfieldhandler->instance_form_definition_after_data($mform, empty($this->question->id) ? 0 : $this->question->id);
+        if ($this->customfieldpluginenabled) {
+            $this->customfieldhandler->instance_form_definition_after_data($mform,
+                empty($this->question->id) ? 0 : $this->question->id);
+        }
     }
 
     /**
@@ -870,10 +881,10 @@ abstract class question_edit_form extends question_wizard_form {
             }
         }
 
-        // Add the custom field validation.
-        $customfieldhandler = core_course\customfield\course_handler::create();
-        $errors  = array_merge($errors, $customfieldhandler->instance_form_validation($fromform, $files));
-
+        if ($this->customfieldpluginenabled) {
+            // Add the custom field validation.
+            $errors  = array_merge($errors, $this->customfieldhandler->instance_form_validation($fromform, $files));
+        }
         return $errors;
     }
 
