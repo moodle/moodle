@@ -78,7 +78,7 @@ class webservice extends base {
 
         if ($haschanged) {
             $new = implode(',', array_flip($plugins));
-            add_to_config_log('webserviceprotocols', $CFG->webserviceprotocols, $new, 'core');
+            add_to_config_log('webserviceprotocols', $CFG->webserviceprotocols ?? '', $new, 'core');
             set_config('webserviceprotocols', $new);
             // Reset caches.
             \core_plugin_manager::reset_caches();
