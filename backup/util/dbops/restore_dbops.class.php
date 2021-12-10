@@ -1301,7 +1301,41 @@ abstract class restore_dbops {
                         $preference = (object)$preference;
                         // Prepare the record and insert it
                         $preference->userid = $newuserid;
-                        $status = $DB->insert_record('user_preferences', $preference);
+
+                        // Translate _loggedin / _loggedoff message user preferences to _enabled. (MDL-67853)
+                        // This code cannot be removed.
+                        if (preg_match('/message_provider_.*/', $preference->name)) {
+                            $nameparts = explode('_', $preference->name);
+                            $name = array_pop($nameparts);
+
+                            if ($name == 'loggedin' || $name == 'loggedoff') {
+                                $preference->name = implode('_', $nameparts).'_enabled';
+
+                                $existingpreference = $DB->get_record('user_preferences',
+                                    ['name' => $preference->name , 'userid' => $newuserid]);
+                                // Merge both values.
+                                if ($existingpreference) {
+                                    $values = [];
+
+                                    if (!empty($existingpreference->value) && $existingpreference->value != 'none') {
+                                        $values = explode(',', $existingpreference->value);
+                                    }
+
+                                    if (!empty($preference->value) && $preference->value != 'none') {
+                                        $values = array_merge(explode(',', $preference->value), $values);
+                                        $values = array_unique($values);
+                                    }
+
+                                    $existingpreference->value = empty($values) ? 'none' : implode(',', $values);
+
+                                    $DB->update_record('user_preferences', $existingpreference);
+                                    continue;
+                                }
+                            }
+                        }
+                        // End translating loggedin / loggedoff message user preferences.
+
+                        $DB->insert_record('user_preferences', $preference);
                     }
                 }
                 // Special handling for htmleditor which was converted to a preference.
@@ -1311,7 +1345,7 @@ abstract class restore_dbops {
                         $preference->userid = $newuserid;
                         $preference->name = 'htmleditor';
                         $preference->value = 'textarea';
-                        $status = $DB->insert_record('user_preferences', $preference);
+                        $DB->insert_record('user_preferences', $preference);
                     }
                 }
 
