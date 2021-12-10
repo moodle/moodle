@@ -120,6 +120,7 @@ class secondary extends view {
             ],
             self::TYPE_CUSTOM => [
                 'advgrading' => 2,
+                'contentbank' => 12,
             ],
         ];
     }
@@ -134,11 +135,7 @@ class secondary extends view {
      * @return array
      */
     protected function get_default_category_mapping(): array {
-        return [
-            self::TYPE_CUSTOM => [
-                'contentbank' => 5,
-            ],
-        ];
+        return [];
     }
 
     /**
