@@ -50,7 +50,7 @@ $definitions = [
             'mod_bigbluebuttonbn/recordingchanged',
             'mod_bigbluebuttonbn/serversettingschanged',
         ],
-        'ttl' => HOURSECS,
+        'ttl' => 5 * MINSECS,
     ],
 
     'currentfetch' => [

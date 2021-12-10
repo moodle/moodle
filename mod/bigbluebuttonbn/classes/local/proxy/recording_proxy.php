@@ -188,7 +188,6 @@ class recording_proxy extends proxy_base {
 
             $recordings += $fetchrecordings;
         }
-
         // Sort recordings.
         return self::sort_recordings($recordings);
     }
@@ -202,7 +201,7 @@ class recording_proxy extends proxy_base {
      */
     private static function fetch_recordings_page(array $ids, $key = 'recordID'): array {
         // The getRecordings call is executed using a method GET (supported by all versions of BBB).
-        $xml = self::fetch_endpoint_xml('getRecordings', [$key => implode(',', $ids)]);
+        $xml = self::fetch_endpoint_xml('getRecordings', [$key => implode(',', $ids), 'state' => 'any']);
 
         if (!$xml) {
             return [];
@@ -293,9 +292,13 @@ class recording_proxy extends proxy_base {
             self::parse_recording_meta(get_object_vars($recording->metadata));
         $recordingarray = [
             'recordID' => (string) $recording->recordID,
-            'meetingID' => (string) $recording->meetingID, 'meetingName' => (string) $recording->name,
-            'published' => (string) $recording->published, 'startTime' => (string) $recording->startTime,
-            'endTime' => (string) $recording->endTime, 'playbacks' => $playbackarray
+            'meetingID' => (string) $recording->meetingID,
+            'meetingName' => (string) $recording->name,
+            'published' => (string) $recording->published,
+            'state' => (string) $recording->state,
+            'startTime' => (string) $recording->startTime,
+            'endTime' => (string) $recording->endTime,
+            'playbacks' => $playbackarray
         ];
         if (isset($recording->protected)) {
             $recordingarray['protected'] = (string) $recording->protected;

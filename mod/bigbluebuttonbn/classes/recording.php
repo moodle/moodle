@@ -63,11 +63,17 @@ class recording extends persistent {
     /** @var int A meeting set to be recorded was processed and set back to an awaiting state */
     public const RECORDING_STATUS_RESET = 4;
 
+    /** @var int A meeting set to be recorded was deleted from bigbluebutton */
+    public const RECORDING_STATUS_DELETED = 5;
+
     /** @var bool Whether metadata been changed so the remote information needs to be updated ? */
     protected $metadatachanged = false;
 
     /** @var int A refresh period for recordings, defaults to 300s (5mins) */
     public const RECORDING_REFRESH_DEFAULT_PERIOD = 300;
+
+    /** @var int A time limit for recordings to be dismissed, defaults to 30d (30days) */
+    public const RECORDING_TIME_LIMIT_DAYS = 30;
 
     /** @var array A cached copy of the metadata */
     protected $metadata = null;
@@ -494,6 +500,16 @@ class recording extends persistent {
     }
 
     /**
+     * Update recording status
+     *
+     * @param bool $value
+     */
+    protected function set_status($value) {
+        $this->raw_set('status', $value);
+        $this->update();
+    }
+
+    /**
      * POSSIBLE_REMOTE_META_SOURCE match a field type and its metadataname (historical and current).
      */
     const POSSIBLE_REMOTE_META_SOURCE = [
@@ -683,12 +699,14 @@ class recording extends persistent {
     protected static function fetch_records(array $selects, array $params): array {
         global $DB;
 
+        $withindays = time() - (self::RECORDING_TIME_LIMIT_DAYS * DAYSECS);
+
         // Fetch the local data. Arbitrary sort by id, so we get the same result on different db engines.
         $recordings = $DB->get_records_select(static::TABLE, implode(" AND ", $selects), $params,
             self::DEFAULT_RECORDING_SORT);
 
         // Grab the recording IDs.
-        $recordingids = array_filter(array_map(function($recording) {
+        $recordingids = array_values(array_map(function($recording) {
             return $recording->recordingid;
         }, $recordings));
 
@@ -696,14 +714,26 @@ class recording extends persistent {
         $metadatas = recording_proxy::fetch_recordings($recordingids);
 
         // Return the instances.
-        return array_map(function($recording) use ($metadatas) {
-            $metadata = null;
-            if (array_key_exists($recording->recordingid, $metadatas)) {
-                $metadata = $metadatas[$recording->recordingid];
+        return array_filter(array_map(function($recording) use ($metadatas, $withindays) {
+            // Filter out if no metadata was fetched.
+            if (!array_key_exists($recording->recordingid, $metadatas)) {
+                // Mark it as dismissed if it is older than 30 days.
+                if ($withindays > $recording->timecreated) {
+                    $recording = new self(0, $recording, null);
+                    $recording->set_status(self::RECORDING_STATUS_DISMISSED);
+                }
+                return false;
             }
-
+            $metadata = $metadatas[$recording->recordingid];
+            // Filter out and mark it as deleted if it was deleted in BBB.
+            if ($metadata['state'] == 'deleted') {
+                $recording = new self(0, $recording, null);
+                $recording->set_status(self::RECORDING_STATUS_DELETED);
+                return false;
+            }
+            // Include it otherwise.
             return new self(0, $recording, $metadata);
-        }, $recordings);
+        }, $recordings));
     }
 
     /**
@@ -748,14 +778,12 @@ class recording extends persistent {
     public static function sync_pending_recordings_from_server(): void {
         global $DB;
 
-        $timelimitdays = 30;
-
         // Fetch the local data.
-        mtrace("=> Looking for any recording awaiting processing from the past {$timelimitdays} days.");
+        mtrace("=> Looking for any recording awaiting processing from the past 30 days.");
         $select = 'status = :status_awaiting AND timecreated > :withindays OR status = :status_reset';
         $recordings = $DB->get_records_select(static::TABLE, $select, [
                 'status_awaiting' => self::RECORDING_STATUS_AWAITING,
-                'withindays' => time() - ($timelimitdays * DAYSECS),
+                'withindays' => time() - (self::RECORDING_TIME_LIMIT_DAYS * DAYSECS),
                 'status_reset' => self::RECORDING_STATUS_RESET,
             ], self::DEFAULT_RECORDING_SORT);
         // Sort by DEFAULT_RECORDING_SORT we get the same result on different db engines.
@@ -778,8 +806,7 @@ class recording extends persistent {
             $id = array_search($recordingid, $recordingids);
 
             $recording = new self(0, $recordings[$id], $metadata);
-            $recording->raw_set('status', self::RECORDING_STATUS_PROCESSED);
-            $recording->update();
+            $recording->set_status(self::RECORDING_STATUS_PROCESSED);
             $foundcount++;
         }
 
