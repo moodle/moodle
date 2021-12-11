@@ -22,7 +22,10 @@
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
+namespace mod_quiz;
 
+use quiz;
+use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,9 +36,9 @@ require_once($CFG->dirroot . '/mod/quiz/lib.php');
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class mod_quiz_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
     public function test_quiz_has_grades() {
-        $quiz = new stdClass();
+        $quiz = new \stdClass();
         $quiz->grade = '100.0000';
         $quiz->sumgrades = '100.0000';
         $this->assertTrue(quiz_has_grades($quiz));
@@ -48,7 +51,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
     }
 
     public function test_quiz_format_grade() {
-        $quiz = new stdClass();
+        $quiz = new \stdClass();
         $quiz->decimalpoints = 2;
         $this->assertEquals(quiz_format_grade($quiz, 0.12345678), format_float(0.12, 2));
         $this->assertEquals(quiz_format_grade($quiz, 0), format_float(0, 2));
@@ -58,7 +61,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
     }
 
     public function test_quiz_get_grade_format() {
-        $quiz = new stdClass();
+        $quiz = new \stdClass();
         $quiz->decimalpoints = 2;
         $this->assertEquals(quiz_get_grade_format($quiz), 2);
         $this->assertEquals($quiz->questiondecimalpoints, -1);
@@ -72,7 +75,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
     }
 
     public function test_quiz_format_question_grade() {
-        $quiz = new stdClass();
+        $quiz = new \stdClass();
         $quiz->decimalpoints = 2;
         $quiz->questiondecimalpoints = 2;
         $this->assertEquals(quiz_format_question_grade($quiz, 0.12345678), format_float(0.12, 2));
@@ -173,7 +176,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         quiz_add_quiz_question($question->id, $quiz);
 
         // Set grade to pass.
-        $item = grade_item::fetch(['courseid' => $course->id, 'itemtype' => 'mod', 'itemmodule' => 'quiz',
+        $item = \grade_item::fetch(['courseid' => $course->id, 'itemtype' => 'mod', 'itemmodule' => 'quiz',
             'iteminstance' => $quiz->id, 'outcomeid' => null]);
         $item->gradepass = 80;
         $item->update();
@@ -196,7 +199,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $quizobj = quiz::create($attemptoptions['quiz']->id);
 
         // Start the passing attempt.
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
         $timenow = time();
@@ -457,15 +460,15 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $quizobj2a = quiz::create($quiz2->id, $u1->id);
 
         // Set attempts.
-        $quba1a = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj1a->get_context());
+        $quba1a = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj1a->get_context());
         $quba1a->set_preferred_behaviour($quizobj1a->get_quiz()->preferredbehaviour);
-        $quba1b = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj1b->get_context());
+        $quba1b = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj1b->get_context());
         $quba1b->set_preferred_behaviour($quizobj1b->get_quiz()->preferredbehaviour);
-        $quba1c = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj1c->get_context());
+        $quba1c = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj1c->get_context());
         $quba1c->set_preferred_behaviour($quizobj1c->get_quiz()->preferredbehaviour);
-        $quba1d = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj1d->get_context());
+        $quba1d = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj1d->get_context());
         $quba1d->set_preferred_behaviour($quizobj1d->get_quiz()->preferredbehaviour);
-        $quba2a = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj2a->get_context());
+        $quba2a = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj2a->get_context());
         $quba2a->set_preferred_behaviour($quizobj2a->get_quiz()->preferredbehaviour);
 
         $timenow = time();
@@ -498,7 +501,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $attemptobj->process_abandon($timenow, true);
 
         // User 1 attempts the quiz three times (abandon, finish, in progress).
-        $quba2a = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj2a->get_context());
+        $quba2a = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj2a->get_context());
         $quba2a->set_preferred_behaviour($quizobj2a->get_quiz()->preferredbehaviour);
 
         $attempt = quiz_create_attempt($quizobj2a, 1, false, $timenow, false, $u1->id);
@@ -507,7 +510,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_abandon($timenow, true);
 
-        $quba2a = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj2a->get_context());
+        $quba2a = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj2a->get_context());
         $quba2a->set_preferred_behaviour($quizobj2a->get_quiz()->preferredbehaviour);
 
         $attempt = quiz_create_attempt($quizobj2a, 2, false, $timenow, false, $u1->id);
@@ -516,7 +519,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($timenow, false);
 
-        $quba2a = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj2a->get_context());
+        $quba2a = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj2a->get_context());
         $quba2a->set_preferred_behaviour($quizobj2a->get_quiz()->preferredbehaviour);
 
         $attempt = quiz_create_attempt($quizobj2a, 3, false, $timenow, false, $u1->id);
@@ -881,7 +884,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
 
         // Remove the permission to attempt or review the quiz for the student role.
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         assign_capability('mod/quiz:reviewmyattempts', CAP_PROHIBIT, $studentrole->id, $coursecontext);
         assign_capability('mod/quiz:attempt', CAP_PROHIBIT, $studentrole->id, $coursecontext);
 
@@ -918,7 +921,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
 
         // Remove the permission to attempt or review the quiz for the student role.
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         assign_capability('mod/quiz:reviewmyattempts', CAP_PROHIBIT, $studentrole->id, $coursecontext);
         assign_capability('mod/quiz:attempt', CAP_PROHIBIT, $studentrole->id, $coursecontext);
 
@@ -965,7 +968,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         // Create an attempt for the student in the quiz.
         $timenow = time();
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $student->id);
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
@@ -1020,7 +1023,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         // Create an attempt for the student in the quiz.
         $timenow = time();
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $student->id);
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
@@ -1057,7 +1060,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm);
 
         // Create an action factory.
@@ -1091,7 +1094,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed for the student.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm, $student->id);
 
         // Create an action factory.
@@ -1113,7 +1116,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
      * @return bool|calendar_event
      */
     private function create_action_event($courseid, $instanceid, $eventtype) {
-        $event = new stdClass();
+        $event = new \stdClass();
         $event->name = 'Calendar event';
         $event->modulename  = 'quiz';
         $event->courseid = $courseid;
@@ -1122,7 +1125,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $event->eventtype = $eventtype;
         $event->timestart = time();
 
-        return calendar_event::create($event);
+        return \calendar_event::create($event);
     }
 
     /**
@@ -1148,13 +1151,13 @@ class mod_quiz_lib_testcase extends advanced_testcase {
             'completion' => 2,
             'completionusegrade' => 0
         ]);
-        $cm1 = cm_info::create(get_coursemodule_from_instance('quiz', $quiz1->id));
-        $cm2 = cm_info::create(get_coursemodule_from_instance('quiz', $quiz2->id));
+        $cm1 = \cm_info::create(get_coursemodule_from_instance('quiz', $quiz1->id));
+        $cm2 = \cm_info::create(get_coursemodule_from_instance('quiz', $quiz2->id));
 
         // Data for the stdClass input type.
         // This type of input would occur when checking the default completion rules for an activity type, where we don't have
         // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
-        $moddefaults = new stdClass();
+        $moddefaults = new \stdClass();
         $moddefaults->customdata = ['customcompletionrules' => [
             'completionattemptsexhausted' => 1,
             'completionpass' => 1
@@ -1167,7 +1170,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
         $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions($cm2), []);
         $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
-        $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions(new stdClass()), []);
+        $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions(new \stdClass()), []);
     }
 
     /**
@@ -1176,7 +1179,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
     public function test_creation_with_no_calendar_capabilities() {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $user = self::getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $roleid = self::getDataGenerator()->create_role();
         self::getDataGenerator()->role_assign($roleid, $user->id, $context->id);

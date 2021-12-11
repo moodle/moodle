@@ -21,7 +21,10 @@
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace enrol_lti;
 
+use course_enrolment_manager;
+use enrol_lti_plugin;
 use enrol_lti\data_connector;
 use enrol_lti\tool_provider;
 use IMSGlobal\LTI\ToolProvider\ResourceLink;
@@ -38,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class enrol_lti_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -57,7 +60,7 @@ class enrol_lti_testcase extends advanced_testcase {
         global $DB;
 
         // Create tool enrolment instance.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->enrolstartdate = time();
         $data->secret = 'secret';
         $tool = $this->getDataGenerator()->create_lti_tool($data);
@@ -140,7 +143,7 @@ class enrol_lti_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
         $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
 

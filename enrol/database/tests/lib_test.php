@@ -21,6 +21,9 @@
  * @copyright  2017 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace enrol_database;
+
+use course_enrolment_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2017 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class enrol_database_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
     /**
      * Test for getting user enrolment actions.
      */

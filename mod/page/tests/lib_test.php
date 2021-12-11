@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
+namespace mod_page;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class mod_page_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /**
      * Prepares things before this test case is initialised
@@ -61,7 +62,7 @@ class mod_page_lib_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
         $page = $this->getDataGenerator()->create_module('page', array('course' => $course->id),
                                                             array('completion' => 2, 'completionview' => 1));
-        $context = context_module::instance($page->cmid);
+        $context = \context_module::instance($page->cmid);
         $cm = get_coursemodule_from_instance('page', $page->id);
 
         // Trigger and capture the event.
@@ -84,7 +85,7 @@ class mod_page_lib_testcase extends advanced_testcase {
         $this->assertNotEmpty($event->get_name());
 
         // Check completion status.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completiondata = $completion->get_data($cm);
         $this->assertEquals(1, $completiondata->completionstate);
     }
@@ -136,7 +137,7 @@ class mod_page_lib_testcase extends advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm);
 
         // Create an action factory.
@@ -173,7 +174,7 @@ class mod_page_lib_testcase extends advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm);
 
         // Create an action factory.
@@ -207,7 +208,7 @@ class mod_page_lib_testcase extends advanced_testcase {
      * @return bool|calendar_event
      */
     private function create_action_event($courseid, $instanceid, $eventtype) {
-        $event = new stdClass();
+        $event = new \stdClass();
         $event->name = 'Calendar event';
         $event->modulename  = 'page';
         $event->courseid = $courseid;
@@ -216,6 +217,6 @@ class mod_page_lib_testcase extends advanced_testcase {
         $event->eventtype = $eventtype;
         $event->timestart = time();
 
-        return calendar_event::create($event);
+        return \calendar_event::create($event);
     }
 }

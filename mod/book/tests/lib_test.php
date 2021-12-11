@@ -22,7 +22,7 @@
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace mod_book;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/book/lib.php');
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_book_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -64,7 +64,7 @@ class mod_book_lib_testcase extends advanced_testcase {
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
         $chapter1 = $bookgenerator->create_chapter(array('bookid' => $book->id, "pagenum" => 1,
             'tags' => array('Cats', 'Dogs')));
-        $tag = core_tag_tag::get_by_name(0, 'Cats');
+        $tag = \core_tag_tag::get_by_name(0, 'Cats');
 
         $chapter2 = $bookgenerator->create_chapter(array('bookid' => $book->id, "pagenum" => 2));
         $subchapter = $bookgenerator->create_chapter(array('bookid' => $book->id, "pagenum" => 3, "subchapter" => 1));
@@ -89,8 +89,8 @@ class mod_book_lib_testcase extends advanced_testcase {
         $this->assertEquals('Chapter 3', $contents[3]['content']);
 
         // Now, test the function via the external API.
-        $contents = core_course_external::get_course_contents($course->id, array());
-        $contents = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $contents);
+        $contents = \core_course_external::get_course_contents($course->id, array());
+        $contents = \external_api::clean_returnvalue(\core_course_external::get_course_contents_returns(), $contents);
 
         $this->assertCount(4, $contents[0]['modules'][0]['contents']);
 
@@ -144,8 +144,8 @@ class mod_book_lib_testcase extends advanced_testcase {
         $this->assertEquals('Chapter 4', $contents[4]['content']);
 
         // Now, test the function via the external API.
-        $contents = core_course_external::get_course_contents($course->id, array());
-        $contents = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $contents);
+        $contents = \core_course_external::get_course_contents($course->id, array());
+        $contents = \external_api::clean_returnvalue(\core_course_external::get_course_contents_returns(), $contents);
 
         $this->assertCount(5, $contents[0]['modules'][0]['contents']);
 
@@ -206,7 +206,7 @@ class mod_book_lib_testcase extends advanced_testcase {
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
         $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
 
-        $context = context_module::instance($book->cmid);
+        $context = \context_module::instance($book->cmid);
         $cm = get_coursemodule_from_instance('book', $book->id);
 
         // Trigger and capture the event.
@@ -235,7 +235,7 @@ class mod_book_lib_testcase extends advanced_testcase {
         $this->assertCount(4, $events);
 
         // Check completion status.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completiondata = $completion->get_data($cm);
         $this->assertEquals(1, $completiondata->completionstate);
     }
@@ -363,7 +363,7 @@ class mod_book_lib_testcase extends advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm);
 
         // Create an action factory.
@@ -397,7 +397,7 @@ class mod_book_lib_testcase extends advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed for the student.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm, $student->id);
 
         // Create an action factory.
@@ -419,7 +419,7 @@ class mod_book_lib_testcase extends advanced_testcase {
      * @return bool|calendar_event
      */
     private function create_action_event($courseid, $instanceid, $eventtype) {
-        $event = new stdClass();
+        $event = new \stdClass();
         $event->name = 'Calendar event';
         $event->modulename  = 'book';
         $event->courseid = $courseid;
@@ -428,7 +428,7 @@ class mod_book_lib_testcase extends advanced_testcase {
         $event->eventtype = $eventtype;
         $event->timestart = time();
 
-        return calendar_event::create($event);
+        return \calendar_event::create($event);
     }
 
     public function test_mod_book_get_tagged_chapters() {
@@ -456,7 +456,7 @@ class mod_book_lib_testcase extends advanced_testcase {
         $chapter23 = $bookgenerator->create_content($book2, array('tags' => array('mice', 'Cats')));
         $chapter31 = $bookgenerator->create_content($book3, array('tags' => array('mice', 'Cats')));
 
-        $tag = core_tag_tag::get_by_name(0, 'Cats');
+        $tag = \core_tag_tag::get_by_name(0, 'Cats');
 
         // Admin can see everything.
         $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
@@ -494,7 +494,7 @@ class mod_book_lib_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentrole->id, 'manual');
         $this->setUser($student);
-        core_tag_index_builder::reset_caches();
+        \core_tag_index_builder::reset_caches();
 
         // User can not see chapters in course 3 because he is not enrolled.
         $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
@@ -504,7 +504,7 @@ class mod_book_lib_testcase extends advanced_testcase {
         $this->assertDoesNotMatchRegularExpression('/'.$chapter31->title.'/', $res->content);
 
         // User can search book chapters inside a course.
-        $coursecontext = context_course::instance($course1->id);
+        $coursecontext = \context_course::instance($course1->id);
         $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$chapter = */0);
         $this->assertMatchesRegularExpression('/'.$chapter11->title.'/', $res->content);
