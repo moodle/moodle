@@ -46,6 +46,10 @@
  * @author     Chris Scribner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_lti;
+
+use mod_lti_external;
+use mod_lti_testcase;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -61,12 +65,12 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lti_locallib_testcase extends mod_lti_testcase {
+class locallib_test extends mod_lti_testcase {
 
     public function test_split_custom_parameters() {
         $this->resetAfterTest();
 
-        $tool = new stdClass();
+        $tool = new \stdClass();
         $tool->enabledcapability = '';
         $tool->parameter = '';
         $tool->ltiversion = 'LTI-1p0';
@@ -280,8 +284,8 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
      * Tests lti_prepare_type_for_save's handling of the "Force SSL" configuration.
      */
     public function test_lti_prepare_type_for_save_forcessl() {
-        $type = new stdClass();
-        $config = new stdClass();
+        $type = new \stdClass();
+        $config = new \stdClass();
 
         // Try when the forcessl config property is not set.
         lti_prepare_type_for_save($type, $config);
@@ -308,7 +312,7 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
      * Tests lti_load_type_from_cartridge and lti_load_type_if_cartridge
      */
     public function test_lti_load_type_from_cartridge() {
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->lti_toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
 
         lti_load_type_if_cartridge($type);
@@ -324,7 +328,7 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
      * Tests lti_load_tool_from_cartridge and lti_load_tool_if_cartridge
      */
     public function test_lti_load_tool_from_cartridge() {
-        $lti = new stdClass();
+        $lti = new \stdClass();
         $lti->toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
 
         lti_load_tool_if_cartridge($lti);
@@ -348,8 +352,8 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
         $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
-        $data = new stdClass();
+        $type = new \stdClass();
+        $data = new \stdClass();
         $data->lti_contentitem = true;
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
@@ -362,7 +366,7 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
         $typeconfig = lti_get_type_config($typeid);
 
         $course = $this->getDataGenerator()->create_course();
-        $returnurl = new moodle_url('/');
+        $returnurl = new \moodle_url('/');
 
         // Default parameters.
         $result = lti_build_content_item_selection_request($typeid, $course, $returnurl);
@@ -434,7 +438,7 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $returnurl = new moodle_url('/');
+        $returnurl = new \moodle_url('/');
 
         // Should throw Exception on non-existent tool type.
         $this->expectException('moodle_exception');
@@ -450,8 +454,8 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
-        $data = new stdClass();
+        $type = new \stdClass();
+        $data = new \stdClass();
         $data->lti_contentitem = true;
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
@@ -460,7 +464,7 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
 
         $typeid = lti_add_type($type, $data);
         $course = $this->getDataGenerator()->create_course();
-        $returnurl = new moodle_url('/');
+        $returnurl = new \moodle_url('/');
 
         // Should throw coding_exception on non-array media types.
         $mediatypes = 'image/*,video/*';
@@ -477,8 +481,8 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
-        $data = new stdClass();
+        $type = new \stdClass();
+        $data = new \stdClass();
         $data->lti_contentitem = true;
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
@@ -487,7 +491,7 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
 
         $typeid = lti_add_type($type, $data);
         $course = $this->getDataGenerator()->create_course();
-        $returnurl = new moodle_url('/');
+        $returnurl = new \moodle_url('/');
 
         // Should throw coding_exception on non-array presentation targets.
         $targets = 'frame,iframe';
@@ -1067,13 +1071,13 @@ class mod_lti_locallib_testcase extends mod_lti_testcase {
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_publickey = '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSv
 vkTtwlvBsaJq7S5wA+kzeVOVpVWwkWdVha4s38XM/pa/yr47av7+z3VTmvDRyAHc
@@ -1104,13 +1108,13 @@ MwIDAQAB
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_publickeyset = dirname(__FILE__) . '/fixtures/test_keyset';
 
         $config->lti_keytype = LTI_JWK_KEYSET;
@@ -1147,14 +1151,14 @@ MwIDAQAB
         $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->toolproxyid = $proxy->id;
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->lti_contentitem = true;
 
         $typeid = lti_add_type($type, $data);
@@ -1172,14 +1176,14 @@ MwIDAQAB
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = 'consumerkey';
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $config = new stdClass();
+        $config = new \stdClass();
         $typeid = lti_add_type($type, $config);
 
         $this->expectExceptionMessage(get_string('errorincorrectconsumerkey', 'mod_lti'));
@@ -1194,14 +1198,14 @@ MwIDAQAB
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = 'consumerkey';
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_keytype = LTI_RSA_KEY;
         $typeid = lti_add_type($type, $config);
 
@@ -1253,38 +1257,38 @@ MwIDAQAB
         $strgraph = '@graph';
         $strtype = '@type';
 
-        $objgraph = new stdClass();
+        $objgraph = new \stdClass();
         $objgraph->url = 'http://example.com/messages/launch';
         $objgraph->title = 'Test title';
         $objgraph->text = 'Test text';
-        $objgraph->placementAdvice = new stdClass();
+        $objgraph->placementAdvice = new \stdClass();
         $objgraph->placementAdvice->presentationDocumentTarget = 'iframe';
         $objgraph->{$strtype} = 'LtiLinkItem';
         $objgraph->mediaType = 'application\/vnd.ims.lti.v1.ltilink';
 
-        $objgraph2 = new stdClass();
+        $objgraph2 = new \stdClass();
         $objgraph2->url = 'http://example.com/messages/launch2';
         $objgraph2->title = 'Test title2';
         $objgraph2->text = 'Test text2';
-        $objgraph2->placementAdvice = new stdClass();
+        $objgraph2->placementAdvice = new \stdClass();
         $objgraph2->placementAdvice->presentationDocumentTarget = 'iframe';
         $objgraph2->placementAdvice->displayHeight = 200;
         $objgraph2->placementAdvice->displayWidth = 300;
         $objgraph2->{$strtype} = 'LtiLinkItem';
         $objgraph2->mediaType = 'application\/vnd.ims.lti.v1.ltilink';
 
-        $objgraph3 = new stdClass();
+        $objgraph3 = new \stdClass();
         $objgraph3->url = 'http://example.com/messages/launch3';
         $objgraph3->title = 'Test title3';
         $objgraph3->text = 'Test text3';
-        $objgraph3->placementAdvice = new stdClass();
+        $objgraph3->placementAdvice = new \stdClass();
         $objgraph3->placementAdvice->presentationDocumentTarget = 'window';
         $objgraph3->placementAdvice->displayHeight = 400;
         $objgraph3->placementAdvice->windowTarget = 'test-win';
         $objgraph3->{$strtype} = 'LtiLinkItem';
         $objgraph3->mediaType = 'application\/vnd.ims.lti.v1.ltilink';
 
-        $expected = new stdClass();
+        $expected = new \stdClass();
         $expected->{$strcontext} = 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem';
         $expected->{$strgraph} = [];
         $expected->{$strgraph}[] = $objgraph;
@@ -1301,10 +1305,10 @@ MwIDAQAB
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->name = "Test tool";
         $type->baseurl = "http://example.com";
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_acceptgrades = LTI_SETTING_DELEGATE;
         $typeid = lti_add_type($type, $config);
 
@@ -1344,10 +1348,10 @@ MwIDAQAB
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->name = "Test tool";
         $type->baseurl = "http://example.com";
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_acceptgrades = LTI_SETTING_DELEGATE;
         $typeid = lti_add_type($type, $config);
 
@@ -1402,10 +1406,10 @@ MwIDAQAB
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->name = "Test tool";
         $type->baseurl = "http://example.com";
-        $config = new stdClass();
+        $config = new \stdClass();
         $typeid = lti_add_type($type, $config);
 
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
@@ -1446,14 +1450,14 @@ MwIDAQAB
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = 'consumerkey';
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $config = new stdClass();
+        $config = new \stdClass();
         $typeid = lti_add_type($type, $config);
 
         $params = [];
@@ -1492,14 +1496,14 @@ MwIDAQAB
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = 'sso.example.com';
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_publickey = '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSv
 vkTtwlvBsaJq7S5wA+kzeVOVpVWwkWdVha4s38XM/pa/yr47av7+z3VTmvDRyAHc
@@ -1532,13 +1536,13 @@ MwIDAQAB
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $typeconfig = new stdClass();
+        $typeconfig = new \stdClass();
         $typeconfig->lti_acceptgrades = true;
 
         $typeid = lti_add_type($type, $typeconfig);
@@ -1563,14 +1567,14 @@ MwIDAQAB
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = "Test client ID";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $config = new stdClass();
+        $config = new \stdClass();
 
         $typeid = lti_add_type($type, $config);
 
@@ -1597,14 +1601,14 @@ MwIDAQAB
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = "Test client ID";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $config = new stdClass();
+        $config = new \stdClass();
 
         $typeid = lti_add_type($type, $config);
 
@@ -1640,7 +1644,7 @@ MwIDAQAB
             ]
         );
 
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_clientid = 'some-client-id';
         $config->typeid = 'some-type-id';
         $config->lti_toolurl = 'some-lti-tool-url';
@@ -1662,7 +1666,7 @@ MwIDAQAB
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_organizationid = '';
         $course = $this->getDataGenerator()->create_course();
         $type = $this->create_type($config);
@@ -1678,7 +1682,7 @@ MwIDAQAB
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_organizationid = '';
         $config->lti_organizationid_default = LTI_DEFAULT_ORGID_SITEHOST;
         $course = $this->getDataGenerator()->create_course();
@@ -1695,7 +1699,7 @@ MwIDAQAB
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_organizationid = '';
         $config->lti_organizationid_default = LTI_DEFAULT_ORGID_SITEID;
         $course = $this->getDataGenerator()->create_course();
@@ -1712,7 +1716,7 @@ MwIDAQAB
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->lti_organizationid = 'overridden!';
         $config->lti_organizationid_default = LTI_DEFAULT_ORGID_SITEID;
         $course = $this->getDataGenerator()->create_course();
@@ -1762,7 +1766,7 @@ MwIDAQAB
         if ($switchedto) {
             $this->setUser($user);
             $role = $DB->get_record('role', array('shortname' => $switchedto));
-            role_switch($role->id, context_course::instance($course->id));
+            role_switch($role->id, \context_course::instance($course->id));
         }
 
         $this->assertEquals($expected, lti_get_ims_role($user, 0, $course->id, $islti2));
@@ -1949,14 +1953,14 @@ MwIDAQAB
      * @return object tool.
      */
     private function create_type(object $config) {
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = "Test client ID";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $configbase = new stdClass();
+        $configbase = new \stdClass();
         $configbase->lti_acceptgrades = LTI_SETTING_NEVER;
         $configbase->lti_sendname = LTI_SETTING_NEVER;
         $configbase->lti_sendemailaddr = LTI_SETTING_NEVER;

@@ -23,6 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
+namespace mod_scorm;
+
+use mod_scorm_get_completion_active_rule_descriptions;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,7 +43,7 @@ require_once($CFG->dirroot . '/mod/scorm/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class mod_scorm_lib_testcase extends externallib_advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /**
      * Set up for every test
@@ -53,7 +56,7 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
         $this->scorm = $this->getDataGenerator()->create_module('scorm', array('course' => $this->course->id));
-        $this->context = context_module::instance($this->scorm->cmid);
+        $this->context = \context_module::instance($this->scorm->cmid);
         $this->cm = get_coursemodule_from_instance('scorm', $this->scorm->id);
 
         // Create users.
@@ -88,7 +91,7 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
         $this->assertEquals('on', $newattempt);
 
         // Now do the same with a SCORM 2004 package.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $this->course->id;
         $record->packagefilepath = $CFG->dirroot.'/mod/scorm/tests/packages/RuntimeBasicCalls_SCORM20043rdEdition.zip';
         $scorm13 = $this->getDataGenerator()->create_module('scorm', $record);
@@ -426,7 +429,7 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm);
 
         // Create an action factory.
@@ -460,7 +463,7 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed for the student.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm, $student->id);
 
         // Create an action factory.
@@ -483,7 +486,7 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
      * @return bool|calendar_event
      */
     private function create_action_event($courseid, $instanceid, $eventtype, $timestart = null) {
-        $event = new stdClass();
+        $event = new \stdClass();
         $event->name = 'Calendar event';
         $event->modulename = 'scorm';
         $event->courseid = $courseid;
@@ -498,7 +501,7 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
             $event->timestart = time();
         }
 
-        return calendar_event::create($event);
+        return \calendar_event::create($event);
     }
 
     /**
@@ -526,13 +529,13 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
             'completionscorerequired' => null,
             'completionstatusallscos' => null
         ]);
-        $cm1 = cm_info::create(get_coursemodule_from_instance('scorm', $scorm1->id));
-        $cm2 = cm_info::create(get_coursemodule_from_instance('scorm', $scorm2->id));
+        $cm1 = \cm_info::create(get_coursemodule_from_instance('scorm', $scorm1->id));
+        $cm2 = \cm_info::create(get_coursemodule_from_instance('scorm', $scorm2->id));
 
         // Data for the stdClass input type.
         // This type of input would occur when checking the default completion rules for an activity type, where we don't have
         // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
-        $moddefaults = new stdClass();
+        $moddefaults = new \stdClass();
         $moddefaults->customdata = ['customcompletionrules' => [
             'completionstatusrequired' => 6,
             'completionscorerequired' => 5,
@@ -557,7 +560,7 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(mod_scorm_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
         $this->assertEquals(mod_scorm_get_completion_active_rule_descriptions($cm2), []);
         $this->assertEquals(mod_scorm_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
-        $this->assertEquals(mod_scorm_get_completion_active_rule_descriptions(new stdClass()), []);
+        $this->assertEquals(mod_scorm_get_completion_active_rule_descriptions(new \stdClass()), []);
     }
 
     /**
@@ -862,7 +865,7 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
     public function test_creation_with_no_calendar_capabilities() {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $user = self::getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $roleid = self::getDataGenerator()->create_role();
         self::getDataGenerator()->role_assign($roleid, $user->id, $context->id);

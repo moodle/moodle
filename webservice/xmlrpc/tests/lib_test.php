@@ -22,6 +22,7 @@
  * @copyright  2015 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace webservice_xmlrpc;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +37,7 @@ require_once($CFG->dirroot . '/webservice/xmlrpc/lib.php');
  * @copyright  2015 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_xmlrpc_test extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /**
      * Setup.
@@ -85,7 +86,7 @@ class webservice_xmlrpc_test extends advanced_testcase {
         $client = new webservice_xmlrpc_client_mock('/webservice/xmlrpc/server.php', 'anytoken');
         $mockresponse = file_get_contents($CFG->dirroot . '/webservice/xmlrpc/tests/fixtures/fault_response.xml');
         $client->set_mock_response($mockresponse);
-        $this->expectException('moodle_exception');
+        $this->expectException('\moodle_exception');
         $client->call('testfunction');
     }
 
@@ -156,7 +157,7 @@ class webservice_xmlrpc_test extends advanced_testcase {
  * @copyright  2015 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_xmlrpc_client_mock extends webservice_xmlrpc_client {
+class webservice_xmlrpc_client_mock extends \webservice_xmlrpc_client {
 
     /** @var string The mock XML-RPC response string.  */
     private $mockresponse;
@@ -178,7 +179,7 @@ class webservice_xmlrpc_client_mock extends webservice_xmlrpc_client {
      * @param string $functionname the function name
      * @param array $params the parameters of the function
      * @return mixed The decoded XML RPC response.
-     * @throws moodle_exception
+     * @throws \moodle_exception
      */
     public function call($functionname, $params = array()) {
         // Get the response.
@@ -188,7 +189,7 @@ class webservice_xmlrpc_client_mock extends webservice_xmlrpc_client {
         // Decode the response.
         $result = xmlrpc_decode($response);
         if (is_array($result) && xmlrpc_is_fault($result)) {
-            throw new moodle_exception($result['faultString']);
+            throw new \moodle_exception($result['faultString']);
         }
 
         return $result;

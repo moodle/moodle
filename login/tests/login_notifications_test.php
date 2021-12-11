@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/lib/externallib.php');
+
 /**
  * Contains tests for course related notifications.
  *
@@ -21,7 +28,7 @@
  * @copyright  2021 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_login_notifications_testcase extends \advanced_testcase {
+class login_notifications_test extends \advanced_testcase {
 
     /**
      * Load required classes
@@ -134,7 +141,7 @@ class core_login_notifications_testcase extends \advanced_testcase {
         // Mock data for test.
         $loginuser->lastip = '1.2.3.4.6';   // Different ip that current.
         $SESSION->isnewsessioncookie = true;    // New session cookie.
-        core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
+        \core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
         @complete_user_login($loginuser);
 
         // Redirect messages to sink and stop buffer output from CLI task.
@@ -165,7 +172,7 @@ class core_login_notifications_testcase extends \advanced_testcase {
 
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
         $token = external_generate_token_for_current_user($service);
-        core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
+        \core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
 
         // Simulate we are using an new device.
         $fakedevice = (object) [
@@ -214,7 +221,7 @@ class core_login_notifications_testcase extends \advanced_testcase {
         $USER->lastip = '0.0.0.0';
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
         $token = external_generate_token_for_current_user($service);
-        core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
+        \core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
 
         // Simulate we are using an new device.
         $fakedevice = (object) [
@@ -261,7 +268,7 @@ class core_login_notifications_testcase extends \advanced_testcase {
         $USER->lastip = '1.2.3.4.6';    // New ip.
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
         $token = external_generate_token_for_current_user($service);
-        core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
+        \core_useragent::instance(true, 'MoodleMobile'); // Force fake mobile app user agent.
 
         external_log_token_request($token);
 

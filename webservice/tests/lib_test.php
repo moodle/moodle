@@ -22,6 +22,10 @@
  * @copyright  2016 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_webservice;
+
+use webservice;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -35,7 +39,7 @@ require_once($CFG->dirroot . '/webservice/lib.php');
  * @copyright  2016 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_test extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /**
      * Setup.
@@ -60,7 +64,7 @@ class webservice_test extends advanced_testcase {
         $this->setAdminUser();
 
         // Add a web service.
-        $webservice = new stdClass();
+        $webservice = new \stdClass();
         $webservice->name = 'Test web service';
         $webservice->enabled = true;
         $webservice->restrictedusers = false;
@@ -71,7 +75,7 @@ class webservice_test extends advanced_testcase {
         $externalserviceid = $DB->insert_record('external_services', $webservice);
 
         // Add token.
-        $externaltoken = new stdClass();
+        $externaltoken = new \stdClass();
         $externaltoken->token = 'testtoken';
         $externaltoken->tokentype = 0;
         $externaltoken->userid = $USER->id;
@@ -82,7 +86,7 @@ class webservice_test extends advanced_testcase {
         $DB->insert_record('external_tokens', $externaltoken);
 
         // Add a function to the service.
-        $wsmethod = new stdClass();
+        $wsmethod = new \stdClass();
         $wsmethod->externalserviceid = $externalserviceid;
         $wsmethod->functionname = 'core_course_get_contents';
         $DB->insert_record('external_services_functions', $wsmethod);
@@ -121,7 +125,7 @@ class webservice_test extends advanced_testcase {
         // Check the contents of service methods.
         foreach ($servicemethods as $method) {
             // Get the external function info.
-            $function = external_api::external_function_info($method->name);
+            $function = \external_api::external_function_info($method->name);
 
             // Check input params.
             foreach ($function->parameters_desc->keys as $name => $keydesc) {
@@ -150,7 +154,7 @@ class webservice_test extends advanced_testcase {
         $this->setAdminUser();
 
         // Add a web service.
-        $webservice = new stdClass();
+        $webservice = new \stdClass();
         $webservice->name = 'Test web service';
         $webservice->enabled = true;
         $webservice->restrictedusers = false;
@@ -161,7 +165,7 @@ class webservice_test extends advanced_testcase {
         $DB->insert_record('external_services', $webservice);
 
         // Add token.
-        $tokenstr = external_create_service_token($webservice->name, context_system::instance()->id);
+        $tokenstr = external_create_service_token($webservice->name, \context_system::instance()->id);
         $token = $DB->get_record('external_tokens', ['token' => $tokenstr]);
 
         // Trigger last access once (at current time).
@@ -358,14 +362,14 @@ class webservice_test extends advanced_testcase {
 /**
  * Class webservice_dummy.
  *
- * Dummy webservice class for testing the webservice_base_server class and enable us to expose variables we want to test.
+ * Dummy webservice class for testing the \webservice_base_server class and enable us to expose variables we want to test.
  *
  * @package    core_webservice
  * @category   test
  * @copyright  2016 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_dummy extends webservice_base_server {
+class webservice_dummy extends \webservice_base_server {
 
     /**
      * webservice_dummy constructor.
