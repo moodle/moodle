@@ -32,3 +32,4 @@ defined('MOODLE_INTERNAL') || die();
 $string['language'] = 'Тил';
 $string['moodlelogo'] = 'Moodle логотиби';
 $string['next'] = 'Мындан ары';
+$string['previous'] = 'Артка';
