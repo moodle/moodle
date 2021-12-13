@@ -18,10 +18,17 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\helpers;
 
-use advanced_testcase;
+use core_reportbuilder_generator;
+use core_reportbuilder_testcase;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
+use core_user\reportbuilder\datasource\users;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 
 /**
  * Unit tests for user profile fields helper
@@ -31,17 +38,31 @@ use core_reportbuilder\local\report\filter;
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_profile_fields_test extends advanced_testcase {
+class user_profile_fields_test extends core_reportbuilder_testcase {
 
     /**
-     * Generate userprofilefields
+     * Generate custom profile fields, one of each type
+     *
+     * @return user_profile_fields
      */
     private function generate_userprofilefields(): user_profile_fields {
         $this->getDataGenerator()->create_custom_profile_field([
-            'shortname' => 'upf1', 'name' => 'User profile field text 1', 'datatype' => 'text']);
+            'shortname' => 'checkbox', 'name' => 'Checkbox field', 'datatype' => 'checkbox']);
 
         $this->getDataGenerator()->create_custom_profile_field([
-            'shortname' => 'upf2', 'name' => 'User profile field text 2', 'datatype' => 'text']);
+            'shortname' => 'datetime', 'name' => 'Date field', 'datatype' => 'datetime', 'param2' => 2022, 'param3' => 0]);
+
+        $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'menu', 'name' => 'Menu field', 'datatype' => 'menu', 'param1' => "Cat\nDog"]);
+
+        $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'Social', 'name' => 'msn', 'datatype' => 'social', 'param1' => 'msn']);
+
+        $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'text', 'name' => 'Text field', 'datatype' => 'text']);
+
+        $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'textarea', 'name' => 'Textarea field', 'datatype' => 'textarea']);
 
         $userentity = new user();
         $useralias = $userentity->get_table_alias('user');
@@ -58,15 +79,36 @@ class user_profile_fields_test extends advanced_testcase {
 
         $userprofilefields = $this->generate_userprofilefields();
         $columns = $userprofilefields->get_columns();
-        $this->assertCount(2, $columns);
-        [$column0, $column1] = $columns;
-        $this->assertInstanceOf(column::class, $column0);
-        $this->assertInstanceOf(column::class, $column1);
-        $this->assertEqualsCanonicalizing(['User profile field text 1', 'User profile field text 2'],
-            [$column0->get_title(), $column1->get_title()]);
-        $this->assertEquals(column::TYPE_TEXT, $column0->get_type());
-        $this->assertEquals('user', $column0->get_entity_name());
-        $this->assertStringStartsWith('LEFT JOIN {user_info_data}', $column0->get_joins()[0]);
+
+        $this->assertCount(6, $columns);
+        $this->assertContainsOnlyInstancesOf(column::class, $columns);
+
+        // Assert column titles.
+        $columntitles = array_map(static function(column $column): string {
+            return $column->get_title();
+        }, $columns);
+        $this->assertEquals([
+            'Checkbox field',
+            'Date field',
+            'Menu field',
+            'MSN ID',
+            'Text field',
+            'Textarea field',
+        ], $columntitles);
+
+        // Assert column types.
+        $columntypes = array_map(static function(column $column): int {
+            return $column->get_type();
+        }, $columns);
+        $this->assertEquals([
+            column::TYPE_BOOLEAN,
+            column::TYPE_TIMESTAMP,
+            column::TYPE_TEXT,
+            column::TYPE_TEXT,
+            column::TYPE_TEXT,
+            column::TYPE_LONGTEXT,
+        ], $columntypes);
+
     }
 
     /**
@@ -107,11 +149,78 @@ class user_profile_fields_test extends advanced_testcase {
 
         $userprofilefields = $this->generate_userprofilefields();
         $filters = $userprofilefields->get_filters();
-        $this->assertCount(2, $filters);
-        [$filter0, $filter1] = $filters;
-        $this->assertInstanceOf(filter::class, $filter0);
-        $this->assertInstanceOf(filter::class, $filter1);
-        $this->assertEqualsCanonicalizing(['User profile field text 1', 'User profile field text 2'],
-            [$filter0->get_header(), $filter1->get_header()]);
+
+        $this->assertCount(6, $filters);
+        $this->assertContainsOnlyInstancesOf(filter::class, $filters);
+
+        // Assert filter headers.
+        $filterheaders = array_map(static function(filter $filter): string {
+            return $filter->get_header();
+        }, $filters);
+        $this->assertEquals([
+            'Checkbox field',
+            'Date field',
+            'Menu field',
+            'MSN ID',
+            'Text field',
+            'Textarea field',
+        ], $filterheaders);
+    }
+
+    /**
+     * Test that adding user profile field columns to a report returns expected values
+     */
+    public function test_custom_report_content(): void {
+        $this->resetAfterTest();
+
+        $userprofilefields = $this->generate_userprofilefields();
+
+        // Create test subject with user profile fields content.
+        $user = $this->getDataGenerator()->create_user([
+            'firstname' => 'Zebedee',
+            'profile_field_checkbox' => true,
+            'profile_field_datetime' => '2021-12-09',
+            'profile_field_menu' => 'Cat',
+            'profile_field_Social' => 12345,
+            'profile_field_text' => 'Hello',
+            'profile_field_textarea' => 'Goodbye',
+        ]);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
+
+        // Add user profile field columns to the report.
+        $firstname = $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:profilefield_checkbox']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:profilefield_datetime']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:profilefield_menu']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:profilefield_Social']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:profilefield_text']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:profilefield_textarea']);
+
+        // Sort the report, Admin -> Zebedee for consistency.
+        report::toggle_report_column_sorting($report->get('id'), $firstname->get('id'), true);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertEquals([
+            [
+                'c0_firstname' => 'Admin',
+                'c1_data' => 'No',
+                'c2_data' => 'Not set',
+                'c3_data' => '',
+                'c4_data' => '',
+                'c5_data' => '',
+                'c6_data' => '',
+            ], [
+                'c0_firstname' => 'Zebedee',
+                'c1_data' => 'Yes',
+                'c2_data' => '9 December 2021',
+                'c3_data' => 'Cat',
+                'c4_data' => '12345',
+                'c5_data' => 'Hello',
+                'c6_data' => '<div class="no-overflow">Goodbye</div>',
+            ],
+        ], $content);
     }
 }
