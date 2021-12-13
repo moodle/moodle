@@ -47,3 +47,44 @@ H5P.getMoodleComponent = function () {
     }
     return undefined;
 };
+
+/**
+ * Set the actor. (Moved to overrides due to MDL-69467)
+ */
+H5P.XAPIEvent.prototype.setActor = function () {
+    if (H5PIntegration.user !== undefined) {
+        this.data.statement.actor = {
+            'name': H5PIntegration.user.name,
+            'objectType': 'Agent'
+        };
+        if (H5PIntegration.user.id !== undefined) {
+            this.data.statement.actor.account = {
+                'name': H5PIntegration.user.id,
+                'homePage': H5PIntegration.siteUrl
+            }
+        } else if (H5PIntegration.user.mail !== undefined) {
+            this.data.statement.actor.mbox = 'mailto:' + H5PIntegration.user.mail;
+        }
+    } else {
+        var uuid;
+        try {
+            if (localStorage.H5PUserUUID) {
+                uuid = localStorage.H5PUserUUID;
+            } else {
+                uuid = H5P.createUUID();
+                localStorage.H5PUserUUID = uuid;
+            }
+        }
+        catch (err) {
+            // LocalStorage and Cookies are probably disabled. Do not track the user.
+            uuid = 'not-trackable-' + H5P.createUUID();
+        }
+        this.data.statement.actor = {
+            'account': {
+                'name': uuid,
+                'homePage': H5PIntegration.siteUrl
+            },
+            'objectType': 'Agent'
+        };
+    }
+};
