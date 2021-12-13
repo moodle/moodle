@@ -98,14 +98,6 @@ if (data_submitted() && !empty($action) && confirm_sesskey()) {
 choice_view($choice, $course, $cm, $context);
 
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($choice->name), 2, null);
-}
-
-// Render the activity information.
-$completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
-echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
 
 if ($notify and confirm_sesskey()) {
     if ($notify === 'choicesaved') {
@@ -139,10 +131,6 @@ if (has_capability('mod/choice:readresponses', $context) && !$PAGE->has_secondar
 }
 
 echo '<div class="clearer"></div>';
-
-if ($choice->intro) {
-    echo $OUTPUT->box(format_module_intro('choice', $choice, $cm->id), 'generalbox', 'intro');
-}
 
 $timenow = time();
 $current = choice_get_my_response($choice);

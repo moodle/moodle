@@ -182,6 +182,7 @@ $PAGE->set_url($url);
 $PAGE->set_title($pagetitle);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_heading($pagetitle);
+$PAGE->activityheader->disable();
 
 echo $OUTPUT->header();
 if (!$PAGE->has_secondary_navigation()) {

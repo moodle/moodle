@@ -172,37 +172,22 @@ function url_print_header($url, $cm, $course) {
 }
 
 /**
- * Print url heading.
+ * Get url introduction.
+ *
  * @param object $url
  * @param object $cm
- * @param object $course
- * @param bool $notused This variable is no longer used.
- * @return void
- */
-function url_print_heading($url, $cm, $course, $notused = false) {
-    global $OUTPUT;
-    echo $OUTPUT->heading(format_string($url->name), 2);
-}
-
-/**
- * Print url introduction.
- * @param object $url
- * @param object $cm
- * @param object $course
  * @param bool $ignoresettings print even if not specified in modedit
- * @return void
+ * @return string
  */
-function url_print_intro($url, $cm, $course, $ignoresettings=false) {
-    global $OUTPUT;
-
+function url_get_intro(object $url, object $cm, bool $ignoresettings = false): string {
     $options = empty($url->displayoptions) ? [] : (array) unserialize_array($url->displayoptions);
     if ($ignoresettings or !empty($options['printintro'])) {
         if (trim(strip_tags($url->intro))) {
-            echo $OUTPUT->box_start('mod_introbox', 'urlintro');
-            echo format_module_intro('url', $url, $cm->id);
-            echo $OUTPUT->box_end();
+            return format_module_intro('url', $url, $cm->id);
         }
     }
+
+    return '';
 }
 
 /**
@@ -219,9 +204,11 @@ function url_display_frame($url, $cm, $course) {
 
     if ($frame === 'top') {
         $PAGE->set_pagelayout('frametop');
+        $PAGE->activityheader->set_attrs([
+            'description' => url_get_intro($url, $cm),
+            'title' => format_string($url->name)
+        ]);
         url_print_header($url, $cm, $course);
-        url_print_heading($url, $cm, $course);
-        url_print_intro($url, $cm, $course);
         echo $OUTPUT->footer();
         die;
 
@@ -268,19 +255,8 @@ EOF;
 function url_print_workaround($url, $cm, $course) {
     global $OUTPUT, $PAGE, $USER;
 
+    $PAGE->activityheader->set_description(url_get_intro($url, $cm, true));
     url_print_header($url, $cm, $course);
-
-    if (!$PAGE->has_secondary_navigation()) {
-        url_print_heading($url, $cm, $course, true);
-    }
-
-    // Display any activity information (eg completion requirements / dates).
-    $cminfo = cm_info::create($cm);
-    $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-    $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-    echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
-
-    url_print_intro($url, $cm, $course, true);
 
     $fullurl = url_get_full_url($url, $cm, $course);
 
@@ -316,7 +292,7 @@ function url_print_workaround($url, $cm, $course) {
  * @return does not return
  */
 function url_display_embed($url, $cm, $course) {
-    global $PAGE, $OUTPUT, $USER;
+    global $PAGE, $OUTPUT;
 
     $mimetype = resourcelib_guess_url_mimetype($url->externalurl);
     $fullurl  = url_get_full_url($url, $cm, $course);
@@ -346,20 +322,10 @@ function url_display_embed($url, $cm, $course) {
         $code = resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype);
     }
 
+    $PAGE->activityheader->set_description(url_get_intro($url, $cm));
     url_print_header($url, $cm, $course);
-    if (!$PAGE->has_secondary_navigation()) {
-        url_print_heading($url, $cm, $course);
-    }
-
-    // Display any activity information (eg completion requirements / dates).
-    $cminfo = cm_info::create($cm);
-    $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-    $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-    echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
 
     echo $code;
-
-    url_print_intro($url, $cm, $course);
 
     echo $OUTPUT->footer();
     die;

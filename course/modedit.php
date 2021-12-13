@@ -200,6 +200,7 @@ if ($mform->is_cancelled()) {
     if (isset($navbaraddition)) {
         $PAGE->navbar->add($navbaraddition);
     }
+    $PAGE->activityheader->disable();
 
     echo $OUTPUT->header();
 

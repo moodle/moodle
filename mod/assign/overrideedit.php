@@ -257,8 +257,13 @@ $PAGE->navbar->add($pagetitle);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
+$activityheader = $PAGE->activityheader;
+$activityheader->set_attrs([
+    'description' => '',
+    'hidecompletion' => true,
+    'title' => $activityheader->is_title_allowed() ? format_string($assigninstance->name, true, ['context' => $context]) : ""
+]);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($assigninstance->name, true, array('context' => $context)));
 
 $mform->display();
 

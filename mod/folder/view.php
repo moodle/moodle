@@ -69,20 +69,9 @@ $PAGE->set_title($course->shortname.': '.$folder->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($folder);
 
-
 $output = $PAGE->get_renderer('mod_folder');
 
 echo $output->header();
-
-if (!$PAGE->has_secondary_navigation()) {
-    echo $output->heading(format_string($folder->name), 2);
-}
-
-// Render the activity information.
-$cminfo = cm_info::create($cm);
-$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-echo $output->activity_information($cminfo, $completiondetails, $activitydates);
 
 echo $output->display_folder($folder);
 

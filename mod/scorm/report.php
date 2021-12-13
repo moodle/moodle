@@ -86,12 +86,13 @@ if (empty($noheader)) {
 
     $PAGE->set_title("$course->shortname: ".format_string($scorm->name));
     $PAGE->set_heading($course->fullname);
+    $PAGE->activityheader->set_attrs([
+        'hidecompletion' => true,
+        'description' => ''
+    ]);
     $PAGE->navbar->add($strreport, new moodle_url('/mod/scorm/report.php', array('id' => $cm->id)));
 
     echo $OUTPUT->header();
-    if (!$PAGE->has_secondary_navigation()) {
-        echo $OUTPUT->heading(format_string($scorm->name));
-    }
 }
 
 // Open the selected Scorm report and display it.

@@ -109,12 +109,12 @@ $PAGE->set_secondary_active_tab("forumsubscriptions");
 
 // Output starts from here.
 $actionbar = new \mod_forum\output\subscription_actionbar($id, $url, $forum);
+$PAGE->activityheader->disable();
 echo $OUTPUT->header();
 if (!$PAGE->has_secondary_navigation()) {
     echo $OUTPUT->heading(get_string('forum', 'forum') . ' ' . $strsubscribers);
 }
 echo $forumoutput->subscription_actionbar($actionbar);
-
 
 if ($edit === 0) {
     $subscribers = \mod_forum\subscriptions::fetch_subscribed_users($forum, $currentgroup, $context);

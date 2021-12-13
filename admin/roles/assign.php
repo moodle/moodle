@@ -61,6 +61,7 @@ if ($returnurl) {
 }
 $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
+$PAGE->activityheader->disable();
 
 $contextname = $context->get_context_name();
 $courseid = $course->id;

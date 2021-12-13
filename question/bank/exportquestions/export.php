@@ -46,6 +46,7 @@ $category = $DB->get_record('question_categories', ["id" => $catid, 'contextid' 
 $PAGE->set_url($thispageurl);
 $PAGE->set_title($strexportquestions);
 $PAGE->set_heading($COURSE->fullname);
+$PAGE->activityheader->disable();
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');

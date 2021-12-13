@@ -52,6 +52,10 @@ if ($confirm) {
 
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 $PAGE->navbar->add(get_string('switchingphase', 'workshop'));
 
 $PAGE->set_secondary_active_tab("modulepage");
@@ -60,10 +64,6 @@ $PAGE->set_secondary_active_tab("modulepage");
 // Output starts here
 //
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($workshop->name));
-}
-
 $continuebtn = new single_button(
     new moodle_url($PAGE->url, array('confirm' => 1)), get_string('continue'), 'post', true);
 $continuebtn->class .= ' mr-3';

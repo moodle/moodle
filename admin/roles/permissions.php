@@ -97,6 +97,7 @@ if ($context->contextlevel == CONTEXT_BLOCK) {
 }
 
 $PAGE->set_title($title);
+$PAGE->activityheader->disable();
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:
         print_error('cannotoverridebaserole', 'error');

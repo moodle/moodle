@@ -230,10 +230,6 @@ class renderer extends \plugin_renderer_base {
      * @return string
      */
     public function render_assign_header(assign_header $header) {
-        global $USER;
-
-        $o = '';
-
         if ($header->subpage) {
             $this->page->navbar->add($header->subpage, $header->subpageurl);
             $args = ['contextname' => $header->context->get_context_name(false, true), 'subpage' => $header->subpage];
@@ -248,33 +244,24 @@ class renderer extends \plugin_renderer_base {
         $this->page->set_title($title);
         $this->page->set_heading($this->page->course->fullname);
 
-        $o .= $this->output->header();
-        if (!$this->page->has_secondary_navigation()) {
-            $o .= $this->output->heading($heading);
-        }
-
-        // Show the activity information output component.
-        $modinfo = get_fast_modinfo($header->assign->course);
-        $cm = $modinfo->get_cm($header->coursemoduleid);
-        $cmcompletion = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
-        $activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
-        $o .= $this->output->activity_information($cm, $cmcompletion, $activitydates);
-
-        if ($header->preface) {
-            $o .= $header->preface;
-        }
-
+        $description = $header->preface;
         if ($header->showintro) {
-            $o .= $this->output->box_start('generalbox boxaligncenter', 'intro');
-            $o .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
+            $description = $this->output->box_start('generalbox boxaligncenter', 'intro');
+            $description .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
             if ($header->activity) {
-                $o .= $this->format_activity_text($header->assign, $header->coursemoduleid);
+                $description .= $this->format_activity_text($header->assign, $header->coursemoduleid);
             }
-            $o .= $header->postfix;
-            $o .= $this->output->box_end();
+            $description .= $header->postfix;
+            $description .= $this->output->box_end();
         }
 
-        return $o;
+        $activityheader = $this->page->activityheader;
+        $activityheader->set_attrs([
+            'title' => $activityheader->is_title_allowed() ? $heading : '',
+            'description' => $description
+        ]);
+
+        return $this->output->header();
     }
 
     /**

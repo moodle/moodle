@@ -1402,7 +1402,11 @@ class core_renderer extends renderer_base {
         $this->opencontainers->push('header/footer', $footer);
         $this->page->set_state(moodle_page::STATE_IN_BODY);
 
-        return $header . $this->skip_link_target('maincontent');
+        // If an activity record has been set, activity_header will handle this.
+        if (!$this->page->activityrecord || !empty($this->page->layout_options['noactivityheader'])) {
+            $header .= $this->skip_link_target('maincontent');
+        }
+        return $header;
     }
 
     /**
@@ -2903,6 +2907,8 @@ EOD;
             //$this->page->set_pagelayout('base'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the pagelayout from URL :-(
             $this->page->set_title(get_string('error'));
             $this->page->set_heading($this->page->course->fullname);
+            // No need to display the activity header when encountering an error.
+            $this->page->activityheader->disable();
             $output .= $this->header();
         }
 

@@ -48,10 +48,11 @@ if (!$feedbackstructure->can_view_analysis()) {
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($feedback->name));
-}
 
 //get the groupid
 $mygroupid = groups_get_activity_group($cm, true);

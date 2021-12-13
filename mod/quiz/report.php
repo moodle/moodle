@@ -65,7 +65,7 @@ $PAGE->set_url($url);
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 $PAGE->set_pagelayout('report');
-
+$PAGE->activityheader->disable();
 $reportlist = quiz_report_list($context);
 if (empty($reportlist)) {
     print_error('erroraccessingreport', 'quiz');

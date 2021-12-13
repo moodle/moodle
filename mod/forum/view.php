@@ -157,24 +157,21 @@ if (!empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forum
         ]) . ': ' . format_string($forum->get_name());
     rss_add_http_header($forum->get_context(), 'mod_forum', $forumrecord, $rsstitle);
 }
-
-// Output starts from here.
-echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($forum->get_name()), 2);
+$activityheader = $PAGE->activityheader;
+$pageheader = [];
+if ($activityheader->is_title_allowed()) {
+    $pageheader['title'] = format_string($forum->get_name());
 }
-
-// Render the activity information.
-$completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
-echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
 
 // Fetch the current groupid.
 $groupid = groups_get_activity_group($cm, true) ?: null;
 
-if (!$istypesingle && !empty($forum->get_intro())) {
-    echo $OUTPUT->box(format_module_intro('forum', $forumrecord, $cm->id), 'generalbox', 'intro');
+if ($istypesingle || empty($forum->get_intro())) {
+    $pageheader['description'] = '';
 }
+$activityheader->set_attrs($pageheader);
+
+echo $OUTPUT->header();
 
 $rendererfactory = mod_forum\local\container::get_renderer_factory();
 // The elements for view action are rendered and added to the page.

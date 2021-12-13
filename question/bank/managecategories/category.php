@@ -147,6 +147,7 @@ if ($param->edit) {
 
 $PAGE->set_title(get_string('editcategories', 'question'));
 $PAGE->set_heading($COURSE->fullname);
+$PAGE->activityheader->disable();
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');

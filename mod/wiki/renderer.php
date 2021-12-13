@@ -234,8 +234,20 @@ class mod_wiki_renderer extends plugin_renderer_base {
 
         return $output;
     }
+
+    /**
+     * Print the wiki activity information and intro
+     *
+     * @return string
+     * @deprecated since 4.0. Now handled in PAGE's activity header
+     */
     public function wiki_info() {
         global $USER;
+
+        debugging(
+            'wiki_info() is deprecated. Output is handled within the $PAGE->activityheader instead.',
+            DEBUG_DEVELOPER
+        );
 
         // Display any activity information (eg completion requirements / dates).
         $cminfo = cm_info::create($this->page->cm);

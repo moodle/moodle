@@ -1094,11 +1094,12 @@ if ($edit) {
 $PAGE->set_title("{$course->shortname}: {$strdiscussionname}{$titlesubject}");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab("modulepage");
-
-echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($forum->name), 2);
+$activityheaderconfig['hidecompletion'] = true;
+if (!empty($parententity)) {
+        $activityheaderconfig['description'] = '';
 }
+$PAGE->activityheader->set_attrs($activityheaderconfig);
+echo $OUTPUT->header();
 
 // Checkup.
 if (!empty($parententity) && !$capabilitymanager->can_view_post($USER, $discussionentity, $parententity)) {
@@ -1141,10 +1142,6 @@ if (!empty($parententity)) {
     $rendererfactory = mod_forum\local\container::get_renderer_factory();
     $postsrenderer = $rendererfactory->get_single_discussion_posts_renderer(FORUM_MODE_THREADED, true);
     echo $postsrenderer->render($USER, [$forumentity], [$discussionentity], $postentities);
-} else {
-    if (!empty($forum->intro)) {
-        echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
-    }
 }
 
 // Call print disclosure for enabled plagiarism plugins.

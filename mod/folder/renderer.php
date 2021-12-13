@@ -47,10 +47,7 @@ class mod_folder_renderer extends plugin_renderer_base {
         }
 
         if (trim($folder->intro)) {
-            if ($folder->display != FOLDER_DISPLAY_INLINE) {
-                $output .= $this->output->box(format_module_intro('folder', $folder, $cm->id),
-                        'generalbox', 'intro');
-            } else if ($cm->showdescription) {
+            if ($folder->display == FOLDER_DISPLAY_INLINE && $cm->showdescription) {
                 // for "display inline" do not filter, filters run at display time.
                 $output .= format_module_intro('folder', $folder, $cm->id, false);
             }

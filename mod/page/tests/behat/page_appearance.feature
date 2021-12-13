@@ -16,9 +16,9 @@ Feature: Configure page appearance
   Scenario Outline: Hide and display page features
     Given I am on the "PageName1" "page activity editing" page logged in as admin
     And I expand all fieldsets
-    And I set the field "Display page name" to "<value>"
+    And I set the field "<feature>" to "<value>"
     And I press "Save and display"
-    Then I <shouldornot> see "PageName1" in the "region-main" "region"
+    Then I <shouldornot> see "<lookfor>" in the "region-main" "region"
 
     Examples:
       | feature                    | lookfor        | value | shouldornot |

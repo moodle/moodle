@@ -261,20 +261,10 @@ $groupmode = groups_get_activity_groupmode($cm);
 $canmanageentries = has_capability('mod/data:manageentries', $context);
 echo $OUTPUT->header();
 
-
 // Detect entries not approved yet and show hint instead of not found error.
 if ($record and !data_can_view_record($data, $record, $currentgroup, $canmanageentries)) {
     print_error('notapproved', 'data');
 }
-
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($data->name), 2);
-}
-
-// Render the activity information.
-$completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
-echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
 
 // Do we need to show a link to the RSS feed for the records?
 //this links has been Settings (database activity administration) block
@@ -289,7 +279,6 @@ if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
     $options = new stdClass();
     $options->noclean = true;
 }
-echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
 
 $returnurl = $CFG->wwwroot . '/mod/data/view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
 groups_print_activity_menu($cm, $returnurl);

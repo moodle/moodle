@@ -72,9 +72,6 @@ $renderer = $PAGE->get_renderer('mod_feedback');
 // Trigger module viewed event.
 $feedbackcompletion->trigger_module_viewed();
 
-/// Print the page header
-echo $OUTPUT->header();
-
 /// Print the main part of the page
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -87,10 +84,10 @@ if ($courseid) {
 }
 $preview = html_writer::link($previewlnk, $previewimg);
 
-// Render the activity information.
-$completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
-echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
+$PAGE->activityheader->set_description("");
+
+// Print the page header.
+echo $OUTPUT->header();
 
 // Show description.
 echo $OUTPUT->box_start('generalbox feedback_description');

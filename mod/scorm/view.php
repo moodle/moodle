@@ -136,17 +136,9 @@ if (empty($preventskip) && empty($launch) && (has_capability('mod/scorm:skipview
 
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
+// Let the module handle the display.
+$PAGE->activityheader->set_description('');
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($scorm->name));
-}
-
-// Display any activity information (eg completion requirements / dates).
-$cminfo = cm_info::create($cm);
-$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
-
 if (!empty($action) && confirm_sesskey() && has_capability('mod/scorm:deleteownresponses', $contextmodule)) {
     if ($action == 'delete') {
         $confirmurl = new moodle_url($PAGE->url, array('action' => 'deleteconfirm'));

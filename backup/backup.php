@@ -107,6 +107,7 @@ switch ($type) {
 
 $PAGE->set_title($heading);
 $PAGE->set_heading($heading);
+$PAGE->activityheader->disable();
 
 if (empty($cancel)) {
     // Do not print the header if user cancelled the process, as we are going to redirect the user.

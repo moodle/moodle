@@ -60,6 +60,7 @@ $string['addedtogroupnot'] = 'Not added to group "{$a}"';
 $string['addedtogroupnotenrolled'] = 'Not added to group "{$a}", because not enrolled in course';
 $string['addfilehere'] = 'Add file(s) here';
 $string['addinganew'] = 'Adding a new {$a}';
+$string['additionalcustomnav'] = 'Additional custom navigation';
 $string['addnew'] = 'Add a new {$a}';
 $string['addinganewto'] = 'Adding a new {$a->what} to {$a->to}';
 $string['addingdatatoexisting'] = 'Adding data to existing';

@@ -137,6 +137,10 @@ if ($action == 'sendmessage' AND $canbulkmessaging) {
 /// Print the page header
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 echo $OUTPUT->header();
 
 /** @var \mod_feedback\output\renderer $renderer */

@@ -337,6 +337,7 @@ if ($mform->is_cancelled()) {
 $streditingquestion = $qtypeobj->get_heading();
 $PAGE->set_title($streditingquestion);
 $PAGE->set_heading($COURSE->fullname);
+$PAGE->activityheader->disable();
 $PAGE->navbar->add($streditingquestion);
 
 // Display a heading, question editing form and possibly some extra content needed for

@@ -40,6 +40,7 @@ if ($eid) {
 }
 
 $PAGE->set_pagelayout('incourse');
+$PAGE->activityheader->disable();
 
 if ($entries) {
     foreach ($entries as $key => $entry) {

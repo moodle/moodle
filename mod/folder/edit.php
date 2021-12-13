@@ -43,7 +43,10 @@ $PAGE->set_title($course->shortname.': '.$folder->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($folder);
 $PAGE->set_secondary_active_tab('modulepage');
-
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 $data = new stdClass();
 $data->id = $cm->id;
 $maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes);
@@ -79,9 +82,6 @@ if ($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($folder->name));
-}
 echo $OUTPUT->box_start('generalbox foldertree');
 $mform->display();
 echo $OUTPUT->box_end();

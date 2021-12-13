@@ -48,10 +48,8 @@ $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title($feedback->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->activityheader->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
-
-// Print the main part of the page.
-echo $OUTPUT->heading(format_string($feedback->name));
 
 $continueurl = new moodle_url('/mod/feedback/view.php', array('id' => $id));
 if ($courseid) {

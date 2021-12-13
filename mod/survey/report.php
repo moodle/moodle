@@ -94,15 +94,16 @@
 
     $PAGE->set_title("$course->shortname: ".format_string($survey->name));
     $PAGE->set_heading($course->fullname);
+    $PAGE->activityheader->set_attrs([
+        'hidecompletion' => true,
+        'description' => ''
+    ]);
 
     // Activate the secondary nav tab.
     navigation_node::override_active_url(new moodle_url('/mod/survey/report.php', ['id' => $id, 'action' => 'summary']));
 
     $actionbar = new \mod_survey\output\actionbar($id, $action, $url);
     echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($survey->name));
-}
     $renderer = $PAGE->get_renderer('mod_survey');
     echo $renderer->response_actionbar($actionbar);
 

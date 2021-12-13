@@ -101,13 +101,26 @@ $THEME->layouts = [
     'popup' => array(
         'file' => 'contentonly.php',
         'regions' => array(),
-        'options' => array('nofooter' => true, 'nonavbar' => true),
+        'options' => array(
+            'nofooter' => true,
+            'nonavbar' => true,
+            'activityheader' => [
+                'notitle' => true,
+                'nocompletion' => true,
+                'nodescription' => true
+            ]
+        ),
     ),
     // No blocks and minimal footer - used for legacy frame layouts only!
     'frametop' => array(
         'file' => 'contentonly.php',
         'regions' => array(),
-        'options' => array('nofooter' => true, 'nocoursefooter' => true),
+        'options' => array(
+            'nofooter' => true,
+            'nocoursefooter' => true,
+            'activityheader' => [
+                'nocompletion' => true
+            ]),
     ),
     // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible.
     'embedded' => array(
@@ -127,7 +140,7 @@ $THEME->layouts = [
     'print' => array(
         'file' => 'contentonly.php',
         'regions' => array(),
-        'options' => array('nofooter' => true, 'nonavbar' => false),
+        'options' => array('nofooter' => true, 'nonavbar' => false, 'noactivityheader' => true),
     ),
     // The pagelayout used when a redirection is occuring.
     'redirect' => array(
