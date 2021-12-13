@@ -71,3 +71,4 @@ Feature: Set the site home page and dashboard as the default home page
       | preference | breadcrumb |
       | Site       | Home       |
       | Dashboard  | Dashboard  |
+      | My courses | My courses |

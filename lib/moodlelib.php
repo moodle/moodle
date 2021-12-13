@@ -489,6 +489,10 @@ define('HOMEPAGE_MY', 1);
  * The home page can be chosen by the user
  */
 define('HOMEPAGE_USER', 2);
+/**
+ * The home page should be the users my courses page
+ */
+define('HOMEPAGE_MYCOURSES', 3);
 
 /**
  * URL of the Moodle sites registration portal.
@@ -10348,6 +10352,8 @@ function get_home_page() {
     if (isloggedin() && !isguestuser() && !empty($CFG->defaulthomepage)) {
         if ($CFG->defaulthomepage == HOMEPAGE_MY) {
             return HOMEPAGE_MY;
+        } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES) {
+            return HOMEPAGE_MYCOURSES;
         } else {
             return (int)get_user_preferences('user_home_page_preference', HOMEPAGE_MY);
         }
