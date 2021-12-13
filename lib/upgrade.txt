@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+
+* The method ensure_adhoc_task_qos() in lib/classes/task/manager.php  has been deprecated, please use get_next_adhoc_task()
+  instead.
+
 === 4.0 ===
 
 * To better detect wrong floats (like, for example, unformatted, using local-dependent separators ones) a number of
