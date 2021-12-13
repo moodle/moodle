@@ -977,7 +977,20 @@ if ($mform->is_cancelled()) {
                         $ccache[$shortname] = $course;
                         $ccache[$shortname]->groups = null;
                     }
-                    company_user::enrol($user, [$ccache[$shortname]->id], $companyid);
+
+                    // find role
+                    $roleid = false;
+                    if (!empty($user->{'role'.$i})) {
+                        $rolename = $user->{'role'.$i};
+                        if (array_key_exists($rolename, $rolecache)) {
+                            $roleid = $rolecache[$rolename]->id;
+                        } else {
+                            $upt->track('enrolments', get_string('unknownrole', 'error', s($rolename)), 'error');
+                            continue;
+                        }
+                    }
+
+                    company_user::enrol($user, [$ccache[$shortname]->id], $companyid , $roleid);
                     $coursecontext = context_course::instance($ccache[$shortname]->id);
 
                     // find group to add to
@@ -1003,9 +1016,11 @@ if ($mform->is_cancelled()) {
                                 }
                             }
                         }
+echo "groups cache = <pre>";print_r($ccache[$shortname]->groups); echo "</pre></br>";
                         // group exists?
                         $addgroup = $user->{'group'.$i};
                         if (!array_key_exists($addgroup, $ccache[$shortname]->groups)) {
+echo "Creating new group $addgroup </br>"; 
                             // if group doesn't exist,  create it
                             $newgroupdata = new stdClass();
                             $newgroupdata->name = $addgroup;
