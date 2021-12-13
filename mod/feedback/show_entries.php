@@ -90,6 +90,7 @@ $PAGE->activityheader->set_attrs([
     'hidecompletion' => true,
     'description' => ''
 ]);
+$PAGE->add_body_class('limitedwidth');
 echo $OUTPUT->header();
 
 /** @var \mod_feedback\output\renderer $renderer */
@@ -167,4 +168,3 @@ if ($userid || $showcompleted) {
 
 // Finish the page.
 echo $OUTPUT->footer();
-

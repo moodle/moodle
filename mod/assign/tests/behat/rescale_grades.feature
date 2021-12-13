@@ -74,7 +74,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     Given I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I wait until the page is ready
-    And I follow "Assignment: Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Rescale existing grades" to "Yes"

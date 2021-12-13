@@ -160,6 +160,7 @@ if ($currentuser) {
 $PAGE->set_title("$course->fullname: $strpersonalprofile: $fullname");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('mypublic');
+$PAGE->add_body_class('limitedwidth');
 
 // Locate the users settings in the settings navigation and force it open.
 // This MUST be done after we've set up the page as it is going to cause theme and output to initialise.

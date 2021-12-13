@@ -47,6 +47,7 @@ $url = new moodle_url('/mod/lesson/edit.php', ['id' => $cm->id, 'mode' => $mode]
 $PAGE->set_url($url);
 $PAGE->force_settings_menu();
 $PAGE->set_secondary_active_tab('modulepage');
+$PAGE->add_body_class('limitedwidth');
 
 if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'single') {
     set_user_preference('lesson_view', $mode);

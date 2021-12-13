@@ -29,37 +29,34 @@
         "welcomemessage": "welcomemessage"
     }
 }}
-<header id="page-header" class="row">
-    <div class="col-12 py-3">
-        <div class="card border-0">
-            <div class="card-body p-2 navigation-card">
-                <div class="d-flex flex-wrap">
-                    {{#hasnavbar}}
-                    <div id="page-navbar" class="p-1">
-                        {{{navbar}}}
-                    </div>
-                    {{/hasnavbar}}
-                    <div class="ml-auto d-flex">
-                        {{{pageheadingbutton}}}
-                    </div>
-                    <div id="course-header">
-                        {{{courseheader}}}
-                    </div>
-                </div>
-                <div class="d-sm-flex align-items-center">
-                    {{#contextheader}}
-                        <div class="mr-auto">
-                            {{{contextheader}}}
-                        </div>
-                    {{/contextheader}}
-                    <div class="header-actions-container flex-shrink-0" data-region="header-actions-container">
-                        {{#headeractions}}
-                            <div class="header-action ml-2">{{{.}}}</div>
-                        {{/headeractions}}
-                    </div>
-                </div>
+<header id="page-header" class="header-maxwidth">
+    <div class="w-100">
+        <div class="d-flex flex-wrap">
+            {{#hasnavbar}}
+            <div id="page-navbar" class="p-1">
+                {{{navbar}}}
+            </div>
+            {{/hasnavbar}}
+            <div class="ml-auto d-flex">
+                {{{pageheadingbutton}}}
+            </div>
+            <div id="course-header">
+                {{{courseheader}}}
             </div>
         </div>
+        <div class="d-sm-flex align-items-center">
+            {{#contextheader}}
+                <div class="mr-auto">
+                    {{{contextheader}}}
+                </div>
+            {{/contextheader}}
+            <div class="header-actions-container flex-shrink-0" data-region="header-actions-container">
+                {{#headeractions}}
+                    <div class="header-action ml-2">{{{.}}}</div>
+                {{/headeractions}}
+            </div>
+        </div>
+
         {{> core/welcome }}
     </div>
 </header>

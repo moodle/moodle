@@ -47,6 +47,8 @@ $PAGE->activityheader->set_attrs([
     'hidecompletion' => true,
     'description' => ''
 ]);
+$PAGE->add_body_class('limitedwidth');
+
 $data = new stdClass();
 $data->id = $cm->id;
 $maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes);

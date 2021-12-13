@@ -69,6 +69,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_secondary_active_tab('modulepage');
+$PAGE->add_body_class('limitedwidth');
 
 // Check if the feedback is open (timeopen, timeclose).
 if (!$feedbackcompletion->is_open()) {

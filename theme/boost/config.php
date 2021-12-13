@@ -36,14 +36,14 @@ $THEME->scss = function($theme) {
 };
 
 $THEME->layouts = [
-    // Most backwards compatible layout without the blocks - this is the layout used by default.
+    // Most backwards compatible layout without the blocks.
     'base' => array(
         'file' => 'columns2.php',
         'regions' => array(),
     ),
-    // Standard layout with blocks, this is recommended for most pages with general information.
+    // Standard layout with blocks.
     'standard' => array(
-        'file' => 'columns2.php',
+        'file' => 'drawers.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
@@ -55,7 +55,7 @@ $THEME->layouts = [
         'options' => array('langmenu' => true),
     ),
     'coursecategory' => array(
-        'file' => 'columns2.php',
+        'file' => 'drawers.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
@@ -67,32 +67,32 @@ $THEME->layouts = [
     ),
     // The site home page.
     'frontpage' => array(
-        'file' => 'columns2.php',
+        'file' => 'drawers.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
         'options' => array('nonavbar' => true),
     ),
     // Server administration scripts.
     'admin' => array(
-        'file' => 'columns2.php',
+        'file' => 'drawers.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
     // My courses page.
     'mycourses' => array(
-        'file' => 'columns2.php',
+        'file' => 'drawers.php',
         'regions' => array()
     ),
     // My dashboard page.
     'mydashboard' => array(
-        'file' => 'columns2.php',
+        'file' => 'drawers.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
         'options' => array('nonavbar' => true, 'langmenu' => true, 'nocontextheader' => true),
     ),
     // My public page.
     'mypublic' => array(
-        'file' => 'columns2.php',
+        'file' => 'drawers.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
@@ -154,7 +154,7 @@ $THEME->layouts = [
     ),
     // The pagelayout used for reports.
     'report' => array(
-        'file' => 'columns2.php',
+        'file' => 'drawers.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),

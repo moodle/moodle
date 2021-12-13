@@ -64,6 +64,7 @@ $PAGE->set_url($url);
 
 // Display a list of overrides.
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_title(get_string('overrides', 'lesson'));
 $PAGE->set_heading($course->fullname);
 

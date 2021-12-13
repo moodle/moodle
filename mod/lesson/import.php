@@ -61,6 +61,7 @@ $mform->set_data($data);
         'hidecompletion' => true,
         'description' => ''
     ]);
+    $PAGE->add_body_class('limitedwidth');
     echo $OUTPUT->header();
     echo $OUTPUT->heading_with_help($strimportquestions, 'importquestions', 'lesson', '', '', 3);
 

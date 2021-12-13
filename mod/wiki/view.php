@@ -52,6 +52,7 @@ $action = optional_param('action', '', PARAM_ALPHA);
 $swid = optional_param('swid', 0, PARAM_INT); // Subwiki ID
 
 $PAGE->force_settings_menu();
+$PAGE->add_body_class('limitedwidth');
 
 /*
  * Case 0:

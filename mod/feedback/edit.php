@@ -89,6 +89,7 @@ $PAGE->activityheader->set_attrs([
     'hidecompletion' => true,
     'description' => ''
 ]);
+$PAGE->add_body_class('limitedwidth');
 
 //Adding the javascript module for the items dragdrop.
 if (count($feedbackitems) > 1) {

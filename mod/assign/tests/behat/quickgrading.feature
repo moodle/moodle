@@ -32,7 +32,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I follow "View all submissions"
     When I click on "Grade" "link" in the "Student 1" "table_row"
     And I press "Save changes"
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page
     Then I should see "1" in the "Needs grading" "table_row"
 
   @skip_chrome_zerosize

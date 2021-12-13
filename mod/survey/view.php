@@ -73,6 +73,10 @@ $PAGE->set_heading($course->fullname);
 // No need to show the description if the survey is done and a graph page is to be shown.
 if ($surveyalreadydone && $showscales) {
     $PAGE->activityheader->set_description('');
+$PAGE->add_body_class('limitedwidth');
+echo $OUTPUT->header();
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading(format_string($survey->name));
 }
 
 echo $OUTPUT->header();
@@ -179,5 +183,3 @@ echo '</div>';
 echo "</form>";
 
 echo $OUTPUT->footer();
-
-

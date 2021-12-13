@@ -146,6 +146,7 @@ $PAGE->set_heading($course->fullname);
 if (html_is_blank($quiz->intro)) {
     $PAGE->activityheader->set_description('');
 }
+$PAGE->add_body_class('limitedwidth');
 $output = $PAGE->get_renderer('mod_quiz');
 // MDL-71915 Will remove this place holder.
 if (defined('BEHAT_SITE_RUNNING')) {

@@ -83,6 +83,7 @@ $title = $courseshortname . ': ' . format_string($chat->name);
 $PAGE->set_url('/mod/chat/view.php', array('id' => $cm->id));
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
+$PAGE->add_body_class('limitedwidth');
 
 // Check to see if groups are being used here.
 $groupmode = groups_get_activity_groupmode($cm);

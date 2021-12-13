@@ -181,6 +181,7 @@ $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_title($pagetitle);
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading($pagetitle);
 $PAGE->activityheader->disable();
 

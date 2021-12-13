@@ -52,6 +52,7 @@ $PAGE->activityheader->set_attrs([
     'hidecompletion' => true,
     'description' => ''
 ]);
+$PAGE->add_body_class('limitedwidth');
 echo $OUTPUT->header();
 
 //get the groupid
@@ -97,4 +98,3 @@ if ($check_anonymously) {
 echo '</div>';
 
 echo $OUTPUT->footer();
-

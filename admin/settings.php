@@ -13,6 +13,7 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/admin/settings.php', array('section' => $section));
 $PAGE->set_pagetype('admin-setting-' . $section);
 $PAGE->set_pagelayout('admin');
+$PAGE->has_secondary_navigation_setter(false);
 $PAGE->navigation->clear_cache();
 navigation_node::require_admin_tree();
 

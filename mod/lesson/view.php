@@ -54,6 +54,7 @@ if ($pageid !== null) {
 }
 $PAGE->set_url($url);
 $PAGE->force_settings_menu();
+$PAGE->add_body_class('limitedwidth');
 
 $context = $lesson->context;
 $canmanage = $lesson->can_manage();

@@ -42,6 +42,7 @@ if (!empty($CFG->defaulthomepage) &&
 }
 $PAGE->set_url('/', $urlparams);
 $PAGE->set_pagelayout('frontpage');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_other_editing_capability('moodle/course:update');
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 $PAGE->set_other_editing_capability('moodle/course:activityvisibility');

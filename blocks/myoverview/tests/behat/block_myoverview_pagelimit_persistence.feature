@@ -43,7 +43,7 @@ Feature: The my overview block allows users to persistence of their page limits
     Then I should see "Course 13"
     And I reload the page
     Then I should see "Course 13"
-    And I should see "All" in the "[data-action='limit-toggle']" "css_element"
+    And I should see "All" in the ".block-myoverview [data-action='limit-toggle']" "css_element"
 
   Scenario: Toggle the page limit between grouping changes
     Given I am on the "My courses" page logged in as "student1"
@@ -52,4 +52,4 @@ Feature: The my overview block allows users to persistence of their page limits
     And I click on "All" "button" in the "Course overview" "block"
     And I click on "In progress" "link" in the "Course overview" "block"
     Then I should see "Course 13"
-    And I should see "All" in the "[data-action='limit-toggle']" "css_element"
+    And I should see "All" in the ".block-myoverview [data-action='limit-toggle']" "css_element"

@@ -82,6 +82,7 @@ $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->set_attrs([
     'hidecompletion' => true
 ]);
+$PAGE->add_body_class('limitedwidth');
 
 $data = new stdClass();
 $data->returnurl = $returnurl;

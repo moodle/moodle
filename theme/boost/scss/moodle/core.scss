@@ -2361,6 +2361,9 @@ $footer-link-color: $bg-inverse-link-color !default;
         display: block;
         z-index: $zindex-dropdown;
     }
+    .jsenabled .drawers.show-drawer-right .btn-footer-popover {
+        display: none;
+    }
 }
 
 .bg-inverse a {
