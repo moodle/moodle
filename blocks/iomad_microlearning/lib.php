@@ -508,10 +508,10 @@ class microlearning {
         if (!empty($scheduletype)) {
             if ($scheduletype == 1) {
                 // We want midnight last night.
-                $starttime = time() - (time() % 86400);
+                $starttime = strtotime("today midnight")+ $threadinfo->message_preset + $threadinfo->message_time;
             } else {
                 // We want the next scheduled time.
-                $starttime = self::get_next_scheduled($threadid);
+                $starttime = self::get_next_scheduled($threadid) + $threadinfo->message_preset + $threadinfo->message_time;
             }
         }
 
@@ -602,7 +602,6 @@ class microlearning {
                 break;
             }
         }
-
         if ($errors) {
             try {
                 throw new Exception('Could not add user to thread');
@@ -960,10 +959,8 @@ class microlearning {
         }
          
         while ($send < $now) {
-            $send = $send + $thread->releaseinterval + $thread->message_time;
-            $send = $send - $thread->message_time;
+            $send = $send + $thread->releaseinterval;
         }
-
         return $send;
     }
 
