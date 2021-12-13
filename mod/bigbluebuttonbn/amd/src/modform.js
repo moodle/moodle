@@ -184,7 +184,7 @@ const participantListInit = () => {
 };
 
 /**
- * Add rows to the participant list dependingon the current selection.
+ * Add rows to the participant list depending on the current selection.
  *
  * @param {string} selectionTypeValue
  * @param {string} selectionValue
@@ -359,9 +359,9 @@ const updateSelectionFromType = (currentTypeSelect) => {
 
         if (currentTypeSelect.value === 'all') {
             createNewOption(participantSelect, '---------------', 'all');
-            currentTypeSelect.disabled = true;
+            participantSelect.disabled = true;
         } else {
-            currentTypeSelect.disabled = false;
+            participantSelect.disabled = false;
         }
     }
 };
