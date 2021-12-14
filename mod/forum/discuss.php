@@ -75,6 +75,8 @@ $forumrecord = $forumdatamapper->to_legacy_object($forum);
 $discussiondatamapper = $datamapperfactory->get_discussion_data_mapper();
 $discussionrecord = $discussiondatamapper->to_legacy_object($discussion);
 $discussionviewurl = $urlfactory->get_discussion_view_url_from_discussion($discussion);
+// Set the activity record, to avoid additional calls to the db if the page getter is called.
+$PAGE->set_activity_record($forumrecord);
 
 // move this down fix for MDL-6926
 require_once($CFG->dirroot . '/mod/forum/lib.php');
