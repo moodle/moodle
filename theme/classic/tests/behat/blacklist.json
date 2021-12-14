@@ -11,5 +11,8 @@
         "course/format/tests/behat/courseindex_keyboardnav.feature",
         "course/format/tests/behat/courseindex_completion.feature",
         "badges/tests/behat/badge_navigation.feature"
+    ],
+    "tags": [
+        "addablocklink"
     ]
 }
