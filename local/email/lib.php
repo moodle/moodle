@@ -45,7 +45,7 @@ function email_cron() {
             $company = new company($email->companyid);
             $managertype = 0;
             if (strpos($email->templatename, 'manager')) {
-                $manapegertype = 1;
+                $managertype = 1;
             }
             if (strpos($email->templatename, 'supervisor')) {
                 $managertype = 2;
