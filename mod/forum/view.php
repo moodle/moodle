@@ -139,6 +139,7 @@ if (!$capabilitymanager->can_view_discussions($USER)) {
 // Mark viewed and trigger the course_module_viewed event.
 $forumdatamapper = $legacydatamapperfactory->get_forum_data_mapper();
 $forumrecord = $forumdatamapper->to_legacy_object($forum);
+$PAGE->set_activity_record($forumrecord);
 forum_view(
     $forumrecord,
     $forum->get_course_record(),
