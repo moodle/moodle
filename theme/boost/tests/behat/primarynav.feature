@@ -45,3 +45,12 @@ Feature: Primary navigation
       |   Site         | Home        |
       |   Dashboard    | Dashboard   |
       |   My courses   | My courses  |
+
+  @javascript @theme_boost
+  Scenario: Users could use primary nav menu on mobile size screens
+    Given I change window size to "mobile"
+    And I am on the "My courses" page logged in as "user1"
+    Then "Home" "link" should not be visible
+    And "Side panel" "button" should exist
+    And I click on "Side panel" "button"
+    And I should see "Home" in the "theme_boost-drawers-primary" "region"
