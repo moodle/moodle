@@ -14588,7 +14588,7 @@ span.editinstructions {
     padding-right: 1rem;
     margin-bottom: 0.5rem;
     margin-top: 0.5rem;
-    border-radius: 0.3rem; }
+    border-radius: 0.25rem; }
   .course-section .section-summary-activities .activity-count {
     color: #6a737b;
     font-size: 0.8203125rem;
@@ -14639,7 +14639,7 @@ span.editinstructions {
 .activity-item {
   position: relative;
   margin: 0.5rem 0;
-  border-radius: 0.3rem; }
+  border-radius: 0.25rem; }
   .activity-item:not(.activityinline) {
     border: 1px solid #dee2e6;
     padding: 1rem; }
@@ -17533,7 +17533,8 @@ textarea[data-auto-rows] {
 
 @media (min-width: 768px) {
   .login-container {
-    max-width: 600px; } }
+    max-width: 600px;
+    border-radius: 0.25rem; } }
 
 /* modules.less */
 select {

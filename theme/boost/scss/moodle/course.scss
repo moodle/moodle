@@ -1320,7 +1320,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         margin-bottom: map-get($spacers, 2);
         margin-top: map-get($spacers, 2);
         @if $enable-rounded {
-            @include border-radius($border-radius-lg);
+            @include border-radius();
         }
     }
 
@@ -1397,7 +1397,7 @@ $activity-iconcontainer-height: 50px;
     margin: map-get($spacers, 2) 0;
 
     @if $enable-rounded {
-        @include border-radius($border-radius-lg);
+        @include border-radius();
     }
 
     &:not(.activityinline) {
