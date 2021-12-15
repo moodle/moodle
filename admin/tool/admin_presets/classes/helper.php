@@ -117,4 +117,46 @@ class helper {
 
         return $pluginid;
     }
+
+    /**
+     * Apply the given preset. If it's a filename, the preset will be imported and then applied.
+     *
+     * @param string $presetnameorfile The preset name to be applied or a valid preset file to be imported and applied.
+     * @return int|null The preset identifier that has been applied or null if the given value was not valid.
+     */
+    public static function change_default_preset(string $presetnameorfile): ?int {
+        global $DB;
+
+        $presetid = null;
+
+        // Check if the given variable points to a valid preset file to be imported and applied.
+        if (is_readable($presetnameorfile)) {
+            $xmlcontent = file_get_contents($presetnameorfile);
+            $manager = new manager();
+            list($xmlnotused, $preset) = $manager->import_preset($xmlcontent);
+            if (!is_null($preset)) {
+                list($applied) = $manager->apply_preset($preset->id);
+                if (!empty($applied)) {
+                    $presetid = $preset->id;
+                }
+            }
+        } else {
+            // Check if the given preset exists; if that's the case, it will be applied.
+            $stringmanager = get_string_manager();
+            if ($stringmanager->string_exists($presetnameorfile . 'preset', 'tool_admin_presets')) {
+                $params = ['name' => get_string($presetnameorfile . 'preset', 'tool_admin_presets')];
+            } else {
+                $params = ['name' => $presetnameorfile];
+            }
+            if ($preset = $DB->get_record('tool_admin_presets', $params)) {
+                $manager = new manager();
+                list($applied) = $manager->apply_preset($preset->id);
+                if (!empty($applied)) {
+                    $presetid = $preset->id;
+                }
+            }
+        }
+
+        return $presetid;
+    }
 }
