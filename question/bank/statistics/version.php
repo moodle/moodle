@@ -26,6 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qbank_statistics';
-$plugin->version   = 2021092000;
+$plugin->version   = 2021121500;
 $plugin->requires  = 2021052500;
 $plugin->maturity  = MATURITY_STABLE;
