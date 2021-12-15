@@ -4900,6 +4900,36 @@ EOD;
             return $CFG->release;
         }
     }
+
+    /**
+     * Generate the add block button when editing mode is turned on and the user can edit blocks.
+     *
+     * @param string $region where new blocks should be added.
+     * @return string html for the add block button.
+     */
+    public function addblockbutton($region = ''): string {
+        $addblockbutton = '';
+        if (isset($this->page->theme->addblockposition) &&
+                $this->page->user_is_editing() &&
+                $this->page->user_can_edit_blocks() &&
+                $this->page->pagelayout !== 'mycourses'
+        ) {
+            $params = ['bui_addblock' => '', 'sesskey' => sesskey()];
+            if (!empty($region)) {
+                $params['bui_blockregion'] = $region;
+            }
+            $url = new moodle_url($this->page->url, $params);
+            $addblockbutton = $this->render_from_template('core/add_block_button',
+                [
+                    'link' => $url->out(false),
+                    'escapedlink' => "?{$url->get_query_string(false)}",
+                    'pageType' => $this->page->pagetype,
+                    'pageLayout' => $this->page->pagelayout,
+                ]
+            );
+        }
+        return $addblockbutton;
+    }
 }
 
 /**

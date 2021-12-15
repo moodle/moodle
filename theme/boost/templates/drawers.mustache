@@ -45,7 +45,8 @@
         "navdraweropen": false,
         "blockdraweropen": true,
         "regionmainsettingsmenu": "",
-        "hasregionmainsettingsmenu": false
+        "hasregionmainsettingsmenu": false,
+        "addblockbutton": ""
     }
 }}
 {{> theme_boost/head }}
@@ -75,6 +76,7 @@
             {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
             {{$drawercontent}}
                 <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                    {{{ addblockbutton }}}
                     {{{ sidepreblocks }}}
                 </section>
             {{/drawercontent}}

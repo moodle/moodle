@@ -27,22 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/behat/lib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
-// Add-a-block in editing mode.
-if (isset($PAGE->theme->addblockposition) && $PAGE->user_is_editing() && $PAGE->user_can_edit_blocks()) {
-    $url = new moodle_url($PAGE->url, ['bui_addblock' => '', 'sesskey' => sesskey()]);
-
-    $block = new block_contents;
-    $block->content = $OUTPUT->render_from_template('core/add_block_button',
-        [
-            'link' => $url->out(false),
-            'escapedlink' => "?{$url->get_query_string(false)}",
-            'pageType' => $PAGE->pagetype,
-            'pageLayout' => $PAGE->pagelayout,
-        ]
-    );
-
-    $PAGE->blocks->add_fake_block($block, BLOCK_POS_RIGHT);
-}
+// Add block button in editing mode.
+$addblockbutton = $OUTPUT->addblockbutton();
 
 user_preference_allow_ajax_update('drawer-open-nav', PARAM_ALPHA);
 user_preference_allow_ajax_update('drawer-open-index', PARAM_BOOL);
@@ -66,7 +52,7 @@ if ($courseindexopen) {
 }
 
 $blockshtml = $OUTPUT->blocks('side-pre');
-$hasblocks = strpos($blockshtml, 'data-block=') !== false;
+$hasblocks = (strpos($blockshtml, 'data-block=') !== false || !empty($addblockbutton));
 if (!$hasblocks) {
     $blockdraweropen = false;
 }
@@ -118,6 +104,7 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
+    'addblockbutton' => $addblockbutton
 ];
 
 $nav = $PAGE->flatnav;
