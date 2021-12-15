@@ -142,7 +142,8 @@
                         </button>
                         <div class="dropdown-menu">
                             {{#options}}
-                                <a class="dropdown-item" href="{{url}}">{{string}}</a>
+                                <a class="dropdown-item" href="{{url}}"
+                                   {{#openinnewwindow}}target="_blank"{{/openinnewwindow}}>{{string}}</a>
                             {{/options}}
                         </div>
                     </div>

@@ -23,6 +23,6 @@ class mod_glossary_import_form extends moodleform {
         $submit_string = get_string('submit');
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
-        $this->add_action_buttons(false, $submit_string);
+        $this->add_action_buttons(true, $submit_string);
     }
 }
