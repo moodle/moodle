@@ -21515,12 +21515,14 @@ div.editor_atto_toolbar button .icon {
   .moremenu .dropdown-item.active {
     background-color: transparent;
     color: #1d2125; }
-    .moremenu .dropdown-item[aria-current="true"]:focus-within,
-    .moremenu .dropdown-item.active:focus-within {
+    .moremenu .dropdown-item[aria-current="true"]:focus-within, .moremenu .dropdown-item[aria-current="true"]:hover,
+    .moremenu .dropdown-item.active:focus-within,
+    .moremenu .dropdown-item.active:hover {
       background-color: #0f6cbf;
       color: #fff; }
-      .moremenu .dropdown-item[aria-current="true"]:focus-within a,
-      .moremenu .dropdown-item.active:focus-within a {
+      .moremenu .dropdown-item[aria-current="true"]:focus-within a, .moremenu .dropdown-item[aria-current="true"]:hover a,
+      .moremenu .dropdown-item.active:focus-within a,
+      .moremenu .dropdown-item.active:hover a {
         color: #fff; }
     .moremenu .dropdown-item[aria-current="true"]:before,
     .moremenu .dropdown-item.active:before {
