@@ -68,9 +68,11 @@ const dropdownFix = () => {
         setTimeout(delayedFocus, 50, new Pending('core/aria:delayed-focus'));
     };
 
-    $('.dropdown').on('shown.bs.dropdown', e => {
+    // We only want to set focus when users access the dropdown via keyboard as per
+    // guidelines defined in w3 aria practices 1.1 menu-button.
+    $(document).on('keydown', '[data-toggle="dropdown"]', (e) => {
         // We need to focus on the first menuitem.
-        const menu = e.target.querySelector('[role="menu"]');
+        const menu = e.target.parentElement.querySelector('[role="menu"]');
         let menuItems = false;
         let foundMenuItem = false;
 
