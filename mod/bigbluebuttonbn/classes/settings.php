@@ -486,6 +486,17 @@ class settings {
                 $item,
                 $showrecordingsettings
             );
+            $item = new admin_setting_configcheckbox(
+                'bigbluebuttonbn_recording_protect_editable',
+                get_string('config_recording_protect_editable', 'bigbluebuttonbn'),
+                get_string('config_recording_protect_editable_description', 'bigbluebuttonbn'),
+                1
+            );
+            $this->add_conditional_element(
+                'recording_protect_editable',
+                $item,
+                $showrecordingsettings
+            );
         }
         $this->admin->add($this->section, $showrecordingsettings);
     }

@@ -70,8 +70,12 @@ class recording_data {
 
         // Build table content.
         foreach ($recordings as $recording) {
-            // Protected recordings is not a standard feature, remove actions when protected flag is not present.
             $rowtools = $tools;
+            // Protected recordings may be enabled or disabled from UI through configuration.
+            if (!(boolean) config::get('recording_protect_editable')) {
+                $rowtools = array_diff($rowtools, ['protect', 'unprotect']);
+            }
+            // Protected recordings is not a standard feature, remove actions when protected flag is not present.
             if (in_array('protect', $rowtools) && $recording->get('protected') === null) {
                 $rowtools = array_diff($rowtools, ['protect', 'unprotect']);
             }
