@@ -3189,5 +3189,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021120100.01);
     }
 
+    if ($oldversion < 2021121400.01) {
+        // The $CFG->grade_navmethod setting has been removed because it's not required anymore. This setting was used
+        // to set the type of navigation (tabs or dropdown box) which will be displayed in gradebook. However, these
+        // navigation methods are no longer used and replaced with tertiary navigation.
+        unset_config('grade_navmethod');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021121400.01);
+    }
+
     return true;
 }

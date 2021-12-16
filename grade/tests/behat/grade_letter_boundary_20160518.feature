@@ -27,8 +27,8 @@ Feature: We can customise the letter boundary of a course in gradebook version 2
     And I set the following fields to these values:
       | Grade display type | Letter |
     And I press "Save changes"
-    And I navigate to "Letters" in the course gradebook
-    And I follow "Edit grade letters"
+    And I navigate to "More > Grade letters" in the course gradebook
+    And I click on "Edit" "button"
     And I set the following fields to these values:
       | id_override | 1 |
       | id_gradeboundary10 | 57 |

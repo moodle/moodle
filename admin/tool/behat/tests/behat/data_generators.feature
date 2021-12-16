@@ -385,7 +385,7 @@ Feature: Set up contextual data for tests
     And I navigate to "Outcomes" in current page administration
     Then I should see "Grade outcome 1" in the "#addoutcomes" "css_element"
     And I should see "Grade outcome 2" in the "#removeoutcomes" "css_element"
-    And I follow "Edit outcomes"
+    And I press "Manage outcomes"
     And the following should exist in the "generaltable" table:
       | Full name       | Short name | Scale        |
       | Grade outcome 2 | OT2        | Test Scale 1 |

@@ -14,18 +14,18 @@ Feature: We can view the logs for any changes to grade letters.
     And I set the following fields to these values:
       | Grade display type | Letter |
     And I press "Save changes"
-    And I navigate to "Letters" in the course gradebook
-    And I follow "Edit grade letters"
+    And I navigate to "More > Grade letters" in the course gradebook
+    And I click on "Edit" "button"
     And I set the following fields to these values:
       | id_override | 1 |
       | id_gradeboundary10 | 57 |
     And I press "Save changes"
-    And I follow "Edit grade letters"
+    And I click on "Edit" "button"
     And I set the following fields to these values:
       | id_override | 1 |
       | id_gradeboundary10 | 50 |
     And I press "Save changes"
-    And I follow "Edit grade letters"
+    And I click on "Edit" "button"
     And I set the following fields to these values:
       | id_override | 1 |
       | id_gradeletter11 | |

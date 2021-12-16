@@ -36,12 +36,9 @@ navigation_node::override_active_url(new moodle_url('/grade/edit/scale/index.php
     array('id' => $courseid)));
 
 $systemcontext = context_system::instance();
-$heading = '';
 
 // a bit complex access control :-O
 if ($id) {
-    $heading = get_string('editscale', 'grades');
-
     /// editing existing scale
     if (!$scale_rec = $DB->get_record('scale', array('id' => $id))) {
         print_error('invalidscaleid');
@@ -68,7 +65,6 @@ if ($id) {
     }
 
 } else if ($courseid){
-    $heading = get_string('addscale', 'grades');
     /// adding new scale from course
     if (!$course = $DB->get_record('course', array('id' => $courseid))) {
         print_error('invalidcourseid');
@@ -147,6 +143,7 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
+$heading = $id ? get_string('editscale', 'grades') : get_string('addscale', 'grades');
 print_grade_page_head($COURSE->id, 'scale', null, $heading, false, false, false);
 
 $mform->display();

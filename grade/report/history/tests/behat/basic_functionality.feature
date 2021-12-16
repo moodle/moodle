@@ -53,7 +53,7 @@ Feature: A teacher checks the grade history report in a course
     And I give the grade "70.00" to the user "Student 2" for the grade item "The greatest assignment ever"
     And I give the grade "80.00" to the user "Student 2" for the grade item "Rewarding assignment"
     And I press "Save changes"
-    And I follow "Grade history"
+    And I navigate to "View > Grade history" in the course gradebook
     When I press "Submit"
     Then the following should exist in the "gradereport_history" table:
       | First name/Surname | Email address        | Favourite food | Grade item                   | Original grade | Revised grade | Grader    |
