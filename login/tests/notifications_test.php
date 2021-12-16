@@ -24,6 +24,15 @@
 class core_login_notifications_testcase extends \advanced_testcase {
 
     /**
+     * Load required classes
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        require_once($CFG->libdir . '/externallib.php');
+    }
+
+    /**
      * Test new login notification.
      */
     public function test_login_notification() {
