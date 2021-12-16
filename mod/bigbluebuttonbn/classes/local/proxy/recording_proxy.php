@@ -87,6 +87,13 @@ class recording_proxy extends proxy_base {
      * @return bool
      */
     public static function protect_recording(string $recordid, string $protected = 'true'): bool {
+        global $CFG;
+
+        // Ignore action if recording_protect_editable is set to false.
+        if (empty($CFG->bigbluebuttonbn_recording_protect_editable)) {
+            return false;
+        }
+
         $result = self::fetch_endpoint_xml('updateRecordings', [
             'recordID' => $recordid,
             'protect' => $protected,

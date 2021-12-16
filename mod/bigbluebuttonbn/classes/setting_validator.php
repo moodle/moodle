@@ -53,7 +53,8 @@ class setting_validator {
                 !isset($CFG->bigbluebuttonbn['recording_all_from_start_default']) ||
                 !isset($CFG->bigbluebuttonbn['recording_all_from_start_editable']) ||
                 !isset($CFG->bigbluebuttonbn['recording_hide_button_default']) ||
-                !isset($CFG->bigbluebuttonbn['recording_hide_button_editable']) );
+                !isset($CFG->bigbluebuttonbn['recording_hide_button_editable'])
+            );
     }
 
     /**
@@ -82,7 +83,8 @@ class setting_validator {
                 !isset($CFG->bigbluebuttonbn['recordings_imported_editable']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_preview_default']) ||
                 !isset($CFG->bigbluebuttonbn['recordings_preview_editable']) ||
-                !isset($CFG->bigbluebuttonbn['recordings_validate_url'])
+                !isset($CFG->bigbluebuttonbn['recordings_validate_url']) ||
+                !isset($CFG->bigbluebuttonbn['recording_protect_editable'])
               );
     }
 
