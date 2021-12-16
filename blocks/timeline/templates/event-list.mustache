@@ -29,18 +29,21 @@
      data-course-id="{{$courseid}}{{/courseid}}"
      data-midnight="{{midnight}}"
 >
-    <div data-region="event-list-loading-placeholder">
-        <ul class="pl-0 list-group list-group-flush">
-            {{> block_timeline/placeholder-event-list-item }}
-            {{> block_timeline/placeholder-event-list-item }}
-            {{> block_timeline/placeholder-event-list-item }}
-            {{> block_timeline/placeholder-event-list-item }}
-            {{> block_timeline/placeholder-event-list-item }}
-        </ul>
-        <div class="pt-3 pb-2 d-flex justify-content-between">
-            <div class="w-25 bg-pulse-grey" style="height: 35px"></div>
+    {{#hascourses}}
+        <div data-region="event-list-loading-placeholder">
+            <ul class="pl-0 list-group list-group-flush">
+                {{> block_timeline/placeholder-event-list-item }}
+                {{> block_timeline/placeholder-event-list-item }}
+                {{> block_timeline/placeholder-event-list-item }}
+                {{> block_timeline/placeholder-event-list-item }}
+                {{> block_timeline/placeholder-event-list-item }}
+            </ul>
+            <div class="pt-3 pb-2 d-flex justify-content-between">
+                <div class="w-25 bg-pulse-grey" style="height: 35px"></div>
+            </div>
         </div>
-    </div>
+    {{/hascourses}}
     <div data-region="event-list-content"></div>
     {{> block_timeline/no-events }}
+    {{> block_timeline/no-courses }}
 </div>

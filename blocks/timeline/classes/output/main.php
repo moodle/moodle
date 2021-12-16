@@ -172,7 +172,8 @@ class main implements renderable, templatable {
             'hasdaysoffset' => true,
             'hasdayslimit' => $offsets['dayslimit'] !== '' ,
             'nodayslimit' => $offsets['dayslimit'] === '' ,
-            'limit' => $this->limit
+            'limit' => $this->limit,
+            'hascourses' => !empty($formattedcourses),
         ];
         return array_merge($contextvariables, $filters, $offsets);
     }
