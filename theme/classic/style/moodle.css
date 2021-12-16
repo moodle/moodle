@@ -13620,6 +13620,9 @@ table.calendartable caption {
   max-height: 190px;
   overflow-y: auto; }
 
+.cb-navigation-container .singleselect .custom-select {
+  width: 100%; }
+
 /* course.less */
 /* COURSE CONTENT */
 .section_add_menus {
