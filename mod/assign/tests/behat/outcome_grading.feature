@@ -35,7 +35,7 @@ Feature: Outcome grading
       | Scale | Test Scale |
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I navigate to "Outcomes" in current page administration
+    And I navigate to "More > Outcomes" in the course gradebook
     And I set the field "Available standard outcomes" to "Outcome Test"
     And I click on "#add" "css_element"
     And I log out
