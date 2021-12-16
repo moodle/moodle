@@ -1017,8 +1017,8 @@ if ($mform->is_cancelled()) {
                             }
                         }
                         // group exists?
-                        $addgroup = $user->{'group'.$i};
-                        if (!array_key_exists($addgroup, $ccache[$shortname]->groups)) {
+                        $addgroup = trim($user->{'group'.$i});
+                         if (!array_key_exists($addgroup, $ccache[$shortname]->groups)) {
                             // if group doesn't exist,  create it
                             $newgroupdata = new stdClass();
                             $newgroupdata->name = $addgroup;
