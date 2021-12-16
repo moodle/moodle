@@ -24,16 +24,6 @@ $font-size-xs: ($font-size-base * .75) !default;
 }
 
 @include media-breakpoint-up(sm) {
-    #region-main {
-        border: $card-border-width solid $card-border-color;
-        @if $enable-rounded {
-            @include border-radius($card-border-radius);
-        }
-        padding: $card-spacer-x;
-    }
-}
-
-@include media-breakpoint-up(sm) {
     .context-header-settings-menu,
     .region-main-settings-menu {
         float: right;
@@ -2059,7 +2049,7 @@ nav.navbar .logo img {
 
     // Do not remove these rules.
     overflow: hidden;
-    padding: 0.25rem;
+    padding: 0.25rem 0;
 
     .page-header-image,
     .page-header-headings {
@@ -2315,7 +2305,7 @@ ul {
 // rather than being specific to the footer. This is kept for backwards compatibility.
 $footer-link-color: $bg-inverse-link-color !default;
 
-.footer-dark .container {
+.footer-dark {
     a {
         color: $footer-link-color;
         text-decoration: underline;
@@ -2345,6 +2335,9 @@ $footer-link-color: $bg-inverse-link-color !default;
             a {
                 color: $body-color;
                 text-decoration: underline;
+                .icon {
+                    color: $body-color;
+                }
                 &:focus {
                     text-decoration: none;
                 }
@@ -2910,12 +2903,12 @@ body.dragging {
     }
 }
 
-.page-mycourses {
-    #region-main {
-        padding: 0;
-    }
-    #region-main,
+.drawers {
     .block_myoverview {
         border: 0;
+        & > .card-body {
+            padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+            padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
+        }
     }
 }

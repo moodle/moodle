@@ -43,9 +43,14 @@
         margin: 0 auto;
         @include border-radius();
         background-color: $white;
-        padding: 1.5rem;
+        padding: 1.5rem 0.5rem;
         margin-top: 3rem;
         margin-bottom: 3rem;
+        flex: 1 0 auto;
+    }
+    div[role="main"] {
+        padding-left: 15px;
+        padding-right: 15px;
     }
 }
 
@@ -67,6 +72,8 @@
     .header-maxwidth {
         max-width: $course-content-maxwidth;
         margin: 0 auto;
+        padding-left: 15px;
+        padding-right: 15px;
 
         .header-inner {
             padding-left: 0;
@@ -167,7 +174,7 @@
 @include media-breakpoint-up(lg) {
     .drawer-left,
     .drawer-right {
-        top: calc(#{$navbar-height} + 1px);
+        top: $navbar-height;
         height: calc(100vh - #{$navbar-height});
     }
 
