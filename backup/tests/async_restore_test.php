@@ -119,6 +119,7 @@ class core_backup_async_restore_testcase extends \core_privacy\tests\provider_te
         $asynctask = new \core\task\asynchronous_restore_task();
         $asynctask->set_blocking(false);
         $asynctask->set_custom_data(array('backupid' => $restoreid));
+        $asynctask->set_userid($USER->id);
         \core\task\manager::queue_adhoc_task($asynctask);
 
         // We are expecting trace output during this test.
@@ -136,5 +137,6 @@ class core_backup_async_restore_testcase extends \core_privacy\tests\provider_te
         // Check backup was created successfully.
         $this->assertEquals(backup::STATUS_FINISHED_OK, $postrestorerec->status);
         $this->assertEquals(1.0, $postrestorerec->progress);
+        $this->assertEquals($USER->id, $postrestorerec->userid);
     }
 }
