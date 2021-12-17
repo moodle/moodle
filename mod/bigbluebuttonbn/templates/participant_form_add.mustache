@@ -29,6 +29,7 @@
         "canRemove": true
     }
 }}
+
 <tr id="participant_list_tr_{{selectiontypevalue}}-{{selectionvalue}}">
     <td class="participant_list_c0">
         <b><i>{{participanttype}}</i></b>
@@ -40,7 +41,7 @@
         <i>{{#str}}mod_form_field_participant_list_text_as, mod_bigbluebuttonbn{{/str}}</i>
     </td>
     <td class="participant_list_c3">
-        <select class="participant-select custom-select">
+        <select class="participant-select custom-select" name="select-for-{{selectiontypevalue}}-{{selectionvalue}}">
             {{#roles}}
                 <option value="{{id}}" {{#isselected}}selected{{/isselected}}>{{label}}</option>
             {{/roles}}
