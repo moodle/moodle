@@ -388,8 +388,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $data = (object) $data;
         $data->quizid = $this->get_new_parentid('quiz');
+        $oldid = $data->id;
         $newitemid = $DB->insert_record('quiz_sections', $data);
         $this->sectioncreated = true;
+        $this->set_mapping('quiz_section', $oldid, $newitemid, true);
     }
 
     protected function process_quiz_feedback($data) {

@@ -69,17 +69,6 @@ $structure = $quizobj->get_structure();
 // You need mod/quiz:manage in addition to question capabilities to access this page.
 require_capability('mod/quiz:manage', $contexts->lowest());
 
-// Log this visit.
-$params = array(
-    'courseid' => $course->id,
-    'context' => $contexts->lowest(),
-    'other' => array(
-        'quizid' => $quiz->id
-    )
-);
-$event = \mod_quiz\event\edit_page_viewed::create($params);
-$event->trigger();
-
 // Process commands ============================================================.
 
 // Get the list of question ids had their check-boxes ticked.
@@ -168,6 +157,16 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     redirect($afteractionurl);
 }
+
+// Log this visit.
+$event = \mod_quiz\event\edit_page_viewed::create([
+    'courseid' => $course->id,
+    'context' => $contexts->lowest(),
+    'other' => [
+        'quizid' => $quiz->id
+    ]
+]);
+$event->trigger();
 
 // Get the question bank view.
 $questionbank = new mod_quiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $quiz);

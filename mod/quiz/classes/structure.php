@@ -839,16 +839,29 @@ class structure {
               ORDER BY page - 1 DESC
                 ", array($this->get_quizid(), $this->get_quizid()));
 
-        foreach ($emptypages as $page) {
+        foreach ($emptypages as $emptypage) {
             $DB->execute("
                     UPDATE {quiz_slots}
                        SET page = page - 1
                      WHERE quizid = ?
                        AND page > ?
-                    ", array($this->get_quizid(), $page));
+                    ", array($this->get_quizid(), $emptypage));
         }
 
         $trans->allow_commit();
+
+        // Log slot moved event.
+        $event = \mod_quiz\event\slot_moved::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $idmove,
+            'other' => [
+                'quizid' => $this->quizobj->get_quizid(),
+                'previousslotnumber' => $movingslotnumber,
+                'afterslotnumber' => $moveafterslotnumber,
+                'page' => $page
+             ]
+        ]);
+        $event->trigger();
     }
 
     /**
@@ -952,6 +965,17 @@ class structure {
         $this->refresh_page_numbers_and_update_db();
 
         $trans->allow_commit();
+
+        // Log slot deleted event.
+        $event = \mod_quiz\event\slot_deleted::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $slot->id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'slotnumber' => $slotnumber,
+            ]
+        ]);
+        $event->trigger();
     }
 
     /**
@@ -974,11 +998,25 @@ class structure {
         }
 
         $trans = $DB->start_delegated_transaction();
+        $previousmaxmark = $slot->maxmark;
         $slot->maxmark = $maxmark;
         $DB->update_record('quiz_slots', $slot);
         \question_engine::set_max_mark_in_attempts(new \qubaids_for_quiz($slot->quizid),
                 $slot->slot, $maxmark);
         $trans->allow_commit();
+
+        // Log slot mark updated event.
+        // We use $num + 0 as a trick to remove the useless 0 digits from decimals.
+        $event = \mod_quiz\event\slot_mark_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $slot->id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'previousmaxmark' => $previousmaxmark + 0,
+                'newmaxmark' => $maxmark + 0
+            ]
+        ]);
+        $event->trigger();
 
         return true;
     }
@@ -991,6 +1029,17 @@ class structure {
     public function update_question_dependency($slotid, $requireprevious) {
         global $DB;
         $DB->set_field('quiz_slots', 'requireprevious', $requireprevious, array('id' => $slotid));
+
+        // Log slot require previous event.
+        $event = \mod_quiz\event\slot_requireprevious_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $slotid,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'requireprevious' => $requireprevious ? 1 : 0
+            ]
+        ]);
+        $event->trigger();
     }
 
     /**
@@ -999,7 +1048,7 @@ class structure {
      * Saves changes to the slot page relationship in the quiz_slots table and reorders the paging
      * for subsequent slots.
      *
-     * @param int $slotid id of slot.
+     * @param int $slotid id of slot which we will add/remove the page break before.
      * @param int $type repaginate::LINK or repaginate::UNLINK.
      * @return \stdClass[] array of slot objects.
      */
@@ -1012,6 +1061,30 @@ class structure {
         $repaginate = new \mod_quiz\repaginate($this->get_quizid(), $quizslots);
         $repaginate->repaginate_slots($quizslots[$slotid]->slot, $type);
         $slots = $this->refresh_page_numbers_and_update_db();
+
+        if ($type == repaginate::LINK) {
+            // Log page break created event.
+            $event = \mod_quiz\event\page_break_deleted::create([
+                'context' => $this->quizobj->get_context(),
+                'objectid' => $slotid,
+                'other' => [
+                    'quizid' => $this->get_quizid(),
+                    'slotnumber' => $quizslots[$slotid]->slot
+                ]
+            ]);
+            $event->trigger();
+        } else {
+            // Log page deleted created event.
+            $event = \mod_quiz\event\page_break_created::create([
+                'context' => $this->quizobj->get_context(),
+                'objectid' => $slotid,
+                'other' => [
+                    'quizid' => $this->get_quizid(),
+                    'slotnumber' => $quizslots[$slotid]->slot
+                ]
+            ]);
+            $event->trigger();
+        }
 
         return $slots;
     }
@@ -1031,9 +1104,25 @@ class structure {
         }
         $section->quizid = $this->get_quizid();
         $slotsonpage = $DB->get_records('quiz_slots', array('quizid' => $this->get_quizid(), 'page' => $pagenumber), 'slot DESC');
-        $section->firstslot = end($slotsonpage)->slot;
+        $firstslot = end($slotsonpage);
+        $section->firstslot = $firstslot->slot;
         $section->shufflequestions = 0;
-        return $DB->insert_record('quiz_sections', $section);
+        $sectionid = $DB->insert_record('quiz_sections', $section);
+
+        // Log section break created event.
+        $event = \mod_quiz\event\section_break_created::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $sectionid,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'firstslotnumber' => $firstslot->slot,
+                'firstslotid' => $firstslot->id,
+                'title' => $section->heading,
+            ]
+        ]);
+        $event->trigger();
+
+        return $sectionid;
     }
 
     /**
@@ -1046,6 +1135,20 @@ class structure {
         $section = $DB->get_record('quiz_sections', array('id' => $id), '*', MUST_EXIST);
         $section->heading = $newheading;
         $DB->update_record('quiz_sections', $section);
+
+        // Log section title updated event.
+        $firstslot = $DB->get_record('quiz_slots', array('quizid' => $this->get_quizid(), 'slot' => $section->firstslot));
+        $event = \mod_quiz\event\section_title_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'firstslotid' => $firstslot ? $firstslot->id : null,
+                'firstslotnumber' => $firstslot ? $firstslot->slot : null,
+                'newtitle' => $newheading
+            ]
+        ]);
+        $event->trigger();
     }
 
     /**
@@ -1058,6 +1161,20 @@ class structure {
         $section = $DB->get_record('quiz_sections', array('id' => $id), '*', MUST_EXIST);
         $section->shufflequestions = $shuffle;
         $DB->update_record('quiz_sections', $section);
+
+        // Log section shuffle updated event.
+        $firstslot = $DB->get_record('quiz_slots', array('quizid' => $this->get_quizid(), 'slot' => $section->firstslot));
+        $event = \mod_quiz\event\section_shuffle_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'firstslotid' => $firstslot->id,
+                'firstslotnumber' => $firstslot->slot,
+                'shuffle' => $shuffle
+            ]
+        ]);
+        $event->trigger();
     }
 
     /**
@@ -1071,6 +1188,19 @@ class structure {
             throw new \coding_exception('Cannot remove the first section in a quiz.');
         }
         $DB->delete_records('quiz_sections', array('id' => $sectionid));
+
+        // Log page deleted created event.
+        $firstslot = $DB->get_record('quiz_slots', array('quizid' => $this->get_quizid(), 'slot' => $section->firstslot));
+        $event = \mod_quiz\event\section_break_deleted::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $sectionid,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'firstslotid' => $firstslot->id,
+                'firstslotnumber' => $firstslot->slot
+            ]
+        ]);
+        $event->trigger();
     }
 
     /**

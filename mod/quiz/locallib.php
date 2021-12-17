@@ -516,6 +516,18 @@ function quiz_repaginate_questions($quizid, $slotsperpage) {
     }
 
     $trans->allow_commit();
+
+    // Log quiz re-paginated event.
+    $cm = get_coursemodule_from_instance('quiz', $quizid);
+    $event = \mod_quiz\event\quiz_repaginated::create([
+        'context' => \context_module::instance($cm->id),
+        'objectid' => $quizid,
+        'other' => [
+            'slotsperpage' => $slotsperpage
+        ]
+    ]);
+    $event->trigger();
+
 }
 
 // Functions to do with quiz grades ////////////////////////////////////////////
@@ -725,6 +737,19 @@ function quiz_set_grade($newgrade, $quiz) {
     quiz_update_grades($quiz);
 
     $transaction->allow_commit();
+
+    // Log quiz grade updated event.
+    // We use $num + 0 as a trick to remove the useless 0 digits from decimals.
+    $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+    $event = \mod_quiz\event\quiz_grade_updated::create([
+        'context' => \context_module::instance($cm->id),
+        'objectid' => $quiz->id,
+        'other' => [
+            'oldgrade' => $oldgrade + 0,
+            'newgrade' => $newgrade + 0
+        ]
+    ]);
+    $event->trigger();
     return true;
 }
 
@@ -2339,8 +2364,21 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         }
     }
 
-    $DB->insert_record('quiz_slots', $slot);
+    $newslotid = $DB->insert_record('quiz_slots', $slot);
     $trans->allow_commit();
+
+    // Log slot created event.
+    $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+    $event = \mod_quiz\event\slot_created::create([
+        'context' => context_module::instance($cm->id),
+        'objectid' => $newslotid,
+        'other' => [
+            'quizid' => $quiz->id,
+            'slotnumber' => $slot->slot,
+            'page' => $slot->page
+        ]
+    ]);
+    $event->trigger();
 }
 
 /**

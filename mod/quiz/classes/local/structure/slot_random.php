@@ -133,6 +133,7 @@ class slot_random {
 
         $slots = $DB->get_records('quiz_slots', array('quizid' => $this->record->quizid),
                 'slot', 'id, slot, page');
+        $quiz = $this->get_quiz();
 
         $trans = $DB->start_delegated_transaction();
 
@@ -164,7 +165,6 @@ class slot_random {
             quiz_update_section_firstslots($this->record->quizid, 1, max($lastslotbefore, 1));
         } else {
             $lastslot = end($slots);
-            $quiz = $this->get_quiz();
             if ($lastslot) {
                 $this->record->slot = $lastslot->slot + 1;
             } else {
@@ -192,5 +192,18 @@ class slot_random {
         }
 
         $trans->allow_commit();
+
+        // Log slot created event.
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+        $event = \mod_quiz\event\slot_created::create([
+            'context' => \context_module::instance($cm->id),
+            'objectid' => $this->record->id,
+            'other' => [
+                'quizid' => $quiz->id,
+                'slotnumber' => $this->record->slot,
+                'page' => $this->record->page
+            ]
+        ]);
+        $event->trigger();
     }
 }
