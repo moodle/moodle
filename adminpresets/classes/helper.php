@@ -204,10 +204,10 @@ privatefiles,moodle|/user/files.php');
         static::add_plugin($presetid, 'availability', 'grouping', false);
         static::add_plugin($presetid, 'availability', 'profile', false);
 
-        // Blocks: Disable Activities, Blog menu, Blog tags, Comments, Course completion status, Course/site summary, Courses,
-        // Flickr, Global search, Latest badges, Learning plans, Logged in user, Login, Main menu, Mentees, Network servers,
-        // Private files, Recent blog entries, RSS feeds, Search forums, Section links,Self completion, Social activities,
-        // Tags, YouTube.
+        // Blocks: Hide Activities, Blog menu, Blog tags, Comments, Course completion status, Courses, Flickr,
+        // Global search, Latest badges, Learning plans, Logged in user, Login, Main menu, Mentees, Network servers, Private files,
+        // Recent blog entries, Search forums, Section links, Social activities,Tags, YouTube.
+        // Hidden by default: Course/site summary, RSS feeds, Self completion, Feedback.
         static::add_plugin($presetid, 'block', 'activity_modules', false);
         static::add_plugin($presetid, 'block', 'blog_menu', false);
         static::add_plugin($presetid, 'block', 'blog_tags', false);
@@ -316,16 +316,15 @@ privatefiles,moodle|/user/files.php'
         static::add_plugin($presetid, 'availability', 'grouping', true);
         static::add_plugin($presetid, 'availability', 'profile', true);
 
-        // Blocks: Enable Activities, Blog menu, Blog tags, Comments, Course completion status, Course/site summary, Courses,
-        // Flickr, Global search, Latest badges, Learning plans, Logged in user, Login, Main menu, Mentees, Network servers,
-        // Private files, Recent blog entries, RSS feeds, Search forums, Section links,Self completion, Social activities,
-        // Tags, YouTube.
+        // Blocks: Enable Activities, Blog menu, Blog tags, Comments, Course completion status, Courses, Flickr,
+        // Global search, Latest badges, Learning plans, Logged in user, Login, Main menu, Mentees, Network servers, Private files,
+        // Recent blog entries, Search forums, Section links, Social activities,Tags, YouTube.
+        // Hidden by default: Course/site summary, RSS feeds, Self completion, Feedback.
         static::add_plugin($presetid, 'block', 'activity_modules', true);
         static::add_plugin($presetid, 'block', 'blog_menu', true);
         static::add_plugin($presetid, 'block', 'blog_tags', true);
         static::add_plugin($presetid, 'block', 'comments', true);
         static::add_plugin($presetid, 'block', 'completionstatus', true);
-        static::add_plugin($presetid, 'block', 'course_summary', true);
         static::add_plugin($presetid, 'block', 'course_list', true);
         static::add_plugin($presetid, 'block', 'tag_flickr', true);
         static::add_plugin($presetid, 'block', 'globalsearch', true);
@@ -338,13 +337,10 @@ privatefiles,moodle|/user/files.php'
         static::add_plugin($presetid, 'block', 'mnet_hosts', true);
         static::add_plugin($presetid, 'block', 'private_files', true);
         static::add_plugin($presetid, 'block', 'blog_recent', true);
-        static::add_plugin($presetid, 'block', 'rss_client', true);
         static::add_plugin($presetid, 'block', 'search_forums', true);
         static::add_plugin($presetid, 'block', 'section_links', true);
-        static::add_plugin($presetid, 'block', 'selfcompletion', true);
         static::add_plugin($presetid, 'block', 'social_activities', true);
         static::add_plugin($presetid, 'block', 'tags', true);
-        static::add_plugin($presetid, 'block', 'feedback', true);
 
         // Course formats: Enable Social format.
         static::add_plugin($presetid, 'format', 'social', true);

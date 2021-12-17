@@ -3538,5 +3538,34 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2021123000.03);
     }
 
+    if ($oldversion < 2022011100.01) {
+        // The following blocks have been hidden by default, so they shouldn't be enabled in the Full core preset: Course/site
+        // summary, RSS feeds, Self completion and Feedback.
+        $params = ['name' => get_string('fullpreset', 'core_adminpresets'), 'iscore' => 1];
+        $fullpreset = $DB->get_record('adminpresets', $params);
+
+        if ($fullpreset) {
+            $blocknames = ['course_summary', 'feedback', 'rss_client', 'selfcompletion'];
+            list($blocksinsql, $blocksinparams) = $DB->get_in_or_equal($blocknames);
+
+            // Remove entries from the adminpresets_app_plug table (in case the preset has been applied).
+            $appliedpresets = $DB->get_records('adminpresets_app', ['adminpresetid' => $fullpreset->id], '', 'id');
+            if ($appliedpresets) {
+                list($appsinsql, $appsinparams) = $DB->get_in_or_equal(array_keys($appliedpresets));
+                $sql = "adminpresetapplyid $appsinsql AND plugin='block' AND name $blocksinsql";
+                $params = array_merge($appsinparams, $blocksinparams);
+                $DB->delete_records_select('adminpresets_app_plug', $sql, $params);
+            }
+
+            // Remove entries for these blocks from the adminpresets_plug table.
+            $sql = "adminpresetid = ? AND plugin='block' AND name $blocksinsql";
+            $params = array_merge([$fullpreset->id], $blocksinparams);
+            $DB->delete_records_select('adminpresets_plug', $sql, $params);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022011100.01);
+    }
+
     return true;
 }
