@@ -25,6 +25,10 @@
 
 declare(strict_types=1);
 
+namespace core;
+
+use advanced_testcase;
+use phpunit_dataset;
 use org\bovigo\vfs\vfsStream;
 
 /**
@@ -32,7 +36,7 @@ use org\bovigo\vfs\vfsStream;
  *
  * @coversDefaultClass phpunit_dataset
  */
-class core_phpunit_dataset_testcase extends advanced_testcase {
+class phpunit_dataset_test extends advanced_testcase {
 
 
     /**
@@ -48,7 +52,7 @@ class core_phpunit_dataset_testcase extends advanced_testcase {
         ];
 
         // We need public properties to check the basis.
-        $dsref = new ReflectionClass($ds);
+        $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
         $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
@@ -152,7 +156,7 @@ class core_phpunit_dataset_testcase extends advanced_testcase {
         $ds = new phpunit_dataset();
 
         // We need public properties to check the basis.
-        $dsref = new ReflectionClass($ds);
+        $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
         $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
@@ -245,7 +249,7 @@ class core_phpunit_dataset_testcase extends advanced_testcase {
         $ds = new phpunit_dataset();
 
         // We need public properties to check the basis.
-        $dsref = new ReflectionClass($ds);
+        $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
         $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
@@ -391,7 +395,7 @@ class core_phpunit_dataset_testcase extends advanced_testcase {
         $ds = new phpunit_dataset();
 
         // We need public properties to check the basis.
-        $dsref = new ReflectionClass($ds);
+        $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
         $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
@@ -485,7 +489,7 @@ class core_phpunit_dataset_testcase extends advanced_testcase {
         $ds = new phpunit_dataset();
 
         // We need public properties to check the basis.
-        $dsref = new ReflectionClass($ds);
+        $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
         $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
@@ -656,7 +660,7 @@ class core_phpunit_dataset_testcase extends advanced_testcase {
         $ds = new phpunit_dataset();
 
         // We need public properties to check the basis.
-        $dsref = new ReflectionClass($ds);
+        $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
         $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
@@ -785,7 +789,7 @@ class core_phpunit_dataset_testcase extends advanced_testcase {
      * @dataProvider to_database_provider
      * @covers ::to_database
      */
-    public function test_to_database(array $files, ?array $filter = [], ?string $exception, array $columns, array $rows) {
+    public function test_to_database(array $files, ?array $filter, ?string $exception, array $columns, array $rows) {
         global $DB;
 
         $this->resetAfterTest();
