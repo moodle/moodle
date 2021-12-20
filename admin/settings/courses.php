@@ -88,6 +88,15 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $downloadcontentsitedefault->add_dependent_on('downloadcoursecontentallowed');
     $temp->add($downloadcontentsitedefault);
 
+    $temp->add(
+            new admin_setting_configtext(
+                'moodlecourse/participantsperpage',
+                new lang_string('participants:perpage', 'course'),
+                new lang_string('participants:perpage_help', 'course'),
+                20
+            )
+        );
+
     // Course format.
     $temp->add(new admin_setting_heading('courseformathdr', new lang_string('type_format', 'plugin'), ''));
 
