@@ -47,7 +47,7 @@ define('WORKSHOP_SUBMISSION_TYPE_REQUIRED', 2);
  *
  * @see plugin_supports() in lib/moodlelib.php
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed true if the feature is supported, null if unknown
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function workshop_supports($feature) {
     switch($feature) {
@@ -60,6 +60,7 @@ function workshop_supports($feature) {
             return true;
         case FEATURE_SHOW_DESCRIPTION:  return true;
         case FEATURE_PLAGIARISM:        return true;
+        case FEATURE_MOD_PURPOSE:       return MOD_PURPOSE_ASSESSMENT;
         default:                        return null;
     }
 }

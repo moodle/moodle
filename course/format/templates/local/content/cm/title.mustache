@@ -29,13 +29,15 @@
         "pluginname": "File",
         "altname": "PDF file",
         "linkclasses": "",
-        "textclasses": ""
+        "textclasses": "",
+        "purpose": "content",
+        "modname": "resource"
     }
 }}
 {{#url}}
     <div class="activity-instance d-flex flex-column">
         <div class="activitytitle media {{textclasses}} modtype_{{modname}} position-relative align-self-start">
-            <div class="activityiconcontainer courseicon align-self-start mr-3">
+            <div class="activityiconcontainer {{purpose}} courseicon align-self-start mr-3">
                 <img src="{{{icon}}}" class="activityicon " alt="{{{modname}}} icon">
             </div>
             <div class="media-body align-self-center">

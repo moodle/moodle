@@ -41,9 +41,9 @@ use mod_h5pactivity\local\grader;
  * @uses FEATURE_GRADE_OUTCOMES
  * @uses FEATURE_BACKUP_MOODLE2
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, false if not, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
-function h5pactivity_supports(string $feature): ?bool {
+function h5pactivity_supports(string $feature) {
     switch($feature) {
         case FEATURE_GROUPS:
             return true;
@@ -63,6 +63,8 @@ function h5pactivity_supports(string $feature): ?bool {
             return true;
         case FEATURE_BACKUP_MOODLE2:
             return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_CONTENT;
         default:
             return null;
     }

@@ -47,7 +47,8 @@ class content_item_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $contentitem = new content_item(22, 'Item name', new lang_string_title('modulename', 'mod_assign'),
-            new \moodle_url('mod_edit.php'), '<img src="test">', 'Description of the module', MOD_ARCHETYPE_RESOURCE, 'mod_page');
+            new \moodle_url('mod_edit.php'), '<img src="test">', 'Description of the module', MOD_ARCHETYPE_RESOURCE, 'mod_page',
+                MOD_PURPOSE_CONTENT);
 
         $this->assertEquals(22, $contentitem->get_id());
         $this->assertEquals('Item name', $contentitem->get_name());
@@ -57,6 +58,7 @@ class content_item_test extends \advanced_testcase {
         $this->assertEquals('Description of the module', $contentitem->get_help());
         $this->assertEquals(MOD_ARCHETYPE_RESOURCE, $contentitem->get_archetype());
         $this->assertEquals('mod_page', $contentitem->get_component_name());
+        $this->assertEquals('content', $contentitem->get_purpose());
     }
 
     /**
@@ -66,7 +68,8 @@ class content_item_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $contentitem = new content_item(22, 'Item name', new string_title('My custom string'),
-            new \moodle_url('mod_edit.php'), '<img src="test">', 'Description of the module', MOD_ARCHETYPE_RESOURCE, 'mod_page');
+            new \moodle_url('mod_edit.php'), '<img src="test">', 'Description of the module', MOD_ARCHETYPE_RESOURCE, 'mod_page',
+                MOD_PURPOSE_CONTENT);
 
         $this->assertEquals('My custom string', $contentitem->get_title()->get_value());
     }

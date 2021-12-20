@@ -110,6 +110,7 @@ class title implements renderable, templatable {
             'pluginname' => get_string('pluginname', 'mod_' . $mod->modname),
             'linkclasses' => $displayoptions['linkclasses'],
             'textclasses' => $displayoptions['textclasses'],
+            'purpose' => plugin_supports('mod', $mod->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER),
         ];
 
         // File type after name, for alphabetic lists (screen reader).

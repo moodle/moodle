@@ -710,9 +710,13 @@ class core_course_renderer extends plugin_renderer_base {
         $onclick = htmlspecialchars_decode($mod->onclick, ENT_QUOTES);
 
         // Display link itself.
-        $activitylink = html_writer::empty_tag('img', array('src' => $mod->get_icon_url(),
-                'class' => 'iconlarge activityicon', 'alt' => '', 'role' => 'presentation', 'aria-hidden' => 'true')) .
-                html_writer::tag('span', $instancename . $altname, array('class' => 'instancename'));
+        $instancename = html_writer::tag('span', $instancename . $altname, ['class' => 'instancename ml-1']);
+
+        $imageicon = html_writer::empty_tag('img', ['src' => $mod->get_icon_url(),
+            'class' => 'activityicon', 'alt' => '', 'role' => 'presentation', 'aria-hidden' => 'true']);
+        $imageicon = html_writer::tag('span', $imageicon, ['class' => 'activityiconcontainer courseicon']);
+        $activitylink = $imageicon . $instancename;
+
         if ($mod->uservisible) {
             $output .= html_writer::link($url, $activitylink, array('class' => 'aalink' . $linkclasses, 'onclick' => $onclick));
         } else {
