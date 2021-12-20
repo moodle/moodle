@@ -69,7 +69,6 @@ class MoodleQuickForm_header extends HTML_QuickForm_header
     */
     function accept(&$renderer, $required=false, $error=null)
     {
-        $this->_text .= $this->getHelpButton();
         $renderer->renderHeader($this);
     }
 

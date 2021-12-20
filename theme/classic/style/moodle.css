@@ -10133,18 +10133,6 @@ a.autolink.glossary:hover {
 .jsenabled .collapsible-actions {
   display: block; }
 
-.collapsible-actions .collapseexpand {
-  padding-left: 20px;
-  background: url([[pix:t/collapsed]]) 2px center no-repeat; }
-
-/*rtl:raw:
-.collapsible-actions .collapseexpand {
-    background: url([[pix:t/collapsed_rtl]]) right center no-repeat;
-}
-*/
-.collapsible-actions .collapse-all {
-  background-image: url([[pix:t/expanded]]); }
-
 .yui-overlay .yui-widget-bd {
   background-color: #ffee69;
   border: 1px solid #a6982b;
@@ -17282,9 +17270,6 @@ body.path-question-type .mform fieldset.hidden {
 #adminsettings .form-control[size] {
   width: auto; }
 
-.jsenabled .mform .collapsed .fcontainer {
-  display: none; }
-
 #adminsettings .error {
   color: #ca3120; }
 
@@ -17467,7 +17452,7 @@ fieldset.coursesearchbox label {
   overflow: auto;
   margin: 0.125rem 0 0;
   padding: 0.5rem 0;
-  z-index: 1; }
+  z-index: 2; }
 
 .form-autocomplete-suggestions li {
   list-style-type: none;
@@ -17576,20 +17561,25 @@ textarea[data-auto-rows] {
 [data-fieldtype="editor"] > div {
   flex-grow: 1; }
 
+@media (min-width: 768px) {
+  .mform fieldset .fcontainer.collapseable .col-form-label {
+    padding-left: 2.5rem; } }
+
 @media (min-width: 576px) {
-  .mform fieldset.collapsible legend a.fheader {
-    padding: 0 5px 0 1.5rem;
-    background: url([[pix:t/expanded]]) 0 center no-repeat; }
-  .mform fieldset.collapsed legend a.fheader {
-    /*rtl:raw:
-        background-image: url([[pix:t/collapsed_rtl]]);
-        */
-    /*rtl:remove*/
-    background-image: url([[pix:t/collapsed]]); }
-  .mform fieldset.collapsible .col-form-label {
-    padding-left: 2.5rem; }
   .mform .form-inline .fdefaultcustom label {
     justify-content: initial; } }
+
+.collapsemenu .collapseall {
+  display: block; }
+
+.collapsemenu .expandall {
+  display: none; }
+
+.collapsemenu.collapsed .collapseall {
+  display: none; }
+
+.collapsemenu.collapsed .expandall {
+  display: block; }
 
 .input-group.form-inset .form-inset-item {
   position: absolute;
