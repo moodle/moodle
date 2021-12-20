@@ -249,3 +249,20 @@ Feature: Perform basic calendar functionality
     Then the page should meet accessibility standards
     And the page should meet "wcag131, wcag143, wcag412" accessibility standards
     And the page should meet accessibility standards with "wcag131, wcag143, wcag412" extra tests
+
+  @javascript
+  Scenario: The calendar page should be responsive
+    Given I log in as "admin"
+    And I am viewing site calendar
+    And I create a calendar event:
+      | Type of event  | site      |
+      | Event title    | Event 1:1 |
+      | timestart[day] | 1         |
+    When I change viewport size to "1200x1000"
+    Then I should see "Event 1:1"
+    And I change viewport size to "600x1000"
+    # We need to give the browser a couple seconds to re-render the page after the screen has been resized.
+    And I wait "1" seconds
+    And I should not see "Event 1:1"
+    And I hover over day "1" of this month in the full calendar page
+    And I should see "Event 1:1"
