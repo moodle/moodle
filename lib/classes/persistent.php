@@ -246,12 +246,13 @@ abstract class persistent {
     final public static function properties_definition() {
         global $CFG;
 
-        static $def = null;
-        if ($def !== null) {
-            return $def;
+        static $cachedef = [];
+        if (isset($cachedef[static::class])) {
+            return $cachedef[static::class];
         }
 
-        $def = static::define_properties();
+        $cachedef[static::class] = static::define_properties();
+        $def = &$cachedef[static::class];
         $def['id'] = array(
             'default' => 0,
             'type' => PARAM_INT,
