@@ -3199,5 +3199,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021121400.01);
     }
 
+    if ($oldversion < 2021121700.01) {
+        // Get current support email setting value.
+        $config = get_config('moodle', 'supportemail');
+
+        // Check if support email setting is empty and then set it to null.
+        // We must do that so the setting is displayed during the upgrade.
+        if (empty($config)) {
+            set_config('supportemail', null);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021121700.01);
+    }
+
     return true;
 }

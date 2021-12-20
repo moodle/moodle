@@ -4129,6 +4129,24 @@ EOD;
     }
 
     /**
+     * Returns the HTML for the site support email link
+     *
+     * @return string The html code for the support email link.
+     */
+    public function supportemail(): string {
+        global $CFG;
+
+        if (empty($CFG->supportemail)) {
+            return '';
+        }
+
+        $supportemail = $CFG->supportemail;
+        $label = get_string('contactsitesupport', 'admin');
+        $icon = $this->pix_icon('t/email', '', 'moodle', ['class' => 'iconhelp icon-pre']);
+        return html_writer::tag('a', $icon . $label, ['href' => 'mailto:' . $supportemail]);
+    }
+
+    /**
      * Returns the page heading menu.
      *
      * @since Moodle 2.5.1 2.6

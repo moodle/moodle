@@ -506,6 +506,11 @@ function install_cli_database(array $options, $interactive) {
         $DB->set_field('user', 'username', $options['adminuser'], array('username' => 'admin'));
     }
 
+    // Set the support email address if specified.
+    if (isset($options['supportemail'])) {
+        set_config('supportemail', $options['supportemail']);
+    }
+
     // indicate that this site is fully configured
     set_config('rolesactive', 1);
     upgrade_finished();
