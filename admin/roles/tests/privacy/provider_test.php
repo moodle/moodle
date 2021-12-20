@@ -190,48 +190,48 @@ class provider_test extends provider_testcase {
                 if ($data = $writer->get_data($subcontextstudent)) {
                     $this->assertEquals($user->id, reset($data)->userid);
                 }
-                if ($data = $writer->get_data($subcontextrc)) {
+                if ($data = (array)$writer->get_data($subcontextrc)) {
                     $this->assertEquals('moodle/backup:backupactivity', reset($data)->capability);
                     $this->assertEquals($strpermissions[CAP_ALLOW], reset($data)->permission);
                 }
             }
             if ($context->contextlevel == CONTEXT_COURSE) {
-                if ($data = $writer->get_data($subcontextstudent)) {
+                if ($data = (array)$writer->get_data($subcontextstudent)) {
                     $this->assertEquals($user->id, reset($data)->userid);
                 }
-                if ($data = $writer->get_data($subcontextrc)) {
+                if ($data = (array)$writer->get_data($subcontextrc)) {
                     $this->assertEquals('moodle/backup:backupcourse', reset($data)->capability);
                 }
             }
             if ($context->contextlevel == CONTEXT_COURSECAT) {
-                if ($data = $writer->get_data($subcontextmanager)) {
+                if ($data = (array)$writer->get_data($subcontextmanager)) {
                     $this->assertEquals($user->id, reset($data)->modifierid);
                 }
-                if ($data = $writer->get_data($subcontextrc)) {
+                if ($data = (array)$writer->get_data($subcontextrc)) {
                     $this->assertEquals('moodle/category:manage', reset($data)->capability);
                 }
             }
             if ($context->contextlevel == CONTEXT_SYSTEM) {
-                if ($data = $writer->get_data($subcontextmanager)) {
+                if ($data = (array)$writer->get_data($subcontextmanager)) {
                     $this->assertEquals($user->id, reset($data)->modifierid);
                 }
-                if ($data = $writer->get_data($subcontextrc)) {
+                if ($data = (array)$writer->get_data($subcontextrc)) {
                     $this->assertEquals('moodle/backup:backupcourse', reset($data)->capability);
                 }
             }
             if ($context->contextlevel == CONTEXT_BLOCK) {
-                if ($data = $writer->get_data($subcontextstudent)) {
+                if ($data = (array)$writer->get_data($subcontextstudent)) {
                     $this->assertEquals($user->id, reset($data)->userid);
                 }
-                if ($data = $writer->get_data($subcontextrc)) {
+                if ($data = (array)$writer->get_data($subcontextrc)) {
                     $this->assertEquals('moodle/block:edit', reset($data)->capability);
                 }
             }
             if ($context->contextlevel == CONTEXT_USER) {
-                if ($data = $writer->get_data($subcontextmanager)) {
+                if ($data = (array)$writer->get_data($subcontextmanager)) {
                     $this->assertEquals($user->id, reset($data)->userid);
                 }
-                if ($data = $writer->get_data($subcontextrc)) {
+                if ($data = (array)$writer->get_data($subcontextrc)) {
                     $this->assertEquals('moodle/competency:evidencedelete', reset($data)->capability);
                 }
             }
@@ -415,7 +415,7 @@ class provider_test extends provider_testcase {
         provider::export_user_role_to_cohort($user->id);
         $writer = writer::with_context($contextuserassignover);
         $this->assertTrue($writer->has_any_data());
-        $exported = $writer->get_related_data($subcontextteacher, 'cohortroles');
+        $exported = (array)$writer->get_related_data($subcontextteacher, 'cohortroles');
         $this->assertEquals($user->id, reset($exported)->userid);
 
         // Test User is member of a cohort which User2 is assigned to role to this cohort.
@@ -432,7 +432,7 @@ class provider_test extends provider_testcase {
         provider::export_user_role_to_cohort($user->id);
         $writer = writer::with_context($contextuser);
         $this->assertTrue($writer->has_any_data());
-        $exported = $writer->get_related_data($subcontextteacher, 'cohortroles');
+        $exported = (array)$writer->get_related_data($subcontextteacher, 'cohortroles');
         $this->assertEquals($user2->id, reset($exported)->userid);
     }
 
