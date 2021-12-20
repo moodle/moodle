@@ -19,8 +19,10 @@
 // Do not add any display specific code here.
 //
 
-function xhprof_error($message) {
-  error_log($message);
+if (!function_exists('xhprof_error')) {
+  function xhprof_error($message) {
+    error_log($message);
+  }
 }
 
 /*

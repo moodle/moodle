@@ -29,7 +29,6 @@ require_capability('moodle/site:config', context_system::instance());
 \core\session\manager::write_close();
 // End moodle modification.
 
-
 // by default assume that xhprof_html & xhprof_lib directories
 // are at the same level.
 $GLOBALS['XHPROF_LIB_ROOT'] = dirname(__FILE__) . '/../xhprof_lib';
