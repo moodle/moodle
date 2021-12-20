@@ -283,4 +283,59 @@ class core_user_profilelib_testcase extends advanced_testcase {
 
         $this->assertNull(profile_get_custom_field_data_by_shortname('speciality'));
     }
+
+    /**
+     * Data provider for {@see test_profile_get_custom_field_data_by_shortname_case_sensitivity}
+     *
+     * @return array[]
+     */
+    public function profile_get_custom_field_data_by_shortname_case_sensitivity_provider(): array {
+        return [
+            'Matching case, case-sensitive search' => ['hello', 'hello', true, true],
+            'Matching case, case-insensitive search' => ['hello', 'hello', false, true],
+            'Non-matching case, case-sensitive search' => ['hello', 'Hello', true, false],
+            'Non-matching case, case-insensitive search' => ['hello', 'Hello', false, true],
+            'Non-matching, case-sensitive search' => ['hello', 'hola', true, false],
+            'Non-matching, case-insensitive search' => ['hello', 'hola', false, false],
+        ];
+    }
+
+    /**
+     * Test retrieving custom field by shortname, specifying case-sensitivity when matching
+     *
+     * @param string $shortname
+     * @param string $shortnamesearch
+     * @param bool $casesensitive
+     * @param bool $expectmatch
+     *
+     * @dataProvider profile_get_custom_field_data_by_shortname_case_sensitivity_provider
+     */
+    public function test_profile_get_custom_field_data_by_shortname_case_sensitivity(
+        string $shortname,
+        string $shortnamesearch,
+        bool $casesensitive,
+        bool $expectmatch
+    ): void {
+        global $CFG;
+
+        require_once("{$CFG->dirroot}/user/profile/lib.php");
+
+        $this->resetAfterTest();
+
+        $this->getDataGenerator()->create_custom_profile_field([
+            'datatype' => 'text',
+            'shortname' => $shortname,
+            'name' => 'My field',
+        ]);
+
+        $customfield = profile_get_custom_field_data_by_shortname($shortnamesearch, $casesensitive);
+        if ($expectmatch) {
+            $this->assertInstanceOf(\stdClass::class, $customfield);
+            $this->assertEquals('text', $customfield->datatype);
+            $this->assertEquals($shortname, $customfield->shortname);
+            $this->assertEquals('My field', $customfield->name);
+        } else {
+            $this->assertNull($customfield);
+        }
+    }
 }
