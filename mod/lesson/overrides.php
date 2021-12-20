@@ -67,15 +67,15 @@ $PAGE->set_pagelayout('admin');
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_title(get_string('overrides', 'lesson'));
 $PAGE->set_heading($course->fullname);
-
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 navigation_node::override_active_url(new moodle_url('/mod/lesson/overrides.php', ['cmid' => $cmid]));
 
 $renderer = $PAGE->get_renderer('mod_lesson');
 
 echo $OUTPUT->header();
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading(format_string($lesson->name, true, array('context' => $context)));
-}
 
 // Delete orphaned group overrides.
 $sql = 'SELECT o.id
@@ -332,6 +332,12 @@ echo html_writer::start_tag('div', array('id' => 'lessonoverrides'));
 if (count($table->data)) {
     echo html_writer::table($table);
 }
+
+// No overrides to be displayed.
+if (!$overrides) {
+    echo $OUTPUT->notification(get_string('nooverridecreated', 'lesson'), 'info', false);
+}
+
 if ($hasinactive) {
     echo $OUTPUT->notification(get_string('inactiveoverridehelp', 'lesson'), 'dimmed_text');
 }

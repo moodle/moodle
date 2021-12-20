@@ -52,7 +52,6 @@ class mod_lesson_renderer extends plugin_renderer_base {
         // Header setup.
         $this->page->set_title($title);
         $this->page->set_heading($this->page->course->fullname);
-        lesson_add_header_buttons($cm, $context, $extraeditbuttons, $lessonpageid);
 
         $canmanage = has_capability('mod/lesson:manage', $context);
         $activityheader = $this->page->activityheader;

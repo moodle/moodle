@@ -29,6 +29,7 @@
     {
         "edit": {
             "button": {
+                "id" : "id1",
                 "method" : "get",
                 "url" : "#",
                 "formid": "1",
@@ -45,6 +46,7 @@
         },
         "gradeessays": {
             "button": {
+                "id" : "id2",
                 "method" : "get",
                 "url" : "#",
                 "formid": "2",
@@ -64,20 +66,29 @@
 }}
 <div class="container-fluid mb-2">
     <div class="row">
-        <div class="col-xs-6 pr-1">
-            {{#edit}}
+        {{#edit}}
+            <div class="col-xs-6 pr-2">
                 {{#button}}
                     {{>core/single_button}}
                 {{/button}}
-            {{/edit}}
-        </div>
-        <div class="col-xs-6">
-            {{#gradeessays}}
+            </div>
+        {{/edit}}
+        {{#editcontents}}
+            <div class="col-xs-6 pr-2">
                 {{#button}}
                     {{>core/single_button}}
                 {{/button}}
-            {{/gradeessays}}
-        </div>
+            </div>
+        {{/editcontents}}
+        {{#gradeessays}}
+            <div class="col-xs-6">
+                {{#button}}
+                    {{>core/single_button}}
+                {{/button}}
+            </div>
+        {{/gradeessays}}
     </div>
 </div>
-
+{{#notification}}
+    {{> core/notification }}
+{{/notification}}

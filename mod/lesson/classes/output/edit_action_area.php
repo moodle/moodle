@@ -75,7 +75,8 @@ class edit_action_area implements templatable, renderable {
                 'text' => get_string('back', 'core'),
                 'link' => (new moodle_url('/mod/lesson/view.php', ['id' => $this->cmid]))->out(false)
             ],
-            'viewselect' => $selectmenu->export_for_template($output)
+            'viewselect' => $selectmenu->export_for_template($output),
+            'heading' => get_string('editinglesson', 'mod_lesson')
         ];
     }
 }

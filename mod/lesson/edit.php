@@ -48,6 +48,7 @@ $PAGE->set_url($url);
 $PAGE->force_settings_menu();
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->add_body_class('limitedwidth');
+$PAGE->activityheader->set_description('');
 
 if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'single') {
     set_user_preference('lesson_view', $mode);
