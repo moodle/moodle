@@ -96,10 +96,10 @@ XPATH
      * Send a query to the mock server
      *
      * @param string $endpoint
-     * @throws coding_exception
+     * @param array $params
      */
-    protected function send_mock_request(string $endpoint): void {
-        $url = $this->get_mocked_server_url($endpoint);
+    protected function send_mock_request(string $endpoint, array $params = []): void {
+        $url = $this->get_mocked_server_url($endpoint, $params);
 
         $curl = new \curl();
         $curl->get($url->out_omit_querystring(), $url->params());
@@ -173,7 +173,10 @@ XPATH
      * @Given the BigBlueButtonBN server has sent recording ready notifications
      */
     public function trigger_recording_ready_notification(): void {
-        $this->send_mock_request('backoffice/sendNotifications');
+        $this->send_mock_request('backoffice/sendNotifications', [
+                'secret' => \mod_bigbluebuttonbn\local\config::DEFAULT_SHARED_SECRET,
+            ]
+        );
     }
 
 }
