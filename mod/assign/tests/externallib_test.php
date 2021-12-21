@@ -2475,6 +2475,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse($result['submitted']);
         $this->assertFalse($result['requiregrading']);
         $this->assertFalse($result['grantedextension']);
+        $this->assertEquals('', $result['submissionstatus']);
         $this->assertTrue($result['blindmarking']);
         // Make sure we don't get any additional info.
         $this->assertArrayNotHasKey('user', $result);
@@ -2529,6 +2530,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue($result['submitted']);
         $this->assertTrue($result['requiregrading']);
         $this->assertFalse($result['grantedextension']);
+        $this->assertEquals(ASSIGN_SUBMISSION_STATUS_SUBMITTED, $result['submissionstatus']);
         $this->assertFalse($result['blindmarking']);
         // Make sure we don't get any additional info.
         $this->assertArrayNotHasKey('user', $result);
@@ -2714,6 +2716,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($student->phone2, $participant['phone2']);
         $this->assertEquals($student->department, $participant['department']);
         $this->assertEquals($student->institution, $participant['institution']);
+        $this->assertEquals('', $participant['submissionstatus']);
         $this->assertArrayHasKey('enrolledcourses', $participant);
 
         $participants = mod_assign_external::list_participants($assignment->id, 0, '', 0, 0, false, false, true);
