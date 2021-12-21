@@ -23,6 +23,7 @@
     {
         "output": {
             "page_doc_link": "Help and documentation",
+            "supportemail": "<a href=\"#\">Contact site support</a>",
             "login_info": "You are logged in as cute kitten",
             "moodle_release": "90210"
         }
@@ -36,17 +37,14 @@
         </button>
     </div>
     <div class="footer-content-popover container" data-region="footer-content-popover">
-
-        {{# output.page_doc_link }}
-            <div class="footer-section p-3 border-bottom">
-                {{{ output.page_doc_link }}}
-            </div>
-        {{/ output.page_doc_link }}
-        {{# output.supportemail }}
-            <div class="footer-section p-3 border-bottom">
-                {{{ output.supportemail }}}
-            </div>
-        {{/ output.supportemail }}
+        <div class="footer-section p-3 border-bottom">
+            {{# output.page_doc_link }}
+                <div>{{{ output.page_doc_link }}}</div>
+            {{/ output.page_doc_link }}
+            {{# output.supportemail }}
+                <div>{{{ output.supportemail }}}</div>
+            {{/ output.supportemail }}
+        </div>
         <div class="footer-section p-3 border-bottom">
             <div class="logininfo">
                 {{{ output.login_info }}}
