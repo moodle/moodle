@@ -35,7 +35,7 @@ class preset_downloaded_test extends \advanced_testcase {
         $this->setAdminUser();
 
         // Create a preset.
-        $generator = $this->getDataGenerator()->get_plugin_generator('tool_admin_presets');
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $presetid = $generator->create_preset();
 
         $params = [
