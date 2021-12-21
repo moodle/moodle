@@ -196,7 +196,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      *
      * @return ArrayIterator
      */
-    public function getIterator() {
+    public function getIterator(): Traversable {
         $ret = array();
         foreach (self::$coursecatfields as $property => $unused) {
             if ($this->$property !== false) {

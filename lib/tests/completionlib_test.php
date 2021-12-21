@@ -1933,23 +1933,25 @@ class core_completionlib_fake_recordset implements Iterator {
         $this->index = 0;
     }
 
+    #[\ReturnTypeWillChange]
     public function current() {
         return $this->values[$this->index];
     }
 
+    #[\ReturnTypeWillChange]
     public function key() {
         return $this->values[$this->index];
     }
 
-    public function next() {
+    public function next(): void {
         $this->index++;
     }
 
-    public function rewind() {
+    public function rewind(): void {
         $this->index = 0;
     }
 
-    public function valid() {
+    public function valid(): bool {
         return count($this->values) > $this->index;
     }
 

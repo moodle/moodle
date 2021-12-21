@@ -88,6 +88,7 @@ class recordset_walk implements \Iterator {
      *
      * @return mixed|bool The returned value type will depend on the callback.
      */
+    #[\ReturnTypeWillChange]
     public function current() {
 
         if (!$this->recordset->valid()) {
@@ -111,8 +112,8 @@ class recordset_walk implements \Iterator {
      *
      * @return void
      */
-    public function next() {
-        return $this->recordset->next();
+    public function next(): void {
+        $this->recordset->next();
     }
 
     /**
@@ -120,6 +121,7 @@ class recordset_walk implements \Iterator {
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key() {
         return $this->recordset->key();
     }
@@ -133,7 +135,7 @@ class recordset_walk implements \Iterator {
      *
      * @return bool
      */
-    public function valid() {
+    public function valid(): bool {
         if (!$valid = $this->recordset->valid()) {
             $this->close();
         }
@@ -145,7 +147,7 @@ class recordset_walk implements \Iterator {
      *
      * @return void
      */
-    public function rewind() {
+    public function rewind(): void {
         // No rewind as it is not implemented in moodle_recordset.
         return;
     }

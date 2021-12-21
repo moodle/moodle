@@ -67,6 +67,7 @@ class skip_future_documents_iterator implements \Iterator {
         }
     }
 
+    #[\ReturnTypeWillChange]
     public function current() {
         if (!$this->gotcurrent) {
             $this->currentdoc = $this->parent->current();
@@ -75,16 +76,17 @@ class skip_future_documents_iterator implements \Iterator {
         return $this->currentdoc;
     }
 
-    public function next() {
+    public function next(): void {
         $this->parent->next();
         $this->gotcurrent = false;
     }
 
+    #[\ReturnTypeWillChange]
     public function key() {
         return $this->parent->key();
     }
 
-    public function valid() {
+    public function valid(): bool {
         // Check that the parent is valid.
         if (!$this->parent->valid()) {
             return false;
@@ -99,7 +101,7 @@ class skip_future_documents_iterator implements \Iterator {
         }
     }
 
-    public function rewind() {
+    public function rewind(): void {
         $this->parent->rewind();
         $this->gotcurrent = false;
     }
