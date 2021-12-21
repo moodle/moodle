@@ -74,7 +74,7 @@ Feature: H5P file upload to content bank for admins
   Scenario: Admins can upload and deployed content types when libraries are not installed
     Given I navigate to "H5P > Manage H5P content types" in site administration
     And I should not see "Fill in the Blanks"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I expand "Site pages" node
     And I click on "Content bank" "link"
     And I should not see "filltheblanks.h5p"

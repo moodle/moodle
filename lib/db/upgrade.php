@@ -3213,5 +3213,56 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021121700.01);
     }
 
+    if ($oldversion < 2021122100.00) {
+        // Get current configuration data.
+        $currentcustomusermenuitems = str_replace(["\r\n", "\r"], "\n", $CFG->customusermenuitems);
+
+        // The old default customusermenuitems config for 3.11 and below.
+        $oldcustomusermenuitems = 'grades,grades|/grade/report/mygrades.php|t/grades
+calendar,core_calendar|/calendar/view.php?view=month|i/calendar
+messages,message|/message/index.php|t/message
+preferences,moodle|/user/preferences.php|t/preferences';
+
+        // Check if the current customusermenuitems config matches the old customusermenuitems config.
+        $samecustomusermenuitems = $currentcustomusermenuitems == $oldcustomusermenuitems;
+        if ($samecustomusermenuitems) {
+            // If the site is still using the old defaults, upgrade to the new default.
+            $newcustomusermenuitems = 'profile,moodle|/user/profile.php
+grades,grades|/grade/report/mygrades.php
+calendar,core_calendar|/calendar/view.php?view=month
+privatefiles,moodle|/user/files.php';
+            // Set the new configuration back.
+            set_config('customusermenuitems', $newcustomusermenuitems);
+        } else {
+            // If the site is not using the old defaults, only add necessary entries.
+            $lines = explode("\n", $currentcustomusermenuitems);
+            $lines = array_map('trim', $lines);
+
+            // Remove the Preference entry from the menu to prevent duplication
+            // since it will be added again in user_get_user_navigation_info().
+            $lines = array_filter($lines, function($value) {
+                return strpos($value, 'preferences,moodle|/user/preferences.php') === false;
+            });
+
+            $matches = preg_grep('/\|\/user\/files.php/i', $lines);
+            if (!$matches) {
+                // Add the Private files entry to the menu.
+                $lines[] = 'privatefiles,moodle|/user/files.php';
+            }
+
+            $matches = preg_grep('/\|\/user\/profile.php/i', $lines);
+            if (!$matches) {
+                // Add the Profile entry to top of the menu.
+                array_unshift($lines, 'profile,moodle|/user/profile.php');
+            }
+
+            // Set the new configuration back.
+            set_config('customusermenuitems', implode("\n", $lines));
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021122100.00);
+    }
+
     return true;
 }

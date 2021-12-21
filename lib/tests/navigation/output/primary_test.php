@@ -95,7 +95,7 @@ class primary_test extends \advanced_testcase {
         if (isloggedin() && !isguestuser()) {
             // Look for a language menu item within the user menu items.
             $usermenulang = array_filter($data['user']['items'], function($usermenuitem) {
-                return $usermenuitem->title === get_string('language');
+                return $usermenuitem->itemtype !== 'divider' && $usermenuitem->title === get_string('language');
             });
             if ($withlang) { // If multiple languages are installed.
                 // Assert that the language menu exists within the user menu.

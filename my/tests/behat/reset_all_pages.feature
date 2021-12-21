@@ -17,7 +17,7 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "student1"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I turn editing mode on
     And I add the "Comments" block
     And I turn editing mode off
@@ -34,7 +34,7 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "student3"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should not see "Comments"
     And I follow "Profile" in the user menu
     And I should not see "Logged in user"
@@ -52,13 +52,13 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "student1"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should not see "Latest announcements"
     And I should see "Latest badges"
     And I log out
 
     And I log in as "student3"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should not see "Latest announcements"
     And I should see "Latest badges"
     And I log out
@@ -70,14 +70,14 @@ Feature: Reset all personalised pages to default
     And I log out
 
     And I log in as "student1"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     Then I should see "Latest announcements"
     And I should not see "Comments"
     And I should not see "Latest badges"
     And I log out
 
     And I log in as "student3"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should see "Latest announcements"
     And I should not see "Latest badges"
     And I log out
@@ -124,6 +124,6 @@ Feature: Reset all personalised pages to default
 
     # Check that this did not affect the customised dashboards.
     And I log in as "student1"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should see "Comments"
     And I should not see "Latest announcements"

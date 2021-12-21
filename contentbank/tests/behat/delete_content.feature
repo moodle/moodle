@@ -72,7 +72,7 @@ Feature: Delete H5P file from the content bank
     And I should see "Delete"
 
   Scenario: The number of times a content is used is displayed before removing it
-    Given I follow "Dashboard" in the user menu
+    Given I follow "Dashboard"
     And I follow "Manage private files..."
     And I click on "Add..." "button"
     And I select "Content bank" repository in file picker

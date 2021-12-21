@@ -42,30 +42,30 @@ class core_user_menu_testcase extends advanced_testcase {
 
             // These are valid but have an invalid string identifiers or components. They will still produce a menu
             // item, and no exception should be thrown.
-            array('#my1files,moodle|/user/files.php|download', 1, 0),
-            array('#my1files,moodleakjladf|/user/files.php|download', 1, 0),
-            array('#my1files,a/b|/user/files.php|download', 1, 0),
-            array('#my1files,#b|/user/files.php|download', 1, 0),
+            array('#my1files,moodle|/user/files.php', 1, 1),
+            array('#my1files,moodleakjladf|/user/files.php', 1, 1),
+            array('#my1files,a/b|/user/files.php', 1, 1),
+            array('#my1files,#b|/user/files.php', 1, 1),
 
             // These are unusual, but valid and will generate a menu entry (no filler).
-            array('-|-|-|-', 1, 0),
-            array('-|-|-', 1, 0),
-            array('-|-', 1, 0),
-            array('#f234|2', 1, 0),
+            array('-|-|-|-', 1, 1),
+            array('-|-|-', 1, 1),
+            array('-|-', 1, 1),
+            array('#f234|2', 1, 1),
 
             // This is a pretty typical entry.
-            array('messages,message|/message/index.php|message', 1, 0),
+            array('messages,message|/message/index.php', 1, 1),
 
             // And these are combinations containing both valid and invalid.
-            array('messages,message|/message/index.php|message
-privatefiles,moodle|/user/files.php|download
+            array('messages,message|/message/index.php
+privatefiles,moodle|/user/files.php
 ###
-badges,badges|/badges/mybadges.php|award
--|-|-
+badges,badges|/badges/mybadges.php
+-|-
 test
 -
 #####
-#f234|2', 5, 2),
+#f234|2', 5, 3),
         );
     }
 
@@ -95,8 +95,8 @@ test
         // We always add two dividers as standard.
         $dividercount += 2;
 
-        // The basic entry count will additionally include the wrapper menu, Dashboard, Profile, Logout and switch roles link.
-        $entrycount += 4;
+        // The basic entry count will additionally include the wrapper menu, Preferences, Logout and switch roles link.
+        $entrycount += 3;
 
         $output = $OUTPUT->user_menu($USER);
         preg_match_all('/<a [^>]+role="menuitem"[^>]+>/', $output, $results);

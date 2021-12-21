@@ -16,7 +16,7 @@ Feature: Steps can be navigated within a tour
       | targettype   | Block        | Title             | Content |
       | Block        | Calendar     | Calendar events   | This is the calendar block |
     And I change window size to "large"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I wait until the page is ready
     And I should see "This is the calendar block"
     When I click on ".block_calendar_month .calendar-controls .next" "css_element"
@@ -35,7 +35,7 @@ Feature: Steps can be navigated within a tour
       | targettype   | Block        | Title             | Content |
       | Block        | Calendar     | Calendar events   | This is the calendar block |
     And I change window size to "large"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I wait until the page is ready
     And I should see "This is the calendar block"
     Then I should see "Got it"
@@ -76,7 +76,7 @@ Feature: Steps can be navigated within a tour
       | targettype   | Block        | Title             | Content |
       | Block        | Calendar     | Calendar events   | This is the calendar block |
     And I change window size to "large"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I wait until the page is ready
     And I should see "This is the calendar block"
     Then I should see "CustomText"

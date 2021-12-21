@@ -31,5 +31,5 @@ Feature: The recently accessed items block allows users to easily access their m
   Scenario: User has accessed some items
     Given I change window size to "large"
     When I am on the "Test forum name" "forum activity" page
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     Then I should see "Test forum name" in the "Recently accessed items" "block"
