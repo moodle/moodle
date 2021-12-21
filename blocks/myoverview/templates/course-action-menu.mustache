@@ -30,10 +30,8 @@
         data-toggle="dropdown"
         aria-haspopup="true"
         aria-expanded="false">
-        {{#pix}} i/moremenu, core {{/pix}}
-            <span class="sr-only">
-                {{#str}} aria:courseactions, block_myoverview {{/str}} {{{fullname}}}
-            </span>
+        <i class="icon fa fa-ellipsis-v fa-fw m-0" title="{{#str}} aria:courseactions, block_myoverview {{/str}} {{{fullname}}}" aria-hidden="true"></i>
+        <span class="sr-only">{{#str}} aria:courseactions, block_myoverview {{/str}} {{{fullname}}}</span>
     </button>
     <div class="dropdown-menu dropdown-menu-right">
         <a class="dropdown-item {{#isfavourite}}hidden{{/isfavourite}}" href="#"

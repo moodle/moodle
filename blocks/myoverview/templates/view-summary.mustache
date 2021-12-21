@@ -38,50 +38,48 @@
 }}
 <div role="list">
 {{#courses}}
-    <div class="course-summaryitem mb-1 p-2" role="listitem"
+    <div class="course-summaryitem list-group-item course-listitem border-left-0 border-right-0 border-top-0 px-2 rounded-0" role="listitem"
         data-region="course-content"
         data-course-id="{{{id}}}">
-        <div class="d-flex">
-            <a href="{{viewurl}}" tabindex="-1">
-                <div class="summaryimage rounded-circle mr-1" style='background-image: url("{{{courseimage}}}");'>
-                    <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
-                </div>
-            </a>
-
-            <div class="align-self-stretch d-flex flex-column w-100">
-                <div class="text-muted muted mb-1 d-flex flex-wrap">
-                    <span class="sr-only">
-                        {{#str}}aria:coursecategory, core_course{{/str}}
-                    </span>
-                    {{$coursecategory}}
-                        {{#showcoursecategory}}
-                            <span class="categoryname">
-                                {{#coursecategory}}
-                                    {{{coursecategory}}}
-                                {{/coursecategory}}
-                            </span>
-                        {{/showcoursecategory}}
-                    {{/coursecategory}}
-                    {{#showshortname}}
+        <div class="row">
+            <div class="col-md-2 d-flex align-items-center mb-sm-3 mb-md-0">
+                <a href="{{viewurl}}" tabindex="-1" class="mw-100 w-100">
+                    <div class="summaryimage card-img dashboard-list-img mw-100" style='background-image: url("{{{courseimage}}}");'>
+                        <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-9 d-flex flex-column">
+                {{#showshortname}}
+                    <div class="text-muted muted d-flex flex-wrap">
                         {{#showcoursecategory}}
                             <div class="pl-1 pr-1">|</div>
                         {{/showcoursecategory}}
-                    <span class="sr-only">
-                        {{#str}}aria:courseshortname, core_course{{/str}}
-                    </span>
-                    <div>{{{shortname}}}</div>
-                    {{/showshortname}}
-                </div>
-                <div class="d-flex mb-1">
-                    <a href="{{viewurl}}" class="aalink coursename">
-                        {{> core_course/favouriteicon }}
                         <span class="sr-only">
-                            {{#str}}aria:coursename, core_course{{/str}}
+                            {{#str}}aria:courseshortname, core_course{{/str}}
                         </span>
-                        <h6 class="d-inline h5">{{{fullname}}}</h6>
-                    </a>
-                    {{> block_myoverview/course-action-menu }}
-                </div>
+                        <div>{{{shortname}}}</div>
+                    </div>
+                {{/showshortname}}
+                <a href="{{viewurl}}" class="aalink coursename">
+                    {{> core_course/favouriteicon }}
+                    <span class="sr-only">
+                        {{#str}}aria:coursename, core_course{{/str}}
+                    </span>
+                    {{{fullname}}}
+                </a>
+                {{$coursecategory}}
+                    <span class="sr-only">
+                        {{#str}}aria:coursecategory, core_course{{/str}}
+                    </span>
+                    {{#showcoursecategory}}
+                        <span class="categoryname">
+                            {{#coursecategory}}
+                                {{{coursecategory}}}
+                            {{/coursecategory}}
+                        </span>
+                    {{/showcoursecategory}}
+                {{/coursecategory}}
                 {{^visible}}
                     <div class="d-flex flex-wrap">
                         <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
@@ -91,11 +89,14 @@
                     <span class="sr-only">{{#str}}aria:coursesummary, block_myoverview{{/str}}</span>
                     {{{summary}}}
                 </div>
-                <div class="ml-auto mt-auto w-50 pt-3">
-                    {{#hasprogress}}
+                {{#hasprogress}}
+                    <div class="text-muted muted d-flex flex-wrap mt-auto">
                         {{> block_myoverview/progress-bar}}
-                    {{/hasprogress}}
-                </div>
+                    </div>
+                {{/hasprogress}}
+            </div>
+            <div class="col-md-1 p-0 d-flex menu">
+                {{> block_myoverview/course-action-menu }}
             </div>
         </div>
     </div>
