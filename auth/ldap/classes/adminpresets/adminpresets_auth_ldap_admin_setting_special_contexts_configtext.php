@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace auth_ldap\local\setting;
+namespace auth_ldap\adminpresets;
 
-use tool_admin_presets\local\setting\admin_preset_setting;
+use core_adminpresets\local\setting\adminpresets_setting;
 
 /**
  * Basic text setting, cleans the param using the admin_setting paramtext attribute.
@@ -26,7 +26,7 @@ use tool_admin_presets\local\setting\admin_preset_setting;
  * @author           Jordan Kesraoui | Sylvain Revenu | Pimenko based on David Monllaó <david.monllao@urv.cat> code
  * @license          http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_preset_auth_ldap_admin_setting_special_contexts_configtext extends admin_preset_setting {
+class adminpresets_auth_ldap_admin_setting_special_contexts_configtext extends adminpresets_setting {
 
     /**
      * Validates the value using paramtype attribute
