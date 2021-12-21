@@ -43,6 +43,8 @@ Local changes (to reapply until upstream upgrades contain them):
     * MDL-73523 php80 compliance. openssl_xxx_free() methods deprecated. I've been unable to
       find any issue upstream and the current library versions are way different from the ones
       we are using here.
+    * MDL-76355 php81 compliance. Class methods require overriding methods to declare a
+      compatible return type.
 
 Information
 -----------
