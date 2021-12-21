@@ -49,7 +49,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class statement_testcase extends advanced_testcase {
+class statement_test extends advanced_testcase {
 
     /**
      * Returns a valid item for a specific attribute.

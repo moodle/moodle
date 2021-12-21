@@ -48,7 +48,8 @@ class user_summary_exporter extends \core\external\exporter {
 
         $profileurl = (new moodle_url('/user/profile.php', array('id' => $this->data->id)))->out(false);
 
-        $identityfields = array_flip(explode(',', $CFG->showuseridentity));
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $identityfields = array_flip(\core_user\fields::get_identity_fields(null, false));
         $data = $this->data;
         foreach ($identityfields as $field => $index) {
             if (!empty($data->$field)) {

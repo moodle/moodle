@@ -33,7 +33,10 @@ $context = context_course::instance($id);
 require_capability('moodle/grade:export', $context);
 require_capability('gradeexport/xml:view', $context);
 
-print_grade_page_head($COURSE->id, 'export', 'xml', get_string('exportto', 'grades') . ' ' . get_string('pluginname', 'gradeexport_xml'));
+$actionbar = new \core_grades\output\export_action_bar($context, $PAGE->url, 'xml');
+print_grade_page_head($COURSE->id, 'export', 'xml',
+    get_string('exportto', 'grades') . ' ' . get_string('pluginname', 'gradeexport_xml'),
+    false, false, true, null, null, null, $actionbar);
 export_verify_grades($COURSE->id);
 
 if (!empty($CFG->gradepublishing)) {

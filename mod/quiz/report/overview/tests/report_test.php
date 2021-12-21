@@ -207,11 +207,11 @@ class quiz_overview_report_testcase extends advanced_testcase {
 
         // Check the calculation of averages.
         $averagerow = $table->compute_average_row('overallaverage', $studentsjoins);
-        $this->assertContains('75.00', $averagerow['sumgrades']);
-        $this->assertContains('75.00', $averagerow['qsgrade1']);
+        $this->assertStringContainsString('75.00', $averagerow['sumgrades']);
+        $this->assertStringContainsString('75.00', $averagerow['qsgrade1']);
         if (!$isdownloading) {
-            $this->assertContains('(2)', $averagerow['sumgrades']);
-            $this->assertContains('(2)', $averagerow['qsgrade1']);
+            $this->assertStringContainsString('(2)', $averagerow['sumgrades']);
+            $this->assertStringContainsString('(2)', $averagerow['qsgrade1']);
         }
 
         // Ensure that filtering by initial does not break it.

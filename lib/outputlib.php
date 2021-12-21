@@ -181,7 +181,8 @@ function theme_get_css_filename($themename, $globalrevision, $themerevision, $di
  * @param bool           $cache        Should the generated files be stored in local cache.
  * @return array         The built theme content in a multi-dimensional array of name => direction => content
  */
-function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'ltr'], $cache = true): array {
+function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'ltr'],
+        $cache = true, $mtraceprogress = false): array {
     global $CFG;
 
     if (empty($themeconfigs)) {
@@ -202,6 +203,11 @@ function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'l
 
         // First generate all the new css.
         foreach ($directions as $direction) {
+            if ($mtraceprogress) {
+                $timestart = microtime(true);
+                mtrace('Building theme CSS for ' . $themeconfig->name . ' [' .
+                        $direction . '] ...', '');
+            }
             // Lock it on. Technically we should build all themes for SVG and no SVG - but ie9 is out of support.
             $themeconfig->force_svg_use(true);
             $themeconfig->set_rtl_mode(($direction === 'rtl'));
@@ -211,6 +217,9 @@ function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'l
                 $themeconfig->set_css_content_cache($themecss[$direction]);
                 $filename = theme_get_css_filename($themeconfig->name, $themerev, $newrevision, $direction);
                 css_store_css($themeconfig, $filename, $themecss[$direction]);
+            }
+            if ($mtraceprogress) {
+                mtrace(' done in ' . round(microtime(true) - $timestart, 2) . ' seconds.');
             }
         }
         $themescss[$themeconfig->name] = $themecss;
@@ -672,6 +681,12 @@ class theme_config {
     public $precompiledcsscallback = null;
 
     /**
+     * Whether the theme uses course index.
+     * @var bool
+     */
+    public $usescourseindex = false;
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -748,7 +763,7 @@ class theme_config {
             'rendererfactory', 'csspostprocess', 'editor_sheets', 'editor_scss', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations', 'blockrendermethod',
             'scss', 'extrascsscallback', 'prescsscallback', 'csstreepostprocessor', 'addblockposition',
-            'iconsystem', 'precompiledcsscallback');
+            'iconsystem', 'precompiledcsscallback', 'haseditswitch', 'usescourseindex', 'activityheaderconfig');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {
@@ -2445,22 +2460,22 @@ class theme_config {
      * @return string
      */
     protected function get_region_name($region, $theme) {
-        $regionstring = get_string('region-' . $region, 'theme_' . $theme);
-        // A name exists in this theme, so use it
-        if (substr($regionstring, 0, 1) != '[') {
-            return $regionstring;
+
+        $stringman = get_string_manager();
+
+        // Check if the name is defined in the theme.
+        if ($stringman->string_exists('region-' . $region, 'theme_' . $theme)) {
+            return get_string('region-' . $region, 'theme_' . $theme);
         }
 
-        // Otherwise, try to find one elsewhere
-        // Check parents, if any
+        // Check the theme parents.
         foreach ($this->parents as $parentthemename) {
-            $regionstring = get_string('region-' . $region, 'theme_' . $parentthemename);
-            if (substr($regionstring, 0, 1) != '[') {
-                return $regionstring;
+            if ($stringman->string_exists('region-' . $region, 'theme_' . $parentthemename)) {
+                return get_string('region-' . $region, 'theme_' . $parentthemename);
             }
         }
 
-        // Last resort, try the boost theme for names
+        // Last resort, try the boost theme for names.
         return get_string('region-' . $region, 'theme_boost');
     }
 

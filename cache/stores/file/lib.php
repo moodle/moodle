@@ -102,6 +102,13 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     protected $definition;
 
     /**
+     * Bytes read or written by last call to set()/get() or set_many()/get_many().
+     *
+     * @var int
+     */
+    protected $lastiobytes = 0;
+
+    /**
      * A reference to the global $CFG object.
      *
      * You may be asking yourself why on earth this is here, but there is a good reason.
@@ -334,6 +341,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @return mixed The data that was associated with the key, or false if the key did not exist.
      */
     public function get($key) {
+        $this->lastiobytes = 0;
         $filename = $key.'.cache';
         $file = $this->file_path_for_key($key);
         $ttl = $this->definition->get_ttl();
@@ -369,6 +377,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         } while (!feof($handle));
         // Unlock it.
         flock($handle, LOCK_UN);
+        $this->lastiobytes = strlen($data);
         // Return it unserialised.
         return $this->prep_data_after_read($data);
     }
@@ -384,10 +393,23 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      */
     public function get_many($keys) {
         $result = array();
+        $total = 0;
         foreach ($keys as $key) {
             $result[$key] = $this->get($key);
+            $total += $this->lastiobytes;
         }
+        $this->lastiobytes = $total;
         return $result;
+    }
+
+    /**
+     * Gets bytes read by last get() or get_many(), or written by set() or set_many().
+     *
+     * @return int Bytes read or written
+     * @since Moodle 4.0
+     */
+    public function get_last_io_bytes(): int {
+        return $this->lastiobytes;
     }
 
     /**
@@ -399,7 +421,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     public function delete($key) {
         $filename = $key.'.cache';
         $file = $this->file_path_for_key($key);
-        if (@unlink($file)) {
+        if (file_exists($file) && @unlink($file)) {
             unset($this->keys[$filename]);
             return true;
         }
@@ -434,7 +456,9 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         $this->ensure_path_exists();
         $filename = $key.'.cache';
         $file = $this->file_path_for_key($key, true);
-        $result = $this->write_file($file, $this->prep_data_before_save($data));
+        $serialized = $this->prep_data_before_save($data);
+        $this->lastiobytes = strlen($serialized);
+        $result = $this->write_file($file, $serialized);
         if (!$result) {
             // Couldn't write the file.
             return false;
@@ -482,11 +506,14 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      */
     public function set_many(array $keyvaluearray) {
         $count = 0;
+        $totaliobytes = 0;
         foreach ($keyvaluearray as $pair) {
             if ($this->set($pair['key'], $pair['value'])) {
+                $totaliobytes += $this->lastiobytes;
                 $count++;
             }
         }
+        $this->lastiobytes = $totaliobytes;
         return $count;
     }
 
@@ -783,5 +810,58 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
             $return[] = substr(basename($file), 0, -6);
         }
         return $return;
+    }
+
+    /**
+     * Gets total size for the directory used by the cache store.
+     *
+     * @return int Total size in bytes
+     */
+    public function store_total_size(): ?int {
+        return get_directory_size($this->filestorepath);
+    }
+
+    /**
+     * Gets total size for a specific cache.
+     *
+     * With the file cache we can just look at the directory listing without having to
+     * actually load any files, so the $samplekeys parameter is ignored.
+     *
+     * @param int $samplekeys Unused
+     * @return stdClass Cache details
+     */
+    public function cache_size_details(int $samplekeys = 50): stdClass {
+        $result = (object)[
+            'supported' => true,
+            'items' => 0,
+            'mean' => 0,
+            'sd' => 0,
+            'margin' => 0
+        ];
+
+        // Find all the files in this cache.
+        $this->ensure_path_exists();
+        $files = glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT);
+        if ($files === false || count($files) === 0) {
+            return $result;
+        }
+
+        // Get the sizes and count of files.
+        $sizes = [];
+        foreach ($files as $file) {
+            $result->items++;
+            $sizes[] = filesize($file);
+        }
+
+        // Work out mean and standard deviation.
+        $total = array_sum($sizes);
+        $result->mean = $total / $result->items;
+        $squarediff = 0;
+        foreach ($sizes as $size) {
+            $squarediff += ($size - $result->mean) ** 2;
+        }
+        $squarediff /= $result->items;
+        $result->sd = sqrt($squarediff);
+        return $result;
     }
 }

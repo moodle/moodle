@@ -39,6 +39,12 @@ use moodle_url;
  */
 class month_exporter extends exporter {
 
+    /** @var int Number of calendar instances displayed. */
+    protected static $calendarinstances = 0;
+
+    /** @var int This calendar instance's ID. */
+    protected $calendarinstanceid = 0;
+
     /**
      * @var \calendar_information $calendar The calendar to be rendered.
      */
@@ -77,6 +83,10 @@ class month_exporter extends exporter {
      * @param array $related The related information
      */
     public function __construct(\calendar_information $calendar, \core_calendar\type_base $type, $related) {
+        // Increment the calendar instances count on initialisation.
+        self::$calendarinstances++;
+        // Assign this instance an ID based on the latest calendar instances count.
+        $this->calendarinstanceid = self::$calendarinstances;
         $this->calendar = $calendar;
         $this->firstdayofweek = $type->get_starting_weekday();
 
@@ -190,6 +200,22 @@ class month_exporter extends exporter {
                 'type' => PARAM_INT,
                 'default' => 0,
             ],
+            'calendarinstanceid' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+            ],
+            'viewingmonth' => [
+                'type' => PARAM_BOOL,
+                'default' => true,
+            ],
+            'showviewselector' => [
+                'type' => PARAM_BOOL,
+                'default' => true,
+            ],
+            'viewinginblock' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
         ];
     }
 
@@ -210,23 +236,28 @@ class month_exporter extends exporter {
         $previousperiodlink = new moodle_url($this->url);
         $previousperiodlink->param('time', $previousperiod[0]);
 
+        $viewmode = $this->calendar->get_viewmode() ?? 'month';
+
         $return = [
             'courseid' => $this->calendar->courseid,
             'weeks' => $this->get_weeks($output),
             'daynames' => $this->get_day_names($output),
-            'view' => 'month',
+            'view' => $viewmode,
             'date' => (new date_exporter($date))->export($output),
             'periodname' => userdate($this->calendar->time, get_string('strftimemonthyear')),
             'previousperiod' => (new date_exporter($previousperiod))->export($output),
-            'previousperiodname' => userdate($previousperiod[0], get_string('strftimemonthyear')),
+            'previousperiodname' => $previousperiod['month'],
             'previousperiodlink' => $previousperiodlink->out(false),
             'nextperiod' => (new date_exporter($nextperiod))->export($output),
-            'nextperiodname' => userdate($nextperiod[0], get_string('strftimemonthyear')),
+            'nextperiodname' => $nextperiod['month'],
             'nextperiodlink' => $nextperiodlink->out(false),
             'larrow' => $output->larrow(),
             'rarrow' => $output->rarrow(),
             'includenavigation' => $this->includenavigation,
             'initialeventsloaded' => $this->initialeventsloaded,
+            'calendarinstanceid' => $this->calendarinstanceid,
+            'showviewselector' => $viewmode === 'month',
+            'viewinginblock' => $viewmode === 'monthblock',
         ];
 
         if ($this->showcoursefilter) {
@@ -252,7 +283,7 @@ class month_exporter extends exporter {
      */
     protected function get_course_filter_selector(renderer_base $output) {
         $content = '';
-        $content .= $output->course_filter_selector($this->url, '', $this->calendar->course->id);
+        $content .= $output->course_filter_selector($this->url, '', $this->calendar->course->id, $this->calendarinstanceid);
 
         return $content;
     }

@@ -74,7 +74,7 @@ class filter_mediaplugin extends moodle_text_filter {
             return $text;
         }
 
-        // Check SWF permissions.
+        // Check permissions.
         $this->trusted = !empty($options['noclean']) or !empty($CFG->allowobjectembed);
 
         // Looking for tags.
@@ -177,7 +177,7 @@ class filter_mediaplugin extends moodle_text_filter {
      */
     protected function embed_alternatives($urls, $name, $width, $height, $options) {
 
-        // Allow SWF (or not).
+        // Allow trusted content (or not).
         if ($this->trusted) {
             $options[core_media_manager::OPTION_TRUSTED] = true;
         }

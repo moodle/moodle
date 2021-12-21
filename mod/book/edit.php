@@ -42,6 +42,7 @@ require_capability('mod/book:edit', $context);
 
 $PAGE->set_url('/mod/book/edit.php', array('cmid'=>$cmid, 'id'=>$chapterid, 'pagenum'=>$pagenum, 'subchapter'=>$subchapter));
 $PAGE->set_pagelayout('admin'); // TODO: Something. This is a bloody hack!
+$PAGE->add_body_class('limitedwidth');
 
 if ($chapterid) {
     $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
@@ -135,9 +136,12 @@ $PAGE->set_heading($course->fullname);
 if ($chapters = book_preload_chapters($book)) {
     book_add_fake_block($chapters, $chapter, $book, $cm);
 }
+$PAGE->activityheader->set_attrs([
+    "description" => '',
+    "hidecompletion" => true
+]);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($book->name));
 
 $mform->display();
 

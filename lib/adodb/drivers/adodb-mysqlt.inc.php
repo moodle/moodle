@@ -1,7 +1,7 @@
 <?php
 
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -10,7 +10,7 @@
   Set tabs to 8.
 
   This driver only supports the original MySQL driver in transactional mode. It
-  is deprected in PHP version 5.5 and removed in PHP version 7. It is deprecated
+  is deprecated in PHP version 5.5 and removed in PHP version 7. It is deprecated
   as of ADOdb version 5.20.0. Use the mysqli driver instead, which supports both
   transactional and non-transactional updates
 
@@ -28,11 +28,6 @@ class ADODB_mysqlt extends ADODB_mysql {
 	var $ansiOuter = true; // for Version 3.23.17 or later
 	var $hasTransactions = true;
 	var $autoRollback = true; // apparently mysql does not autorollback properly
-
-	function __construct()
-	{
-	global $ADODB_EXTENSION; if ($ADODB_EXTENSION) $this->rsPrefix .= 'ext_';
-	}
 
 	/* set transaction mode
 

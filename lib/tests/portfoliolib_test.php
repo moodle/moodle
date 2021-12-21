@@ -35,7 +35,7 @@ require_once($CFG->libdir.'/portfolio/formats.php');
  * @copyright  2014 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_portfoliolib_testcase extends advanced_testcase {
+class portfoliolib_test extends advanced_testcase {
 
     public function test_portfolio_rewrite_pluginfile_urls() {
         $this->resetAfterTest();
@@ -78,7 +78,7 @@ class core_portfoliolib_testcase extends advanced_testcase {
         $this->assertSame($input, $output);
 
         // Now use our dummy format.
-        $format = new core_portfolio_format_dummytest();
+        $format = new core_portfolio_format_dummy();
         $options = null;
 
         // Test that the link is matching.
@@ -155,7 +155,7 @@ class core_portfoliolib_testcase extends advanced_testcase {
  * @copyright  2014 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_portfolio_format_dummytest extends portfolio_format {
+class core_portfolio_format_dummy extends portfolio_format {
 
     public static function file_output($file, $options = null) {
         if (isset($options['attributes']) && is_array($options['attributes'])) {

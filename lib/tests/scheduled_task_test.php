@@ -56,20 +56,40 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         $this->setTimezone('Europe/London');
 
+        // Let's specify the hour we are going to use initially for the test.
+        // (note that we pick 01:00 that is tricky for Europe/London, because
+        // it's exactly the Daylight Saving Time Begins hour.
+        $testhour = 1;
+
         // Test job run at 1 am.
         $testclass = new \core\task\scheduled_test_task();
 
         // All fields default to '*'.
-        $testclass->set_hour('1');
+        $testclass->set_hour($testhour);
         $testclass->set_minute('0');
         // Next valid time should be 1am of the next day.
         $nexttime = $testclass->get_next_scheduled_time();
 
         $oneamdate = new DateTime('now', new DateTimeZone('Europe/London'));
-        $oneamdate->setTime(1, 0, 0);
+        $oneamdate->setTime($testhour, 0, 0);
+
+        // Once a year (currently last Sunday of March), when changing to Daylight Saving Time,
+        // Europe/London 01:00 simply doesn't exists because, exactly at 01:00 the clock
+        // is advanced by one hour and becomes 02:00. When that happens, the DateInterval
+        // calculations cannot be to advance by 1 day, but by one less hour. That is exactly when
+        // the next scheduled run will happen (next day 01:00).
+        $isdaylightsaving = false;
+        if ($testhour < (int)$oneamdate->format('H')) {
+            $isdaylightsaving = true;
+        }
+
         // Make it 1 am tomorrow if the time is after 1am.
         if ($oneamdate->getTimestamp() < time()) {
             $oneamdate->add(new DateInterval('P1D'));
+            if ($isdaylightsaving) {
+                // If today is Europe/London Daylight Saving Time Begins, expectation is 1 less hour.
+                $oneamdate->sub(new DateInterval('PT1H'));
+            }
         }
         $oneam = $oneamdate->getTimestamp();
 
@@ -145,7 +165,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Should be displayed in user timezone.
         // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20160502T01&p1=113
         // setting my location to Kathmandu to verify this time.
-        $this->assertContains('2:15 AM', core_text::strtoupper($userdate));
+        $this->assertStringContainsString('2:15 AM', core_text::strtoupper($userdate));
     }
 
     public function test_reset_scheduled_tasks_for_component_customised(): void {
@@ -396,8 +416,8 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $testclass = new \core\task\scheduled_test_task();
 
         // The test task defaults to '*'.
-        $this->assertInternalType('string', $testclass->get_minute());
-        $this->assertInternalType('string', $testclass->get_hour());
+        $this->assertIsString($testclass->get_minute());
+        $this->assertIsString($testclass->get_hour());
 
         // Set a random value.
         $testclass->set_minute('R');
@@ -406,19 +426,19 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         // Verify the minute has changed within allowed bounds.
         $minute = $testclass->get_minute();
-        $this->assertInternalType('int', $minute);
+        $this->assertIsInt($minute);
         $this->assertGreaterThanOrEqual(0, $minute);
         $this->assertLessThanOrEqual(59, $minute);
 
         // Verify the hour has changed within allowed bounds.
         $hour = $testclass->get_hour();
-        $this->assertInternalType('int', $hour);
+        $this->assertIsInt($hour);
         $this->assertGreaterThanOrEqual(0, $hour);
         $this->assertLessThanOrEqual(23, $hour);
 
         // Verify the dayofweek has changed within allowed bounds.
         $dayofweek = $testclass->get_day_of_week();
-        $this->assertInternalType('int', $dayofweek);
+        $this->assertIsInt($dayofweek);
         $this->assertGreaterThanOrEqual(0, $dayofweek);
         $this->assertLessThanOrEqual(6, $dayofweek);
     }
@@ -518,6 +538,170 @@ class core_scheduled_task_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for test_scheduled_task_override_values.
+     */
+    public static function provider_schedule_overrides(): array {
+        return array(
+            array(
+                'scheduled_tasks' => array(
+                    '\core\task\scheduled_test_task' => array(
+                        'schedule' => '10 13 1 2 4',
+                        'disabled' => 0,
+                    ),
+                    '\core\task\scheduled_test2_task' => array(
+                        'schedule' => '* * * * *',
+                        'disabled' => 1,
+                    ),
+                ),
+                'task_full_classnames' => array(
+                    '\core\task\scheduled_test_task',
+                    '\core\task\scheduled_test2_task',
+                ),
+                'expected' => array(
+                    '\core\task\scheduled_test_task' => array(
+                        'min'   => '10',
+                        'hour'  => '13',
+                        'day'   => '1',
+                        'week'  => '2',
+                        'month' => '4',
+                        'disabled' => 0,
+                    ),
+                    '\core\task\scheduled_test2_task' => array(
+                        'min'   => '*',
+                        'hour'  => '*',
+                        'day'   => '*',
+                        'week'  => '*',
+                        'month' => '*',
+                        'disabled' => 1,
+                    ),
+                )
+            ),
+            array(
+                'scheduled_tasks' => array(
+                    '\core\task\*' => array(
+                        'schedule' => '1 2 3 4 5',
+                        'disabled' => 0,
+                    )
+                ),
+                'task_full_classnames' => array(
+                    '\core\task\scheduled_test_task',
+                    '\core\task\scheduled_test2_task',
+                ),
+                'expected' => array(
+                    '\core\task\scheduled_test_task' => array(
+                        'min'   => '1',
+                        'hour'  => '2',
+                        'day'   => '3',
+                        'week'  => '4',
+                        'month' => '5',
+                        'disabled' => 0,
+                    ),
+                    '\core\task\scheduled_test2_task' => array(
+                        'min'   => '1',
+                        'hour'  => '2',
+                        'day'   => '3',
+                        'week'  => '4',
+                        'month' => '5',
+                        'disabled' => 0,
+                    ),
+                )
+            )
+        );
+    }
+
+
+    /**
+     * Test to ensure scheduled tasks are updated by values set in config.
+     *
+     * @param array $overrides
+     * @param array $tasks
+     * @param array $expected
+     * @dataProvider provider_schedule_overrides
+     */
+    public function test_scheduled_task_override_values(array $overrides, array $tasks, array $expected): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+
+        // Add overrides to the config.
+        $CFG->scheduled_tasks = $overrides;
+
+        // Set up test scheduled task record.
+        $record = new stdClass();
+        $record->component = 'test_scheduled_task';
+
+        foreach ($tasks as $task) {
+            $record->classname = $task;
+            $DB->insert_record('task_scheduled', $record);
+
+            $scheduledtask = \core\task\manager::get_scheduled_task($task);
+            $expectedresults = $expected[$task];
+
+            // Check that the task is actually overridden.
+            $this->assertTrue($scheduledtask->is_overridden(), 'Is overridden');
+
+            // Check minute is correct.
+            $this->assertEquals($expectedresults['min'], $scheduledtask->get_minute(), 'Minute check');
+
+            // Check day is correct.
+            $this->assertEquals($expectedresults['day'], $scheduledtask->get_day(), 'Day check');
+
+            // Check hour is correct.
+            $this->assertEquals($expectedresults['hour'], $scheduledtask->get_hour(), 'Hour check');
+
+            // Check week is correct.
+            $this->assertEquals($expectedresults['week'], $scheduledtask->get_day_of_week(), 'Day of week check');
+
+            // Check week is correct.
+            $this->assertEquals($expectedresults['month'], $scheduledtask->get_month(), 'Month check');
+
+            // Check to see if the task is disabled.
+            $this->assertEquals($expectedresults['disabled'], $scheduledtask->get_disabled(), 'Disabled check');
+        }
+    }
+
+    /**
+     * Check that an overridden task is sent to be processed.
+     */
+    public function test_scheduled_task_overridden_task_can_run(): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+
+        // Delete all existing scheduled tasks.
+        $DB->delete_records('task_scheduled');
+
+        // Add overrides to the config.
+        $CFG->scheduled_tasks = [
+            '\core\task\scheduled_test_task' => [
+                'disabled' => 1
+            ],
+            '\core\task\scheduled_test2_task' => [
+                'disabled' => 0
+            ],
+        ];
+
+        // A task that runs once per hour.
+        $record = new stdClass();
+        $record->component = 'test_scheduled_task';
+        $record->classname = '\core\task\scheduled_test_task';
+        $record->disabled = 0;
+        $DB->insert_record('task_scheduled', $record);
+
+        // And disabled test.
+        $record->classname = '\core\task\scheduled_test2_task';
+        $record->disabled = 1;
+        $DB->insert_record('task_scheduled', $record);
+
+        $now = time();
+
+        $scheduledtask = \core\task\manager::get_next_scheduled_task($now);
+        $this->assertInstanceOf('\core\task\scheduled_test2_task', $scheduledtask);
+        $scheduledtask->execute();
+        \core\task\manager::scheduled_task_complete($scheduledtask);
+    }
+
+    /**
      * Assert that the specified tasks are equal.
      *
      * @param   \core\task\task_base $task
@@ -567,5 +751,66 @@ class core_scheduled_task_testcase extends advanced_testcase {
         );
 
         call_user_func_array([$this, 'assertNotEquals'], $args);
+    }
+
+    /**
+     * Assert that the lastruntime column holds an original value after a scheduled task is reset.
+     */
+    public function test_reset_scheduled_tasks_for_component_keeps_original_lastruntime(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Set lastruntime for the scheduled task.
+        $DB->set_field('task_scheduled', 'lastruntime', 123456789, ['classname' => '\core\task\session_cleanup_task']);
+
+        // Reset the task.
+        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+
+        // Fetch the task again.
+        $taskafterreset = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+
+        // Confirm, that lastruntime is still in place.
+        $this->assertEquals(123456789, $taskafterreset->get_last_run_time());
+    }
+
+    /**
+     * Data provider for {@see test_is_component_enabled}
+     *
+     * @return array[]
+     */
+    public function is_component_enabled_provider(): array {
+        return [
+            'Enabled component' => ['auth_cas', true],
+            'Disabled component' => ['auth_ldap', false],
+            'Invalid component' => ['auth_invalid', false],
+        ];
+    }
+
+    /**
+     * Tests whether tasks belonging to components consider the component to be enabled
+     *
+     * @param string $component
+     * @param bool $expected
+     *
+     * @dataProvider is_component_enabled_provider
+     */
+    public function test_is_component_enabled(string $component, bool $expected): void {
+        $this->resetAfterTest();
+
+        // Set cas as the only enabled auth component.
+        set_config('auth', 'cas');
+
+        $task = new \core\task\scheduled_test_task();
+        $task->set_component($component);
+
+        $this->assertEquals($expected, $task->is_component_enabled());
+    }
+
+    /**
+     * Test whether tasks belonging to core components considers the component to be enabled
+     */
+    public function test_is_component_enabled_core(): void {
+        $task = new \core\task\scheduled_test_task();
+        $this->assertTrue($task->is_component_enabled());
     }
 }

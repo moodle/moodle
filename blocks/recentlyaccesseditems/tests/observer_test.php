@@ -42,7 +42,7 @@ class block_recentlyaccesseditems_observer_testcase extends advanced_testcase {
     /**
      * Set up for every test
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
 
         $this->resetAfterTest();

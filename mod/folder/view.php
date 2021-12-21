@@ -69,12 +69,11 @@ $PAGE->set_title($course->shortname.': '.$folder->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($folder);
 
+$PAGE->add_body_class('limitedwidth');
 
 $output = $PAGE->get_renderer('mod_folder');
 
 echo $output->header();
-
-echo $output->heading(format_string($folder->name), 2);
 
 echo $output->display_folder($folder);
 

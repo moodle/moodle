@@ -2,67 +2,57 @@
  * Tour management code.
  *
  * @module     tool_usertours/managetours
- * @class      managetours
- * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  */
-define(
-['jquery', 'core/ajax', 'core/str', 'core/notification'],
-function($, ajax, str, notification) {
-    var manager = {
-        /**
-         * Confirm removal of the specified tour.
-         *
-         * @method  removeTour
-         * @param   {EventFacade}   e   The EventFacade
-         */
-        removeTour: function(e) {
-            e.preventDefault();
-            var targetUrl = $(e.currentTarget).attr('href');
-            str.get_strings([
-                {
-                    key:        'confirmtourremovaltitle',
-                    component:  'tool_usertours'
-                },
-                {
-                    key:        'confirmtourremovalquestion',
-                    component:  'tool_usertours'
-                },
-                {
-                    key:        'yes',
-                    component:  'moodle'
-                },
-                {
-                    key:        'no',
-                    component:  'moodle'
-                }
-            ])
-            .then(function(s) {
-                notification.confirm(s[0], s[1], s[2], s[3], function() {
-                    window.location = targetUrl;
-                });
+import {prefetchStrings} from 'core/prefetch';
+import {get_string as getString} from 'core/str';
+import {confirm as confirmModal} from 'core/notification';
 
-                return;
-            })
-            .catch();
-        },
+/**
+ * Handle tour management actions.
+ *
+ * @param   {Event} e
+ * @private
+ */
+const removeTourHandler = e => {
+    const deleteButton = e.target.closest('[data-action="delete"]');
+    if (deleteButton) {
+        e.preventDefault();
+        removeTourFromLink(deleteButton.href);
+    }
+};
 
-        /**
-         * Setup the tour management UI.
-         *
-         * @method          setup
-         */
-        setup: function() {
-            $('body').delegate('[data-action="delete"]', 'click', manager.removeTour);
+/**
+ * Handle removal of a tour with confirmation.
+ *
+ * @param {string} targetUrl
+ * @private
+ */
+const removeTourFromLink = targetUrl => {
+    confirmModal(
+        getString('confirmtourremovaltitle', 'tool_usertours'),
+        getString('confirmtourremovalquestion', 'tool_usertours'),
+        getString('yes', 'core'),
+        getString('no', 'core'),
+        () => {
+            window.location = targetUrl;
         }
-    };
+    );
+};
 
-    return /** @alias module:tool_usertours/managetours */ {
-        /**
-         * Setup the tour management UI.
-         *
-         * @method          setup
-         */
-        setup: manager.setup
-    };
-});
+/**
+ * Set up the tour management handlers.
+ */
+export const setup = () => {
+    prefetchStrings('tool_usertours', [
+        'confirmtourremovaltitle',
+        'confirmtourremovalquestion',
+    ]);
+
+    prefetchStrings('core', [
+        'yes',
+        'no',
+    ]);
+
+    document.querySelector('body').addEventListener('click', removeTourHandler);
+};

@@ -66,7 +66,7 @@ abstract class question_engine {
      * {@link save_questions_usage_by_activity()}.
      *
      * @param string $component the plugin creating this attempt. For example mod_quiz.
-     * @param object $context the context this usage belongs to.
+     * @param context $context the context this usage belongs to.
      * @return question_usage_by_activity the newly created object.
      */
     public static function make_questions_usage_by_activity($component, $context) {
@@ -432,7 +432,7 @@ abstract class question_engine {
     public static function get_all_response_file_areas() {
         $variables = array();
         foreach (question_bank::get_all_qtypes() as $qtype) {
-            $variables += $qtype->response_file_areas();
+            $variables = array_merge($variables, $qtype->response_file_areas());
         }
 
         $areas = array();
@@ -476,7 +476,10 @@ abstract class question_engine {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_display_options {
-    /**#@+ @var integer named constants for the values that most of the options take. */
+    /**#@+
+     * @var integer named constants for the values that most of the options take.
+     */
+    const SHOW_ALL = -1;
     const HIDDEN = 0;
     const VISIBLE = 1;
     const EDITABLE = 2;
@@ -627,9 +630,14 @@ class question_display_options {
     public $editquestionparams = array();
 
     /**
-     * @var int the context the attempt being output belongs to.
+     * @var context the context the attempt being output belongs to.
      */
     public $context;
+
+    /**
+     * @var int The option to show the action author in the response history.
+     */
+    public $userinfoinhistory = self::HIDDEN;
 
     /**
      * Set all the feedback-related fields {@link $feedback}, {@link generalfeedback},
@@ -1011,9 +1019,10 @@ abstract class question_utils {
     /**
      * Get the options required to configure the filepicker for one of the editor
      * toolbar buttons.
+     *
      * @param mixed $acceptedtypes array of types of '*'.
      * @param int $draftitemid the draft area item id.
-     * @param object $context the context.
+     * @param context $context the context.
      * @return object the required options.
      */
     protected static function specific_filepicker_options($acceptedtypes, $draftitemid, $context) {
@@ -1034,7 +1043,8 @@ abstract class question_utils {
 
     /**
      * Get filepicker options for question related text areas.
-     * @param object $context the context.
+     *
+     * @param context $context the context.
      * @param int $draftitemid the draft area item id.
      * @return array An array of options
      */
@@ -1048,7 +1058,8 @@ abstract class question_utils {
 
     /**
      * Get editor options for question related text areas.
-     * @param object $context the context.
+     *
+     * @param context $context the context.
      * @return array An array of options
      */
     public static function get_editor_options($context) {

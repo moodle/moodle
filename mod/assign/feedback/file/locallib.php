@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use \mod_assign\output\assign_header;
+
 // File areas for file feedback assignment.
 define('ASSIGNFEEDBACK_FILE_FILEAREA', 'feedback_files');
 define('ASSIGNFEEDBACK_FILE_BATCH_FILEAREA', 'feedback_files_batch');
@@ -474,7 +476,8 @@ class assign_feedback_file extends assign_feedback_plugin {
                                                    $this->assignment->get_course_context()),
                                                    $this->assignment->is_blind_marking(),
                                                    $this->assignment->get_uniqueid_for_user($user->id),
-                                                   get_extra_user_fields($this->assignment->get_context()));
+                                                   // TODO Does not support custom user profile fields (MDL-70456).
+                                                   \core_user\fields::get_identity_fields($this->assignment->get_context(), false));
             $usershtml .= $this->assignment->get_renderer()->render($usersummary);
             $usercount += 1;
         }

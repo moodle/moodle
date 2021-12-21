@@ -131,8 +131,11 @@ class discussion_list extends db_table_vault {
         // - Most recent editor.
         $thistable = new dml_table(self::TABLE, $alias, $alias);
         $posttable = new dml_table('forum_posts', 'fp', 'p_');
-        $firstauthorfields = \user_picture::fields('fa', ['deleted'], self::FIRST_AUTHOR_ID_ALIAS, self::FIRST_AUTHOR_ALIAS);
-        $latestuserfields = \user_picture::fields('la', ['deleted'], self::LATEST_AUTHOR_ID_ALIAS, self::LATEST_AUTHOR_ALIAS);
+        $userfieldsapi = \core_user\fields::for_userpic()->including('deleted');
+        $firstauthorfields = $userfieldsapi->get_sql('fa', false,
+                self::FIRST_AUTHOR_ALIAS, self::FIRST_AUTHOR_ID_ALIAS, false)->selects;
+        $latestuserfields = $userfieldsapi->get_sql('la', false,
+                self::LATEST_AUTHOR_ALIAS, self::LATEST_AUTHOR_ID_ALIAS, false)->selects;
 
         $fields = implode(', ', [
             $thistable->get_field_select(),
@@ -271,7 +274,7 @@ class discussion_list extends db_table_vault {
                     $nameformat = get_string('fullnamedisplay', '', (object)['firstname' => 'firstname', 'lastname' => 'lastname']);
                 }
                 // Fetch all the available user name fields.
-                $availablefields = order_in_string(get_all_user_name_fields(), $nameformat);
+                $availablefields = order_in_string(\core_user\fields::get_name_fields(), $nameformat);
                 // We'll default to the first name if there's no available name field.
                 $returnfield = 'firstname';
                 if (!empty($availablefields)) {

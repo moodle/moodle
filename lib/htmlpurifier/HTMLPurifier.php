@@ -19,7 +19,7 @@
  */
 
 /*
-    HTML Purifier 4.12.0 - Standards Compliant HTML Filtering
+    HTML Purifier 4.13.0 - Standards Compliant HTML Filtering
     Copyright (C) 2006-2008 Edward Z. Yang
 
     This library is free software; you can redistribute it and/or
@@ -58,12 +58,12 @@ class HTMLPurifier
      * Version of HTML Purifier.
      * @type string
      */
-    public $version = '4.12.0';
+    public $version = '4.13.0';
 
     /**
      * Constant with version of HTML Purifier.
      */
-    const VERSION = '4.12.0';
+    const VERSION = '4.13.0';
 
     /**
      * Global configuration object.
@@ -240,6 +240,7 @@ class HTMLPurifier
     public function purifyArray($array_of_html, $config = null)
     {
         $context_array = array();
+        $array = array();
         foreach($array_of_html as $key=>$value){
             if (is_array($value)) {
                 $array[$key] = $this->purifyArray($value, $config);

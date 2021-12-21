@@ -67,6 +67,9 @@ abstract class scheduled_task extends task_base {
     /** @var boolean $customised - Has this task been changed from it's default schedule? */
     private $customised = false;
 
+    /** @var boolean $overridden - Does the task have values set VIA config? */
+    private $overridden = false;
+
     /** @var int $disabled - Is this task disabled in cron? */
     private $disabled = false;
 
@@ -100,6 +103,22 @@ abstract class scheduled_task extends task_base {
      */
     public function set_customised($customised) {
         $this->customised = $customised;
+    }
+
+    /**
+     * Has this task been changed from it's default config?
+     * @return bool
+     */
+    public function is_overridden(): bool {
+        return $this->overridden;
+    }
+
+    /**
+     * Set the overridden value.
+     * @param bool $overridden
+     */
+    public function set_overridden(bool $overridden): void {
+        $this->overridden = $overridden;
     }
 
     /**
@@ -408,6 +427,33 @@ abstract class scheduled_task extends task_base {
                            $nextvalidyear);
 
         return $nexttime;
+    }
+
+    /**
+     * Informs whether this task can be run.
+     * @return bool true when this task can be run. false otherwise.
+     */
+    public function can_run(): bool {
+        return $this->is_component_enabled() || $this->get_run_if_component_disabled();
+    }
+
+    /**
+     * Checks whether the component and the task disabled flag enables to run this task.
+     * This do not checks whether the task manager allows running them or if the
+     * site allows tasks to "run now".
+     * @return bool true if task is enabled. false otherwise.
+     */
+    public function is_enabled(): bool {
+        return $this->can_run() && !$this->get_disabled();
+    }
+
+    /**
+     * Produces a valid id string to use as id attribute based on the given FQCN class name.
+     * @param string $classname FQCN of a task.
+     * @return string valid string to be used as id attribute.
+     */
+    public static function get_html_id(string $classname): string {
+        return str_replace('\\', '-', ltrim($classname, '\\'));
     }
 
     /**

@@ -195,7 +195,7 @@ Feature: Test category management actions
     And "What to do" "select" should not exist
     And "Move into" "select" should exist
     And the "Move into" select box should contain "Cat 2"
-    And the "Move into" select box should contain "Miscellaneous"
+    And the "Move into" select box should contain "Category 1"
     And I press "Cancel"
 
   @javascript
@@ -230,7 +230,7 @@ Feature: Test category management actions
     And "What to do" "select" should exist
     And I expand the "Move into" autocomplete
     And "Cat 2" "autocomplete_suggestions" should not exist
-    And "Miscellaneous" "autocomplete_selection" should be visible
+    And "Category 1" "autocomplete_selection" should be visible
     And I set the field "What to do" to "Delete all - cannot be undone"
     And "Move into" "select" should not be visible
     And I press "Cancel"
@@ -250,7 +250,7 @@ Feature: Test category management actions
     # Redirect
     And I should see "Assign roles in Category: Cat 1"
     And I should see "Please choose a role to assign"
-    And I click on "Back to Category: Cat 1" "link"
+    And I click on "Back" "button"
     # Redirect
     And I should see the "Course categories and courses" management page
     And "Cat 1" "link" should exist in the "#category-listing" "css_element"

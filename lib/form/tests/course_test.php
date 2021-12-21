@@ -53,12 +53,12 @@ class core_form_course_testcase extends basic_testcase {
 
         $element = new MoodleQuickForm_course('testel', null, $attributes);
         $html = $element->toHtml();
-        $this->assertContains('data-exclude="1,2"', $html);
-        $this->assertContains('data-requiredcapabilities="moodle/course:update"', $html);
-        $this->assertContains('data-limittoenrolled="0"', $html);
-        $this->assertNotContains('multiple', $html);
-        $this->assertNotContains('data-includefrontpage', $html);
-        $this->assertNotContains('data-onlywithcompletion', $html);
+        $this->assertStringContainsString('data-exclude="1,2"', $html);
+        $this->assertStringContainsString('data-requiredcapabilities="moodle/course:update"', $html);
+        $this->assertStringContainsString('data-limittoenrolled="0"', $html);
+        $this->assertStringNotContainsString('multiple', $html);
+        $this->assertStringNotContainsString('data-includefrontpage', $html);
+        $this->assertStringNotContainsString('data-onlywithcompletion', $html);
 
         // Add more attributes.
         $attributes = [
@@ -69,9 +69,9 @@ class core_form_course_testcase extends basic_testcase {
         ];
         $element = new MoodleQuickForm_course('testel', null, $attributes);
         $html = $element->toHtml();
-        $this->assertContains('multiple', $html);
-        $this->assertContains('data-limittoenrolled="1"', $html);
-        $this->assertContains('data-includefrontpage="' . SITEID . '"', $html);
-        $this->assertContains('data-onlywithcompletion="1"', $html);
+        $this->assertStringContainsString('multiple', $html);
+        $this->assertStringContainsString('data-limittoenrolled="1"', $html);
+        $this->assertStringContainsString('data-includefrontpage="' . SITEID . '"', $html);
+        $this->assertStringContainsString('data-onlywithcompletion="1"', $html);
     }
 }

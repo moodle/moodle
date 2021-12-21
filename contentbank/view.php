@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_contentbank\content;
+
 require('../config.php');
 
 require_login();
@@ -50,26 +52,62 @@ if ($PAGE->course) {
     require_login($PAGE->course->id);
 }
 
+$cb = new \core_contentbank\contentbank();
+$content = $cb->get_content_from_id($record->id);
+$contenttype = $content->get_content_type_instance();
+$pageheading = $record->name;
+
+if (!$content->is_view_allowed()) {
+    $cburl = new \moodle_url('/contentbank/index.php', ['contextid' => $context->id, 'errormsg' => 'notavailable']);
+    redirect($cburl);
+}
+
+if ($content->get_visibility() == content::VISIBILITY_UNLISTED) {
+    $pageheading = get_string('visibilitytitleunlisted', 'contentbank', $record->name);
+}
+
 $PAGE->set_url(new \moodle_url('/contentbank/view.php', ['id' => $id]));
 $PAGE->set_context($context);
 $PAGE->navbar->add($record->name);
-$PAGE->set_heading($record->name);
+$PAGE->set_heading($pageheading);
 $title .= ": ".$record->name;
 $PAGE->set_title($title);
 $PAGE->set_pagetype('contentbank');
-
-$contenttypeclass = "\\$record->contenttype\\contenttype";
-$contentclass = "\\$record->contenttype\\content";
-if (!class_exists($contenttypeclass) || !class_exists($contentclass)) {
-    print_error('contenttypenotfound', 'error', $returnurl, $record->contenttype);
-}
-$contenttype = new $contenttypeclass($context);
-$content = new $contentclass($record);
 
 // Create the cog menu with all the secondary actions, such as delete, rename...
 $actionmenu = new action_menu();
 $actionmenu->set_alignment(action_menu::TR, action_menu::BR);
 if ($contenttype->can_manage($content)) {
+    // Add the visibility item to the menu.
+    switch($content->get_visibility()) {
+        case content::VISIBILITY_UNLISTED:
+            $visibilitylabel = get_string('visibilitysetpublic', 'core_contentbank');
+            $newvisibility = content::VISIBILITY_PUBLIC;
+            $visibilityicon = 't/hide';
+            break;
+        case content::VISIBILITY_PUBLIC:
+            $visibilitylabel = get_string('visibilitysetunlisted', 'core_contentbank');
+            $newvisibility = content::VISIBILITY_UNLISTED;
+            $visibilityicon = 't/show';
+            break;
+        default:
+            print_error('contentvisibilitynotfound', 'error', $returnurl, $content->get_visibility());
+            break;
+    }
+
+    $attributes = [
+        'data-action' => 'setcontentvisibility',
+        'data-visibility' => $newvisibility,
+        'data-contentid' => $content->get_id(),
+    ];
+    $actionmenu->add_secondary_action(new action_menu_link(
+        new moodle_url('#'),
+        new pix_icon($visibilityicon, $visibilitylabel),
+        $visibilitylabel,
+        false,
+        $attributes
+    ));
+
     // Add the rename content item to the menu.
     $attributes = [
         'data-action' => 'renamecontent',
@@ -86,11 +124,17 @@ if ($contenttype->can_manage($content)) {
 
     if ($contenttype->can_upload()) {
         $actionmenu->add_secondary_action(new action_menu_link(
-            new moodle_url('/contentbank/upload.php', ['contextid' => $context->id, 'id' => $content->get_id()]),
+            new moodle_url('/contentbank/view.php', ['contextid' => $context->id, 'id' => $content->get_id()]),
             new pix_icon('i/upload', get_string('upload')),
             get_string('replacecontent', 'contentbank'),
-            false
+            false,
+            ['data-action' => 'upload']
         ));
+        $PAGE->requires->js_call_amd(
+            'core_contentbank/upload',
+            'initModal',
+            ['[data-action=upload]', \core_contentbank\form\upload_files::class, $context->id, $content->get_id()]
+        );
     }
 }
 if ($contenttype->can_download($content)) {
@@ -107,6 +151,7 @@ if ($contenttype->can_delete($content)) {
     $attributes = [
                 'data-action' => 'deletecontent',
                 'data-contentname' => $content->get_name(),
+                'data-uses' => count($content->get_uses()),
                 'data-contentid' => $content->get_id(),
                 'data-contextid' => $context->id,
             ];
@@ -133,7 +178,22 @@ if ($errormsg !== '' && get_string_manager()->string_exists($errormsg, 'core_con
     $errormsg = get_string($errormsg, 'core_contentbank');
     echo $OUTPUT->notification($errormsg);
 } else if ($statusmsg !== '' && get_string_manager()->string_exists($statusmsg, 'core_contentbank')) {
-    $statusmsg = get_string($statusmsg, 'core_contentbank');
+    if ($statusmsg == 'contentvisibilitychanged') {
+        switch ($content->get_visibility()) {
+            case content::VISIBILITY_PUBLIC:
+                $visibilitymsg = get_string('public', 'core_contentbank');
+                break;
+            case content::VISIBILITY_UNLISTED:
+                $visibilitymsg = get_string('unlisted', 'core_contentbank');
+                break;
+            default:
+                print_error('contentvisibilitynotfound', 'error', $returnurl, $content->get_visibility());
+                break;
+        }
+        $statusmsg = get_string($statusmsg, 'core_contentbank', $visibilitymsg);
+    } else {
+        $statusmsg = get_string($statusmsg, 'core_contentbank');
+    }
     echo $OUTPUT->notification($statusmsg, 'notifysuccess');
 }
 if ($contenttype->can_access()) {

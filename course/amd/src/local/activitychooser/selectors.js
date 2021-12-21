@@ -17,7 +17,6 @@
  * Define all of the selectors we will be using on the grading interface.
  *
  * @module     core_course/local/chooser/selectors
- * @package    core_course
  * @copyright  2019 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -52,10 +51,8 @@ export default {
         help: getDataSelector('region', 'help'),
         modules: getDataSelector('region', 'modules'),
         favouriteTabNav: getDataSelector('region', 'favourite-tab-nav'),
-        recommendedTabNav: getDataSelector('region', 'recommended-tab-nav'),
         defaultTabNav: getDataSelector('region', 'default-tab-nav'),
         activityTabNav: getDataSelector('region', 'activity-tab-nav'),
-        resourceTabNav: getDataSelector('region', 'resources-tab-nav'),
         favouriteTab: getDataSelector('region', 'favourites'),
         recommendedTab: getDataSelector('region', 'recommended'),
         defaultTab: getDataSelector('region', 'default'),

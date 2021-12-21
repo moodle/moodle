@@ -489,10 +489,9 @@ class mod_quiz_privacy_provider_testcase extends \core_privacy\tests\provider_te
         // Fetch users - user1 and user2 should be returned.
         $userlist = new \core_privacy\local\request\userlist($context, 'mod_quiz');
         \mod_quiz\privacy\provider::get_users_in_context($userlist);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$user->id, $anotheruser->id],
-                $userlist->get_userids(),
-                '', 0.0, 10, true);
+                $userlist->get_userids());
     }
 
     /**

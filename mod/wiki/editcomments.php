@@ -58,7 +58,7 @@ if (!wiki_user_can_view($subwiki, $wiki)) {
     print_error('cannotviewpage', 'wiki');
 }
 
-$editcomments = new page_wiki_editcomment($wiki, $subwiki, $cm);
+$editcomments = new page_wiki_editcomment($wiki, $subwiki, $cm, 'modulepage');
 $comment = new stdClass();
 if ($action == 'edit') {
     if (!$comment = $DB->get_record('comments', array('id' => $commentid))) {

@@ -1,14 +1,16 @@
 {{< core_form/element-template }}
     {{$label}}
         {{^element.hiddenlabel}}
-            <p id="{{element.id}}_label" class="col-form-label d-inline" aria-hidden="true">
+            <p id="{{element.id}}_label" class="mb-0 word-break" aria-hidden="true">
                 {{{label}}}
             </p>
         {{/element.hiddenlabel}}
     {{/label}}
     {{$element}}
         <fieldset class="w-100 m-0 p-0 border-0">
-            <legend class="sr-only">{{label}}</legend>
+            {{#label}}
+                <legend class="sr-only">{{label}}</legend>
+            {{/label}}
             <div class="d-flex flex-wrap align-items-center">
             {{#element.elements}}
                 {{{separator}}}

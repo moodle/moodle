@@ -7,38 +7,49 @@ Feature: Use the particiaption report to message groups of students
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
-      | Course 1 | C1 | 0 | 1 |
+      | Course 1 | C1        | 0        | 1         |
     And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
-      | student1 | Student | 1 | student1@example.com |
-      | student2 | Student | 2 | student2@example.com |
-      | student3 | Student | 3 | student3@example.com |
+      | username | firstname | lastname |
+      | teacher1 | Teacher   | 1        |
+      | student1 | Student   | 1        |
+      | student2 | Student   | 2        |
+      | student3 | Student   | 3        |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-      | student2 | C1 | student |
-      | student3 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Book" to section "1" and I fill the form with:
-      | Name | Test book name |
-      | Description | Test book |
-    And I follow "Test book name"
-    And I set the following fields to these values:
-      | Chapter title | Test chapter |
-      | Content | Test chapter content |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+      | student3 | C1     | student        |
+    And the following "activity" exists:
+      | course      | C1             |
+      | activity    | book           |
+      | name        | Test book name |
+      | idnumber    | Test book name |
+      | description | Test book      |
+      | idnumber    | book1          |
+    And I am on the "Test book name" "book activity" page logged in as student1
     And I log out
-    And I log in as "student1"
+
+  Scenario: Message all students from the participation report
+    Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I follow "Test book name"
-    And I log out
+    And I navigate to "Reports" in current page administration
+    And I select "Course participation" from the "Report type" singleselect
+    And I set the field "instanceid" to "Test book name"
+    And I set the field "roleid" to "Student"
+    And I press "Go"
+    When I click on "select-all-participants" "checkbox"
+    And I choose "Send a message" from the participants page bulk action menu
+    Then "Send message to 3 people" "dialogue" should exist
+    And I set the field "Message" to "Hi there"
+    And I press "Send message to 3 people"
+    And I should see "Message sent to 3 people"
 
   Scenario: Message students who have not participated in book
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Course participation" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Course participation" from the "Report type" singleselect
     And I set the field "instanceid" to "Test book name"
     And I set the field "roleid" to "Student"
     And I press "Go"
@@ -47,18 +58,20 @@ Feature: Use the particiaption report to message groups of students
     And I should see "No" in the "Student 3" "table_row"
     When I press "Select all 'No'"
     And I choose "Send a message" from the participants page bulk action menu
-    Then I should see "Send message to 2 people"
+    Then "Send message to 2 people" "dialogue" should exist
+    And I set the field "Message" to "Hi there"
+    And I press "Send message to 2 people"
+    And I should see "Message sent to 2 people"
 
   Scenario: Ensure no message options when messaging is disabled
-    Given I log in as "admin"
-    And I set the following administration settings values:
+    Given the following config values are set as admin:
       | messaging | 0 |
-    And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Course participation" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Course participation" from the "Report type" singleselect
     When I set the field "instanceid" to "Test book name"
     And I set the field "roleid" to "Student"
     And I press "Go"
     Then I should not see "With selected users..."
-    And I should not see "Select all"
+    And "select-all-participants" "checkbox" should not exist

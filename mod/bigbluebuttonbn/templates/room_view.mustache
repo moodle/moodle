@@ -1,0 +1,98 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_bigbluebuttonbn/room_view
+
+    This template renders the mobile page.
+
+    Example context (json):
+    {
+       "statusclosed": true,
+       "statusclosed": false,
+       "openingtime": 123456789,
+       "closingtime": 987654321
+    }
+}}
+
+<div id="bbb-room-view" class="box py-3 generalbox boxaligncenter" data-bbb-id="{{bigbluebuttonbnid}}"
+     data-group-id="{{groupid}}">
+    <span id="status_bar">
+        <span class="status-message">{{statusmessage}}</span>
+        <span class="conf-opening-time">
+          {{#openingtime}}
+          <span class="conf-opening">
+            {{#str}}mod_form_field_openingtime, bigbluebuttonbn{{/str}}:
+            {{#userdate}} {{.}}, {{#str}} strftimedaydatetime, langconfig {{/str}} {{/userdate}}
+          </span>
+          {{/openingtime}}
+          {{#closingtime}}
+          <span class="conf-closing">
+            {{#str}}mod_form_field_closingtime, bigbluebuttonbn{{/str}}:
+            {{#userdate}} {{.}}, {{#str}} strftimedaydatetime, langconfig {{/str}} {{/userdate}}
+          </span>
+          {{/closingtime}}
+        </span>
+        {{#statusrunning}}
+            <div>
+            <span>{{#str}}view_message_session_started_at, mod_bigbluebuttonbn{{/str}}</span>
+            <strong>{{#userdate}} {{startedat}}, {{#str}} strftimetime, core_langconfig{{/str}} {{/userdate}}</strong>
+            <span>
+                {{#moderatorplural}}{{#str}}view_message_moderators, mod_bigbluebuttonbn{{/str}}{{/moderatorplural}}
+                {{^moderatorplural}}{{#str}}view_message_moderator, mod_bigbluebuttonbn{{/str}}{{/moderatorplural}}
+                <strong>{{moderatorcount}}</strong>
+            </span>
+            <span>
+                {{#viewerplural}}{{#str}}view_message_viewers, mod_bigbluebuttonbn{{/str}}{{/viewerplural}}
+                {{^viewerplural}}{{#str}}view_message_viewer, mod_bigbluebuttonbn{{/str}}{{/viewerplural}}
+                <strong>{{participantcount}}</strong>.
+            </span>
+        </div>
+        {{/statusrunning}}
+    </span>
+
+    <div id="room_view_control_panel" data-bbb-id="{{bigbluebuttonbnid}}">
+        {{#haspresentations}}
+            <h4>{{#str}}view_section_title_presentation, mod_bigbluebuttonbn{{/str}}</h4>
+            <div class="list-group list-group-flush">
+              {{#presentations}}
+                <a href="{{url}}" target="_blank" class="list-group-item list-group-item-action">
+                  {{#pix}}{{iconname}},core, {{icondesc}}{{/pix}}
+                  {{name}}
+                </a>
+              {{/presentations}}
+            </div>
+        {{/haspresentations}}
+    </div>
+    <div id="bigbluebuttonbn_view_action_button_box" class="box py-3 generalbox boxaligncenter">
+        <div id="room_view_action_buttons">
+            {{#canjoin}}
+                <a {{!
+                    }} href="{{{joinurl}}}"{{!
+                    }} class="btn btn-primary bbb-btn-action"{{!
+                    }} data-action="join"{{!
+                    }} target="_blank"{{!
+                }}>
+                    {{#str}}view_conference_action_join, mod_bigbluebuttonbn{{/str}}
+                </a>
+            {{/canjoin}}
+
+            {{#ismoderator}}
+                {{> mod_bigbluebuttonbn/end_session_button}}
+            {{/ismoderator}}
+        </div>
+    </div>
+</div>

@@ -95,7 +95,7 @@ class copy  {
      * @param \stdClass $formdata Data from the validated course copy form.
      * @return array $keptroles The roles to keep.
      */
-    private final function get_enrollment_roles(\stdClass $formdata): array {
+    private function get_enrollment_roles(\stdClass $formdata): array {
         $keptroles = array();
 
         foreach ($formdata as $key => $value) {
@@ -114,7 +114,7 @@ class copy  {
      * @return \stdClass $copydata Data required for course copy operations.
      * @throws \moodle_exception If one of the required copy fields is missing
      */
-    private final function get_copy_data(\stdClass $formdata): \stdClass {
+    private function get_copy_data(\stdClass $formdata): \stdClass {
         $copydata = new \stdClass();
 
         foreach ($this->copyfields as $field) {

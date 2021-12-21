@@ -1,4 +1,4 @@
-@core @core_contentbank @contenttype_h5p @_file_upload @_switch_iframe @javascript
+@core @core_contentbank @core_h5p @contenttype_h5p @_file_upload @_switch_iframe @javascript
 Feature: H5P file upload to content bank for admins
   In order import new H5P content to content bank
   As an admin
@@ -9,7 +9,7 @@ Feature: H5P file upload to content bank for admins
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
-    And I press "Customise this page"
+    And I turn editing mode on
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     And I click on "Content bank" "link"
@@ -50,7 +50,7 @@ Feature: H5P file upload to content bank for admins
     And I navigate to "Plugins > Content bank > Manage content types" in site administration
     And I click on "Disable" "icon" in the "H5P" "table_row"
     And I wait until the page is ready
-    When I click on "Content bank" "link"
+    When I navigate to "Plugins > Content bank" in site administration
     Then I should not see "filltheblanks.h5p"
 
   Scenario: Contents in a context are not available from other contexts

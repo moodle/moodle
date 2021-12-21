@@ -15,12 +15,11 @@ Feature: In a lesson activity, teacher can add an essay question
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity | name             | intro                    | course | idnumber  | section | feedback |
+      | lesson   | Test lesson name | Test lesson description  | C1     | lesson1   | 1       | 1        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-      | Use default feedback | Yes |
     And I follow "Test lesson name"
     And I follow "Add a question page"
     And I set the field "Select a question type" to "Essay"
@@ -48,7 +47,7 @@ Feature: In a lesson activity, teacher can add an essay question
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And I follow "Grade essays"
+    And I grade lesson essays
     And I should see "Student 1"
     And I should see "Essay question"
     And I follow "Essay question"
@@ -59,7 +58,7 @@ Feature: In a lesson activity, teacher can add an essay question
       | Essay score | 1 |
     And I press "Save changes"
     And I should see "Changes saved"
-    And I follow "Reports"
+    And I navigate to "Reports" in current page administration
     And I should see "Student 1"
     And I click on ".lesson-attempt-link" "css_element" in the "Student 1" "table_row"
     And I should see "Essay: Essay question"

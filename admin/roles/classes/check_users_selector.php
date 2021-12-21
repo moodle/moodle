@@ -46,6 +46,7 @@ class core_role_check_users_selector extends user_selector_base {
         if (!isset($options['multiselect'])) {
             $options['multiselect'] = false;
         }
+        $options['includecustomfields'] = true;
         parent::__construct($name, $options);
 
         $coursecontext = $this->accesscontext->get_course_context(false);
@@ -61,8 +62,9 @@ class core_role_check_users_selector extends user_selector_base {
         global $DB;
 
         list($wherecondition, $params) = $this->search_sql($search, 'u');
+        $params = array_merge($params, $this->userfieldsparams);
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT u.id, ' . $this->userfieldsselects;
         $countfields = 'SELECT COUNT(1)';
 
         $coursecontext = $this->accesscontext->get_course_context(false);
@@ -74,6 +76,7 @@ class core_role_check_users_selector extends user_selector_base {
                               JOIN {user_enrolments} ue ON (ue.userid = subu.id)
                               JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid1)
                            ) subq ON subq.id = u.id
+                           $this->userfieldsjoin
                      WHERE $wherecondition";
             $params['courseid1'] = $coursecontext->instanceid;
 
@@ -83,6 +86,7 @@ class core_role_check_users_selector extends user_selector_base {
                 $sql2 = " FROM {user} u
                      LEFT JOIN ({user_enrolments} ue
                                 JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid2)) ON (ue.userid = u.id)
+                               $this->userfieldsjoin
                          WHERE $wherecondition
                                AND ue.id IS NULL";
                 $params['courseid2'] = $coursecontext->instanceid;
@@ -95,12 +99,13 @@ class core_role_check_users_selector extends user_selector_base {
             }
             $sql1 = null;
             $sql2 = " FROM {user} u
+                           $this->userfieldsjoin
                      WHERE $wherecondition";
         }
 
         $params['contextid'] = $this->accesscontext->id;
 
-        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext, $this->userfieldsmappings);
         $order = ' ORDER BY ' . $sort;
 
         $result = array();

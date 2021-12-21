@@ -36,6 +36,7 @@ Feature: Add a comment to the comments block
   @javascript
   Scenario: Test comment block pagination
     When I add "Super test comment 01" comment to comments block
+    And I change window size to "1024x4096"
     And I add "Super test comment 02" comment to comments block
     And I add "Super test comment 03" comment to comments block
     And I add "Super test comment 04" comment to comments block

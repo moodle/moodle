@@ -1009,7 +1009,7 @@ function portfolio_filesize_info() {
     $filesizes = array();
     $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152, 5242880, 10485760, 20971520, 52428800);
     foreach ($sizelist as $size) {
-        $filesizes[$size] = display_size($size);
+        $filesizes[$size] = display_size($size, 0);
     }
     return array(
         'options' => $filesizes,
@@ -1028,15 +1028,15 @@ function portfolio_filesize_info() {
 function portfolio_expected_time_db($recordcount) {
     global $CFG;
 
-    if (empty($CFG->portfolio_moderate_dbsize_threshold)) {
-        set_config('portfolio_moderate_dbsize_threshold', 10);
+    if (empty($CFG->portfolio_moderate_db_threshold)) {
+        set_config('portfolio_moderate_db_threshold', 20);
     }
-    if (empty($CFG->portfolio_high_dbsize_threshold)) {
-        set_config('portfolio_high_dbsize_threshold', 50);
+    if (empty($CFG->portfolio_high_db_threshold)) {
+        set_config('portfolio_high_db_threshold', 50);
     }
-    if ($recordcount < $CFG->portfolio_moderate_dbsize_threshold) {
+    if ($recordcount < $CFG->portfolio_moderate_db_threshold) {
         return PORTFOLIO_TIME_LOW;
-    } else if ($recordcount < $CFG->portfolio_high_dbsize_threshold) {
+    } else if ($recordcount < $CFG->portfolio_high_db_threshold) {
         return PORTFOLIO_TIME_MODERATE;
     }
     return PORTFOLIO_TIME_HIGH;
@@ -1117,7 +1117,10 @@ function portfolio_export_pagesetup($PAGE, $caller) {
 
     // and now we know the course for sure and maybe the cm, call require_login with it
     require_login($PAGE->course, false, $cm);
-
+    $PAGE->activityheader->set_attrs([
+        'description' => '',
+        'hidecompletion' => true
+    ]);
     foreach ($extranav as $navitem) {
         $PAGE->navbar->add($navitem['name']);
     }

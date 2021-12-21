@@ -81,7 +81,12 @@ class behat_permissions extends behat_base {
         );
 
         if (!$this->running_javascript()) {
-            $this->execute("behat_general::i_click_on_in_the", [get_string('go'), 'button', 'region-main', 'region']);
+            $xpath = "//div[@class='advancedoverride']/div/form/noscript";
+            $this->execute("behat_general::i_click_on_in_the", [
+                get_string('go'), 'button',
+                $this->escape($xpath),
+                'xpath_element']
+            );
         }
 
         $this->execute("behat_permissions::i_fill_the_capabilities_form_with_the_following_permissions", $table);
@@ -248,5 +253,45 @@ class behat_permissions extends behat_base {
                 );
             }
         }
+    }
+
+    /**
+     * Mark context as frozen.
+     *
+     * @Then /^the "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" is context frozen$/
+     * @throws ExpectationException if the context cannot be frozen or found
+     * @param string $element Element we look on
+     * @param string $selector The type of where we look (activity, course)
+     */
+    public function the_context_is_context_frozen(string $element, string $selector) {
+
+        // Enable context freeze if it is not done yet.
+        set_config('contextlocking', 1);
+
+        // Find context.
+        $context = self::get_context($selector, $element);
+
+        // Freeze context.
+        $context->set_locked(true);
+    }
+
+    /**
+     * Unmark context as frozen.
+     *
+     * @Then /^the "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" is not context frozen$/
+     * @throws ExpectationException if the context cannot be frozen or found
+     * @param string $element Element we look on
+     * @param string $selector The type of where we look (activity, course)
+     */
+    public function the_context_is_not_context_frozen(string $element, string $selector) {
+
+        // Enable context freeze if it is not done yet.
+        set_config('contextlocking', 1);
+
+        // Find context.
+        $context = self::get_context($selector, $element);
+
+        // Freeze context.
+        $context->set_locked(false);
     }
 }

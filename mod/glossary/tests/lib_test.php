@@ -408,33 +408,33 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         // Get first page of tagged entries (first 5 entries).
         $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */0);
-        $this->assertRegExp('/'.$entry11->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry12->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry13->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry14->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry15->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry16->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry17->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry21->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry22->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry23->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry31->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry11->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry12->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry13->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry14->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry15->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry16->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry17->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry21->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry22->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry23->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry31->concept.'</', $res->content);
         $this->assertEmpty($res->prevpageurl);
         $this->assertNotEmpty($res->nextpageurl);
         // Get second page of tagged entries (second 5 entries).
         $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */1);
-        $this->assertNotRegExp('/'.$entry11->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry12->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry13->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry14->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry15->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry16->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry17->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry21->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry22->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry23->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry31->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry11->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry12->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry13->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry14->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry15->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry16->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry17->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry21->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry22->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry23->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry31->concept.'</', $res->content);
         $this->assertNotEmpty($res->prevpageurl);
         $this->assertEmpty($res->nextpageurl);
 
@@ -444,27 +444,27 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         // User can not see entries in course 3 because he is not enrolled.
         $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */1);
-        $this->assertRegExp('/'.$entry22->concept.'/', $res->content);
-        $this->assertRegExp('/'.$entry23->concept.'/', $res->content);
-        $this->assertNotRegExp('/'.$entry31->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry22->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry23->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry31->concept.'/', $res->content);
 
         // User can search glossary entries inside a course.
         $coursecontext = context_course::instance($course1->id);
         $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$entry = */0);
-        $this->assertRegExp('/'.$entry11->concept.'/', $res->content);
-        $this->assertRegExp('/'.$entry12->concept.'/', $res->content);
-        $this->assertRegExp('/'.$entry13->concept.'/', $res->content);
-        $this->assertNotRegExp('/'.$entry14->concept.'/', $res->content);
-        $this->assertRegExp('/'.$entry15->concept.'/', $res->content);
-        $this->assertNotRegExp('/'.$entry21->concept.'/', $res->content);
-        $this->assertNotRegExp('/'.$entry22->concept.'/', $res->content);
-        $this->assertNotRegExp('/'.$entry23->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry11->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry12->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry13->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry14->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry15->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry21->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry22->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry23->concept.'/', $res->content);
         $this->assertEmpty($res->nextpageurl);
 
         // User cannot see unapproved entries unless he is an author.
-        $this->assertNotRegExp('/'.$entry16->concept.'/', $res->content);
-        $this->assertRegExp('/'.$entry17->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry16->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry17->concept.'/', $res->content);
     }
 
     public function test_glossary_get_entries_search() {
@@ -502,5 +502,268 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $concept = strtolower($entry->concept);
         $search = glossary_get_entries_search($concept, $course->id);
         $this->assertCount(0, $search);
+    }
+
+    public function test_mod_glossary_can_delete_entry_users() {
+        $this->resetAfterTest();
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $anotherstudent = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $glossary = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student);
+        $entry = $gg->create_content($glossary);
+        $context = context_module::instance($glossary->cmid);
+
+        // Test student can delete.
+        $this->assertTrue(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test teacher can delete.
+        $this->setUser($teacher);
+        $this->assertTrue(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test admin can delete.
+        $this->setAdminUser();
+        $this->assertTrue(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test a different student is not able to delete.
+        $this->setUser($anotherstudent);
+        $this->assertFalse(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test exception.
+        $this->expectExceptionMessage(get_string('nopermissiontodelentry', 'error'));
+        mod_glossary_can_delete_entry($entry, $glossary, $context, false);
+    }
+
+    public function test_mod_glossary_can_delete_entry_edit_period() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $glossary = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id, 'editalways' => 1]);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student);
+        $entry = $gg->create_content($glossary);
+        $context = context_module::instance($glossary->cmid);
+
+        // Test student can always delete when edit always is set to 1.
+        $entry->timecreated = time() - 2 * $CFG->maxeditingtime;
+        $this->assertTrue(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test student cannot delete old entries when edit always is set to 0.
+        $glossary->editalways = 0;
+        $this->assertFalse(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test student can delete recent entries when edit always is set to 0.
+        $entry->timecreated = time();
+        $this->assertTrue(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Check exception.
+        $entry->timecreated = time() - 2 * $CFG->maxeditingtime;
+        $this->expectExceptionMessage(get_string('errdeltimeexpired', 'glossary'));
+        mod_glossary_can_delete_entry($entry, $glossary, $context, false);
+    }
+
+    public function test_mod_glossary_delete_entry() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        require_once($CFG->dirroot . '/rating/lib.php');
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->assessed = RATING_AGGREGATE_AVERAGE;
+        $scale = $this->getDataGenerator()->create_scale(['scale' => 'A,B,C,D']);
+        $record->scale = "-$scale->id";
+        $glossary = $this->getDataGenerator()->create_module('glossary', $record);
+        $context = context_module::instance($glossary->cmid);
+        $cm = get_coursemodule_from_instance('glossary', $glossary->id);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student1);
+
+        // Create entry with tags and rating.
+        $entry = $gg->create_content(
+            $glossary,
+            ['approved' => 1, 'userid' => $student1->id, 'tags' => ['Cats', 'Dogs']],
+            ['alias1', 'alias2']
+        );
+
+        // Rate the entry as user2.
+        $rating1 = new stdClass();
+        $rating1->contextid = $context->id;
+        $rating1->component = 'mod_glossary';
+        $rating1->ratingarea = 'entry';
+        $rating1->itemid = $entry->id;
+        $rating1->rating = 1; // 1 is A.
+        $rating1->scaleid = "-$scale->id";
+        $rating1->userid = $student2->id;
+        $rating1->timecreated = time();
+        $rating1->timemodified = time();
+        $rating1->id = $DB->insert_record('rating', $rating1);
+
+        $sink = $this->redirectEvents();
+        mod_glossary_delete_entry(fullclone($entry), $glossary, $cm, $context, $course);
+        $events = $sink->get_events();
+        $event = array_pop($events);
+
+        // Check events.
+        $this->assertEquals('\mod_glossary\event\entry_deleted', $event->eventname);
+        $this->assertEquals($entry->id, $event->objectid);
+        $sink->close();
+
+        // No entry, no alias, no ratings, no tags.
+        $this->assertEquals(0, $DB->count_records('glossary_entries', ['id' => $entry->id]));
+        $this->assertEquals(0, $DB->count_records('glossary_alias', ['entryid' => $entry->id]));
+        $this->assertEquals(0, $DB->count_records('rating', ['component' => 'mod_glossary', 'itemid' => $entry->id]));
+        $this->assertEmpty(core_tag_tag::get_by_name(0, 'Cats'));
+    }
+
+    public function test_mod_glossary_delete_entry_imported() {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $glossary1 = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
+        $glossary2 = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
+
+        $context = context_module::instance($glossary2->cmid);
+        $cm = get_coursemodule_from_instance('glossary', $glossary2->id);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student);
+
+        $entry1 = $gg->create_content($glossary1);
+        $entry2 = $gg->create_content(
+            $glossary2,
+            ['approved' => 1, 'userid' => $student->id, 'sourceglossaryid' => $glossary1->id, 'tags' => ['Cats', 'Dogs']]
+        );
+
+        $sink = $this->redirectEvents();
+        mod_glossary_delete_entry(fullclone($entry2), $glossary2, $cm, $context, $course);
+        $events = $sink->get_events();
+        $event = array_pop($events);
+
+        // Check events.
+        $this->assertEquals('\mod_glossary\event\entry_deleted', $event->eventname);
+        $this->assertEquals($entry2->id, $event->objectid);
+        $sink->close();
+
+        // Check source.
+        $this->assertEquals(0, $DB->get_field('glossary_entries', 'sourceglossaryid', ['id' => $entry2->id]));
+        $this->assertEquals($glossary1->id, $DB->get_field('glossary_entries', 'glossaryid', ['id' => $entry2->id]));
+
+        // Tags.
+        $this->assertEmpty(core_tag_tag::get_by_name(0, 'Cats'));
+    }
+
+    public function test_mod_glossary_can_update_entry_users() {
+        $this->resetAfterTest();
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $anotherstudent = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $glossary = $this->getDataGenerator()->create_module('glossary', array('course' => $course->id));
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student);
+        $entry = $gg->create_content($glossary);
+        $context = context_module::instance($glossary->cmid);
+        $cm = get_coursemodule_from_instance('glossary', $glossary->id);
+
+        // Test student can update.
+        $this->assertTrue(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test teacher can update.
+        $this->setUser($teacher);
+        $this->assertTrue(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test admin can update.
+        $this->setAdminUser();
+        $this->assertTrue(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test a different student is not able to update.
+        $this->setUser($anotherstudent);
+        $this->assertFalse(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test exception.
+        $this->expectExceptionMessage(get_string('errcannoteditothers', 'glossary'));
+        mod_glossary_can_update_entry($entry, $glossary, $context, $cm, false);
+    }
+
+    public function test_mod_glossary_can_update_entry_edit_period() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $glossary = $this->getDataGenerator()->create_module('glossary', array('course' => $course->id, 'editalways' => 1));
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student);
+        $entry = $gg->create_content($glossary);
+        $context = context_module::instance($glossary->cmid);
+        $cm = get_coursemodule_from_instance('glossary', $glossary->id);
+
+        // Test student can always update when edit always is set to 1.
+        $entry->timecreated = time() - 2 * $CFG->maxeditingtime;
+        $this->assertTrue(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test student cannot update old entries when edit always is set to 0.
+        $glossary->editalways = 0;
+        $this->assertFalse(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test student can update recent entries when edit always is set to 0.
+        $entry->timecreated = time();
+        $this->assertTrue(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Check exception.
+        $entry->timecreated = time() - 2 * $CFG->maxeditingtime;
+        $this->expectExceptionMessage(get_string('erredittimeexpired', 'glossary'));
+        mod_glossary_can_update_entry($entry, $glossary, $context, $cm, false);
+    }
+
+    public function test_prepare_entry_for_edition() {
+        global $USER;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $glossary = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+
+        $this->setAdminUser();
+        $aliases = ['alias1', 'alias2'];
+        $entry = $gg->create_content(
+            $glossary,
+            ['approved' => 1, 'userid' => $USER->id],
+            $aliases
+        );
+
+        $cat1 = $gg->create_category($glossary, [], [$entry]);
+        $gg->create_category($glossary);
+
+        $entry = mod_glossary_prepare_entry_for_edition($entry);
+        $this->assertCount(1, $entry->categories);
+        $this->assertEquals($cat1->id, $entry->categories[0]);
+        $returnedaliases = array_values(explode("\n", trim($entry->aliases)));
+        sort($returnedaliases);
+        $this->assertEquals($aliases, $returnedaliases);
     }
 }

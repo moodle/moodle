@@ -47,7 +47,7 @@ require_once($CFG->dirroot . '/webservice/lib.php');
  */
 class core_webservice_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 

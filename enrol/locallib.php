@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_user\fields;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -238,13 +240,15 @@ class course_enrolment_manager {
             list($instancessql, $params, $filter) = $this->get_instance_sql();
             list($filtersql, $moreparams) = $this->get_filter_sql();
             $params += $moreparams;
-            $extrafields = get_extra_user_fields($this->get_context());
-            $extrafields[] = 'lastaccess';
-            $ufields = user_picture::fields('u', $extrafields);
-            $sql = "SELECT DISTINCT $ufields, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
+            $userfields = fields::for_identity($this->get_context())->with_userpic()->excluding('lastaccess');
+            ['selects' => $fieldselect, 'joins' => $fieldjoin, 'params' => $fieldjoinparams] =
+                    (array)$userfields->get_sql('u', true, '', '', false);
+            $params += $fieldjoinparams;
+            $sql = "SELECT DISTINCT $fieldselect, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
                       FROM {user} u
                       JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
                       JOIN {enrol} e ON (e.id = ue.enrolid)
+                           $fieldjoin
                  LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)";
             if ($this->groupfilter) {
                 $sql .= " LEFT JOIN ({groups_members} gm JOIN {groups} g ON (g.id = gm.groupid))
@@ -268,7 +272,8 @@ class course_enrolment_manager {
         global $DB;
 
         // Search condition.
-        $extrafields = get_extra_user_fields($this->get_context());
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrafields = fields::get_identity_fields($this->get_context(), false);
         list($sql, $params) = users_search_sql($this->searchfilter, 'u', true, $extrafields);
 
         // Role condition.
@@ -341,22 +346,26 @@ class course_enrolment_manager {
             list($ctxcondition, $params) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
             $params['courseid'] = $this->course->id;
             $params['cid'] = $this->course->id;
-            $extrafields = get_extra_user_fields($this->get_context());
-            $ufields = user_picture::fields('u', $extrafields);
-            $sql = "SELECT ra.id as raid, ra.contextid, ra.component, ctx.contextlevel, ra.roleid, $ufields,
-                        coalesce(u.lastaccess,0) AS lastaccess
-                    FROM {role_assignments} ra
-                    JOIN {user} u ON u.id = ra.userid
-                    JOIN {context} ctx ON ra.contextid = ctx.id
-               LEFT JOIN (
+            $userfields = fields::for_identity($this->get_context())->with_userpic();
+            ['selects' => $fieldselect, 'joins' => $fieldjoin, 'params' => $fieldjoinparams] =
+                    (array)$userfields->get_sql('u', true);
+            $params += $fieldjoinparams;
+            $sql = "SELECT ra.id as raid, ra.contextid, ra.component, ctx.contextlevel, ra.roleid,
+                           coalesce(u.lastaccess,0) AS lastaccess
+                           $fieldselect
+                      FROM {role_assignments} ra
+                      JOIN {user} u ON u.id = ra.userid
+                      JOIN {context} ctx ON ra.contextid = ctx.id
+                           $fieldjoin
+                 LEFT JOIN (
                        SELECT ue.id, ue.userid
                          FROM {user_enrolments} ue
                          JOIN {enrol} e ON e.id = ue.enrolid
                         WHERE e.courseid = :courseid
                        ) ue ON ue.userid=u.id
-                   WHERE ctx.id $ctxcondition AND
-                         ue.id IS NULL
-                ORDER BY $sort $direction, ctx.depth DESC";
+                     WHERE ctx.id $ctxcondition AND
+                           ue.id IS NULL
+                  ORDER BY $sort $direction, ctx.depth DESC";
             $this->otherusers[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
         }
         return $this->otherusers[$key];
@@ -369,19 +378,37 @@ class course_enrolment_manager {
      * @param bool $searchanywhere Can the search term be anywhere, or must it be at the start.
      * @return array with three elements:
      *     string list of fields to SELECT,
+     *     string possible database joins for user fields
      *     string contents of SQL WHERE clause,
      *     array query params. Note that the SQL snippets use named parameters.
      */
     protected function get_basic_search_conditions($search, $searchanywhere) {
         global $DB, $CFG;
 
+        // Get custom user field SQL used for querying all the fields we need (identity, name, and
+        // user picture).
+        $userfields = fields::for_identity($this->context)->with_name()->with_userpic()
+                ->excluding('username', 'lastaccess', 'maildisplay');
+        ['selects' => $fieldselects, 'joins' => $fieldjoins, 'params' => $params, 'mappings' => $mappings] =
+                (array)$userfields->get_sql('u', true, '', '', false);
+
+        // Searchable fields are only the identity and name ones (not userpic, and without exclusions).
+        $searchablefields = fields::for_identity($this->context)->with_name();
+        $searchable = array_fill_keys($searchablefields->get_required_fields(), true);
+        if (array_key_exists('username', $searchable)) {
+            // Add the username into the mappings list from the other query, because it was excluded.
+            $mappings['username'] = 'u.username';
+        }
+
         // Add some additional sensible conditions
         $tests = array("u.id <> :guestid", 'u.deleted = 0', 'u.confirmed = 1');
-        $params = array('guestid' => $CFG->siteguest);
+        $params['guestid'] = $CFG->siteguest;
         if (!empty($search)) {
-            $conditions = get_extra_user_fields($this->get_context());
-            foreach (get_all_user_name_fields() as $field) {
-                $conditions[] = 'u.'.$field;
+            // Include identity and name fields as conditions.
+            foreach ($mappings as $fieldname => $fieldsql) {
+                if (array_key_exists($fieldname, $searchable)) {
+                    $conditions[] = $fieldsql;
+                }
             }
             $conditions[] = $DB->sql_fullname('u.firstname', 'u.lastname');
             if ($searchanywhere) {
@@ -399,13 +426,8 @@ class course_enrolment_manager {
         }
         $wherecondition = implode(' AND ', $tests);
 
-        $extrafields = get_extra_user_fields($this->get_context(), array('username', 'lastaccess'));
-        $extrafields[] = 'username';
-        $extrafields[] = 'lastaccess';
-        $extrafields[] = 'maildisplay';
-        $ufields = user_picture::fields('u', $extrafields);
-
-        return array($ufields, $params, $wherecondition);
+        $selects = $fieldselects . ', u.username, u.lastaccess, u.maildisplay';
+        return [$selects, $fieldjoins, $params, $wherecondition];
     }
 
     /**
@@ -486,11 +508,12 @@ class course_enrolment_manager {
             $addedenrollment = 0, $returnexactcount = false) {
         global $DB;
 
-        list($ufields, $params, $wherecondition) = $this->get_basic_search_conditions($search, $searchanywhere);
+        [$ufields, $joins, $params, $wherecondition] = $this->get_basic_search_conditions($search, $searchanywhere);
 
         $fields      = 'SELECT '.$ufields;
         $countfields = 'SELECT COUNT(1)';
         $sql = " FROM {user} u
+                      $joins
             LEFT JOIN {user_enrolments} ue ON (ue.userid = u.id AND ue.enrolid = :enrolid)
                 WHERE $wherecondition
                       AND ue.id IS NULL";
@@ -518,11 +541,12 @@ class course_enrolment_manager {
     public function search_other_users($search = '', $searchanywhere = false, $page = 0, $perpage = 25, $returnexactcount = false) {
         global $DB, $CFG;
 
-        list($ufields, $params, $wherecondition) = $this->get_basic_search_conditions($search, $searchanywhere);
+        [$ufields, $joins, $params, $wherecondition] = $this->get_basic_search_conditions($search, $searchanywhere);
 
         $fields      = 'SELECT ' . $ufields;
         $countfields = 'SELECT COUNT(u.id)';
         $sql   = " FROM {user} u
+                        $joins
               LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid = :contextid)
                   WHERE $wherecondition
                     AND ra.id IS NULL";
@@ -546,11 +570,12 @@ class course_enrolment_manager {
      */
     public function search_users(string $search = '', bool $searchanywhere = false, int $page = 0, int $perpage = 25,
             bool $returnexactcount = false) {
-        list($ufields, $params, $wherecondition) = $this->get_basic_search_conditions($search, $searchanywhere);
+        [$ufields, $joins, $params, $wherecondition] = $this->get_basic_search_conditions($search, $searchanywhere);
 
         $fields      = 'SELECT ' . $ufields;
         $countfields = 'SELECT COUNT(u.id)';
         $sql = " FROM {user} u
+                      $joins
                  JOIN {user_enrolments} ue ON ue.userid = u.id
                  JOIN {enrol} e ON ue.enrolid = e.id
                 WHERE $wherecondition
@@ -1046,7 +1071,8 @@ class course_enrolment_manager {
 
         $context    = $this->get_context();
         $now = time();
-        $extrafields = get_extra_user_fields($context);
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrafields = fields::get_identity_fields($context, false);
 
         $users = array();
         foreach ($userroles as $userrole) {
@@ -1124,7 +1150,8 @@ class course_enrolment_manager {
         $canmanagegroups = has_capability('moodle/course:managegroups', $context);
 
         $url = new moodle_url($pageurl, $this->get_url_params());
-        $extrafields = get_extra_user_fields($context);
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrafields = fields::get_identity_fields($context, false);
 
         $enabledplugins = $this->get_enrolment_plugins(true);
 
@@ -1203,7 +1230,7 @@ class course_enrolment_manager {
      * Please note that this function does not check capability for moodle/coures:viewhiddenuserfields
      *
      * @param object $user The user record
-     * @param array $extrafields The list of fields as returned from get_extra_user_fields used to determine which
+     * @param array $extrafields The list of fields as returned from \core_user\fields::get_identity_fields used to determine which
      * additional fields may be displayed
      * @param int $now The time used for lastaccess calculation
      * @return array The fields to be displayed including userid, courseid, picture, firstname, lastcourseaccess, lastaccess and any
@@ -1301,7 +1328,8 @@ class course_enrolment_manager {
             list($instancesql, $instanceparams) = $DB->get_in_or_equal(array_keys($instances), SQL_PARAMS_NAMED, 'instanceid0000');
         }
 
-        $userfields = user_picture::fields('u');
+        $userfieldsapi = \core_user\fields::for_userpic();
+        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         list($idsql, $idparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid0000');
 
         list($sort, $sortparams) = users_order_by_sql('u');

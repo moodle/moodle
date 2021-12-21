@@ -51,7 +51,8 @@ $users = \gradereport_history\helper::get_users($context, $search, $page, 25);
 $outcome->response = array('users' => array());
 $outcome->response['totalusers'] = \gradereport_history\helper::get_users_count($context, $search);;
 
-$extrafields = get_extra_user_fields($context);
+$userfieldsapi = \core_user\fields::for_identity($context)->with_userpic();
+$extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 $useroptions = array('link' => false, 'visibletoscreenreaders' => false);
 
 // Format the user record.
@@ -60,16 +61,17 @@ foreach ($users as $user) {
     $newuser->userid = $user->id;
     $newuser->picture = $OUTPUT->user_picture($user, $useroptions);
     $newuser->fullname = fullname($user);
-    $fieldvalues = array();
+    $fieldvalues = [];
     foreach ($extrafields as $field) {
-        $fieldvalues[] = s($user->{$field});
+        if ($user->{$field}) {
+            $fieldvalues[] = $user->{$field};
+        }
     }
     $newuser->extrafields = implode(', ', $fieldvalues);
     $outcome->response['users'][] = $newuser;
 }
 
 $outcome->success = true;
-
 echo $OUTPUT->header();
 echo json_encode($outcome);
 echo $OUTPUT->footer();

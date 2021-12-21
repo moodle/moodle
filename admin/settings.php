@@ -13,6 +13,7 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/admin/settings.php', array('section' => $section));
 $PAGE->set_pagetype('admin-setting-' . $section);
 $PAGE->set_pagelayout('admin');
+$PAGE->has_secondary_navigation_setter(false);
 $PAGE->navigation->clear_cache();
 navigation_node::require_admin_tree();
 
@@ -101,7 +102,7 @@ if (empty($SITE->fullname)) {
     echo $OUTPUT->render_from_template('core_admin/settings', $context);
 
 } else {
-    if ($PAGE->user_allowed_editing()) {
+    if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
         $url = clone($PAGE->url);
         if ($PAGE->user_is_editing()) {
             $caption = get_string('blockseditoff');
@@ -148,13 +149,8 @@ if (empty($SITE->fullname)) {
     echo $OUTPUT->render_from_template('core_admin/settings', $context);
 }
 
-$PAGE->requires->yui_module('moodle-core-formchangechecker',
-        'M.core_formchangechecker.init',
-        array(array(
-            'formid' => 'adminsettings'
-        ))
-);
-$PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
+// Add the form change checker.
+$PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['adminsettings']);
 
 if ($settingspage->has_dependencies()) {
     $opts = [

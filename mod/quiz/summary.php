@@ -30,6 +30,9 @@ $attemptid = required_param('attempt', PARAM_INT); // The attempt to summarise.
 $cmid = optional_param('cmid', null, PARAM_INT);
 
 $PAGE->set_url('/mod/quiz/summary.php', array('attempt' => $attemptid));
+// During quiz attempts, the browser back/forwards buttons should force a reload.
+$PAGE->set_cacheable(false);
+$PAGE->set_secondary_active_tab("modulepage");
 
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
 
@@ -77,6 +80,8 @@ if ($attemptobj->is_finished()) {
     redirect($attemptobj->review_url());
 }
 
+\core\session\manager::keepalive(); // Try to prevent sessions expiring during quiz attempts.
+
 // Arrange for the navigation to be displayed.
 if (empty($attemptobj->get_quiz()->showblocks)) {
     $PAGE->blocks->show_only_fake_blocks();
@@ -89,7 +94,7 @@ $PAGE->blocks->add_fake_block($navbc, reset($regions));
 $PAGE->navbar->add(get_string('summaryofattempt', 'quiz'));
 $PAGE->set_title($attemptobj->summary_page_title());
 $PAGE->set_heading($attemptobj->get_course()->fullname);
-
+$PAGE->activityheader->disable();
 // Display the page.
 echo $output->summary_page($attemptobj, $displayoptions);
 

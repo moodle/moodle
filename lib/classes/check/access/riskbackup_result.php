@@ -165,7 +165,8 @@ class riskbackup_result extends \core\check\result {
             'context1' => CONTEXT_COURSE,
             'context2' => CONTEXT_COURSE,
         ];
-        $userfields = \user_picture::fields('u');
+        $userfieldsapi = \core_user\fields::for_userpic();
+        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $rs = $DB->get_recordset_sql("
             SELECT DISTINCT $userfields,
                             ra.contextid,

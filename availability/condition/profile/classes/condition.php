@@ -197,11 +197,11 @@ class condition extends \core_availability\condition {
                         $this->customfield);
             }
         } else {
-            $translatedfieldname = get_user_field_name($this->standardfield);
+            $translatedfieldname = \core_user\fields::get_display_name($this->standardfield);
         }
-        $context = \context_course::instance($course->id);
         $a = new \stdClass();
-        $a->field = format_string($translatedfieldname, true, array('context' => $context));
+        // Not safe to call format_string here; use the special function to call it later.
+        $a->field = self::description_format_string($translatedfieldname);
         $a->value = s($this->value);
         if ($not) {
             // When doing NOT strings, we replace the operator with its inverse.

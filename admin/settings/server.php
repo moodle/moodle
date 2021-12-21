@@ -38,6 +38,8 @@ if ($hassiteconfig) {
         new lang_string('pathtodot_help', 'admin'), ''));
     $temp->add(new admin_setting_configexecutable('pathtogs', new lang_string('pathtogs', 'admin'),
         new lang_string('pathtogs_help', 'admin'), '/usr/bin/gs'));
+    $temp->add(new admin_setting_configexecutable('pathtopdftoppm', new lang_string('pathtopdftoppm', 'admin'),
+        new lang_string('pathtopdftoppm_help', 'admin'), ''));
     $temp->add(new admin_setting_configexecutable('pathtopython', new lang_string('pathtopython', 'admin'),
         new lang_string('pathtopythondesc', 'admin'), ''));
     $ADMIN->add('server', $temp);
@@ -72,6 +74,22 @@ if ($hassiteconfig) {
 
     $temp->add(new admin_setting_configduration('sessiontimeout', new lang_string('sessiontimeout', 'admin'),
         new lang_string('configsessiontimeout', 'admin'), 8 * 60 * 60));
+
+    $sessiontimeoutwarning = new admin_setting_configduration('sessiontimeoutwarning',
+        new lang_string('sessiontimeoutwarning', 'admin'),
+        new lang_string('configsessiontimeoutwarning', 'admin'), 20 * 60);
+
+    $sessiontimeoutwarning->set_validate_function(function(int $value): string {
+        global $CFG;
+        // Check sessiontimeoutwarning is less than sessiontimeout.
+        if ($CFG->sessiontimeout <= $value) {
+            return get_string('configsessiontimeoutwarningcheck', 'admin');
+        } else {
+            return '';
+        }
+    });
+
+    $temp->add($sessiontimeoutwarning);
 
     $temp->add(new admin_setting_configtext('sessioncookie', new lang_string('sessioncookie', 'admin'),
         new lang_string('configsessioncookie', 'admin'), '', PARAM_ALPHANUM));
@@ -455,6 +473,15 @@ if ($hassiteconfig) {
         new lang_string('divertallemailsexcept_desc', 'admin'),
         '', PARAM_RAW, '50', '4'));
 
+    $noreplyaddress = isset($CFG->noreplyaddress) ? $CFG->noreplyaddress : 'noreply@example.com';
+    $dkimdomain = substr(strrchr($noreplyaddress, "@"), 1);
+    $dkimselector = empty($CFG->emaildkimselector) ? '[selector]' : $CFG->emaildkimselector;
+    $pempath = "\$CFG->dataroot/dkim/{$dkimdomain}/{$dkimselector}.private";
+    $temp->add(new admin_setting_heading('emaildkim', new lang_string('emaildkim', 'admin'),
+        new lang_string('emaildkiminfo', 'admin', ['path' => $pempath, 'docs' => \get_docs_url('Mail_configuration#DKIM')])));
+    $temp->add(new admin_setting_configtext('emaildkimselector', new lang_string('emaildkimselector', 'admin'),
+        new lang_string('configemaildkimselector', 'admin'), '', PARAM_FILE));
+
     $url = new moodle_url('/admin/testoutgoingmailconf.php');
     $link = html_writer::link($url, get_string('testoutgoingmailconf', 'admin'));
     $temp->add(new admin_setting_heading('testoutgoinmailc', new lang_string('testoutgoingmailconf', 'admin'),
@@ -519,4 +546,67 @@ if ($hassiteconfig) {
             new lang_string('updatenotifybuilds_desc', 'core_admin'), 0));
         $ADMIN->add('server', $temp);
     }
+
+    // Web services.
+    $ADMIN->add('server', new admin_category('webservicesettings', new lang_string('webservices', 'webservice')));
+
+    // Web services > Overview.
+    $temp = new admin_settingpage('webservicesoverview', new lang_string('webservicesoverview', 'webservice'));
+    $temp->add(new admin_setting_webservicesoverview());
+    $ADMIN->add('webservicesettings', $temp);
+
+    // Web services > API documentation.
+    $ADMIN->add('webservicesettings', new admin_externalpage('webservicedocumentation', new lang_string('wsdocapi', 'webservice'),
+        "{$CFG->wwwroot}/{$CFG->admin}/webservice/documentation.php", 'moodle/site:config', false));
+
+    // Web services > External services.
+    $temp = new admin_settingpage('externalservices', new lang_string('externalservices', 'webservice'));
+
+    $temp->add(new admin_setting_heading('manageserviceshelpexplaination', new lang_string('information', 'webservice'),
+        new lang_string('servicehelpexplanation', 'webservice')));
+
+    $temp->add(new admin_setting_manageexternalservices());
+
+    $ADMIN->add('webservicesettings', $temp);
+
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalservice', new lang_string('editaservice', 'webservice'),
+        "{$CFG->wwwroot}/{$CFG->admin}/webservice/service.php", 'moodle/site:config', true));
+
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalservicefunctions',
+        new lang_string('externalservicefunctions', 'webservice'), "{$CFG->wwwroot}/{$CFG->admin}/webservice/service_functions.php",
+        'moodle/site:config', true));
+
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusers',
+        new lang_string('externalserviceusers', 'webservice'), "{$CFG->wwwroot}/{$CFG->admin}/webservice/service_users.php",
+        'moodle/site:config', true));
+
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusersettings',
+        new lang_string('serviceusersettings', 'webservice'), "{$CFG->wwwroot}/{$CFG->admin}/webservice/service_user_settings.php",
+        'moodle/site:config', true));
+
+    // Web services > Manage protocols.
+    $temp = new admin_settingpage('webserviceprotocols', new lang_string('manageprotocols', 'webservice'));
+    $temp->add(new admin_setting_managewebserviceprotocols());
+    if (empty($CFG->enablewebservices)) {
+        $temp->add(new admin_setting_heading('webservicesaredisabled', '', new lang_string('disabledwarning', 'webservice')));
+    }
+
+    // We cannot use $OUTPUT->doc_link() this early, we would lose the ability to set the page layout on all admin pages.
+    $url = new moodle_url(get_docs_url('How_to_get_a_security_key'));
+    $wsdoclink = html_writer::link($url, new lang_string('supplyinfo', 'webservice'), ['target' => '_blank']);
+    $temp->add(new admin_setting_configcheckbox('enablewsdocumentation', new lang_string('enablewsdocumentation', 'admin'),
+        new lang_string('configenablewsdocumentation', 'admin', $wsdoclink), false));
+
+    $ADMIN->add('webservicesettings', $temp);
+
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('webservice');
+    core_collator::asort_objects_by_property($plugins, 'displayname');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\webservice $plugin */
+        $plugin->load_settings($ADMIN, 'webservicesettings', $hassiteconfig);
+    }
+
+    // Web services > Manage tokens.
+    $ADMIN->add('webservicesettings', new admin_externalpage('webservicetokens', new lang_string('managetokens', 'webservice'),
+        new moodle_url('/admin/webservice/tokens.php')));
 }

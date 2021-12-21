@@ -246,7 +246,7 @@ class MoodleExcelWorksheet {
      * Write one date somewhere in the worksheet.
      * @param integer $row    Zero indexed row
      * @param integer $col    Zero indexed column
-     * @param string  $date   The date to write in UNIX timestamp format
+     * @param int     $date   The date to write in UNIX timestamp format
      * @param mixed   $format The XF format for the cell
      */
     public function write_date($row, $col, $date, $format = null) {
@@ -425,11 +425,11 @@ class MoodleExcelWorksheet {
         $objdrawing->setOffsetX($x);
         $objdrawing->setOffsetY($y);
         $objdrawing->setWorksheet($this->worksheet);
-        if ($scale_x != 1) {
+        if ($scalex != 1) {
             $objdrawing->setResizeProportional(false);
             $objdrawing->getWidth($objdrawing->getWidth() * $scalex);
         }
-        if ($scale_y != 1) {
+        if ($scaley != 1) {
             $objdrawing->setResizeProportional(false);
             $objdrawing->setHeight($objdrawing->getHeight() * $scaley);
         }
@@ -489,7 +489,7 @@ class MoodleExcelWorksheet {
  */
 class MoodleExcelFormat {
     /** @var array */
-    protected $format = array('font'=>array('size'=>10, 'name'=>'Arial'));
+    protected $format = array();
 
     /**
      * Constructs one Moodle Format.

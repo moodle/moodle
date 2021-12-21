@@ -66,7 +66,8 @@ class riskadmin extends check {
      */
     public function get_result(): result {
         global $DB, $CFG;
-        $userfields = \user_picture::fields('u');
+        $userfieldsapi = \core_user\fields::for_userpic();
+        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $sql = "SELECT $userfields
                   FROM {user} u
                  WHERE u.id IN ($CFG->siteadmins)";

@@ -46,7 +46,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Set up method.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -2154,11 +2154,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         // Change our event's date to the 20th Monday of the current year.
         $twentiethmonday = new DateTime(date('Y-01-01'));
         $twentiethmonday->modify('+20 Monday');
-        $startdatetime = $this->change_event_startdate($twentiethmonday->format('Ymd\T090000'), 'US/Eastern');
-
-        $startdate = new DateTime($startdatetime->format('Y-m-d'));
-
-        $offset = $startdatetime->diff($startdate, true);
+        $startdatetime = $this->change_event_startdate($twentiethmonday->format('Ymd\T000000'), 'US/Eastern');
 
         $interval = new DateInterval('P1Y');
 
@@ -2183,7 +2179,6 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
             $expecteddate->modify('January 1');
             $expecteddate->add($interval);
             $expecteddate->modify("+20 Monday");
-            $expecteddate->add($offset);
         }
     }
 
@@ -2437,7 +2432,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
             $this->assertEquals($expecteddate->format('Y-m-d H:i:s'), date('Y-m-d H:i:s', $record->timestart));
 
             // Assert that the record is either the 7th, 8th, 9th, ... 13th day of the month.
-            $this->assertContains(date('j', $record->timestart), $bymonthdays);
+            $this->assertContainsEquals(date('j', $record->timestart), $bymonthdays);
         }
     }
 
@@ -2494,7 +2489,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
             $this->assertEquals($expecteddate->format('Y-m-d H:i:s'), date('Y-m-d H:i:s', $record->timestart));
 
             // Assert that the record is either the 2nd, 3rd, 4th ... 8th day of the month.
-            $this->assertContains(date('j', $record->timestart), $bymonthdays);
+            $this->assertContainsEquals(date('j', $record->timestart), $bymonthdays);
         }
     }
 
@@ -2525,7 +2520,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
             (new DateTime('1997-11-06 09:00:00 EST'))->getTimestamp()
         ];
         foreach ($records as $record) {
-            $this->assertContains($record->timestart, $expecteddates, date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
+            $this->assertContainsEquals($record->timestart, $expecteddates,
+                date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
         }
     }
 
@@ -2603,7 +2599,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
             (new DateTime('1997-09-02 15:00:00 EDT'))->getTimestamp(),
         ];
         foreach ($records as $record) {
-            $this->assertContains($record->timestart, $expecteddates, date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
+            $this->assertContainsEquals($record->timestart, $expecteddates,
+                date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
         }
     }
 
@@ -2634,7 +2631,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
             (new DateTime('1997-09-02 10:15:00 EDT'))->getTimestamp(),
         ];
         foreach ($records as $record) {
-            $this->assertContains($record->timestart, $expecteddates, date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
+            $this->assertContainsEquals($record->timestart, $expecteddates,
+                date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
         }
     }
 
@@ -2663,7 +2661,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
             (new DateTime('1997-09-02 13:30:00 EDT'))->getTimestamp(),
         ];
         foreach ($records as $record) {
-            $this->assertContains($record->timestart, $expecteddates, date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
+            $this->assertContainsEquals($record->timestart, $expecteddates,
+                date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
         }
     }
 
@@ -2707,7 +2706,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $this->assertCount($count, $records);
 
         foreach ($records as $record) {
-            $this->assertContains($record->timestart, $expecteddates, date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
+            $this->assertContainsEquals($record->timestart, $expecteddates,
+                date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
         }
     }
 
@@ -2751,7 +2751,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $this->assertCount($count, $records);
 
         foreach ($records as $record) {
-            $this->assertContains($record->timestart, $expecteddates, date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
+            $this->assertContainsEquals($record->timestart, $expecteddates,
+                date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
         }
     }
 
@@ -2782,7 +2783,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
             (new DateTime('1997-08-24 09:00:00 EDT'))->getTimestamp(),
         ];
         foreach ($records as $record) {
-            $this->assertContains($record->timestart, $expecteddates, date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
+            $this->assertContainsEquals($record->timestart, $expecteddates,
+                date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
         }
     }
 
@@ -2815,7 +2817,8 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         ];
 
         foreach ($records as $record) {
-            $this->assertContains($record->timestart, $expecteddates, date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
+            $this->assertContainsEquals($record->timestart, $expecteddates,
+                date('Y-m-d H:i:s', $record->timestart) . ' is not found.');
         }
     }
 

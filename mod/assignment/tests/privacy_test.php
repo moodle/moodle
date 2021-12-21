@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/../lib.php');
 
 use \mod_assignment\privacy\provider;
-use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\transform;
 use \core_privacy\local\request\writer;
@@ -42,7 +41,7 @@ use \core_privacy\tests\provider_testcase;
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assignment_privacy_testcase extends advanced_testcase {
+class mod_assignment_privacy_testcase extends provider_testcase {
 
     /**
      * @var int array   Array of test student ids associated for Course 1.

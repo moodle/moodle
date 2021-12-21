@@ -18,7 +18,32 @@ Feature: Manage language packs
     And the "Installed language packs" select box should contain "en_ar"
     And I navigate to "Reports > Live logs" in site administration
     And I should see "The language pack 'en_ar' was installed."
-    And I log out
+
+  Scenario: Install multiple language packs asynchronously in the background
+    Given I log in as "admin"
+    And I navigate to "Language > Language packs" in site administration
+    And I set the field "Available language packs" to "en_us,en_us_k12"
+    When I press "Install selected language pack(s)"
+    Then I should see "Language packs scheduled for installation."
+    And I should see "The following language packs will be installed soon: en_us, en_us_k12."
+    And I trigger cron
+    And I am on homepage
+    And I navigate to "Language > Language packs" in site administration
+    And the "Installed language packs" select box should contain "en_us"
+    And the "Installed language packs" select box should contain "en_us_k12"
+    And I navigate to "Reports > Live logs" in site administration
+    And I should see "The language pack 'en_us' was installed."
+    And I should see "The language pack 'en_us_k12' was installed."
+
+  @javascript
+  Scenario: Search for available language pack
+    Given I log in as "admin"
+    And I navigate to "Language > Language packs" in site administration
+    When I set the field "Search available language packs" to "pirate"
+    Then the "Available language packs" select box should not contain "es"
+    And I set the field "Available language packs" to "en_ar"
+    And I press "Install selected language pack(s)"
+    And I should see "Language pack 'en_ar' was successfully installed"
 
   Scenario: Update language pack
     Given outdated langpack 'en_ar' is installed
@@ -29,7 +54,14 @@ Feature: Manage language packs
     And I should see "Language pack update completed"
     And I navigate to "Reports > Live logs" in site administration
     And I should see "The language pack 'en_ar' was updated."
-    And I log out
+
+  Scenario: Inform admin that there are multiple installed languages and updating them all can take too long
+    Given outdated langpack 'en_ar' is installed
+    And outdated langpack 'en_us' is installed
+    And outdated langpack 'en_us_k12' is installed
+    When I log in as "admin"
+    And I navigate to "Language > Language packs" in site administration
+    Then I should see "Updating all installed language packs by clicking the button can take a long time and lead to timeouts."
 
   Scenario: Try to uninstall language pack
     Given I log in as "admin"
@@ -45,7 +77,6 @@ Feature: Manage language packs
     And I navigate to "Reports > Live logs" in site administration
     And I should see "The language pack 'en_ar' was removed."
     And I should see "Language pack uninstalled"
-    And I log out
 
   Scenario: Try to uninstall English language pack
     Given I log in as "admin"
@@ -55,4 +86,3 @@ Feature: Manage language packs
     Then I should see "The English language pack cannot be uninstalled."
     And I navigate to "Reports > Live logs" in site administration
     And I should not see "Language pack uninstalled"
-    And I log out

@@ -40,11 +40,17 @@ class core_availability_renderer extends plugin_renderer_base {
      *
      * This function will not be called unless there are at least two messages.
      *
+     * @deprecated since Moodle 4.0 MDL-716916 - please do not use this function any more.
      * @param core_availability_multiple_messages $renderable Multiple messages
      * @return string Combined HTML
      */
     public function render_core_availability_multiple_messages(
             core_availability_multiple_messages $renderable) {
+
+        debugging(
+            'render_core_availability_multiple_messages is deprecated. Use core_availability\\output\\multiple_messages instead',
+            DEBUG_DEVELOPER
+        );
         // Get initial message.
         $out = get_string('list_' . ($renderable->root ? 'root_' : '') .
                 ($renderable->andoperator ? 'and' : 'or') . ($renderable->treehidden ? '_hidden' : ''),

@@ -138,9 +138,19 @@ class data_field_textarea extends data_field_base {
             $link_options->env = 'editor';
             $link_options->itemid = $draftitemid;
 
+            // H5P plugin.
+            $args->accepted_types = ['h5p'];
+            $h5poptions = initialise_filepicker($args);
+            $h5poptions->context = $this->context;
+            $h5poptions->client_id = uniqid();
+            $h5poptions->maxbytes  = $options['maxbytes'];
+            $h5poptions->env = 'editor';
+            $h5poptions->itemid = $draftitemid;
+
             $fpoptions['image'] = $image_options;
             $fpoptions['media'] = $media_options;
             $fpoptions['link'] = $link_options;
+            $fpoptions['h5p'] = $h5poptions;
         }
 
         $editor = editors_get_preferred_editor($format);
@@ -153,7 +163,8 @@ class data_field_textarea extends data_field_base {
         $editor->use_editor($field, $options, $fpoptions);
         $str .= '<input type="hidden" name="'.$field.'_itemid" value="'.s($draftitemid).'" />';
         $str .= '<div class="mod-data-input">';
-        $str .= '<div><textarea id="'.$field.'" name="'.$field.'" rows="'.$this->field->param3.'" cols="'.$this->field->param2.'" spellcheck="true">'.s($text).'</textarea></div>';
+        $str .= '<div><textarea id="'.$field.'" name="'.$field.'" rows="'.$this->field->param3.'" class="form-control" ' .
+            'cols="'.$this->field->param2.'" spellcheck="true">'.s($text).'</textarea></div>';
         $str .= '<div><label class="accesshide" for="' . $field . '_content1">' . get_string('format') . '</label>';
         $str .= '<select id="' . $field . '_content1" name="'.$field.'_content1">';
         foreach ($formats as $key=>$desc) {

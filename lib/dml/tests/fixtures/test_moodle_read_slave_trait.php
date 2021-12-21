@@ -46,12 +46,45 @@ trait test_moodle_read_slave_trait {
     // @codingStandardsIgnoreEnd
         parent::__construct($external);
 
+        $rw = fopen("php://memory", 'r+');
+        fputs($rw, 'rw');
+
+        $ro = fopen("php://memory", 'r+');
+        fputs($ro, 'ro');
+
         $this->wantreadslave = true;
-        $this->dbhwrite = 'test_rw';
-        $this->dbhreadonly = 'test_ro';
+        $this->dbhwrite = $rw;
+        $this->dbhreadonly = $ro;
         $this->set_db_handle($this->dbhwrite);
 
         $this->temptables = new moodle_temptables($this);
+    }
+
+    /**
+     * Check db handle
+     * @param string $id
+     * @return bool
+     */
+    public function db_handle_is($id) {
+        $dbh = $this->get_db_handle();
+        rewind($dbh);
+        return stream_get_contents($dbh) == $id;
+    }
+
+    /**
+     * Check db handle is rw
+     * @return bool
+     */
+    public function db_handle_is_rw() {
+        return $this->db_handle_is('rw');
+    }
+
+    /**
+     * Check db handle is ro
+     * @return bool
+     */
+    public function db_handle_is_ro() {
+        return $this->db_handle_is('ro');
     }
 
     /**

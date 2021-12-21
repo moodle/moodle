@@ -42,7 +42,7 @@ class gradereport_grader_privacy_testcase extends \core_privacy\tests\provider_t
     /**
      * Basic setup for these tests.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
     }
 
@@ -63,14 +63,18 @@ class gradereport_grader_privacy_testcase extends \core_privacy\tests\provider_t
      * These preferences can be set on each course, but the value is shared in the whole site.
      */
     public function test_export_user_preferences_single() {
-        // Add some user preferences.
+        // Create test user, add some preferences.
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
+
         set_user_preference('grade_report_showcalculations', 1, $user);
         set_user_preference('grade_report_meanselection', GRADE_REPORT_MEAN_GRADED, $user);
         set_user_preference('grade_report_studentsperpage', 50, $user);
 
-        // Validate exported data.
+        // Switch to admin user (so we can validate preferences of our test user are still exported).
+        $this->setAdminUser();
+
+        // Validate exported data for our test user.
         provider::export_user_preferences($user->id);
         $context = context_user::instance($user->id);
         $writer = writer::with_context($context);

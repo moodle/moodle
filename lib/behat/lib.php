@@ -124,10 +124,9 @@ function behat_get_error_string($errtype) {
  * @param string $errstr
  * @param string $errfile
  * @param int $errline
- * @param array $errcontext
  * @return bool
  */
-function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
+function behat_error_handler($errno, $errstr, $errfile, $errline) {
 
     // If is preceded by an @ we don't show it.
     if (!error_reporting()) {
@@ -149,7 +148,7 @@ function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
     }
 
     // Using the default one in case there is a fatal catchable error.
-    default_error_handler($errno, $errstr, $errfile, $errline, $errcontext);
+    default_error_handler($errno, $errstr, $errfile, $errline);
 
     $errnostr = behat_get_error_string($errno);
 
@@ -244,18 +243,31 @@ function behat_clean_init_config() {
 function behat_check_config_vars() {
     global $CFG;
 
+    $moodleprefix = empty($CFG->prefix) ? '' : $CFG->prefix;
+    $behatprefix = empty($CFG->behat_prefix) ? '' : $CFG->behat_prefix;
+    $phpunitprefix = empty($CFG->phpunit_prefix) ? '' : $CFG->phpunit_prefix;
+    $behatdbname = empty($CFG->behat_dbname) ? $CFG->dbname : $CFG->behat_dbname;
+    $phpunitdbname = empty($CFG->phpunit_dbname) ? $CFG->dbname : $CFG->phpunit_dbname;
+    $behatdbhost = empty($CFG->behat_dbhost) ? $CFG->dbhost : $CFG->behat_dbhost;
+    $phpunitdbhost = empty($CFG->phpunit_dbhost) ? $CFG->dbhost : $CFG->phpunit_dbhost;
+
     // Verify prefix value.
     if (empty($CFG->behat_prefix)) {
         behat_error(BEHAT_EXITCODE_CONFIG,
             'Define $CFG->behat_prefix in config.php');
     }
-    if (!empty($CFG->prefix) and $CFG->behat_prefix == $CFG->prefix) {
+    if ($behatprefix == $moodleprefix && $behatdbname == $CFG->dbname && $behatdbhost == $CFG->dbhost) {
         behat_error(BEHAT_EXITCODE_CONFIG,
-            '$CFG->behat_prefix in config.php must be different from $CFG->prefix');
+            '$CFG->behat_prefix in config.php must be different from $CFG->prefix' .
+            ' when $CFG->behat_dbname and $CFG->behat_host are not set or when $CFG->behat_dbname equals $CFG->dbname' .
+            ' and $CFG->behat_dbhost equals $CFG->dbhost');
     }
-    if (!empty($CFG->phpunit_prefix) and $CFG->behat_prefix == $CFG->phpunit_prefix) {
+    if ($phpunitprefix !== '' && $behatprefix == $phpunitprefix && $behatdbname == $phpunitdbname &&
+            $behatdbhost == $phpunitdbhost) {
         behat_error(BEHAT_EXITCODE_CONFIG,
-            '$CFG->behat_prefix in config.php must be different from $CFG->phpunit_prefix');
+            '$CFG->behat_prefix in config.php must be different from $CFG->phpunit_prefix' .
+            ' when $CFG->behat_dbname equals $CFG->phpunit_dbname' .
+            ' and $CFG->behat_dbhost equals $CFG->phpunit_dbhost');
     }
 
     // Verify behat wwwroot value.
@@ -401,7 +413,9 @@ function behat_update_vars_for_process() {
 function behat_is_requested_url($url) {
 
     $parsedurl = parse_url($url . '/');
-    $parsedurl['port'] = isset($parsedurl['port']) ? $parsedurl['port'] : 80;
+    if (!isset($parsedurl['port'])) {
+        $parsedurl['port'] = ($parsedurl['scheme'] === 'https') ? 443 : 80;
+    }
     $parsedurl['path'] = rtrim($parsedurl['path'], '/');
 
     // Removing the port.

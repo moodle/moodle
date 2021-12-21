@@ -64,7 +64,7 @@ $string['downloadcourses'] = 'Download courses';
 $string['enablesmartappbanners'] = 'Enable App Banners';
 $string['enablesmartappbanners_desc'] = 'If enabled, a banner promoting the mobile app will be displayed when accessing the site using a mobile browser.';
 $string['filetypeexclusionlist'] = 'File type exclusion list';
-$string['filetypeexclusionlist_desc'] = 'List of file types that we don\'t want users to try and open in the app. These files will still be listed on the app\'s course screen, but attempting to open them on iOS or Android would display a warning to the user indicating that this file type is not intended for use on a mobile device. They can then either cancel the open, or ignore the warning and open anyway.';
+$string['filetypeexclusionlist_desc'] = 'Select all file types which are not for use on a mobile device. Such files will be listed in the course, then if a user attempts to open them, a warning will be displayed advising that the file type is not intended for use on a mobile device. The user can then cancel or ignore the warning and open the file anyway.';
 $string['filetypeexclusionlistplaceholder'] = 'Mobile file type exclusion list';
 $string['forcedurlscheme'] = 'If you want to allow only your custom branded app to be opened via a browser window, then specify its URL scheme here. If you want to allow only the official app, then set the default value. Leave the field empty if you want to allow any app.';
 $string['forcedurlscheme_key'] = 'URL scheme';
@@ -73,16 +73,18 @@ $string['forcelogout_desc'] = 'If enabled, the app option \'Change site\' is rep
 $string['h5poffline'] = 'View H5P content offline';
 $string['httpsrequired'] = 'HTTPS required';
 $string['insecurealgorithmwarning'] = 'It seems that the HTTPS certificate uses an insecure algorithm for signing (SHA-1). Please try updating the certificate.';
-$string['invalidcertificatechainwarning'] = 'It seems that the certificate chain is invalid.';
+$string['invalidcertificatechainwarning'] = 'It seems that the certificate chain is invalid. This certificate might work for a browser but not for a mobile app.';
 $string['invalidcertificateexpiredatewarning'] = 'It seems that the HTTPS certificate for the site has expired.';
 $string['invalidcertificatestartdatewarning'] = 'It seems that the HTTPS certificate for the site is not yet valid (with a start date in the future).';
 $string['invalidprivatetoken'] = 'Invalid private token. Token should not be empty or passed via GET parameter.';
 $string['invaliduserquotawarning'] = 'The user quota (userquota) is set to an invalid number. It should be set to a valid number (an integer value) in Site security settings.';
 $string['iosappid'] = 'iOS app\'s unique identifier';
 $string['iosappid_desc'] = 'This setting may be left as default unless you have a custom iOS app.';
+$string['launchviasiteinbrowser'] = 'Launch via site in system browser';
 $string['loginintheapp'] = 'Via the app';
 $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
 $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
+$string['logoutconfirmation'] = 'Are you sure you want to log out from the mobile app on your mobile devices? By logging out, you will then need to re-enter your username and password in the mobile app on all devices where you have the app installed.';
 $string['mainmenu'] = 'Main menu';
 $string['managefiletypes'] = 'Manage file types';
 $string['minimumversion'] = 'If an app version is specified (3.8.0 or higher), any users using an older app version will be prompted to upgrade their app before being allowed access to the site.';
@@ -108,7 +110,6 @@ $string['notificationssentnotifications'] = 'Notifications sent';
 $string['notificationscurrentactivedevices'] = 'Devices receiving notifications this month';
 $string['oauth2identityproviders'] = 'OAuth 2 identity providers';
 $string['offlineuse'] = 'Offline use';
-$string['openusingembeddedbrowser'] = 'Open using embedded browser';
 $string['pluginname'] = 'Moodle app tools';
 $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
 $string['qrcodedisabled'] = 'Access via QR code disabled';
@@ -123,7 +124,7 @@ $string['qrcodetypelogin'] = 'QR code with automatic login';
 $string['readingthisemailgettheapp'] = 'Reading this in an email? <a href="{$a}">Download the mobile app and receive notifications on your mobile device</a>.';
 $string['remoteaddons'] = 'Remote add-ons';
 $string['scanqrcode'] = 'Scan QR code';
-$string['selfsignedoruntrustedcertificatewarning'] = 'It seems that the HTTPS certificate is self-signed or not trusted. The mobile app will only work with trusted sites.';
+$string['selfsignedoruntrustedcertificatewarning'] = 'It seems that the HTTPS certificate is self-signed or not trusted. The mobile app will only work with trusted sites. Please use any online SSL checker to diagnose the problem. If it indicates that your certificate is OK, you can ignore this warning.';
 $string['setuplink'] = 'App download page';
 $string['setuplink_desc'] = 'URL of page with options to download the mobile app from the App Store and Google Play. The app download page link is displayed in the page footer and in a user\'s profile. Leave blank to not display a link.';
 $string['smartappbanners'] = 'App Banners';
@@ -146,3 +147,6 @@ $string['viewqrcode'] = 'View QR code';
 
 // Deprecated since Moodle 3.10.
 $string['mobileappconnected'] = 'Mobile app connected';
+
+// Deprecated since Moodle 3.11.
+$string['openusingembeddedbrowser'] = 'Open using embedded browser';

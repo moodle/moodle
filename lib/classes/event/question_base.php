@@ -60,7 +60,7 @@ abstract class question_base extends base {
                     ['courseid' => $this->courseid, 'cat' => $cat, 'lastchanged' => $this->objectid]);
         }
         // Lets try viewing from the frontpage for contexts above course.
-        return new \moodle_url('/question/category.php',
+        return new \moodle_url('/question/bank/managecategories/category.php',
                 ['courseid' => SITEID, 'edit' => $this->other['categoryid'], 'lastchanged' => $this->objectid]);
     }
 

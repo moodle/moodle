@@ -42,6 +42,33 @@ class logstore extends base {
         return isset($enabled['logstore_' . $this->name]);
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        $haschanged = false;
+        $plugins = [];
+        $oldvalue = get_config('tool_log', 'enabled_stores');
+        if (!empty($oldvalue)) {
+            $plugins = array_flip(explode(',', $oldvalue));
+        }
+        // Only set visibility if it's different from the current value.
+        if ($enabled && !array_key_exists($pluginname, $plugins)) {
+            $plugins[$pluginname] = $pluginname;
+            $haschanged = true;
+        } else if (!$enabled && array_key_exists($pluginname, $plugins)) {
+            unset($plugins[$pluginname]);
+            $haschanged = true;
+        }
+
+        if ($haschanged) {
+            $new = implode(',', array_flip($plugins));
+            add_to_config_log('tool_logstore_visibility', !$enabled, $enabled, $pluginname);
+            set_config('enabled_stores', $new, 'tool_log');
+            // Reset caches.
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
     public function get_settings_section_name() {
         return 'logsetting' . $this->name;
     }

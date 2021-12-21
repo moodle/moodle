@@ -60,7 +60,7 @@ class qtype_match_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'shuffleanswers',
                 get_string('shuffle', 'qtype_match'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleanswers', 'shuffle', 'qtype_match');
-        $mform->setDefault('shuffleanswers', 1);
+        $mform->setDefault('shuffleanswers', $this->get_default_value('shuffleanswers', 1));
 
         $this->add_per_answer_fields($mform, get_string('questionno', 'question', '{no}'), 0);
 

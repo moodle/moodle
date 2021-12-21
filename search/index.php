@@ -190,6 +190,10 @@ if ($errorstr = $search->get_engine()->get_query_error()) {
 $mform->display();
 
 if (!empty($results)) {
+    $topresults = $search->search_top($data);
+    if (!empty($topresults)) {
+        echo $searchrenderer->render_top_results($topresults);
+    }
     echo $searchrenderer->render_results($results->results, $results->actualpage, $results->totalcount, $url, $cat);
 
     \core_search\manager::trigger_search_results_viewed([

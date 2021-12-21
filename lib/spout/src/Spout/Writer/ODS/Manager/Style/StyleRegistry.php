@@ -22,6 +22,10 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
      */
     public function registerStyle(Style $style)
     {
+        if ($style->isRegistered()) {
+            return $style;
+        }
+
         $registeredStyle = parent::registerStyle($style);
         $this->usedFontsSet[$style->getFontName()] = true;
 
@@ -33,6 +37,6 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
      */
     public function getUsedFonts()
     {
-        return array_keys($this->usedFontsSet);
+        return \array_keys($this->usedFontsSet);
     }
 }

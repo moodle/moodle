@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -32,14 +31,14 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'ei';
 $string['cliansweryes'] = 'jah';
-$string['cliincorrectvalueerror'] = 'Viga, vigane väärtus "{$a->value}" "{$a->option}"-le';
-$string['cliincorrectvalueretry'] = 'Vale väärtus(value), palun proovige uuesti';
+$string['cliincorrectvalueerror'] = 'Tõrge, „{$a->option}“ sobimatu väärtus „{$a->value}“';
+$string['cliincorrectvalueretry'] = 'Sobimatu väärtus, proovige uuesti';
 $string['clitypevalue'] = 'tüübi väärtus';
-$string['clitypevaluedefault'] = 'sisesta väärtus, vajuta Enter kasutamaks vaikeväärtust ({$a})';
+$string['clitypevaluedefault'] = 'tüübi väärtus, vaikeväärtuse kasutamiseks vajutage sisestusklahvi ({$a})';
 $string['cliunknowoption'] = 'Tundmatud valikud:
   {$a}
 Kasutage spikrivalikut.';
-$string['cliyesnoprompt'] = 'kirjuta y (tähendab jah) või n (tähendab ei)';
-$string['environmentrequireinstall'] = 'on nõutud, et oleks installeeritud ja võimaldatud';
-$string['environmentrequireversion'] = 'versioon {$a->needed} on nõutud, Sinul on jooksmas versioon {$a->current}';
+$string['cliyesnoprompt'] = 'tippige y (jah) või n (ei)';
+$string['environmentrequireinstall'] = 'peab olema installitud ja lubatud';
+$string['environmentrequireversion'] = 'nõutav on versioon {$a->needed}, teil töötab versioon {$a->current}';
 $string['upgradekeyset'] = 'Versioonitäienduse võti (jätke tühjaks, kui te ei soovi seda määrata)';

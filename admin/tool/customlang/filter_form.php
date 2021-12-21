@@ -32,7 +32,6 @@ class tool_customlang_filter_form extends moodleform {
 
     function definition() {
         $mform = $this->_form;
-        $current = $this->_customdata['current'];
 
         $mform->addElement('header', 'filtersettings', get_string('filter', 'tool_customlang'));
 

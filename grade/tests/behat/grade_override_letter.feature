@@ -2,7 +2,7 @@
 Feature: Grade letters can be overridden
   In order to test the grade letters functionality
   As a teacher I override site defaults
-  and alter the grade letters
+  and alter the grade letters/edit/letter/index.php
 
   Background:
     Given the following "courses" exist:
@@ -16,7 +16,8 @@ Feature: Grade letters can be overridden
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Letters > Edit" in the course gradebook
+    And I navigate to "More > Grade letters" in the course gradebook
+    And I click on "Edit" "button"
 
   Scenario Outline: Grade letters can be completely overridden
     When I set the following fields to these values:
@@ -109,7 +110,7 @@ Feature: Grade letters can be overridden
       | 49.99 %  | 40.00 %  | D      |
       | 39.99 %  | 20.00 %  | E      |
       | 19.99 %  | 0.00 %   | F      |
-    When I follow "Edit grade letters"
+    When I click on "Edit" "button"
     And I set the following fields to these values:
       | override               | 1  |
       | Grade letter 1         | A  |
@@ -176,7 +177,7 @@ Feature: Grade letters can be overridden
       | 59.99 %  | 50.00 %  | C      |
       | 49.99 %  | 40.00 %  | D      |
       | 39.99 %  | 0.00 %   | F      |
-    When I follow "Edit grade letters"
+    When I click on "Edit" "button"
     And I set the following fields to these values:
       | override               | 1  |
       | Grade letter 1         | α  |

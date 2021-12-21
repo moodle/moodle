@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['coursemanagementoptions'] = 'Course management options';
 $string['mymoodle'] = 'Dashboard';
 $string['nocourses'] = 'No course information to show.';
 $string['noguest'] = 'The Dashboard page is not available to guest users';
@@ -31,6 +32,7 @@ $string['defaultpage'] = 'Default My Moodle page';
 $string['defaultprofilepage'] = 'Default profile page';
 $string['addpage'] = 'Add page';
 $string['alldashboardswerereset'] = 'All Dashboard pages have been reset to default.';
+$string['resettingdashboards'] = 'Resetting user dashboards to default...';
 $string['allprofileswerereset'] = 'All profile pages have been reset to default.';
 $string['delpage'] = 'Delete page';
 $string['managepages'] = 'Manage pages';

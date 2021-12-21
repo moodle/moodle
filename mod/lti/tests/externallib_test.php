@@ -30,6 +30,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/lti/lib.php');
+require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
 
 /**
  * External tool module external functions tests
@@ -40,12 +41,12 @@ require_once($CFG->dirroot . '/mod/lti/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class mod_lti_external_testcase extends externallib_advanced_testcase {
+class mod_lti_external_testcase extends mod_lti_testcase {
 
     /**
      * Set up for every test
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 
@@ -86,6 +87,42 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
             'studentrole' => $studentrole,
             'teacherrole' => $teacherrole
         ];
+    }
+
+    /**
+     * Test get_tool_proxies.
+     */
+    public function test_mod_lti_get_tool_proxies() {
+        // Create two tool proxies. One to associate with tool, and one to leave orphaned.
+        $this->setAdminUser();
+        $proxy = $this->generate_tool_proxy("1");
+        $orphanedproxy = $this->generate_tool_proxy("2");
+        $this->generate_tool_type("1", $proxy->id); // Associate proxy 1 with tool type.
+
+        // Fetch all proxies.
+        $proxies = mod_lti_external::get_tool_proxies(false);
+        $proxies = external_api::clean_returnvalue(mod_lti_external::get_tool_proxies_returns(), $proxies);
+
+        $this->assertCount(2, $proxies);
+        $this->assertEqualsCanonicalizing([(array) $proxy, (array) $orphanedproxy], $proxies);
+    }
+
+    /**
+     * Test get_tool_proxies with orphaned proxies only.
+     */
+    public function test_mod_lti_get_orphaned_tool_proxies() {
+        // Create two tool proxies. One to associate with tool, and one to leave orphaned.
+        $this->setAdminUser();
+        $proxy = $this->generate_tool_proxy("1");
+        $orphanedproxy = $this->generate_tool_proxy("2");
+        $this->generate_tool_type("1", $proxy->id); // Associate proxy 1 with tool type.
+
+        // Fetch all proxies.
+        $proxies = mod_lti_external::get_tool_proxies(true);
+        $proxies = external_api::clean_returnvalue(mod_lti_external::get_tool_proxies_returns(), $proxies);
+
+        $this->assertCount(1, $proxies);
+        $this->assertEqualsCanonicalizing([(array) $orphanedproxy], $proxies);
     }
 
     /**
@@ -410,7 +447,6 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      * Test get_tool_types.
      */
     public function test_mod_lti_get_tool_types() {
-        // Create a tool proxy.
         $this->setAdminUser();
         $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
         $proxy = (object) external_api::clean_returnvalue(mod_lti_external::create_tool_proxy_returns(), $proxy);

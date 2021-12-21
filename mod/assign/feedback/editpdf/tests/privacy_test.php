@@ -37,9 +37,9 @@ use \mod_assign\privacy\assign_plugin_request_data;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignfeedback_editpdf_privacy_testcase extends \mod_assign\tests\mod_assign_privacy_testcase {
+class assignfeedback_editpdf_privacy_testcase extends \mod_assign\tests\privacy_test {
 
-    public function setUp() {
+    public function setUp(): void {
         // Skip this test if ghostscript is not supported.
         $result = \assignfeedback_editpdf\pdf::test_gs_path(false);
         if ($result->status !== \assignfeedback_editpdf\pdf::GSPATH_OK) {

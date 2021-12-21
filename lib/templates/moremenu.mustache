@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/moremenu
+
+    The More menu.
+
+    Example context (json):
+    {
+        "nodecollection": {
+            "children": [
+                {
+                    "text": "Home",
+                    "action": "/index.php?redirect=0",
+                    "active": "true"
+                },
+                {
+                    "text": "Dashboard",
+                    "action": "/my"
+                },
+                {
+                    "text": "Courses",
+                    "action": "/course"
+                },
+                {
+                    "text": "Site Administration",
+                    "action": "/admin/search.php"
+                }
+            ]
+        },
+        "moremenuid": "614c104dbacfa"
+    }
+}}
+<nav class="moremenu navigation">
+    <ul id="moremenu-{{moremenuid}}-{{navbarstyle}}" role="menubar" class="nav more-nav {{navbarstyle}}">
+        {{#nodecollection}}
+            {{#children}}
+                {{> core/moremenu_children}}
+            {{/children}}
+        {{/nodecollection}}
+        {{#nodearray}}
+            {{> core/moremenu_children}}
+        {{/nodearray}}
+        <li role="none" class="nav-item dropdown dropdownmoremenu d-none" data-region="morebutton">
+            <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}}" href="#" id="moremenu-dropdown-{{moremenuid}}" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="-1">
+                {{#str}}moremenu, core{{/str}}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-left" data-region="moredropdown" aria-labelledby="moremenu-dropdown-{{moremenuid}}" role="menu">
+            </ul>
+        </li>
+    </ul>
+</nav>
+{{#js}}
+    require(['core/moremenu'], function(moremenu) {
+        moremenu(document.querySelector('#moremenu-{{moremenuid}}-{{navbarstyle}}'));
+    });
+{{/js}}

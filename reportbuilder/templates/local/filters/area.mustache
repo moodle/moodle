@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_reportbuilder/local/filters/area
+
+    Template for system report filters area
+
+    Example context (json):
+    {
+        "id": 3,
+        "contextid": 1,
+        "filtersapplied": 3,
+        "filtersform": "form"
+    }
+}}
+
+{{! Filters button }}
+<button class="btn btn-outline-secondary ml-2" type="button" id="dropdownFiltersButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{#str}} filters, moodle {{/str}}">
+    {{#pix}} i/filter, core {{/pix}}
+    <span data-region="filter-button-label">
+        {{#filtersapplied}} {{#str}} filtersappliedx, core_reportbuilder, {{filtersapplied}} {{/str}} {{/filtersapplied}}
+        {{^filtersapplied}} {{#str}} filters, moodle {{/str}} {{/filtersapplied}}
+    </span>
+</button>
+{{! Filters content }}
+<div class="filters-dropdown dropdown-menu dropdown-menu-right" aria-labelledby="dropdownFiltersButton">
+    <div id="filters" class="reportbuilder-filters-sidebar" data-region="report-filters">
+        <div class="p-3">
+            {{#filtersform}}
+                <div class="reportbuilder-filters-wrapper" data-region="filters-form">
+                    {{{filtersform}}}
+                </div>
+            {{/filtersform}}
+        </div>
+    </div>
+</div>
+
+{{#js}}
+    require(['core_reportbuilder/filters'], function(filters) {
+        filters.init({{id}}, {{contextid}});
+    });
+{{/js}}

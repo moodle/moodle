@@ -20,8 +20,12 @@
     Adds the give feedback link.
 
     Example context (json):
-    {}
+    {
+        "url": "#"
+    }
 }}
 
 {{# pix }} i/bullhorn, core {{/ pix }}
-<a href="{{url}}" target="_blank">{{#str}}calltofeedback_give{{/str}}</a>
+<a href="{{url}}" target="_blank">
+    {{#str}}calltofeedback_give{{/str}} {{#pix}}i/externallink, core, {{#str}}opensinnewwindow{{/str}}{{/pix}}
+</a>

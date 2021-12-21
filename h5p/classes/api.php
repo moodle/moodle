@@ -24,9 +24,8 @@
 
 namespace core_h5p;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core\lock\lock_config;
+use Moodle\H5PCore;
 
 /**
  * Contains API class for the H5P area.
@@ -185,16 +184,23 @@ class api {
      *
      * @param string $url H5P pluginfile URL.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
+     * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
+     *     might be controlled before calling this method.
      *
      * @return array of [file, stdClass|false]:
      *             - file local file for this $url.
      *             - stdClass is an H5P object or false if there isn't any H5P with this URL.
      */
-    public static function get_content_from_pluginfile_url(string $url, bool $preventredirect = true): array {
+    public static function get_content_from_pluginfile_url(string $url, bool $preventredirect = true,
+        bool $skipcapcheck = false): array {
+
         global $DB;
 
         // Deconstruct the URL and get the pathname associated.
-        $pathnamehash = self::get_pluginfile_hash($url, $preventredirect);
+        if ($skipcapcheck || self::can_access_pluginfile_hash($url, $preventredirect)) {
+            $pathnamehash = self::get_pluginfile_hash($url);
+        }
+
         if (!$pathnamehash) {
             return [false, false];
         }
@@ -211,6 +217,114 @@ class api {
     }
 
     /**
+     * Get the original file and H5P DB instance for a given H5P pluginfile URL. If it doesn't exist, it's not created.
+     * If the file has been added as a reference, this method will return the original linked file.
+     *
+     * @param string $url H5P pluginfile URL.
+     * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions.
+     * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
+     *     might be controlled before calling this method.
+     *
+     * @return array of [\stored_file|false, \stdClass|false, \stored_file|false]:
+     *             - \stored_file: original local file for the given url (if it has been added as a reference, this method
+     *                            will return the linked file) or false if there isn't any H5P file with this URL.
+     *             - \stdClass: an H5P object or false if there isn't any H5P with this URL.
+     *             - \stored_file: file associated to the given url (if it's different from original) or false when both files
+     *                            (original and file) are the same.
+     * @since Moodle 4.0
+     */
+    public static function get_original_content_from_pluginfile_url(string $url, bool $preventredirect = true,
+        bool $skipcapcheck = false): array {
+
+        $file = false;
+        list($originalfile, $h5p) = self::get_content_from_pluginfile_url($url, $preventredirect, $skipcapcheck);
+        if ($originalfile) {
+            if ($reference = $originalfile->get_reference()) {
+                $file = $originalfile;
+                // If the file has been added as a reference to any other file, get it.
+                $fs = new \file_storage();
+                $referenced = \file_storage::unpack_reference($reference);
+                $originalfile = $fs->get_file(
+                    $referenced['contextid'],
+                    $referenced['component'],
+                    $referenced['filearea'],
+                    $referenced['itemid'],
+                    $referenced['filepath'],
+                    $referenced['filename']
+                );
+                $h5p = self::get_content_from_pathnamehash($originalfile->get_pathnamehash());
+                if (empty($h5p)) {
+                    $h5p = false;
+                }
+            }
+        }
+
+        return [$originalfile, $h5p, $file];
+    }
+
+    /**
+     * Check if the user can edit an H5P file. It will return true in the following situations:
+     * - The user is the author of the file.
+     * - The component is different from user (i.e. private files).
+     * - If the component is contentbank, the user can edit this file (calling the ContentBank API).
+     * - If the component is mod_xxx or block_xxx, the user has the addinstance capability.
+     * - If the component implements the can_edit_content in the h5p\canedit class and the callback to this method returns true.
+     *
+     * @param \stored_file $file The H5P file to check.
+     *
+     * @return boolean Whether the user can edit or not the given file.
+     * @since Moodle 4.0
+     */
+    public static function can_edit_content(\stored_file $file): bool {
+        global $USER;
+
+        list($type, $component) = \core_component::normalize_component($file->get_component());
+
+        // Private files.
+        $currentuserisauthor = $file->get_userid() == $USER->id;
+        $isuserfile = $component === 'user';
+        if ($currentuserisauthor && $isuserfile) {
+            // The user can edit the content because it's a private user file and she is the owner.
+            return true;
+        }
+
+        // Check if the plugin where the file belongs implements the custom can_edit_content method and call it if that's the case.
+        $classname = '\\' . $file->get_component() . '\\h5p\\canedit';
+        $methodname = 'can_edit_content';
+        if (method_exists($classname, $methodname)) {
+            return $classname::{$methodname}($file);
+        }
+
+        // For mod/block files, check if the user has the addinstance capability of the component where the file belongs.
+        if ($type === 'mod' || $type === 'block') {
+            // For any other component, check whether the user can add/edit them.
+            $context = \context::instance_by_id($file->get_contextid());
+            $plugins = \core_component::get_plugin_list($type);
+            $isvalid = array_key_exists($component, $plugins);
+            if ($isvalid && has_capability("$type/$component:addinstance", $context)) {
+                // The user can edit the content because she has the capability for creating instances where the file belongs.
+                return true;
+            }
+        }
+
+        // For contentbank files, use the API to check if the user has access.
+        if ($component == 'contentbank') {
+            $cb = new \core_contentbank\contentbank();
+            $content = $cb->get_content_from_id($file->get_itemid());
+            $contenttype = $content->get_content_type_instance();
+            if ($contenttype instanceof \contenttype_h5p\contenttype) {
+                // Only H5P contenttypes should be considered here.
+                if ($contenttype->can_edit($content)) {
+                    // The user has permissions to edit the H5P in the content bank.
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Create, if it doesn't exist, the H5P DB instance id for a H5P pluginfile URL. If it exists:
      * - If the content is not the same, remove the existing content and re-deploy the H5P content again.
      * - If the content is the same, returns the H5P identifier.
@@ -220,17 +334,19 @@ class api {
      * @param factory $factory The \core_h5p\factory object
      * @param stdClass $messages The error, exception and info messages, raised while preparing and running an H5P content.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
+     * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
+     *     might be controlled before calling this method.
      *
      * @return array of [file, h5pid]:
      *             - file local file for this $url.
      *             - h5pid is the H5P identifier or false if there isn't any H5P with this URL.
      */
     public static function create_content_from_pluginfile_url(string $url, \stdClass $config, factory $factory,
-        \stdClass &$messages, bool $preventredirect = true): array {
+        \stdClass &$messages, bool $preventredirect = true, bool $skipcapcheck = false): array {
         global $USER;
 
         $core = $factory->get_core();
-        list($file, $h5p) = self::get_content_from_pluginfile_url($url, $preventredirect);
+        list($file, $h5p) = self::get_content_from_pluginfile_url($url, $preventredirect, $skipcapcheck);
 
         if (!$file) {
             $core->h5pF->setErrorMessage(get_string('h5pfilenotfound', 'core_h5p'));
@@ -248,13 +364,21 @@ class api {
         $context = \context::instance_by_id($file->get_contextid());
         if ($h5p) {
             // The H5P content has been deployed previously.
-            $displayoptions = helper::get_display_options($core, $config);
-            // Check if the user can set the displayoptions.
-            if ($displayoptions != $h5p->displayoptions && has_capability('moodle/h5p:setdisplayoptions', $context)) {
-                // If the displayoptions has changed and the user has permission to modify it, update this information in the DB.
-                $core->h5pF->updateContentFields($h5p->id, ['displayoptions' => $displayoptions]);
+
+            // If the main library for this H5P content is disabled, the content won't be displayed.
+            $mainlibrary = (object) ['id' => $h5p->mainlibraryid];
+            if (!self::is_library_enabled($mainlibrary)) {
+                $core->h5pF->setErrorMessage(get_string('mainlibrarydisabled', 'core_h5p'));
+                return [$file, false];
+            } else {
+                $displayoptions = helper::get_display_options($core, $config);
+                // Check if the user can set the displayoptions.
+                if ($displayoptions != $h5p->displayoptions && has_capability('moodle/h5p:setdisplayoptions', $context)) {
+                    // If displayoptions has changed and user has permission to modify it, update this information in DB.
+                    $core->h5pF->updateContentFields($h5p->id, ['displayoptions' => $displayoptions]);
+                }
+                return [$file, $h5p->id];
             }
-            return [$file, $h5p->id];
         } else {
             // The H5P content hasn't been deployed previously.
 
@@ -337,22 +461,28 @@ class api {
      * @param factory $factory The \core_h5p\factory object
      */
     public static function delete_content_from_pluginfile_url(string $url, factory $factory): void {
+        global $DB;
+
         // Get the H5P to delete.
-        list($file, $h5p) = self::get_content_from_pluginfile_url($url);
+        $pathnamehash = self::get_pluginfile_hash($url);
+        $h5p = $DB->get_record('h5p', ['pathnamehash' => $pathnamehash]);
         if ($h5p) {
             self::delete_content($h5p, $factory);
         }
     }
 
     /**
-     * Get the pathnamehash from an H5P internal URL.
+     * If user can access pathnamehash from an H5P internal URL.
      *
      * @param  string $url H5P pluginfile URL poiting to an H5P file.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
      *
-     * @return string|false pathnamehash for the file in the internal URL.
+     * @return bool if user can access pluginfile hash.
+     * @throws \moodle_exception
+     * @throws \coding_exception
+     * @throws \require_login_exception
      */
-    protected static function get_pluginfile_hash(string $url, bool $preventredirect = true) {
+    protected static function can_access_pluginfile_hash(string $url, bool $preventredirect = true): bool {
         global $USER, $CFG;
 
         // Decode the URL before start processing it.
@@ -365,7 +495,6 @@ class api {
         // We only need the slasharguments.
         $path = substr($path, strpos($path, '.php/') + 5);
         $parts = explode('/', $path);
-        $filename = array_pop($parts);
 
         // If the request is made by tokenpluginfile.php we need to avoid userprivateaccesskey.
         if (strpos($url, '/tokenpluginfile.php')) {
@@ -376,11 +505,6 @@ class api {
         $contextid = array_shift($parts);
         $component = array_shift($parts);
         $filearea = array_shift($parts);
-
-        // Ignore draft files, because they are considered temporary files, so shouldn't be displayed.
-        if ($filearea == 'draft') {
-            return false;
-        }
 
         // Get the context.
         try {
@@ -415,7 +539,7 @@ class api {
                     $parentcontext = $context->get_parent_context();
                     if ($parentcontext->contextlevel === CONTEXT_COURSECAT) {
                         // Check if category is visible and user can view this category.
-                        if (!core_course_category::get($parentcontext->instanceid, IGNORE_MISSING)) {
+                        if (!\core_course_category::get($parentcontext->instanceid, IGNORE_MISSING)) {
                             send_file_not_found();
                         }
                     } else if ($parentcontext->contextlevel === CONTEXT_USER && $parentcontext->instanceid != $USER->id) {
@@ -431,7 +555,7 @@ class api {
             // For CONTEXT_MODULE and CONTEXT_COURSE check if the user is enrolled in the course.
             // And for CONTEXT_MODULE has permissions view this .h5p file.
             if ($context->contextlevel == CONTEXT_MODULE ||
-                    $context->contextlevel == CONTEXT_COURSE) {
+                $context->contextlevel == CONTEXT_COURSE) {
                 // Require login to the course first (without login to the module).
                 require_course_login($course, true, null, !$preventredirect, $preventredirect);
 
@@ -446,6 +570,54 @@ class api {
                     }
                 }
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the pathnamehash from an H5P internal URL.
+     *
+     * @param  string $url H5P pluginfile URL poiting to an H5P file.
+     *
+     * @return string|false pathnamehash for the file in the internal URL.
+     *
+     * @throws \moodle_exception
+     */
+    protected static function get_pluginfile_hash(string $url) {
+
+        // Decode the URL before start processing it.
+        $url = new \moodle_url(urldecode($url));
+
+        // Remove params from the URL (such as the 'forcedownload=1'), to avoid errors.
+        $url->remove_params(array_keys($url->params()));
+        $path = $url->out_as_local_url();
+
+        // We only need the slasharguments.
+        $path = substr($path, strpos($path, '.php/') + 5);
+        $parts = explode('/', $path);
+        $filename = array_pop($parts);
+
+        // If the request is made by tokenpluginfile.php we need to avoid userprivateaccesskey.
+        if (strpos($url, '/tokenpluginfile.php')) {
+            array_shift($parts);
+        }
+
+        // Get the contextid, component and filearea.
+        $contextid = array_shift($parts);
+        $component = array_shift($parts);
+        $filearea = array_shift($parts);
+
+        // Ignore draft files, because they are considered temporary files, so shouldn't be displayed.
+        if ($filearea == 'draft') {
+            return false;
+        }
+
+        // Get the context.
+        try {
+            list($context, $course, $cm) = get_context_info_array($contextid);
+        } catch (\moodle_exception $e) {
+            throw new \moodle_exception('invalidcontextid', 'core_h5p');
         }
 
         // Some components, such as mod_page or mod_resource, add the revision to the URL to prevent caching problems.
@@ -541,5 +713,117 @@ class api {
         }
 
         return null;
+    }
+
+    /**
+     * Enable or disable a library.
+     *
+     * @param int $libraryid The id of the library to enable/disable.
+     * @param bool $isenabled True if the library should be enabled; false otherwise.
+     */
+    public static function set_library_enabled(int $libraryid, bool $isenabled): void {
+        global $DB;
+
+        $library = $DB->get_record('h5p_libraries', ['id' => $libraryid], '*', MUST_EXIST);
+        if ($library->runnable) {
+            // For now, only runnable libraries can be enabled/disabled.
+            $record = [
+                'id' => $libraryid,
+                'enabled' => $isenabled,
+            ];
+            $DB->update_record('h5p_libraries', $record);
+        }
+    }
+
+    /**
+     * Check whether a library is enabled or not. When machinename is passed, it will return false if any of the versions
+     * for this machinename is disabled.
+     * If the library doesn't exist, it will return true.
+     *
+     * @param \stdClass $librarydata Supported fields for library: 'id' and 'machichename'.
+     * @return bool
+     * @throws \moodle_exception
+     */
+    public static function is_library_enabled(\stdClass $librarydata): bool {
+        global $DB;
+
+        $params = [];
+        if (property_exists($librarydata, 'machinename')) {
+            $params['machinename'] = $librarydata->machinename;
+        }
+        if (property_exists($librarydata, 'id')) {
+            $params['id'] = $librarydata->id;
+        }
+
+        if (empty($params)) {
+            throw new \moodle_exception("Missing 'machinename' or 'id' in librarydata parameter");
+        }
+
+        $libraries = $DB->get_records('h5p_libraries', $params);
+
+        // If any of the libraries with these values have been disabled, return false.
+        foreach ($libraries as $id => $library) {
+            if (!$library->enabled) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check whether an H5P package is valid or not.
+     *
+     * @param \stored_file $file The file with the H5P content.
+     * @param bool $onlyupdatelibs Whether new libraries can be installed or only the existing ones can be updated
+     * @param bool $skipcontent Should the content be skipped (so only the libraries will be saved)?
+     * @param factory|null $factory The \core_h5p\factory object
+     * @param bool $deletefiletree Should the temporary files be deleted before returning?
+     * @return bool True if the H5P file is valid (expected format, valid libraries...); false otherwise.
+     */
+    public static function is_valid_package(\stored_file $file, bool $onlyupdatelibs, bool $skipcontent = false,
+            ?factory $factory = null, bool $deletefiletree = true): bool {
+
+        // This may take a long time.
+        \core_php_time_limit::raise();
+
+        $isvalid = false;
+
+        if (empty($factory)) {
+            $factory = new factory();
+        }
+        $core = $factory->get_core();
+        $h5pvalidator = $factory->get_validator();
+
+        // Set the H5P file path.
+        $core->h5pF->set_file($file);
+        $path = $core->fs->getTmpPath();
+        $core->h5pF->getUploadedH5pFolderPath($path);
+        // Add manually the extension to the file to avoid the validation fails.
+        $path .= '.h5p';
+        $core->h5pF->getUploadedH5pPath($path);
+        // Copy the .h5p file to the temporary folder.
+        $file->copy_content_to($path);
+
+        if ($h5pvalidator->isValidPackage($skipcontent, $onlyupdatelibs)) {
+            if ($skipcontent) {
+                $isvalid = true;
+            } else if (!empty($h5pvalidator->h5pC->mainJsonData['mainLibrary'])) {
+                $mainlibrary = (object) ['machinename' => $h5pvalidator->h5pC->mainJsonData['mainLibrary']];
+                if (self::is_library_enabled($mainlibrary)) {
+                    $isvalid = true;
+                } else {
+                    // If the main library of the package is disabled, the H5P content will be considered invalid.
+                    $core->h5pF->setErrorMessage(get_string('mainlibrarydisabled', 'core_h5p'));
+                }
+            }
+        }
+
+        if ($deletefiletree) {
+            // Remove temp content folder.
+            H5PCore::deleteFileTree($path);
+        }
+
+        return $isvalid;
     }
 }

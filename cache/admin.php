@@ -65,7 +65,7 @@ $title = array_key_exists('title', $forminfo) ? $forminfo['title'] : new lang_st
 
 $PAGE->set_title($title);
 $PAGE->set_heading($SITE->fullname);
-/* @var core_cache_renderer $renderer */
+/** @var \core_cache\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('core_cache');
 
 echo $renderer->header();

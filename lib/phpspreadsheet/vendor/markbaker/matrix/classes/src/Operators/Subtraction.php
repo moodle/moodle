@@ -14,7 +14,7 @@ class Subtraction extends Operator
      * @throws Exception If the provided argument is not appropriate for the operation
      * @return $this The operation object, allowing multiple subtractions to be chained
      **/
-    public function execute($value)
+    public function execute($value): Operator
     {
         if (is_array($value)) {
             $value = new Matrix($value);
@@ -35,7 +35,7 @@ class Subtraction extends Operator
      * @param mixed $value The numeric value to subtracted from the current base value
      * @return $this The operation object, allowing multiple additions to be chained
      **/
-    protected function subtractScalar($value)
+    protected function subtractScalar($value): Operator
     {
         for ($row = 0; $row < $this->rows; ++$row) {
             for ($column = 0; $column < $this->columns; ++$column) {
@@ -53,7 +53,7 @@ class Subtraction extends Operator
      * @return $this The operation object, allowing multiple subtractions to be chained
      * @throws Exception If the provided argument is not appropriate for the operation
      **/
-    protected function subtractMatrix(Matrix $value)
+    protected function subtractMatrix(Matrix $value): Operator
     {
         $this->validateMatchingDimensions($value);
 

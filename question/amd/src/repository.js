@@ -16,9 +16,9 @@
 /**
  * A javascript module to handle question ajax actions.
  *
+ * @deprecated since Moodle 4.0
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  * @module     core_question/repository
- * @class      repository
- * @package    core_question
  * @copyright  2017 Simey Lameze <lameze@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,10 +28,14 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
      * Submit the form data for the question tags form.
      *
      * @method submitTagCreateUpdateForm
+     * @param  {number} questionId
+     * @param  {number} contextId
      * @param {string} formdata The URL encoded values from the form
-     * @return {promise}
+     * @returns {promise}
      */
     var submitTagCreateUpdateForm = function(questionId, contextId, formdata) {
+        window.console.warn('warn: The core_question/repository has been deprecated.' +
+            'Please use qbank_tagquestion/repository instead.');
         var request = {
             methodname: 'core_question_submit_tags_form',
             args: {

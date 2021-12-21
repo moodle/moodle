@@ -23,9 +23,9 @@ Feature: Text area with enable/disable function.
   @javascript
   Scenario: Check disable Text area editor.
     When I set the field "mycontrol" to "Disable"
-    Then the "readonly" attribute of "textarea#id_myeditor" "css_element" should contain "readonly"
+    Then the "readonly" attribute of "textarea#id_myeditor" "css_element" should be set
 
   @javascript
   Scenario: Check enable Text area editor.
     When I set the field "mycontrol" to "Enable"
-    Then "textarea#id_myeditor[readonly]" "css_element" should not exist
+    Then the "readonly" attribute of "textarea#id_myeditor" "css_element" should not be set

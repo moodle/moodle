@@ -107,4 +107,19 @@ class qtype_truefalse_question_test extends advanced_testcase {
                 $tf->id => question_classified_response::no_response()),
                 $tf->classify_response(array()));
     }
+
+    /**
+     * test_get_question_definition_for_external_rendering
+     */
+    public function test_get_question_definition_for_external_rendering() {
+        $this->resetAfterTest();
+
+        $question = test_question_maker::make_question('truefalse', 'true');
+        $question->start_attempt(new question_attempt_step(), 1);
+        $qa = test_question_maker::get_a_qa($question);
+        $displayoptions = new question_display_options();
+
+        $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
+        $this->assertNull($options);
+    }
 }

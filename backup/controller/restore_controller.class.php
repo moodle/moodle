@@ -350,6 +350,15 @@ class restore_controller extends base_controller {
         }
     }
 
+    /**
+     * For debug only. Get a simple test display of all the settings.
+     *
+     * @return string
+     */
+    public function debug_display_all_settings_values(): string {
+        return $this->get_plan()->debug_display_all_settings_values();
+    }
+
     public function get_info() {
         return $this->info;
     }
@@ -369,6 +378,7 @@ class restore_controller extends base_controller {
             $options = array();
             $options['keep_roles_and_enrolments'] = $this->get_setting_value('keep_roles_and_enrolments');
             $options['keep_groups_and_groupings'] = $this->get_setting_value('keep_groups_and_groupings');
+            $options['userid'] = $this->userid;
             restore_dbops::delete_course_content($this->get_courseid(), $options);
         }
         // If this is not a course restore or single activity restore (e.g. duplicate), inform the plan we are not

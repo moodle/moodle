@@ -646,8 +646,8 @@ class blog_listing {
         if (!$userid) {
             $userid = $USER->id;
         }
-
-        $allnamefields = \user_picture::fields('u', null, 'useridalias');
+        $userfieldsapi = \core_user\fields::for_userpic();
+        $allnamefields = $userfieldsapi->get_sql('u', false, '', 'useridalias', false)->selects;
         // The query used to locate blog entries is complicated.  It will be built from the following components:
         $requiredfields = "p.*, $allnamefields";  // The SELECT clause.
         $tables = array('p' => 'post', 'u' => 'user');   // Components of the FROM clause (table_id => table_name).

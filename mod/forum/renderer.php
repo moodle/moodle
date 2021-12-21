@@ -125,7 +125,8 @@ class mod_forum_renderer extends plugin_renderer_base {
             $output .= $this->output->heading(get_string("invalidmodule", "error"));
         } else {
             $cm = $modinfo->instances['forum'][$forum->id];
-            $canviewemail = in_array('email', get_extra_user_fields(context_module::instance($cm->id)));
+            // TODO Does not support custom user profile fields (MDL-70456).
+            $canviewemail = in_array('email', \core_user\fields::get_identity_fields(context_module::instance($cm->id), false));
             $strparams = new stdclass();
             $strparams->name = format_string($forum->name);
             $strparams->count = count($users);
@@ -233,10 +234,35 @@ class mod_forum_renderer extends plugin_renderer_base {
      * Render quick search form.
      *
      * @param \mod_forum\output\quick_search_form $form The renderable.
-     * @return string
+     * @return string rendered HTML string from the template.
      */
     public function render_quick_search_form(\mod_forum\output\quick_search_form $form) {
-        return $this->render_from_template('mod_forum/quick_search_form', $form->export_for_template($this));
+        if (strpos($this->page->url->get_path(), "index.php")) {
+            return $this->render_from_template('mod_forum/quick_search_form', $form->export_for_template($this));
+        }
+
+        return $this->render_from_template('mod_forum/forum_new_discussion_actionbar', $form->export_for_template($this));
+    }
+
+    /**
+     * Render the view action area.
+     *
+     * @param \mod_forum\output\forum_actionbar $actionbar forum_actionbar object.
+     * @return string rendered HTML string
+     */
+    public function render_activity_actionbar(\mod_forum\output\forum_actionbar $actionbar): string {
+        return $this->render_from_template('mod_forum/forum_actionbar', $actionbar->export_for_template($this));
+    }
+
+    /**
+     * Render the subscription action area.
+     *
+     * @param \mod_forum\output\subscription_actionbar $subscriptionactionbar subscription_actionbar object.
+     * @return bool|string rendered HTML string.
+     */
+    public function subscription_actionbar(\mod_forum\output\subscription_actionbar $subscriptionactionbar): string {
+        return $this->render_from_template('mod_forum/forum_subscription_action',
+            $subscriptionactionbar->export_for_template($this));
     }
 
     /**

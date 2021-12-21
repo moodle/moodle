@@ -1,0 +1,86 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Helper class for adding/editing a question.
+ *
+ * This code is based on question/editlib.php by Martin Dougiamas.
+ *
+ * @package    qbank_editquestion
+ * @copyright  2021 Catalyst IT Australia Pty Ltd
+ * @author     Safat Shahin <safatshahin@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace qbank_editquestion;
+
+/**
+ * Class editquestion_helper for methods related to add/edit/copy
+ *
+ * @package    qbank_editquestion
+ * @copyright  2021 Catalyst IT Australia Pty Ltd
+ * @author     Safat Shahin <safatshahin@catalyst-au.net>
+ */
+class editquestion_helper {
+
+    /**
+     * Print a form to let the user choose which question type to add.
+     * When the form is submitted, it goes to the question.php script.
+     *
+     * @param array|null $hiddenparams hidden parameters to add to the form, in addition to
+     *      the qtype radio buttons.
+     * @param array|null $allowedqtypes optional list of qtypes that are allowed. If given, only
+     *      those qtypes will be shown. Example value array('description', 'multichoice').
+     * @param bool $enablejs
+     * @return bool|string
+     */
+    public static function print_choose_qtype_to_add_form(array $hiddenparams, array $allowedqtypes = null, $enablejs = true) {
+        global $PAGE;
+
+        $chooser = \qbank_editquestion\qbank_chooser::get($PAGE->course, $hiddenparams, $allowedqtypes);
+        $renderer = $PAGE->get_renderer('qbank_editquestion');
+
+        return $renderer->render($chooser);
+    }
+
+    /**
+     * Print a button for creating a new question. This will open question/addquestion.php,
+     * which in turn goes to question/question.php before getting back to $params['returnurl']
+     * (by default the question bank screen).
+     *
+     * @param int $categoryid The id of the category that the new question should be added to.
+     * @param array $params Other paramters to add to the URL. You need either $params['cmid'] or
+     *      $params['courseid'], and you should probably set $params['returnurl']
+     * @param bool $canadd the text to display on the button.
+     * @param string $tooltip a tooltip to add to the button (optional).
+     * @param bool $disabled if true, the button will be disabled.
+     */
+    public static function create_new_question_button($categoryid, $params, $canadd, $tooltip = '', $disabled = false) {
+        global $PAGE, $OUTPUT;
+
+        $addquestiondisplay = array();
+        $addquestiondisplay['canadd'] = $canadd;
+        if ($canadd) {
+            $params['category'] = $categoryid;
+            $url = new \moodle_url('/question/bank/editquestion/addquestion.php', $params);
+            $addquestiondisplay['buttonhtml'] = $OUTPUT->single_button($url,
+                    get_string('createnewquestion', 'question'),
+                    'get', array('disabled' => $disabled, 'title' => $tooltip));
+            $addquestiondisplay['qtypeform'] = self::print_choose_qtype_to_add_form(array());
+        }
+        return $PAGE->get_renderer('qbank_editquestion')->render_create_new_question_button($addquestiondisplay);
+    }
+}

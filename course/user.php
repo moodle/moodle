@@ -55,7 +55,14 @@ if ($mode === 'coursecompletions' or $mode === 'coursecompletion') {
 $coursecontext   = context_course::instance($course->id);
 $personalcontext = context_user::instance($user->id);
 
-$PAGE->set_context($personalcontext);
+if ($id == SITEID) {
+    $PAGE->set_context($personalcontext);
+    $PAGE->set_heading(fullname($user));
+} else {
+    $PAGE->set_context($coursecontext);
+    $PAGE->set_secondary_active_tab('participants');
+    $PAGE->set_heading($course->fullname);
+}
 
 $PAGE->set_url('/course/user.php', array('id'=>$id, 'user'=>$user->id, 'mode'=>$mode));
 
@@ -125,7 +132,6 @@ $stractivityreport = get_string("activityreport");
 $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
 $PAGE->set_title("$course->shortname: $stractivityreport ($mode)");
-$PAGE->set_heading(fullname($user));
 
 switch ($mode) {
     case "grade":
@@ -166,6 +172,19 @@ switch ($mode) {
         }
         echo $OUTPUT->header();
 
+        if ($course->id !== SITEID) {
+            $backurl = new moodle_url('/user/view.php', ['id' => $user->id, 'course' => $course->id]);
+            echo $OUTPUT->single_button($backurl, get_string('back'), 'get', ['class' => 'mb-3']);
+            $userheading = array(
+                'heading' => fullname($user, has_capability('moodle/site:viewfullnames', $PAGE->context)),
+                'user' => $user,
+                'usercontext' => $personalcontext,
+            );
+            echo $OUTPUT->context_header($userheading, 2);
+
+            echo $OUTPUT->heading(get_string('grades', 'moodle'), 2, 'main mt-4 mb-4');
+        }
+
         if (empty($CFG->grade_profilereport) or !file_exists($CFG->dirroot.'/grade/report/'.$CFG->grade_profilereport.'/lib.php')) {
             $CFG->grade_profilereport = 'user';
         }
@@ -179,7 +198,6 @@ switch ($mode) {
         }
         break;
 
-        break;
     default:
         // It's unlikely to reach this piece of code, as the mode is never empty and it sets mode as grade in most of the cases.
         // Display the page header to avoid breaking the navigation. A course/user.php review will be done in MDL-49939.

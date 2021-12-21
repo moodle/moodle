@@ -93,7 +93,7 @@ class BorderPart
      */
     public function setName($name)
     {
-        if (!in_array($name, self::$allowedNames)) {
+        if (!\in_array($name, self::$allowedNames)) {
             throw new InvalidNameException($name);
         }
         $this->name = $name;
@@ -114,7 +114,7 @@ class BorderPart
      */
     public function setStyle($style)
     {
-        if (!in_array($style, self::$allowedStyles)) {
+        if (!\in_array($style, self::$allowedStyles)) {
             throw new InvalidStyleException($style);
         }
         $this->style = $style;
@@ -152,7 +152,7 @@ class BorderPart
      */
     public function setWidth($width)
     {
-        if (!in_array($width, self::$allowedWidths)) {
+        if (!\in_array($width, self::$allowedWidths)) {
             throw new InvalidWidthException($width);
         }
         $this->width = $width;

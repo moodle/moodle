@@ -18,7 +18,6 @@
  * online users block.
  *
  * @module     block_online_users/change_user_visibility
- * @package    block_online_users
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

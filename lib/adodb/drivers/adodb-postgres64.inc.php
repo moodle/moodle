@@ -1,6 +1,6 @@
 <?php
 /*
- @version   v5.20.16  12-Jan-2020
+ @version   v5.21.0  2021-02-27
  @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -114,6 +114,7 @@ class ADODB_postgres64 extends ADOConnection{
 	var $_bindInputArray = false; // requires postgresql 7.3+ and ability to modify database
 	var $disableBlobs = false; // set to true to disable blob checking, resulting in 2-5% improvement in performance.
 
+	/** @var int $_pnum Number of the last assigned query parameter {@see param()} */
 	var $_pnum = 0;
 
 	// The last (fmtTimeStamp is not entirely correct:
@@ -124,19 +125,40 @@ class ADODB_postgres64 extends ADOConnection{
 	// to know what the concequences are. The other values are correct (wheren't in 0.94)
 	// -- Freek Dijkstra
 
-	function __construct()
+	/**
+	 * Retrieve Server information.
+	 * In addition to server version and description, the function also returns
+	 * the client version.
+	 * @param bool $detailed If true, retrieve detailed version string (executes
+	 *                       a SQL query) in addition to the version number
+	 * @return array|bool Server info or false if version could not be retrieved
+	 *                    e.g. if there is no active connection
+	 */
+	function ServerInfo($detailed = true)
 	{
-		// changes the metaColumnsSQL, adds columns: attnum[6]
-	}
+		if (empty($this->version['version'])) {
+			// We don't have a connection, so we can't retrieve server info
+			if (!$this->_connectionID) {
+				return false;
+			}
 
-	function ServerInfo()
-	{
-		if (isset($this->version)) return $this->version;
+			$version = pg_version($this->_connectionID);
+			$this->version = array(
+				// If PHP has been compiled with PostgreSQL 7.3 or lower, then
+				// server version is not set so we use pg_parameter_status()
+				// which includes logic to obtain values server_version
+				'version' => isset($version['server'])
+					? $version['server']
+					: pg_parameter_status($this->_connectionID, 'server_version'),
+				'client' => $version['client'],
+				'description' => null,
+			);
+		}
+		if ($detailed && $this->version['description'] === null) {
+			$this->version['description'] = $this->GetOne('select version()');
+		}
 
-		$arr['description'] = $this->GetOne("select version()");
-		$arr['version'] = ADOConnection::_findvers($arr['description']);
-		$this->version = $arr;
-		return $arr;
+		return $this->version;
 	}
 
 	function IfNull( $field, $ifNull )
@@ -165,7 +187,7 @@ class ADODB_postgres64 extends ADOConnection{
 	function _insertid($table,$column)
 	{
 		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
-		$oid = pg_getlastoid($this->_resultid);
+		$oid = pg_last_oid($this->_resultid);
 		// to really return the id, we need the table and column-name, else we can only return the oid != id
 		return empty($table) || empty($column) ? $oid : $this->GetOne("SELECT $column FROM $table WHERE oid=".(int)$oid);
 	}
@@ -243,29 +265,30 @@ class ADODB_postgres64 extends ADOConnection{
 	}
 
 
-	// if magic quotes disabled, use pg_escape_string()
-	function qstr($s,$magic_quotes=false)
+	/**
+	 * Quotes a string to be sent to the database.
+	 *
+	 * Relies on pg_escape_string()
+	 * @link https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:qstr
+	 *
+	 * @param string $s            The string to quote
+	 * @param bool   $magic_quotes This param is not used since 5.21.0.
+	 *                             It remains for backwards compatibility.
+	 *
+	 * @return string Quoted string
+	 */
+	function qStr($s, $magic_quotes=false)
 	{
-		if (is_bool($s)) return $s ? 'true' : 'false';
-
-		if (!$magic_quotes) {
-			if (ADODB_PHPVER >= 0x5200 && $this->_connectionID) {
-				return  "'".pg_escape_string($this->_connectionID,$s)."'";
-			}
-			if (ADODB_PHPVER >= 0x4200) {
-				return  "'".pg_escape_string($s)."'";
-			}
-			if ($this->replaceQuote[0] == '\\'){
-				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\\\000"),$s);
-			}
-			return  "'".str_replace("'",$this->replaceQuote,$s)."'";
+		if (is_bool($s)) {
+			return $s ? 'true' : 'false';
 		}
 
-		// undo magic quotes for "
-		$s = str_replace('\\"','"',$s);
-		return "'$s'";
+		if ($this->_connectionID) {
+			return "'" . pg_escape_string($this->_connectionID, $s) . "'";
+		} else {
+			return "'" . pg_escape_string($s) . "'";
+		}
 	}
-
 
 
 	// Format date column in sql string given an input format that understands Y M D
@@ -393,7 +416,7 @@ class ADODB_postgres64 extends ADOConnection{
 	}
 
 	/*
-		Hueristic - not guaranteed to work.
+		Heuristic - not guaranteed to work.
 	*/
 	function GuessOID($oid)
 	{
@@ -425,29 +448,25 @@ class ADODB_postgres64 extends ADOConnection{
 		}
 		if (!$maxsize) $maxsize = $this->maxblobsize;
 		$realblob = @pg_lo_read($fd,$maxsize);
-		@pg_loclose($fd);
+		@pg_lo_close($fd);
 		if ($hastrans) pg_query($this->_connectionID,'commit');
 		return $realblob;
 	}
 
-	/*
-		See http://www.postgresql.org/idocs/index.php?datatype-binary.html
-
-		NOTE: SQL string literals (input strings) must be preceded with two backslashes
-		due to the fact that they must pass through two parsers in the PostgreSQL
-		backend.
-	*/
+	/**
+	 * Encode binary value prior to DB storage.
+	 *
+	 * See https://www.postgresql.org/docs/current/static/datatype-binary.html
+	 *
+	 * NOTE: SQL string literals (input strings) must be preceded with two
+	 * backslashes due to the fact that they must pass through two parsers in
+	 * the PostgreSQL backend.
+	 *
+	 * @param string $blob
+	 */
 	function BlobEncode($blob)
 	{
-		if (ADODB_PHPVER >= 0x5200) return pg_escape_bytea($this->_connectionID, $blob);
-		if (ADODB_PHPVER >= 0x4200) return pg_escape_bytea($blob);
-
-		/*92=backslash, 0=null, 39=single-quote*/
-		$badch = array(chr(92),chr(0),chr(39)); # \  null  '
-		$fixch = array('\\\\134','\\\\000','\\\\047');
-		return adodb_str_replace($badch,$fixch,$blob);
-
-		// note that there is a pg_escape_bytea function only for php 4.2.0 or later
+		return pg_escape_bytea($this->_connectionID, $blob);
 	}
 
 	// assumes bytea for blob, and varchar for clob
@@ -492,7 +511,7 @@ class ADODB_postgres64 extends ADOConnection{
 
 	// for schema support, pass in the $table param "$schema.$tabname".
 	// converts field names to lowercase, $upper is ignored
-	// see http://phplens.com/lens/lensforum/msgs.php?id=14018 for more info
+	// see PHPLens Issue No: 14018 for more info
 	function MetaColumns($table,$normalize=true)
 	{
 		global $ADODB_FETCH_MODE;
@@ -606,15 +625,18 @@ class ADODB_postgres64 extends ADOConnection{
 
 	}
 
-	function Param($name,$type='C')
+	function param($name, $type='C')
 	{
-		if ($name) {
-			$this->_pnum += 1;
-		} else {
-			// Reset param num if $name is false
-			$this->_pnum = 1;
+		if (!$name) {
+			// Reset parameter number if $name is falsy
+			$this->_pnum = 0;
+			if ($name === false) {
+				// and don't return placeholder if false (see #380)
+				return '';
+			}
 		}
-		return '$'.$this->_pnum;
+
+		return '$' . ++$this->_pnum;
 	}
 
 	function MetaIndexes ($table, $primary = FALSE, $owner = false)
@@ -729,9 +751,9 @@ class ADODB_postgres64 extends ADOConnection{
 		if ($this->_connectionID === false) return false;
 		$this->Execute("set datestyle='ISO'");
 
-		$info = $this->ServerInfo();
-		$this->pgVersion = (float) substr($info['version'],0,3);
-		if ($this->pgVersion >= 7.1) { // good till version 999
+		$info = $this->ServerInfo(false);
+
+		if (version_compare($info['version'], '7.1', '>=')) {
 			$this->_nestedSQL = true;
 		}
 
@@ -739,8 +761,11 @@ class ADODB_postgres64 extends ADOConnection{
 		# PHP does not handle 'hex' properly ('x74657374' is returned as 't657374')
 		# https://bugs.php.net/bug.php?id=59831 states this is in fact not a bug,
 		# so we manually set bytea_output
-		if ( !empty($this->connection->noBlobs) && version_compare($info['version'], '9.0', '>=')) {
-			$this->Execute('set bytea_output=escape');
+		if (!empty($this->connection->noBlobs) && version_compare($info['version'], '9.0', '>=')) {
+			$version = pg_version($this->connectionID);
+			if (version_compare($info['client'], '9.2', '<')) {
+				$this->Execute('set bytea_output=escape');
+			}
 		}
 
 		return true;
@@ -848,20 +873,23 @@ class ADODB_postgres64 extends ADOConnection{
 	/*	Returns: the last error message from previous database operation	*/
 	function ErrorMsg()
 	{
-		if ($this->_errorMsg !== false) return $this->_errorMsg;
-		if (ADODB_PHPVER >= 0x4300) {
-			if (!empty($this->_resultid)) {
-				$this->_errorMsg = @pg_result_error($this->_resultid);
-				if ($this->_errorMsg) return $this->_errorMsg;
-			}
-
-			if (!empty($this->_connectionID)) {
-				$this->_errorMsg = @pg_last_error($this->_connectionID);
-			} else $this->_errorMsg = $this->_errconnect();
-		} else {
-			if (empty($this->_connectionID)) $this->_errconnect();
-			else $this->_errorMsg = @pg_errormessage($this->_connectionID);
+		if ($this->_errorMsg !== false) {
+			return $this->_errorMsg;
 		}
+		
+		if (!empty($this->_resultid)) {
+			$this->_errorMsg = @pg_result_error($this->_resultid);
+			if ($this->_errorMsg) {
+				return $this->_errorMsg;
+			}
+		}
+
+		if (!empty($this->_connectionID)) {
+			$this->_errorMsg = @pg_last_error($this->_connectionID);
+		} else {
+			$this->_errorMsg = $this->_errconnect();
+		}
+
 		return $this->_errorMsg;
 	}
 
@@ -986,7 +1014,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		$o= new ADOFieldObject();
 		$o->name = @pg_field_name($this->_queryID,$off);
 		$o->type = @pg_field_type($this->_queryID,$off);
-		$o->max_length = @pg_fieldsize($this->_queryID,$off);
+		$o->max_length = @pg_field_size($this->_queryID,$off);
 		return $o;
 	}
 
@@ -998,7 +1026,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	function _decode($blob)
 	{
 		if ($blob === NULL) return NULL;
-//		eval('$realblob="'.adodb_str_replace(array('"','$'),array('\"','\$'),$blob).'";');
+//		eval('$realblob="'.str_replace(array('"','$'),array('\"','\$'),$blob).'";');
 		return pg_unescape_bytea($blob);
 	}
 
@@ -1049,7 +1077,12 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 
 	function _close()
 	{
-		return @pg_free_result($this->_queryID);
+		if (!is_resource($this->_queryID)
+			|| get_resource_type($this->_queryID) != 'pgsql result'
+		) {
+			return true;
+		}
+		return pg_free_result($this->_queryID);
 	}
 
 	function MetaType($t,$len=-1,$fieldobj=false)
@@ -1068,6 +1101,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 				case 'NAME':
 				case 'BPCHAR':
 				case '_VARCHAR':
+				case 'CIDR':
 				case 'INET':
 				case 'MACADDR':
 					if ($len <= $this->blobSize) return 'C';
@@ -1111,7 +1145,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 					return 'R';
 
 				default:
-					return 'N';
+					return ADODB_DEFAULT_METATYPE;
 			}
 	}
 

@@ -55,14 +55,38 @@ define('UU_PWRESET_ALL', 2);
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class uu_progress_tracker {
-    private $_row;
+    /** @var array */
+    protected $_row;
 
     /**
      * The columns shown on the table.
      * @var array
      */
-    public $columns = array('status', 'line', 'id', 'username', 'firstname', 'lastname', 'email',
-                            'password', 'auth', 'enrolments', 'suspended', 'theme', 'deleted');
+    public $columns = [];
+    /** @var array column headers */
+    protected $headers = [];
+
+    /**
+     * uu_progress_tracker constructor.
+     */
+    public function __construct() {
+        $this->headers = [
+            'status' => get_string('status'),
+            'line' => get_string('uucsvline', 'tool_uploaduser'),
+            'id' => 'ID',
+            'username' => get_string('username'),
+            'firstname' => get_string('firstname'),
+            'lastname' => get_string('lastname'),
+            'email' => get_string('email'),
+            'password' => get_string('password'),
+            'auth' => get_string('authentication'),
+            'enrolments' => get_string('enrolments', 'enrol'),
+            'suspended' => get_string('suspended', 'auth'),
+            'theme' => get_string('theme'),
+            'deleted' => get_string('delete'),
+        ];
+        $this->columns = array_keys($this->headers);
+    }
 
     /**
      * Print table header.
@@ -72,19 +96,9 @@ class uu_progress_tracker {
         $ci = 0;
         echo '<table id="uuresults" class="generaltable boxaligncenter flexible-wrap" summary="'.get_string('uploadusersresult', 'tool_uploaduser').'">';
         echo '<tr class="heading r0">';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('status').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('uucsvline', 'tool_uploaduser').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">ID</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('username').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('firstname').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('lastname').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('email').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('password').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('authentication').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('enrolments', 'enrol').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('suspended', 'auth').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('theme').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('delete').'</th>';
+        foreach ($this->headers as $key => $header) {
+            echo '<th class="header c'.$ci++.'" scope="col">'.$header.'</th>';
+        }
         echo '</tr>';
         $this->_row = null;
     }
@@ -401,17 +415,17 @@ function uu_allowed_sysroles_cache() {
  * @return stdClass pre-processed custom profile data
  */
 function uu_pre_process_custom_profile_data($data) {
-    global $CFG, $DB;
+    global $CFG;
+    require_once($CFG->dirroot . '/user/profile/lib.php');
+    $fields = profile_get_user_fields_with_data(0);
+
     // find custom profile fields and check if data needs to converted.
     foreach ($data as $key => $value) {
         if (preg_match('/^profile_field_/', $key)) {
             $shortname = str_replace('profile_field_', '', $key);
-            if ($fields = $DB->get_records('user_info_field', array('shortname' => $shortname))) {
-                foreach ($fields as $field) {
-                    require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-                    $newfield = 'profile_field_'.$field->datatype;
-                    $formfield = new $newfield($field->id, $data->id);
-                    if (method_exists($formfield, 'convert_external_data')) {
+            if ($fields) {
+                foreach ($fields as $formfield) {
+                    if ($formfield->get_shortname() === $shortname && method_exists($formfield, 'convert_external_data')) {
                         $data->$key = $formfield->convert_external_data($value);
                     }
                 }
@@ -429,7 +443,9 @@ function uu_pre_process_custom_profile_data($data) {
  * @return bool true if no error else false
  */
 function uu_check_custom_profile_data(&$data) {
-    global $CFG, $DB;
+    global $CFG;
+    require_once($CFG->dirroot.'/user/profile/lib.php');
+
     $noerror = true;
     $testuserid = null;
 
@@ -438,15 +454,13 @@ function uu_check_custom_profile_data(&$data) {
             $testuserid = $result[1];
         }
     }
+    $profilefields = profile_get_user_fields_with_data(0);
     // Find custom profile fields and check if data needs to converted.
     foreach ($data as $key => $value) {
         if (preg_match('/^profile_field_/', $key)) {
             $shortname = str_replace('profile_field_', '', $key);
-            if ($fields = $DB->get_records('user_info_field', array('shortname' => $shortname))) {
-                foreach ($fields as $field) {
-                    require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-                    $newfield = 'profile_field_'.$field->datatype;
-                    $formfield = new $newfield($field->id, 0);
+            foreach ($profilefields as $formfield) {
+                if ($formfield->get_shortname() === $shortname) {
                     if (method_exists($formfield, 'convert_external_data') &&
                             is_null($formfield->convert_external_data($value))) {
                         $data['status'][] = get_string('invaliduserfield', 'error', $shortname);

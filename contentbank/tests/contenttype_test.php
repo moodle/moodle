@@ -40,7 +40,7 @@ use contenttype_testable\contenttype as contenttype;
  * @coversDefaultClass \core_contentbank\contenttype
  *
  */
-class core_contenttype_contenttype_testcase extends \advanced_testcase {
+class contenttype_test extends \advanced_testcase {
 
     /** @var int Identifier for the manager role. */
     protected $managerroleid;
@@ -112,7 +112,7 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
         $record->name = 'New content';
         $content = $testable->create_content($record);
         $icon = $testable->get_icon($content);
-        $this->assertContains('archive', $icon);
+        $this->assertStringContainsString('archive', $icon);
     }
 
     /**
@@ -464,6 +464,7 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
             'Too long name' => [str_repeat('a', 300), str_repeat('a', 255), true],
             'Empty name' => ['', 'Test content ', false],
             'Blanks only' => ['  ', 'Test content ', false],
+            'Zero name' => ['0', '0', true],
         ];
     }
 
@@ -649,7 +650,7 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
         $contenttype = new contenttype($systemcontext);
         $url = $contenttype->get_download_url($content);
         $this->assertNotEmpty($url);
-        $this->assertContains($filename, $url);
+        $this->assertStringContainsString($filename, $url);
 
         // Check the URL is empty when the content hasn't any file.
         $record = new stdClass();

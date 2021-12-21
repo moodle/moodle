@@ -77,9 +77,12 @@ class recent_form extends moodleform {
             $options[0] = get_string('allparticipants');
             $options[$CFG->siteguest] = get_string('guestuser');
 
+            $userfieldsapi = \core_user\fields::for_userpic();
+            $ufields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+
             if (isset($groupoptions[0])) {
                 // can see all enrolled users
-                if ($enrolled = get_enrolled_users($context, null, 0, user_picture::fields('u'))) {
+                if ($enrolled = get_enrolled_users($context, null, 0, $ufields)) {
                     foreach ($enrolled as $euser) {
                         $options[$euser->id] = fullname($euser, $viewfullnames);
                     }
@@ -87,7 +90,7 @@ class recent_form extends moodleform {
             } else {
                 // can see users from some groups only
                 foreach ($groupoptions as $groupid=>$unused) {
-                    if ($enrolled = get_enrolled_users($context, null, $groupid, user_picture::fields('u'))) {
+                    if ($enrolled = get_enrolled_users($context, null, $groupid, $ufields)) {
                         foreach ($enrolled as $euser) {
                             if (!array_key_exists($euser->id, $options)) {
                                 $options[$euser->id] = fullname($euser, $viewfullnames);

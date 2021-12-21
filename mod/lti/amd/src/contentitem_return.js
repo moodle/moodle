@@ -17,8 +17,6 @@
  * Processes the result of LTI tool creation from a Content-Item message type.
  *
  * @module     mod_lti/contentitem_return
- * @class      contentitem_return
- * @package    mod_lti
  * @copyright  2016 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2

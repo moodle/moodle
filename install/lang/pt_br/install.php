@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -37,6 +36,7 @@ $string['chooselanguagesub'] = 'Por favor, escolha o idioma para a instalação.
 $string['clialreadyconfigured'] = 'Arquivo config.php já existe. Por favor, use admin/cli/install_database.php para instalar o Moodle neste site.';
 $string['clialreadyinstalled'] = 'Arquivo config.php já existe. Por favor use admin/cli/install_database.php para atualizar o Moodle neste site.';
 $string['cliinstallheader'] = 'Programa de instalação por linha de comando do Moodle {$a}';
+$string['clitablesexist'] = 'O banco de dados possui tabelas, a instalação por CLI não pode continuar.';
 $string['databasehost'] = 'Host do banco de dados';
 $string['databasename'] = 'Nome do banco de dados';
 $string['databasetypehead'] = 'Escolha o driver do banco de dados';
@@ -52,16 +52,16 @@ $string['installation'] = 'Instalação';
 $string['langdownloaderror'] = 'Infelizmente não foi possível fazer download do idioma "{$a}". O processo de instalação continuará em Inglês.';
 $string['memorylimithelp'] = '<p>O limite de memória do PHP configurado atualmente no seu servidor é de {$a}.</p>
 
-<p>Este limite pode causar problemas no futuro, especialmente quando muitos módulos estiverem ativados ou em caso de um número elevado de usuários.</p>
+<p>Este limite pode causar problemas com o Moodle no futuro, especialmente quando muitos módulos estiverem ativados ou em caso de um número elevado de usuários.</p>
 
-<p>É aconselhável a configuração do limite de memória com o valor mais alto possível, como 40M. Você pode tentar um dos seguintes caminhos:</p>
+<p>É aconselhável a configuração do limite de memória com o valor mais alto possível, como 40M. Você pode tentar uma das seguintes opções:</p>
 <ol>
 <li>Se você puder, recompile o PHP com <i>--enable-memory-limit</i>.
-Com esta operação Moodle será capaz de configurar o limite de memória sózinho.</li>
-<li>Se você tiver acesso ao arquivo php.ini, você pode mudar o parâmetro <b>memory_limit</b> para um valor próximo a 40M. Se você não tiver acesso direto, peça ao administrador do sistema para fazer esta operação.</li>
+Com esta operação Moodle será capaz de configurar o seu limite de memória sózinho.</li>
+<li>Se você tiver acesso ao arquivo php.ini, você pode mudar o parâmetro <b>memory_limit</b> para um valor próximo a 40M. Se você não tiver acesso a este arquivo de configuração, peça ao administrador do sistema para fazer esta configuração para você.</li>
 <li>Em alguns servidores é possível fazer esta mudança criando um arquivo .htaccess no diretório Moodle. O arquivo deve conter a seguinte expressão:
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário excluir o arquivo .htaccess .</p>
+<p>Entretanto, em alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário excluir o arquivo .htaccess .</p>
 </li></ol>';
 $string['paths'] = 'Caminhos';
 $string['pathserrcreatedataroot'] = 'O diretório de dados ({$a->dataroot}) não pode ser criado pelo instalador.';
@@ -82,14 +82,14 @@ $string['pathsunsecuredataroot'] = 'A localização da pasta de dados não é se
 $string['pathswrongadmindir'] = 'Diretório Admin não existe';
 $string['phpextension'] = 'Extensão PHP {$a}';
 $string['phpversion'] = 'Versão do PHP';
-$string['phpversionhelp'] = '<p>O Moodle requer uma versão PHP de pelo menos 5.6.5 ou 7.1 (o 7.0.x tem algumas limitações do motor). </p>
-<p>Atualmente você está executando a versão {$a}. </p>
-<p>Você deve atualizar o PHP ou migrar para um host com uma versão mais recente do PHP. </p>';
+$string['phpversionhelp'] = '<p>O Moodle requer uma versão PHP de pelo menos 5.6.5 ou 7.1 (o 7.0.x tem algumas limitações do mecanismo).</p>
+<p>Atualmente você está executando a versão {$a}.</p>
+<p>Você deve atualizar o PHP ou migrar para um host com uma versão mais recente do PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Você está vendo esa página pois instalou com sucesso o pacote<strong>{$a->packname} {$a->packversion}</strong>. Parabéns!';
-$string['welcomep30'] = 'Esta versão do <strong>{$a->installername}</strong> inclui as aplicações para a criação de um ambiente em que <strong>Moodle</strong> possa operar:';
+$string['welcomep30'] = 'Esta versão do <strong>{$a->installername}</strong> inclui as aplicações para a criação de um ambiente em que o <strong>Moodle</strong> possa operar:';
 $string['welcomep40'] = 'O pacote inclui também o <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'O uso das aplicações incluídas neste pacote é regulamentado pelas respectivas licenças. O instalador completo <strong>{$a->installername}</strong> é <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> e é distribuído com uma licença <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'As seguinte páginas guiam passo a passo a configuração de <strong>Moodle</strong> no seu computador. Você pode usar a configuração padrão ou alterá-las de acordo com as suas necessidades.';
-$string['welcomep70'] = 'Clicar o botão "Próxima" abaixo para continuar a configuração de <strong>Moodle</strong>.';
+$string['welcomep70'] = 'Clique no botão "Próximo" abaixo para continuar a configuração do <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Endereço web';

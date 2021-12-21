@@ -35,7 +35,7 @@ class RowIterator implements IteratorInterface
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
-    /** @var string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml */
+    /** @var string Path of the sheet data XML file as in [Content_Types].xml */
     protected $sheetDataXMLFilePath;
 
     /** @var \Box\Spout\Reader\Wrapper\XMLReader The XMLReader object that will help read sheet's XML data */
@@ -127,7 +127,7 @@ class RowIterator implements IteratorInterface
      */
     protected function normalizeSheetDataXMLFilePath($sheetDataXMLFilePath)
     {
-        return ltrim($sheetDataXMLFilePath, '/');
+        return \ltrim($sheetDataXMLFilePath, '/');
     }
 
     /**
@@ -234,7 +234,7 @@ class RowIterator implements IteratorInterface
     {
         // Read dimensions of the sheet
         $dimensionRef = $xmlReader->getAttribute(self::XML_ATTRIBUTE_REF); // returns 'A1:M13' for instance (or 'A1' for empty sheet)
-        if (preg_match('/[A-Z]+\d+:([A-Z]+\d+)/', $dimensionRef, $matches)) {
+        if (\preg_match('/[A-Z]+\d+:([A-Z]+\d+)/', $dimensionRef, $matches)) {
             $this->numColumns = CellHelper::getColumnIndexFromCellIndex($matches[1]) + 1;
         }
 
@@ -257,11 +257,11 @@ class RowIterator implements IteratorInterface
         $numberOfColumnsForRow = $this->numColumns;
         $spans = $xmlReader->getAttribute(self::XML_ATTRIBUTE_SPANS); // returns '1:5' for instance
         if ($spans) {
-            list(, $numberOfColumnsForRow) = explode(':', $spans);
+            list(, $numberOfColumnsForRow) = \explode(':', $spans);
             $numberOfColumnsForRow = (int) $numberOfColumnsForRow;
         }
 
-        $cells = array_fill(0, $numberOfColumnsForRow, $this->entityFactory->createCell(''));
+        $cells = \array_fill(0, $numberOfColumnsForRow, $this->entityFactory->createCell(''));
         $this->currentlyProcessedRow->setCells($cells);
 
         return XMLProcessor::PROCESSING_CONTINUE;

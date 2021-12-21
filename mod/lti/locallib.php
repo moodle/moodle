@@ -51,9 +51,12 @@
 defined('MOODLE_INTERNAL') || die;
 
 // TODO: Switch to core oauthlib once implemented - MDL-30149.
+use mod_lti\helper;
 use moodle\mod\lti as lti;
 use Firebase\JWT\JWT;
 use Firebase\JWT\JWK;
+use mod_lti\local\ltiopenid\jwks_helper;
+use mod_lti\local\ltiopenid\registration_helper;
 
 global $CFG;
 require_once($CFG->dirroot.'/mod/lti/OAuth.php');
@@ -126,7 +129,8 @@ function lti_get_jwt_claim_mapping() {
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'accept_copy_advice',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'accept_media_types' => [
             'suffix' => 'dl',
@@ -138,7 +142,8 @@ function lti_get_jwt_claim_mapping() {
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'accept_multiple',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'accept_presentation_document_targets' => [
             'suffix' => 'dl',
@@ -156,19 +161,22 @@ function lti_get_jwt_claim_mapping() {
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'accept_unsigned',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'auto_create' => [
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'auto_create',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'can_confirm' => [
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'can_confirm',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'content_item_return_url' => [
             'suffix' => 'dl',
@@ -389,7 +397,7 @@ function lti_get_jwt_claim_mapping() {
         'tool_consumer_info_product_family_code' => [
             'suffix' => '',
             'group' => 'tool_platform',
-            'claim' => 'family_code',
+            'claim' => 'product_family_code',
             'isarray' => false
         ],
         'tool_consumer_info_version' => [
@@ -428,7 +436,7 @@ function lti_get_jwt_claim_mapping() {
             'claim' => 'url',
             'isarray' => false
         ],
-        'custom_context_memberships_url' => [
+        'custom_context_memberships_v2_url' => [
             'suffix' => 'nrps',
             'group' => 'namesroleservice',
             'claim' => 'context_memberships_url',
@@ -483,14 +491,14 @@ function lti_get_jwt_claim_mapping() {
             'isarray' => false
         ],
         'lis_outcome_service_url' => [
-            'suffix' => 'bos',
-            'group' => 'basicoutcomesservice',
+            'suffix' => 'bo',
+            'group' => 'basicoutcome',
             'claim' => 'lis_outcome_service_url',
             'isarray' => false
         ],
         'lis_result_sourcedid' => [
-            'suffix' => 'bos',
-            'group' => 'basicoutcomesservice',
+            'suffix' => 'bo',
+            'group' => 'basicoutcome',
             'claim' => 'lis_result_sourcedid',
             'isarray' => false
         ],
@@ -586,11 +594,11 @@ function lti_get_launch_data($instance, $nonce = '') {
             $endpoint = trim($instance->securetoolurl);
         }
 
-        $endpoint = lti_ensure_url_is_https($endpoint);
-    } else {
-        if (!strstr($endpoint, '://')) {
-            $endpoint = 'http://' . $endpoint;
+        if ($endpoint !== '') {
+            $endpoint = lti_ensure_url_is_https($endpoint);
         }
+    } else if ($endpoint !== '' && !strstr($endpoint, '://')) {
+        $endpoint = 'http://' . $endpoint;
     }
 
     $orgid = lti_get_organizationid($typeconfig);
@@ -1519,8 +1527,6 @@ function content_item_to_form(object $tool, object $typeconfig, object $item) : 
         }
         $config->instructorcustomparameters = implode("\n", $customparameters);
     }
-    // Including a JSON version of the form data to support adding many items in one submit.
-    $config->contentitemjson = json_encode($item);
     return $config;
 }
 
@@ -2068,6 +2074,18 @@ function lti_calculate_custom_parameter($value) {
             return implode(",", groups_get_user_groups($COURSE->id, $USER->id)[0]);
         case 'Context.id.history':
             return implode(",", get_course_history($COURSE));
+        case 'CourseSection.timeFrame.begin':
+            if (empty($COURSE->startdate)) {
+                return "";
+            }
+            $dt = new DateTime("@$COURSE->startdate", new DateTimeZone('UTC'));
+            return $dt->format(DateTime::ATOM);
+        case 'CourseSection.timeFrame.end':
+            if (empty($COURSE->enddate)) {
+                return "";
+            }
+            $dt = new DateTime("@$COURSE->enddate", new DateTimeZone('UTC'));
+            return $dt->format(DateTime::ATOM);
     }
     return null;
 }
@@ -2148,7 +2166,7 @@ function lti_get_ims_role($user, $cmid, $courseid, $islti2) {
         }
     }
 
-    if (is_siteadmin($user) || has_capability('mod/lti:admin', $context)) {
+    if (!is_role_switched($courseid) && (is_siteadmin($user)) || has_capability('mod/lti:admin', $context)) {
         // Make sure admins do not have the Learner role, then set admin role.
         $roles = array_diff($roles, array('Learner'));
         if (!$islti2) {
@@ -2305,7 +2323,8 @@ function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
                 FROM {lti_types}
                WHERE coursevisible $coursevisiblesql
                  AND ($coursecond)
-                 AND state = :active";
+                 AND state = :active
+            ORDER BY name ASC";
 
     return $DB->get_records_sql($query,
         array('siteid' => $SITE->id, 'courseid' => $courseid, 'active' => LTI_TOOL_STATE_CONFIGURED) + $coursevisparams);
@@ -2357,11 +2376,7 @@ function lti_get_configured_types($courseid, $sectionreturn = 0) {
             $type->help     = clean_param($trimmeddescription, PARAM_NOTAGS);
             $type->helplink = get_string('modulename_shortcut_link', 'lti');
         }
-        if (empty($ltitype->icon)) {
-            $type->icon = $OUTPUT->pix_icon('icon', '', 'lti', array('class' => 'icon'));
-        } else {
-            $type->icon = html_writer::empty_tag('img', array('src' => $ltitype->icon, 'alt' => '', 'class' => 'icon'));
-        }
+        $type->icon = html_writer::empty_tag('img', ['src' => get_tool_type_icon_url($ltitype), 'alt' => '', 'class' => 'icon']);
         $type->link = new moodle_url('/course/modedit.php', array('add' => 'lti', 'return' => 0, 'course' => $courseid,
             'sr' => $sectionreturn, 'typeid' => $ltitype->id));
         $types[] = $type;
@@ -2720,7 +2735,11 @@ function lti_get_type_type_config($id) {
 function lti_prepare_type_for_save($type, $config) {
     if (isset($config->lti_toolurl)) {
         $type->baseurl = $config->lti_toolurl;
-        $type->tooldomain = lti_get_domain_from_url($config->lti_toolurl);
+        if (isset($config->lti_tooldomain)) {
+            $type->tooldomain = $config->lti_tooldomain;
+        } else {
+            $type->tooldomain = lti_get_domain_from_url($config->lti_toolurl);
+        }
     }
     if (isset($config->lti_description)) {
         $type->description = $config->lti_description;
@@ -2735,7 +2754,7 @@ function lti_prepare_type_for_save($type, $config) {
         $type->clientid = $config->lti_clientid;
     }
     if ((!empty($type->ltiversion) && $type->ltiversion === LTI_VERSION_1P3) && empty($type->clientid)) {
-        $type->clientid = random_string(15);
+        $type->clientid = registration_helper::get()->new_clientid();
     } else if (empty($type->clientid)) {
         $type->clientid = null;
     }
@@ -2804,6 +2823,14 @@ function lti_update_type($type, $config) {
                 $record->value = $value;
                 lti_update_config($record);
             }
+        }
+        if (isset($type->toolproxyid) && $type->ltiversion === LTI_VERSION_1P3) {
+            // We need to remove the tool proxy for this tool to function under 1.3.
+            $toolproxyid = $type->toolproxyid;
+            $DB->delete_records('lti_tool_settings', array('toolproxyid' => $toolproxyid));
+            $DB->delete_records('lti_tool_proxies', array('id' => $toolproxyid));
+            $type->toolproxyid = null;
+            $DB->update_record('lti_types', $type);
         }
         require_once($CFG->libdir.'/modinfolib.php');
         if ($clearcache) {
@@ -3070,6 +3097,73 @@ function lti_delete_tool_proxy($id) {
 }
 
 /**
+ * Get both LTI tool proxies and tool types.
+ *
+ * If limit and offset are not zero, a subset of the tools will be returned. Tool proxies will be counted before tool
+ * types.
+ * For example: If 10 tool proxies and 10 tool types exist, and the limit is set to 15, then 10 proxies and 5 types
+ * will be returned.
+ *
+ * @param int $limit Maximum number of tools returned.
+ * @param int $offset Do not return tools before offset index.
+ * @param bool $orphanedonly If true, only return orphaned proxies.
+ * @param int $toolproxyid If not 0, only return tool types that have this tool proxy id.
+ * @return array list(proxies[], types[]) List containing array of tool proxies and array of tool types.
+ */
+function lti_get_lti_types_and_proxies(int $limit = 0, int $offset = 0, bool $orphanedonly = false, int $toolproxyid = 0): array {
+    global $DB;
+
+    if ($orphanedonly) {
+        $orphanedproxiessql = helper::get_tool_proxy_sql($orphanedonly, false);
+        $countsql = helper::get_tool_proxy_sql($orphanedonly, true);
+        $proxies  = $DB->get_records_sql($orphanedproxiessql, null, $offset, $limit);
+        $totalproxiescount = $DB->count_records_sql($countsql);
+    } else {
+        $proxies = $DB->get_records('lti_tool_proxies', null, 'name ASC, state DESC, timemodified DESC',
+            '*', $offset, $limit);
+        $totalproxiescount = $DB->count_records('lti_tool_proxies');
+    }
+
+    // Find new offset and limit for tool types after getting proxies and set up query.
+    $typesoffset = max($offset - $totalproxiescount, 0); // Set to 0 if negative.
+    $typeslimit = max($limit - count($proxies), 0); // Set to 0 if negative.
+    $typesparams = [];
+    if (!empty($toolproxyid)) {
+        $typesparams['toolproxyid'] = $toolproxyid;
+    }
+
+    $types = $DB->get_records('lti_types', $typesparams, 'name ASC, state DESC, timemodified DESC',
+            '*', $typesoffset, $typeslimit);
+
+    return [$proxies, array_map('serialise_tool_type', $types)];
+}
+
+/**
+ * Get the total number of LTI tool types and tool proxies.
+ *
+ * @param bool $orphanedonly If true, only count orphaned proxies.
+ * @param int $toolproxyid If not 0, only count tool types that have this tool proxy id.
+ * @return int Count of tools.
+ */
+function lti_get_lti_types_and_proxies_count(bool $orphanedonly = false, int $toolproxyid = 0): int {
+    global $DB;
+
+    $typessql = "SELECT count(*)
+                   FROM {lti_types}";
+    $typesparams = [];
+    if (!empty($toolproxyid)) {
+        $typessql .= " WHERE toolproxyid = :toolproxyid";
+        $typesparams['toolproxyid'] = $toolproxyid;
+    }
+
+    $proxiessql = helper::get_tool_proxy_sql($orphanedonly, true);
+
+    $countsql = "SELECT ($typessql) + ($proxiessql) as total" . $DB->sql_null_from_clause();
+
+    return $DB->count_records_sql($countsql, $typesparams);
+}
+
+/**
  * Add a tool configuration in the database
  *
  * @param object $config   Tool configuration
@@ -3250,9 +3344,12 @@ function lti_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce 
         $claim = LTI_JWT_CLAIM_PREFIX;
         if (array_key_exists($key, $claimmapping)) {
             $mapping = $claimmapping[$key];
+            $type = $mapping["type"] ?? "string";
             if ($mapping['isarray']) {
                 $value = explode(',', $value);
                 sort($value);
+            } else if ($type == 'boolean') {
+                $value = isset($value) && ($value == 'true');
             }
             if (!empty($mapping['suffix'])) {
                 $claim .= "-{$mapping['suffix']}";
@@ -3273,9 +3370,8 @@ function lti_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce 
         }
     }
 
-    $privatekey = get_config('mod_lti', 'privatekey');
-    $kid = get_config('mod_lti', 'kid');
-    $jwt = JWT::encode($payload, $privatekey, 'RS256', $kid);
+    $privatekey = jwks_helper::get_private_key();
+    $jwt = JWT::encode($payload, $privatekey['key'], 'RS256', $privatekey['kid']);
 
     $newparms = array();
     $newparms['id_token'] = $jwt;
@@ -3427,7 +3523,8 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
     }
     $r .= "</form>\n";
 
-    if ( ! $debug ) {
+    // Auto-submit the form if endpoint is set.
+    if ($endpoint !== '' && !$debug) {
         $r .= " <script type=\"text/javascript\"> \n" .
             "  //<![CDATA[ \n" .
             "    document.ltiLaunchForm.submit(); \n" .
@@ -3727,7 +3824,8 @@ function lti_get_capabilities() {
        'CourseSection.label' => 'context_label',
        'CourseSection.sourcedId' => 'lis_course_section_sourcedid',
        'CourseSection.longDescription' => '$COURSE->summary',
-       'CourseSection.timeFrame.begin' => '$COURSE->startdate',
+       'CourseSection.timeFrame.begin' => null,
+       'CourseSection.timeFrame.end' => null,
        'ResourceLink.id' => 'resource_link_id',
        'ResourceLink.title' => 'resource_link_title',
        'ResourceLink.description' => 'resource_link_description',
@@ -3820,6 +3918,7 @@ function lti_get_service_by_resource_id($services, $resourceid) {
 
 /**
  * Initializes an array with the scopes for services supported by the LTI module
+ * and authorized for this particular tool instance.
  *
  * @param object $type  LTI tool type
  * @param array  $typeconfig  LTI tool type configuration
@@ -3840,7 +3939,6 @@ function lti_get_permitted_service_scopes($type, $typeconfig) {
     }
 
     return $scopes;
-
 }
 
 /**
@@ -4165,9 +4263,14 @@ function serialise_tool_type(stdClass $type) {
  *
  * @param stdClass $proxy The tool proxy
  *
+ * @deprecated since Moodle 3.10
+ * @todo This will be finally removed for Moodle 4.2 as part of MDL-69976.
  * @return array An array of values representing this type
  */
 function serialise_tool_proxy(stdClass $proxy) {
+    $deprecatedtext = __FUNCTION__ . '() is deprecated. Please remove all references to this method.';
+    debugging($deprecatedtext, DEBUG_DEVELOPER);
+
     return array(
         'id' => $proxy->id,
         'name' => $proxy->name,
@@ -4359,7 +4462,7 @@ function lti_load_cartridge($url, $map, $propertiesmap = array()) {
 
     // TODO MDL-46023 Replace this code with a call to the new library.
     $origerrors = libxml_use_internal_errors(true);
-    $origentity = libxml_disable_entity_loader(true);
+    $origentity = lti_libxml_disable_entity_loader(true);
     libxml_clear_errors();
 
     $document = new DOMDocument();
@@ -4371,7 +4474,7 @@ function lti_load_cartridge($url, $map, $propertiesmap = array()) {
 
     libxml_clear_errors();
     libxml_use_internal_errors($origerrors);
-    libxml_disable_entity_loader($origentity);
+    lti_libxml_disable_entity_loader($origentity);
 
     if (count($errors) > 0) {
         $message = 'Failed to load cartridge.';
@@ -4454,4 +4557,22 @@ function lti_new_access_token($typeid, $scopes) {
 
     return $newtoken;
 
+}
+
+
+/**
+ * Wrapper for function libxml_disable_entity_loader() deprecated in PHP 8
+ *
+ * Method was deprecated in PHP 8 and it shows deprecation message. However it is still
+ * required in the previous versions on PHP. While Moodle supports both PHP 7 and 8 we need to keep it.
+ * @see https://php.watch/versions/8.0/libxml_disable_entity_loader-deprecation
+ *
+ * @param bool $value
+ * @return bool
+ */
+function lti_libxml_disable_entity_loader(bool $value): bool {
+    if (PHP_VERSION_ID < 80000) {
+        return (bool)libxml_disable_entity_loader($value);
+    }
+    return true;
 }

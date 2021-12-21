@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -34,6 +33,7 @@ $string['admindirname'] = 'Dossièr d\'administracion';
 $string['availablelangs'] = 'Paquetatges de lenga disponibles';
 $string['chooselanguagehead'] = 'Causitz ua lenga';
 $string['cliinstallheader'] = 'Programa d\'installacion de Moodle {$a} en linha de comanda';
+$string['clitablesexist'] = 'Las taulas de la banca de dadas que son ja presentas. L\'installacion en linha de comanda ne pòt pas contunhar.';
 $string['databasehost'] = 'Servidor de banca de dadas';
 $string['databasename'] = 'Nom de la banca de dadas';
 $string['databasetypehead'] = 'Seleccionar un pilòt de banca de dadas';

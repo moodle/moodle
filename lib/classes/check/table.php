@@ -118,7 +118,11 @@ class table implements \renderable {
             $row[] = $output->check_result($result);
             $row[] = $output->action_link($link, $check->get_name());
 
-            $row[] = $result->get_summary();
+            $row[] = $result->get_summary()
+                . '<br>'
+                . \html_writer::start_tag('small')
+                . $output->action_link($link, get_string('moreinfo'))
+                . \html_writer::end_tag('small');
             if ($actionlink) {
                 $row[] = $output->render($actionlink);
             } else {

@@ -68,7 +68,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
 
   Scenario: A completed lesson with only questions that does not allow multiple attempts
     Given  I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Re-takes allowed | 0 |
     And I press "Save and display"
@@ -145,7 +145,7 @@ Feature: In Dashboard, a student can see their current status on all lessons wit
 
   Scenario: A completed lesson with only content pages that does not allow multiple attempts
     Given I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Re-takes allowed | 0 |
     And I press "Save and display"

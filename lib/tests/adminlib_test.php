@@ -85,5 +85,48 @@ class core_adminlib_testcase extends advanced_testcase {
         $this->assertSame($actual, $expected);
     }
 
-}
+    /**
+     * Data provider for additional skip tables.
+     *
+     * @return array
+     */
+    public function db_should_replace_additional_skip_tables_dataprovider() {
+        return [
+            // Skipped tables.
+            ['block_instances', '', false],
+            ['config',          '', false],
+            ['config_plugins',  '', false],
+            ['config_log',      '', false],
+            ['events_queue',    '', false],
+            ['filter_config',   '', false],
+            ['log',             '', false],
+            ['repository_instance_config', '', false],
+            ['sessions',        '', false],
+            ['upgrade_log',     '', false],
 
+            // Additional skipped tables.
+            ['context',      '', false],
+            ['quiz_attempts',     '', false],
+            ['role_assignments',     '', false],
+
+            // Normal tables.
+            ['assign',          '', true],
+            ['book',          '', true],
+        ];
+    }
+
+    /**
+     * Test additional skip tables.
+     *
+     * @dataProvider db_should_replace_additional_skip_tables_dataprovider
+     * @param string $table name
+     * @param string $column name
+     * @param bool $expected whether it should be replaced
+     */
+    public function test_db_should_replace_additional_skip_tables(string $table, string $column, bool $expected) {
+        $this->resetAfterTest();
+        $additionalskiptables = 'context, quiz_attempts, role_assignments ';
+        $actual = db_should_replace($table, $column, $additionalskiptables);
+        $this->assertSame($actual, $expected);
+    }
+}

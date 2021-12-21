@@ -18,7 +18,6 @@
  *
  * @deprecated since Moodle 3.9 MDL-68612 - user unified filter replaced by participants filter.
  * @module     core_user/unified_filter
- * @package    core_user
  * @copyright  2017 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

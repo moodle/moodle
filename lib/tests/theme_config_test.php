@@ -173,7 +173,7 @@ class core_theme_config_testcase extends advanced_testcase {
         theme_set_sub_revision_for_theme($themename, $themesubrevision);
         $url = $theme->editor_css_url();
 
-        $this->assertRegExp("/{$themerevision}_{$themesubrevision}/", $url->out(false));
+        $this->assertMatchesRegularExpression("/{$themerevision}_{$themesubrevision}/", $url->out(false));
     }
 
     /**
@@ -212,5 +212,17 @@ class core_theme_config_testcase extends advanced_testcase {
         $cssactual = $theme->editor_scss_to_css();
 
         $this->assertEquals($cssexpected, $cssactual);
+    }
+
+    /**
+     * Test that {@see theme_config::get_all_block_regions()} returns localised list of region names.
+     */
+    public function test_get_all_block_regions() {
+        $this->resetAfterTest();
+
+        $theme = theme_config::load(theme_config::DEFAULT_THEME);
+        $regions = $theme->get_all_block_regions();
+
+        $this->assertEquals('Right', $regions['side-pre']);
     }
 }

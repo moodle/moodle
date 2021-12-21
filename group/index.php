@@ -81,9 +81,15 @@ switch ($action) {
     case 'ajax_getmembersingroup':
         $roles = array();
 
-        $extrafields = get_extra_user_fields($context);
+        $userfieldsapi = \core_user\fields::for_identity($context)->with_userpic();
+        [
+            'selects' => $userfieldsselects,
+            'joins' => $userfieldsjoin,
+            'params' => $userfieldsparams
+        ] = (array)$userfieldsapi->get_sql('u', true, '', '', false);
+        $extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
         if ($groupmemberroles = groups_get_members_by_role($groupids[0], $courseid,
-                'u.id, ' . user_picture::fields('u', $extrafields))) {
+                'u.id, ' . $userfieldsselects, null, '', $userfieldsparams, $userfieldsjoin)) {
 
             $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
@@ -98,7 +104,8 @@ switch ($action) {
                     if ($extrafields) {
                         $extrafieldsdisplay = [];
                         foreach ($extrafields as $field) {
-                            $extrafieldsdisplay[] = s($member->{$field});
+                            // No escaping here, handled client side in response to AJAX request.
+                            $extrafieldsdisplay[] = $member->{$field};
                         }
                         $shortmember->name .= ' (' . implode(', ', $extrafieldsdisplay) . ')';
                     }
@@ -163,10 +170,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
-// Add tabs
-$currenttab = 'groups';
-require('tabs.php');
-
+echo $OUTPUT->render_participants_tertiary_nav($course);
 echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) .' '.$strgroups, 3);
 
 $groups = groups_get_all_groups($courseid);
@@ -194,7 +198,7 @@ if ($groups) {
         $groupoptions[] = (object) [
             'value' => $group->id,
             'selected' => $selected,
-            'text' => $groupname
+            'text' => s($groupname)
         ];
     }
 }
@@ -202,9 +206,15 @@ if ($groups) {
 // Get list of group members to render if there is a single selected group.
 $members = array();
 if ($singlegroup) {
-    $extrafields = get_extra_user_fields($context);
+    $userfieldsapi = \core_user\fields::for_identity($context)->with_userpic();
+    [
+        'selects' => $userfieldsselects,
+        'joins' => $userfieldsjoin,
+        'params' => $userfieldsparams
+    ] = (array)$userfieldsapi->get_sql('u', true, '', '', false);
+    $extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
     if ($groupmemberroles = groups_get_members_by_role(reset($groupids), $courseid,
-            'u.id, ' . user_picture::fields('u', $extrafields))) {
+            'u.id, ' . $userfieldsselects, null, '', $userfieldsparams, $userfieldsjoin)) {
 
         $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
 

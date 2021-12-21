@@ -5,22 +5,22 @@
 // want white default colour.
 $bg-inverse-link-color: #fff !default;
 
+$dropzone-border: $gray-900 !default;
+
+$collapse-list-item-padding-y: 0.5rem !default;
+$collapse-list-item-padding-x: 1rem !default;
+$collapse-list-item-hover-bg: theme-color-level('info', -11) !default;
+$collapse-list-item-hover-border: theme-color-level('info', -9) !default;
+
+$thin-scroll-bg-thumb: $gray-600 !default;
+$thin-scroll-bg-hover: $gray-700 !default;
+
 $font-size-xs: ($font-size-base * .75) !default;
 
 #region-main {
     overflow-x: auto;
     overflow-y: visible;
     background-color: $body-bg;
-}
-
-@include media-breakpoint-up(sm) {
-    #region-main {
-        border: $card-border-width solid $card-border-color;
-        @if $enable-rounded {
-            @include border-radius($card-border-radius);
-        }
-        padding: $card-spacer-x;
-    }
 }
 
 @include media-breakpoint-up(sm) {
@@ -41,35 +41,6 @@ $font-size-xs: ($font-size-base * .75) !default;
         display: flex;
         justify-content: flex-end;
     }
-}
-
-$gototop-bottom-position: 50px !default;
-
-#goto-top-link {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity .7s ease 0s, visibility .1s ease .8s;
-    display: block;
-    position: fixed;
-    bottom: $gototop-bottom-position;
-    right: 0;
-    a {
-        position: absolute;
-        right: 0;
-        transform: translateY(-100%);
-    }
-}
-
-@include media-breakpoint-down(sm) {
-    #goto-top-link {
-        bottom: 0;
-    }
-}
-
-body.scrolled #goto-top-link {
-    opacity: 1;
-    visibility: visible;
-    transition: visibility 0s ease 0s, opacity .7s ease .1s;
 }
 
 .context-header-settings-menu .dropdown-toggle > .icon,
@@ -158,7 +129,8 @@ a:not([class]),
 .aabtn,
 .btn-link,
 .nav-link,
-.atto_link_button,
+.editor_atto_toolbar button,
+.editor_atto_toolbar .atto_toolbar_row,
 [role="button"],
 .list-group-item-action,
 input[type="checkbox"],
@@ -166,11 +138,12 @@ input[type="radio"],
 input[type="file"],
 input[type="image"],
 .sr-only-focusable,
-a.dropdown-item,
 a.dropdown-toggle,
 .modal-dialog[tabindex="0"],
 .moodle-dialogue-base .closebutton,
-button.close {
+button.close,
+.form-autocomplete-selection,
+[role="treeitem"]:not([aria-expanded="true"]) {
     &.focus,
     &:focus {
         outline: 0;
@@ -181,6 +154,27 @@ button.close {
     }
 }
 
+// We don't want to highlight the whole li when it's expanded. Only the first child is highlighted.
+[role="treeitem"][aria-expanded="true"] {
+    outline: 0;
+    &.focus,
+    &:focus {
+        > *:first-child {
+            outline: 0;
+            box-shadow: $input-btn-focus-box-shadow;
+        }
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+// Accessible focus styling for autocomplete elements.
+.form-autocomplete-suggestions li[aria-selected=true] {
+    outline: 0;
+    box-shadow: $input-btn-focus-box-shadow;
+}
+
 // Safari does not allow custom styling of checkboxes.
 .safari {
     input[type="checkbox"],
@@ -189,19 +183,6 @@ button.close {
         &:focus {
             outline: auto;
         }
-    }
-}
-
-.usermenu,
-div.dropdown-item {
-    a,
-    a[role="button"] {
-        outline: 0;
-        box-shadow: none;
-    }
-    &:focus-within {
-        outline: 0;
-        box-shadow: $input-btn-focus-box-shadow;
     }
 }
 
@@ -217,6 +198,18 @@ div.dropdown-item {
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+.section li.movehere a {
+    display: block;
+    width: 100%;
+    height: 2rem;
+    border: 2px dashed $gray-800;
+}
+
+.editing .course-content .hidden.sectionname {
+    visibility: hidden;
+    display: initial;
 }
 
 .inline,
@@ -362,7 +355,8 @@ a.autolink.glossary:hover {
     font-weight: bold;
 }
 
-img.userpicture {
+img.userpicture,
+.userinitials {
     margin-right: 0.5rem;
 }
 
@@ -373,10 +367,12 @@ img.resize {
 
 .action-menu .dropdown-toggle {
     text-decoration: none;
+    display: inline-block;
 }
 
 .action-menu {
     white-space: nowrap;
+    display: inline;
 }
 
 .block img.resize {
@@ -425,12 +421,10 @@ form.popupform div {
     overflow: auto;
 }
 
-// Minimum height required for a menu in a table inside a scrollable div.
 // Position required for table sizing inside a flex container.
 .no-overflow > .generaltable {
     position: relative;
     margin-bottom: 0;
-    min-height: 10em;
 }
 // Accessibility features
 
@@ -541,21 +535,6 @@ a.skip:active {
 
 .groupselector label {
     display: inline-block;
-}
-
-// Login
-.login-page {
-    [name="username"] {
-        margin-bottom: -1px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-
-    [type="password"] {
-        margin-bottom: 10px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
 }
 
 // Notes
@@ -1116,6 +1095,14 @@ tr.flagged-tag a {
     margin-left: 3px;
 }
 
+#page-enrol-otherusers .userenrolment .col_role {
+    .role {
+        float: none;
+        margin: 3px 3px 3px 0;
+        padding: 3px 3px 3px 0;
+    }
+}
+
 .corelightbox {
     background-color: #ccc;
     position: absolute;
@@ -1253,12 +1240,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     overflow: auto;
 }
 
-.moodle-dialogue-base .moodle-dialogue-fullscreen .closebutton {
-    width: 28px;
-    height: 16px;
-    background-size: 100%;
-}
-
 .moodle-dialogue-base .moodle-dialogue-wrap {
     background-color: #fff;
     border: 1px solid #ccc;
@@ -1285,8 +1266,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     line-height: 1.5;
 }
 
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h5 {
     font-size: 1.5rem;
+    font-weight: $font-weight-base;
+    margin-bottom: 0;
+    line-height: 1.5;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
@@ -1871,10 +1855,13 @@ ul.badges {
 }
 
 .badges li .expireimage {
+    background-image: url([[pix:i/expired]]);
+    background-repeat: no-repeat;
+    background-size: 100px 100px;
     width: 100px;
     height: 100px;
     left: 25px;
-    top: 0;
+    top: 15px;
     position: absolute;
     z-index: 10;
     opacity: 0.85;
@@ -1892,6 +1879,9 @@ ul.badges {
     margin-bottom: 20px;
 
     .expireimage {
+        background-image: url([[pix:i/expired]]);
+        background-repeat: no-repeat;
+        background-size: 100px 100px;
         width: 100px;
         height: 100px;
         left: 0;
@@ -1938,6 +1928,14 @@ ul.badges {
         width: 79%;
         margin-left: 1%;
     }
+}
+
+#badge-criteria li li {
+    list-style-type: none;
+}
+
+#badge-image-col {
+    flex: 0 0 400px;
 }
 
 .badge-profile {
@@ -2019,6 +2017,9 @@ img#persona_signin {
 
 /** Page header */
 #page-header {
+    h1.h2 {
+        font-weight: bold;
+    }
     .logo {
         margin: $spacer 0;
         img {
@@ -2048,7 +2049,7 @@ nav.navbar .logo img {
 
     // Do not remove these rules.
     overflow: hidden;
-    padding: 0.25rem;
+    padding: 0.25rem 0;
 
     .page-header-image,
     .page-header-headings {
@@ -2059,7 +2060,8 @@ nav.navbar .logo img {
 
     .page-header-image {
         margin-right: 1em;
-        margin-bottom: 1em;
+        margin-bottom: 0.5em;
+        margin-top: 0.7em;
         & > a {
             display: inline-block;
         }
@@ -2302,14 +2304,58 @@ ul {
 // but really in bootstrap we want the colour of links on .bg-inverse to be changed
 // rather than being specific to the footer. This is kept for backwards compatibility.
 $footer-link-color: $bg-inverse-link-color !default;
-#page-footer a {
-    color: $footer-link-color;
-    text-decoration: underline;
-    .icon {
+
+.footer-dark {
+    a {
         color: $footer-link-color;
+        text-decoration: underline;
+
+        .icon {
+            color: $footer-link-color;
+        }
+
+        &:focus .icon {
+            color: $body-color;
+        }
     }
-    &:focus .icon {
-        color: $body-color;
+}
+
+.btn-footer-popover {
+    display: none;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    @include box-shadow($popover-box-shadow);
+}
+
+.popover.footer {
+    .popover-body {
+        padding: 0;
+        .footer-section {
+            a {
+                color: $body-color;
+                text-decoration: underline;
+                .icon {
+                    color: $body-color;
+                }
+                &:focus {
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .jsenabled #page-footer .footer-content-popover {
+        display: none;
+    }
+    .jsenabled .btn-footer-popover {
+        display: block;
+        z-index: $zindex-dropdown;
+    }
+    .jsenabled .drawers.show-drawer-right .btn-footer-popover {
+        display: none;
     }
 }
 
@@ -2328,13 +2374,35 @@ $footer-link-color: $bg-inverse-link-color !default;
 }
 
 // Make links in a menu clickable anywhere in the row.
-.dropdown-item a {
-    display: block;
-    width: 100%;
-    color: $body-color;
-}
-.dropdown-item:active a {
-    color: $dropdown-link-active-color;
+.dropdown-item {
+    a {
+        display: block;
+        width: 100%;
+        color: $body-color;
+    }
+    &:active,
+    &:hover,
+    &:focus,
+    &:focus-within {
+        outline: 0;
+        background-color: $dropdown-link-active-bg;
+        color: $dropdown-link-active-color;
+        a {
+            color: $dropdown-link-active-color;
+        }
+    }
+    &[aria-current="true"] {
+        position: relative;
+        display: flex;
+        align-items: center;
+        &:before {
+            @include fa-icon();
+            content: $fa-var-circle;
+            position: absolute;
+            left: 0.4rem;
+            font-size: 0.7rem;
+        }
+    }
 }
 
 .competency-tree {
@@ -2440,6 +2508,10 @@ body.h5p-embed {
     }
 }
 
+#h5pcontenttypes td {
+    vertical-align: middle;
+}
+
 .text-decoration-none {
     text-decoration: none !important; /* stylelint-disable-line declaration-no-important */
 }
@@ -2458,6 +2530,10 @@ body.h5p-embed {
 
 .text-break {
     overflow-wrap: break-word !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.word-break {
+    word-break: break-word !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .z-index-0 {
@@ -2660,7 +2736,7 @@ $picker-emojis-per-row: 7 !default;
             }
         }
     }
-    .nav-tabs,
+    .nav-tabs:not(.more-nav),
     .nav-pills {
         margin: 0;
         border: 0;
@@ -2700,12 +2776,139 @@ $picker-emojis-per-row: 7 !default;
 }
 
 .alert.cta {
-    .icon {
-        padding: 0.3rem;
-        &.fa {
-            border-radius: 50%;
-            border-style: solid;
-            border-width: 0.125rem;
+    .cta-icon {
+        .icon {
+            padding: 0.3rem;
+            &.fa {
+                border-radius: 50%;
+                border-style: solid;
+                border-width: 0.125rem;
+            }
+        }
+    }
+}
+.core_payment_gateways_modal .custom-control-label::before,
+.core_payment_gateways_modal .custom-control-label::after {
+    top: 45%;
+}
+
+$scrollbar-thumb: $primary;
+$scrollbar-track: lighten($primary, 40%);
+// simple scrollbars
+.visual-scroll-x {
+    scrollbar-width: thin;
+    scrollbar-color: $scrollbar-thumb $scrollbar-track;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    &::-webkit-scrollbar {
+        height: 8px; // for horizontal scrollbars
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: $scrollbar-thumb;
+        border-right: $border-width solid $white;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: $scrollbar-track;
+        border-right: $border-width solid $white;
+    }
+}
+
+// Thin scrollbars.
+@mixin thin-scrolls($bg-track) {
+
+    // Firefox.
+    scrollbar-width: thin;
+    scrollbar-color: $thin-scroll-bg-thumb $bg-track;
+
+    // Chrome, Edge and Safari.
+    &::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $bg-track;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $thin-scroll-bg-thumb;
+        border-radius: 20px;
+        border: 3px solid $bg-track;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: $thin-scroll-bg-hover;
+    }
+}
+
+// Generic dropzones and dragging styles.
+
+body.dragging {
+
+    .drop-zone {
+        border: 2px dashed $dropzone-border;
+    }
+
+    .drop-up {
+        border-top: 2px solid $dropzone-border;
+    }
+
+    .drop-down {
+        border-bottom: 2px solid $dropzone-border;
+    }
+
+    .dragging {
+        opacity: .6;
+    }
+}
+
+.dragicon {
+    visibility: hidden;
+}
+
+.draggable:hover .dragicon {
+    visibility: visible;
+    cursor: move;
+}
+
+// Generic classes reactive components can use.
+
+.waitstate {
+    display: none;
+}
+
+.stateready {
+    .waitstate {
+        display: inherit;
+    }
+    .whilenostate {
+        display: none;
+    }
+}
+
+// Collapsible list.
+
+.collapse-list {
+    .collapse-list-item {
+        padding: $collapse-list-item-padding-y $collapse-list-item-padding-x;
+        @include hover-focus() {
+            background-color: $collapse-list-item-hover-bg;
+            border-color: $collapse-list-item-hover-border;
+        }
+    }
+    .collapse-list-item-content {
+        .collapse-list-item {
+            padding-left: calc(#{$collapse-list-item-padding-x} * 3);
+        }
+    }
+}
+
+.drawers {
+    .block_myoverview {
+        border: 0;
+        & > .card-body {
+            padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+            padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
         }
     }
 }

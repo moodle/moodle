@@ -173,10 +173,11 @@ class core_h5p_generator extends \component_generator_base {
      */
     public function generate_h5p_data(bool $createlibraryfiles = false): stdClass {
         // Create libraries.
-        $mainlib = $libraries[] = $this->create_library_record('MainLibrary', 'Main Lib', 1, 0);
-        $lib1 = $libraries[] = $this->create_library_record('Library1', 'Lib1', 2, 0);
-        $lib2 = $libraries[] = $this->create_library_record('Library2', 'Lib2', 2, 1);
-        $lib3 = $libraries[] = $this->create_library_record('Library3', 'Lib3', 3, 2);
+        $mainlib = $libraries[] = $this->create_library_record('MainLibrary', 'Main Lib', 1, 0, 1, '', null,
+            'http://tutorial.org', 'http://example.org');
+        $lib1 = $libraries[] = $this->create_library_record('Library1', 'Lib1', 2, 0, 1, '', null, null,  'http://example.org');
+        $lib2 = $libraries[] = $this->create_library_record('Library2', 'Lib2', 2, 1, 1, '', null, 'http://tutorial.org');
+        $lib3 = $libraries[] = $this->create_library_record('Library3', 'Lib3', 3, 2, 1, '', null, null, null, true, 0);
         $lib4 = $libraries[] = $this->create_library_record('Library4', 'Lib4', 1, 1);
         $lib5 = $libraries[] = $this->create_library_record('Library5', 'Lib5', 1, 3);
 
@@ -248,26 +249,34 @@ class core_h5p_generator extends \component_generator_base {
      * @param int $patchversion The library's patch version
      * @param string $semantics Json describing the content structure for the library
      * @param string $addto The plugin configuration data
+     * @param string $tutorial The tutorial URL
+     * @param string $examlpe The example URL
+     * @param bool $enabled Whether the library is enabled or not
+     * @param int $runnable Whether the library is runnable (1) or not (0)
      * @return stdClass An object representing the added library record
      */
     public function create_library_record(string $machinename, string $title, int $majorversion = 1,
-            int $minorversion = 0, int $patchversion = 1, string $semantics = '', string $addto = null): stdClass {
+            int $minorversion = 0, int $patchversion = 1, string $semantics = '', string $addto = null,
+            string $tutorial = null, string $example = null, bool $enabled = true, int $runnable = 1): stdClass {
         global $DB;
 
-        $content = array(
+        $content = [
             'machinename' => $machinename,
             'title' => $title,
             'majorversion' => $majorversion,
             'minorversion' => $minorversion,
             'patchversion' => $patchversion,
-            'runnable' => 1,
+            'runnable' => $runnable,
             'fullscreen' => 1,
             'preloadedjs' => 'js/example.js',
             'preloadedcss' => 'css/example.css',
             'droplibrarycss' => '',
             'semantics' => $semantics,
-            'addto' => $addto
-        );
+            'addto' => $addto,
+            'tutorial' => $tutorial,
+            'example' => $example,
+            'enabled' => $enabled,
+        ];
 
         $libraryid = $DB->insert_record('h5p_libraries', $content);
 

@@ -60,3 +60,9 @@ if (class_exists('Redis')) { // Only if Redis is available.
         )
     );
 }
+
+$settings->add(new admin_setting_configcheckbox(
+        'cachestore_redis/test_ttl',
+        get_string('test_ttl', 'cachestore_redis'),
+        get_string('test_ttl_desc', 'cachestore_redis'),
+        false));

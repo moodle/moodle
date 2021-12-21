@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['adhoc'] = 'Ad-hoc';
-$string['adhoctaskid'] = 'Ad-hoc task id: {$a}';
-$string['adhoctasks'] = 'Ad-hoc tasks';
+$string['adhoc'] = 'Ad hoc';
+$string['adhoctaskid'] = 'Ad hoc task ID: {$a}';
+$string['adhoctasks'] = 'Ad hoc tasks';
 $string['asap'] = 'ASAP';
 $string['adhocempty'] = 'Ad hoc task queue is empty';
 $string['adhocqueuesize'] = 'Ad hoc task queue has {$a} tasks';
@@ -51,6 +51,7 @@ $string['enablerunnow_desc'] = 'Allows administrators to run a single scheduled 
 $string['faildelay'] = 'Fail delay';
 $string['fromcomponent'] = 'From component: {$a}';
 $string['hostname'] = 'Host name';
+$string['lastcronstart'] = 'Time since last cron run: {$a}';
 $string['lastruntime'] = 'Last run';
 $string['lastupdated'] = 'Last updated {$a}.';
 $string['nextruntime'] = 'Next run';

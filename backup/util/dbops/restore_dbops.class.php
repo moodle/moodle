@@ -619,7 +619,8 @@ abstract class restore_dbops {
             // Top-level category counter.
             $topcats = 0;
             // get categories in context (bank)
-            $categories = self::restore_get_question_categories($restoreid, $contextid);
+            $categories = self::restore_get_question_categories($restoreid, $contextid, $contextlevel);
+
             // cache permissions if $targetcontext is found
             if ($targetcontext = self::restore_find_best_target_context($categories, $courseid, $contextlevel)) {
                 $canmanagecategory = has_capability('moodle/question:managecategory', $targetcontext, $userid);
@@ -765,8 +766,13 @@ abstract class restore_dbops {
     /**
      * Return one array of question_category records for
      * a given restore operation and one restore context (question bank)
+     *
+     * @param string $restoreid Unique identifier of the restore operation being performed.
+     * @param int $contextid Context id we want question categories to be returned.
+     * @param int $contextlevel Context level we want to restrict the returned categories.
+     * @return array Question categories for the given context id and level.
      */
-    public static function restore_get_question_categories($restoreid, $contextid) {
+    public static function restore_get_question_categories($restoreid, $contextid, $contextlevel) {
         global $DB;
 
         $results = array();
@@ -776,7 +782,14 @@ abstract class restore_dbops {
                                           AND itemname = 'question_category'
                                           AND parentitemid = ?", array($restoreid, $contextid));
         foreach ($qcats as $qcat) {
-            $results[$qcat->itemid] = backup_controller_dbops::decode_backup_temp_info($qcat->info);
+            $result = backup_controller_dbops::decode_backup_temp_info($qcat->info);
+            // Filter out found categories that belong to another context level.
+            // (this can happen when a higher level category becomes remapped to
+            // a context id that, by coincidence, matches a context id of another
+            // category at lower level). See MDL-72950 for more info.
+            if ($result->contextlevel == $contextlevel) {
+                $results[$qcat->itemid] = $result;
+            }
         }
         $qcats->close();
 
@@ -1078,8 +1091,8 @@ abstract class restore_dbops {
                                 $localpath = $filesystem->get_local_path_from_storedfile($storedfile);
                                 $fs->create_file_from_pathname($file, $localpath);
                             } else if ($filesystem->is_file_readable_remotely_by_storedfile($storedfile)) {
-                                $url = $filesystem->get_remote_path_from_storedfile($storedfile);
-                                $fs->create_file_from_url($file, $url);
+                                $remotepath = $filesystem->get_remote_path_from_storedfile($storedfile);
+                                $fs->create_file_from_pathname($file, $remotepath);
                             } else if ($filesystem->is_file_readable_locally_by_storedfile($storedfile, true)) {
                                 $localpath = $filesystem->get_local_path_from_storedfile($storedfile, true);
                                 $fs->create_file_from_pathname($file, $localpath);
@@ -1151,6 +1164,7 @@ abstract class restore_dbops {
     public static function create_included_users($basepath, $restoreid, $userid,
             \core\progress\base $progress) {
         global $CFG, $DB;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
         $progress->start_progress('Creating included users');
 
         $authcache = array(); // Cache to get some bits from authentication plugins
@@ -1257,8 +1271,9 @@ abstract class restore_dbops {
                         $udata = (object)$udata;
                         // If the profile field has data and the profile shortname-datatype is defined in server
                         if ($udata->field_data) {
-                            if ($field = $DB->get_record('user_info_field', array('shortname'=>$udata->field_name, 'datatype'=>$udata->field_type))) {
-                            /// Insert the user_custom_profile_field
+                            $field = profile_get_custom_field_data_by_shortname($udata->field_name);
+                            if ($field && $field->datatype === $udata->field_type) {
+                                // Insert the user_custom_profile_field.
                                 $rec = new stdClass();
                                 $rec->userid  = $newuserid;
                                 $rec->fieldid = $field->id;

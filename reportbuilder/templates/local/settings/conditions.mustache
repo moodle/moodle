@@ -1,0 +1,73 @@
+{{!
+  This file is part of Moodle - http://moodle.org/
+
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_reportbuilder/local/settings/conditions
+
+    Template for custom report conditions settings area
+
+    Example context (json):
+    {
+        "conditions": [{
+            "hasavailableconditions": true,
+            "availableconditions": [{
+                "optiongroup": [{
+                    "text": "User",
+                    "values": [{
+                        "value": 1,
+                        "visiblename": "User name"
+                    }]
+                }]
+            }],
+            "hasactiveconditions": true,
+            "activeconditionsform": "form"
+        }]
+    }
+}}
+
+<div class="p-2" data-region="settings-conditions">
+    {{#conditions}}
+        {{#hasavailableconditions}}
+            <div>
+                <label for="addconditionselect" class="sr-only">{{#str}} selectacondition, core_reportbuilder {{/str}}</label>
+                <select id="addconditionselect" data-action="report-add-condition" class="w-100 custom-select">
+                    <option value="0">{{#str}} selectacondition, core_reportbuilder {{/str}}&hellip;</option>
+                    {{#availableconditions}}
+                        {{#optiongroup}}
+                            <optgroup label="{{text}}">
+                                {{#values}}
+                                    <option value="{{value}}">{{visiblename}}</option>
+                                {{/values}}
+                            </optgroup>
+                        {{/optiongroup}}
+                    {{/availableconditions}}
+                </select>
+            </div>
+        {{/hasavailableconditions}}
+
+        <div class="reportbuilder-conditions-list" data-region="conditions-form">
+            {{#hasactiveconditions}}
+                {{{activeconditionsform}}}
+            {{/hasactiveconditions}}
+
+            {{^hasactiveconditions}}
+                {{< core_reportbuilder/local/settings/empty_message }}
+                    {{$nothingtoshow}} {{#str}} noconditions, core_reportbuilder {{/str}} {{/nothingtoshow}}
+                {{/ core_reportbuilder/local/settings/empty_message }}
+            {{/hasactiveconditions}}
+        </div>
+    {{/conditions}}
+</div>

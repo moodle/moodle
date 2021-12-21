@@ -38,7 +38,7 @@ global $CFG;
  * @copyright 2017 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_testcase extends advanced_testcase {
+class external_test extends advanced_testcase {
 
     /**
      * Test the core_form_get_filetypes_browser_data external function
@@ -51,7 +51,7 @@ class external_testcase extends advanced_testcase {
 
         // The actual data are tested in filetypes_util_test.php, here we just
         // make sure that the external function wrapper seems to work.
-        $this->assertInternalType('object', $data);
-        $this->assertInternalType('array', $data->groups);
+        $this->assertIsObject($data);
+        $this->assertIsArray($data->groups);
     }
 }

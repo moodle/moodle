@@ -59,7 +59,7 @@
         {{>core_contentbank/bankcontent/toolbar_dropdown}}
     {{/dropdown}}
     {{^dropdown}}
-        <a href="{{{ link }}}" class="icon-no-margin btn btn-secondary" title="{{{ name }}}">
+        <a href="{{ link }}" class="icon-no-margin btn btn-secondary" title="{{ name }}" data-action="{{ action }}">
             {{#pix}} {{{ icon }}} {{/pix}} {{{ name }}}
         </a>
     {{/dropdown}}

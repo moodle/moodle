@@ -1,6 +1,6 @@
 <?php
 /*
- @version   v5.20.16  12-Jan-2020
+ @version   v5.21.0  2021-02-27
  @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -101,7 +101,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		if (ADODB_ASSOC_CASE !== ADODB_ASSOC_CASE_NATIVE) {
 			$this->rsPrefix .= 'assoc_';
 		}
-		$this->_bindInputArray = PHP_VERSION >= 5.1;
+		$this->_bindInputArray = true;
 	}
 
 
@@ -309,12 +309,6 @@ class ADORecordSet_postgres7 extends ADORecordSet_postgres64{
 
 	var $databaseType = "postgres7";
 
-
-	function __construct($queryID, $mode=false)
-	{
-		parent::__construct($queryID, $mode);
-	}
-
 	// 10% speedup to move MoveNext to child class
 	function MoveNext()
 	{
@@ -340,11 +334,6 @@ class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
 
 	var $databaseType = "postgres7";
 
-
-	function __construct($queryID, $mode=false)
-	{
-		parent::__construct($queryID, $mode);
-	}
 
 	function _fetch()
 	{

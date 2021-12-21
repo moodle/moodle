@@ -45,18 +45,13 @@ $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'settings', 'cour
 $strgrades = get_string('grades');
 $pagename  = get_string('coursesettings', 'grades');
 
-$returnurl = $CFG->wwwroot.'/grade/index.php?id='.$course->id;
-
 $mform = new course_settings_form();
 
 $settings = grade_get_settings($course->id);
 
 $mform->set_data($settings);
 
-if ($mform->is_cancelled()) {
-    redirect($returnurl);
-
-} else if ($data = $mform->get_data()) {
+if ($data = $mform->get_data()) {
     $data = (array)$data;
     $general = array('displaytype', 'decimalpoints', 'aggregationposition', 'minmaxtouse');
     foreach ($data as $key=>$value) {
@@ -76,8 +71,6 @@ if ($mform->is_cancelled()) {
             grade_force_full_regrading($courseid);
         }
     }
-
-    redirect($returnurl);
 }
 
 print_grade_page_head($courseid, 'settings', 'coursesettings', get_string('coursegradesettings', 'grades'));

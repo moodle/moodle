@@ -62,6 +62,7 @@ interface event_vault_interface {
      * @param bool                  $ignorehidden          If true don't return hidden events.
      * @param callable|null         $filter                Additional logic to filter out unwanted events.
      *                                                     Must return true to keep the event, false to discard it.
+     * @param string|null           $searchvalue          The value a user wishes to search against
      * @return event_interface[] Array of event_interfaces.
      */
     public function get_events(
@@ -79,7 +80,8 @@ interface event_vault_interface {
         array $categoriesfilter = null,
         $withduration = true,
         $ignorehidden = true,
-        callable $filter = null
+        callable $filter = null,
+        ?string $searchvalue = null
     );
 
     /**
@@ -94,6 +96,7 @@ interface event_vault_interface {
      * @param event_interface $afterevent   Only return events after this one
      * @param int             $limitnum     Return at most this number of events
      * @param bool            $lmittononsuspendedevents Limit course events to courses the user is active in (not suspended).
+     * @param string|null     $searchvalue  The value a user wishes to search against
      * @return event_interface
      */
     public function get_action_events_by_timesort(
@@ -102,7 +105,8 @@ interface event_vault_interface {
         $timesortto,
         event_interface $afterevent,
         $limitnum,
-        $limittononsuspendedevents
+        $limittononsuspendedevents,
+        ?string $searchvalue = null
     );
 
     /**
@@ -118,6 +122,7 @@ interface event_vault_interface {
      * @param int             $timesortto   Events with timesort until this value (inclusive)
      * @param event_interface $afterevent   Only return events after this one
      * @param int             $limitnum     Return at most this number of events
+     * @param string|null     $searchvalue  The value a user wishes to search against
      * @return action_event_interface
      */
     public function get_action_events_by_course(
@@ -126,6 +131,7 @@ interface event_vault_interface {
         $timesortfrom,
         $timesortto,
         event_interface $afterevent,
-        $limitnum
+        $limitnum,
+        ?string $searchvalue = null
     );
 }

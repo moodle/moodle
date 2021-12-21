@@ -62,7 +62,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      *
      * @return null
      */
-    public function tearDown() {
+    public function tearDown(): void {
         $this->setAdminUser();
 
         $models = \core_analytics\manager::get_all_models();
@@ -135,7 +135,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminuser();
 
-        $misc = $DB->get_record('course_categories', ['name' => 'Miscellaneous']);
+        $misc = $DB->get_record('course_categories', ['name' => get_string('defaultcategoryname')]);
         $miscctx = \context_coursecat::instance($misc->id);
 
         $category = $this->getDataGenerator()->create_category();
@@ -261,8 +261,8 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $this->assertEquals($predictedrangeindex, $predictedrange->rangeindex);
             $sampleids = json_decode($predictedrange->sampleids, true);
             $this->assertCount(2, $sampleids);
-            $this->assertContains($course1->id, $sampleids);
-            $this->assertContains($course2->id, $sampleids);
+            $this->assertContainsEquals($course1->id, $sampleids);
+            $this->assertContainsEquals($course2->id, $sampleids);
         }
         $this->assertEquals(1, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
@@ -302,10 +302,10 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $this->assertEquals($predictedrangeindex, $predictedrange->rangeindex);
             $sampleids = json_decode($predictedrange->sampleids, true);
             $this->assertCount(4, $sampleids);
-            $this->assertContains($course1->id, $sampleids);
-            $this->assertContains($course2->id, $sampleids);
-            $this->assertContains($course3->id, $sampleids);
-            $this->assertContains($course4->id, $sampleids);
+            $this->assertContainsEquals($course1->id, $sampleids);
+            $this->assertContainsEquals($course2->id, $sampleids);
+            $this->assertContainsEquals($course3->id, $sampleids);
+            $this->assertContainsEquals($course4->id, $sampleids);
         }
         $this->assertEquals(2, $DB->count_records('analytics_used_files',
             array('modelid' => $model->get_id(), 'action' => 'predicted')));
@@ -706,7 +706,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
         $endtime = 321;
         $sampleorigin = 'whatever';
 
-        $indicator = $this->getMockBuilder('test_indicator_max')->setMethods(['calculate_sample'])->getMock();
+        $indicator = $this->getMockBuilder('test_indicator_max')->onlyMethods(['calculate_sample'])->getMock();
         $indicator->expects($this->never())->method('calculate_sample');
 
         $existingcalcs = array(111 => 1, 222 => -1);

@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_analytics_course_testcase extends advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
 
         $this->course = $this->getDataGenerator()->create_course(['startdate' => 0]);

@@ -26,6 +26,9 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+use core\navigation\views\primary;
+use core\navigation\views\secondary;
+use core\navigation\output\primary as primaryoutput;
 
 /**
  * $PAGE is a central store of information about the current page we are
@@ -71,7 +74,7 @@ defined('MOODLE_INTERNAL') || die();
  *      course table. (Also available as $COURSE global.) If we are not inside
  *      an actual course, this will be the site course.
  * @property-read string $devicetypeinuse The name of the device type in use
- * @property-read string $docspath The path to the Moodle docs for this page.
+ * @property-read string $docspath The path to the Help and documentation.
  * @property-read string $focuscontrol The id of the HTML element to be focused when the page has loaded.
  * @property-read bool $headerprinted True if the page header has already been printed.
  * @property-read string $heading The main heading that should be displayed at the top of the <body>.
@@ -79,6 +82,10 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $layout_options An arrays with options for the layout file.
  * @property-read array $legacythemeinuse True if the legacy browser theme is in use.
  * @property-read navbar $navbar The navbar object used to display the navbar
+ * @property-read secondary $secondarynav The secondary navigation object
+ *      used to display the secondarynav in boost
+ * @property-read primary $primarynav The primary navigation object used to display the primary nav in boost
+ * @property-read primaryoutput $primarynavcombined The primary navigation object used to display the primary nav in boost
  * @property-read global_navigation $navigation The navigation structure for this page.
  * @property-read xhtml_container_stack $opencontainers Tracks XHTML tags on this page that have been opened but not closed.
  *      mainly for internal use by the rendering code.
@@ -198,7 +205,7 @@ class moodle_page {
     protected $_subpage = '';
 
     /**
-     * @var string Set a different path to use for the 'Moodle docs for this page' link.
+     * @var string Set a different path to use for the 'Help and documentation' link.
      * By default, it uses the path of the file for instance mod/quiz/attempt.
      */
     protected $_docspath = null;
@@ -295,6 +302,24 @@ class moodle_page {
     protected $_flatnav = null;
 
     /**
+     * @var secondary Contains the nav nodes that will appear
+     * in the secondary navigation.
+     */
+    protected $_secondarynav = null;
+
+    /**
+     * @var primary Contains the nav nodes that will appear
+     * in the primary navigation.
+     */
+    protected $_primarynav = null;
+
+    /**
+     * @var primaryoutput Contains the combined nav nodes that will appear
+     * in the primary navigation. Includes - primarynav, langmenu, usermenu
+     */
+    protected $_primarynavcombined = null;
+
+    /**
      * @var navbar Contains the navbar structure.
      */
     protected $_navbar = null;
@@ -362,6 +387,26 @@ class moodle_page {
      * @var bool Should the region main settings menu be rendered in the header.
      */
     protected $_regionmainsettingsinheader = false;
+
+    /**
+     * @var bool Should the secondary menu be rendered.
+     */
+    protected $_hassecondarynavigation = true;
+
+    /**
+     * @var string the key of the secondary node to be activated.
+     */
+    protected $_activekeysecondary = null;
+
+    /**
+     * @var string the key of the primary node to be activated.
+     */
+    protected $_activenodeprimary = null;
+
+    /**
+     * @var \core\output\activity_header The default activity header for standardised.
+     */
+    protected $_activityheader;
 
     /**
      * Force the settings menu to be displayed on this page. This will only force the
@@ -589,7 +634,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->docspath syntax. {@link moodle_page::__get()}.
-     * @return string the path to the Moodle docs for this page.
+     * @return string the path to the Help and documentation.
      */
     protected function magic_get_docspath() {
         if (is_string($this->_docspath)) {
@@ -781,6 +826,65 @@ class moodle_page {
             $this->_flatnav->initialise();
         }
         return $this->_flatnav;
+    }
+
+    /**
+     * Returns the activity header object
+     * @return secondary
+     */
+    protected function magic_get_activityheader() {
+        global $USER;
+        if ($this->_activityheader === null) {
+            $class = 'core\output\activity_header';
+            // Try and load a custom class first.
+            if (class_exists("mod_{$this->activityname}\\output\\activity_header")) {
+                $class = "mod_{$this->activityname}\\output\\activity_header";
+            }
+
+            $this->_activityheader = new $class($this, $USER);
+        }
+        return $this->_activityheader;
+    }
+
+    /**
+     * Returns the secondary navigation object
+     * @return secondary
+     */
+    protected function magic_get_secondarynav() {
+        if ($this->_secondarynav === null) {
+            $class = 'core\navigation\views\secondary';
+            // Try and load a custom class first.
+            if (class_exists("mod_{$this->activityname}\\local\\views\\secondary")) {
+                $class = "mod_{$this->activityname}\\local\\views\\secondary";
+            }
+
+            $this->_secondarynav = new $class($this);
+            $this->_secondarynav->initialise();
+        }
+        return $this->_secondarynav;
+    }
+
+    /**
+     * Returns the primary navigation object
+     * @return primary
+     */
+    protected function magic_get_primarynav() {
+        if ($this->_primarynav === null) {
+            $this->_primarynav = new primary($this);
+            $this->_primarynav->initialise();
+        }
+        return $this->_primarynav;
+    }
+
+    /**
+     * Returns the primary navigation object
+     * @return primary
+     */
+    protected function magic_get_primarynavcombined() {
+        if ($this->_primarynavcombined === null) {
+            $this->_primarynavcombined = new primaryoutput($this);
+        }
+        return $this->_primarynavcombined;
     }
 
     /**
@@ -1200,6 +1304,14 @@ class moodle_page {
     }
 
     /**
+     * Force set secondary_nav. Useful in cases where we dealing with non course modules. e.g. blocks, tools.
+     * @param secondary $nav
+     */
+    public function set_secondarynav(secondary $nav) {
+        $this->_secondarynav = $nav;
+    }
+
+    /**
      * Adds a CSS class to the body tag of the page.
      *
      * @param string $class add this class name ot the class attribute on the body tag.
@@ -1282,7 +1394,7 @@ class moodle_page {
     }
 
     /**
-     * Set a different path to use for the 'Moodle docs for this page' link.
+     * Set a different path to use for the 'Help and documentation' link.
      *
      * By default, it uses the pagetype, which is normally the same as the
      * script name. So, for example, for mod/quiz/attempt.php, pagetype is
@@ -2051,7 +2163,8 @@ class moodle_page {
             $reportnode = $myprofilenode->add(get_string('reports'));
         }
         // Finally add the report to the navigation tree.
-        $reportnode->add($nodeinfo['name'], $nodeinfo['url'], navigation_node::TYPE_COURSE);
+        $reportnode->add($nodeinfo['name'], $nodeinfo['url'], navigation_node::TYPE_CUSTOM, null, null,
+            new pix_icon('i/report', $nodeinfo['name']));
     }
 
     /**
@@ -2090,5 +2203,59 @@ class moodle_page {
      */
     public function include_region_main_settings_in_header_actions() : bool {
         return $this->_regionmainsettingsinheader;
+    }
+
+    /**
+     * Set the flag to indicate if the secondary navigation should be rendered.
+     *
+     * @param bool $value If the secondary navigation should be rendered.
+     */
+    public function has_secondary_navigation_setter(bool $value) : void {
+        $this->_hassecondarynavigation = $value;
+    }
+
+    /**
+     * Check if the secondary navigation should be rendered.
+     *
+     * @return bool
+     */
+    public function has_secondary_navigation() : bool {
+        return $this->_hassecondarynavigation;
+    }
+
+    /**
+     * Set the key of the secondary nav node to be activated.
+     *
+     * @param string $navkey the key of the secondary nav node to be activated.
+     */
+    public function set_secondary_active_tab(string $navkey) : void {
+        $this->_activekeysecondary = $navkey;
+    }
+
+    /**
+     * The key of secondary nav node to activate.
+     *
+     * @return string|null get the key of the secondary node to activate.
+     */
+    public function get_secondary_active_tab(): ?string {
+        return $this->_activekeysecondary;
+    }
+
+    /**
+     * Set the key of the primary nav node to be activated.
+     *
+     * @param string $navkey
+     */
+    public function set_primary_active_tab(string $navkey): void {
+        $this->_activenodeprimary = $navkey;
+    }
+
+    /**
+     * The key of the primary nav node to activate.
+     *
+     * @return string|null get the key of the primary nav node to activate.
+     */
+    public function get_primary_activate_tab(): ?string {
+        return $this->_activenodeprimary;
     }
 }

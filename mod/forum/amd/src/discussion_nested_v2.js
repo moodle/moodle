@@ -16,12 +16,14 @@
 /**
  * Module for viewing a discussion in nested v2 view.
  *
+ * @module mod_Forum/discussion_nested_v2
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import $ from 'jquery';
 import AutoRows from 'core/auto_rows';
 import CustomEvents from 'core/custom_interaction_events';
+import * as FormChangeChecker from 'core_form/changechecker';
 import Notification from 'core/notification';
 import Templates from 'core/templates';
 import Discussion from 'mod_forum/discussion';
@@ -232,7 +234,7 @@ const buildShowInPageReplyFormFunction = (additionalTemplateContext) => {
      *
      * @param {Object} postContainer jQuery element for the post container
      */
-    return async (postContainer) => {
+    return async(postContainer) => {
 
         const inPageReplyContainer = getInPageReplyContainer(postContainer);
         const repliesVisibilityToggleContainer = getRepliesVisibilityToggleContainer(postContainer);
@@ -245,6 +247,8 @@ const buildShowInPageReplyFormFunction = (additionalTemplateContext) => {
             } catch (e) {
                 Notification.exception(e);
             }
+
+            FormChangeChecker.watchForm(postContainer[0].querySelector('form'));
         }
 
         inPageReplyCreateButton.fadeOut(ANIMATION_DURATION, () => {

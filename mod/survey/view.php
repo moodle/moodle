@@ -31,6 +31,8 @@ if (! $cm = get_coursemodule_from_id('survey', $id)) {
     print_error('invalidcoursemodule');
 }
 
+$cm = cm_info::create($cm);
+
 if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
     print_error('coursemisconf');
 }
@@ -68,8 +70,13 @@ if ($surveyalreadydone) {
 $strsurvey = get_string("modulename", "survey");
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->fullname);
+// No need to show the description if the survey is done and a graph page is to be shown.
+if ($surveyalreadydone && $showscales) {
+    $PAGE->activityheader->set_description('');
+}
+$PAGE->add_body_class('limitedwidth');
+
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($survey->name));
 
 // Check to see if groups are being used in this survey.
 if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used.
@@ -83,11 +90,7 @@ if (has_capability('mod/survey:readresponses', $context) or ($groupmode == VISIB
     $currentgroup = 0;
 }
 
-if (has_capability('mod/survey:readresponses', $context)) {
-    $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
-    echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">".
-          get_string("viewsurveyresponses", "survey", $numusers)."</a></div>";
-} else if (!$cm->visible) {
+if (!$cm->visible) {
     notice(get_string("activityiscurrentlyhidden"));
 }
 
@@ -96,9 +99,7 @@ if (!is_enrolled($context)) {
 }
 
 if ($surveyalreadydone) {
-
     $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
-
     if ($showscales) {
         // Ensure that graph.php will allow the user to see the graph.
         if (has_capability('mod/survey:readresponses', $context) || !$groupmode || groups_is_member($currentgroup)) {
@@ -116,7 +117,6 @@ if ($surveyalreadydone) {
 
     } else {
 
-        echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox', 'intro');
         echo $OUTPUT->spacer(array('height' => 30, 'width' => 1), true);  // Should be done with CSS instead.
 
         $questions = survey_get_questions($survey);
@@ -144,7 +144,6 @@ echo '<div>';
 echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
 
-echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox boxaligncenter bowidthnormal', 'intro');
 echo '<div>'. get_string('allquestionrequireanswer', 'survey'). '</div>';
 
 // Get all the major questions in order.
@@ -176,10 +175,8 @@ if (!is_enrolled($context)) {
 $PAGE->requires->js_call_amd('mod_survey/validation', 'ensureRadiosChosen', array('surveyform'));
 
 echo '<br />';
-echo '<input type="submit" class="btn btn-primary" value="'.get_string("clicktocontinue", "survey").'" />';
+echo '<input type="submit" class="btn btn-primary" value="'. get_string("submit"). '" />';
 echo '</div>';
 echo "</form>";
 
 echo $OUTPUT->footer();
-
-

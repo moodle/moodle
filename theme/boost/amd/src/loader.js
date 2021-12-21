@@ -16,19 +16,16 @@
 /**
  * Template renderer for Moodle. Load and render Moodle templates with Mustache.
  *
- * @module     core/templates
- * @package    core
- * @class      templates
+ * @module     theme_boost/loader
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
  */
 
 import $ from 'jquery';
-import Aria from './aria';
-import Bootstrap from './bootstrap/index';
+import * as Aria from './aria';
+import Bootstrap from './index';
 import Pending from 'core/pending';
-import Scroll from './scroll';
 import setupBootstrapPendingChecks from './pending';
 
 /**
@@ -43,9 +40,12 @@ const rememberTabs = () => {
             location.hash = hash;
         }
     });
-    var hash = window.location.hash;
+    const hash = window.location.hash;
     if (hash) {
-       $('.nav-link[href="' + hash + '"]').tab('show');
+        const tab = document.querySelector('.nav-link[href="' + hash + '"]');
+        if (tab) {
+            tab.click();
+        }
     }
 };
 
@@ -83,6 +83,9 @@ const pendingPromise = new Pending('theme_boost/loader:init');
 // Add pending promise event listeners to relevant Bootstrap custom events.
 setupBootstrapPendingChecks();
 
+// Setup Aria helpers for Bootstrap features.
+Aria.init();
+
 // Remember the last visited tabs.
 rememberTabs();
 
@@ -92,14 +95,8 @@ enablePopovers();
 // Enable all tooltips.
 enableTooltips();
 
-// Add scroll handling.
-(new Scroll()).init();
-
 // Disables flipping the dropdowns up and getting hidden behind the navbar.
 $.fn.dropdown.Constructor.Default.flip = false;
-
-// Setup Aria helpers for Bootstrap features.
-Aria.init();
 
 pendingPromise.resolve();
 

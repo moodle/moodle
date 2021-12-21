@@ -16,7 +16,6 @@
 /**
  * Manage the timeline view navigation for the timeline block.
  *
- * @package    block_timeline
  * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,14 +26,16 @@ define(
     'core/custom_interaction_events',
     'block_timeline/view',
     'core/ajax',
-    'core/notification'
+    'core/notification',
+    'core/utils'
 ],
 function(
     $,
     CustomEvents,
     View,
     Ajax,
-    Notification
+    Notification,
+    Utils
 ) {
 
     var SELECTORS = {
@@ -43,6 +44,9 @@ function(
         TIMELINE_VIEW_SELECTOR: '[data-region="view-selector"]',
         DATA_DAYS_OFFSET: '[data-days-offset]',
         DATA_DAYS_LIMIT: '[data-days-limit]',
+        TIMELINE_SEARCH_INPUT: '[data-region="search-input"]',
+        TIMELINE_SEARCH_CLEAR_ICON: '[data-region="clear-icon"]',
+        TIMELINE_SEARCH_SEARCH_ICON: '[data-region="search-icon"]'
     };
 
     /**
@@ -89,7 +93,7 @@ function(
 
                 var option = $(e.target).closest(SELECTORS.TIMELINE_DAY_FILTER_OPTION);
 
-                if (option.hasClass('active')) {
+                if (option.attr('aria-current') == 'true') {
                     // If it's already active then we don't need to do anything.
                     return;
                 }
@@ -130,9 +134,11 @@ function(
 
         // Listen for when the user changes tab so that we can show the first set of courses
         // and load their events when they request the sort by courses view for the first time.
-        viewSelector.on('shown shown.bs.tab', function() {
+        viewSelector.on('shown shown.bs.tab', function(e) {
             View.shown(timelineViewRoot);
+            $(e.target).removeClass('active');
         });
+
 
         // Event selector for user_sort
         CustomEvents.define(viewSelector, [CustomEvents.events.activate]);
@@ -141,6 +147,56 @@ function(
             var type = 'block_timeline_user_sort_preference';
             updateUserPreferences(type, filtername);
         });
+    };
+
+    /**
+     * Event listener for the "search" input field in the timeline navigation that allows for
+     * searching the activity name, course name and activity type.
+     *
+     * @param {object} root The root element for the timeline block
+     * @param {object} timelineViewRoot The root element for the timeline view
+     */
+    const registerSearch = (root, timelineViewRoot) => {
+        const searchInput = root.find(SELECTORS.TIMELINE_SEARCH_INPUT);
+        const searchIcon = root.find(SELECTORS.TIMELINE_SEARCH_SEARCH_ICON);
+        const clearSearchIcon = root.find(SELECTORS.TIMELINE_SEARCH_CLEAR_ICON);
+        searchInput.on('input', Utils.debounce(() => {
+            if (searchInput.val() !== '') {
+                activeSearchState(searchIcon, clearSearchIcon, timelineViewRoot);
+            } else {
+                clearSearchState(searchIcon, clearSearchIcon, timelineViewRoot);
+            }
+        }, 300));
+        clearSearchIcon.on('click', () => {
+            searchInput.val('');
+            clearSearchState(searchIcon, clearSearchIcon, timelineViewRoot);
+        });
+    };
+
+    /**
+     * Change the search icon to clear icon.
+     *
+     * @param {object} searchIcon Search icon element.
+     * @param {object} clearSearchIcon Clear search icon element.
+     * @param {object} timelineViewRoot The root element for the timeline view
+     */
+    const activeSearchState = (searchIcon, clearSearchIcon, timelineViewRoot) => {
+        searchIcon.addClass('d-none');
+        clearSearchIcon.parent().removeClass('d-none');
+        View.reset(timelineViewRoot);
+    };
+
+    /**
+     * Change the clear search icon to search icon.
+     *
+     * @param {object} searchIcon Search icon element.
+     * @param {object} clearSearchIcon Clear search icon element.
+     * @param {object} timelineViewRoot The root element for the timeline view
+     */
+    const clearSearchState = (searchIcon, clearSearchIcon, timelineViewRoot) => {
+        searchIcon.removeClass('d-none');
+        clearSearchIcon.parent().addClass('d-none');
+        View.reset(timelineViewRoot);
     };
 
     /**
@@ -154,6 +210,7 @@ function(
         root = $(root);
         registerTimelineDaySelector(root, timelineViewRoot);
         registerViewSelector(root, timelineViewRoot);
+        registerSearch(root, timelineViewRoot);
     };
 
     return {

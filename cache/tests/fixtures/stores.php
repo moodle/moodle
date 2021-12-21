@@ -46,7 +46,7 @@ abstract class cachestore_tests extends advanced_testcase {
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    public function setUp() {
+    public function setUp(): void {
         $class = $this->get_class_name();
         if (!class_exists($class) || !$class::are_requirements_met()) {
             $this->markTestSkipped('Could not test '.$class.'. Requirements are not met.');
@@ -116,10 +116,10 @@ abstract class cachestore_tests extends advanced_testcase {
         // Test find and find with prefix if this class implements the searchable interface.
         if ($instance->is_searchable()) {
             // Extra settings here ignore the return order of the array.
-            $this->assertEquals(['test3', 'test1', 'test2', 'other3'], $instance->find_all(), '', 0, 1, true);
+            $this->assertEqualsCanonicalizing(['test3', 'test1', 'test2', 'other3'], $instance->find_all());
 
             // Extra settings here ignore the return order of the array.
-            $this->assertEquals(['test2', 'test1', 'test3'], $instance->find_by_prefix('test'), '', 0, 1, true);
+            $this->assertEqualsCanonicalizing(['test2', 'test1', 'test3'], $instance->find_by_prefix('test'));
             $this->assertEquals(['test2'], $instance->find_by_prefix('test2'));
             $this->assertEquals(['other3'], $instance->find_by_prefix('other'));
             $this->assertEquals([], $instance->find_by_prefix('nothere'));
@@ -131,16 +131,16 @@ abstract class cachestore_tests extends advanced_testcase {
 
         // Test get with an int.
         $this->assertSame(1, $instance->get('test1'));
-        $this->assertInternalType('int', $instance->get('test1'));
+        $this->assertIsInt($instance->get('test1'));
         $this->assertSame(2, $instance->get('test2'));
-        $this->assertInternalType('int', $instance->get('test2'));
+        $this->assertIsInt($instance->get('test2'));
 
         // Test set with a bool.
         $this->assertTrue($instance->set('test1', true));
 
         // Test get with an bool.
         $this->assertSame(true, $instance->get('test1'));
-        $this->assertInternalType('boolean', $instance->get('test1'));
+        $this->assertIsBool($instance->get('test1'));
 
         // Test with an object.
         $this->assertTrue($instance->set('obj', $object));
@@ -177,7 +177,7 @@ abstract class cachestore_tests extends advanced_testcase {
 
         // Test get_many.
         $result = $instance->get_many(array('many1', 'many3', 'many5', 'many6'));
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount(4, $result);
         $this->assertSame(array(
             'many1' => 'many1',

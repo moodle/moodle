@@ -1,6 +1,13 @@
 This files describes API changes in /dataformat/ download system,
 information provided here is intended especially for developers.
 
+=== 3.11.1 ===
+* Optional $callback for the following \core\dataformat methods now receive a second argument to define
+  whether the current format writer supports HTML:
+  - download_data()
+  - write_data()
+  - write_data_to_filearea()
+
 === 3.9 ===
 * The following methods have been added to the base dataformat class to allow instances to export to a local
   file. They can be overridden in extending classes to define how files should be created:

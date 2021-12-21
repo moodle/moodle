@@ -45,7 +45,7 @@ class mod_forum_search_testcase extends advanced_testcase {
      */
     protected $forumpostareaid = null;
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
         set_config('enableglobalsearch', true);
 

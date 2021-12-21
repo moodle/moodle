@@ -46,4 +46,4 @@ $string['processgrades'] = 'Import grades';
 $string['skiprecord'] = 'Skip record';
 $string['updaterecord'] = 'Update record';
 $string['uploadgrades'] = 'Upload grading worksheet';
-$string['updatedgrades'] = 'Updated {$a} grades and feedback';
+$string['updatedgrades'] = 'Updated <strong>{$a->gradeupdatescount}</strong> grades and <strong>{$a->feedbackupdatescount}</strong> feedback instances.';

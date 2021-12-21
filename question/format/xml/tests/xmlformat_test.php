@@ -169,11 +169,11 @@ class qformat_xml_test extends question_testcase {
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($q);
 
-        $this->assertRegExp('|<hint format=\"moodle_auto_format\">\s*<text>\s*' .
+        $this->assertMatchesRegularExpression('|<hint format=\"moodle_auto_format\">\s*<text>\s*' .
                 'This is the first hint\.\s*</text>\s*</hint>|', $xml);
-        $this->assertNotRegExp('|<shownumcorrect/>|', $xml);
-        $this->assertNotRegExp('|<clearwrong/>|', $xml);
-        $this->assertNotRegExp('|<options>|', $xml);
+        $this->assertDoesNotMatchRegularExpression('|<shownumcorrect/>|', $xml);
+        $this->assertDoesNotMatchRegularExpression('|<clearwrong/>|', $xml);
+        $this->assertDoesNotMatchRegularExpression('|<options>|', $xml);
     }
 
     public function test_write_hint_with_parts() {
@@ -204,16 +204,16 @@ class qformat_xml_test extends question_testcase {
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($q);
 
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
                 '|<hint format=\"html\">\s*<text>\s*This is the first hint\.\s*</text>|', $xml);
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
                 '|<hint format=\"html\">\s*<text>\s*This is the second hint\.\s*</text>|', $xml);
         list($ignored, $hint1, $hint2) = explode('<hint', $xml);
-        $this->assertNotRegExp('|<shownumcorrect/>|', $hint1);
-        $this->assertRegExp('|<clearwrong/>|', $hint1);
-        $this->assertRegExp('|<shownumcorrect/>|', $hint2);
-        $this->assertNotRegExp('|<clearwrong/>|', $hint2);
-        $this->assertNotRegExp('|<options>|', $xml);
+        $this->assertDoesNotMatchRegularExpression('|<shownumcorrect/>|', $hint1);
+        $this->assertMatchesRegularExpression('|<clearwrong/>|', $hint1);
+        $this->assertMatchesRegularExpression('|<shownumcorrect/>|', $hint2);
+        $this->assertDoesNotMatchRegularExpression('|<clearwrong/>|', $hint2);
+        $this->assertDoesNotMatchRegularExpression('|<options>|', $xml);
     }
 
     public function test_import_hints_no_parts() {
@@ -406,8 +406,14 @@ END;
         $expectedq->responseformat = 'editor';
         $expectedq->responserequired = 1;
         $expectedq->responsefieldlines = 15;
+        $expectedq->minwordlimit = null;
+        $expectedq->minwordenabled = false;
+        $expectedq->maxwordlimit = null;
+        $expectedq->maxwordenabled = false;
         $expectedq->attachments = 0;
         $expectedq->attachmentsrequired = 0;
+        $expectedq->maxbytes = 0;
+        $expectedq->filetypeslist = null;
         $expectedq->graderinfo['text'] = '';
         $expectedq->graderinfo['format'] = FORMAT_MOODLE;
         $expectedq->responsetemplate['text'] = '';
@@ -465,8 +471,83 @@ END;
         $expectedq->responseformat = 'monospaced';
         $expectedq->responserequired = 0;
         $expectedq->responsefieldlines = 42;
+        $expectedq->minwordlimit = null;
+        $expectedq->minwordenabled = false;
+        $expectedq->maxwordlimit = null;
+        $expectedq->maxwordenabled = false;
         $expectedq->attachments = -1;
         $expectedq->attachmentsrequired = 1;
+        $expectedq->maxbytes = 0;
+        $expectedq->filetypeslist = null;
+        $expectedq->graderinfo['text'] = '<p>Grade <b>generously</b>!</p>';
+        $expectedq->graderinfo['format'] = FORMAT_HTML;
+        $expectedq->responsetemplate['text'] = '<p>Here is something <b>really</b> interesting.</p>';
+        $expectedq->responsetemplate['format'] = FORMAT_HTML;
+        $expectedq->tags = array('tagEssay', 'tagEssay21', 'tagTest');
+
+        $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
+    }
+
+    public function test_import_essay_311() {
+        $xml = '  <question type="essay">
+    <name>
+      <text>An essay</text>
+    </name>
+    <questiontext format="moodle_auto_format">
+      <text>Write something.</text>
+    </questiontext>
+    <generalfeedback>
+      <text>I hope you wrote something interesting.</text>
+    </generalfeedback>
+    <defaultgrade>1</defaultgrade>
+    <penalty>0</penalty>
+    <hidden>0</hidden>
+    <responseformat>monospaced</responseformat>
+    <responserequired>0</responserequired>
+    <responsefieldlines>42</responsefieldlines>
+    <minwordlimit>10</minwordlimit>
+    <maxwordlimit>20</maxwordlimit>
+    <attachments>-1</attachments>
+    <attachmentsrequired>1</attachmentsrequired>
+    <maxbytes>52428800</maxbytes>
+    <filetypeslist>.pdf,.zip.,.docx</filetypeslist>
+    <graderinfo format="html">
+        <text><![CDATA[<p>Grade <b>generously</b>!</p>]]></text>
+    </graderinfo>
+    <responsetemplate format="html">
+        <text><![CDATA[<p>Here is something <b>really</b> interesting.</p>]]></text>
+    </responsetemplate>
+    <tags>
+      <tag><text>tagEssay</text></tag>
+      <tag><text>tagEssay21</text></tag>
+      <tag><text>tagTest</text></tag>
+    </tags>
+  </question>';
+        $xmldata = xmlize($xml);
+
+        $importer = new qformat_xml();
+        $q = $importer->import_essay($xmldata['question']);
+
+        $expectedq = new stdClass();
+        $expectedq->qtype = 'essay';
+        $expectedq->name = 'An essay';
+        $expectedq->questiontext = 'Write something.';
+        $expectedq->questiontextformat = FORMAT_MOODLE;
+        $expectedq->generalfeedback = 'I hope you wrote something interesting.';
+        $expectedq->defaultmark = 1;
+        $expectedq->length = 1;
+        $expectedq->penalty = 0;
+        $expectedq->responseformat = 'monospaced';
+        $expectedq->responserequired = 0;
+        $expectedq->responsefieldlines = 42;
+        $expectedq->minwordlimit = 10;
+        $expectedq->minwordenabled = true;
+        $expectedq->maxwordlimit = 20;
+        $expectedq->maxwordenabled = true;
+        $expectedq->attachments = -1;
+        $expectedq->attachmentsrequired = 1;
+        $expectedq->maxbytes = 52428800; // 50MB.
+        $expectedq->filetypeslist = '.pdf,.zip.,.docx';
         $expectedq->graderinfo['text'] = '<p>Grade <b>generously</b>!</p>';
         $expectedq->graderinfo['format'] = FORMAT_HTML;
         $expectedq->responsetemplate['text'] = '<p>Here is something <b>really</b> interesting.</p>';
@@ -497,12 +578,16 @@ END;
         $qdata->options->responseformat = 'monospaced';
         $qdata->options->responserequired = 0;
         $qdata->options->responsefieldlines = 42;
+        $qdata->options->minwordlimit = 10;
+        $qdata->options->maxwordlimit = 20;
         $qdata->options->attachments = -1;
         $qdata->options->attachmentsrequired = 1;
         $qdata->options->graderinfo = '<p>Grade <b>generously</b>!</p>';
         $qdata->options->graderinfoformat = FORMAT_HTML;
         $qdata->options->responsetemplate = '<p>Here is something <b>really</b> interesting.</p>';
         $qdata->options->responsetemplateformat = FORMAT_HTML;
+        $qdata->options->maxbytes = 52428800; // 50MB.
+        $qdata->options->filetypeslist = '.pdf,.zip.,.docx';
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($qdata);
 
@@ -524,8 +609,12 @@ END;
     <responseformat>monospaced</responseformat>
     <responserequired>0</responserequired>
     <responsefieldlines>42</responsefieldlines>
+    <minwordlimit>10</minwordlimit>
+    <maxwordlimit>20</maxwordlimit>
     <attachments>-1</attachments>
     <attachmentsrequired>1</attachmentsrequired>
+    <maxbytes>52428800</maxbytes>
+    <filetypeslist>.pdf,.zip.,.docx</filetypeslist>
     <graderinfo format="html">
       <text><![CDATA[<p>Grade <b>generously</b>!</p>]]></text>
     </graderinfo>
@@ -1043,7 +1132,7 @@ END;
                     'format' => FORMAT_HTML),
             array('text' => 'Completely wrong.',
                     'format' => FORMAT_HTML));
-        $expectedq->tolerance = array(0.001, 1, 0);
+        $expectedq->tolerance = array(0.001, 1, '');
 
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }

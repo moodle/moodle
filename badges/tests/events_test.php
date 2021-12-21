@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/badges/tests/badgeslib_test.php');
  * @copyright  2015 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_badges_events_testcase extends core_badges_badgeslib_testcase {
+class events_test extends badgeslib_test {
 
     /**
      * Test badge awarded event.

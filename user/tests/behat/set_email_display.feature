@@ -28,6 +28,7 @@ Feature: Set email display preference
     Given I log in as "studentp"
     When I follow "Profile" in the user menu
     Then I should see "studentP@example.com"
+    And I should see "(Visible to other course participants)"
 
   @javascript
   Scenario: Student peer on the same course viewing profiles
@@ -76,3 +77,20 @@ Feature: Set email display preference
     And I navigate to course participants
     When I follow "Student MEMBERS"
     Then I should see "studentM@example.com"
+
+  @javascript
+  Scenario: User can see user's email address settings on own profile
+    Given I log in as "studentp"
+    And I follow "Profile" in the user menu
+    Then I should see "studentP@example.com"
+    And I should see "(Visible to other course participants)"
+    When I click on "Edit profile" "link" in the "region-main" "region"
+    And I set the following fields to these values:
+      | maildisplay | 0 |
+    And I click on "Update profile" "button"
+    Then I should see "(Hidden from all non-privileged users)"
+    When I click on "Edit profile" "link" in the "region-main" "region"
+    And I set the following fields to these values:
+      | maildisplay | 1 |
+    And I click on "Update profile" "button"
+    Then I should see "(Visible to everyone)"

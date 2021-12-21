@@ -61,7 +61,8 @@ class comment_manager {
         }
         $comments = array();
 
-        $usernamefields = get_all_user_name_fields(true, 'u');
+        $userfieldsapi = \core_user\fields::for_name();
+        $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $sql = "SELECT c.id, c.contextid, c.itemid, c.component, c.commentarea, c.userid, c.content, $usernamefields, c.timecreated
                   FROM {comments} c
                   JOIN {user} u
@@ -75,7 +76,7 @@ class comment_manager {
             $item->time = userdate($item->timecreated);
             $item->content = format_text($item->content, FORMAT_MOODLE, $formatoptions);
             // Unset fields not related to the comment
-            foreach (get_all_user_name_fields() as $namefield) {
+            foreach (\core_user\fields::get_name_fields() as $namefield) {
                 unset($item->$namefield);
             }
             unset($item->timecreated);

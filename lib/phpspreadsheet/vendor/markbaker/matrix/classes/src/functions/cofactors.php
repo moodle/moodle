@@ -17,7 +17,7 @@ namespace Matrix;
  * @return Matrix The new matrix
  * @throws Exception If argument isn't a valid matrix or array.
  */
-function cofactors($matrix)
+function cofactors($matrix): Matrix
 {
     if (is_array($matrix)) {
         $matrix = new Matrix($matrix);

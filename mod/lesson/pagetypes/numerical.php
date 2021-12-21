@@ -229,12 +229,7 @@ class lesson_page_type_numerical extends lesson_page {
         return $table;
     }
     public function stats(array &$pagestats, $tries) {
-        if(count($tries) > $this->lesson->maxattempts) { // if there are more tries than the max that is allowed, grab the last "legal" attempt
-            $temp = $tries[$this->lesson->maxattempts - 1];
-        } else {
-            // else, user attempted the question less than the max, so grab the last one
-            $temp = end($tries);
-        }
+        $temp = $this->lesson->get_last_attempt($tries);
         if (isset($pagestats[$temp->pageid][$temp->useranswer])) {
             $pagestats[$temp->pageid][$temp->useranswer]++;
         } else {

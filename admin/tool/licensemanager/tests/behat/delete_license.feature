@@ -10,12 +10,10 @@ Feature: Delete custom licenses
     And I navigate to "Licence > Licence manager" in site administration
     And I click on "Create licence" "link"
     And I set the following fields to these values:
-    | shortname      | MIT                                 |
-    | fullname       | MIT Licence                         |
-    | source         | https://opensource.org/licenses/MIT |
-    | version[day]   | 1                                   |
-    | version[month] | March                               |
-    | version[year]  | 2019                                |
+    | shortname       | MIT                                 |
+    | fullname        | MIT Licence                         |
+    | source          | https://opensource.org/licenses/MIT |
+    | Licence version | ##1 March 2019##                    |
     And I press "Save changes"
     And I click on "Delete" "icon" in the "MIT" "table_row"
     When I click on "Save changes" "button" in the "Delete licence" "dialogue"

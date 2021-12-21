@@ -61,7 +61,7 @@ class EncodingHelper
             $bomUsed = $this->supportedEncodingsWithBom[$encoding];
 
             // we skip the N first bytes
-            $byteOffsetToSkipBom = strlen($bomUsed);
+            $byteOffsetToSkipBom = \strlen($bomUsed);
         }
 
         return $byteOffsetToSkipBom;
@@ -80,9 +80,9 @@ class EncodingHelper
 
         $this->globalFunctionsHelper->rewind($filePointer);
 
-        if (array_key_exists($encoding, $this->supportedEncodingsWithBom)) {
+        if (\array_key_exists($encoding, $this->supportedEncodingsWithBom)) {
             $potentialBom = $this->supportedEncodingsWithBom[$encoding];
-            $numBytesInBom = strlen($potentialBom);
+            $numBytesInBom = \strlen($potentialBom);
 
             $hasBOM = ($this->globalFunctionsHelper->fgets($filePointer, $numBytesInBom + 1) === $potentialBom);
         }

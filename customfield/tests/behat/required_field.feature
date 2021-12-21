@@ -1,4 +1,4 @@
-@core @core_course @core_customfield
+@core @core_course @core_customfield @javascript
 Feature: Requiredness The course custom fields can be mandatory or not
   In order to make users required to fill a custom field
   As a manager
@@ -27,11 +27,11 @@ Feature: Requiredness The course custom fields can be mandatory or not
       | Name       | Test field |
       | Short name | testfield  |
       | Required   | Yes        |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I press "Save and display"
     Then I should see "You must supply a value here"
     And I set the field "Test field" to "some value"
@@ -48,11 +48,11 @@ Feature: Requiredness The course custom fields can be mandatory or not
       | Name       | Test field |
       | Short name | testfield  |
       | Required   | No         |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I press "Save and display"
     Then I should see "Course 1"
     And I should see "Topic 1"

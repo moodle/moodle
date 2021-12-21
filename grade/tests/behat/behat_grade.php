@@ -279,9 +279,13 @@ class behat_grade extends behat_base {
     /**
      * Select the tab in the gradebook. We must be on one of the gradebook pages already.
      *
+     * @deprecated since 4.0 - use select_in_gradebook_navigation_selector() instead.
      * @param string $gradepath examples: "View > User report", "Letters > View", "Scales"
      */
     protected function select_in_gradebook_tabs($gradepath) {
+        debugging('The function select_in_gradebook_tabs() is deprecated, please use ' .
+            'select_in_gradebook_navigation_selector() instead.', DEBUG_DEVELOPER);
+
         $gradepath = preg_split('/\s*>\s*/', trim($gradepath));
         if (count($gradepath) > 2) {
             throw new coding_exception('Grade path is too long (must have no more than two items separated with ">")');
@@ -309,25 +313,108 @@ class behat_grade extends behat_base {
     }
 
     /**
-     * Navigates to the course gradebook and selects a specified item from the grade navigation tabs.
+     * Navigates to the course gradebook and selects the specified item from the general grade navigation selector.
      *
      * Examples:
      * - I navigate to "Setup > Gradebook setup" in the course gradebook
      * - I navigate to "Scales" in the course gradebook
-     * - I navigate to "Letters > View" in the course gradebook
-     * - I navigate to "View > User report" in the course gradebook // for teachers
-     * - I navigate to "User report" in the course gradebook // for students
+     * - I navigate to "More > Grade letters" in the course gradebook
      *
      * @Given /^I navigate to "(?P<gradepath_string>(?:[^"]|\\")*)" in the course gradebook$/
-     * @param string $gradepath
+     * @param string $gradepath The path string. If the path has two items (ex. "More > Grade letters"), the first item
+     *                          ("More") will be used to identify an option group in the navigation selector, while the
+     *                          second ("Grade letters") will be used to identify an option within that option group.
+     *                          Otherwise, a single item in a path (ex. "Scales") will be used to identify an option in
+     *                          the navigation selector regardless of the option group.
      */
     public function i_navigate_to_in_the_course_gradebook($gradepath) {
         // If we are not on one of the gradebook pages already, follow "Grades" link in the navigation drawer.
         $xpath = '//div[contains(@class,\'grade-navigation\')]';
         if (!$this->getSession()->getPage()->findAll('xpath', $xpath)) {
-            $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', get_string('grades'));
+            $this->execute('behat_navigation::i_select_from_secondary_navigation', get_string('grades'));
         }
 
-        $this->select_in_gradebook_tabs($gradepath);
+        $this->select_in_gradebook_navigation_selector($gradepath, 'gradesactionselect');
+    }
+
+    /**
+     * Navigates to the imports page in the course gradebook and selects the specified import type from the grade
+     * imports navigation selector.
+     *
+     * Examples:
+     * - I navigate to "CSV file" import page in the course gradebook
+     *
+     * @Given /^I navigate to "(?P<importoption_string>(?:[^"]|\\")*)" import page in the course gradebook$/
+     * @param string $gradeimportoption The name of an existing grade import option.
+     */
+    public function i_navigate_to_import_page_in_the_course_gradebook($gradeimportoption) {
+        $this->i_navigate_to_in_the_course_gradebook("More > Import");
+        $this->select_in_gradebook_navigation_selector($gradeimportoption, 'gradesimportactionselect');
+    }
+
+    /**
+     * Navigates to the exports page in the course gradebook and selects the specified export type from the grade
+     * exports navigation selector.
+     *
+     * Examples:
+     * - I navigate to "XML file" export page in the course gradebook
+     *
+     * @Given /^I navigate to "(?P<exportoption_string>(?:[^"]|\\")*)" export page in the course gradebook$/
+     * @param string $gradeexportoption The name of an existing grade export option.
+     */
+    public function i_navigate_to_export_page_in_the_course_gradebook($gradeexportoption) {
+        $this->i_navigate_to_in_the_course_gradebook("More > Export");
+        $this->select_in_gradebook_navigation_selector($gradeexportoption, 'gradesexportactionselect');
+    }
+
+    /**
+     * Select a given option from a navigation URL selector in the gradebook. We must be on one of the gradebook pages
+     * already.
+     *
+     * @param string $path The string path that is used to identify an item within the navigation selector. If the path
+     *                     has two items (ex. "More > Grade letters"), the first item ("More") will be used to identify
+     *                     an option group in the navigation selector, while the second ("Grade letters") will be used to
+     *                     identify an option within that option group. Otherwise, a single item in a path (ex. "Scales")
+     *                     will be used to identify an option in the navigation selector regardless of the option group.
+     * @param string $formid The ID of the form element which contains the navigation URL selector element.
+     */
+    protected function select_in_gradebook_navigation_selector(string $path, string $formid) {
+        // Split the path string by ">".
+        $path = preg_split('/\s*>\s*/', trim($path));
+
+        // Make sure that the path does not have more than two items separated with ">".
+        if (count($path) > 2) {
+            throw new coding_exception('The path is too long (must have no more than two items separated with ">")');
+        }
+
+        // Get the select element.
+        $selectxpath = "//form[contains(@id,'{$formid}')]//select";
+        $select = $this->find('xpath', $selectxpath);
+
+        // Define the xpath to the option element depending on the provided path.
+        // If two items are provided in the path, the first item will be considered as an identifier of an existing
+        // option group in the select select element, while the second item will identify an existing option within
+        // that option group.
+        // If one item is provided in the path, this item will identify any existing option in the select element
+        // regardless of the option group. Also, this is useful when option elements are not a part of an option group
+        // which is possible.
+        if (count($path) === 2) {
+            $optionxpath = $selectxpath . '/optgroup[@label="' . $this->escape($path[0]) . '"]' .
+                '/option[contains(.,"' . $this->escape($path[1]) . '")]';
+        } else {
+            $optionxpath = $selectxpath . '//option[contains(.,"' . $this->escape($path[0]) . '")]';
+        }
+
+        // Get the option element that we are looking to select.
+        $option = $this->find('xpath', $optionxpath);
+
+        // Select the given option in the select element.
+        $field = behat_field_manager::get_field_instance('select', $select, $this->getSession());
+        $field->set_value($this->escape($option->getValue()));
+
+        if (!$this->running_javascript()) {
+            $this->execute('behat_general::i_click_on_in_the', [get_string('go'), 'button',
+                "#{$formid}", 'css_element']);
+        }
     }
 }

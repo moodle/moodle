@@ -220,7 +220,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $output .= $this->container_end();
         }
 
-        $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get');
+        $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get', true);
         $button->class = 'continuebutton';
         $output .= $this->render($button);
         $output .= $this->footer();
@@ -1616,12 +1616,18 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $plugininfo = $pluginman->get_plugins();
 
-        $numtotal = $numextension = $numupdatable = 0;
+        $numtotal = $numextension = $numupdatable = $numinstallable = 0;
 
         foreach ($plugininfo as $type => $plugins) {
             foreach ($plugins as $name => $plugin) {
-                if ($plugin->available_updates()) {
+                if ($res = $plugin->available_updates()) {
                     $numupdatable++;
+                    foreach ($res as $updateinfo) {
+                        if ($pluginman->is_remote_plugin_installable($updateinfo->component, $updateinfo->version, $reason, false)) {
+                            $numinstallable++;
+                            break;
+                        }
+                    }
                 }
                 if ($plugin->get_status() === core_plugin_manager::PLUGIN_STATUS_MISSING) {
                     continue;
@@ -1664,16 +1670,13 @@ class core_admin_renderer extends plugin_renderer_base {
             $out .= $this->output->heading(get_string('overviewext', 'core_plugin'), 3);
         }
 
-        if ($numupdatable) {
-            $installableupdates = $pluginman->filter_installable($pluginman->available_updates());
-            if ($installableupdates) {
-                $out .= $this->output->single_button(
-                    new moodle_url($this->page->url, array('installupdatex' => 1)),
-                    get_string('updateavailableinstallall', 'core_admin', count($installableupdates)),
-                    'post',
-                    array('class' => 'singlebutton updateavailableinstallall')
-                );
-            }
+        if ($numinstallable) {
+            $out .= $this->output->single_button(
+                new moodle_url($this->page->url, array('installupdatex' => 1)),
+                get_string('updateavailableinstallall', 'core_admin', $numinstallable),
+                'post',
+                array('class' => 'singlebutton updateavailableinstallall')
+            );
         }
 
         $out .= html_writer::div($infoall, 'info info-all').
@@ -1907,7 +1910,7 @@ class core_admin_renderer extends plugin_renderer_base {
             'infos'
         );
 
-        if ($pluginman->is_remote_plugin_installable($updateinfo->component, $updateinfo->version, $reason)) {
+        if ($pluginman->is_remote_plugin_installable($updateinfo->component, $updateinfo->version, $reason, false)) {
             $box .= $this->output->single_button(
                 new moodle_url($this->page->url, array('installupdate' => $updateinfo->component,
                     'installupdateversion' => $updateinfo->version)),
@@ -2127,8 +2130,16 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->container_start('upgradekeyreq');
         $output .= $this->heading(get_string('upgradekeyreq', 'core_admin'));
         $output .= html_writer::start_tag('form', array('method' => 'POST', 'action' => $url));
-        $output .= html_writer::empty_tag('input', array('name' => 'upgradekey', 'type' => 'password'));
-        $output .= html_writer::empty_tag('input', array('value' => get_string('submit'), 'type' => 'submit'));
+        $output .= html_writer::empty_tag('input', [
+            'name' => 'upgradekey',
+            'type' => 'password',
+            'class' => 'form-control w-auto',
+        ]);
+        $output .= html_writer::empty_tag('input', [
+            'type' => 'submit',
+            'value' => get_string('submit'),
+            'class' => 'btn btn-primary mt-3',
+        ]);
         $output .= html_writer::end_tag('form');
         $output .= $this->container_end();
         $output .= $this->footer();

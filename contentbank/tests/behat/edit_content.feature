@@ -1,4 +1,4 @@
-@core @core_contentbank @contentbank_h5p @_file_upload @javascript
+@core @core_contentbank @core_h5p @contentbank_h5p @_file_upload @javascript
 Feature: Content bank use editor feature
   In order to add/edit content
   As a user
@@ -117,7 +117,12 @@ Feature: Content bank use editor feature
     Then the field "Title" matches value "New title"
 
   Scenario: Teachers can edit their own content in the content bank
-    Given the following "users" exist:
+    Given I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And I upload "h5p/tests/fixtures/ipsums.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "courses" exist:
@@ -157,5 +162,38 @@ Feature: Content bank use editor feature
     And I am on "Course 1" course homepage
     And I expand "Site pages" node
     And I click on "Content bank" "link"
+    And I follow "filltheblanks.h5p"
+    Then "Edit" "link" should not exist in the "region-main" "region"
+
+  Scenario: Teachers keep their content authoring in copied courses
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1        | 0        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+    And the following "contentbank content" exist:
+      | contextlevel | reference | contenttype     | user     | contentname       | filepath                              |
+      | Course       | C1        | contenttype_h5p | admin    | filltheblanks.h5p | /h5p/tests/fixtures/filltheblanks.h5p |
+      | Course       | C1        | contenttype_h5p | teacher1 | ipsums.h5p        | /h5p/tests/fixtures/ipsums.h5p        |
+    And I am on the "Course 1" "course copy" page
+    And I set the following fields to these values:
+      | Course full name  | Copy |
+      | Course short name | Copy |
+      | Teacher           | 1    |
+    When I press "Copy and view"
+    And I trigger cron
+    And I am on homepage
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Copy" course homepage
+    And I expand "Site pages" node
+    And I click on "Content bank" "link"
+    And I follow "ipsums.h5p"
+    Then "Edit" "link" should exist in the "region-main" "region"
+    And I navigate to "Content bank" in current page administration
     And I follow "filltheblanks.h5p"
     Then "Edit" "link" should not exist in the "region-main" "region"

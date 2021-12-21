@@ -163,6 +163,16 @@ abstract class restore_block_task extends restore_task {
     abstract public function get_configdata_encoded_attributes();
 
     /**
+     * Helper method to safely unserialize block configuration during restore
+     *
+     * @param string $configdata The original base64 encoded block config, as retrieved from the block_instances table
+     * @return stdClass
+     */
+    protected function decode_configdata(string $configdata): stdClass {
+        return unserialize_object(base64_decode($configdata));
+    }
+
+    /**
      * Define the contents in the activity that must be
      * processed by the link decoder
      */

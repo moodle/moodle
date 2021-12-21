@@ -42,10 +42,8 @@ Feature: Backup user data
       | Feedback for the response 'True'.  | So you think it is true                 |
       | Feedback for the response 'False'. | So you think it is false                |
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I press "Attempt quiz now"
+    When I am on the "Quiz 1" "quiz activity" page logged in as student1
+    And I follow "Attempt quiz"
     And I click on "True" "radio" in the "First question" "question"
     And I click on "False" "radio" in the "Second question" "question"
     And I press "Finish attempt"

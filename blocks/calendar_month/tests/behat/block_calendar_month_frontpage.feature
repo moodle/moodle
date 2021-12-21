@@ -19,5 +19,5 @@ Feature: Enable the calendar block on the site front page
     And I log out
     When I log in as "student1"
     And I am on site homepage
-    And I hover over today in the calendar
+    And I hover over today in the mini-calendar block
     Then I should see "Site Event"

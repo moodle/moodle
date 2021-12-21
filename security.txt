@@ -1,0 +1,6 @@
+Contact: https://moodle.org/security/report/
+Acknowledgments: https://moodle.org/security/
+Preferred-Languages: en
+Canonical: https://moodle.org/.well-known/security.txt
+Policy: https://docs.moodle.org/dev/Moodle_security_procedures
+Expires: Mon, 30 May 2022 01:00:00 +0000

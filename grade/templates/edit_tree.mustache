@@ -51,7 +51,7 @@
         {{{table}}}
         <div id="gradetreesubmit">
             {{#showsave}}
-                <input class="advanced btn btn-primary" type="submit" value={{#quote}}{{#str}}savechanges{{/str}}{{/quote}}>
+                <input class="advanced btn btn-primary" type="submit" value="{{#cleanstr}}savechanges{{/cleanstr}}">
             {{/showsave}}
             {{#showbulkmove}}
                 <div class="form-inline mt-3">
@@ -60,7 +60,7 @@
                     <select name="moveafter" id="menumoveafter" class="ignoredirty singleselect custom-select form-control"
                             data-action="toggle" data-toggle="action" data-togglegroup="category" disabled>
                         {{#bulkmoveoptions}}
-                            <option value="{{value}}">{{name}}</option>
+                            <option value="{{value}}">{{{name}}}</option>
                         {{/bulkmoveoptions}}
                     </select>
                 </div>

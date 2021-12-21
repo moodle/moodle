@@ -548,6 +548,7 @@ abstract class backup_controller_dbops extends backup_dbops {
 
         switch ($mode) {
             case backup::MODE_GENERAL:
+            case backup::MODE_ASYNC:
                 // Load the general defaults
                 $settings = array(
                         'backup_general_users'              => 'users',
@@ -577,6 +578,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                         'backup_import_blocks'             => 'blocks',
                         'backup_import_filters'            => 'filters',
                         'backup_import_calendarevents'     => 'calendarevents',
+                        'backup_import_permissions'        => 'permissions',
                         'backup_import_questionbank'       => 'questionbank',
                         'backup_import_groups'             => 'groups',
                         'backup_import_competencies'       => 'competencies',

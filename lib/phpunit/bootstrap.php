@@ -50,7 +50,6 @@ if (!defined('IGNORE_COMPONENT_CACHE')) {
 
 require_once(__DIR__.'/bootstraplib.php');
 require_once(__DIR__.'/../testing/lib.php');
-require_once(__DIR__.'/classes/autoloader.php');
 
 if (isset($_SERVER['REMOTE_ADDR'])) {
     phpunit_bootstrap_error(1, 'Unit tests can be executed only from command line!');
@@ -185,7 +184,7 @@ $allowed = array('wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermission
 $productioncfg = (array)$CFG;
 $CFG = new stdClass();
 foreach ($productioncfg as $key=>$value) {
-    if (!in_array($key, $allowed) and strpos($key, 'phpunit_') !== 0) {
+    if (!in_array($key, $allowed) and strpos($key, 'phpunit_') !== 0 and strpos($key, 'behat_') !== 0) {
         // ignore
         continue;
     }

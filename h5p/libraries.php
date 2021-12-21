@@ -28,6 +28,7 @@ require_login(null, false);
 
 $deletelibrary = optional_param('deletelibrary', null, PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
+$action = optional_param('action', null, PARAM_ALPHANUMEXT);
 
 $context = context_system::instance();
 require_capability('moodle/h5p:updatelibraries', $context);
@@ -62,6 +63,15 @@ if ($deletelibrary) {
     );
     echo $OUTPUT->footer();
     die();
+}
+
+if (!is_null($action)) {
+    if ($action == 'enable' || $action == 'disable') {
+        // If action is enable or disable, library id is required too.
+        $libraryid = required_param('id', PARAM_INT);
+
+        \core_h5p\api::set_library_enabled($libraryid, ($action == 'enable'));
+    }
 }
 
 echo $OUTPUT->header();

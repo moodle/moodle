@@ -516,9 +516,13 @@ class block_activity_results extends block_base {
 
                 // Now grab all the users from the database.
                 $userids = array_merge(array_keys($best), array_keys($worst));
-                $fields = array_merge(array('id', 'idnumber'), get_all_user_name_fields());
+                $fields = array_merge(array('id', 'idnumber'), \core_user\fields::get_name_fields());
                 $fields = implode(',', $fields);
                 $users = $DB->get_records_list('user', 'id', $userids, '', $fields);
+
+                // If configured to view user idnumber, ensure current user can see it.
+                $extrafields = \core_user\fields::for_identity($this->context)->get_required_fields();
+                $canviewidnumber = (array_search('idnumber', $extrafields) !== false);
 
                 // Ready for output!
                 if ($activity->gradetype == GRADE_TYPE_SCALE) {
@@ -545,10 +549,14 @@ class block_activity_results extends block_base {
                     }
                     $this->content->text .= '</h6></caption><colgroup class="number" />';
                     $this->content->text .= '<colgroup class="name" /><colgroup class="grade" /><tbody>';
+
                     foreach ($best as $userid => $gradeid) {
                         switch ($nameformat) {
                             case B_ACTIVITYRESULTS_NAME_FORMAT_ID:
-                                $thisname = get_string('user').' '.$users[$userid]->idnumber;
+                                $thisname = get_string('user');
+                                if ($canviewidnumber) {
+                                    $thisname .= ' ' . s($users[$userid]->idnumber);
+                                }
                             break;
                             case B_ACTIVITYRESULTS_NAME_FORMAT_ANON:
                                 $thisname = get_string('user');
@@ -611,7 +619,10 @@ class block_activity_results extends block_base {
                     foreach ($worst as $userid => $gradeid) {
                         switch ($nameformat) {
                             case B_ACTIVITYRESULTS_NAME_FORMAT_ID:
-                                $thisname = get_string('user').' '.$users[$userid]->idnumber;
+                                $thisname = get_string('user');
+                                if ($canviewidnumber) {
+                                    $thisname .= ' ' . s($users[$userid]->idnumber);
+                                };
                             break;
                             case B_ACTIVITYRESULTS_NAME_FORMAT_ANON:
                                 $thisname = get_string('user');

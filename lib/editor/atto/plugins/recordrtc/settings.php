@@ -26,6 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Needed for constants.
+require_once($CFG->dirroot . '/lib/editor/atto/plugins/recordrtc/lib.php');
+
 $ADMIN->add('editoratto', new admin_category('atto_recordrtc', new lang_string('pluginname', 'atto_recordrtc')));
 
 if ($ADMIN->fulltree) {
@@ -55,10 +58,29 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configtext('atto_recordrtc/videobitrate', $name, $desc, $default, PARAM_INT, 8);
     $settings->add($setting);
 
-    // Recording time limit.
-    $name = get_string('timelimit', 'atto_recordrtc');
-    $desc = get_string('timelimit_desc', 'atto_recordrtc');
-    $default = '120';
-    $setting = new admin_setting_configtext('atto_recordrtc/timelimit', $name, $desc, $default, PARAM_INT, 8);
+    // Audio recording time limit.
+    $name = get_string('audiotimelimit', 'atto_recordrtc');
+    $desc = get_string('audiotimelimit_desc', 'atto_recordrtc');
+    // Validate audiotimelimit greater than 0.
+    $setting = new admin_setting_configduration('atto_recordrtc/audiotimelimit', $name, $desc, DEFAULT_TIME_LIMIT);
+    $setting->set_validate_function(function(int $value): string {
+        if ($value <= 0) {
+            return get_string('timelimitwarning', 'atto_recordrtc');
+        }
+        return '';
+    });
+    $settings->add($setting);
+
+    // Video recording time limit.
+    $name = get_string('videotimelimit', 'atto_recordrtc');
+    $desc = get_string('videotimelimit_desc', 'atto_recordrtc');
+    // Validate videotimelimit greater than 0.
+    $setting = new admin_setting_configduration('atto_recordrtc/videotimelimit', $name, $desc, DEFAULT_TIME_LIMIT);
+    $setting->set_validate_function(function(int $value): string {
+        if ($value <= 0) {
+            return get_string('timelimitwarning', 'atto_recordrtc');
+        }
+        return '';
+    });
     $settings->add($setting);
 }

@@ -36,6 +36,13 @@ use lang_string;
  */
 class issuer extends persistent {
 
+    /** @var int Issuer is displayed on both login page and in the services lists */
+    const EVERYWHERE = 1;
+    /** @var int Issuer is displayed on the login page only */
+    const LOGINONLY = 2;
+    /** @var int Issuer is displayed only in the services lists and can not be used for login */
+    const SERVICEONLY = 0;
+
     const TABLE = 'oauth2_issuer';
 
     /**
@@ -70,8 +77,8 @@ class issuer extends persistent {
                 'default' => true
             ),
             'showonloginpage' => array(
-                'type' => PARAM_BOOL,
-                'default' => false
+                'type' => PARAM_INT,
+                'default' => self::SERVICEONLY,
             ),
             'basicauth' => array(
                 'type' => PARAM_BOOL,
@@ -109,7 +116,17 @@ class issuer extends persistent {
             'requireconfirmation' => array(
                 'type' => PARAM_BOOL,
                 'default' => true
-            )
+            ),
+            'servicetype' => array(
+                'type' => PARAM_ALPHANUM,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ),
+            'loginpagename' => array(
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ),
         );
     }
 
@@ -168,7 +185,23 @@ class issuer extends persistent {
      * @return boolean
      */
     public function is_authentication_supported() {
+        debugging('Method is_authentication_supported() is deprecated, please use is_available_for_login()',
+            DEBUG_DEVELOPER);
         return (!empty($this->get_endpoint_url('userinfo')));
+    }
+
+    /**
+     * Is this issue fully configured and enabled and can be used for login/signup
+     *
+     * @return bool
+     * @throws \coding_exception
+     */
+    public function is_available_for_login(): bool {
+        return $this->get('id') &&
+            $this->is_configured() &&
+            $this->get('showonloginpage') != self::SERVICEONLY &&
+            $this->get('enabled') &&
+            !empty($this->get_endpoint_url('userinfo'));
     }
 
     /**
@@ -225,5 +258,14 @@ class issuer extends persistent {
             return new lang_string('sslonlyaccess', 'error');
         }
         return true;
+    }
+
+    /**
+     * Display name for the issuers used on the login page
+     *
+     * @return string
+     */
+    public function get_display_name(): string {
+        return $this->get('loginpagename') ? $this->get('loginpagename') : $this->get('name');
     }
 }

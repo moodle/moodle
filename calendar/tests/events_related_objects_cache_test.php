@@ -41,7 +41,7 @@ class core_calendar_events_related_objects_cache_testcase extends advanced_testc
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
     }
 

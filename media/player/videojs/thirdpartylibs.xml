@@ -4,7 +4,7 @@
         <location>amd/src/video-lazy.js</location>
         <name>VideoJS</name>
         <license>Apache</license>
-        <version>7.7.6</version>
+        <version>7.10.0</version>
         <licenseversion>2.0</licenseversion>
     </library>
     <library>
@@ -18,21 +18,27 @@
         <location>videojs</location>
         <name>VideoJS support files</name>
         <license>Apache</license>
-        <version>7.7.6</version>
+        <version>7.10.0</version>
         <licenseversion>2.0</licenseversion>
     </library>
     <library>
-        <location>amd/src/videojs-flash-lazy.js</location>
-        <name>The Flash tech for video.js </name>
-        <license>Apache</license>
-        <version>2.2.1</version>
-        <licenseversion>2.0</licenseversion>
+        <location>amd/src/local/ogv/ogv.js</location>
+        <name>ogv.js</name>
+        <license>MIT</license>
+        <version>1.8.4</version>
+        <licenseversion></licenseversion>
     </library>
     <library>
-        <location>videojs/video-js.swf</location>
-        <name>Custom Flash Player for VideoJS</name>
-        <license>Apache</license>
-        <version>5.4.2</version>
-        <licenseversion>2.0</licenseversion>
+        <location>ogvjs</location>
+        <name>ogv.js support files</name>
+        <license>MIT</license>
+        <version>1.8.4</version>
+    </library>
+    <library>
+        <location>amd/src/videojs-ogvjs-lazy.js</location>
+        <name>ogv.js Tech plugin for Video.JS</name>
+        <license>MIT</license>
+        <version>0.1.2</version>
+        <licenseversion></licenseversion>
     </library>
 </libraries>

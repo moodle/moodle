@@ -44,8 +44,6 @@ use file_storage;
 class post_attachment {
     /** The component for attachments */
     private const COMPONENT = 'mod_forum';
-    /** File area for attachments */
-    private const FILE_AREA = 'attachment';
     /** Sort the attachments by filename */
     private const SORT = 'filename';
     /** Don't include directories */
@@ -68,9 +66,10 @@ class post_attachment {
      *
      * @param context $context The (forum) context that the posts are in
      * @param post_entity[] $posts The list of posts to load attachments for
+     * @param string $area The file storage area, can be 'attachment' or 'post' for inline attachments.
      * @return array Post attachments indexed by post id
      */
-    public function get_attachments_for_posts(context $context, array $posts) {
+    private function get_area_attachments_for_posts(context $context, array $posts, string $area) {
         $itemids = array_map(function($post) {
             return $post->get_id();
         }, $posts);
@@ -78,7 +77,7 @@ class post_attachment {
         $files = $this->filestorage->get_area_files(
             $context->id,
             self::COMPONENT,
-            self::FILE_AREA,
+            $area,
             $itemids,
             self::SORT,
             self::INCLUDE_DIRECTORIES
@@ -95,4 +94,27 @@ class post_attachment {
             return $carry;
         }, $filesbyid);
     }
+
+    /**
+     * Get attachment for posts.
+     *
+     * @param context $context The (forum) context that the posts are in
+     * @param post_entity[] $posts The list of posts to load attachments for
+     * @return array Post attachments indexed by post id
+     */
+    public function get_attachments_for_posts(context $context, array $posts) {
+        return $this->get_area_attachments_for_posts($context, $posts, 'attachment');
+    }
+
+    /**
+     * Get inline attachments for posts.
+     *
+     * @param context $context The (forum) context that the posts are in
+     * @param post_entity[] $posts The list of posts to load attachments for
+     * @return array Post attachments indexed by post id
+     */
+    public function get_inline_attachments_for_posts(context $context, array $posts) {
+        return $this->get_area_attachments_for_posts($context, $posts, 'post');
+    }
+
 }

@@ -830,7 +830,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             // No categories found.
             // This may happen after upgrade of a very old moodle version.
             // In new versions the default category is created on install.
-            $defcoursecat = self::create(array('name' => get_string('miscellaneous')));
+            $defcoursecat = self::create(array('name' => get_string('defaultcategoryname')));
             set_config('defaultrequestcategory', $defcoursecat->id);
             $all[0] = array($defcoursecat->id);
             $all[$defcoursecat->id] = array();
@@ -1040,7 +1040,8 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         list($sql2, $params2) = $DB->get_in_or_equal($managerroles, SQL_PARAMS_NAMED, 'rid');
         list($sort, $sortparams) = users_order_by_sql('u');
         $notdeleted = array('notdeleted' => 0);
-        $allnames = get_all_user_name_fields(true, 'u');
+        $userfieldsapi = \core_user\fields::for_name();
+        $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $sql = "SELECT ra.contextid, ra.id AS raid,
                        r.id AS roleid, r.name AS rolename, r.shortname AS roleshortname,
                        rn.name AS rolecoursealias, u.id, u.username, $allnames
@@ -2092,6 +2093,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $DB->delete_records('event', array('categoryid' => $this->id));
 
         // Finally delete the category and it's context.
+        $categoryrecord = $this->get_db_record();
         $DB->delete_records('course_categories', array('id' => $this->id));
 
         $coursecatcontext = context_coursecat::instance($this->id);
@@ -2106,6 +2108,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             'context' => $coursecatcontext,
             'other' => array('name' => $this->name)
         ));
+        $event->add_record_snapshot($event->objecttable, $categoryrecord);
         $event->set_coursecat($this);
         $event->trigger();
 
@@ -2281,6 +2284,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         }
 
         // Finally delete the category and it's context.
+        $categoryrecord = $this->get_db_record();
         $DB->delete_records('course_categories', array('id' => $this->id));
         $context->delete();
 
@@ -2291,6 +2295,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             'context' => $context,
             'other' => array('name' => $this->name, 'contentmovedcategoryid' => $newparentid)
         ));
+        $event->add_record_snapshot($event->objecttable, $categoryrecord);
         $event->set_coursecat($this);
         $event->trigger();
 
@@ -2606,7 +2611,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * Returns ids of all parents of the category. Last element in the return array is the direct parent
      *
      * For example, if you have a tree of categories like:
-     *   Miscellaneous (id = 1)
+     *   Category (id = 1)
      *      Subcategory (id = 2)
      *         Sub-subcategory (id = 4)
      *   Other category (id = 3)
@@ -2632,14 +2637,14 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * List is cached for 10 minutes
      *
      * For example, if you have a tree of categories like:
-     *   Miscellaneous (id = 1)
+     *   Category (id = 1)
      *      Subcategory (id = 2)
      *         Sub-subcategory (id = 4)
      *   Other category (id = 3)
      * Then after calling this function you will have
-     * array(1 => 'Miscellaneous',
-     *       2 => 'Miscellaneous / Subcategory',
-     *       4 => 'Miscellaneous / Subcategory / Sub-subcategory',
+     * array(1 => 'Category',
+     *       2 => 'Category / Subcategory',
+     *       4 => 'Category / Subcategory / Sub-subcategory',
      *       3 => 'Other category');
      *
      * If you specify $requiredcapability, then only categories where the current

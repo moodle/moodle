@@ -8,7 +8,7 @@ use Box\Spout\Common\Exception\InvalidColorException;
  * Class Color
  * This class provides constants and functions to work with colors
  */
-class Color
+abstract class Color
 {
     /** Standard colors - based on Office Online */
     const BLACK = '000000';
@@ -38,7 +38,7 @@ class Color
         self::throwIfInvalidColorComponentValue($green);
         self::throwIfInvalidColorComponentValue($blue);
 
-        return strtoupper(
+        return \strtoupper(
             self::convertColorComponentToHex($red) .
             self::convertColorComponentToHex($green) .
             self::convertColorComponentToHex($blue)
@@ -54,7 +54,7 @@ class Color
      */
     protected static function throwIfInvalidColorComponentValue($colorComponent)
     {
-        if (!is_int($colorComponent) || $colorComponent < 0 || $colorComponent > 255) {
+        if (!\is_int($colorComponent) || $colorComponent < 0 || $colorComponent > 255) {
             throw new InvalidColorException("The RGB components must be between 0 and 255. Received: $colorComponent");
         }
     }
@@ -67,7 +67,7 @@ class Color
      */
     protected static function convertColorComponentToHex($colorComponent)
     {
-        return str_pad(dechex($colorComponent), 2, '0', STR_PAD_LEFT);
+        return \str_pad(\dechex($colorComponent), 2, '0', STR_PAD_LEFT);
     }
 
     /**

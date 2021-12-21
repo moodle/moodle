@@ -130,10 +130,16 @@ if ($data = data_submitted()) {
 }
 
 $PAGE->set_pagelayout('report');
+
+$actionbar = new \core_grades\output\general_action_bar($context,
+    new moodle_url('/grade/report/singleview/index.php', ['id' => $courseid]), 'report', 'singleview');
+
 if ($itemtype == 'user') {
-    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false, true, null, null, $report->screen->item);
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false,
+        true, null, null, $report->screen->item, $actionbar);
 } else {
-    print_grade_page_head($course->id, 'report', 'singleview', $reportname);
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false,
+        true, null, null, null, $actionbar);
 }
 
 $graderrightnav = $graderleftnav = null;

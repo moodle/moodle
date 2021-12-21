@@ -9,13 +9,16 @@ Feature: Editing choice block
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
+    And the following "activity" exists:
+      | activity | choice               |
+      | course   | C1                   |
+      | idnumber | choice1              |
+      | name     | Choice name 1        |
+      | intro    | Choice Description 1 |
+      | section  | 1                    |
+      | option   | Option 1, Option 2   |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name 1 |
-      | Description | Choice Description 1 |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
     And I follow "Choice name 1"
     And I add the "Blog menu" block
     And I should see "View all entries about this Choice"
@@ -40,13 +43,16 @@ Feature: Editing choice block
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity | choice               |
+      | course   | C1                   |
+      | idnumber | choice1              |
+      | name     | Choice name 1        |
+      | intro    | Choice Description 1 |
+      | section  | 1                    |
+      | option   | Option 1, Option 2   |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name 1 |
-      | Description | Choice Description 1 |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
     And I follow "Choice name 1"
     And I add the "Blog menu" block
     And I should see "View all entries about this Choice"
@@ -70,13 +76,16 @@ Feature: Editing choice block
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | teacher1 | C1 | student |
+    And the following "activity" exists:
+      | activity | choice               |
+      | course   | C1                   |
+      | idnumber | choice1              |
+      | name     | Choice name 1        |
+      | intro    | Choice Description 1 |
+      | section  | 1                    |
+      | option   | Option 1, Option 2   |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name 1 |
-      | Description | Choice Description 1 |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
     And I follow "Choice name 1"
     And I add the "Blog menu" block
     And I should see "View all entries about this Choice"

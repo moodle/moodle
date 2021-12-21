@@ -46,22 +46,25 @@ class qtype_multichoice_edit_form extends question_edit_form {
         );
         $mform->addElement('select', 'single',
                 get_string('answerhowmany', 'qtype_multichoice'), $menu);
-        $mform->setDefault('single', get_config('qtype_multichoice', 'answerhowmany'));
+        $mform->setDefault('single', $this->get_default_value('single',
+            get_config('qtype_multichoice', 'answerhowmany')));
 
         $mform->addElement('advcheckbox', 'shuffleanswers',
                 get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_multichoice');
-        $mform->setDefault('shuffleanswers', get_config('qtype_multichoice', 'shuffleanswers'));
+        $mform->setDefault('shuffleanswers', $this->get_default_value('shuffleanswers',
+            get_config('qtype_multichoice', 'shuffleanswers')));
 
         $mform->addElement('select', 'answernumbering',
                 get_string('answernumbering', 'qtype_multichoice'),
                 qtype_multichoice::get_numbering_styles());
-        $mform->setDefault('answernumbering', get_config('qtype_multichoice', 'answernumbering'));
+        $mform->setDefault('answernumbering', $this->get_default_value('answernumbering',
+            get_config('qtype_multichoice', 'answernumbering')));
 
         $mform->addElement('selectyesno', 'showstandardinstruction',
             get_string('showstandardinstruction', 'qtype_multichoice'), null, null, [0, 1]);
         $mform->addHelpButton('showstandardinstruction', 'showstandardinstruction', 'qtype_multichoice');
-        $mform->setDefault('showstandardinstruction', 0);
+        $mform->setDefault('showstandardinstruction', $this->get_default_value('showstandardinstruction', 0));
 
         $this->add_per_answer_fields($mform, get_string('choiceno', 'qtype_multichoice', '{no}'),
                 question_bank::fraction_options_full(), max(5, QUESTION_NUMANS_START));
@@ -78,7 +81,7 @@ class qtype_multichoice_edit_form extends question_edit_form {
         $repeated[] = $mform->createElement('editor', 'answer',
                 $label, array('rows' => 1), $this->editoroptions);
         $repeated[] = $mform->createElement('select', 'fraction',
-                get_string('grade'), $gradeoptions);
+                get_string('gradenoun'), $gradeoptions);
         $repeated[] = $mform->createElement('editor', 'feedback',
                 get_string('feedback', 'question'), array('rows' => 1), $this->editoroptions);
         $repeatedoptions['answer']['type'] = PARAM_RAW;

@@ -128,7 +128,7 @@ class backp_settings_testcase extends basic_testcase {
             $this->assertEquals($e->errorcode, 'incorrect_object_passed');
         } catch (TypeError $e) {
             // On PHP7+ we get a TypeError raised, lets check we've the right error.
-            $this->assertRegexp('/must be an instance of backup_setting_ui/', $e->getMessage());
+            $this->assertMatchesRegularExpression('/must be (of type|an instance of) backup_setting_ui/', $e->getMessage());
         }
         restore_error_handler();
 
@@ -145,7 +145,7 @@ class backp_settings_testcase extends basic_testcase {
             $this->assertEquals($e->errorcode, 'incorrect_object_passed');
         } catch (TypeError $e) {
             // On PHP7+ we get a TypeError raised, lets check we've the right error.
-            $this->assertRegexp('/must be an instance of backup_setting_ui/', $e->getMessage());
+            $this->assertMatchesRegularExpression('/must be (of type|an instance of) backup_setting_ui/', $e->getMessage());
         }
         restore_error_handler();
 
@@ -354,7 +354,7 @@ class backp_settings_testcase extends basic_testcase {
             $this->assertEquals($e->errorcode, 'incorrect_object_passed');
         } catch (TypeError $e) {
             // On PHP7+ we get a TypeError raised, lets check we've the right error.
-            $this->assertRegexp('/must be an instance of base_setting/', $e->getMessage());
+            $this->assertMatchesRegularExpression('/must be (an instance of|of type) base_setting/', $e->getMessage());
         }
         restore_error_handler();
 
@@ -504,10 +504,9 @@ class mock_course_backup_setting extends course_backup_setting {
  * @param string $errstr
  * @param string $errfile
  * @param int $errline
- * @param array $errcontext
  * @return null
  */
-function backup_setting_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
+function backup_setting_error_handler($errno, $errstr, $errfile, $errline) {
     if ($errno !== E_RECOVERABLE_ERROR) {
         // Currently we only want to deal with type hinting errors
         return false;

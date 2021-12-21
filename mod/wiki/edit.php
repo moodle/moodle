@@ -93,7 +93,7 @@ if ($option == get_string('save', 'wiki')) {
         if (!confirm_sesskey()) {
             print_error(get_string('invalidsesskey', 'wiki'));
         }
-        $wikipage = new page_wiki_preview($wiki, $subwiki, $cm);
+        $wikipage = new page_wiki_preview($wiki, $subwiki, $cm, 'modulepage');
         $wikipage->set_page($page);
     } else {
         if ($option == get_string('cancel')) {
@@ -102,7 +102,7 @@ if ($option == get_string('save', 'wiki')) {
 
             redirect($CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $pageid);
         } else {
-            $wikipage = new page_wiki_edit($wiki, $subwiki, $cm);
+            $wikipage = new page_wiki_edit($wiki, $subwiki, $cm, 'modulepage');
             $wikipage->set_page($page);
             $wikipage->set_upload($option == get_string('upload', 'wiki'));
         }

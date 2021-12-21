@@ -134,9 +134,9 @@
 {{# str }}somefieldsrequired, form, <i class="icon fa fa-exclamation-circle text-danger fa-fw" title="{{# str }} required {{/ str }}" ></i>{{/ str }}
 <hr>
 
-<input type="submit" class="btn btn-primary" name="submit" value={{#quote}}{{#str}} next {{/str}}{{/quote}}>
+<input type="submit" class="btn btn-primary" name="submit" value="{{#cleanstr}} next {{/cleanstr}}">
 {{#cancancel}}
-<input type="submit" class="btn btn-secondary" name="cancel" value={{#quote}}{{#str}} cancel {{/str}}{{/quote}}>
+<input type="submit" class="btn btn-secondary" name="cancel" value="{{#cleanstr}} cancel {{/cleanstr}}">
 {{/cancancel}}
 </form>
 

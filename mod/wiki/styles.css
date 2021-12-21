@@ -123,16 +123,6 @@
     border: thin solid black;
 }
 
-.wiki_restore_yes,
-.wiki_deletecomment_yes {
-    float: left;
-}
-
-.wiki_restore_no,
-.wiki_deletecomment_no {
-    float: right;
-}
-
 .wiki_restoreform,
 .wiki_deletecommentform {
     width: 10%;

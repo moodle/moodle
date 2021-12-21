@@ -40,7 +40,7 @@ class core_media_player_native_testcase extends advanced_testcase {
     /**
      * Pre-test setup.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }
@@ -92,7 +92,7 @@ class core_media_player_native_testcase extends advanced_testcase {
         $title = 'Some Filename Video';
         $content = $player->embed($urls, $title, 0, 0, []);
 
-        $this->assertRegExp('~title="' . $title . '"~', $content);
+        $this->assertMatchesRegularExpression('~title="' . $title . '"~', $content);
         $this->assertEquals($title, media_test_native_plugin::get_attribute($content, 'title'));
     }
 
@@ -112,27 +112,27 @@ class core_media_player_native_testcase extends advanced_testcase {
 
         // Add attributes.
         $content = media_test_native_plugin::add_attributes($content, ['preload' => 'none', 'controls' => 'true']);
-        $this->assertRegExp('~title="' . $title . '"~', $content);
-        $this->assertRegExp('~preload="none"~', $content);
-        $this->assertRegExp('~controls="true"~', $content);
+        $this->assertMatchesRegularExpression('~title="' . $title . '"~', $content);
+        $this->assertMatchesRegularExpression('~preload="none"~', $content);
+        $this->assertMatchesRegularExpression('~controls="true"~', $content);
 
         // Change existing attribute.
         $content = media_test_native_plugin::add_attributes($content, ['controls' => 'false']);
-        $this->assertRegExp('~title="' . $title . '"~', $content);
-        $this->assertRegExp('~preload="none"~', $content);
-        $this->assertRegExp('~controls="false"~', $content);
+        $this->assertMatchesRegularExpression('~title="' . $title . '"~', $content);
+        $this->assertMatchesRegularExpression('~preload="none"~', $content);
+        $this->assertMatchesRegularExpression('~controls="false"~', $content);
 
         // Remove attributes.
         $content = media_test_native_plugin::remove_attributes($content, ['title']);
-        $this->assertNotRegExp('~title="' . $title . '"~', $content);
-        $this->assertRegExp('~preload="none"~', $content);
-        $this->assertRegExp('~controls="false"~', $content);
+        $this->assertDoesNotMatchRegularExpression('~title="' . $title . '"~', $content);
+        $this->assertMatchesRegularExpression('~preload="none"~', $content);
+        $this->assertMatchesRegularExpression('~controls="false"~', $content);
 
         // Remove another one.
         $content = media_test_native_plugin::remove_attributes($content, ['preload']);
-        $this->assertNotRegExp('~title="' . $title . '"~', $content);
-        $this->assertNotRegExp('~preload="none"~', $content);
-        $this->assertRegExp('~controls="false"~', $content);
+        $this->assertDoesNotMatchRegularExpression('~title="' . $title . '"~', $content);
+        $this->assertDoesNotMatchRegularExpression('~preload="none"~', $content);
+        $this->assertMatchesRegularExpression('~controls="false"~', $content);
     }
 
     /**
@@ -150,14 +150,14 @@ class core_media_player_native_testcase extends advanced_testcase {
         $content = $player->embed($urls, $title, 0, 0, []);
 
         // Test sources present.
-        $this->assertContains('<source src="http://example.org/some_filename.mp4" />', $content);
-        $this->assertContains('<source src="http://example.org/some_filename_hires.mp4" />', $content);
+        $this->assertStringContainsString('<source src="http://example.org/some_filename.mp4" />', $content);
+        $this->assertStringContainsString('<source src="http://example.org/some_filename_hires.mp4" />', $content);
 
         // Change sources.
         $newsource = '<source src="http://example.org/new_filename.mp4" />';
         $content = media_test_native_plugin::replace_sources($content, $newsource);
-        $this->assertContains($newsource, $content);
-        $this->assertNotContains('<source src="http://example.org/some_filename.mp4" />', $content);
-        $this->assertNotContains('<source src="http://example.org/some_filename_hires.mp4" />', $content);
+        $this->assertStringContainsString($newsource, $content);
+        $this->assertStringNotContainsString('<source src="http://example.org/some_filename.mp4" />', $content);
+        $this->assertStringNotContainsString('<source src="http://example.org/some_filename_hires.mp4" />', $content);
     }
 }

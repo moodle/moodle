@@ -37,7 +37,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @return string
      */
     public function header($lesson, $cm, $currenttab = '', $extraeditbuttons = false, $lessonpageid = null, $extrapagetitle = null) {
-        global $CFG;
+        global $CFG, $USER;
 
         $activityname = format_string($lesson->name, true, $lesson->course);
         if (empty($extrapagetitle)) {
@@ -53,26 +53,30 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $this->page->set_title($title);
         $this->page->set_heading($this->page->course->fullname);
         lesson_add_header_buttons($cm, $context, $extraeditbuttons, $lessonpageid);
-        $output = $this->output->header();
 
-        if (has_capability('mod/lesson:manage', $context)) {
-            $output .= $this->output->heading_with_help($activityname, 'overview', 'lesson');
-            // Info box.
-            if ($lesson->intro) {
-                $output .= $this->output->box(format_module_intro('lesson', $lesson, $cm->id), 'generalbox', 'intro');
-            }
-            if (!empty($currenttab)) {
-                ob_start();
-                include($CFG->dirroot.'/mod/lesson/tabs.php');
-                $output .= ob_get_contents();
-                ob_end_clean();
-            }
-        } else {
-            $output .= $this->output->heading($activityname);
-            // Info box.
-            if ($lesson->intro) {
-                $output .= $this->output->box(format_module_intro('lesson', $lesson, $cm->id), 'generalbox', 'intro');
-            }
+        $canmanage = has_capability('mod/lesson:manage', $context);
+        $activityheader = $this->page->activityheader;
+        $activitypage = new moodle_url('/mod/' . $this->page->activityname . '/view.php');
+        $setactive = $activitypage->compare($this->page->url, URL_MATCH_BASE);
+        if ($activityheader->is_title_allowed()) {
+            $title = $canmanage && $setactive ?
+                        $this->output->heading_with_help($activityname, 'overview', 'lesson') :
+                        $activityname;
+            $activityheader->set_title($title);
+        }
+
+        // If we have the capability to manage the lesson but not within the view page,
+        // there's no reason to show activity/completion information.
+        if ($canmanage && !$setactive) {
+            $activityheader->set_hidecompletion(true);
+        }
+
+        $output = $this->output->header();
+        if ($canmanage && !empty($currenttab) && !$this->page->has_secondary_navigation()) {
+            ob_start();
+            include($CFG->dirroot.'/mod/lesson/tabs.php');
+            $output .= ob_get_contents();
+            ob_end_clean();
         }
 
         foreach ($lesson->messages as $message) {
@@ -222,11 +226,6 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $table = new html_table();
         $table->head = array(get_string('pagetitle', 'lesson'), get_string('qtype', 'lesson'), get_string('jumps', 'lesson'), get_string('actions', 'lesson'));
         $table->align = array('left', 'left', 'left', 'center');
-        $table->wrap = array('', 'nowrap', '', 'nowrap');
-        $table->tablealign = 'center';
-        $table->cellspacing = 0;
-        $table->cellpadding = '2px';
-        $table->width = '80%';
         $table->data = array();
 
         $canedit = has_capability('mod/lesson:edit', context_module::instance($this->page->cm->id));
@@ -451,6 +450,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
             $addpageurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'sesskey'=>sesskey()));
             $addpageselect = new single_select($addpageurl, 'qtype', $options, null, array(''=>get_string('addanewpage', 'lesson').'...'), 'addpageafter'.$page->id);
+            $addpageselect->attributes = ['aria-label' => get_string('actions', 'lesson')];
             $addpageselector = $this->output->render($addpageselect);
         }
 
@@ -642,5 +642,51 @@ class mod_lesson_renderer extends plugin_renderer_base {
                 array('class' => 'centerpadded lessonbutton standardbutton pr-3'));
         }
         return $output;
+    }
+
+    /**
+     * Render the override action menu.
+     *
+     * @param \mod_lesson\output\override_action_menu $overrideactionmenu The overrideactionmenu
+     *
+     * @return string The rendered override action menu.
+     */
+    public function render_override_action_menu(\mod_lesson\output\override_action_menu $overrideactionmenu): string {
+        $context = $overrideactionmenu->export_for_template($this);
+        return $this->render_from_template('mod_lesson/override_action_menu', $context);
+    }
+
+    /**
+     * Render the edit action buttons.
+     *
+     * @param \mod_lesson\output\edit_action_buttons $editbuttons The editbuttons
+     *
+     * @return string The rendered edit action buttons.
+     */
+    public function render_edit_action_buttons(\mod_lesson\output\edit_action_buttons $editbuttons): string {
+        $context = $editbuttons->export_for_template($this);
+        return $this->render_from_template('mod_lesson/edit_action_buttons', $context);
+    }
+
+    /**
+     * Render the edit action area.
+     *
+     * @param \mod_lesson\output\edit_action_area $editarea The edit area.
+     * @return string The rendered edit action area.
+     */
+    public function render_edit_action_area(\mod_lesson\output\edit_action_area $editarea): string {
+        $context = $editarea->export_for_template($this);
+        return $this->render_from_template('mod_lesson/edit_action_area', $context);
+    }
+
+    /**
+     * Render the report action menu
+     *
+     * @param \mod\lesson\output\report_action_menu $reportmenu The reportmenu.
+     * @return string The rendered report action menu.
+     */
+    public function render_report_action_menu(\mod_lesson\output\report_action_menu $reportmenu): string {
+        $context = $reportmenu->export_for_template($this);
+        return $this->render_from_template('mod_lesson/report_action_menu', $context);
     }
 }

@@ -63,9 +63,11 @@
         ]
     }
 }}
-<div class="border-bottom pb-2">
+<div class="pb-2" data-region="event-list-wrapper">
     {{#eventsbyday}}
-        <h5 class="h6 mt-3 mb-0 {{#past}}text-danger{{/past}}">{{#userdate}} {{dayTimestamp}}, {{#str}} strftimedaydate, core_langconfig {{/str}}  {{/userdate}}</h5>
+        <div class="mt-3" data-region="event-list-content-date" data-timestamp="{{dayTimestamp}}">
+            <h5 class="h6 d-inline {{^courseview}}font-weight-bold px-2{{/courseview}}">{{#userdate}} {{dayTimestamp}}, {{#str}} strftimedaydate, core_langconfig {{/str}}  {{/userdate}}</h5>
+        </div>
         {{> block_timeline/event-list-items }}
     {{/eventsbyday}}
 </div>

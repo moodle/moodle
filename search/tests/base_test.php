@@ -51,7 +51,7 @@ class search_base_testcase extends advanced_testcase {
      */
     protected $engine = null;
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
         set_config('enableglobalsearch', true);
 
@@ -62,7 +62,7 @@ class search_base_testcase extends advanced_testcase {
         $this->generator->setup();
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         // For unit tests before PHP 7, teardown is called even on skip. So only do our teardown if we did setup.
         if ($this->generator) {
             // Moodle DML freaks out if we don't teardown the temp table after each run.
@@ -115,7 +115,7 @@ class search_base_testcase extends advanced_testcase {
         // with required methods stubbed.
         $builder = $this->getMockBuilder('\core_search\base');
         $builder->disableOriginalConstructor();
-        $builder->setMethods(array('get_search_fileareas', 'get_component_name'));
+        $builder->onlyMethods(array('get_search_fileareas', 'get_component_name'));
         $stub = $builder->getMockForAbstractClass();
         $stub->method('get_search_fileareas')->willReturn(array($filearea));
         $stub->method('get_component_name')->willReturn($component);

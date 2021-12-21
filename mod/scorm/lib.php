@@ -19,6 +19,7 @@
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 
 /** SCORM_TYPE_LOCAL = local */
 define('SCORM_TYPE_LOCAL', 'local');
@@ -52,6 +53,8 @@ define('SCORM_DISPLAY_ATTEMPTSTATUS_ENTRY', 3);
 
 define('SCORM_EVENT_TYPE_OPEN', 'open');
 define('SCORM_EVENT_TYPE_CLOSE', 'close');
+
+require_once(__DIR__ . '/deprecatedlib.php');
 
 /**
  * Return an array of status options
@@ -358,9 +361,9 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
             'time' => grade_get_date_for_user_grade($grade, $user),
         ];
         if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
-            $result->info = get_string('grade') . ': '. $grade->str_long_grade;
+            $result->info = get_string('gradenoun') . ': '. $grade->str_long_grade;
         } else {
-            $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
+            $result->info = get_string('gradenoun') . ': ' . get_string('hidden', 'grades');
         }
 
         return $result;
@@ -401,12 +404,12 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     if (!empty($grades->items[0]->grades)) {
         $grade = reset($grades->items[0]->grades);
         if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
-            echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
+            echo $OUTPUT->container(get_string('gradenoun').': '.$grade->str_long_grade);
             if ($grade->str_feedback) {
                 echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
             }
         } else {
-            echo $OUTPUT->container(get_string('grade') . ': ' . get_string('hidden', 'grades'));
+            echo $OUTPUT->container(get_string('gradenoun') . ': ' . get_string('hidden', 'grades'));
         }
     }
 
@@ -1008,6 +1011,9 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         return false;
     }
 
+    // Allow SVG files to be loaded within SCORM content, instead of forcing download.
+    $options['dontforcesvgdownload'] = true;
+
     // Finally send the file.
     send_stored_file($file, $lifetime, 0, false, $options);
 }
@@ -1144,118 +1150,6 @@ function scorm_version_check($scormversion, $version='') {
         }
     }
     return false;
-}
-
-/**
- * Obtains the automatic completion state for this scorm based on any conditions
- * in scorm settings.
- *
- * @param object $course Course
- * @param object $cm Course-module
- * @param int $userid User ID
- * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
- * @return bool True if completed, false if not. (If no conditions, then return
- *   value depends on comparison type)
- */
-function scorm_get_completion_state($course, $cm, $userid, $type) {
-    global $DB;
-
-    $result = $type;
-
-    // Get scorm.
-    if (!$scorm = $DB->get_record('scorm', array('id' => $cm->instance))) {
-        print_error('cannotfindscorm');
-    }
-    // Only check for existence of tracks and return false if completionstatusrequired or completionscorerequired
-    // this means that if only view is required we don't end up with a false state.
-    if ($scorm->completionstatusrequired !== null ||
-        $scorm->completionscorerequired !== null) {
-        // Get user's tracks data.
-        $tracks = $DB->get_records_sql(
-            "
-            SELECT
-                id,
-                scoid,
-                element,
-                value
-            FROM
-                {scorm_scoes_track}
-            WHERE
-                scormid = ?
-            AND userid = ?
-            AND element IN
-            (
-                'cmi.core.lesson_status',
-                'cmi.completion_status',
-                'cmi.success_status',
-                'cmi.core.score.raw',
-                'cmi.score.raw'
-            )
-            ",
-            array($scorm->id, $userid)
-        );
-
-        if (!$tracks) {
-            return completion_info::aggregate_completion_states($type, $result, false);
-        }
-    }
-
-    // Check for status.
-    if ($scorm->completionstatusrequired !== null) {
-
-        // Get status.
-        $statuses = array_flip(scorm_status_options());
-        $nstatus = 0;
-        // Check any track for these values.
-        $scostatus = array();
-        foreach ($tracks as $track) {
-            if (!in_array($track->element, array('cmi.core.lesson_status', 'cmi.completion_status', 'cmi.success_status'))) {
-                continue;
-            }
-            if (array_key_exists($track->value, $statuses)) {
-                $scostatus[$track->scoid] = true;
-                $nstatus |= $statuses[$track->value];
-            }
-        }
-
-        if (!empty($scorm->completionstatusallscos)) {
-            // Iterate over all scos and make sure each has a lesson_status.
-            $scos = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id, 'scormtype' => 'sco'));
-            foreach ($scos as $sco) {
-                if (empty($scostatus[$sco->id])) {
-                    return completion_info::aggregate_completion_states($type, $result, false);
-                }
-            }
-            return completion_info::aggregate_completion_states($type, $result, true);
-        } else if ($scorm->completionstatusrequired & $nstatus) {
-            return completion_info::aggregate_completion_states($type, $result, true);
-        } else {
-            return completion_info::aggregate_completion_states($type, $result, false);
-        }
-    }
-
-    // Check for score.
-    if ($scorm->completionscorerequired !== null) {
-        $maxscore = -1;
-
-        foreach ($tracks as $track) {
-            if (!in_array($track->element, array('cmi.core.score.raw', 'cmi.score.raw'))) {
-                continue;
-            }
-
-            if (strlen($track->value) && floatval($track->value) >= $maxscore) {
-                $maxscore = floatval($track->value);
-            }
-        }
-
-        if ($scorm->completionscorerequired <= $maxscore) {
-            return completion_info::aggregate_completion_states($type, $result, true);
-        } else {
-            return completion_info::aggregate_completion_states($type, $result, false);
-        }
-    }
-
-    return $result;
 }
 
 /**
@@ -1910,4 +1804,46 @@ function mod_scorm_get_path_from_pluginfile(string $filearea, array $args) : arr
         'itemid' => 0,
         'filepath' => $filepath,
     ];
+}
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_scorm_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'scorm');
+
+    switch ($eventtype) {
+        case SCORM_EVENT_TYPE_OPEN:
+            $identifier = 'calendarstart';
+            break;
+        case SCORM_EVENT_TYPE_CLOSE:
+            $identifier = 'calendarend';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'scorm', $modulename);
+}
+
+/**
+ * This function extends the settings navigation block for the site.
+ *
+ * It is safe to rely on PAGE here as we will only ever be within the module
+ * context when this is called
+ *
+ * @param navigation_node $settings navigation_node object.
+ * @param navigation_node $scormnode navigation_node object.
+ * @return void
+ */
+function scorm_extend_settings_navigation(navigation_node $settings, navigation_node $scormnode): void {
+    global $PAGE;
+
+    if (has_capability('mod/scorm:viewreport', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/scorm/report.php', ['id' => $PAGE->cm->id]);
+        $scormnode->add(get_string("reports", "scorm"), $url, navigation_node::TYPE_CUSTOM, null, 'scormreport');
+    }
 }

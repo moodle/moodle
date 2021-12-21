@@ -51,7 +51,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
      *
      * This is executed before running any test in this file.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
 
         // Add a mnet host.
@@ -328,7 +328,7 @@ class mnetservice_enrol_privacy_testcase extends provider_testcase {
         $course->hostid         = $this->mnethost->id;
         $course->remoteid       = $remoteid;
         $course->categoryid     = 1;
-        $course->categoryname   = 'Miscellaneous';
+        $course->categoryname   = get_string('defaultcategoryname');
         $course->sortorder      = 10001;
         $course->fullname       = 'Test Remote Course '.$remoteid;
         $course->shortname      = 'testremotecourse '.$remoteid;

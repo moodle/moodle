@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_bigbluebuttonbn/mobile_view_notification
+
+    This template renders the notifications for mobile page.
+
+    Example context (json):
+    {
+        "bigbluebuttonbn.intro": "foo",
+        "cmid": 3,
+        "message": "A message",
+        "not_started": [
+          {"not_started.starts_at": "aaa", "not_started.starts_at": "bbb"},
+          {"not_started.starts_at": "aaa", "not_started.starts_at": "bbb"}
+        ]
+    }
+}}
+{{=<% %>=}}
+<div>
+    <core-course-module-description description="<% bigbluebuttonbn.intro %>" component="mod_bigbluebuttonbn" componentId="<% cmid %>"></core-course-module-description>
+    <ion-list>
+        <ion-item class="ion-text-wrap" text-wrap>
+            <ion-label><% message %></ion-label>
+        </ion-item>
+        <%#not_started%>
+            <ion-item class="ion-text-wrap" text-wrap>
+                <ion-label>
+                    <p><% not_started.starts_at %></p>
+                    <p><% not_started.ends_at %></p>
+                </ion-label>
+            </ion-item>
+        <%/not_started%>
+        <span core-site-plugins-call-ws-on-load
+              name="mod_bigbluebuttonbn_can_join" [params]="{cmid: <% cmid %>}" (onSuccess)="onCanJoinReturns($event)"></span>
+    </ion-list>
+</div>

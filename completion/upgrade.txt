@@ -1,6 +1,36 @@
 This files describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+* New method mark_course_completions_activity_criteria() has been added to mark course completions instantly. It is
+  based on cron for completion_criteria_activity.php which is refactored to use it as well.
+* Core now passes an additional parameter to '_get_completion_state'. This is an array representation of the completion results that have already been
+  tested. Currently contains - viewed, usegrade, passgrade. Any plugin that are dependent on these criteria can now check this array instead of retesting it.
+* The method \completion_criteria_completion::mark_complete() now has the optional $timecompleted parameter to specify when the
+  criteria was completed.
+
+=== 3.11 ===
+* New Behat steps for activity completion in the behat_completion class:
+  - activity_completion_condition_displayed_as()
+    - Given the "<Completion condition>" completion condition of "<Activity name>" is displayed as "<Status>"
+  - activity_should_have_the_completion_condition()
+    - Given "<Activity name>" should have the "<Condition name>" completion condition
+  - manual_completion_button_displayed_as()
+    - Given the manual completion button of "<Activity name>" is displayed as "<Status>"
+  - the_manual_completion_button_for_activity_should_be_disabled()
+    - Given the manual completion button for "<Activity name>" should be disabled
+  - there_should_be_no_completion_for_activity()
+    - Given there should be no completion information shown for "<Activity name>"
+  - toggle_the_manual_completion_state()
+    - Given I toggle the manual completion state of "<Activity name>"
+  - overridden_manual_completion_button_displayed_as
+    - Given the manual completion button of "<Activity name>" overridden by "<User>" is displayed as "<Status>"
+  - overridden_activity_completion_condition_displayed_as
+    - Given the "<Completion condition>" completion condition of "<Activity name>" overridden by "<User>" is displayed as "<Status>"
+* *_get_completion_state() callback functions have been deprecated and should no longer be used. Plugins that define custom
+  completion rules must implement the mod_[modname]\completion\custom_completion class that extends the
+  \core_completion\activity_custom_completion base class.
+
 === 3.7 ===
  * External function core_completion_external::get_activities_completion_status new returns the following additional field:
    - valueused (indicates whether the completion state affects the availability of other content)

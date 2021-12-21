@@ -1,0 +1,204 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_brickfield/advanced
+
+    This template renders advanced page.
+
+    Example context (json):
+    {
+        "pagetitle": "Advanced"
+    }
+}}
+
+<link rel="stylesheet" href="styles.css">
+
+<h3>{{{pagetitle}}}</h3>
+
+<section class="tool_brickfield_banner">
+    <div class="tool_brickfield_banner_heading">
+        <img src="pix/i/Brickfield-logo-black.png" alt="Brickfield Logo" class="pull-right tool_brickfield_logo_height">
+        <h2>{{# str }}bannerheadingone, tool_brickfield{{/ str }}</h2>
+    </div>
+    <p>
+        {{# str }}bannercontentone, tool_brickfield, https://www.brickfield.ie/moodle_talk_to_sales/{{/ str }}
+    </p>
+</section>
+
+<div class="tool_brickfield_grid">
+    <div class="tool_brickfield_grid_inner">
+
+        <div class="tool_brickfield_grid_item">
+            <div class="tool_brickfield_grid_item_shape">
+                <div class="tool_brickfield_grid_display" style="grid-template-areas: 'al ar ar' 'al ar ar'; grid-area: a;">
+                    <div style="grid-area: al;">
+                        <div class="tool_brickfield_grid_spacing">
+                            <span class="tool_brickfield_icon_position">
+                                <img src="pix/i/analytics-custom.png" alt="Analytics icon" class="tool_brickfield_icon_height">
+                            </span>
+                        </div>
+                    </div>
+                    <div style="grid-area: ar;">
+                        <h3>
+                            <span class="tool_brickfield_grid_heading">
+                                {{# str }}headingone, tool_brickfield{{/ str }}
+                            </span>
+                        </h3>
+                        <p class="tool_brickfield_grid_content">
+                            {{# str }}contentone, tool_brickfield{{/ str }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tool_brickfield_grid_item">
+            <div class="tool_brickfield_grid_item_shape">
+                <div class="tool_brickfield_grid_display" style="grid-template-areas: 'bl br br' 'bl br br'; grid-area: b;">
+                    <div style="grid-area: bl;">
+                        <div class="tool_brickfield_grid_spacing">
+                            <span class="tool_brickfield_icon_position">
+                                <img src="pix/i/tools-custom.png" alt="Tools icon" class="tool_brickfield_icon_height">
+                            </span>
+                        </div>
+                    </div>
+                    <div style="grid-area: br;">
+                        <h3>
+                            <span class="tool_brickfield_grid_heading">
+                                {{# str }}headingtwo, tool_brickfield{{/ str }}
+                            </span>
+                        </h3>
+                        <p class="tool_brickfield_grid_content">
+                            {{# str }}contenttwo, tool_brickfield{{/ str }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tool_brickfield_grid_item">
+            <div class="tool_brickfield_grid_item_shape">
+                <div class="tool_brickfield_grid_display" style="grid-template-areas: 'cl cr cr' 'cl cr cr'; grid-area: c;">
+                    <div style="grid-area: cl;">
+                        <div class="tool_brickfield_grid_spacing">
+                            <span class="tool_brickfield_icon_position">
+                                <img src="pix/i/file-edit-custom.png" alt="Edit file icon" class="tool_brickfield_icon_height">
+                            </span>
+                        </div>
+                    </div>
+                    <div style="grid-area: cr;">
+                        <h3>
+                            <span class="tool_brickfield_grid_heading">
+                                {{# str }}headingthree, tool_brickfield{{/ str }}
+                            </span>
+                        </h3>
+                        <p class="tool_brickfield_grid_content">
+                            {{# str }}contentthree, tool_brickfield{{/ str }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tool_brickfield_grid_item">
+            <div class="tool_brickfield_grid_item_shape">
+                <div class="tool_brickfield_grid_display" style="grid-template-areas: 'dl dr dr' 'dl dr dr'; grid-area: d;">
+                    <div style="grid-area: dl;">
+                        <div class="tool_brickfield_grid_spacing">
+                            <span class="tool_brickfield_icon_position">
+                                <img src="pix/i/search-plus-custom.png" alt="Search icon" class="tool_brickfield_icon_height">
+                            </span>
+                        </div>
+                    </div>
+                    <div style="grid-area: dr;">
+                        <h3>
+                            <span class="tool_brickfield_grid_heading">
+                                {{# str }}headingfour, tool_brickfield{{/ str }}
+                            </span>
+                        </h3>
+                        <p class="tool_brickfield_grid_content">
+                            {{# str }}contentfour, tool_brickfield{{/ str }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tool_brickfield_grid_item">
+            <div class="tool_brickfield_grid_item_shape">
+                <div class="tool_brickfield_grid_display" style="grid-template-areas: 'el er er' 'el er er'; grid-area: e;">
+                    <div style="grid-area: el;">
+                        <div class="tool_brickfield_grid_spacing">
+                            <span class="tool_brickfield_icon_position">
+                                <img src="pix/i/wand-magic-custom.png" alt="Magic wand icon" class="tool_brickfield_icon_height">
+                            </span>
+                        </div>
+                    </div>
+                    <div style="grid-area: er;">
+                        <h3>
+                            <span class="tool_brickfield_grid_heading">
+                                {{# str }}headingfive, tool_brickfield{{/ str }}
+                            </span>
+                        </h3>
+                        <p class="tool_brickfield_grid_content">
+                            {{# str }}contentfive, tool_brickfield{{/ str }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tool_brickfield_grid_item">
+            <div class="tool_brickfield_grid_item_shape">
+                <div class="tool_brickfield_grid_display" style="grid-template-areas: 'fl fr fr' 'fl fr fr'; grid-area: f;">
+                    <div style="grid-area: fl;">
+                        <div class="tool_brickfield_grid_spacing">
+                            <span class="tool_brickfield_icon_position">
+                                <img src="pix/i/hands-helping-custom.png" alt="Helping hands icon" class="tool_brickfield_icon_height">
+                            </span>
+                        </div>
+                    </div>
+                    <div style="grid-area: fr;">
+                        <h3>
+                            <span class="tool_brickfield_grid_heading">
+                                {{# str }}headingsix, tool_brickfield{{/ str }}
+                            </span>
+                        </h3>
+                        <p class="tool_brickfield_grid_content">
+                            {{# str }}contentsix, tool_brickfield{{/ str }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<section class="tool_brickfield_banner">
+    <h2 class="accesshide">{{# str }}footerheading, tool_brickfield{{/ str }}</h2>
+    <p>
+        {{# str }}bannercontenttwo, tool_brickfield{{/ str }}
+    </p>
+    <div class="tool_brickfield_center_button">
+        <form action="https://www.brickfield.ie/moodle_free_demo/">
+            <button class="tool_brickfield_advanced_button">
+                {{# str }}buttonone, tool_brickfield{{/ str }}
+            </button>
+        </form>
+    </div>
+</section>

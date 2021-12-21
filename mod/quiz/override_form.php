@@ -37,10 +37,10 @@ require_once($CFG->dirroot . '/mod/quiz/mod_form.php');
  */
 class quiz_override_form extends moodleform {
 
-    /** @var object course module object. */
+    /** @var cm_info course module object. */
     protected $cm;
 
-    /** @var object the quiz settings object. */
+    /** @var stdClass the quiz settings object. */
     protected $quiz;
 
     /** @var context the quiz context. */
@@ -73,8 +73,7 @@ class quiz_override_form extends moodleform {
         $this->groupid = empty($override->groupid) ? 0 : $override->groupid;
         $this->userid = empty($override->userid) ? 0 : $override->userid;
 
-        parent::__construct($submiturl, null, 'post');
-
+        parent::__construct($submiturl);
     }
 
     protected function definition() {
@@ -123,34 +122,56 @@ class quiz_override_form extends moodleform {
             }
         } else {
             // User override.
+            $userfieldsapi = \core_user\fields::for_identity($this->context)->with_userpic()->with_name();
+            $extrauserfields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
             if ($this->userid) {
                 // There is already a userid, so freeze the selector.
-                $user = $DB->get_record('user', array('id'=>$this->userid));
+                $user = $DB->get_record('user', ['id' => $this->userid]);
+                profile_load_custom_fields($user);
                 $userchoices = array();
-                $userchoices[$this->userid] = fullname($user);
+                $userchoices[$this->userid] = self::display_user_name($user, $extrauserfields);
                 $mform->addElement('select', 'userid',
                         get_string('overrideuser', 'quiz'), $userchoices);
                 $mform->freeze('userid');
             } else {
                 // Prepare the list of users.
-                $users = array();
-                list($sort, $sortparams) = users_order_by_sql('u');
-                if (!empty($sortparams)) {
-                    throw new coding_exception('users_order_by_sql returned some query parameters. ' .
-                            'This is unexpected, and a problem because there is no way to pass these ' .
-                            'parameters to get_users_by_capability. See MDL-34657.');
-                }
 
                 // Get the list of appropriate users, depending on whether and how groups are used.
-                if ($accessallgroups) {
-                    $users = get_users_by_capability($this->context, 'mod/quiz:attempt',
-                            'u.id, u.email, ' . get_all_user_name_fields(true, 'u'),
-                            $sort);
-                } else if ($groups = groups_get_activity_allowed_groups($cm)) {
-                    $users = get_users_by_capability($this->context, 'mod/quiz:attempt',
-                            'u.id, u.email, ' . get_all_user_name_fields(true, 'u'),
-                            $sort, '', '', array_keys($groups));
+                $userfieldsql = $userfieldsapi->get_sql('u', true, '', '', false);
+                $capabilityjoin = get_with_capability_join($this->context, 'mod/quiz:attempt', 'u.id');
+                list($sort, $sortparams) = users_order_by_sql('u', null,
+                        $this->context, $userfieldsql->mappings);
+
+                $groupjoin = '';
+                $groupparams = [];
+                if (!$accessallgroups) {
+                    $groups = groups_get_activity_allowed_groups($cm);
+                    list($grouptest, $groupparams) = $DB->get_in_or_equal(
+                            array_keys($groups), SQL_PARAMS_NAMED, 'grp');
+                    $groupjoin = "JOIN (SELECT DISTINCT userid
+                                  FROM {groups_members}
+                                 WHERE groupid $grouptest
+                                       ) gm ON gm.userid = u.id";
                 }
+
+                $capabilitywhere = '';
+                if ($capabilityjoin->wheres) {
+                    $capabilitywhere = 'AND ' . $capabilityjoin->wheres;
+                }
+
+                $users = $DB->get_records_sql("
+                        SELECT $userfieldsql->selects
+                          FROM {user} u
+                          LEFT JOIN {quiz_overrides} existingoverride ON
+                                      existingoverride.userid = u.id AND existingoverride.quiz = :quizid
+                          $capabilityjoin->joins
+                          $groupjoin
+                          $userfieldsql->joins
+                         WHERE existingoverride.id IS NULL
+                           $capabilitywhere
+                      ORDER BY $sort
+                        ", array_merge(['quizid' => $this->quiz->id], $capabilityjoin->params,
+                        $groupparams, $userfieldsql->params, $sortparams));
 
                 // Filter users based on any fixed restrictions (groups, profile).
                 $info = new \core_availability\info_module($cm);
@@ -162,17 +183,9 @@ class quiz_override_form extends moodleform {
                     print_error('usersnone', 'quiz', $link);
                 }
 
-                $userchoices = array();
-                $canviewemail = in_array('email', get_extra_user_fields($this->context));
+                $userchoices = [];
                 foreach ($users as $id => $user) {
-                    if (empty($invalidusers[$id]) || (!empty($override) &&
-                            $id == $override->userid)) {
-                        if ($canviewemail) {
-                            $userchoices[$id] = fullname($user) . ', ' . $user->email;
-                        } else {
-                            $userchoices[$id] = fullname($user);
-                        }
-                    }
+                    $userchoices[$id] = self::display_user_name($user, $extrauserfields);
                 }
                 unset($users);
 
@@ -228,10 +241,35 @@ class quiz_override_form extends moodleform {
 
         $mform->addGroup($buttonarray, 'buttonbar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonbar');
-
     }
 
-    public function validation($data, $files) {
+    /**
+     * Get a user's name and identity ready to display.
+     *
+     * @param stdClass $user a user object.
+     * @param array $extrauserfields (identity fields in user table only from the user_fields API)
+     * @return string User's name, with extra info, for display.
+     */
+    public static function display_user_name(stdClass $user, array $extrauserfields): string {
+        $username = fullname($user);
+        $namefields = [];
+        foreach ($extrauserfields as $field) {
+            if (isset($user->$field) && $user->$field !== '') {
+                $namefields[] = s($user->$field);
+            } else if (strpos($field, 'profile_field_') === 0) {
+                $field = substr($field, 14);
+                if (isset($user->profile[$field]) && $user->profile[$field] !== '') {
+                    $namefields[] = s($user->profile[$field]);
+                }
+            }
+        }
+        if ($namefields) {
+            $username .= ' (' . implode(', ', $namefields) . ')';
+        }
+        return $username;
+    }
+
+    public function validation($data, $files): array {
         $errors = parent::validation($data, $files);
 
         $mform =& $this->_form;

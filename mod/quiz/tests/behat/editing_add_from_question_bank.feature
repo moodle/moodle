@@ -28,7 +28,7 @@ Feature: Adding questions to a quiz from the question bank
   Scenario: The questions can be filtered by tag
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    When I navigate to "Question bank > Questions" in current page administration
+    When I navigate to "Question bank" in current page administration
     And I choose "Edit question" action for "question 01 name" in the question bank
     And I set the following fields to these values:
       | Tags | foo |
@@ -44,7 +44,7 @@ Feature: Adding questions to a quiz from the question bank
     And I should see "bar" in the "question 02 name" "table_row"
     And I should see "qidnum" in the "question 02 name" "table_row"
     And I set the field "Filter by tags..." to "foo"
-    And I press key "13" in the field "Filter by tags..."
+    And I press the enter key
     And I should see "question 01 name" in the "categoryquestions" "table"
     And I should not see "question 02 name" in the "categoryquestions" "table"
 
@@ -79,6 +79,9 @@ Feature: Adding questions to a quiz from the question bank
     Then I should see "question 21 name" in the "categoryquestions" "table"
     And I should see "question 22 name" in the "categoryquestions" "table"
     And I should not see "question 01 name" in the "categoryquestions" "table"
+    And I click on "Show all 22" "link" in the ".question-showall-text" "css_element"
+    And I should see "question 01 name" in the "categoryquestions" "table"
+    And I should see "question 22 name" in the "categoryquestions" "table"
 
   Scenario: Questions are added in the right place with multiple sections
     Given the following "questions" exist:
@@ -100,3 +103,29 @@ Feature: Adding questions to a quiz from the question bank
     And I click on "Add selected questions to the quiz" "button"
     Then I should see "question 03 name" on quiz page "1"
     And I should see "question 01 name" before "question 03 name" on the edit quiz page
+
+  Scenario: Add several selected questions from the question bank
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    When I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I set the field with xpath "//input[@type='checkbox' and @id='qbheadercheckbox']" to "1"
+    And I press "Add selected questions to the quiz"
+    Then I should see "question 01 name" on quiz page "1"
+    And I should see "question 02 name" on quiz page "2"
+
+  @javascript
+  Scenario: Validate the sorting while adding questions from question bank
+    Given the following "questions" exist:
+      | questioncategory | qtype       | name              | questiontext          |
+      | Test questions   | multichoice | question 03 name  | question 03 name text |
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    When I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I click on "Sort by Question ascending" "link"
+    Then "question 01 name" "text" should appear before "question 02 name" "text"
+    And I click on "Sort by Question descending" "link"
+    And "question 03 name" "text" should appear before "question 01 name" "text"
+    And I follow "Sort by Question type ascending"
+    Then "question 01 name" "text" should appear before "question 03 name" "text"
+    And I follow "Sort by Question type descending"
+    Then "question 03 name" "text" should appear before "question 01 name" "text"

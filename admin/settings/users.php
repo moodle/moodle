@@ -42,6 +42,7 @@ if ($hassiteconfig
         $choices['firstaccess'] = new lang_string('firstaccess', 'filters');
         $choices['lastaccess'] = new lang_string('lastaccess');
         $choices['neveraccessed'] = new lang_string('neveraccessed', 'filters');
+        $choices['timecreated'] = new lang_string('timecreated');
         $choices['timemodified'] = new lang_string('lastmodified');
         $choices['nevermodified'] = new lang_string('nevermodified', 'filters');
         $choices['auth'] = new lang_string('authentication');
@@ -87,6 +88,14 @@ if ($hassiteconfig
         $choices['1'] = new lang_string('trackforumsyes');
         $temp->add(new admin_setting_configselect('defaultpreference_trackforums', new lang_string('trackforums'),
             '', 0, $choices));
+
+        $choices = [];
+        $choices[\core_contentbank\content::VISIBILITY_PUBLIC] = new lang_string('visibilitychoicepublic', 'core_contentbank');
+        $choices[\core_contentbank\content::VISIBILITY_UNLISTED] = new lang_string('visibilitychoiceunlisted', 'core_contentbank');
+        $temp->add(new admin_setting_configselect('defaultpreference_core_contentbank_visibility',
+            new lang_string('visibilitypref', 'core_contentbank'),
+            new lang_string('visibilitypref_help', 'core_contentbank'),
+            \core_contentbank\content::VISIBILITY_PUBLIC, $choices));
     }
     $ADMIN->add('accounts', $temp);
 
@@ -178,6 +187,9 @@ if ($hassiteconfig
             unset($restorersnewrole);
         }
 
+        $temp->add(new admin_setting_configcheckbox('enroladminnewcourse', new lang_string('enroladminnewcourse', 'admin'),
+            new lang_string('enroladminnewcourse_help', 'admin'), 1));
+
         $temp->add(new admin_setting_configcheckbox('autologinguests', new lang_string('autologinguests', 'admin'), new lang_string('configautologinguests', 'admin'), 0));
 
         $temp->add(new admin_setting_configmultiselect('hiddenuserfields', new lang_string('hiddenuserfields', 'admin'),
@@ -188,12 +200,6 @@ if ($hassiteconfig
                              'country' => new lang_string('country'),
                              'moodlenetprofile' => new lang_string('moodlenetprofile', 'user'),
                              'timezone' => new lang_string('timezone'),
-                             'webpage' => new lang_string('webpage'),
-                             'icqnumber' => new lang_string('icqnumber'),
-                             'skypeid' => new lang_string('skypeid'),
-                             'yahooid' => new lang_string('yahooid'),
-                             'aimid' => new lang_string('aimid'),
-                             'msnid' => new lang_string('msnid'),
                              'firstaccess' => new lang_string('firstaccess'),
                              'lastaccess' => new lang_string('lastaccess'),
                              'lastip' => new lang_string('lastip'),
@@ -206,21 +212,39 @@ if ($hassiteconfig
         // with moodle/site:viewuseridentity).
         // Options include fields from the user table that might be helpful to
         // distinguish when adding or listing users ('I want to add the John
-        // Smith from Science faculty').
-        // Custom user profile fields are not currently supported.
+        // Smith from Science faculty') and any custom profile fields.
         $temp->add(new admin_setting_configmulticheckbox('showuseridentity',
                 new lang_string('showuseridentity', 'admin'),
-                new lang_string('showuseridentity_desc', 'admin'), array('email' => 1, 'department' => 1), array(
-                    'username'    => new lang_string('username'),
-                    'idnumber'    => new lang_string('idnumber'),
-                    'email'       => new lang_string('email'),
-                    'phone1'      => new lang_string('phone1'),
-                    'phone2'      => new lang_string('phone2'),
-                    'department'  => new lang_string('department'),
-                    'institution' => new lang_string('institution'),
-                    'city'        => new lang_string('city'),
-                    'country'     => new lang_string('country'),
-                )));
+                new lang_string('showuseridentity_desc', 'admin'), ['email' => 1],
+                function() {
+                    global $CFG;
+                    require_once($CFG->dirroot.'/user/profile/lib.php');
+
+                    // Basic fields available in user table.
+                    $fields = [
+                        'username'    => new lang_string('username'),
+                        'idnumber'    => new lang_string('idnumber'),
+                        'email'       => new lang_string('email'),
+                        'phone1'      => new lang_string('phone1'),
+                        'phone2'      => new lang_string('phone2'),
+                        'department'  => new lang_string('department'),
+                        'institution' => new lang_string('institution'),
+                        'city'        => new lang_string('city'),
+                        'country'     => new lang_string('country'),
+                    ];
+
+                    // Custom profile fields.
+                    $profilefields = profile_get_custom_fields();
+                    foreach ($profilefields as $field) {
+                        // Only reasonable-length text fields can be used as identity fields.
+                        if ($field->param2 > 255 || $field->datatype != 'text') {
+                            continue;
+                        }
+                        $fields['profile_field_' . $field->shortname] = $field->name . ' *';
+                    }
+
+                    return $fields;
+                }));
         $setting = new admin_setting_configtext('fullnamedisplay', new lang_string('fullnamedisplay', 'admin'),
             new lang_string('configfullnamedisplay', 'admin'), 'language', PARAM_TEXT, 50);
         $setting->set_force_ltr(true);

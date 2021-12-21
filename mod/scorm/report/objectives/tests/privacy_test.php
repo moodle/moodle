@@ -39,7 +39,7 @@ class scormreport_objectives_privacy_testcase extends \core_privacy\tests\provid
     /**
      * Basic setup for these tests.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
     }
 

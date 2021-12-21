@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class tool_moodlenet_import_handler_registry_testcase, providing test cases for the import_handler_registry class.
  */
-class tool_moodlenet_import_handler_registry_testcase extends \advanced_testcase {
+class import_handler_registry_test extends \advanced_testcase {
 
     /**
      * Test confirming the behaviour of get_resource_handlers_for_strategy with different params.

@@ -29,41 +29,70 @@
 
 define('MY_PAGE_PUBLIC', 0);
 define('MY_PAGE_PRIVATE', 1);
+define('MY_PAGE_DEFAULT', '__default');
+define('MY_PAGE_COURSES', '__courses');
 
 require_once("$CFG->libdir/blocklib.php");
 
-/*
+/**
  * For a given user, this returns the $page information for their My Moodle page
  *
+ * @param int|null $userid the id of the user whose page should be retrieved
+ * @param int|null $private either MY_PAGE_PRIVATE or MY_PAGE_PUBLIC
+ * @param string|null $pagename Differentiate between standard /my or /courses pages.
  */
-function my_get_page($userid, $private=MY_PAGE_PRIVATE) {
+function my_get_page(?int $userid, int $private = MY_PAGE_PRIVATE, string $pagename = MY_PAGE_DEFAULT) {
     global $DB, $CFG;
 
     if (empty($CFG->forcedefaultmymoodle) && $userid) {  // Ignore custom My Moodle pages if admin has forced them
         // Does the user have their own page defined?  If so, return it.
-        if ($customised = $DB->get_record('my_pages', array('userid' => $userid, 'private' => $private))) {
+        if ($customised = $DB->get_record(
+            'my_pages',
+            array('userid' => $userid, 'private' => $private, 'name' => $pagename),
+            '*',
+            IGNORE_MULTIPLE
+        )) {
             return $customised;
         }
     }
 
     // Otherwise return the system default page
-    return $DB->get_record('my_pages', array('userid' => null, 'name' => '__default', 'private' => $private));
+    return $DB->get_record('my_pages', array('userid' => null, 'name' => $pagename, 'private' => $private), '*', IGNORE_MULTIPLE);
 }
 
 
-/*
+/**
  * This copies a system default page to the current user
  *
+ * @param int $userid the id of the user whose page should be reset
+ * @param int $private either MY_PAGE_PRIVATE or MY_PAGE_PUBLIC
+ * @param string $pagetype either my-index or user-profile
+ * @param string $pagename Differentiate between standard /my or /courses pages.
  */
-function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
+function my_copy_page(
+    int $userid,
+    int $private = MY_PAGE_PRIVATE,
+    string $pagetype = 'my-index',
+    string $pagename = MY_PAGE_DEFAULT
+) {
     global $DB;
 
-    if ($customised = $DB->get_record('my_pages', array('userid' => $userid, 'private' => $private))) {
+    if ($customised = $DB->get_record(
+        'my_pages',
+        array('userid' => $userid, 'name' => $pagename, 'private' => $private),
+        '*',
+        IGNORE_MULTIPLE
+    )) {
         return $customised;  // We're done!
     }
 
     // Get the system default page
-    if (!$systempage = $DB->get_record('my_pages', array('userid' => null, 'private' => $private))) {
+    if (!$systempage = $DB->get_record(
+        'my_pages',
+        array('userid' => null, 'name' => $pagename, 'private' => $private),
+        '*',
+        IGNORE_MULTIPLE
+    )) {
         return false;  // error
     }
 
@@ -117,18 +146,24 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
     return $page;
 }
 
-/*
+/**
  * For a given user, this deletes their My Moodle page and returns them to the system default.
  *
  * @param int $userid the id of the user whose page should be reset
  * @param int $private either MY_PAGE_PRIVATE or MY_PAGE_PUBLIC
  * @param string $pagetype either my-index or user-profile
+ * @param string $pagename Differentiate between standard /my or /courses pages.
  * @return mixed system page, or false on error
  */
-function my_reset_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
+function my_reset_page(
+    int $userid,
+    int $private = MY_PAGE_PRIVATE,
+    string $pagetype='my-index',
+    string $pagename = MY_PAGE_DEFAULT
+) {
     global $DB, $CFG;
 
-    $page = my_get_page($userid, $private);
+    $page = my_get_page($userid, $private, $pagename);
     if ($page->userid == $userid) {
         $context = context_user::instance($userid);
         if ($blocks = $DB->get_records('block_instances', array('parentcontextid' => $context->id,
@@ -140,11 +175,16 @@ function my_reset_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') 
             }
         }
         $DB->delete_records('block_positions', ['subpage' => $page->id, 'pagetype' => $pagetype, 'contextid' => $context->id]);
-        $DB->delete_records('my_pages', array('id' => $page->id));
+        $DB->delete_records('my_pages', array('id' => $page->id, 'name' => $pagename));
     }
 
     // Get the system default page
-    if (!$systempage = $DB->get_record('my_pages', array('userid' => null, 'private' => $private))) {
+    if (!$systempage = $DB->get_record(
+        'my_pages',
+        array('userid' => null, 'name' => $pagename, 'private' => $private),
+        '*',
+        IGNORE_MULTIPLE
+    )) {
         return false; // error
     }
 
@@ -166,40 +206,78 @@ function my_reset_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') 
  *
  * @param int $private Either MY_PAGE_PRIVATE or MY_PAGE_PUBLIC.
  * @param string $pagetype Either my-index or user-profile.
+ * @param progress_bar|null $progressbar A progress bar to update.
+ * @param string $pagename Differentiate between standard /my or /courses pages.
  * @return void
  */
-function my_reset_page_for_all_users($private = MY_PAGE_PRIVATE, $pagetype = 'my-index') {
+function my_reset_page_for_all_users(
+    int $private = MY_PAGE_PRIVATE,
+    string $pagetype = 'my-index',
+    ?progress_bar $progressbar = null,
+    string $pagename = MY_PAGE_DEFAULT
+) {
     global $DB;
 
     // This may take a while. Raise the execution time limit.
     core_php_time_limit::raise();
 
-    // Find all the user pages and all block instances in them.
-    $sql = "SELECT bi.id
-        FROM {my_pages} p
-        JOIN {context} ctx ON ctx.instanceid = p.userid AND ctx.contextlevel = :usercontextlevel
-        JOIN {block_instances} bi ON bi.parentcontextid = ctx.id AND
-            bi.pagetypepattern = :pagetypepattern AND
-            (bi.subpagepattern IS NULL OR bi.subpagepattern = " . $DB->sql_concat("''", 'p.id') . ")
-        WHERE p.private = :private";
-    $params = array('private' => $private,
-        'usercontextlevel' => CONTEXT_USER,
-        'pagetypepattern' => $pagetype);
-    $blockids = $DB->get_fieldset_sql($sql, $params);
+    $users = $DB->get_fieldset_select(
+        'my_pages',
+        'DISTINCT(userid)',
+        'userid IS NOT NULL AND private = :private',
+        ['private' => $private]
+    );
+    $chunks = array_chunk($users, 20);
 
-    // Wrap the SQL queries in a transaction.
-    $transaction = $DB->start_delegated_transaction();
-
-    // Delete the block instances.
-    if (!empty($blockids)) {
-        blocks_delete_instances($blockids);
+    if (!empty($progressbar) && count($chunks) > 0) {
+        $count = count($chunks);
+        $message = get_string('inprogress');
+        $progressbar->update(0, $count, $message);
     }
 
-    // Finally delete the pages.
-    $DB->delete_records_select('my_pages', 'userid IS NOT NULL AND private = :private', ['private' => $private]);
+    foreach ($chunks as $key => $userchunk) {
+        list($infragment, $inparams) = $DB->get_in_or_equal($userchunk,  SQL_PARAMS_NAMED);
+        // Find all the user pages and all block instances in them.
+        $sql = "SELECT bi.id
+                  FROM {my_pages} p
+                  JOIN {context} ctx ON ctx.instanceid = p.userid AND ctx.contextlevel = :usercontextlevel
+                  JOIN {block_instances} bi ON bi.parentcontextid = ctx.id
+                   AND bi.pagetypepattern = :pagetypepattern
+                   AND (bi.subpagepattern IS NULL OR bi.subpagepattern = " . $DB->sql_concat("''", 'p.id') . ")
+                 WHERE p.private = :private
+                   AND p.name = :name
+                   AND p.userid $infragment";
 
-    // We should be good to go now.
-    $transaction->allow_commit();
+        $params = array_merge([
+            'private' => $private,
+            'usercontextlevel' => CONTEXT_USER,
+            'pagetypepattern' => $pagetype,
+            'name' => $pagename
+        ], $inparams);
+        $blockids = $DB->get_fieldset_sql($sql, $params);
+
+        // Wrap the SQL queries in a transaction.
+        $transaction = $DB->start_delegated_transaction();
+
+        // Delete the block instances.
+        if (!empty($blockids)) {
+            blocks_delete_instances($blockids);
+        }
+
+        // Finally delete the pages.
+        $DB->delete_records_select(
+            'my_pages',
+            "userid $infragment AND private = :private",
+            array_merge(['private' => $private], $inparams)
+        );
+
+        // We should be good to go now.
+        $transaction->allow_commit();
+
+        if (!empty($progressbar)) {
+            $progressbar->update(((int) $key + 1), $count, $message);
+        }
+    }
 
     // Trigger dashboard has been reset event.
     $eventparams = array(
@@ -211,6 +289,42 @@ function my_reset_page_for_all_users($private = MY_PAGE_PRIVATE, $pagetype = 'my
     );
     $event = \core\event\dashboards_reset::create($eventparams);
     $event->trigger();
+
+    if (!empty($progressbar)) {
+        $progressbar->update(1, 1, get_string('completed'));
+    }
+}
+
+/**
+ * Within /my we need to be able to add a block to the center content region directly as well as show
+ * the standard add a block information.
+ *
+ * @return block_contents|null
+ */
+function my_page_add_block_center(): ?block_contents {
+    global $PAGE, $OUTPUT;
+    // Add-a-block in editing mode.
+    if (isset($PAGE->theme->addblockposition) &&
+            $PAGE->user_is_editing() &&
+            $PAGE->user_can_edit_blocks() &&
+            !defined('BEHAT_SITE_RUNNING')
+    ) {
+        $url = new moodle_url($PAGE->url, ['bui_addblock' => '', 'bui_blockregion' => 'content', 'sesskey' => sesskey()]);
+
+        $block = new block_contents;
+        $block->content = $OUTPUT->render_from_template('core/add_block_button',
+            [
+                'link' => $url->out(false),
+                'escapedlink' => "?{$url->get_query_string(false)}",
+                'pageType' => $PAGE->pagetype,
+                'pageLayout' => $PAGE->pagelayout,
+            ]
+        );
+
+        return $block;
+    }
+
+    return null;
 }
 
 class my_syspage_block_manager extends block_manager {

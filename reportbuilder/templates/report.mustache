@@ -1,0 +1,55 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_reportbuilder/report
+
+    Template for a report
+
+    Example context (json):
+    {
+        "id": 1,
+        "contextid": 1,
+        "type": 1,
+        "parameters": [],
+        "table": "table",
+        "filterspresent": true,
+        "filtersform": "form"
+    }
+}}
+<div class="reportbuilder-report"
+        data-region="core_reportbuilder/report"
+        data-report-id="{{id}}"
+        data-report-type="{{type}}"
+        data-parameter="{{parameters}}">
+            <div class="reportbuilder-wrapper">
+                {{#filterspresent}}
+                    <div class="dropdown d-flex justify-content-end">
+                        {{>core_reportbuilder/local/filters/area}}
+                    </div>
+                {{/filterspresent}}
+                {{! Table }}
+                <div class="mt-2">
+                    {{{table}}}
+                </div>
+            </div>
+</div>
+
+{{#js}}
+    require(['core_reportbuilder/report'], function(report) {
+        report.init();
+    });
+{{/js}}

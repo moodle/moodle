@@ -81,7 +81,7 @@ class core_tag_tag {
      */
     protected function __construct($record) {
         if (empty($record->id)) {
-            throw new coding_exeption("Record must contain at least field 'id'");
+            throw new coding_exception("Record must contain at least field 'id'");
         }
         $this->record = $record;
     }
@@ -753,7 +753,7 @@ class core_tag_tag {
     public static function set_item_tags($component, $itemtype, $itemid, context $context, $tagnames, $tiuserid = 0) {
         if ($itemtype === 'tag') {
             if ($tiuserid) {
-                throw new coding_exeption('Related tags can not have tag instance userid');
+                throw new coding_exception('Related tags can not have tag instance userid');
             }
             debugging('You can not use set_item_tags() for tagging a tag, please use set_related_tags()', DEBUG_DEVELOPER);
             static::get($itemid, '*', MUST_EXIST)->set_related_tags($tagnames);

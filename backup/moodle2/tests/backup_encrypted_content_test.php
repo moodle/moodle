@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_custom_fields.php');
 
 class core_backup_encrypted_content_testscase extends advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         if (!function_exists('openssl_encrypt')) {
             $this->markTestSkipped('OpenSSL extension is not loaded.');
 

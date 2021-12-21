@@ -17,7 +17,6 @@
  * Change the course competency settings in a popup.
  *
  * @module     tool_lp/configurecoursecompetencysettings
- * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,7 +39,7 @@ define(['jquery',
         $(selector).on('click', this.configureSettings.bind(this));
     };
 
-    /** @type {Dialogue} Reference to the dialogue that we opened. */
+    /** @property {Dialogue} Reference to the dialogue that we opened. */
     settingsMod.prototype._dialogue = null;
 
     /**
@@ -138,7 +137,6 @@ define(['jquery',
     /**
      * Refresh the course competencies page.
      *
-     * @param {Event} e
      * @method saveSettings
      */
     settingsMod.prototype.refreshCourseCompetenciesPage = function() {

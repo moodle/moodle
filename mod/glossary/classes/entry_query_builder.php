@@ -117,7 +117,9 @@ class mod_glossary_entry_query_builder {
      * @return void
      */
     public function add_user_fields() {
-        $this->fields[] = user_picture::fields('u', null, 'userdataid', 'userdata');
+        $userfieldsapi = \core_user\fields::for_userpic();
+        $fields = $userfieldsapi->get_sql('u', false, 'userdata', '', false)->selects;
+        $this->fields[] = $fields;
     }
 
     /**

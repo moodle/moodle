@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -34,7 +33,7 @@ $string['cannotcreatedboninstall'] = '<p>Die Datenbank konnte nicht angelegt wer
 $string['cannotcreatelangdir'] = 'Das Verzeichnis \'lang\' wurde nicht angelegt.';
 $string['cannotcreatetempdir'] = 'Das Verzeichnis \'temp\' wurde nicht angelegt.';
 $string['cannotdownloadcomponents'] = 'Einige Komponenten können nicht geladen werden.';
-$string['cannotdownloadzipfile'] = 'ZIP-Datei kann nicht heruntergeladen werden.';
+$string['cannotdownloadzipfile'] = 'Die ZIP-Datei kann nicht heruntergeladen werden';
 $string['cannotfindcomponent'] = 'Die Komponente kann nicht gefunden werden.';
 $string['cannotsavemd5file'] = 'Die md5-Datei wurde nicht gespeichert.';
 $string['cannotsavezipfile'] = 'Die ZIP-Datei wurde nicht gespeichert.';

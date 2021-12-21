@@ -39,6 +39,7 @@ $ADMIN->add('root', new admin_category('license', new lang_string('license')));
 $ADMIN->add('root', new admin_category('location', new lang_string('location','admin')));
 $ADMIN->add('root', new admin_category('language', new lang_string('language')));
 $ADMIN->add('root', new admin_category('messaging', new lang_string('messagingcategory', 'admin')));
+$ADMIN->add('root', new admin_category('payment', new lang_string('payments', 'payment')));
 $ADMIN->add('root', new admin_category('modules', new lang_string('plugins', 'admin')));
 $ADMIN->add('root', new admin_category('security', new lang_string('security','admin')));
 $ADMIN->add('root', new admin_category('appearance', new lang_string('appearance','admin')));

@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -37,6 +36,7 @@ $string['chooselanguagesub'] = 'Zvolte si jazyk tohoto průvodce instalací. Vyb
 $string['clialreadyconfigured'] = 'Konfigurační soubor config.php již existuje. Spusťte admin/cli/install_database.php, pokud chcete provést instalaci databáze.';
 $string['clialreadyinstalled'] = 'Konfigurační soubor config.php již existuje. Spusťte admin/cli/upgrade.php, pokud chcete provést upgrade vašich stránek.';
 $string['cliinstallheader'] = 'Moodle {$a} - průvodce instalací z příkazové řádky';
+$string['clitablesexist'] = 'Databázové tabulky již existují; CLI instalace nemůže pokračovat.';
 $string['databasehost'] = 'Databázový server';
 $string['databasename'] = 'Název databáze';
 $string['databasetypehead'] = 'Vyberte databázový ovladač';
@@ -86,7 +86,7 @@ $string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 5.6.5 PHP ne
 <p>Nyní používáte PHP verzi {$a}.</p>
 <p>PHP musíte upgradovat, nebo přejít k hostiteli s vyšší verzí!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Podařilo se vám úspěšně nainstalovat a spustit balíček <strong>{$a->packname} {$a->packversion}</strong>. Gratulujeme!';
+$string['welcomep20'] = 'Tuto stránku vidíte, protože jste úspěšně nainstalovali a spustili  balíček <strong>{$a->packname} {$a->packversion}</strong>. Gratulujeme!';
 $string['welcomep30'] = 'Tato verze <strong>{$a->installername}</strong> obsahuje aplikace k vytvoření prostředí, ve kterém bude provozován váš <strong>Moodle</strong>. Jmenovitě se jedná o:';
 $string['welcomep40'] = 'Balíček rovněž obsahuje <strong>Moodle ve verzi {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Použití všech aplikací v tomto balíčku je vázáno jejich příslušnými licencemi. Kompletní balíček <strong>{$a->installername}</strong> je software s <a href="https://www.opensource.org/docs/definition_plain.html"> otevřeným kódem (open source)</a> a je šířen pod licencí <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a>.';

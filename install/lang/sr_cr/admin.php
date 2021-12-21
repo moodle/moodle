@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -39,7 +38,7 @@ $string['clitypevaluedefault'] = 'откуцај вредност, притис�
 $string['cliunknowoption'] = 'Непрепознате опције:
 {$a}
 Молимо искористите опцију за помоћ.';
-$string['cliyesnoprompt'] = 'откуцај y (значи да) или n (значи не)';
+$string['cliyesnoprompt'] = 'унеси y (значи да) или n (значи не)';
 $string['environmentrequireinstall'] = 'мора бити инсталиран и омогућен';
-$string['environmentrequireversion'] = 'неопходна верзија је {$a->needed} а Ви тренутно користите верзију {$a->current}';
+$string['environmentrequireversion'] = 'неопходна верзија је {$a->needed} а ви тренутно користите верзију {$a->current}';
 $string['upgradekeyset'] = 'Кључ за надоградњу (оставите празно ако не желите да поставите кључ)';

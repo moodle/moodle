@@ -16,7 +16,7 @@ namespace Complex;
  * @return    Complex          The inverse sine of the complex argument.
  * @throws    Exception        If argument isn't a valid real or complex number.
  */
-function asin($complex)
+function asin($complex): Complex
 {
     $complex = Complex::validateComplexArgument($complex);
 

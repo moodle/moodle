@@ -23,11 +23,11 @@ Feature: The description of a group can be viewed by students and teachers
   Scenario: A student can see the group description when visible groups are set. Teachers can see group details.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Group mode | Visible groups |
     And I press "Save and display"
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group A |
@@ -46,8 +46,7 @@ Feature: The description of a group can be viewed by students and teachers
     And I should see "Description for Group A"
     And ".groupinfobox" "css_element" should exist
     And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Group B" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Group B"
     And I click on "Apply filters" "button"
     And I click on "Student 2" "link" in the "participants" "table"
     And I click on "Group B" "link"
@@ -73,11 +72,11 @@ Feature: The description of a group can be viewed by students and teachers
   Scenario: A student can not see the group description when separate groups are set. Teachers can see group details.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save and display"
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group A |
@@ -96,8 +95,7 @@ Feature: The description of a group can be viewed by students and teachers
     And I should see "Description for Group A"
     And ".groupinfobox" "css_element" should exist
     And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Group B" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Group B"
     And I click on "Apply filters" "button"
     And I click on "Student 2" "link" in the "participants" "table"
     And I click on "Group B" "link"

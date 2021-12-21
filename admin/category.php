@@ -75,7 +75,7 @@ if ($PAGE->user_allowed_editing() && $adminediting != -1) {
     $USER->editing = $adminediting;
 }
 $buttons = null;
-if ($PAGE->user_allowed_editing()) {
+if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
     $url = clone($PAGE->url);
     if ($PAGE->user_is_editing()) {
         $caption = get_string('blockseditoff');
@@ -157,5 +157,8 @@ echo html_writer::tag('div', '<!-- -->', array('class' => 'clearer'));
 echo $outputhtml;
 echo html_writer::end_tag('fieldset');
 echo html_writer::end_tag('form');
+
+// Add the form change checker.
+$PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['adminsettings']);
 
 echo $OUTPUT->footer();

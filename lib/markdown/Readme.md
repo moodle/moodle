@@ -1,7 +1,7 @@
 PHP Markdown
 ============
 
-PHP Markdown Lib 1.8.0 - 14 Jan 2018
+PHP Markdown Lib 1.9.0 - 1 Dec 2019
 
 by Michel Fortin  
 <https://michelf.ca/>
@@ -163,25 +163,53 @@ potential side effects, and future extensibility -- before deciding on
 acceptance or rejection.
 
 If you make a pull request that includes changes to the parser please add
-tests for what is being changed to [MDTest][] and make a pull request there
-too.
+tests for what is being changed to the `test/` directory. This can be as
+simple as adding a `.text` (input) file with a corresponding `.xhtml`
+(output) file to proper category under `./test/resources/`.
 
- [MDTest]: https://github.com/michelf/mdtest/
+Traditionally tests were in a separate repository, [MDTest](https://github.com/michelf/mdtest)
+but they are now located here, alongside the source code.
 
 
 Donations
 ---------
 
 If you wish to make a donation that will help me devote more time to
-PHP Markdown, please visit [michelf.ca/donate] or send Bitcoin to
-[1HiuX34czvVPPdhXbUAsAu7pZcesniDCGH].
+PHP Markdown, please visit [michelf.ca/donate].
 
  [michelf.ca/donate]: https://michelf.ca/donate/#!Thanks%20for%20PHP%20Markdown
- [1HiuX34czvVPPdhXbUAsAu7pZcesniDCGH]: bitcoin:1HiuX34czvVPPdhXbUAsAu7pZcesniDCGH
 
 
 Version History
 ---------------
+
+PHP Markdown Lib 1.9.0 (1 Dec 2019)
+
+*	Added `fn_backlink_label` configuration variable to put some text in the
+	`aria-label` attribute.
+	(Thanks to Sunny Walker for the implementation.)
+
+*	Occurances of "`^^`" in `fn_backlink_html`, `fn_backlink_class`,
+	`fn_backlink_title`, and `fn_backlink_label` will be replaced by the 
+	corresponding footnote number in the HTML output. Occurances of "`%%`" will be 
+	replaced by a number for the reference (footnotes can have multiple references).
+	(Thanks to Sunny Walker for the implementation.)
+
+*	Added configuration variable `omit_footnotes`. When `true` footnotes are not
+	appended at the end of the generated HTML and the `footnotes_assembled`
+	variable will contain the HTML for the footnote list, allowing footnotes to be
+	moved somewhere else on the page.
+	(Thanks to James K. for the implementation.)
+
+	Note: when placing the content of `footnotes_assembled` on the page, consider
+	adding the attribute `role="doc-endnotes"` to the `<div>` or `<section>` that will
+	enclose the list of footnotes so they are reachable to accessibility tools the
+	same way they would be with the default HTML output.
+	
+*	Fixed deprecation warnings from PHP about usage of curly braces to access
+	characters in text strings.
+	(Thanks to Remi Collet and Frans-Willem Post.)
+
 
 PHP Markdown Lib 1.8.0 (14 Jan 2018)
 
@@ -371,7 +399,7 @@ Copyright and License
 ---------------------
 
 PHP Markdown Lib
-Copyright (c) 2004-2016 Michel Fortin
+Copyright (c) 2004-2019 Michel Fortin
 <https://michelf.ca/>  
 All rights reserved.
 

@@ -24,7 +24,8 @@ define('CLI_SCRIPT', true);
 require(__DIR__.'/../../config.php');
 
 $categorysortorder = [
-    'Smileys & People',
+    'Smileys & Emotion',
+    'People & Body',
     'Animals & Nature',
     'Food & Drink',
     'Travel & Places',
@@ -39,6 +40,8 @@ $rawdata = file_get_contents('./emoji_pretty.json');
 $jsondata = json_decode($rawdata, true);
 $emojibycategory = [];
 $obsoletes = [];
+// Emoji categories used in the emoji-data library.
+$categories = [];
 
 foreach ($jsondata as $data) {
     $category = $data['category'];
@@ -46,6 +49,10 @@ foreach ($jsondata as $data) {
 
     if ($category === 'Skin Tones') {
         continue;
+    }
+
+    if (!in_array($category, $categories)) {
+        $categories[] = $category;
     }
 
     if (!empty($data['obsoleted_by'])) {
@@ -70,6 +77,17 @@ foreach ($jsondata as $data) {
         'unified' => $unified,
         'shortnames' => [$data['short_name']]
     ];
+}
+// Detect any category changes.
+// Some emoji categories from the emoji-data library are missing.
+if ($missingcategories = array_diff($categories, $categorysortorder)) {
+    die("The following categories are missing: " . implode(', ', $missingcategories) .
+        ". For more details on how to properly fix this issue, please see /lib/emoji-data/readme_moodle.txt");
+}
+// Some emoji categories are not being used anymore in the emoji-data library.
+if ($unusedcategories = array_diff($categorysortorder, $categories)) {
+    die("The following categories are no longer used: " . implode(', ', $unusedcategories) .
+        ". For more details on how to properly fix this issue, please see /lib/emoji-data/readme_moodle.txt");
 }
 
 $emojibycategory = array_values($emojibycategory);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/assign/db" VERSION="20140724" COMMENT="XMLDB file for Moodle mod/assign"
+<XMLDB PATH="mod/assign/db" VERSION="20210930" COMMENT="XMLDB file for Moodle mod/assign"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -36,6 +36,10 @@
         <FIELD NAME="markingallocation" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If enabled, marking allocation features will be used in this assignment"/>
         <FIELD NAME="sendstudentnotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Default for send student notifications checkbox when grading."/>
         <FIELD NAME="preventsubmissionnotingroup" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If enabled a user will be unable to make a submission unless they are a member of a group."/>
+        <FIELD NAME="activity" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="activityformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="submissionattachments" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this assignment instance."/>
@@ -52,6 +56,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time of the first student submission to this assignment."/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The last time this assignment submission was modified by a student."/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The time when the student stared the submission."/>
         <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The status of this assignment submission. The current statuses are DRAFT and SUBMITTED."/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The group id for team submissions"/>
         <FIELD NAME="attemptnumber" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Used to track attempts for an assignment"/>
@@ -150,6 +155,7 @@
         <FIELD NAME="allowsubmissionsfromdate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time at which students may start attempting this assign. Can be null, in which case the assign default is used."/>
         <FIELD NAME="duedate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time by which students must have completed their attempt.  Can be null, in which case the assign default is used."/>
         <FIELD NAME="cutoffdate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time by which students must have completed their attempt.  Can be null, in which case the assign default is used."/>
+        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time limit in seconds. Can be null, in which case the quiz default is used."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

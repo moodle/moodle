@@ -79,7 +79,6 @@
 }
 
 .path-grade-report-grader .gradeparent .user.cell .userpicture {
-    margin: 0 4px;
     border: none;
     vertical-align: middle;
 }
@@ -136,14 +135,6 @@
 
 .path-grade-report-grader .gradeparent .gradevalue {
     display: inline-block;
-}
-
-.path-grade-report-grader span.gradepass {
-    color: #298721;
-}
-
-.path-grade-report-grader span.gradefail {
-    color: #890d0d;
 }
 
 .path-grade-report-grader .gradeparent tr:nth-child(n) td.overridden:nth-child(n) {

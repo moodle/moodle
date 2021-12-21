@@ -132,6 +132,9 @@ class message {
     /** @var  mixed Custom data to be passed to the message processor. Must be serialisable using json_encode(). */
     private $customdata;
 
+    /** @var boolean If message is anonymous. */
+    private $anonymous;
+
     /** @var array a list of properties that is allowed for each message. */
     private $properties = array(
         'courseid',
@@ -158,6 +161,7 @@ class message {
         'timecreated',
         'fullmessagetrust',
         'customdata',
+        'anonymous',
     );
 
     /** @var array property to store any additional message processor specific content */

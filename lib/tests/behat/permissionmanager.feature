@@ -16,8 +16,7 @@ Feature: Override permissions on a context
       | teacher1  | C1     | editingteacher |
 
   Scenario: Default system capabilities modification
-    Given I am on the "C1" "Course" page logged in as "admin"
-    And I navigate to "Users > Permissions" in current page administration
+    Given I am on the "C1" "permissions" page logged in as "admin"
     When I click on "Allow" "icon" in the "mod/forum:addnews" "table_row"
     And I press "Student"
     Then "Add announcementsmod/forum:addnews" row "Roles with permission" column of "permissions" table should contain "Student"
@@ -31,12 +30,11 @@ Feature: Override permissions on a context
     Then "Add announcementsmod/forum:addnews" row "Prohibited" column of "permissions" table should contain "Student"
 
   Scenario: Module capabilities overrides
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name  | Forum 1 |
-    And I follow "Forum 1"
-    And I navigate to "Permissions" in current page administration
+    Given the following "activity" exists:
+      | course   | C1      |
+      | activity | forum   |
+      | name     | Forum 1 |
+    And I am on the "Forum 1" "forum activity permissions" page logged in as admin
     When I click on "Allow" "icon" in the "mod/forum:addnews" "table_row"
     And I press "Student"
     Then "Add announcementsmod/forum:addnews" row "Roles with permission" column of "permissions" table should contain "Student"

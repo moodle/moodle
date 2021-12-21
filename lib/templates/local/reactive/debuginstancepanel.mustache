@@ -1,0 +1,86 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/local/reactive/debuginstancepanel
+
+    Template to render the global reactive debug panel.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+        "id": "instanceid"
+    }
+}}
+<div id="{{uniqid}}-reactive-debugpanel-instance" data-id="{{id}}" class="card text-dark">
+    <div class="card-body">
+        <h5 class="card-title" data-for="name">
+            {{id}}
+            <button href="#" class="btn btn-secondary" data-for="pin" data-alt="{{#str}} reactive_pin , core_debug {{/str}}">
+                {{#str}} reactive_unpin , core_debug {{/str}}
+            </button>
+            <button href="#" class="btn btn-danger float-right" data-for="close">
+                {{#str}} close , admin {{/str}}
+            </button>
+        </h5>
+        <p class="card-text">
+            <button
+                class="btn btn-secondary"
+                data-for="highlight"
+                data-alt="{{#str}} reactive_highlighton , core_debug {{/str}}"
+            >
+                {{#str}} reactive_highlightoff , core_debug {{/str}}
+            </button>
+            <button
+                class="btn btn-secondary"
+                data-for="readmode"
+                data-alt="{{#str}} reactive_readmodeoff , core_debug {{/str}}"
+            >
+                {{#str}} reactive_readmodeon , core_debug {{/str}}
+            </button>
+            <button
+                class="btn btn-secondary"
+                data-for="clean"
+            >
+                {{#str}} reactive_resetpanel , core_debug {{/str}}
+            </button>
+        </p>
+        <div>
+            <h6>
+                {{#str}} reactive_statedata , core_debug {{/str}}
+                <button class="btn btn-secondary" data-for="save" disabled>
+                    {{#str}} save , admin {{/str}}
+                </button>
+                <span data-for="invalid">{{#str}} reactive_saveingwarning , core_debug {{/str}}</span>
+            </h6>
+            <textarea class="w-100" style="resize:vertical; height: 20em;" data-for="state" draggable="false"></textarea>
+        </div>
+        <div>
+            <h6>State events log</h6>
+            <textarea class="w-100" style="resize:vertical; height: 20em;" data-for="log" draggable="false"></textarea>
+        </div>
+  </div>
+</div>
+{{#js}}
+require(['core/local/reactive/debugpanel'], function(component) {
+    component.initsubpanel('{{uniqid}}-reactive-debugpanel-instance');
+});
+{{/js}}

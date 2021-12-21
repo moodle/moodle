@@ -8,7 +8,7 @@ namespace Complex;
  *
  * @package Complex
  * @copyright  Copyright (c) 2014 Mark Baker (https://github.com/MarkBaker/PHPComplex)
- * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
+ * @license    https://opensource.org/licenses/MIT          MIT
  */
 class Autoloader
 {

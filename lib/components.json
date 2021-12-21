@@ -28,6 +28,7 @@
         "repository": "repository",
         "portfolio": "portfolio",
         "search": "search\/engine",
+        "qbank": "question\/bank",
         "qbehaviour": "question\/behaviour",
         "qformat": "question\/format",
         "plagiarism": "plagiarism",
@@ -38,7 +39,8 @@
         "contenttype": "contentbank\/contenttype",
         "theme": "theme",
         "local": "local",
-        "h5plib": "h5p\/h5plib"
+        "h5plib": "h5p\/h5plib",
+        "paygw": "payment\/gateway"
     },
     "subsystems": {
         "access": null,
@@ -61,6 +63,7 @@
         "contentbank": "contentbank",
         "countries": null,
         "course": "course",
+        "courseformat": "course\/format",
         "currencies": null,
         "customfield": "customfield",
         "dbtransfer": null,
@@ -94,6 +97,7 @@
         "my": "my",
         "notes": "notes",
         "pagetype": null,
+        "payment" : "payment",
         "pix": null,
         "plagiarism": "plagiarism",
         "plugin": null,
@@ -101,6 +105,7 @@
         "privacy": "privacy",
         "question": "question",
         "rating": "rating",
+        "reportbuilder": "reportbuilder",
         "repository": "repository",
         "rss": "rss",
         "role": "admin\/roles",

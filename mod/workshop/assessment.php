@@ -53,7 +53,13 @@ $workshop = new workshop($workshop, $cm, $course);
 $PAGE->set_url($workshop->assess_url($assessment->id));
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->activityheader->set_attrs([
+    "hidecompletion" => true,
+    "description" => ""
+]);
+
 $PAGE->navbar->add(get_string('assessingsubmission', 'workshop'));
+$PAGE->set_secondary_active_tab('modulepage');
 
 $cansetassessmentweight = has_capability('mod/workshop:allocate', $workshop->context);
 $canoverridegrades      = has_capability('mod/workshop:overridegrades', $workshop->context);
@@ -74,7 +80,6 @@ if ($assessmenteditable) {
     list($assessed, $notice) = $workshop->check_examples_assessed_before_assessment($assessment->reviewerid);
     if (!$assessed) {
         echo $output->header();
-        echo $output->heading(format_string($workshop->name));
         notice(get_string($notice, 'workshop'), new moodle_url('/mod/workshop/view.php', array('id' => $cm->id)));
         echo $output->footer();
         exit;
@@ -155,7 +160,6 @@ if ($canoverridegrades or $cansetassessmentweight) {
 // output starts here
 $output = $PAGE->get_renderer('mod_workshop');      // workshop renderer
 echo $output->header();
-echo $output->heading(format_string($workshop->name));
 echo $output->heading(get_string('assessedsubmission', 'workshop'), 3);
 
 $submission = $workshop->get_submission_by_id($submission->id);     // reload so can be passed to the renderer

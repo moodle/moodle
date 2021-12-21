@@ -1,8 +1,9 @@
 <?php
+
 /**
  * SCSSPHP
  *
- * @copyright 2012-2019 Leaf Corcoran
+ * @copyright 2012-2020 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
@@ -12,13 +13,14 @@
 namespace ScssPhp\ScssPhp\Formatter;
 
 use ScssPhp\ScssPhp\Formatter;
-use ScssPhp\ScssPhp\Formatter\OutputBlock;
 use ScssPhp\ScssPhp\Type;
 
 /**
  * Nested formatter
  *
  * @author Leaf Corcoran <leafot@gmail.com>
+ *
+ * @deprecated since 1.4.0. Use the Expanded formatter instead.
  */
 class Nested extends Formatter
 {
@@ -32,6 +34,8 @@ class Nested extends Formatter
      */
     public function __construct()
     {
+        @trigger_error('The Nested formatter is deprecated since 1.4.0. Use the Expanded formatter instead.', E_USER_DEPRECATED);
+
         $this->indentLevel = 0;
         $this->indentChar = '  ';
         $this->break = "\n";
@@ -58,12 +62,11 @@ class Nested extends Formatter
     protected function blockLines(OutputBlock $block)
     {
         $inner = $this->indentStr();
-
-        $glue = $this->break . $inner;
+        $glue  = $this->break . $inner;
 
         foreach ($block->lines as $index => $line) {
             if (substr($line, 0, 2) === '/*') {
-                $block->lines[$index] = preg_replace('/[\r\n]+/', $glue, $line);
+                $block->lines[$index] = preg_replace('/\r\n?|\n|\f/', $this->break, $line);
             }
         }
 
@@ -90,7 +93,7 @@ class Nested extends Formatter
             $previousHasSelector = false;
         }
 
-        $isMediaOrDirective = in_array($block->type, [Type::T_DIRECTIVE, Type::T_MEDIA]);
+        $isMediaOrDirective = \in_array($block->type, [Type::T_DIRECTIVE, Type::T_MEDIA]);
         $isSupport = ($block->type === Type::T_DIRECTIVE
             && $block->selectors && strpos(implode('', $block->selectors), '@supports') !== false);
 
@@ -98,7 +101,8 @@ class Nested extends Formatter
             array_pop($depths);
             $this->depth--;
 
-            if (! $this->depth && ($block->depth <= 1 || (! $this->indentLevel && $block->type === Type::T_COMMENT)) &&
+            if (
+                ! $this->depth && ($block->depth <= 1 || (! $this->indentLevel && $block->type === Type::T_COMMENT)) &&
                 (($block->selectors && ! $isMediaOrDirective) || $previousHasSelector)
             ) {
                 $downLevel = $this->break;
@@ -119,10 +123,12 @@ class Nested extends Formatter
             if ($block->depth > end($depths)) {
                 if (! $previousEmpty || $this->depth < 1) {
                     $this->depth++;
+
                     $depths[] = $block->depth;
                 } else {
                     // keep the current depth unchanged but take the block depth as a new reference for following blocks
                     array_pop($depths);
+
                     $depths[] = $block->depth;
                 }
             }

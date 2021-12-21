@@ -80,6 +80,7 @@ if ($id and $delete) {
     if (!$confirm) {
         $PAGE->set_title(get_string('deleteselectedkey'));
         $PAGE->set_heading($course->fullname);
+        $PAGE->set_secondary_active_tab('grades');
         echo $OUTPUT->header();
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
@@ -133,7 +134,9 @@ $PAGE->navbar->add($strheading);
 /// Print header
 $PAGE->set_title($strkeys);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_secondary_active_tab('grades');
 echo $OUTPUT->header();
+echo $OUTPUT->heading($strheading);
 
 $editform->display();
 echo $OUTPUT->footer();

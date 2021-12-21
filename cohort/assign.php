@@ -115,11 +115,14 @@ if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
       </td>
       <td id="buttonscell">
           <div id="addcontrols">
-              <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.s(get_string('add')); ?>" title="<?php p(get_string('add')); ?>" /><br />
+              <input class="btn btn-secondary" name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow() . '&nbsp;' .
+                  s(get_string('add')); ?>" title="<?php p(get_string('add')); ?>" /><br />
           </div>
 
           <div id="removecontrols">
-              <input name="remove" id="remove" type="submit" value="<?php echo s(get_string('remove')).'&nbsp;'.$OUTPUT->rarrow(); ?>" title="<?php p(get_string('remove')); ?>" />
+              <input class="btn btn-secondary" name="remove" id="remove" type="submit"
+                     value="<?php echo s(get_string('remove')) . '&nbsp;' . $OUTPUT->rarrow(); ?>"
+                     title="<?php p(get_string('remove')); ?>" />
           </div>
       </td>
       <td id="potentialcell">
@@ -128,7 +131,7 @@ if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
       </td>
     </tr>
     <tr><td colspan="3" id='backcell'>
-      <input type="submit" name="cancel" value="<?php p(get_string('backtocohorts', 'cohort')); ?>" />
+      <input class="btn btn-secondary" type="submit" name="cancel" value="<?php p(get_string('backtocohorts', 'cohort')); ?>" />
     </td></tr>
   </table>
 </div></form>

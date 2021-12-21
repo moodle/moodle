@@ -972,7 +972,7 @@ class qformat_default {
 
         // continue path for following error checks
         $course = $this->course;
-        $continuepath = "{$CFG->wwwroot}/question/export.php?courseid={$course->id}";
+        $continuepath = "{$CFG->wwwroot}/question/bank/exportquestions/export.php?courseid={$course->id}";
 
         // did we actually process anything
         if ($count==0) {
@@ -1065,7 +1065,7 @@ class qformat_default {
      * back into an array of category names.
      *
      * Each category name is cleaned by a call to clean_param(, PARAM_TEXT),
-     * which matches the cleaning in question/category_form.php.
+     * which matches the cleaning in question/bank/managecategories/category_form.php.
      *
      * @param string $path
      * @return array of category names.

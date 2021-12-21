@@ -61,9 +61,9 @@ class XmlScanner
         return false;
     }
 
-    private function disableEntityLoaderCheck()
+    private function disableEntityLoaderCheck(): void
     {
-        if (Settings::getLibXmlDisableEntityLoader()) {
+        if (Settings::getLibXmlDisableEntityLoader() && \PHP_VERSION_ID < 80000) {
             $libxmlDisableEntityLoaderValue = libxml_disable_entity_loader(true);
 
             if (self::$libxmlDisableEntityLoaderValue === null) {
@@ -72,9 +72,9 @@ class XmlScanner
         }
     }
 
-    public static function shutdown()
+    public static function shutdown(): void
     {
-        if (self::$libxmlDisableEntityLoaderValue !== null) {
+        if (self::$libxmlDisableEntityLoaderValue !== null && \PHP_VERSION_ID < 80000) {
             libxml_disable_entity_loader(self::$libxmlDisableEntityLoaderValue);
             self::$libxmlDisableEntityLoaderValue = null;
         }
@@ -85,7 +85,7 @@ class XmlScanner
         self::shutdown();
     }
 
-    public function setAdditionalCallback(callable $callback)
+    public function setAdditionalCallback(callable $callback): void
     {
         $this->callback = $callback;
     }
@@ -114,8 +114,6 @@ class XmlScanner
      *
      * @param mixed $xml
      *
-     * @throws Reader\Exception
-     *
      * @return string
      */
     public function scan($xml)
@@ -142,8 +140,6 @@ class XmlScanner
      * Scan theXML for use of <!ENTITY to prevent XXE/XEE attacks.
      *
      * @param string $filestream
-     *
-     * @throws Reader\Exception
      *
      * @return string
      */

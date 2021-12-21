@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class tool_moodlenet_import_processor_testcase, providing test cases for the import_processor class.
  */
-class tool_moodlenet_import_processor_testcase extends \advanced_testcase {
+class import_processor_test extends \advanced_testcase {
 
     /**
      * An integration test, this confirms the ability to construct an import processor and run the import for the current user.

@@ -17,27 +17,26 @@
  * Contain the logic for the question bank modal.
  *
  * @module     mod_quiz/modal_quiz_question_bank
- * @package    mod_quiz
  * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([
     'jquery',
-    'core/yui',
     'core/notification',
     'core/modal',
     'core/modal_events',
     'core/modal_registry',
-    'core/fragment'
+    'core/fragment',
+    'core_form/changechecker',
 ],
 function(
     $,
-    Y,
     Notification,
     Modal,
     ModalEvents,
     ModalRegistry,
-    Fragment
+    Fragment,
+    FormChangeChecker,
 ) {
 
     var registered = false;
@@ -299,12 +298,9 @@ function(
 
         // Disable the form change checker when the body is rendered.
         this.getRoot().on(ModalEvents.bodyRendered, function() {
-            // Make sure the form change checker is disabled otherwise it'll
-            // stop the user from navigating away from the page once the modal
-            // is hidden.
-            Y.use('moodle-core-formchangechecker', function() {
-                M.core_formchangechecker.reset_form_dirty_state();
-            });
+            // Make sure the form change checker is disabled otherwise it'll stop the user from navigating away from the
+            // page once the modal is hidden.
+            FormChangeChecker.disableAllChecks();
         });
     };
 

@@ -39,19 +39,15 @@ Feature: View gradebook when single item scales are used
       | assign   | C1     | a1       | Test assignment one | Submit something! | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Sub category 1 |
     And the "multilang" filter is "on"
     And the "multilang" filter applies to "content and headings"
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test assignment one" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Scale"
     And I set the field "grade[modgrade_scale]" to "EN Singleitem"
     And I press "Save and display"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade" to "A"
     And I press "Save changes"
-    And I press "OK"
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weightings" to "Show"

@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -8,7 +8,7 @@
   the BSD license will take precedence.
 Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   DB2 data driver. Requires ODBC.
 
@@ -28,7 +28,7 @@ to SQL_CUR_USE_ODBC Cursor Type, then
 the whole query speed up from 1 till 10 seconds
 to 0.2 till 0.3 seconds for 100 records. Amazing!!!
 
-Therfore, PHP is just almost fast as calling the DB2
+Therefore, PHP is just almost fast as calling the DB2
 from Servlets using JDBC (don't take too much care
 about the speed at whole: the database was on a
 completely other location, so the whole connection
@@ -92,7 +92,7 @@ to DB2 full rights to the DB2 SQLLIB directory, and place the user in the DBUSER
 if (!defined('ADODB_DIR')) die();
 
 if (!defined('_ADODB_ODBC_LAYER')) {
-	include(ADODB_DIR."/drivers/adodb-odbc.inc.php");
+	include_once(ADODB_DIR."/drivers/adodb-odbc.inc.php");
 }
 if (!defined('ADODB_ODBC_DB2')){
 define('ADODB_ODBC_DB2',1);
@@ -157,7 +157,6 @@ class ADODB_ODBC_DB2 extends ADODB_odbc {
 			$false = false;
 			return $false;
 		}
-		$rs->_has_stupid_odbc_fetch_api_change = $this->_has_stupid_odbc_fetch_api_change;
 
 		$arr = $rs->GetArray();
 		//print_r($arr);
@@ -306,11 +305,6 @@ class  ADORecordSet_odbc_db2 extends ADORecordSet_odbc {
 
 	var $databaseType = "db2";
 
-	function __construct($id,$mode=false)
-	{
-		parent::__construct($id,$mode);
-	}
-
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{
 		if (is_object($t)) {
@@ -361,7 +355,7 @@ class  ADORecordSet_odbc_db2 extends ADORecordSet_odbc {
 		case 'I':
 			return 'I';
 
-		default: return 'N';
+		default: return ADODB_DEFAULT_METATYPE;
 		}
 	}
 }

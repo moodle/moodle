@@ -48,7 +48,7 @@ require_once(__DIR__ . '/fixtures/event.php');
  */
 class logstore_legacy_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 

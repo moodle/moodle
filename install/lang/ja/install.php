@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -37,6 +36,7 @@ $string['chooselanguagesub'] = 'インストールにのみ使用する言語を
 $string['clialreadyconfigured'] = '設定ファイルconfig.phpはすでに登録されています。このサイトをインストールする場合、admin/cli/install_database.phpを使用してください。';
 $string['clialreadyinstalled'] = '設定ファイルconfig.phpはすでに登録されています。このサイトをアップグレードする場合、admin/cli/upgrade.phpを使用してください。';
 $string['cliinstallheader'] = 'Moodle {$a} コマンドラインインストールプログラム';
+$string['clitablesexist'] = 'データベーステーブルはすでに作成されています。CLIインストールを続けることはできません。';
 $string['databasehost'] = 'データベースホスト :';
 $string['databasename'] = 'データベース名 :';
 $string['databasetypehead'] = 'データベースドライバを選択する';

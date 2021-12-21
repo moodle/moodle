@@ -1237,7 +1237,7 @@ abstract class sql_generator {
         }
 
         // Now call the standard $DB->sql_concat() DML function
-        return call_user_func_array(array($this->mdb, 'sql_concat'), $elements);
+        return call_user_func_array(array($this->mdb, 'sql_concat'), array_values($elements));
     }
 
     /**

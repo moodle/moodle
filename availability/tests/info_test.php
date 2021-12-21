@@ -36,7 +36,7 @@ use core_availability\info_section;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class info_testcase extends advanced_testcase {
-    public function setUp() {
+    public function setUp(): void {
         // Load the mock condition so that it can be used.
         require_once(__DIR__ . '/fixtures/mock_condition.php');
     }
@@ -91,7 +91,7 @@ class info_testcase extends advanced_testcase {
         $debugging = $this->getDebuggingMessages();
         $this->resetDebugging();
         $this->assertEquals(1, count($debugging));
-        $this->assertContains('Invalid availability', $debugging[0]->message);
+        $this->assertStringContainsString('Invalid availability', $debugging[0]->message);
 
         // Check empty one.
         $info = new info_module($cm4);
@@ -145,7 +145,7 @@ class info_testcase extends advanced_testcase {
         $debugging = $this->getDebuggingMessages();
         $this->resetDebugging();
         $this->assertEquals(1, count($debugging));
-        $this->assertContains('Invalid availability', $debugging[0]->message);
+        $this->assertStringContainsString('Invalid availability', $debugging[0]->message);
 
         // Check empty one.
         $info = new info_section($sections[4]);
@@ -510,5 +510,34 @@ class info_testcase extends advanced_testcase {
         $result = $DB->get_fieldset_sql($sql, $params);
         sort($result);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the info_module class when involved in a recursive call to $cm->name.
+     */
+    public function test_info_recursive_name_call() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a course and page.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $page1 = $generator->create_module('page', ['course' => $course->id, 'name' => 'Page1']);
+
+        // Set invalid availability.
+        $DB->set_field('course_modules', 'availability', 'not valid', ['id' => $page1->cmid]);
+
+        // Get the cm_info object.
+        $this->setAdminUser();
+        $modinfo = get_fast_modinfo($course);
+        $cm1 = $modinfo->get_cm($page1->cmid);
+
+        // At this point we will generate dynamic data for $cm1, which will cause the debugging
+        // call below.
+        $this->assertEquals('Page1', $cm1->name);
+
+        $this->assertDebuggingCalled('Error processing availability data for ' .
+                '&lsquo;Page1&rsquo;: Invalid availability text');
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/db" VERSION="20200615" COMMENT="XMLDB file for Moodle mod/quiz"
+<XMLDB PATH="mod/quiz/db" VERSION="20211019" COMMENT="XMLDB file for Moodle mod/quiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -45,7 +45,6 @@
         <FIELD NAME="showuserpicture" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Option to show the user's picture during the attempt and on the review page."/>
         <FIELD NAME="showblocks" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether blocks should be shown on the attempt.php and review.php pages."/>
         <FIELD NAME="completionattemptsexhausted" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="completionpass" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="completionminattempts" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="allowofflineattempts" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether to allow the quiz to be attempted offline in the mobile app"/>
       </FIELDS>
@@ -144,6 +143,7 @@
         <FIELD NAME="timemodifiedoffline" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Last modified time via web services."/>
         <FIELD NAME="timecheckstate" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Next time quiz cron should check attempt for state changes.  NULL means never check."/>
         <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="Total marks for this attempt."/>
+        <FIELD NAME="gradednotificationsenttime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp when the 'graded' notification was sent."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

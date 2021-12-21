@@ -17,7 +17,6 @@
  * Compare a given form's values and its previously set data attributes.
  *
  * @module     core_grades/grades/grader/gradingpanel/comparison
- * @package    core_grades
  * @copyright  2019 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

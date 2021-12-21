@@ -139,7 +139,7 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
         $mc->start_attempt(new question_attempt_step(), 1);
 
         list($grade, $state) = $mc->grade_response($mc->prepare_simulated_post_data(array('1' => '1', '3' => '1', '5' => '1')));
-        $this->assertEquals(1, $grade, '', 0.000001);
+        $this->assertEqualsWithDelta(1, $grade, 0.000001);
         $this->assertEquals(question_state::$gradedright, $state);
     }
 

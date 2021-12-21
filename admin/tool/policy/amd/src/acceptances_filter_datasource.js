@@ -18,7 +18,6 @@
  *
  * This module is compatible with core/form-autocomplete.
  *
- * @package    tool_policy
  * @copyright  2017 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,7 +40,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             var selectedFilters = el.val();
             $.each(originalOptions, function(index, option) {
                 // Skip option if it does not contain the query string.
-                if ($.trim(query) !== '' && option.label.toLocaleLowerCase().indexOf(query.toLocaleLowerCase()) === -1) {
+                if (query.trim() !== '' && option.label.toLocaleLowerCase().indexOf(query.toLocaleLowerCase()) === -1) {
                     return true;
                 }
                 // Skip filters that have already been selected.

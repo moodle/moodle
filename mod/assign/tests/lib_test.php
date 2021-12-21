@@ -173,7 +173,7 @@ class mod_assign_lib_testcase extends advanced_testcase {
 
         $result = assign_user_outline($course, $student, $assign->get_course_module(), $assign->get_instance());
 
-        $this->assertRegExp('/50.5/', $result->info);
+        $this->assertMatchesRegularExpression('/50.5/', $result->info);
     }
 
     /**
@@ -536,7 +536,7 @@ class mod_assign_lib_testcase extends advanced_testcase {
 
         // Confirm the event was decorated.
         $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
-        $this->assertEquals(get_string('grade'), $actionevent->get_name());
+        $this->assertEquals(get_string('gradenoun'), $actionevent->get_name());
         $this->assertInstanceOf('moodle_url', $actionevent->get_url());
         $this->assertEquals(0, $actionevent->get_item_count());
         $this->assertTrue($actionevent->is_actionable());
@@ -561,7 +561,7 @@ class mod_assign_lib_testcase extends advanced_testcase {
 
         // Confirm the event was decorated.
         $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
-        $this->assertEquals(get_string('grade'), $actionevent->get_name());
+        $this->assertEquals(get_string('gradenoun'), $actionevent->get_name());
         $this->assertInstanceOf('moodle_url', $actionevent->get_url());
         $this->assertEquals(0, $actionevent->get_item_count());
         $this->assertTrue($actionevent->is_actionable());
@@ -583,7 +583,7 @@ class mod_assign_lib_testcase extends advanced_testcase {
 
         // Confirm the event was decorated.
         $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
-        $this->assertEquals(get_string('grade'), $actionevent->get_name());
+        $this->assertEquals(get_string('gradenoun'), $actionevent->get_name());
         $this->assertInstanceOf('moodle_url', $actionevent->get_url());
         $this->assertEquals(0, $actionevent->get_item_count());
         $this->assertFalse($actionevent->is_actionable());
@@ -608,7 +608,7 @@ class mod_assign_lib_testcase extends advanced_testcase {
 
         // Confirm the event was decorated.
         $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent);
-        $this->assertEquals(get_string('grade'), $actionevent->get_name());
+        $this->assertEquals(get_string('gradenoun'), $actionevent->get_name());
         $this->assertInstanceOf('moodle_url', $actionevent->get_url());
         $this->assertEquals(0, $actionevent->get_item_count());
         $this->assertFalse($actionevent->is_actionable());

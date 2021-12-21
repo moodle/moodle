@@ -48,7 +48,10 @@ class StyleManager
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
-    /** @var string Path of the styles XML file */
+    /** @var bool Whether the XLSX file contains a styles XML file */
+    protected $hasStylesXMLFile;
+
+    /** @var string|null Path of the styles XML file */
     protected $stylesXMLFilePath;
 
     /** @var InternalEntityFactory Factory to create entities */
@@ -75,8 +78,11 @@ class StyleManager
     {
         $this->filePath = $filePath;
         $this->entityFactory = $entityFactory;
-        $this->builtinNumFmtIdIndicatingDates = array_keys(self::$builtinNumFmtIdToNumFormatMapping);
-        $this->stylesXMLFilePath = $workbookRelationshipsManager->getStylesXMLFilePath();
+        $this->builtinNumFmtIdIndicatingDates = \array_keys(self::$builtinNumFmtIdToNumFormatMapping);
+        $this->hasStylesXMLFile = $workbookRelationshipsManager->hasStylesXMLFile();
+        if ($this->hasStylesXMLFile) {
+            $this->stylesXMLFilePath = $workbookRelationshipsManager->getStylesXMLFilePath();
+        }
     }
 
     /**
@@ -88,6 +94,10 @@ class StyleManager
      */
     public function shouldFormatNumericValueAsDate($styleId)
     {
+        if (!$this->hasStylesXMLFile) {
+            return false;
+        }
+
         $stylesAttributes = $this->getStylesAttributes();
 
         // Default style (0) does not format numeric values as timestamps. Only custom styles do.
@@ -263,7 +273,7 @@ class StyleManager
      */
     protected function isNumFmtIdBuiltInDateFormat($numFmtId)
     {
-        return in_array($numFmtId, $this->builtinNumFmtIdIndicatingDates);
+        return \in_array($numFmtId, $this->builtinNumFmtIdIndicatingDates);
     }
 
     /**
@@ -273,7 +283,7 @@ class StyleManager
     protected function isFormatCodeCustomDateFormat($formatCode)
     {
         // if no associated format code or if using the default "General" format
-        if ($formatCode === null || strcasecmp($formatCode, self::NUMBER_FORMAT_GENERAL) === 0) {
+        if ($formatCode === null || \strcasecmp($formatCode, self::NUMBER_FORMAT_GENERAL) === 0) {
             return false;
         }
 
@@ -288,7 +298,7 @@ class StyleManager
     {
         // Remove extra formatting (what's between [ ], the brackets should not be preceded by a "\")
         $pattern = '((?<!\\\)\[.+?(?<!\\\)\])';
-        $formatCode = preg_replace($pattern, '', $formatCode);
+        $formatCode = \preg_replace($pattern, '', $formatCode);
 
         // custom date formats contain specific characters to represent the date:
         // e - yy - m - d - h - s
@@ -300,7 +310,7 @@ class StyleManager
             // character not preceded by "\" (case insensitive)
             $pattern = '/(?<!\\\)' . $dateFormatCharacter . '/i';
 
-            if (preg_match($pattern, $formatCode)) {
+            if (\preg_match($pattern, $formatCode)) {
                 $hasFoundDateFormatCharacter = true;
                 break;
             }

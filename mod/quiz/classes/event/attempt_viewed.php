@@ -33,6 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int quizid: the id of the quiz.
+ *      - int page: the page number of attempt.
  * }
  *
  * @package    mod_quiz
@@ -66,8 +67,10 @@ class attempt_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has viewed the attempt with id '$this->objectid' belonging to the user " .
-            "with id '$this->relateduserid' for the quiz with course module id '$this->contextinstanceid'.";
+        $page = isset($this->other['page']) ? $this->other['page'] + 1 : '';
+        return "The user with id '$this->userid' has viewed page '$page' of the attempt with id " .
+            "'$this->objectid' belonging to the user with id '$this->relateduserid' for the quiz " .
+            "with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -76,7 +79,10 @@ class attempt_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/quiz/review.php', array('attempt' => $this->objectid));
+        return new \moodle_url('/mod/quiz/review.php', [
+            'attempt' => $this->objectid,
+            'page' => isset($this->other['page']) ? $this->other['page'] : 0
+        ]);
     }
 
     /**
@@ -104,6 +110,10 @@ class attempt_viewed extends \core\event\base {
 
         if (!isset($this->other['quizid'])) {
             throw new \coding_exception('The \'quizid\' value must be set in other.');
+        }
+
+        if (!isset($this->other['page'])) {
+            throw new \coding_exception('The \'page\' value must be set in other.');
         }
     }
 

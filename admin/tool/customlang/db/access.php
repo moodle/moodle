@@ -46,5 +46,14 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         ),
     ),
+    /* allows the user to export the current language customization */
+    'tool/customlang:export' => array(
+        'riskbitmask' => RISK_CONFIG,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+    ),
 
 );

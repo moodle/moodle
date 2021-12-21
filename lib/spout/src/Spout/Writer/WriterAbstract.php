@@ -33,7 +33,7 @@ abstract class WriterAbstract implements WriterInterface
     /** @var GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var HelperFactory $helperFactory */
+    /** @var HelperFactory */
     protected $helperFactory;
 
     /** @var OptionsManagerInterface Writer options manager */
@@ -123,9 +123,26 @@ abstract class WriterAbstract implements WriterInterface
         // @see https://github.com/box/spout/issues/241
         $this->globalFunctionsHelper->ob_end_clean();
 
-        // Set headers
+        /*
+         * Set headers
+         *
+         * For newer browsers such as Firefox, Chrome, Opera, Safari, etc., they all support and use `filename*`
+         * specified by the new standard, even if they do not automatically decode filename; it does not matter;
+         * and for older versions of Internet Explorer, they are not recognized `filename*`, will automatically
+         * ignore it and use the old `filename` (the only minor flaw is that there must be an English suffix name).
+         * In this way, the multi-browser multi-language compatibility problem is perfectly solved, which does not
+         * require UA judgment and is more in line with the standard.
+         *
+         * @see https://github.com/box/spout/issues/745
+         * @see https://tools.ietf.org/html/rfc6266
+         * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+         */
         $this->globalFunctionsHelper->header('Content-Type: ' . static::$headerContentType);
-        $this->globalFunctionsHelper->header('Content-Disposition: attachment; filename="' . $this->outputFilePath . '"');
+        $this->globalFunctionsHelper->header(
+            'Content-Disposition: attachment; ' .
+            'filename="' . rawurldecode($this->outputFilePath) . '"; ' .
+            'filename*=UTF-8\'\'' . rawurldecode($this->outputFilePath)
+        );
 
         /*
          * When forcing the download of a file over SSL,IE8 and lower browsers fail
@@ -223,7 +240,7 @@ abstract class WriterAbstract implements WriterInterface
 
         $this->closeWriter();
 
-        if (is_resource($this->filePointer)) {
+        if (\is_resource($this->filePointer)) {
             $this->globalFunctionsHelper->fclose($this->filePointer);
         }
 
@@ -243,7 +260,7 @@ abstract class WriterAbstract implements WriterInterface
 
         // remove output file if it was created
         if ($this->globalFunctionsHelper->file_exists($this->outputFilePath)) {
-            $outputFolderPath = dirname($this->outputFilePath);
+            $outputFolderPath = \dirname($this->outputFilePath);
             $fileSystemHelper = $this->helperFactory->createFileSystemHelper($outputFolderPath);
             $fileSystemHelper->deleteFile($this->outputFilePath);
         }

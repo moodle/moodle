@@ -36,10 +36,10 @@
             {{#summary}}{{#str}} summary, block_myoverview {{/str}}{{/summary}}
         </span>
     </button>
-    <ul class="dropdown-menu" data-show-active-item aria-labelledby="displaydropdown">
+    <ul class="dropdown-menu" role="menu" data-show-active-item data-skip-active-class="true" aria-labelledby="displaydropdown">
     {{#layouts}}
             <li>
-                <a class="dropdown-item {{#active}}active{{/active}}" href="#" data-display-option="display" data-value="{{id}}" data-pref="{{id}}" aria-label="{{arialabel}}" aria-controls="courses-view-{{uniqid}}">
+                <a class="dropdown-item" href="#" data-display-option="display" data-value="{{id}}" data-pref="{{id}}" aria-label="{{arialabel}}" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
                     {{name}}
                 </a>
             </li>

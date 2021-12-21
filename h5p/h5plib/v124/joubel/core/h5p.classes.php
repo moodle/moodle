@@ -1,4 +1,9 @@
 <?php
+
+namespace Moodle;
+
+use ZipArchive;
+
 /**
  * Interface defining functions the h5p library needs the framework to implement
  */
@@ -758,14 +763,11 @@ class H5PValidator {
       unlink($tmpPath);
       return FALSE;
     }
-    // Moodle: the extension mbstring is optional.
-    /*
     if (!extension_loaded('mbstring')) {
       $this->h5pF->setErrorMessage($this->h5pF->t('The mbstring PHP extension is not loaded. H5P need this to function properly'), 'mbstring-unsupported');
       unlink($tmpPath);
       return FALSE;
     }
-    */
 
     // Create a temporary dir to extract package in.
     $tmpDir = $this->h5pF->getUploadedH5pFolderPath();
@@ -812,7 +814,7 @@ class H5PValidator {
       }
       $totalSize += $fileStat['size'];
 
-      $fileName = \core_text::strtolower($fileStat['name']);
+      $fileName = mb_strtolower($fileStat['name']);
       if (preg_match('/(^[\._]|\/[\._])/', $fileName) !== 0) {
         continue; // Skip any file or folder starting with a . or _
       }
@@ -2060,7 +2062,7 @@ class H5PCore {
    *
    * @param H5PFrameworkInterface $H5PFramework
    *  The frameworks implementation of the H5PFrameworkInterface
-   * @param string|\H5PFileStorage $path H5P file storage directory or class.
+   * @param string|H5PFileStorage $path H5P file storage directory or class.
    * @param string $url To file storage directory.
    * @param string $language code. Defaults to english.
    * @param boolean $export enabled?
@@ -2068,7 +2070,7 @@ class H5PCore {
   public function __construct(H5PFrameworkInterface $H5PFramework, $path, $url, $language = 'en', $export = FALSE) {
     $this->h5pF = $H5PFramework;
 
-    $this->fs = ($path instanceof \H5PFileStorage ? $path : new \H5PDefaultStorage($path));
+    $this->fs = ($path instanceof H5PFileStorage ? $path : new H5PDefaultStorage($path));
 
     $this->url = $url;
     $this->exportEnabled = $export;
@@ -3318,15 +3320,12 @@ class H5PCore {
       $setup->disable_hub = TRUE;
     }
 
-    // Moodle: the extension mbstring is optional.
-    /*
     if (!extension_loaded('mbstring')) {
       $setup->errors[] = $this->h5pF->t(
         'The mbstring PHP extension is not loaded. H5P needs this to function properly'
       );
       $setup->disable_hub = TRUE;
     }
-    */
 
     // Check php version >= 5.2
     $php_version = explode('.', phpversion());
@@ -3674,13 +3673,12 @@ class H5PContentValidator {
 
     // Check if string is within allowed length
     if (isset($semantics->maxLength)) {
-      // Moodle: the extension mbstring is optional.
-      /*
       if (!extension_loaded('mbstring')) {
         $this->h5pF->setErrorMessage($this->h5pF->t('The mbstring PHP extension is not loaded. H5P need this to function properly'), 'mbstring-unsupported');
       }
-      */
-      $text = \core_text::substr($text, 0, $semantics->maxLength);
+      else {
+        $text = mb_substr($text, 0, $semantics->maxLength);
+      }
     }
 
     // Check if string is according to optional regexp in semantics
@@ -3730,14 +3728,11 @@ class H5PContentValidator {
         // file name, 2. testing against a returned error array that could
         // never be more than 1 element long anyway, 3. recreating the regex
         // for every file.
-        // Moodle: the extension mbstring is optional.
-        /*
         if (!extension_loaded('mbstring')) {
           $this->h5pF->setErrorMessage($this->h5pF->t('The mbstring PHP extension is not loaded. H5P need this to function properly'), 'mbstring-unsupported');
           $valid = FALSE;
         }
-        */
-        if (!preg_match($wl_regex, \core_text::strtolower($file))) {
+        else if (!preg_match($wl_regex, mb_strtolower($file))) {
           $this->h5pF->setErrorMessage($this->h5pF->t('File "%filename" not allowed. Only files with the following extensions are allowed: %files-allowed.', array('%filename' => $file, '%files-allowed' => $whitelist)), 'not-in-whitelist');
           $valid = FALSE;
         }
@@ -4279,7 +4274,7 @@ class H5PContentValidator {
       return '&lt;';
     }
 
-    if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9\-]+)([^>]*)>?|(<!--.*?-->)$%', $string, $matches)) {
+    if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9\-]+)\s*([^>]*)>?|(<!--.*?-->)$%', $string, $matches)) {
       // Seriously malformed.
       return '';
     }
@@ -4341,7 +4336,13 @@ class H5PContentValidator {
           // Attribute name, href for instance.
           if (preg_match('/^([-a-zA-Z]+)/', $attr, $match)) {
             $attrName = strtolower($match[1]);
-            $skip = ($attrName == 'style' || substr($attrName, 0, 2) == 'on');
+            $skip = (
+              $attrName == 'style' ||
+              substr($attrName, 0, 2) == 'on' ||
+              substr($attrName, 0, 1) == '-' ||
+              // Ignore long attributes to avoid unnecessary processing overhead.
+              strlen($attrName) > 96
+            );
             $working = $mode = 1;
             $attr = preg_replace('/^[-a-zA-Z]+/', '', $attr);
           }

@@ -17,7 +17,7 @@ namespace Matrix;
  * @return Matrix The transposed matrix
  * @throws Exception If argument isn't a valid matrix or array.
  */
-function transpose($matrix)
+function transpose($matrix): Matrix
 {
     if (is_array($matrix)) {
         $matrix = new Matrix($matrix);

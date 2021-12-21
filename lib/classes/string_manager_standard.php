@@ -302,7 +302,9 @@ class core_string_manager_standard implements core_string_manager {
             'strftimedatefullshort' => 1,
             'strftimedateshort' => 1,
             'strftimedatetime' => 1,
+            'strftimedatetimeaccurate' => 1,
             'strftimedatetimeshort' => 1,
+            'strftimedatetimeshortaccurate' => 1,
             'strftimedaydate' => 1,
             'strftimedaydatetime' => 1,
             'strftimedayshort' => 1,
@@ -427,6 +429,7 @@ class core_string_manager_standard implements core_string_manager {
 
         $countries = $this->load_component_strings('core_countries', $lang);
         core_collator::asort($countries);
+
         if (!$returnall and !empty($CFG->allcountrycodes)) {
             $enabled = explode(',', $CFG->allcountrycodes);
             $return = array();
@@ -435,7 +438,10 @@ class core_string_manager_standard implements core_string_manager {
                     $return[$c] = $countries[$c];
                 }
             }
-            return $return;
+
+            if (!empty($return)) {
+                return $return;
+            }
         }
 
         return $countries;
@@ -529,7 +535,13 @@ class core_string_manager_standard implements core_string_manager {
                     $languages[$langcode] = !empty($this->transaliases[$langcode]) ? $this->transaliases[$langcode] : $langname;
                 }
             }
-            return $languages;
+
+            // If there are no valid enabled translations, then return all languages.
+            if (!empty($languages)) {
+                return $languages;
+            } else {
+                return $cachedlist;
+            }
         }
 
         // Get all languages available in system.
@@ -580,7 +592,12 @@ class core_string_manager_standard implements core_string_manager {
             }
         }
 
-        return $languages;
+        // If there are no valid enabled translations, then return all languages.
+        if (!empty($languages)) {
+            return $languages;
+        } else {
+            return $cachedlist;
+        }
     }
 
     /**

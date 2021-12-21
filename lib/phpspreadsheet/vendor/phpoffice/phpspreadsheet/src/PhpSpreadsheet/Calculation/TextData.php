@@ -2,6 +2,7 @@
 
 namespace PhpOffice\PhpSpreadsheet\Calculation;
 
+use DateTimeInterface;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
@@ -26,15 +27,15 @@ class TextData
     {
         $character = Functions::flattenSingleValue($character);
 
-        if ((!is_numeric($character)) || ($character < 0)) {
+        if (!is_numeric($character)) {
+            return Functions::VALUE();
+        }
+        $character = (int) $character;
+        if ($character < 1 || $character > 255) {
             return Functions::VALUE();
         }
 
-        if (function_exists('iconv')) {
-            return iconv('UCS-4LE', 'UTF-8', pack('V', $character));
-        }
-
-        return mb_convert_encoding('&#' . (int) $character . ';', 'UTF-8', 'HTML-ENTITIES');
+        return iconv('UCS-4LE', 'UTF-8', pack('V', $character));
     }
 
     /**
@@ -98,7 +99,7 @@ class TextData
      *
      * @param string $characters Value
      *
-     * @return int
+     * @return int|string A string if arguments are invalid
      */
     public static function ASCIICODE($characters)
     {
@@ -159,7 +160,7 @@ class TextData
 
         // Validate parameters
         if (!is_numeric($value) || !is_numeric($decimals)) {
-            return Functions::NAN();
+            return Functions::VALUE();
         }
         $decimals = floor($decimals);
 
@@ -167,12 +168,13 @@ class TextData
         if ($decimals > 0) {
             $mask .= '.' . str_repeat('0', $decimals);
         } else {
-            $round = pow(10, abs($decimals));
+            $round = 10 ** abs($decimals);
             if ($value < 0) {
                 $round = 0 - $round;
             }
             $value = MathTrig::MROUND($value, $round);
         }
+        $mask = "$mask;($mask)";
 
         return NumberFormat::toFormattedString($value, $mask);
     }
@@ -264,7 +266,7 @@ class TextData
 
         // Validate parameters
         if (!is_numeric($value) || !is_numeric($decimals)) {
-            return Functions::NAN();
+            return Functions::VALUE();
         }
         $decimals = (int) floor($decimals);
 
@@ -543,7 +545,7 @@ class TextData
      *
      * @param mixed $value Value to check
      *
-     * @return bool
+     * @return DateTimeInterface|float|int|string A string if arguments are invalid
      */
     public static function VALUE($value = '')
     {
@@ -623,7 +625,7 @@ class TextData
             $percentageAdjustment = strlen($value) - strlen($percentageString);
             if ($percentageAdjustment) {
                 $value = (float) $percentageString;
-                $value /= pow(10, $percentageAdjustment * 2);
+                $value /= 10 ** ($percentageAdjustment * 2);
             }
         }
 

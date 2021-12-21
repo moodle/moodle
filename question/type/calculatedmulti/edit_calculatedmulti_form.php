@@ -72,7 +72,7 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $answeroptions[] = $mform->createElement('text', 'answer',
                 $label, array('size' => 50));
         $answeroptions[] = $mform->createElement('select', 'fraction',
-                get_string('grade'), $gradeoptions);
+                get_string('gradenoun'), $gradeoptions);
         $repeated[] = $mform->createElement('group', 'answeroptions',
                  $label, $answeroptions, null, false);
 

@@ -23,9 +23,7 @@ Feature: Teachers can embed images into instructions and conclusion fields
     # Create and edit the workshop.
     When I add a "Workshop" to section "1" and I fill the form with:
       | Workshop name | Workshop with embedded images  |
-    And I follow "Workshop with embedded images"
-    # Embed the image into Instructions for submission.
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Workshop with embedded images" "workshop activity editing" page
     And I expand all fieldsets
     And I set the field "Instructions for submission" to "<p>Image test</p>"
     And I select the text in the "Instructions for submission" Atto editor
@@ -38,7 +36,7 @@ Feature: Teachers can embed images into instructions and conclusion fields
     And I click on "Save image" "button"
     And I press "Save and display"
     # Embed the image into Instructions for assessment.
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Instructions for assessment" to "<p>Image test</p>"
     And I select the text in the "Instructions for assessment" Atto editor
@@ -51,7 +49,7 @@ Feature: Teachers can embed images into instructions and conclusion fields
     And I click on "Save image" "button"
     And I press "Save and display"
     # Embed the image into Conclusion.
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Conclusion" to "<p>Image test</p>"
     And I select the text in the "Conclusion" Atto editor

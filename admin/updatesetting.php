@@ -50,11 +50,13 @@ if (!array_key_exists($plugin, $plugins)) {
 
 switch ($action) {
     case 'disable':
-        $plugins[$plugin]->set_enabled(false);
+        $class = \core_plugin_manager::resolve_plugininfo_class($type);
+        $class::enable_plugin($plugin, false);
         break;
 
     case 'enable':
-        $plugins[$plugin]->set_enabled(true);
+        $class = \core_plugin_manager::resolve_plugininfo_class($type);
+        $class::enable_plugin($plugin, true);
         break;
 
     case 'up':

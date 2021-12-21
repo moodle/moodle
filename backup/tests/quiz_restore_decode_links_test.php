@@ -82,16 +82,17 @@ class restore_quiz_decode_testcase extends \core_privacy\tests\provider_testcase
 
         $newcm = duplicate_module($course, get_fast_modinfo($course)->get_cm($quiz->cmid));
 
-        $sql = "SELECT qa.answer
+        $sql = "SELECT qa.id, qa.answer
                   FROM {quiz} q
              LEFT JOIN {quiz_slots} qs ON qs.quizid = q.id
              LEFT JOIN {question_answers} qa ON qa.question = qs.questionid
                  WHERE q.id = :quizid";
         $params = array('quizid' => $newcm->instance);
-        $answers = $DB->get_fieldset_sql($sql, $params);
-        $this->assertEquals($CFG->wwwroot . '/course/view.php?id=' . $course->id, $answers[0]);
-        $this->assertEquals($CFG->wwwroot . '/mod/quiz/view.php?id=' . $quiz->cmid, $answers[1]);
-        $this->assertEquals($CFG->wwwroot . '/grade/report/index.php?id=' . $quiz->cmid, $answers[2]);
-        $this->assertEquals($CFG->wwwroot . '/mod/quiz/index.php?id=' . $quiz->cmid, $answers[3]);
+        $answers = $DB->get_records_sql_menu($sql, $params);
+
+        $this->assertEquals($CFG->wwwroot . '/course/view.php?id=' . $course->id, $answers[$firstanswer->id]);
+        $this->assertEquals($CFG->wwwroot . '/mod/quiz/view.php?id=' . $quiz->cmid, $answers[$secondanswer->id]);
+        $this->assertEquals($CFG->wwwroot . '/grade/report/index.php?id=' . $quiz->cmid, $answers[$thirdanswer->id]);
+        $this->assertEquals($CFG->wwwroot . '/mod/quiz/index.php?id=' . $quiz->cmid, $answers[$fourthanswer->id]);
     }
 }

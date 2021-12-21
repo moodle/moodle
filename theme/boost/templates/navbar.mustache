@@ -34,46 +34,70 @@
         "config": {
             "wwwroot": "#"
         },
-        "sitename": "Moodle Site"
+        "sitename": "Moodle Site",
+        "mobileprimarynav": [
+            {
+                "text": "Dashboard",
+                "url": "/my",
+                "isactive": true
+            },
+            {
+                "text": "Site home",
+                "url": "/",
+                "isactive": false
+            },
+            {
+                "text": "My courses",
+                "url": "/course",
+                "isactive": false
+            }
+        ]
     }
 }}
-<nav class="fixed-top navbar navbar-light bg-white navbar-expand moodle-has-zindex" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+<nav class="navbar fixed-top navbar-light bg-white navbar-expand" aria-label="{{#str}}sitemenubar, admin{{/str}}">
 
-        <div data-region="drawer-toggle" class="d-inline-block mr-3">
-            <button aria-expanded="{{#navdraweropen}}true{{/navdraweropen}}{{^navdraweropen}}false{{/navdraweropen}}" aria-controls="nav-drawer" type="button" class="btn nav-link float-sm-left mr-1 btn-light bg-gray" data-action="toggle-drawer" data-side="left" data-preference="drawer-open-nav">{{#pix}}i/menubars{{/pix}}<span class="sr-only">{{#str}}sidepanel, core{{/str}}</span></button>
+    <button class="navbar-toggler aabtn d-block d-md-none my-1 mr-2" data-toggle="drawers" data-action="toggle" data-target="theme_boost-drawers-primary">
+        <span class="navbar-toggler-icon"></span>
+        <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
+    </button>
+
+    <a href="{{{ config.wwwroot }}}" class="navbar-brand d-none d-md-flex align-items-center m-0 mr-4 p-0 aabtn">
+
+        {{# output.should_display_navbar_logo }}
+            <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+        {{/ output.should_display_navbar_logo }}
+        {{^ output.should_display_navbar_logo }}
+            {{{ sitename }}}
+        {{/ output.should_display_navbar_logo }}
+    </a>
+    {{#primarymoremenu}}
+        <div class="primary-navigation">
+            {{> core/moremenu}}
         </div>
+    {{/primarymoremenu}}
 
-        <a href="{{{ config.wwwroot }}}" class="navbar-brand aabtn {{# output.should_display_navbar_logo }}has-logo{{/ output.should_display_navbar_logo }}
-            {{^ output.should_display_navbar_logo }}
-                d-none d-sm-inline
-            {{/ output.should_display_navbar_logo }}
-                ">
-            {{# output.should_display_navbar_logo }}
-                <span class="logo d-none d-sm-inline">
-                    <img src="{{output.get_compact_logo_url}}" alt="{{sitename}}">
-                </span>
-            {{/ output.should_display_navbar_logo }}
-            <span class="site-name d-none d-md-inline">{{{ sitename }}}</span>
-        </a>
+    <ul class="navbar-nav d-none d-md-flex my-1 px-1">
+        <!-- page_heading_menu -->
+        {{{ output.page_heading_menu }}}
+    </ul>
 
-        <ul class="navbar-nav d-none d-md-flex">
-            <!-- custom_menu -->
-            {{{ output.custom_menu }}}
-            <!-- page_heading_menu -->
-            {{{ output.page_heading_menu }}}
-        </ul>
-        <div class="ml-auto">
+    <div id="usernavigation" class="navbar-nav ml-auto">
+        {{# output.search_box }}
             {{{ output.search_box }}}
+            <div class="divider border-left h-75 align-self-center mx-1"></div>
+        {{/output.search_box}}
+        {{#langmenu}}
+            {{> theme_boost/language_menu }}
+            <div class="divider border-left h-75 align-self-center mx-1"></div>
+        {{/langmenu}}
+        {{{ output.navbar_plugin_output }}}
+        <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
+            {{#usermenu}}
+                {{> core/user_menu }}
+            {{/usermenu}}
         </div>
-        <ul class="nav navbar-nav usernav">
-            <!-- navbar_plugin_output -->
-            <li class="nav-item">
-                {{{ output.navbar_plugin_output }}}
-            </li>
-            <!-- user_menu -->
-            <li class="nav-item align-items-center pl-2">
-                {{{ output.user_menu }}}
-            </li>
-        </ul>
-        <!-- search_box -->
+        {{{ output.edit_switch }}}
+    </div>
 </nav>
+
+{{> theme_boost/primary-drawer-mobile }}

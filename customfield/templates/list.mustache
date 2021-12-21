@@ -106,7 +106,7 @@
                         <td class="col-3">{{{shortname}}}</td>
                         <td class="col-2">{{{type}}}</td>
                         <td class="col-2 text-right">
-                            <a href="{{editfieldurl}}" data-role="editfield">{{#pix}}
+                            <a href="#" data-role="editfield" data-name="{{name}}" data-id="{{id}}">{{#pix}}
                                 t/edit, core, {{#str}} edit, moodle {{/str}} {{/pix}}</a>
                             <a href="#" data-id="{{id}}" data-role="deletefield">{{#pix}}
                                 t/delete, core, {{#str}} delete, moodle {{/str}} {{/pix}}</a>
@@ -114,7 +114,7 @@
                     </tr>
                 {{/fields}}
                 {{^fields}}
-                    <tr class="nofields"><td colspan="4">{{# str }} therearenofields, core_customfield {{/ str }}</td></tr>
+                    {{> core_customfield/nofields }}
                 {{/fields}}
                 </tbody>
             </table>

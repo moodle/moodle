@@ -25,9 +25,6 @@
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
-if (badges_open_badges_backpack_api() != OPEN_BADGES_V2P1) {
-    throw new coding_exception('backpacks only support Open Badges V2.1');
-}
 $hash = optional_param('hash', null, PARAM_RAW);
 
 $PAGE->set_pagelayout('admin');
@@ -37,7 +34,12 @@ require_login();
 if (empty($CFG->badges_allowexternalbackpack) || empty($CFG->enablebadges)) {
     redirect($CFG->wwwroot);
 }
-$backpack = badges_get_site_backpack($CFG->badges_site_backpack);
+
+$backpack = badges_get_user_backpack();
+if (badges_open_badges_backpack_api($backpack->id) != OPEN_BADGES_V2P1) {
+    throw new coding_exception('backpacks only support Open Badges V2.1');
+}
+
 $userbadges = badges_get_user_badges($USER->id);
 $context = context_user::instance($USER->id);
 
@@ -50,7 +52,6 @@ $PAGE->set_pagelayout('standard');
 
 $redirecturl = new moodle_url('/badges/mybadges.php');
 if ($hash) {
-    $backpack = badges_get_site_backpack($CFG->badges_site_backpack);
     $api = new core_badges\backpack_api2p1($backpack);
     $notify = $api->put_assertions($hash);
     if (!empty($notify['status']) && $notify['status'] == \core\output\notification::NOTIFY_SUCCESS) {

@@ -307,7 +307,7 @@ class graph {
         //print "$thisX, $thisY <br />";
 
         if (($bar!='none') && (string)$thisY != 'none') {
-            if ($relatedset = $this->offset_relation[$set]) {                               // Moodle
+            if (isset($this->offset_relation[$set]) && $relatedset = $this->offset_relation[$set]) {
                 $yoffset = $this->calculated['y_plot'][$relatedset][$index];                // Moodle
             } else {                                                                        // Moodle
                 $yoffset = 0;                                                               // Moodle

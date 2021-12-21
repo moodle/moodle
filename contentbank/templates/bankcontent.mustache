@@ -29,17 +29,20 @@
                 "type": "Archive (H5P)",
                 "author": "Admin user",
                 "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",
-                "icon" : "http://something/theme/image.php/boost/core/1581597850/f/h5p-64"
+                "icon" : "http://something/theme/image.php/boost/core/1581597850/f/h5p-64",
+                "visibilityunlisted": true
             },
             {
                 "name": "resume.pdf",
                 "title": "resume",
                 "timemodified": 1589792039,
                 "size": "699.3KB",
+                "uses": 3,
                 "bytes": 716126,
                 "type": "Archive (PDF)",
                 "author": "Admin user",
-                "icon": "http://something/theme/image.php/boost/core/1584597850/f/pdf-64"
+                "icon": "http://something/theme/image.php/boost/core/1584597850/f/pdf-64",
+                "visibilityunlisted": false
             }
         ],
         "tools": [
@@ -72,15 +75,41 @@
             {
                 "icon": "i/export"
             }
+        ],
+        "allowedcontexts": [
+            {
+                "name": "contextid",
+                "method": "get",
+                "action": "http://localhost/stable_master/contentbank/index.php",
+                "options": [
+                    {
+                        "value": "1",
+                        "name": "System",
+                        "selected": true,
+                        "optgroup": false
+                    },
+                    {
+                        "value": "32",
+                        "name": "Category 1",
+                        "selected": false,
+                        "optgroup": false
+                    }
+                ]
+            }
         ]
     }
-
 }}
+
 <div class="content-bank-container {{#viewlist}}view-list{{/viewlist}} {{^viewlist}}view-grid{{/viewlist}}"
 data-region="contentbank">
     <div class="d-flex justify-content-between flex-column flex-sm-row">
-        <div class="cb-search-container mb-2">
-            {{>core_contentbank/bankcontent/search}}
+        <div class="d-flex">
+            <div class="cb-navigation-container mb-2 mr-2">
+                {{>core_contentbank/bankcontent/navigation}}
+            </div>
+            <div class="cb-search-container mb-2">
+                {{>core_contentbank/bankcontent/search}}
+            </div>
         </div>
         <div class="cb-toolbar-container mb-2 d-flex">
             {{>core_contentbank/bankcontent/toolbar}}
@@ -96,82 +125,96 @@ data-region="contentbank">
                 </div>
             </div>
             {{#contents.0}}
-                <div class="cb-content-wrapper d-flex px-2" data-region="filearea">
-                    <div class="cb-heading bg-white">
-                        <div class="cb-file cb-column d-flex">
-                            <div class="title">{{#str}} contentname, contentbank {{/str}}</div>
-                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="contentname" data-action="sortname"
+                <div role="{{#viewlist}}table{{/viewlist}}{{^viewlist}}list{{/viewlist}}" aria-label="{{#str}} contentbank, contentbank {{/str}}"
+                    class="cb-content-wrapper d-flex px-2" data-region="filearea">
+                    <div {{#viewlist}}role="row"{{/viewlist}} class="cb-heading bg-white">
+                        <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-file cb-column d-flex">
+                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="contentname" data-action="sortname"
                                 title="{{#str}} sortbyx, core, {{#str}} contentname, contentbank {{/str}} {{/str}}">
-                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
-                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
-                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                                <span class="title">{{#str}} contentname, contentbank {{/str}}</span>
+                                <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core {{/pix}}</span>
                             </button>
                         </div>
-                        <div class="cb-date cb-column d-flex">
-                            <div class="title">{{#str}} lastmodified, contentbank {{/str}}</div>
-                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="lastmodified" data-action="sortdate"
+                        <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-uses cb-column d-flex">
+                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="uses" data-action="sortuses"
+                            title="{{#str}} sortbyx, core, {{#str}} uses, contentbank {{/str}} {{/str}}">
+                                <span class="title">{{#str}} uses, contentbank {{/str}}</span>
+                                <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core {{/pix}}</span>
+                            </button>
+                        </div>
+                        <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-date cb-column d-flex">
+                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="lastmodified" data-action="sortdate"
                             title="{{#str}} sortbyx, core, {{#str}} lastmodified, contentbank {{/str}} {{/str}}">
-                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
-                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
-                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                                <span class="title">{{#str}} lastmodified, contentbank {{/str}}</span>
+                                <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core {{/pix}}</span>
                             </button>
                         </div>
-                        <div class="cb-size cb-column d-flex">
-                            <div class="title">{{#str}} size, contentbank {{/str}}</div>
-                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="size" data-action="sortsize"
+                        <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-size cb-column d-flex">
+                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="size" data-action="sortsize"
                             title="{{#str}} sortbyx, core, {{#str}} size, contentbank {{/str}} {{/str}}">
-                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
-                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
-                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                                <span class="title">{{#str}} size, contentbank {{/str}}</span>
+                                <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core {{/pix}}</span>
                             </button>
                         </div>
-                        <div class="cb-type cb-column d-flex">
-                            <div class="title">{{#str}} type, contentbank {{/str}}</div>
-                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="type" data-action="sorttype"
+                        <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-type cb-column d-flex">
+                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="type" data-action="sorttype"
                             title="{{#str}} sortbyx, core, {{#str}} type, contentbank {{/str}} {{/str}}">
-                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
-                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
-                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                                <span class="title">{{#str}} type, contentbank {{/str}}</span>
+                                <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core {{/pix}}</span>
                             </button>
                         </div>
-                        <div class="cb-author cb-column d-flex last">
-                            <div class="title">{{#str}} author, contentbank {{/str}}</div>
-                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="author" data-action="sortauthor"
+                        <div {{#viewlist}}role="columnheader"{{/viewlist}} aria-sort="none" class="cb-author cb-column d-flex last">
+                            <button class="btn btn-block cb-btnsort dir-none text-left" data-string="author" data-action="sortauthor"
                             title="{{#str}} sortbyx, core, {{#str}} author, contentbank {{/str}} {{/str}}">
-                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
-                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
-                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                                <span class="title">{{#str}} author, contentbank {{/str}}</span>
+                                <span class="default">{{#pix}} t/sort, core {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core {{/pix}}</span>
                             </button>
                         </div>
                     </div>
                 {{#contents}}
-                    <div class="cb-listitem"
-                        data-file="{{{ title }}}"
-                        data-name="{{{ name }}}"
+                    <div role="{{#viewlist}}row{{/viewlist}}{{^viewlist}}listitem{{/viewlist}}"
+                        class="cb-listitem {{#visibilityunlisted}}cb-unlisted{{/visibilityunlisted}}"
+                        data-file="{{ title }}"
+                        data-name="{{ name }}"
                         data-bytes="{{ bytes }}"
+                        data-uses="{{ uses }}"
                         data-timemodified="{{ timemodified }}"
-                        data-type="{{{ type }}}"
-                        data-author="{{{ author }}}">
-                        <div class="cb-file cb-column position-relative">
-                            <div class="cb-thumbnail" role="img" aria-label="{{{ name }}}"
-                            style="background-image: url('{{{ icon }}}');">
+                        data-type="{{ type }}"
+                        data-author="{{ author }}">
+                        <div {{#viewlist}}role="cell"{{/viewlist}} class="cb-file cb-column position-relative">
+                            <div class="cb-thumbnail" style="background-image: url('{{{ icon }}}');">
                             </div>
-                            <a href="{{{ link }}}" class="cb-link stretched-link" title="{{{ name }}}">
+                            <a href="{{{ link }}}" class="cb-link stretched-link">
                                 <span class="cb-name word-break-all clamp-2" data-region="cb-content-name">
                                     {{{ name }}}
                                 </span>
                             </a>
                         </div>
-                        <div class="cb-date cb-column small">
+                        <div {{#viewlist}}role="cell"{{/viewlist}} class="cb-uses cb-column small">
+                            {{ uses }}
+                        </div>
+                        <div {{#viewlist}}role="cell"{{/viewlist}} class="cb-date cb-column small">
                             {{#userdate}} {{ timemodified }}, {{#str}} strftimedatetimeshort, core_langconfig {{/str}} {{/userdate}}
                         </div>
-                        <div class="cb-size cb-column small">
+                        <div {{#viewlist}}role="cell"{{/viewlist}} class="cb-size cb-column small">
                             {{ size }}
                         </div>
-                        <div class="cb-type cb-column small">
+                        <div {{#viewlist}}role="cell"{{/viewlist}} class="cb-type cb-column small">
                             {{{ type }}}
                         </div>
-                        <div class="cb-type cb-column last small">
+                        <div {{#viewlist}}role="cell"{{/viewlist}} class="cb-type cb-column last small">
                             {{{ author }}}
                         </div>
                     </div>

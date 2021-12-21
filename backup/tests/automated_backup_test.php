@@ -46,7 +46,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
      */
     protected $course;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -119,8 +119,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $method->setAccessible(true); // Allow accessing of private method.
         $emailpending = $method->invokeArgs($classobject, [$courses, $admin]);
 
-        $coursename = $this->course->fullname;
-        $this->expectOutputRegex("/Skipping $coursename \(Not scheduled for backup until/");
+        $this->expectOutputRegex('/Skipping course id ' . $this->course->id . ': Not scheduled for backup until/');
         $this->assertFalse($emailpending);
 
         $backupcourse = $DB->get_record('backup_courses', array('courseid' => $this->course->id));
@@ -162,8 +161,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $emailpending = $method->invokeArgs($classobject, [$courses, $admin]);
         $this->assertTrue($emailpending);
 
-        $coursename = $this->course->fullname;
-        $this->expectOutputRegex("/Putting backup of $coursename in adhoc task queue/");
+        $this->expectOutputRegex('/Putting backup of course id ' . $this->course->id. ' in adhoc task queue/');
 
         $backupcourse = $DB->get_record('backup_courses', array('courseid' => $this->course->id));
         // Now this backup course status should be queued.
@@ -206,7 +204,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $skipped = $method->invokeArgs($classobject, [$backupcourse, $course, $nextstarttime]);
 
         $this->assertTrue($skipped);
-        $this->expectOutputRegex("/Skipping $course->fullname \(Not visible\)/");
+        $this->expectOutputRegex('/Skipping course id ' . $this->course->id. ': Not visible/');
     }
 
     /**
@@ -241,7 +239,7 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $skipped = $method->invokeArgs($classobject, [$backupcourse, $course, $nextstarttime]);
 
         $this->assertTrue($skipped);
-        $this->expectOutputRegex("/Skipping $course->fullname \(Not modified in the past 2 days\)/");
+        $this->expectOutputRegex('/Skipping course id ' . $this->course->id . ': Not modified in the past 2 days/');
     }
 
     /**
@@ -276,7 +274,74 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $skipped = $method->invokeArgs($classobject, [$backupcourse, $course, $nextstarttime]);
 
         $this->assertTrue($skipped);
-        $this->expectOutputRegex("/Skipping $course->fullname \(Not modified since previous backup\)/");
+        $this->expectOutputRegex('/Skipping course id ' . $this->course->id . ': Not modified since previous backup/');
+    }
+
+    /**
+     * Test the task completes when coureid is missing.
+     */
+    public function test_task_complete_when_courseid_is_missing() {
+        global $DB;
+        $admin = get_admin();
+        $classobject = $this->backupcronautomatedhelper->return_this();
+
+        // Create this backup course.
+        $backupcourse = new stdClass;
+        $backupcourse->courseid = $this->course->id;
+        $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_NOTYETRUN;
+        $DB->insert_record('backup_courses', $backupcourse);
+        $backupcourse = $DB->get_record('backup_courses', ['courseid' => $this->course->id]);
+
+        // Create a backup task.
+        $method = new ReflectionMethod('\backup_cron_automated_helper', 'push_course_backup_adhoc_task');
+        $method->setAccessible(true); // Allow accessing of private method.
+        $method->invokeArgs($classobject, [$backupcourse, $admin]);
+
+        // Delete course for this test.
+        delete_course($this->course->id, false);
+
+        $task = core\task\manager::get_next_adhoc_task(time());
+
+        ob_start();
+        $task->execute();
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString('Invalid course id: ' . $this->course->id . ', task aborted.', $output);
+        core\task\manager::adhoc_task_complete($task);
+    }
+
+    /**
+     * Test the task completes when backup course is missing.
+     */
+    public function test_task_complete_when_backup_course_is_missing() {
+        global $DB;
+        $admin = get_admin();
+        $classobject = $this->backupcronautomatedhelper->return_this();
+
+        // Create this backup course.
+        $backupcourse = new stdClass;
+        $backupcourse->courseid = $this->course->id;
+        $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_NOTYETRUN;
+        $DB->insert_record('backup_courses', $backupcourse);
+        $backupcourse = $DB->get_record('backup_courses', ['courseid' => $this->course->id]);
+
+        // Create a backup task.
+        $method = new ReflectionMethod('\backup_cron_automated_helper', 'push_course_backup_adhoc_task');
+        $method->setAccessible(true); // Allow accessing of private method.
+        $method->invokeArgs($classobject, [$backupcourse, $admin]);
+
+        // Delete backup course for this test.
+        $DB->delete_records('backup_courses', ['courseid' => $this->course->id]);
+
+        $task = core\task\manager::get_next_adhoc_task(time());
+
+        ob_start();
+        $task->execute();
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString('Automated backup for course: ' . $this->course->fullname . ' encounters an error.',
+            $output);
+        core\task\manager::adhoc_task_complete($task);
     }
 }
 

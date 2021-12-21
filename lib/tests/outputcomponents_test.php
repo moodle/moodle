@@ -33,6 +33,11 @@ require_once($CFG->libdir . '/outputcomponents.php');
  */
 class core_outputcomponents_testcase extends advanced_testcase {
 
+    /**
+     * Tests user_picture::fields.
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
+     */
     public function test_fields_aliasing() {
         $fields = user_picture::fields();
         $fields = array_map('trim', explode(',', $fields));
@@ -60,10 +65,16 @@ class core_outputcomponents_testcase extends advanced_testcase {
             $this->assertContains($expected, $returned, "Expected pattern '$expected' not returned");
         }
         $this->assertContains("custom1 AS prefixcustom1", $returned, "Expected pattern 'custom1 AS prefixcustom1' not returned");
+
+        // Deprecation warnings for user_picture::fields.
+        $this->assertDebuggingCalledCount(2);
     }
 
+    /**
+     * Tests user_picture::unalias.
+     */
     public function test_fields_unaliasing() {
-        $fields = user_picture::fields();
+        $fields = implode(',', \core_user\fields::get_picture_fields());
         $fields = array_map('trim', explode(',', $fields));
 
         $fakerecord = new stdClass();
@@ -86,8 +97,11 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $this->assertSame('Value of custom1', $returned->custom1);
     }
 
+    /**
+     * Tests user_picture::unalias with null values.
+     */
     public function test_fields_unaliasing_null() {
-        $fields = user_picture::fields();
+        $fields = implode(',', \core_user\fields::get_picture_fields());
         $fields = array_map('trim', explode(',', $fields));
 
         $fakerecord = new stdClass();
@@ -469,10 +483,10 @@ EOF;
         $renderer = $page->get_renderer('core');
 
         $reason = 'An icon with no alt text is hidden from screenreaders.';
-        $this->assertContains('aria-hidden="true"', $renderer->pix_icon('t/print', ''), $reason);
+        $this->assertStringContainsString('aria-hidden="true"', $renderer->pix_icon('t/print', ''), $reason);
 
         $reason = 'An icon with alt text is not hidden from screenreaders.';
-        $this->assertNotContains('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
+        $this->assertStringNotContainsString('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
 
         // Test another theme with a different icon system.
         set_config('theme', 'classic');
@@ -481,10 +495,10 @@ EOF;
         $renderer = $page->get_renderer('core');
 
         $reason = 'An icon with no alt text is hidden from screenreaders.';
-        $this->assertContains('aria-hidden="true"', $renderer->pix_icon('t/print', ''), $reason);
+        $this->assertStringContainsString('aria-hidden="true"', $renderer->pix_icon('t/print', ''), $reason);
 
         $reason = 'An icon with alt text is not hidden from screenreaders.';
-        $this->assertNotContains('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
+        $this->assertStringNotContainsString('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
     }
 
     /**
@@ -649,5 +663,34 @@ EOF;
         // The rest should be fine.
         $this->assertTrue(in_array(['name' => 'class', 'value' => $labelclass], $data->labelattributes));
         $this->assertTrue(in_array(['name' => 'style', 'value' => $labelstyle], $data->labelattributes));
+    }
+
+    /**
+     * Data provider for test_block_contents_is_fake().
+     *
+     * @return array
+     */
+    public function block_contents_is_fake_provider() {
+        return [
+            'Null' => [null, false],
+            'Not set' => [false, false],
+            'Fake' => ['_fake', true],
+            'Real block' => ['activity_modules', false],
+        ];
+    }
+
+    /**
+     * Test block_contents is_fake() method.
+     *
+     * @dataProvider block_contents_is_fake_provider
+     * @param mixed $value Value for the data-block attribute
+     * @param boolean $expected The expected result
+     */
+    public function test_block_contents_is_fake($value, $expected) {
+        $bc = new block_contents(array());
+        if ($value !== false) {
+            $bc->attributes['data-block'] = $value;
+        }
+        $this->assertEquals($expected, $bc->is_fake());
     }
 }

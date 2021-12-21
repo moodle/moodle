@@ -51,7 +51,7 @@ require_once($CFG->dirroot . '/admin/tool/log/store/standard/tests/fixtures/even
  */
 class tool_log_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Logging waits till the transaction gets committed.
     }

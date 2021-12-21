@@ -17,7 +17,6 @@
  * Search methods for finding contents in the content bank.
  *
  * @module     core_contentbank/search
- * @package    core_contentbank
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

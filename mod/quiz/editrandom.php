@@ -51,6 +51,7 @@ if ($returnurl) {
 $url = new moodle_url('/mod/quiz/editrandom.php', array('slotid' => $slotid));
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 
 if (!$question = $DB->get_record('question', array('id' => $slot->questionid))) {
     print_error('questiondoesnotexist', 'question', $returnurl);

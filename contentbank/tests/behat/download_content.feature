@@ -1,4 +1,4 @@
-@core @core_contentbank @contentbank_h5p @_file_upload @javascript
+@core @core_contentbank @core_h5p @contentbank_h5p @_file_upload @javascript
 Feature: Download H5P content from the content bank
   In order export H5P content from the content bank
   As an admin

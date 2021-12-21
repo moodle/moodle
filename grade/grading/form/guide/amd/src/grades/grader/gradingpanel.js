@@ -17,7 +17,6 @@
  * Grading panel for gradingform_guide.
  *
  * @module     gradingform_guide/grades/grader/gradingpanel
- * @package    gradingform_guide
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -45,7 +45,7 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
     /**
      * Set up for every test
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -160,7 +160,7 @@ class core_badges_external_testcase extends externallib_advanced_testcase {
         foreach ($badges as $badge) {
             $context = ($badge->type == BADGE_TYPE_SITE) ? context_system::instance() : context_course::instance($badge->courseid);
             $badge->badgeurl = moodle_url::make_webservice_pluginfile_url($context->id, 'badges', 'badgeimage', $badge->id, '/',
-                                                                            'f1')->out(false);
+                                                                            'f3')->out(false);
 
             // Get the endorsement, alignments and related badges.
             $badgeinstance = new badge($badge->id);

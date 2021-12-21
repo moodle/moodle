@@ -76,13 +76,13 @@ class tool_task_renderer extends plugin_renderer_base {
         $data = [];
         $yes = get_string('yes');
         $no = get_string('no');
-        $canruntasks = \core\task\manager::is_runnable();
+        $canruntasks = \core\task\manager::is_runnable() && get_config('tool_task', 'enablerunnow');
         foreach ($tasks as $task) {
             $classname = get_class($task);
             $defaulttask = \core\task\manager::get_default_scheduled_task($classname, false);
 
             $customised = $task->is_customised() ? $no : $yes;
-            if (empty($CFG->preventscheduledtaskchanges)) {
+            if (empty($CFG->preventscheduledtaskchanges) && !$task->is_overridden()) {
                 $configureurl = new moodle_url('/admin/tool/task/scheduledtasks.php',
                         ['action' => 'edit', 'task' => $classname]);
                 $editlink = $this->output->action_icon($configureurl, new pix_icon('t/edit',
@@ -100,17 +100,19 @@ class tool_task_renderer extends plugin_renderer_base {
                 ));
             }
 
-            $namecell = new html_table_cell($task->get_name() . "\n" .
-                    html_writer::span('\\' . $classname, 'task-class text-ltr'));
+            $namecellcontent = $task->get_name() . "\n" .
+                html_writer::span('\\' . $classname, 'task-class text-ltr');
+            if ($task->is_overridden()) {
+                // Let the user know the scheduled task is defined in config.
+                $namecellcontent .= "\n" . html_writer::div(get_string('configoverride', 'admin'), 'alert-info');
+            }
+            $namecell = new html_table_cell($namecellcontent);
             $namecell->header = true;
-
-            $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
-            $plugindisabled = $plugininfo && $plugininfo->is_enabled() === false &&
-                    !$task->get_run_if_component_disabled();
-            $disabled = $plugindisabled || $task->get_disabled();
+            $namecell->id = scheduled_task::get_html_id($classname);
 
             $runnow = '';
-            if (!$disabled && get_config('tool_task', 'enablerunnow') && $canruntasks ) {
+            $canrunthistask = $canruntasks && $task->can_run();
+            if ($canrunthistask) {
                 $runnow = html_writer::div(html_writer::link(
                         new moodle_url('/admin/tool/task/schedule_task.php',
                             ['task' => $classname]),
@@ -142,7 +144,7 @@ class tool_task_renderer extends plugin_renderer_base {
                         new html_table_cell($customised)]);
 
             $classes = [];
-            if ($disabled) {
+            if (!$task->is_enabled()) {
                 $classes[] = 'disabled';
             }
             if (get_class($task) == $lastchanged) {

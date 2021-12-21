@@ -17,14 +17,12 @@
  * Provides an interface for a tool type in the Moodle server.
  *
  * @module     mod_lti/tool_type
- * @class      tool_type
- * @package    mod_lti
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
 define(['core/ajax', 'core/notification'], function(ajax, notification) {
-    return /** @alias module:mod_lti/tool_type */ {
+    return {
         /**
          * Get a list of tool types from Moodle for the given
          * search args.

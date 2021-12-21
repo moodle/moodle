@@ -1,4 +1,4 @@
-@core @core_course @core_customfield
+@core @core_course @core_customfield @javascript
 Feature: Teachers can edit course custom fields
   In order to have additional data on the course
   As a teacher
@@ -28,7 +28,7 @@ Feature: Teachers can edit course custom fields
   Scenario: Display custom fields on course edit form
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then I should see "Category for test"
     And I should see "Field 1"
@@ -42,7 +42,7 @@ Feature: Teachers can edit course custom fields
     When I log in as "admin"
     And I go to the courses management page
     And I should see the "Categories" management page
-    And I click on category "Miscellaneous" in the management interface
+    And I click on category "Category 1" in the management interface
     And I should see the "Course categories and courses" management page
     And I click on "Create new course" "link" in the "#course-listing" "css_element"
     And I set the following fields to these values:
@@ -57,8 +57,7 @@ Feature: Teachers can edit course custom fields
       | customfield_f4[year]  | 2019         |
       | Field 5               | b            |
     And I press "Save and display"
-    And I press "Proceed to course content"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the following fields match these values:
       | Course full name      | Course 2     |
       | Course short name     | C2           |
@@ -80,18 +79,18 @@ Feature: Teachers can edit course custom fields
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Edit" "link" in the "Field 1" "table_row"
     And I select the text in the "Description" Atto editor
-    And I click on "Insert or edit image" "button" in the "//*[@data-fieldtype='editor']/*[descendant::*[@id='id_description_editoreditable']]" "xpath_element"
+    And I click on "Insert or edit image" "button" in the "Description" "form_row"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "gd-logo.png" "link"
     And I click on "Select this file" "button"
     And I set the field "Describe this image for someone who cannot see it" to "Example"
     And I click on "Save image" "button"
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Updating Field 1" "dialogue"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then the image at "//div[contains(@class, 'fitem')][contains(., 'Field 1')]/following-sibling::div[1]//img[contains(@src, 'pluginfile.php') and contains(@src, '/core_customfield/description/') and @alt='Example']" "xpath_element" should be identical to "lib/tests/fixtures/gd-logo.png"
     And I log out
@@ -104,12 +103,13 @@ Feature: Teachers can edit course custom fields
     And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     Then I should see "You must supply a value here" in the "Short name" "form_row"
     And I set the field "Short name" to "short name"
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I should see "The short name can only contain alphanumeric lowercase characters and underscores (_)." in the "Short name" "form_row"
     And I set the field "Short name" to "f1"
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I should see "Short name already exists" in the "Short name" "form_row"
+    And I click on "Cancel" "button" in the "Adding a new Short text" "dialogue"
     And I log out

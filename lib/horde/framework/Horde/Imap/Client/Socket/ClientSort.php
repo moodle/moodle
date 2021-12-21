@@ -110,7 +110,7 @@ class Horde_Imap_Client_Socket_ClientSort
         }
 
         $mbox = $this->_socket->currentMailbox();
-        $fetch_res = $this->_socket->fetch($mbox['mailbox'], $query, array(
+        $fetch_res = $this->_socket->fetch(isset($mbox['mailbox']) ? $mbox['mailbox'] : null, $query, array(
             'ids' => $res
         ));
 

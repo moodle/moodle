@@ -70,15 +70,16 @@
         </form>
     </div>
     <a
-        class="btn btn-open"
+        class="btn btn-open rounded-0 nav-link"
         data-toggle="collapse"
         data-action="opensearch"
         href="#searchform-navbar"
         role="button"
         aria-expanded="false"
         aria-controls="searchform-navbar"
+        title="{{#str}} togglesearch {{/str}}"
     >
-        <i class="icon fa fa-search fa-fw " aria-hidden="true"></i>
+        {{#pix}} a/search, core {{/pix}}
         <span class="sr-only">{{#str}} togglesearch {{/str}}</span>
     </a>
 </div>
@@ -95,7 +96,7 @@ function(
     var container = $('#searchinput-navbar-' + uniqid);
     var opensearch = container.find('[data-action="opensearch"]');
     var input = container.find('[data-region="input"]');
-    var submit = container.find('[data-action="submit"');
+    var submit = container.find('[data-action="submit"]');
 
     submit.on('click', function(e) {
         if (input.val() === '') {

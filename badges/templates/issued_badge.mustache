@@ -1,0 +1,381 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_badges/issued_badges
+
+    Display an issued badge.
+
+    Context variables required for this template:
+    * coursefullname - Course name (only available if it's a course badge).
+    * sitefullname - Site name (only available if it's a site badge).
+    * badgeimage - Badge image.
+    * expireddate - Date (in the past) when the badge expired (if defined). If expiredate is defined, this field will be empty.
+    * expireddateformatted - Formatted expired date.
+    * expiredate - Date (in the future) when the badge will expire (if defined). If expireddate is defined, this field will be empty.
+    * badgename - Badge name.
+    * badgedescription - Badge description.
+    * badgeissuedon - Date where the badge was issued on by the user.
+    * recipientname - User awarded with the badge.
+    * recipientnotification.message - Message to be displayed if there is some issue with the recipient.
+    * criteria - HTML code with the criteria to display.
+    * issuedby - Badge issuer.
+    * issuedbyemailobfuscated - Badge issuer email link obfuscated.
+    * hasotherfields - Wheter the badge has other fields or not.
+    * language - Badge language [optional].
+    * version - Badge version [optional].
+    * imageauthorname - Badge image author name [optional].
+    * imageauthoremail - Badge image author email [optional].
+    * imageauthorurl - Badge image author URL [optional].
+    * imagecaption - Badge image caption [optional].
+    * endorsement - Badge endorsement data, with id, badgeid, issuername... [optional].
+    * hasrelatedbadges - Whether the badge has related badges or not.
+    * relatedbadges - Array of related badges (if hasrelatedbadges is set to true).
+    * hasalignments - Whether the badge has alignments or not.
+    * alignments - Array of alignments (if hasalignments is set to true).
+    * hostedurl - The URL where the badge is hosted [optional].
+
+    Example context (json):
+    {
+        "coursefullname": "Learn Moodle 3.11 Basics",
+        "badgeimage": "https://moodlesite/pluginfile/badges/123.jpg",
+        "expiredate": 1656972000,
+        "badgename": "Lean Moodle 3.11 Basics helper",
+        "badgedescription":"This badge is awarded to people who have provided outstanding support to other participants in the MOOC",
+        "badgeissuedon": 1625491897,
+        "recipientname": "Judit Cortes",
+        "recipientnotification": {
+            "message": "This user cannot be verified as a recipient of this badge."
+        },
+        "criteria": "Complete <strong>ALL</strong> of the listed requirements.<ul><li>This badge has to be awarded by a user with the following role:<ul><li>Teacher</li></ul></li><li>The following activity has to be completed:<ul><li><strong>View video</strong></li></ul></li><li>The following badge has to be earned:<ul><li><strong>Lean Moodle 3.11 Basics participant</strong></li></ul></li></ul>",
+        "issuedby": "Moodle HQ",
+        "issuedbyemailobfuscated": "<a href=\"mailto:xxxxx\">Moodle HQ</a>",
+        "hasotherfields": true,
+        "language": "English",
+        "version": "1.0beta",
+        "imageauthorname": "Judit Blanque",
+        "imageauthoremail": "<a href=\"mailto:xxx\">judit@moodle.invalid</a>",
+        "imageauthorurl": "http://juditblanque.cat",
+        "imagecaption": "This is a nice picture from my cat",
+        "endorsement": {
+            "id": "2",
+            "badgeid": "13",
+            "issuername": "Endorsement",
+            "issuerurl": "http://endorsement.cat",
+            "issueremail": "<a href=\"mailto:xxxx\">endorsement@moodle.invalid</a>",
+            "claimid": "http://claim.cat",
+            "claimcomment": "This is an endorsement comment.",
+            "dateissued": "1625491680"
+        },
+        "hasrelatedbadges": true,
+        "relatedbadges": [
+            {
+                "id": "12",
+                "name": "Lean Moodle 3.11 Basics participant",
+                "version": "",
+                "language": "en",
+                "type": "2",
+                "url": "http://xxxxx/badges/overview.php?id=12"
+            }
+        ],
+        "hasalignments": true,
+        "alignments": [
+            {
+                "id": "3",
+                "badgeid": "13",
+                "targetname": "Skill 1",
+                "targeturl": "http://skill1.cat",
+                "targetdescription": "This is the description for \"Skill 1\"",
+                "targetframework": "Framework name",
+                "targetcode": "S001"
+            },
+            {
+                "id": "2",
+                "badgeid": "13",
+                "targetname": "Alignment1",
+                "targeturl": "http://alignment1.cat",
+                "targetdescription": "This is the description for alignament1",
+                "targetframework": "Framework name",
+                "targetcode": "A1001"
+            }
+        ],
+        "hostedurl": "http://externalbackpack/badge?id=ABC"
+    }
+}}
+
+<div id="badge" class="container-fluid">
+<div class="row">
+    <div id="badge-image-col" class="col col-auto">
+        <img src="{{badgeimage}}" alt="{{imagecaption}}" width="300" class="mx-auto d-block"/>
+        {{#expireddateformatted}}
+            <span class="expireimage">
+                {{# pix }} i/expired, core, {{# str }} expireddate, badges, {{expireddateformatted}} {{/ str }}{{/ pix }}
+            </span>
+        {{/expireddateformatted}}
+        {{#downloadurl}}
+            <form action="{{downloadurl}}" method="post" id="downloadbadgeform">
+                <button type="submit" class="btn btn-secondary m-1 w-100">{{#str}}download{{/str}}</button>
+            </form>
+        {{/downloadurl}}
+        {{#addtobackpackurl}}
+            <form action="{{addtobackpackurl}}" method="post" id="addtobackpackform">
+                <button type="submit" class="btn btn-secondary m-1 w-100">{{#str}}addtobackpack, badges{{/str}}</button>
+            </form>
+        {{/addtobackpackurl}}
+    </div>
+
+    <div id="badge-details-col" class="col">
+        <h2>{{badgename}}</h2>
+        <div id="badge-awardedto" class="pt-1 pb-2">
+            {{#recipientnotification}}
+                {{> core/notification_warning}}
+            {{/recipientnotification}}
+            {{#str}}awardedto, core_badges, {{recipientname}}{{/str}}
+        </div>
+
+        <div id="badge-issued-expire" class="pt-1 pb-2">
+            <div class="pb-3">
+            <small>
+            {{#str}}
+                issuedon,
+                core_badges,
+                {{#userdate}}{{badgeissuedon}}, {{#str}} strftimedatetime, langconfig {{/str}}{{/userdate}}
+            {{/str}}
+            <br/>
+            {{#expiredate}}
+                {{#str}}
+                    expiresin,
+                    core_badges,
+                    {{#userdate}}{{expiredate}}, {{#str}} strftimedatetime, langconfig {{/str}}{{/userdate}}
+                {{/str}}
+                <br/>
+            {{/expiredate}}
+            {{#expireddate}}
+                {{#str}}
+                    expiredin,
+                    core_badges,
+                    {{#userdate}}{{expireddate}}, {{#str}} strftimedatetime, langconfig {{/str}}{{/userdate}}
+                {{/str}}
+            {{/expireddate}}
+            </small>
+            </div>
+
+            {{#issuedby}}
+            <div class="pb-2">
+                {{#str}}
+                    issuedby,
+                    core_badges,
+                    {{#issuedbyemailobfuscated}}
+                        {{{issuedbyemailobfuscated}}}
+                    {{/issuedbyemailobfuscated}}
+                    {{^issuedbyemailobfuscated}}
+                        {{issuedby}}
+                    {{/issuedbyemailobfuscated}}
+                {{/str}}
+            </div>
+            {{/issuedby}}
+
+            {{#hostedurl}}
+            <div class="pb-2">
+                <a href="{{.}}" target="_blank" aria-label="{{#str}}hostedurldescription, core_badges{{/str}}">
+                    {{#str}}hostedurl, core_badges{{/str}}
+                </a>
+            </div>
+            {{/hostedurl}}
+
+            {{#coursefullname}}
+            <div class="pb-2">
+                {{#str}}
+                    course,
+                    core_badges,
+                    {{coursefullname}}
+                {{/str}}
+            </div>
+            {{/coursefullname}}
+        </div>
+
+        <p class="pb-4">{{{badgedescription}}}</p>
+
+        <div id="badge-criteria">
+            <h3>{{#str}}bcriteria, core_badges{{/str}}</h3>
+            {{{criteria}}}
+        </div>
+
+        {{#hasotherfields}}
+        <div id="badge-other-fields">
+            <a data-toggle="collapse" href="#collapseOtherDetails" role="button" aria-expanded="false" aria-controls="collapseOtherDetails">
+                {{#str}}moredetails, core_badges{{/str}}
+            </a>
+            <div class="collapse" id="collapseOtherDetails">
+                <div class="container ml-0">
+                    {{#version}}
+                        <dl>
+                            <dt>
+                                {{#str}}version, core_badges{{/str}}
+                            </dt>
+                            <dd>
+                                {{version}}
+                            </dd>
+                        </dl>
+                    {{/version}}
+
+                    {{#language}}
+                        <dl>
+                            <dt>
+                                {{#str}}language, core_badges{{/str}}
+                            </dt>
+                            <dd>
+                                {{language}}
+                            </dd>
+                        </dl>
+                    {{/language}}
+
+                    {{#imageauthorname}}
+                        <dl>
+                            <dt>
+                                {{#str}}imageauthorname, core_badges{{/str}}
+                            </dt>
+                            <dd>
+                                {{imageauthorname}}
+                            </dd>
+                        </dl>
+                    {{/imageauthorname}}
+
+                    {{#imageauthoremail}}
+                        <dl>
+                            <dt>
+                                {{#str}}imageauthoremail, core_badges{{/str}}
+                            </dt>
+                            <dd>
+                                {{{imageauthoremail}}}
+                            </dd>
+                        </dl>
+                    {{/imageauthoremail}}
+
+                    {{#imageauthorurl}}
+                        <dl>
+                            <dt>
+                                {{#str}}imageauthorurl, core_badges{{/str}}
+                            </dt>
+                            <dd>
+                                <a href="{{imageauthorurl}}" target="_blank">{{imageauthorurl}}</a>
+                            </dd>
+                        </dl>
+                    {{/imageauthorurl}}
+                    {{#imagecaption}}
+                        <dl>
+                            <dt>
+                                {{#str}}imagecaption, core_badges{{/str}}
+                            </dt>
+                            <dd>
+                                {{imagecaption}}
+                            </dd>
+                        </dl>
+                    {{/imagecaption}}
+                </div>
+
+            {{#endorsement}}
+                <h4>{{#str}}endorsement, core_badges{{/str}}</h4>
+                <div class="container ml-0">
+                    <dl>
+                        <dt>
+                            {{#str}}issuername, core_badges{{/str}}
+                        </dt>
+                        <dd>
+                            {{issuername}}
+                        </dd>
+                    </dl>
+
+                    <dl>
+                        <dt>
+                            {{#str}}issueremail, core_badges{{/str}}
+                        </dt>
+                        <dd>
+                            {{{issueremail}}}
+                        </dd>
+                    </dl>
+
+                    <dl>
+                        <dt>
+                            {{#str}}issuerurl, core_badges{{/str}}
+                        </dt>
+                        <dd>
+                            <a href="{{issuerurl}}" target="_blank">{{issuerurl}}</a>
+                        </dd>
+                    </dl>
+
+                    <dl>
+                        <dt>
+                            {{#str}}dateawarded, core_badges{{/str}}
+                        </dt>
+                        <dd>
+                            {{#userdate}}{{dateissued}}, {{#str}} strftimedatetime, langconfig {{/str}}{{/userdate}}
+                        </dd>
+                    </dl>
+
+                    <dl>
+                        <dt>
+                            {{#str}}claimid, core_badges{{/str}}
+                        </dt>
+                        <dd>
+                            <a href="{{claimid}}" target="_blank">{{claimid}}</a>
+                        </dd>
+                    </dl>
+
+                    <dl>
+                        <dt>
+                            {{#str}}claimcomment, core_badges{{/str}}
+                        </dt>
+                        <dd>
+                            {{claimcomment}}
+                        </dd>
+                    </dl>
+                </div>
+            {{/endorsement}}
+
+            {{#hasrelatedbadges}}
+                <h4>{{#str}}relatedbages, core_badges{{/str}}</h4>
+                <ul>
+            {{/hasrelatedbadges}}
+            {{#relatedbadges}}
+                <li>
+                {{#url}}<a href="{{url}}" target="_blank">{{/url}}
+                    {{name}}
+                {{#url}}</a>{{/url}}
+                </li>
+            {{/relatedbadges}}
+            {{#hasrelatedbadges}}
+                </ul>
+            {{/hasrelatedbadges}}
+
+            {{#hasalignments}}
+                <h4>{{#str}}alignment, core_badges{{/str}}</h4>
+                <ul>
+            {{/hasalignments}}
+            {{#alignments}}
+                <li>
+                    <a href="{{targeturl}}" target="_blank">{{targetname}}</a>
+                </li>
+            {{/alignments}}
+            {{#hasalignments}}
+                </ul>
+            {{/hasalignments}}
+            </div>
+        </div>
+        {{/hasotherfields}}
+    </div>
+</div>
+</div>

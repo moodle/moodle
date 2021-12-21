@@ -28,22 +28,25 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 $id = required_param('id', PARAM_INT); // Course Module ID.
 $userid = required_param('user', PARAM_INT); // User ID.
 $attempt = optional_param('attempt', 1, PARAM_INT); // attempt number.
+$mode = optional_param('mode', '', PARAM_ALPHA); // Scorm mode from which reached here.
 
 // Building the url to use for links.+ data details buildup.
 $url = new moodle_url('/mod/scorm/report/userreport.php', array('id' => $id,
-                                                                'user' => $userid,
-                                                                'attempt' => $attempt));
+    'user' => $userid,
+    'attempt' => $attempt));
 $tracksurl = new moodle_url('/mod/scorm/report/userreporttracks.php', array('id' => $id,
-                                                                            'user' => $userid,
-                                                                            'attempt' => $attempt));
+    'user' => $userid,
+    'attempt' => $attempt,
+     'mode' => $mode));
 $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
 $course = get_course($cm->course);
 $scorm = $DB->get_record('scorm', array('id' => $cm->instance), '*', MUST_EXIST);
-$user = $DB->get_record('user', array('id' => $userid), user_picture::fields(), MUST_EXIST);
+$user = $DB->get_record('user', array('id' => $userid), implode(',', \core_user\fields::get_picture_fields()), MUST_EXIST);
 // Get list of attempts this user has made.
 $attemptids = scorm_get_all_attempts($scorm->id, $userid);
 
 $PAGE->set_url($url);
+$PAGE->set_secondary_active_tab('scormreport');
 // END of url setting + data buildup.
 
 // Checking login +logging +getting context.
@@ -76,10 +79,15 @@ $PAGE->navbar->add($strreport, new moodle_url('/mod/scorm/report.php', array('id
 $PAGE->navbar->add(fullname($user). " - $strattempt $attempt");
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($scorm->name));
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading(format_string($scorm->name));
+}
 // End of Print the page header.
 $currenttab = 'scoes';
-require($CFG->dirroot . '/mod/scorm/report/userreporttabs.php');
+
+$renderer = $PAGE->get_renderer('mod_scorm');
+$useractionreport = new \mod_scorm\output\userreportsactionbar($id, $userid, $attempt, 'learning', $mode);
+echo $renderer->user_report_actionbar($useractionreport);
 
 // Printing user details.
 $output = $PAGE->get_renderer('mod_scorm');

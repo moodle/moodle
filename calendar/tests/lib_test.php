@@ -38,7 +38,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
     }
 
@@ -190,7 +190,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, null, $sub->id);
+        calendar_import_events_from_ical($ical, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
 
@@ -207,7 +207,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, null, $sub->id);
+        calendar_import_events_from_ical($ical, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
 
@@ -224,7 +224,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, array());
 
         $sub = calendar_get_subscription($id);
-        calendar_import_icalendar_events($ical, null, $sub->id);
+        calendar_import_events_from_ical($ical, $sub->id);
         $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
         $this->assertEquals($count, 1);
 
@@ -240,11 +240,15 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->assertEquals($ical->parser_errors, []);
 
         $sub = calendar_get_subscription($id);
-        $output = calendar_import_icalendar_events($ical, null, $sub->id);
-        $this->assertStringNotContainsString('Events deleted: 17', $output);
-        $this->assertStringContainsString('Events imported: 1', $output);
-        $this->assertStringContainsString('Events skipped: 0', $output);
-        $this->assertStringContainsString('Events updated: 0', $output);
+        $output = calendar_import_events_from_ical($ical, $sub->id);
+        $this->assertArrayHasKey('eventsimported', $output);
+        $this->assertArrayHasKey('eventsskipped', $output);
+        $this->assertArrayHasKey('eventsupdated', $output);
+        $this->assertArrayHasKey('eventsdeleted', $output);
+        $this->assertEquals(1, $output['eventsimported']);
+        $this->assertEquals(0, $output['eventsskipped']);
+        $this->assertEquals(0, $output['eventsupdated']);
+        $this->assertEquals(0, $output['eventsdeleted']);
     }
 
     /**
@@ -827,10 +831,9 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $defaultcourses = calendar_get_default_courses(null, '*', false, $users[0]->id);
         list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses);
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID],
-                array_values($courseids),
-                '', 0.0, 10, true);
+                array_values($courseids));
         $this->assertFalse($groupids);
         $this->assertFalse($userid);
     }
@@ -853,10 +856,9 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $defaultcourses = calendar_get_default_courses(null, '*', false, $users[0]->id);
         list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses, false, $users[0]);
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID],
-                array_values($courseids),
-                '', 0.0, 10, true);
+                array_values($courseids));
         $this->assertEquals(array($coursegroups[$courses[0]->id][0]->id), $groupids);
         $this->assertEquals($users[0]->id, $userid);
 
@@ -873,8 +875,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->setUser($users[0]);
         $defaultcourses = calendar_get_default_courses(null, '*', false, $users[0]->id);
         list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses, false);
-        $this->assertEquals([$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID], array_values($courseids), '', 0.0, 10,
-                true);
+        $this->assertEqualsCanonicalizing([$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID], array_values($courseids));
         $this->assertEquals(array($coursegroups[$courses[0]->id][0]->id), $groupids);
         $this->assertEquals($users[0]->id, $userid);
     }

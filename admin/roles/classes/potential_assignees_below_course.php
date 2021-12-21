@@ -39,25 +39,26 @@ class core_role_potential_assignees_below_course extends core_role_assign_user_s
 
         // Now we have to go to the database.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
-        $params = array_merge($params, $eparams);
+        $params = array_merge($params, $eparams, $this->userfieldsparams);
 
         if ($wherecondition) {
             $wherecondition = ' AND ' . $wherecondition;
         }
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT u.id, ' . $this->userfieldsselects;
         $countfields = 'SELECT COUNT(u.id)';
 
         $sql   = " FROM ($enrolsql) enrolled_users_view
                    JOIN {user} u ON u.id = enrolled_users_view.id
               LEFT JOIN {role_assignments} ra ON (ra.userid = enrolled_users_view.id AND
                                             ra.roleid = :roleid AND ra.contextid = :contextid)
+                        $this->userfieldsjoin
                   WHERE ra.id IS NULL
                         $wherecondition";
         $params['contextid'] = $this->context->id;
         $params['roleid'] = $this->roleid;
 
-        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext, $this->userfieldsmappings);
         $order = ' ORDER BY ' . $sort;
 
         // Check to see if there are too many to show sensibly.

@@ -40,7 +40,7 @@ class core_course_customfield_testcase extends advanced_testcase {
     /**
      * Set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();

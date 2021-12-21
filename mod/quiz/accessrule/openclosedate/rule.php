@@ -42,30 +42,6 @@ class quizaccess_openclosedate extends quiz_access_rule_base {
         return new self($quizobj, $timenow);
     }
 
-    public function description() {
-        $result = array();
-        if ($this->timenow < $this->quiz->timeopen) {
-            $result[] = get_string('quiznotavailable', 'quizaccess_openclosedate',
-                    userdate($this->quiz->timeopen));
-            if ($this->quiz->timeclose) {
-                $result[] = get_string('quizcloseson', 'quiz', userdate($this->quiz->timeclose));
-            }
-
-        } else if ($this->quiz->timeclose && $this->timenow > $this->quiz->timeclose) {
-            $result[] = get_string('quizclosed', 'quiz', userdate($this->quiz->timeclose));
-
-        } else {
-            if ($this->quiz->timeopen) {
-                $result[] = get_string('quizopenedon', 'quiz', userdate($this->quiz->timeopen));
-            }
-            if ($this->quiz->timeclose) {
-                $result[] = get_string('quizcloseson', 'quiz', userdate($this->quiz->timeclose));
-            }
-        }
-
-        return $result;
-    }
-
     public function prevent_access() {
         $message = get_string('notavailable', 'quizaccess_openclosedate');
 

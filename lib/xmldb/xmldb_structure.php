@@ -359,7 +359,7 @@ class xmldb_structure extends xmldb_object {
             }
             $o.= '  </TABLES>' . "\n";
         }
-        $o.= '</XMLDB>';
+        $o.= '</XMLDB>' . "\n";
 
         return $o;
     }

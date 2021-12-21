@@ -36,7 +36,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Next"
     And I set the field "I agree to the This site policy" to "1"
     And I press "Next"
-    And I should see "Course overview"
+    And I should see "Calendar"
     And I log out
     And I log in as "manager"
     And I press "Next"
@@ -82,7 +82,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Next"
     And I set the field "I agree to the This site policy" to "1"
     And I press "Next"
-    And I should see "Course overview"
+    And I should see "Calendar"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
     And I click on "1 of 4 (25%)" "link" in the "This site policy" "table_row"
     And I click on "Accept This site policy" "link" in the "User One" "table_row"
@@ -111,7 +111,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I set the field "I agree to the This site policy" to "1"
     And I set the field "I agree to the This privacy policy" to "1"
     And I press "Next"
-    And I should see "Course overview"
+    And I should see "Calendar"
     And I log out
     And I log in as "manager"
     And I press "Next"
@@ -300,7 +300,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Next"
     And I set the field "I agree to the This site policy" to "1"
     And I press "Next"
-    And I should see "Course overview"
+    And I should see "Calendar"
     And I log out
     And I log in as "admin"
     And I navigate to "Users > Privacy and policies > Manage policies" in site administration
@@ -311,4 +311,4 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I press "Continue"
     And I log out
     When I log in as "user1"
-    Then I should see "Course overview"
+    Then I should see "Calendar"

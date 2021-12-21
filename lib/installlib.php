@@ -263,6 +263,11 @@ function install_generate_configphp($database, $cfg) {
         $configphp .= '$CFG->upgradekey = ' . var_export($cfg->upgradekey, true) . ';' . PHP_EOL . PHP_EOL;
     }
 
+    if (isset($cfg->setsitepresetduringinstall) and $cfg->setsitepresetduringinstall !== '') {
+        $configphp .= '$CFG->setsitepresetduringinstall = ' . var_export($cfg->setsitepresetduringinstall, true) .
+            ';' . PHP_EOL . PHP_EOL;
+    }
+
     $configphp .= 'require_once(__DIR__ . \'/lib/setup.php\');' . PHP_EOL . PHP_EOL;
     $configphp .= '// There is no php closing tag in this file,' . PHP_EOL;
     $configphp .= '// it is intentional because it prevents trailing whitespace problems!' . PHP_EOL;
@@ -525,4 +530,9 @@ function install_cli_database(array $options, $interactive) {
 
     // Redirect to site registration on first login.
     set_config('registrationpending', 1);
+
+    // Apply default preset, if it is defined in $CFG and has a valid value.
+    if (!empty($CFG->setsitepresetduringinstall)) {
+        \tool_admin_presets\helper::change_default_preset($CFG->setsitepresetduringinstall);
+    }
 }

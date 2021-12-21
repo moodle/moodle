@@ -1,0 +1,84 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/user_action_menu_items
+
+    Template for user action menu items.
+
+    Context variables required for this template:
+    * items - The different items to be rendered
+        * link - If a link is provided render it.
+          * title - The text to be shown for the link.
+          * url - The href for the link.
+          * pixicon - (Optional) The Moodle icon to use
+          * imgsrc - (Optional) If provided, uses this as source for an image tag. Note: pixicon is preferred.
+        * submenulink - If a submenu link is provided render it.
+          * submenuid - The id of the targeted submenu.
+          * title - The text to be shown for the link.
+          * pixicon - (Optional) The Moodle icon to use.
+          * imgsrc - (Optional) If provided, uses this as source for an image tag. Note: pixicon is preferred.
+        * divider - Whether a divider is to be displayed or not
+
+    Example context (json):
+    {
+        "items": [
+            {
+                "link": {
+                    "title": "Github user",
+                    "url": "https://raw.githubusercontent.com/",
+                    "pixicon": "t/dashboard",
+                    "imgsrc": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"
+                },
+                "divider": 1
+            },
+            {
+                "submenulink": {
+                    "title": "Title",
+                    "submenuid": "86cebd87",
+                    "pixicon": "t/dashboard",
+                    "imgsrc": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"
+                },
+                "divider": 1
+            }
+        ]
+    }
+}}
+{{#items}}
+    {{#link}}
+        <a href="{{{url}}}" class="dropdown-item" role="menuitem">
+            {{#pixicon}}
+                {{#pix}}{{pixicon}}{{/pix}}
+            {{/pixicon}}
+            {{^pixicon}}
+                {{#imgsrc}}<img aria-hidden="true" src="{{imgsrc}}" alt="{{title}}"/>{{/imgsrc}}
+            {{/pixicon}}
+            {{title}}
+        </a>
+    {{/link}}
+    {{#submenulink}}
+        <a href="#" class="carousel-navigation-link dropdown-item" role="menuitem" data-carousel-target-id="carousel-item-{{submenuid}}">
+            {{#pixicon}}
+                {{#pix}}{{pixicon}}{{/pix}}
+            {{/pixicon}}
+            {{^pixicon}}
+                {{#imgsrc}}<img aria-hidden="true" src="{{imgsrc}}" alt="{{title}}"/>{{/imgsrc}}
+            {{/pixicon}}
+            {{title}}
+        </a>
+    {{/submenulink}}
+    {{#divider}}<div class="dropdown-divider"></div>{{/divider}}
+{{/items}}

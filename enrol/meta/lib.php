@@ -328,31 +328,45 @@ class enrol_meta_plugin extends enrol_plugin {
      */
     public function edit_instance_validation($data, $files, $instance, $context) {
         global $DB;
+
         $errors = array();
         $thiscourseid = $context->instanceid;
-        $c = false;
 
         if (!empty($data['customint1'])) {
-            $courses = is_array($data['customint1']) ? $data['customint1'] : [$data['customint1']];
-            foreach ($courses as $courseid) {
-                $c = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-                $coursecontext = context_course::instance($c->id);
+            $coursesidarr = is_array($data['customint1']) ? $data['customint1'] : [$data['customint1']];
+            list($coursesinsql, $coursesinparams) = $DB->get_in_or_equal($coursesidarr, SQL_PARAMS_NAMED, 'metacourseid');
+            if ($coursesrecords = $DB->get_records_select('course', "id {$coursesinsql}",
+                $coursesinparams, '', 'id,visible')) {
+                // Cast NULL to 0 to avoid possible mess with the SQL.
+                $instanceid = $instance->id ?? 0;
 
-                $sqlexists = 'enrol = :meta AND courseid = :currentcourseid AND customint1 = :courseid AND id != :id';
-                $existing = $DB->record_exists_select('enrol', $sqlexists, [
+                $existssql = "enrol = :meta AND courseid = :currentcourseid AND id != :id AND customint1 {$coursesinsql}";
+                $existsparams = [
                     'meta' => 'meta',
                     'currentcourseid' => $thiscourseid,
-                    'courseid' => $c->id,
-                    'id' => $instance->id
-                ]);
-
-                if (!$c->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-                    $errors['customint1'] = get_string('error');
-                } else if (!has_capability('enrol/meta:selectaslinked', $coursecontext)) {
-                    $errors['customint1'] = get_string('error');
-                } else if ($c->id == SITEID or $c->id == $thiscourseid or $existing) {
-                    $errors['customint1'] = get_string('error');
+                    'id' => $instanceid
+                ];
+                $existsparams += $coursesinparams;
+                if ($DB->record_exists_select('enrol', $existssql, $existsparams)) {
+                    // We may leave right here as further checks do not make sense in case we have existing enrol records
+                    // with the parameters from above.
+                    $errors['customint1'] = get_string('invalidcourseid', 'error');
+                } else {
+                    foreach ($coursesrecords as $coursesrecord) {
+                        $coursecontext = context_course::instance($coursesrecord->id);
+                        if (!$coursesrecord->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                            $errors['customint1'] = get_string('nopermissions', 'error',
+                                'moodle/course:viewhiddencourses');
+                        } else if (!has_capability('enrol/meta:selectaslinked', $coursecontext)) {
+                            $errors['customint1'] = get_string('nopermissions', 'error',
+                                'enrol/meta:selectaslinked');
+                        } else if ($coursesrecord->id == SITEID or $coursesrecord->id == $thiscourseid) {
+                            $errors['customint1'] = get_string('invalidcourseid', 'error');
+                        }
+                    }
                 }
+            } else {
+                $errors['customint1'] = get_string('invalidcourseid', 'error');
             }
         } else {
             $errors['customint1'] = get_string('required');

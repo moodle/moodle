@@ -35,7 +35,7 @@ class WriterFactory
      */
     public static function createFromFile(string $path)
     {
-        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $extension = \strtolower(\pathinfo($path, PATHINFO_EXTENSION));
 
         return self::createFromType($extension);
     }

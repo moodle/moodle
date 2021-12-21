@@ -98,7 +98,7 @@ class WriterEntityFactory
      */
     public static function createRowFromArray(array $cellValues = [], Style $rowStyle = null)
     {
-        $cells = array_map(function ($cellValue) {
+        $cells = \array_map(function ($cellValue) {
             return new Cell($cellValue);
         }, $cellValues);
 

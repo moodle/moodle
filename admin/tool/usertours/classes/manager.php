@@ -370,6 +370,8 @@ class manager {
             $tour->set_description($data->description);
             $tour->set_pathmatch($data->pathmatch);
             $tour->set_enabled(!empty($data->enabled));
+            $tour->set_endtourlabel($data->endtourlabel);
+            $tour->set_display_step_numbers(!empty($data->displaystepnumbers));
 
             foreach (configuration::get_defaultable_keys() as $key) {
                 $tour->set_config($key, $data->$key);
@@ -438,17 +440,7 @@ class manager {
         $filename = 'tour_export_' . $tour->get_id() . '_' . time() . '.json';
 
         // Force download.
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');
-        header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
-        header('Expires: ' . gmdate('D, d M Y H:i:s', 0) . 'GMT');
-        header('Pragma: no-cache');
-        header('Accept-Ranges: none');
-        header('Content-disposition: attachment; filename=' . $filename);
-        header('Content-length: ' . strlen($exportstring));
-        header('Content-type: text/calendar; charset=utf-8');
-
-        echo $exportstring;
-        die;
+        send_file($exportstring, $filename, 0, 0, true, true);
     }
 
     /**
@@ -608,42 +600,52 @@ class manager {
     }
 
     /**
-     * Get the first tour matching the current page URL.
+     * Get all tours for the current page URL.
      *
-     * @param   bool        $reset      Forcibly update the current tour
-     * @return  tour
+     * @param   bool        $reset      Forcibly update the current tours
+     * @return  array
      */
-    public static function get_current_tour($reset = false) {
+    public static function get_current_tours($reset = false): array {
         global $PAGE;
 
-        static $tour = false;
+        static $tours = false;
 
-        if ($tour === false || $reset) {
-            $tour = self::get_matching_tours($PAGE->url);
+        if ($tours === false || $reset) {
+            $tours = self::get_matching_tours($PAGE->url);
         }
 
-        return $tour;
+        return $tours;
     }
 
     /**
-     * Get the first tour matching the specified URL.
+     * Get all tours matching the specified URL.
      *
      * @param   moodle_url  $pageurl        The URL to match.
-     * @return  tour
+     * @return  array
      */
-    public static function get_matching_tours(\moodle_url $pageurl) {
+    public static function get_matching_tours(\moodle_url $pageurl): array {
         global $PAGE;
+
+        if (\core_user::awaiting_action()) {
+            // User not fully ready to use the site. Don't show any tours, we need the user to get properly set up so
+            // that all require_login() and other bits work as expected.
+            return [];
+        }
 
         $tours = cache::get_matching_tourdata($pageurl);
 
-        foreach ($tours as $record) {
-            $tour = tour::load_from_record($record);
-            if ($tour->is_enabled() && $tour->matches_all_filters($PAGE->context)) {
-                return $tour;
+        $matches = [];
+        if ($tours) {
+            $filters = helper::get_all_filters();
+            foreach ($tours as $record) {
+                $tour = tour::load_from_record($record);
+                if ($tour->is_enabled() && $tour->matches_all_filters($PAGE->context, $filters)) {
+                    $matches[] = $tour;
+                }
             }
         }
 
-        return null;
+        return $matches;
     }
 
     /**
@@ -872,6 +874,12 @@ class manager {
             // Formerly included in Moodle 3.6.0.
             '36_dashboard.json' => 3,
             '36_messaging.json' => 3,
+
+            // Formerly included in Moodle 3.11.0.
+            '311_activity_information_activity_page_student.json' => 2,
+            '311_activity_information_activity_page_teacher.json' => 2,
+            '311_activity_information_course_page_student.json' => 2,
+            '311_activity_information_course_page_teacher.json' => 2,
         ];
 
         $existingtourrecords = $DB->get_recordset('tool_usertours_tours');

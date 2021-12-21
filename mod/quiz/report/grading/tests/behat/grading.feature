@@ -5,10 +5,19 @@ Feature: Basic use of the Manual grading report
   I need to use the manual grading report
 
   Background:
-    Given the following "users" exist:
-      | username | firstname | lastname | email                | idnumber |
-      | teacher1 | T1        | Teacher1 | teacher1@example.com | T1000    |
-      | student1 | S1        | Student1 | student1@example.com | S1000    |
+    Given the following "custom profile fields" exist:
+      | datatype | shortname  | name           |
+      | text     | username   | Username       |
+      | text     | email      | Email address  |
+      | text     | idnumber   | ID number      |
+      | text     | frog       | Favourite frog |
+    And the following config values are set as admin:
+      | showuseridentity | username,idnumber,email,profile_field_frog |
+
+    And the following "users" exist:
+      | username | firstname | lastname | email                | idnumber |  profile_field_frog |
+      | teacher1 | T1        | Teacher1 | teacher1@example.com | T1000    |                     |
+      | student1 | S1        | Student1 | student1@example.com | S1000    | little yellow frog  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
@@ -34,7 +43,7 @@ Feature: Basic use of the Manual grading report
     # Check report shows nothing when there are no attempts.
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher1"
     And I navigate to "Results > Manual grading" in current page administration
-    Then I should see "Manual grading"
+    Then I should see "Quiz 1" in the "//nav[contains(concat(' ', normalize-space(@aria-label), ' '), ' Navigation bar ')]" "xpath_element"
     And I should see "Quiz 1"
     And I should see "Nothing to display"
     And I follow "Also show questions that have been graded automatically"
@@ -52,10 +61,13 @@ Feature: Basic use of the Manual grading report
     # Go to the grading page.
     And I click on "update grades" "link" in the "Short answer 001" "table_row"
     And I should see "Grading attempts 1 to 1 of 1"
-
     # Test the display options.
-    And I set the field "Order attempts" to "By student ID number"
+    And I set the field "Order attempts by" to "ID number"
     And I press "Change options"
+
+    # General feedback for Short answer 001 displays.
+    And I should see "That is a bad answer."
+    And I should see "The correct answer is: frog"
 
     # Adjust the mark for Student1.
     And I set the field "Comment" to "I have adjusted your mark to 0.6"
@@ -73,13 +85,48 @@ Feature: Basic use of the Manual grading report
     And I follow "Also show questions that have been graded automatically"
     And I click on "update grades" "link" in the "Short answer 001" "table_row"
     And I set the following fields to these values:
-      | Questions per page | 42      |
-      | Order attempts     | By date |
+      | Questions per page | 42   |
+      | Order attempts by  | Date |
     And I press "Change options"
     And I log out
     And I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
     And I follow "Also show questions that have been graded automatically"
     And I click on "update grades" "link" in the "Short answer 001" "table_row"
     Then the following fields match these values:
-      | Questions per page | 42      |
-      | Order attempts     | By date |
+      | Questions per page | 42   |
+      | Order attempts by  | Date |
+
+  @javascript
+  Scenario: Manual grading settings are validated
+    Given user "student1" has attempted "Quiz 1" with responses:
+      | slot | response |
+      | 1    | Paris    |
+    And I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
+    And I follow "Also show questions that have been graded automatically"
+    And I click on "update grades" "link" in the "Short answer 001" "table_row"
+    When I set the following fields to these values:
+      | Questions per page | 0 |
+    And I press "Change options"
+    Then I should see "You must enter a number that is greater than 0."
+    And I set the following fields to these values:
+      | Questions per page | -1 |
+    And I press "Change options"
+    And I should see "You must enter a number that is greater than 0."
+    And I set the following fields to these values:
+      | Questions per page | abc |
+    And I press "Change options"
+    And I should see "You must enter a number that is greater than 0."
+    And I set the following fields to these values:
+      | Questions per page | 1 |
+    And I press "Change options"
+
+  @javascript
+  Scenario: Teacher can see user custom filed columns as additional user identity
+    Given user "student1" has attempted "Quiz 1" with responses:
+      | slot | response |
+      | 1    | Paris    |
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher1"
+    And I navigate to "Results > Manual grading" in current page administration
+    And I follow "Also show questions that have been graded automatically"
+    And I click on "update grades" "link" in the "Short answer 001" "table_row"
+    Then I should see "Attempt number 1 for S1 Student1 (student1, S1000, student1@example.com, little yellow frog)"

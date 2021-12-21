@@ -23,6 +23,7 @@
  */
 
 require_once("../config.php");
+require_once($CFG->dirroot . '/course/lib.php');
 
 $formaction = required_param('formaction', PARAM_LOCALURL);
 $id = required_param('id', PARAM_INT);
@@ -78,7 +79,8 @@ if ($formaction == 'bulkchange.php') {
 
     if (empty($plugin) AND $operationname == 'download_participants') {
         // Check permissions.
-        if (has_capability('moodle/course:manageactivities', $context)) {
+        $pagecontext = ($course->id == SITEID) ? context_system::instance() : $context;
+        if (course_can_view_participants($pagecontext)) {
             $plugins = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
             if (isset($plugins[$dataformat])) {
                 if ($plugins[$dataformat]->is_enabled()) {
@@ -89,27 +91,83 @@ if ($formaction == 'bulkchange.php') {
                     $columnnames = array(
                         'firstname' => get_string('firstname'),
                         'lastname' => get_string('lastname'),
-                        'email' => get_string('email'),
                     );
 
-                    $identityfields = get_extra_user_fields($context);
-                    $identityfieldsselect = '';
+                    // Get the list of fields we have to hide.
+                    $hiddenfields = [];
+                    if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
+                        $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+                    }
 
+                    // Retrieve all identity fields required for users.
+                    $userfieldsapi = \core_user\fields::for_identity($context);
+                    $userfields = $userfieldsapi->get_sql('u', true, '', '', false);
+
+                    $identityfields = array_keys($userfields->mappings);
                     foreach ($identityfields as $field) {
-                        $columnnames[$field] = get_string($field);
-                        $identityfieldsselect .= ', u.' . $field . ' ';
+                        $columnnames[$field] = \core_user\fields::get_display_name($field);
                     }
 
-                    if (!empty($userids)) {
-                        list($insql, $inparams) = $DB->get_in_or_equal($userids);
+                    // Ensure users are enrolled in this course context, further limiting them by selected userids.
+                    [$enrolledsql, $enrolledparams] = get_enrolled_sql($context);
+                    [$useridsql, $useridparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid');
+                    [$userordersql, $userorderparams] = users_order_by_sql('u', null, $context);
+
+                    $params = array_merge($userfields->params, $enrolledparams, $useridparams, $userorderparams);
+
+                    // If user can only view their own groups then they can only export users from those groups too.
+                    $groupmode = groups_get_course_groupmode($course);
+                    if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
+                        $groups = groups_get_all_groups($course->id, $USER->id, 0, 'g.id');
+                        $groupids = array_column($groups, 'id');
+
+                        [$groupmembersql, $groupmemberparams] = groups_get_members_ids_sql($groupids, $context);
+                        $params = array_merge($params, $groupmemberparams);
+
+                        $groupmemberjoin = "JOIN ({$groupmembersql}) jg ON jg.id = u.id";
+                    } else {
+                        $groupmemberjoin = '';
                     }
 
-                    $sql = "SELECT u.firstname, u.lastname, u.email" . $identityfieldsselect . "
+                    // Add column for groups if the user can view them.
+                    if (!isset($hiddenfields['groups'])) {
+                        $columnnames['groupnames'] = get_string('groups');
+                        $userfields->selects .= ', gcn.groupnames';
+
+                        [$groupconcatnamesql, $groupconcatnameparams] = groups_get_names_concat_sql($course->id);
+                        $groupconcatjoin = "LEFT JOIN ({$groupconcatnamesql}) gcn ON gcn.userid = u.id";
+                        $params = array_merge($params, $groupconcatnameparams);
+                    } else {
+                        $groupconcatjoin = '';
+                    }
+
+                    $sql = "SELECT u.firstname, u.lastname, {$userfields->selects}
                               FROM {user} u
-                             WHERE u.id $insql";
+                                   {$userfields->joins}
+                              JOIN ({$enrolledsql}) je ON je.id = u.id
+                                   {$groupmemberjoin}
+                                   {$groupconcatjoin}
+                             WHERE u.id {$useridsql}
+                          ORDER BY {$userordersql}";
 
-                    $rs = $DB->get_recordset_sql($sql, $inparams);
-                    \core\dataformat::download_data('courseid_' . $course->id . '_participants', $dataformat, $columnnames, $rs);
+                    $rs = $DB->get_recordset_sql($sql, $params);
+
+                    // Provide callback to pre-process all records ensuring user identity fields are escaped if HTML supported.
+                    \core\dataformat::download_data(
+                        'courseid_' . $course->id . '_participants',
+                        $dataformat,
+                        $columnnames,
+                        $rs,
+                        function(stdClass $record, bool $supportshtml) use ($identityfields): stdClass {
+                            if ($supportshtml) {
+                                foreach ($identityfields as $identityfield) {
+                                    $record->{$identityfield} = s($record->{$identityfield});
+                                }
+                            }
+
+                            return $record;
+                        }
+                    );
                     $rs->close();
                 }
             }

@@ -94,7 +94,7 @@ class user extends \core_search\base {
         $doc = \core_search\document_factory::instance($record->id, $this->componentname, $this->areaname);
         // Include all alternate names in title.
         $array = [];
-        foreach (get_all_user_name_fields(false, null, null, null, true) as $field) {
+        foreach (\core_user\fields::get_name_fields(true) as $field) {
             $array[$field] = $record->$field;
         }
         $fullusername = join(' ', $array);

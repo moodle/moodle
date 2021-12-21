@@ -46,9 +46,9 @@ class XMLReader extends \XMLReader
     public function getRealPathURIForFileInZip($zipFilePath, $fileInsideZipPath)
     {
         // The file path should not start with a '/', otherwise it won't be found
-        $fileInsideZipPathWithoutLeadingSlash = ltrim($fileInsideZipPath, '/');
+        $fileInsideZipPathWithoutLeadingSlash = \ltrim($fileInsideZipPath, '/');
 
-        return (self::ZIP_WRAPPER . realpath($zipFilePath) . '#' . $fileInsideZipPathWithoutLeadingSlash);
+        return (self::ZIP_WRAPPER . \realpath($zipFilePath) . '#' . $fileInsideZipPathWithoutLeadingSlash);
     }
 
     /**
@@ -62,7 +62,7 @@ class XMLReader extends \XMLReader
         $doesFileExists = false;
 
         $pattern = '/zip:\/\/([^#]+)#(.*)/';
-        if (preg_match($pattern, $zipStreamURI, $matches)) {
+        if (\preg_match($pattern, $zipStreamURI, $matches)) {
             $zipFilePath = $matches[1];
             $innerFilePath = $matches[2];
 
@@ -158,7 +158,7 @@ class XMLReader extends \XMLReader
         // In some cases, the node has a prefix (for instance, "<sheet>" can also be "<x:sheet>").
         // So if the given node name does not have a prefix, we need to look at the unprefixed name ("localName").
         // @see https://github.com/box/spout/issues/233
-        $hasPrefix = (strpos($nodeName, ':') !== false);
+        $hasPrefix = (\strpos($nodeName, ':') !== false);
         $currentNodeName = ($hasPrefix) ? $this->name : $this->localName;
 
         return ($this->nodeType === $nodeType && $currentNodeName === $nodeName);

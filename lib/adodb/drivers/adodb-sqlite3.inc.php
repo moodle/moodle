@@ -1,13 +1,13 @@
 <?php
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   SQLite info: http://www.hwaci.com/sw/sqlite/
 
@@ -22,6 +22,7 @@ if (!defined('ADODB_DIR')) die();
 
 class ADODB_sqlite3 extends ADOConnection {
 	var $databaseType = "sqlite3";
+	var $dataProvider = "sqlite";
 	var $replaceQuote = "''"; // string to use to replace quotes
 	var $concat_operator='||';
 	var $_errorNo = 0;
@@ -32,10 +33,6 @@ class ADODB_sqlite3 extends ADOConnection {
 	var $sysDate = "adodb_date('Y-m-d')";
 	var $sysTimeStamp = "adodb_date('Y-m-d H:i:s')";
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";
-
-	function __construct()
-	{
-	}
 
 	function ServerInfo()
 	{
@@ -82,6 +79,73 @@ class ADODB_sqlite3 extends ADOConnection {
 		return !empty($ret);
 	}
 
+	function metaType($t,$len=-1,$fieldobj=false)
+	{
+
+		if (is_object($t))
+		{
+			$fieldobj = $t;
+			$t = $fieldobj->type;
+			$len = $fieldobj->max_length;
+		}
+
+		$t = strtoupper($t);
+
+		/*
+		* We are using the Sqlite affinity method here
+		* @link https://www.sqlite.org/datatype3.html
+		*/
+		$affinity = array(
+		'INT'=>'INTEGER',
+		'INTEGER'=>'INTEGER',
+		'TINYINT'=>'INTEGER',
+		'SMALLINT'=>'INTEGER',
+		'MEDIUMINT'=>'INTEGER',
+		'BIGINT'=>'INTEGER',
+		'UNSIGNED BIG INT'=>'INTEGER',
+		'INT2'=>'INTEGER',
+		'INT8'=>'INTEGER',
+
+		'CHARACTER'=>'TEXT',
+		'VARCHAR'=>'TEXT',
+		'VARYING CHARACTER'=>'TEXT',
+		'NCHAR'=>'TEXT',
+		'NATIVE CHARACTER'=>'TEXT',
+		'NVARCHAR'=>'TEXT',
+		'TEXT'=>'TEXT',
+		'CLOB'=>'TEXT',
+
+		'BLOB'=>'BLOB',
+
+		'REAL'=>'REAL',
+		'DOUBLE'=>'REAL',
+		'DOUBLE PRECISION'=>'REAL',
+		'FLOAT'=>'REAL',
+
+		'NUMERIC'=>'NUMERIC',
+		'DECIMAL'=>'NUMERIC',
+		'BOOLEAN'=>'NUMERIC',
+		'DATE'=>'NUMERIC',
+		'DATETIME'=>'NUMERIC'
+		);
+
+		if (!isset($affinity[$t]))
+			return ADODB_DEFAULT_METATYPE;
+
+		$subt = $affinity[$t];
+		/*
+		* Now that we have subclassed the provided data down
+		* the sqlite 'affinity', we convert to ADOdb metatype
+		*/
+
+		$subclass = array('INTEGER'=>'I',
+						  'TEXT'=>'X',
+						  'BLOB'=>'B',
+						  'REAL'=>'N',
+						  'NUMERIC'=>'N');
+
+		return $subclass[$subt];
+	}
 	// mark newnham
 	function MetaColumns($table, $normalize=true)
 	{
@@ -129,6 +193,60 @@ class ADODB_sqlite3 extends ADOConnection {
 		return $arr;
 	}
 
+	function metaForeignKeys( $table, $owner = FALSE, $upper = FALSE, $associative = FALSE )
+	{
+	    global $ADODB_FETCH_MODE;
+		if ($ADODB_FETCH_MODE == ADODB_FETCH_ASSOC
+		|| $this->fetchMode == ADODB_FETCH_ASSOC)
+		$associative = true;
+
+	    /*
+		* Read sqlite master to find foreign keys
+		*/
+		$sql = "SELECT sql
+				 FROM (
+				SELECT sql sql, type type, tbl_name tbl_name, name name
+				  FROM sqlite_master
+			          )
+				WHERE type != 'meta'
+				  AND sql NOTNULL
+		          AND LOWER(name) ='" . strtolower($table) . "'";
+
+		$tableSql = $this->getOne($sql);
+
+		$fkeyList = array();
+		$ylist = preg_split("/,+/",$tableSql);
+		foreach ($ylist as $y)
+		{
+			if (!preg_match('/FOREIGN/',$y))
+				continue;
+
+			$matches = false;
+			preg_match_all('/\((.+?)\)/i',$y,$matches);
+			$tmatches = false;
+			preg_match_all('/REFERENCES (.+?)\(/i',$y,$tmatches);
+
+			if ($associative)
+			{
+				if (!isset($fkeyList[$tmatches[1][0]]))
+					$fkeyList[$tmatches[1][0]]	= array();
+				$fkeyList[$tmatches[1][0]][$matches[1][0]] = $matches[1][1];
+			}
+			else
+				$fkeyList[$tmatches[1][0]][] = $matches[1][0] . '=' . $matches[1][1];
+		}
+
+		if ($associative)
+		{
+			if ($upper)
+				$fkeyList = array_change_key_case($fkeyList,CASE_UPPER);
+			else
+				$fkeyList = array_change_key_case($fkeyList,CASE_LOWER);
+		}
+		return $fkeyList;
+	}
+
+
 	function _init($parentDriver)
 	{
 		$parentDriver->hasTransactions = false;
@@ -160,10 +278,21 @@ class ADODB_sqlite3 extends ADOConnection {
 
 	function SQLDate($fmt, $col=false)
 	{
+		/*
+		* In order to map the values correctly, we must ensure the proper
+		* casing for certain fields
+		* Y must be UC, because y is a 2 digit year
+		* d must be LC, because D is 3 char day
+		* A must be UC  because a is non-portable am
+		* Q must be UC  because q means nothing
+		*/
+		$fromChars = array('y','D','a','q');
+		$toChars   = array('Y','d','A','Q');
+		$fmt       = str_replace($fromChars,$toChars,$fmt);
+
 		$fmt = $this->qstr($fmt);
 		return ($col) ? "adodb_date2($fmt,$col)" : "adodb_date($fmt)";
 	}
-
 
 	function _createFunctions()
 	{
@@ -288,8 +417,8 @@ class ADODB_sqlite3 extends ADOConnection {
 	{
 		return $this->_connectionID->close();
 	}
-
-	function MetaIndexes($table, $primary = FALSE, $owner = false)
+	
+	function metaIndexes($table, $primary = FALSE, $owner = false)
 	{
 		$false = false;
 		// save old fetch mode
@@ -299,8 +428,36 @@ class ADODB_sqlite3 extends ADOConnection {
 		if ($this->fetchMode !== FALSE) {
 			$savem = $this->SetFetchMode(FALSE);
 		}
-		$SQL=sprintf("SELECT name,sql FROM sqlite_master WHERE type='index' AND tbl_name='%s'", strtolower($table));
-		$rs = $this->Execute($SQL);
+		
+		$pragmaData = array();
+		
+		/*
+		* If we want the primary key, we must extract
+		* it from the table statement, and the pragma
+		*/
+		if ($primary)
+		{
+			$sql = sprintf('PRAGMA table_info([%s]);',
+						   strtolower($table)
+						   );
+			$pragmaData = $this->getAll($sql);
+		}
+		
+		/*
+		* Exclude the empty entry for the primary index
+		*/
+		$sqlite = "SELECT name,sql
+					 FROM sqlite_master 
+					WHERE type='index' 
+					  AND sql IS NOT NULL
+					  AND LOWER(tbl_name)='%s'";
+		
+		$SQL = sprintf($sqlite,
+				     strtolower($table)
+					 );
+		
+		$rs = $this->execute($SQL);
+		
 		if (!is_object($rs)) {
 			if (isset($savem)) {
 				$this->SetFetchMode($savem);
@@ -310,10 +467,10 @@ class ADODB_sqlite3 extends ADOConnection {
 		}
 
 		$indexes = array ();
-		while ($row = $rs->FetchRow()) {
-			if ($primary && preg_match("/primary/i",$row[1]) == 0) {
-				continue;
-			}
+		
+		while ($row = $rs->FetchRow()) 
+		{
+			
 			if (!isset($indexes[$row[0]])) {
 				$indexes[$row[0]] = array(
 					'unique' => preg_match("/unique/i",$row[1]),
@@ -321,21 +478,120 @@ class ADODB_sqlite3 extends ADOConnection {
 				);
 			}
 			/**
-			 * There must be a more elegant way of doing this,
-			 * the index elements appear in the SQL statement
+			 * The index elements appear in the SQL statement
 			 * in cols[1] between parentheses
 			 * e.g CREATE UNIQUE INDEX ware_0 ON warehouse (org,warehouse)
 			 */
-			$cols = explode("(",$row[1]);
-			$cols = explode(")",$cols[1]);
-			array_pop($cols);
-			$indexes[$row[0]]['columns'] = $cols;
+			preg_match_all('/\((.*)\)/',$row[1],$indexExpression);
+			$indexes[$row[0]]['columns'] = array_map('trim',explode(',',$indexExpression[1][0]));
 		}
+		
 		if (isset($savem)) {
 			$this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 		}
+		
+		/*
+		* If we want primary, add it here
+		*/
+		if ($primary){
+			
+			/*
+			* Check the previously retrieved pragma to search
+			* with a closure
+			*/
+
+			$pkIndexData = array('unique'=>1,'columns'=>array());
+			
+			$pkCallBack = function ($value, $key) use (&$pkIndexData) {
+				
+				/*
+				* As we iterate the elements check for pk index and sort
+				*/
+				if ($value[5] > 0)
+				{
+					$pkIndexData['columns'][$value[5]] = strtolower($value[1]);
+					ksort($pkIndexData['columns']);
+				}
+			};
+			
+			array_walk($pragmaData,$pkCallBack);
+
+			/*
+			* If we found no columns, there is no
+			* primary index
+			*/
+			if (count($pkIndexData['columns']) > 0)
+				$indexes['PRIMARY'] = $pkIndexData;
+		}
+		
 		return $indexes;
+	}
+
+	/**
+	* Returns the maximum size of a MetaType C field. Because of the
+	* database design, sqlite places no limits on the size of data inserted
+	*
+	* @return int
+	*/
+	function charMax()
+	{
+		return ADODB_STRINGMAX_NOLIMIT;
+	}
+
+	/**
+	* Returns the maximum size of a MetaType X field. Because of the
+	* database design, sqlite places no limits on the size of data inserted
+	*
+	* @return int
+	*/
+	function textMax()
+	{
+		return ADODB_STRINGMAX_NOLIMIT;
+	}
+
+	/**
+	 * Converts a date to a month only field and pads it to 2 characters
+	 *
+	 * This uses the more efficient strftime native function to process
+	 *
+	 * @param 	str		$fld	The name of the field to process
+	 *
+	 * @return	str				The SQL Statement
+	 */
+	function month($fld)
+	{
+		$x = "strftime('%m',$fld)";
+		return $x;
+	}
+
+	/**
+	 * Converts a date to a day only field and pads it to 2 characters
+	 *
+	 * This uses the more efficient strftime native function to process
+	 *
+	 * @param 	str		$fld	The name of the field to process
+	 *
+	 * @return	str				The SQL Statement
+	 */
+	function day($fld) {
+		$x = "strftime('%d',$fld)";
+		return $x;
+	}
+
+	/**
+	 * Converts a date to a year only field
+	 *
+	 * This uses the more efficient strftime native function to process
+	 *
+	 * @param 	str		$fld	The name of the field to process
+	 *
+	 * @return	str				The SQL Statement
+	 */
+	function year($fld)
+	{
+		$x = "strftime('%Y',$fld)";
+		return $x;
 	}
 
 }

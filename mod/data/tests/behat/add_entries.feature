@@ -4,8 +4,7 @@ Feature: Users can add entries to database activities
   As a user
   I need to add entries to databases
 
-  @javascript
-  Scenario: Students can add entries to a database
+  Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
@@ -20,8 +19,10 @@ Feature: Users can add entries to database activities
     And the following "activities" exist:
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+
+  @javascript
+  Scenario: Students can add entries to a database
+    Given I am on the "Course 1" course page logged in as teacher1
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
@@ -29,26 +30,25 @@ Feature: Users can add entries to database activities
       | Field name | Test field 2 name |
       | Field description | Test field 2 description |
     # To generate the default templates.
-    And I follow "Templates"
+    And I navigate to "Templates" in current page administration
     And I wait until the page is ready
     And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I add an entry to "Test database name" database with:
       | Test field name | Student original entry |
       | Test field 2 name | Student original entry 2 |
-    And I press "Save and view"
+    And I press "Save"
     Then I should see "Student original entry"
     And I follow "Edit"
     And I set the following fields to these values:
       | Test field name | Student original entry |
       | Test field 2 name |  |
-    And I press "Save and view"
+    And I press "Save"
     Then I should not see "Student original entry 2"
     And I follow "Edit"
     And I set the following fields to these values:
       | Test field name | Student edited entry |
-    And I press "Save and view"
+    And I press "Save"
     And I should see "Student edited entry"
     And I add an entry to "Test database name" database with:
       | Test field name | Student second entry |
@@ -56,8 +56,8 @@ Feature: Users can add entries to database activities
     And the field "Test field name" does not match value "Student second entry"
     And I add an entry to "Test database name" database with:
       | Test field name | Student third entry |
-    And I press "Save and view"
-    And I follow "View list"
+    And I press "Save"
+    And I select "List view" from the "jump" singleselect
     And I should see "Student edited entry"
     And I should see "Student second entry"
     And I should see "Student third entry"
@@ -69,10 +69,19 @@ Feature: Users can add entries to database activities
     And I should see "Student third entry"
     # Now I will bulk delete the rest of the entries.
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test database name"
+    And I am on the "Test database name" "data activity" page logged in as teacher1
     And I press "Select all"
     And I press "Delete selected"
     And I press "Delete"
     And I should see "No entries in database"
+
+  @javascript @editor @editor_atto @atto @atto_h5p
+  Scenario: If a new text area entry is added, the filepicker is displayed in the H5P Atto button
+    Given I am on the "Course 1" course page logged in as teacher1
+    And I add a "Text area" field to "Test database name" database and I fill the form with:
+      | Field name | Textarea field name |
+    And I am on "Course 1" course homepage
+    When I add an entry to "Test database name" database with:
+      | Textarea field name | This is the content |
+    And I click on "Insert H5P" "button"
+    Then I should see "Browse repositories..."

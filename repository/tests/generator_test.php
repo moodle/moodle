@@ -45,8 +45,8 @@ class core_repository_generator_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         // All the repository types.
-        $all = array('boxnet', 'coursefiles', 'dropbox', 'equella', 'filesystem', 'flickr',
-            'flickr_public', 'googledocs', 'local', 'nextcloud', 'merlot', 'picasa', 'recent', 's3', 'upload', 'url',
+        $all = array('coursefiles', 'dropbox', 'equella', 'filesystem', 'flickr',
+            'flickr_public', 'googledocs', 'local', 'nextcloud', 'merlot', 'recent', 's3', 'upload', 'url',
             'user', 'webdav', 'wikimedia', 'youtube');
 
         // The ones enabled during installation.
@@ -100,10 +100,20 @@ class core_repository_generator_testcase extends advanced_testcase {
         $this->assertEquals('Custom Flickr',
             $DB->get_field('repository_instances', 'name', array('typeid' => $flickr->id), MUST_EXIST));
 
+        // Create a dropbox oauth issuer.
+        $this->setAdminUser();
+        $params = [
+            'name' => 'Dropbox',
+            'clientid' => 'key',
+            'clientsecret' => 'secret',
+            'loginparamsoffline' => 'token_access_type=offline',
+            'image' => '',
+            'showonloginpage' => 1,
+        ];
+        $issuer = \core\oauth2\api::create_issuer((object)$params);
         $record = new stdClass();
         $record->pluginname = 'Custom Dropbox';
-        $record->dropbox_key = '12345';
-        $record->dropbox_secret = '67890';
+        $record->dropbox_issuerid = $issuer->get('id');
         $record->dropbox_cachelimit = '123';
         $dropbox = $this->getDataGenerator()->create_repository_type('dropbox', $record);
 

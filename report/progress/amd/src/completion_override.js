@@ -17,7 +17,6 @@
  * AMD module to handle overriding activity completion status.
  *
  * @module     report_progress/completion_override
- * @package    report_progress
  * @copyright  2016 onwards Eiz Eddin Al Katrib <eiz@barasoft.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
@@ -27,13 +26,13 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
     function($, Ajax, Str, ModalFactory, ModalEvents, Notification, CustomEvents, Templates) {
 
         /**
-         * @type {String} the full name of the current user.
+         * @var {String} the full name of the current user.
          * @private
          */
         var userFullName;
 
         /**
-         * @type {JQuery} JQuery object containing the element (completion link) that was most recently activated.
+         * @var {JQuery} JQuery object containing the element (completion link) that was most recently activated.
          * @private
          */
         var triggerElement;

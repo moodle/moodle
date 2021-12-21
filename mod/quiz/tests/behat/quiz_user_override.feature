@@ -5,65 +5,96 @@ Feature: Quiz user override
   I need to create an override for that user.
 
   Background:
+    And the following "custom profile fields" exist:
+      | datatype | shortname  | name           |
+      | text     | frog       | Favourite frog |
     Given the following "users" exist:
-      | username | firstname | lastname | email                |
-      | teacher1 | Teacher   | One      | teacher1@example.com |
-      | student1 | Student   | One      | student1@example.com |
-      | student2 | Student   | Two      | student2@example.com |
+      | username | firstname | lastname | email                | profile_field_frog |
+      | teacher  | Teacher   | One      | teacher@example.com  |                    |
+      | helper   | Exam      | Helper   | helper@example.com   |                    |
+      | student1 | Student   | One      | student1@example.com | yellow frog        |
+      | student2 | Student   | Two      | student2@example.com | prince frog        |
+      | student3 | Student   | Three    | student3@example.com | Kermit             |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
       | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
+      | teacher  | C1     | editingteacher |
+      | helper   | C1     | teacher        |
       | student1 | C1     | student        |
       | student2 | C1     | student        |
-    And the following "activities" exist:
-      | activity   | name   | intro              | course | idnumber |
-      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |
+      | student3 | C1     | student        |
 
   @javascript
   Scenario: Add, modify then delete a user override
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I follow "Quiz 1"
-    And I navigate to "User overrides" in current page administration
+    Given the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher"
+    And I change window size to "large"
+    And I navigate to "Overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user        | Student1 |
-      | id_timeclose_enabled | 1        |
-      | timeclose[day]       | 1        |
-      | timeclose[month]     | January  |
-      | timeclose[year]      | 2020     |
-      | timeclose[hour]      | 08       |
-      | timeclose[minute]    | 00       |
+      | Override user        | Student One (student1@example.com) |
+      | id_timeclose_enabled | 1                                  |
+      | timeclose[day]       | 1                                  |
+      | timeclose[month]     | January                            |
+      | timeclose[year]      | 2020                               |
+      | timeclose[hour]      | 08                                 |
+      | timeclose[minute]    | 00                                 |
     And I press "Save"
-    And I should see "Wednesday, 1 January 2020, 8:00"
-    Then I click on "Edit" "link" in the "Student One" "table_row"
+    Then I should see "Wednesday, 1 January 2020, 8:00"
+
+    And I click on "Edit" "link" in the "Student One" "table_row"
     And I set the following fields to these values:
       | timeclose[year] | 2030 |
     And I press "Save"
-    And I should see "Tuesday, 1 January 2030, 8:00"
-    And I click on "Delete" "link"
+    And I should see "Action"
+    And I should see "Tuesday, 1 January 2030, 8:00" in the "Student One" "table_row"
+    And I should see "student1@example.com" in the "Student One" "table_row"
+
+    And I click on "Delete" "link" in the "Student One" "table_row"
+    And I should see "Are you sure you want to delete the override for user Student One (student1@example.com)?"
     And I press "Continue"
     And I should not see "Student One"
 
   @javascript
-  Scenario: Being able to modify a user override when the quiz is not available to the student
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
-    And I navigate to "Edit settings" in current page administration
-    And I expand all fieldsets
-    And I set the field "Availability" to "Hide from students"
-    And I click on "Save and display" "button"
-    When I navigate to "User overrides" in current page administration
+  Scenario: Can add a user override when the quiz is not available to the student
+    Given the following "activities" exist:
+      | activity   | name      | course | idnumber | visible |
+      | quiz       | Test quiz | C1     | quiz1    | 0       |
+    When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user    | Student1 |
-      | Attempts allowed | 1        |
+      | Override user    | Student One (student1@example.com) |
+      | Attempts allowed | 1                                  |
     And I press "Save"
     Then I should see "This override is inactive"
+    And I should see "Action"
+    And "Edit" "icon" should exist in the "Student One" "table_row"
+    And "copy" "icon" should exist in the "Student One" "table_row"
+    And "Delete" "icon" should exist in the "Student One" "table_row"
+    And I follow "Student One"
+    And I should see "Student One"
+    And I should see "User details"
+
+  @javascript
+  Scenario: Teacher without 'See full user identity in lists' can see and edit overrides
+    Given the following "permission overrides" exist:
+      | capability                   | permission | role           | contextlevel | reference |
+      | moodle/site:viewuseridentity | Prevent    | editingteacher | Course       | C1        |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber | visible |
+      | quiz       | Test quiz | C1     | quiz1    | 0       |
+    When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user    | Student One |
+      | Attempts allowed | 1           |
+    And I press "Save"
+    And I should see "Action"
+    And I should not see "student1@example.com"
     And "Edit" "icon" should exist in the "Student One" "table_row"
     And "copy" "icon" should exist in the "Student One" "table_row"
     And "Delete" "icon" should exist in the "Student One" "table_row"
@@ -77,21 +108,18 @@ Feature: Quiz user override
     And the following "group members" exist:
       | user     | group |
       | student1 | G1    |
-      | teacher1 | G1    |
+      | teacher  | G1    |
       | student2 | G2    |
     And the following "permission overrides" exist:
       | capability                  | permission | role           | contextlevel | reference |
       | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
     And the following "activities" exist:
-      | activity | name   | intro              | course | idnumber | groupmode |
-      | quiz     | Quiz 2 | Quiz 2 description | C1     | quiz2    | 1         |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 2"
-    And I navigate to "User overrides" in current page administration
+      | activity | name      | course | idnumber | groupmode |
+      | quiz     | Test quiz | C1     | quiz1    | 1         |
+    When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
     And I press "Add user override"
-    Then the "Override user" select box should contain "Student One, student1@example.com"
-    And the "Override user" select box should not contain "Student Two, student2@example.com"
+    Then the "Override user" select box should contain "Student One (student1@example.com)"
+    And the "Override user" select box should not contain "Student Two (student2@example.com)"
 
   Scenario: Override user in an activity with group mode set to "separate groups" as a teacher who is not a member in any group, and does not have accessallgroups permission
     Given the following "groups" exist:
@@ -104,11 +132,57 @@ Feature: Quiz user override
       | capability                  | permission | role           | contextlevel | reference |
       | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
     And the following "activities" exist:
-      | activity | name   | intro              | course | idnumber | groupmode |
-      | quiz     | Quiz 2 | Quiz 2 description | C1     | quiz2    | 1         |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 2"
-    And I navigate to "User overrides" in current page administration
+      | activity | name      | course | idnumber | groupmode |
+      | quiz     | Test quiz | C1     | quiz1    | 1         |
+    When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
     Then I should see "No groups you can access."
     And the "Add user override" "button" should be disabled
+
+  Scenario: A non-editing teacher can see the overrides, but not change them
+    Given the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And the following "mod_quiz > user overrides" exist:
+      | quiz      | user     | attempts |
+      | Test quiz | student1 | 2        |
+      | Test quiz | student2 | 2        |
+    And I am on the "Test quiz" "mod_quiz > View" page logged in as "helper"
+    When I navigate to "Overrides" in current page administration
+    Then "Student One" "table_row" should exist
+    And "Student Two" "table_row" should exist
+    And "Add user override" "button" should not exist
+    And I should not see "Action"
+    And "Edit" "link" should not exist in the "Student One" "table_row"
+    And "Copy" "link" should not exist in the "Student One" "table_row"
+    And "Delete" "link" should not exist in the "Student One" "table_row"
+    And I am on the "Test quiz" "mod_quiz > View" page
+    And I should see "Settings overrides exist (Users: 2)"
+
+  @javascript
+  Scenario: Teachers can see user additional user identity information
+    Given the following config values are set as admin:
+      | showuseridentity | email,profile_field_frog |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And the following "mod_quiz > user overrides" exist:
+      | quiz      | user     | attempts |
+      | Test quiz | student1 | 2        |
+      | Test quiz | student2 | 2        |
+    When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
+    Then I should see "yellow frog" in the "Student One" "table_row"
+    And I should see "prince frog" in the "Student Two" "table_row"
+
+    And I press "Add user override"
+    And I expand the "Override user" autocomplete
+    And I should see "Kermit"
+    And I should not see "Student one"
+    And I should not see "Student two"
+    And I press "Cancel"
+
+    And I click on "Edit" "link" in the "Student One" "table_row"
+    And I should see "Student One (student1@example.com, yellow frog)"
+    And I press "Cancel"
+
+    And I click on "Delete" "link" in the "Student One" "table_row"
+    And I should see "Student One (student1@example.com, yellow frog)"

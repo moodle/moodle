@@ -38,6 +38,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         new lang_string('customusermenuitems', 'admin'),
         new lang_string('configcustomusermenuitems', 'admin'),
         'grades,grades|/grade/report/mygrades.php|t/grades
+calendar,core_calendar|/calendar/view.php?view=month|i/calendar
 messages,message|/message/index.php|t/message
 preferences,moodle|/user/preferences.php|t/preferences',
         PARAM_RAW,
@@ -187,6 +188,7 @@ preferences,moodle|/user/preferences.php|t/preferences',
     $choices = array(
         HOMEPAGE_SITE => new lang_string('site'),
         HOMEPAGE_MY => new lang_string('mymoodle', 'admin'),
+        HOMEPAGE_MYCOURSES => new lang_string('mycourses', 'admin'),
         HOMEPAGE_USER => new lang_string('userpreference', 'admin')
     );
     $temp->add(new admin_setting_configselect('defaulthomepage', new lang_string('defaulthomepage', 'admin'),
@@ -253,10 +255,13 @@ preferences,moodle|/user/preferences.php|t/preferences',
             new lang_string('courselistshortnames_desc', 'admin'), 0));
     $temp->add(new admin_setting_configtext('coursesperpage', new lang_string('coursesperpage', 'admin'), new lang_string('configcoursesperpage', 'admin'), 20, PARAM_INT));
     $temp->add(new admin_setting_configtext('courseswithsummarieslimit', new lang_string('courseswithsummarieslimit', 'admin'), new lang_string('configcourseswithsummarieslimit', 'admin'), 10, PARAM_INT));
+
     $temp->add(new admin_setting_configtext('courseoverviewfileslimit', new lang_string('courseoverviewfileslimit'),
             new lang_string('configcourseoverviewfileslimit', 'admin'), 1, PARAM_INT));
-    $temp->add(new admin_setting_configtext('courseoverviewfilesext', new lang_string('courseoverviewfilesext'),
-            new lang_string('configcourseoverviewfilesext', 'admin'), '.jpg,.gif,.png'));
+    $temp->add(new admin_setting_filetypes('courseoverviewfilesext', new lang_string('courseoverviewfilesext'),
+        new lang_string('configcourseoverviewfilesext', 'admin'), 'web_image'
+    ));
+
     $temp->add(new admin_setting_configtext('coursegraceperiodbefore', new lang_string('coursegraceperiodbefore', 'admin'),
         new lang_string('configcoursegraceperiodbefore', 'admin'), 0, PARAM_INT));
     $temp->add(new admin_setting_configtext('coursegraceperiodafter', new lang_string('coursegraceperiodafter', 'admin'),
@@ -269,7 +274,6 @@ preferences,moodle|/user/preferences.php|t/preferences',
     $setting = new admin_setting_configcheckbox('cachejs', new lang_string('cachejs', 'admin'), new lang_string('cachejs_help', 'admin'), 1);
     $setting->set_updatedcallback('js_reset_all_caches');
     $temp->add($setting);
-    $temp->add(new admin_setting_configcheckbox('modchooserdefault', new lang_string('modchooserdefault', 'admin'), new lang_string('configmodchooserdefault', 'admin'), 1));
     $ADMIN->add('appearance', $temp);
 
     // Link to tag management interface.

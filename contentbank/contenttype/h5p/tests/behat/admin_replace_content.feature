@@ -1,4 +1,4 @@
-@core @core_contentbank @contenttype_h5p @_file_upload @_switch_iframe @javascript
+@core @core_contentbank @core_h5p @contenttype_h5p @_file_upload @_switch_iframe @javascript
 Feature: Replace H5P file from an existing content
   In order to replace an H5P content from the content bank
   As an admin
@@ -9,7 +9,7 @@ Feature: Replace H5P file from an existing content
       | contextlevel | reference | contenttype     | user  | contentname       | filepath                              |
       | System       |           | contenttype_h5p | admin | filltheblanks.h5p | /h5p/tests/fixtures/filltheblanks.h5p |
     And I log in as "admin"
-    And I press "Customise this page"
+    And I turn editing mode on
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     And I click on "Content bank" "link"

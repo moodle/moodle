@@ -1,5 +1,9 @@
 <?php
 
+namespace Moodle;
+
+use stdClass;
+
 class H5peditor {
 
   private static $hasWYSIWYGEditor = array(
@@ -56,9 +60,9 @@ class H5peditor {
   /**
    * Constructor for the core editor library.
    *
-   * @param \H5PCore $h5p Instance of core
-   * @param \H5peditorStorage $storage Instance of h5peditor storage interface
-   * @param \H5PEditorAjaxInterface $ajaxInterface Instance of h5peditor ajax
+   * @param H5PCore $h5p Instance of core
+   * @param H5peditorStorage $storage Instance of h5peditor storage interface
+   * @param H5PEditorAjaxInterface $ajaxInterface Instance of h5peditor ajax
    * interface
    */
   function __construct($h5p, $storage, $ajaxInterface) {
@@ -373,7 +377,7 @@ class H5peditor {
    *
    * @return array Libraries that was requested
    */
-  public function getLibraryData($machineName, $majorVersion, $minorVersion, $languageCode, $prefix = '', $fileDir = '', $defaultLanguage) {
+  public function getLibraryData($machineName, $majorVersion, $minorVersion, $languageCode, $prefix = '', $fileDir = '', $defaultLanguage = '') {
     $libraryData = new stdClass();
 
     $library = $this->h5p->loadLibrary($machineName, $majorVersion, $minorVersion);

@@ -54,3 +54,14 @@ Feature: Adding random questions to a quiz based on category and tags
     And I am on the "Quiz 1" "mod_quiz > Edit" page
     When I open the "last" add to quiz menu
     Then I should not see "a random question"
+
+  Scenario: A random question can be added to the quiz by creating a new category
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    When I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I follow "New category"
+    And I set the following fields to these values:
+      | Name            | New Random category |
+      | Parent category |  Top for Quiz 1     |
+    And I press "Create category and add random question"
+    Then I should see "Random (New Random category)" on quiz page "1"

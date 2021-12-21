@@ -53,7 +53,8 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/A password reset was requested for your account/', quoted_printable_decode($email->body));
+        $this->assertMatchesRegularExpression('/A password reset was requested for your account/',
+            quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -77,7 +78,8 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/A password reset was requested for your account/', quoted_printable_decode($email->body));
+        $this->assertMatchesRegularExpression('/A password reset was requested for your account/',
+            quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -119,7 +121,8 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/A password reset was requested for your account/', quoted_printable_decode($email->body));
+        $this->assertMatchesRegularExpression('/A password reset was requested for your account/',
+            quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -152,7 +155,8 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/A password reset was requested for your account/', quoted_printable_decode($email->body));
+        $this->assertMatchesRegularExpression('/A password reset was requested for your account/',
+            quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -169,7 +173,8 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/Unfortunately your account on this site is disabled/', quoted_printable_decode($email->body));
+        $this->assertMatchesRegularExpression('/Unfortunately your account on this site is disabled/',
+            quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -189,7 +194,8 @@ class core_login_lib_testcase extends advanced_testcase {
         $this->assertSame($user->email, $email->to);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/Unfortunately passwords cannot be reset on this site/', quoted_printable_decode($email->body));
+        $this->assertMatchesRegularExpression('/Unfortunately passwords cannot be reset on this site/',
+            quoted_printable_decode($email->body));
         $sink->clear();
     }
 
@@ -257,24 +263,34 @@ class core_login_lib_testcase extends advanced_testcase {
                 ['username' => get_string('usernamenotfound')],
                 ['protectusernames' => 0]
             ],
-            'Valid username, unconfirmed username' => [
+            'Valid username, unconfirmed username, username protection on' => [
                 ['username' => 's1'],
-                ['email' => get_string('confirmednot')],
+                [],
                 ['confirmed' => 0]
             ],
             'Invalid email' => [
                 ['email' => 's1-example.com'],
                 ['email' => get_string('invalidemail')]
             ],
-            'Multiple accounts with the same email' => [
+            'Multiple accounts with the same email, username protection on' => [
                 ['email' => 's1@example.com'],
-                ['email' => get_string('forgottenduplicate')],
+                [],
                 ['allowaccountssameemail' => 1]
             ],
-            'Multiple accounts with the same email but with different case' => [
+            'Multiple accounts with the same email, username protection off' => [
+                ['email' => 's1@example.com'],
+                ['email' => get_string('forgottenduplicate')],
+                ['allowaccountssameemail' => 1, 'protectusernames' => 0]
+            ],
+            'Multiple accounts with the same email but with different case, username protection is on' => [
+                ['email' => 'S1@EXAMPLE.COM'],
+                [],
+                ['allowaccountssameemail' => 1]
+            ],
+            'Multiple accounts with the same email but with different case, username protection is off' => [
                 ['email' => 'S1@EXAMPLE.COM'],
                 ['email' => get_string('forgottenduplicate')],
-                ['allowaccountssameemail' => 1]
+                ['allowaccountssameemail' => 1, 'protectusernames' => 0]
             ],
             'Non-existent email, username protection on' => [
                 ['email' => 's2@example.com']
@@ -290,10 +306,15 @@ class core_login_lib_testcase extends advanced_testcase {
             'Valid email, different case' => [
                 ['email' => 'S1@EXAMPLE.COM']
             ],
-            'Valid email, unconfirmed user' => [
+            'Valid email, unconfirmed user, username protection is on' => [
+                ['email' => 's1@example.com'],
+                [],
+                ['confirmed' => 0]
+            ],
+            'Valid email, unconfirmed user, username protection is off' => [
                 ['email' => 's1@example.com'],
                 ['email' => get_string('confirmednot')],
-                ['confirmed' => 0]
+                ['confirmed' => 0, 'protectusernames' => 0]
             ],
         ];
     }

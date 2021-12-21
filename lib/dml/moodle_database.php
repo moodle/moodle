@@ -137,7 +137,7 @@ abstract class moodle_database {
     /**
      * @var int internal temporary variable used to guarantee unique parameters in each request. Its used by {@link get_in_or_equal()}.
      */
-    private $inorequaluniqueindex = 1;
+    protected $inorequaluniqueindex = 1;
 
     /**
      * @var boolean variable use to temporarily disable logging.
@@ -1795,7 +1795,7 @@ abstract class moodle_database {
      * If the return ID isn't required, then this just reports success as true/false.
      * $data is an object containing needed data
      * @param string $table The database table to be inserted into
-     * @param object $dataobject A data object with values for one or more fields in the record
+     * @param object|array $dataobject A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @param bool $bulk Set to true is multiple inserts are expected
      * @return bool|int true or new id
@@ -2039,6 +2039,29 @@ abstract class moodle_database {
     }
 
     /**
+     * Deletes records from a table using a subquery. The subquery should return a list of values
+     * in a single column, which match one field from the table being deleted.
+     *
+     * The $alias parameter must be set to the name of the single column in your subquery result
+     * (e.g. if the subquery is 'SELECT id FROM whatever', then it should be 'id'). This is not
+     * needed on most databases, but MySQL requires it.
+     *
+     * (On database where the subquery is inefficient, it is implemented differently.)
+     *
+     * @param string $table Table to delete from
+     * @param string $field Field in table to match
+     * @param string $alias Name of single column in subquery e.g. 'id'
+     * @param string $subquery Subquery that will return values of the field to delete
+     * @param array $params Parameters for subquery
+     * @throws dml_exception If there is any error
+     * @since Moodle 3.10
+     */
+    public function delete_records_subquery(string $table, string $field, string $alias,
+            string $subquery, array $params = []): void {
+        $this->delete_records_select($table, $field . ' IN (' . $subquery . ')', $params);
+    }
+
+    /**
      * Delete one or more records from a table which match a particular WHERE clause.
      *
      * @param string $table The database table to be checked against.
@@ -2273,6 +2296,16 @@ abstract class moodle_database {
      * @return string The SQL to concatenate the strings.
      */
     public abstract function sql_concat_join($separator="' '", $elements=array());
+
+    /**
+     * Return SQL for performing group concatenation on given field/expression
+     *
+     * @param string $field Table field or SQL expression to be concatenated
+     * @param string $separator The separator desired between each concatetated field
+     * @param string $sort Ordering of the concatenated field
+     * @return string
+     */
+    public abstract function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string;
 
     /**
      * Returns the proper SQL (for the dbms in use) to concatenate $firstname and $lastname

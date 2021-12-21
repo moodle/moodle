@@ -513,6 +513,7 @@ define(['jquery'], function($) {
      *
      * @param  {Object} state Current state.
      * @param  {Array} messageIds Messages to delete.
+     * @param  {string} errorMessage
      * @return {Object} New state with array of pending delete message ids.
      */
     var setMessagesSendFailById = function(state, messageIds, errorMessage) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/usertours/db" VERSION="20160830" COMMENT="XMLDB file for Moodle tool/usertours"
+<XMLDB PATH="admin/tool/usertours/db" VERSION="20211013" COMMENT="XMLDB file for Moodle tool/usertours"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -12,7 +12,9 @@
         <FIELD NAME="pathmatch" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="endtourlabel" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Custom label for the end tour button"/>
         <FIELD NAME="configdata" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="displaystepnumbers" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Setting to display step numbers of the tour"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -24,6 +26,7 @@
         <FIELD NAME="tourid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="title" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Title of the step"/>
         <FIELD NAME="content" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Content of the user tour - allow for multilang tags"/>
+        <FIELD NAME="contentformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="targettype" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="Type of the target (e.g. block, CSS selector, etc.)"/>
         <FIELD NAME="targetvalue" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The value for the specified target type."/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>

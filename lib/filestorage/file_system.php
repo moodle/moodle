@@ -35,20 +35,6 @@ defined('MOODLE_INTERNAL') || die();
 abstract class file_system {
 
     /**
-     * Private clone method to prevent cloning of the instance.
-     */
-    final protected function __clone() {
-        return;
-    }
-
-    /**
-     * Private wakeup method to prevent unserialising of the instance.
-     */
-    final protected function __wakeup() {
-        return;
-    }
-
-    /**
      * Output the content of the specified stored file.
      *
      * Note, this is different to get_content() as it uses the built-in php
@@ -412,21 +398,60 @@ abstract class file_system {
     /**
      * Returns image information relating to the specified path or URL.
      *
-     * @param string $path The path to pass to getimagesize.
-     * @return array Containing width, height, and mimetype.
+     * @param string $path The full path of the image file.
+     * @return array|bool array that containing width, height, and mimetype or false if cannot get the image info.
      */
     protected function get_imageinfo_from_path($path) {
-        $imageinfo = getimagesize($path);
+        $imagemimetype = file_storage::mimetype_from_file($path);
+        $issvgimage = file_is_svg_image_from_mimetype($imagemimetype);
 
-        if (!is_array($imageinfo)) {
-            return false; // Nothing to process, the file was not recognised as image by GD.
+        if (!$issvgimage) {
+            $imageinfo = getimagesize($path);
+            if (!is_array($imageinfo)) {
+                return false; // Nothing to process, the file was not recognised as image by GD.
+            }
+            $image = [
+                    'width' => $imageinfo[0],
+                    'height' => $imageinfo[1],
+                    'mimetype' => image_type_to_mime_type($imageinfo[2]),
+            ];
+        } else {
+            // Since SVG file is actually an XML file, GD cannot handle.
+            $svgcontent = @simplexml_load_file($path);
+            if (!$svgcontent) {
+                // Cannot parse the file.
+                return false;
+            }
+            $svgattrs = $svgcontent->attributes();
+
+            if (!empty($svgattrs->viewBox)) {
+                // We have viewBox.
+                $viewboxval = explode(' ', $svgattrs->viewBox);
+                $width = intval($viewboxval[2]);
+                $height = intval($viewboxval[3]);
+            } else {
+                // Get the width.
+                if (!empty($svgattrs->width) && intval($svgattrs->width) > 0) {
+                    $width = intval($svgattrs->width);
+                } else {
+                    // Default width.
+                    $width = 800;
+                }
+                // Get the height.
+                if (!empty($svgattrs->height) && intval($svgattrs->height) > 0) {
+                    $height = intval($svgattrs->height);
+                } else {
+                    // Default width.
+                    $height = 600;
+                }
+            }
+
+            $image = [
+                    'width' => $width,
+                    'height' => $height,
+                    'mimetype' => $imagemimetype,
+            ];
         }
-
-        $image = array(
-                'width'     => $imageinfo[0],
-                'height'    => $imageinfo[1],
-                'mimetype'  => image_type_to_mime_type($imageinfo[2]),
-            );
 
         if (empty($image['width']) or empty($image['height']) or empty($image['mimetype'])) {
             // GD can not parse it, sorry.

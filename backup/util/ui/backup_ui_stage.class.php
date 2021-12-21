@@ -116,7 +116,9 @@ class backup_ui_stage_initial extends backup_ui_stage {
                         if (isset($data->$name) &&  $data->$name != $setting->get_value()) {
                             $setting->set_value($data->$name);
                             $changes++;
-                        } else if (!isset($data->$name) && $setting->get_ui_type() == backup_setting::UI_HTML_CHECKBOX && $setting->get_value()) {
+                        } else if (!isset($data->$name) && $setting->get_value() &&
+                                $setting->get_ui_type() == backup_setting::UI_HTML_CHECKBOX &&
+                                $setting->get_status() !== backup_setting::LOCKED_BY_HIERARCHY) {
                             $setting->set_value(0);
                             $changes++;
                         }

@@ -54,7 +54,7 @@ class qtype_truefalse_walkthrough_test extends qbehaviour_walkthrough_test_base 
                         get_string('questiontext', 'question')));
         $this->assertEquals(get_string('false', 'qtype_truefalse'),
                 $this->quba->get_right_answer_summary($this->slot));
-        $this->assertRegExp('/' . preg_quote($tf->questiontext, '/') . '/',
+        $this->assertMatchesRegularExpression('/' . preg_quote($tf->questiontext, '/') . '/',
                 $this->quba->get_question_summary($this->slot));
         $this->assertNull($this->quba->get_response_summary($this->slot));
 

@@ -89,7 +89,7 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper impleme
      */
     protected function createRootFolder()
     {
-        $this->rootFolder = $this->createFolder($this->baseFolderRealPath, uniqid('ods'));
+        $this->rootFolder = $this->createFolder($this->baseFolderRealPath, \uniqid('ods'));
 
         return $this;
     }
@@ -210,22 +210,22 @@ EOD;
 
         // Append sheets content to "content.xml"
         $contentXmlFilePath = $this->rootFolder . '/' . self::CONTENT_XML_FILE_NAME;
-        $contentXmlHandle = fopen($contentXmlFilePath, 'a');
+        $contentXmlHandle = \fopen($contentXmlFilePath, 'a');
 
         foreach ($worksheets as $worksheet) {
             // write the "<table:table>" node, with the final sheet's name
-            fwrite($contentXmlHandle, $worksheetManager->getTableElementStartAsString($worksheet));
+            \fwrite($contentXmlHandle, $worksheetManager->getTableElementStartAsString($worksheet));
 
             $worksheetFilePath = $worksheet->getFilePath();
             $this->copyFileContentsToTarget($worksheetFilePath, $contentXmlHandle);
 
-            fwrite($contentXmlHandle, '</table:table>');
+            \fwrite($contentXmlHandle, '</table:table>');
         }
 
         $contentXmlFileContents = '</office:spreadsheet></office:body></office:document-content>';
 
-        fwrite($contentXmlHandle, $contentXmlFileContents);
-        fclose($contentXmlHandle);
+        \fwrite($contentXmlHandle, $contentXmlFileContents);
+        \fclose($contentXmlHandle);
 
         return $this;
     }
@@ -241,9 +241,9 @@ EOD;
      */
     protected function copyFileContentsToTarget($sourceFilePath, $targetResource)
     {
-        $sourceHandle = fopen($sourceFilePath, 'r');
-        stream_copy_to_stream($sourceHandle, $targetResource);
-        fclose($sourceHandle);
+        $sourceHandle = \fopen($sourceFilePath, 'r');
+        \stream_copy_to_stream($sourceHandle, $targetResource);
+        \fclose($sourceHandle);
     }
 
     /**

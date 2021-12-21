@@ -60,4 +60,72 @@ class core_question_walkthrough_testcase extends qbehaviour_walkthrough_test_bas
         // Verify the flag has not been lost.
         $this->assertTrue($this->get_question_attempt()->is_flagged());
     }
+
+    /**
+     * Test action_author function.
+     */
+    public function test_action_author_with_display_options_testcase() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $teacher = $this->getDataGenerator()->create_user();
+        $student = $this->getDataGenerator()->create_user();
+
+        // Create an essay question in the DB.
+        $cat = $generator->create_question_category();
+        $essay = $generator->create_question('essay', 'editorfilepicker', ['category' => $cat->id]);
+
+        // Start attempt at the question.
+        $q = question_bank::load_question($essay->id);
+
+        // Student attempt the question.
+        $this->setUser($student);
+        $this->start_attempt_at_question($q, 'deferredfeedback', 10, 1);
+
+        // Simulate some data submitted by the student.
+        $this->process_submission(['answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML]);
+        $this->finish();
+
+        // Process a manual comment.
+        $this->setUser($teacher);
+        $this->manual_grade('Not good enough!', 10, FORMAT_HTML);
+        $this->render();
+        $this->save_quba();
+
+        // Set display option userinfoinhistory to HIDDEN.
+        $displayoptions = new question_display_options();
+        $displayoptions->history = question_display_options::VISIBLE;
+        $displayoptions->userinfoinhistory = question_display_options::HIDDEN;
+
+        $this->load_quba();
+        $result = $this->quba->render_question($this->slot, $displayoptions);
+
+        // The profile user link should not display.
+        preg_match("/<a ?.*>(.*)<\/a>/", $result, $matches);
+        $this->assertEquals(false, isset($matches[0]));
+
+        // Set display option userinfoinhistory to SHOW_ALL.
+        $displayoptions = new question_display_options();
+        $displayoptions->history = question_display_options::VISIBLE;
+        $displayoptions->userinfoinhistory = question_display_options::SHOW_ALL;
+
+        $this->load_quba();
+        $result = $this->quba->render_question($this->slot, $displayoptions);
+        $numsteps = $this->quba->get_question_attempt($this->slot)->get_num_steps();
+
+        // All steps in the result should contain user profile link.
+        preg_match_all("/<a ?.*>(.*)<\/a>/", $result, $matches);
+        $this->assertEquals($numsteps, count($matches[0]));
+
+        // Set the userinfoinhistory to student id.
+        $displayoptions = new question_display_options();
+        $displayoptions->history = question_display_options::VISIBLE;
+        $displayoptions->userinfoinhistory = $student->id;
+
+        $this->load_quba();
+        $result = $this->quba->render_question($this->slot, $displayoptions);
+
+        // The step just show the user profile link if the step's userid is different with student id.
+        preg_match_all("/<a ?.*>(.*)<\/a>/", $result, $matches);
+        $this->assertEquals(1, count($matches[0]));
+    }
 }

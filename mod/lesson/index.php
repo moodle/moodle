@@ -72,7 +72,7 @@ $usesections = course_format_uses_sections($course->format);
 
 $timenow = time();
 $strname  = get_string("name");
-$strgrade  = get_string("grade");
+$strgrade  = get_string("gradenoun");
 $strdeadline  = get_string("deadline", "lesson");
 $strnodeadline = get_string("nodeadline", "lesson");
 $table = new html_table();

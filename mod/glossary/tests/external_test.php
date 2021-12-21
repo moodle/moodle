@@ -112,10 +112,6 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $sink->close();
     }
 
-    /**
-     * @expectedException        require_login_exception
-     * @expectedExceptionMessage Activity is hidden
-     */
     public function test_view_glossary_without_permission() {
         $this->resetAfterTest(true);
 
@@ -134,13 +130,11 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         // Assertion.
         $this->setUser($u1);
+        $this->expectException(require_login_exception::class);
+        $this->expectExceptionMessage('Activity is hidden');
         mod_glossary_external::view_glossary($g1->id, 'letter');
     }
 
-    /**
-     * @expectedException        require_login_exception
-     * @expectedExceptionMessage Activity is hidden
-     */
     public function test_view_entry() {
         $this->resetAfterTest(true);
 
@@ -188,6 +182,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         }
 
         // Test non-readable entry.
+        $this->expectException(require_login_exception::class);
+        $this->expectExceptionMessage('Activity is hidden');
         mod_glossary_external::view_entry($e4->id);
     }
 
@@ -918,7 +914,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
         $expected = array($e1->id, $e2->id);
         $actual = array($return['entries'][0]['id'], $return['entries'][1]['id']);
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
         // Compare rawnames of all expected tags, ignore ordering of array, using canonicalize parameter of assertEquals.
         $expected = array('Cats', 'Dogs'); // Only $e1 has 2 tags.
         $actual = array(); // Accumulate all tags returned.
@@ -927,7 +923,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
                 $actual[] = $tag['rawname'];
             }
         }
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
 
         // Search alias.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => false));
@@ -938,7 +934,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
         $expected = array($e2->id, $e3->id);
         $actual = array($return['entries'][0]['id'], $return['entries'][1]['id']);
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
 
         // Search including not approved.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => true));
@@ -948,7 +944,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
         $expected = array($e4->id, $e2->id, $e3->id);
         $actual = array($return['entries'][0]['id'], $return['entries'][1]['id'], $return['entries'][2]['id']);
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
 
         // Pagination.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 1, array('includenotapproved' => true));
@@ -1077,11 +1073,14 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $c1 = $this->getDataGenerator()->create_course();
         $c2 = $this->getDataGenerator()->create_course();
         $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
-        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id, 'visible' => 0));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c2->id, 'visible' => 0));
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
         $ctx = context_module::instance($g1->cmid);
         $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+        $this->getDataGenerator()->enrol_user($u2->id, $c1->id);
+        $this->getDataGenerator()->enrol_user($u3->id, $c1->id);
 
         $e1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id, 'tags' => array('Cats', 'Dogs')));
         // Add a fake inline image to the entry.
@@ -1108,10 +1107,12 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('Cats', $return['entry']['tags'][0]['rawname']);
         $this->assertEquals('Dogs', $return['entry']['tags'][1]['rawname']);
         $this->assertEquals($filename, $return['entry']['definitioninlinefiles'][0]['filename']);
+        $this->assertTrue($return['permissions']['candelete']);
 
         $return = mod_glossary_external::get_entry_by_id($e2->id);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
         $this->assertEquals($e2->id, $return['entry']['id']);
+        $this->assertTrue($return['permissions']['candelete']);
 
         try {
             $return = mod_glossary_external::get_entry_by_id($e3->id);
@@ -1127,11 +1128,19 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
             // All good.
         }
 
-        // An admin can be other's entries to be approved.
+        // An admin can see other's entries to be approved.
         $this->setAdminUser();
         $return = mod_glossary_external::get_entry_by_id($e3->id);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
         $this->assertEquals($e3->id, $return['entry']['id']);
+        $this->assertTrue($return['permissions']['candelete']);
+
+        // Students can see other students approved entries but they will not be able to delete them.
+        $this->setUser($u3);
+        $return = mod_glossary_external::get_entry_by_id($e1->id);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
+        $this->assertEquals($e1->id, $return['entry']['id']);
+        $this->assertFalse($return['permissions']['candelete']);
     }
 
     public function test_add_entry_without_optional_settings() {
@@ -1182,7 +1191,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $aliases = $DB->get_records('glossary_alias', array('entryid' => $return['entryid']));
         $this->assertCount(3, $aliases);
         foreach ($aliases as $alias) {
-            $this->assertContains($alias->alias, $paramaliases);
+            $this->assertStringContainsString($alias->alias, $paramaliases);
         }
     }
 
@@ -1212,7 +1221,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $categories = $DB->get_records('glossary_entries_categories', array('entryid' => $return['entryid']));
         $this->assertCount(2, $categories);
         foreach ($categories as $category) {
-            $this->assertContains($category->categoryid, $paramcategories);
+            $this->assertStringContainsString($category->categoryid, $paramcategories);
         }
     }
 

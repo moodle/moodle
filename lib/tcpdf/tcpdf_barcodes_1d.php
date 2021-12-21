@@ -938,7 +938,7 @@ class TCPDFBarcode {
 				} else {
 					$t = false; // space
 				}
-				$w = $seq[$j];
+				$w = (float)$seq[$j];
 				$bararray['bcode'][$k] = array('t' => $t, 'w' => $w, 'h' => 1, 'p' => 0);
 				$bararray['maxw'] += $w;
 				++$k;
@@ -1271,7 +1271,7 @@ class TCPDFBarcode {
 				} else {
 					$t = false; // space
 				}
-				$w = $seq[$j];
+				$w = (float)$seq[$j];
 				$bararray['bcode'][] = array('t' => $t, 'w' => $w, 'h' => 1, 'p' => 0);
 				$bararray['maxw'] += $w;
 			}
@@ -1856,7 +1856,7 @@ class TCPDFBarcode {
 				} else {
 					$t = false; // space
 				}
-				$w = $seq[$j];
+				$w = (float)$seq[$j];
 				$bararray['bcode'][$k] = array('t' => $t, 'w' => $w, 'h' => 1, 'p' => 0);
 				$bararray['maxw'] += $w;
 				++$k;
@@ -1947,7 +1947,7 @@ class TCPDFBarcode {
 				} else {
 					$t = false; // space
 				}
-				$w = $seq[$j];
+				$w = (float)$seq[$j];
 				$bararray['bcode'][$k] = array('t' => $t, 'w' => $w, 'h' => 1, 'p' => 0);
 				$bararray['maxw'] += $w;
 				++$k;

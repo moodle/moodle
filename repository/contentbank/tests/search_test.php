@@ -65,7 +65,7 @@ class repository_contentbank_search_testcase extends advanced_testcase {
             return $searchcontentnode['shorttitle'];
         }, $searchcontentnodes);
 
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
     }
 
     /**
@@ -140,7 +140,7 @@ class repository_contentbank_search_testcase extends advanced_testcase {
     public function test_get_search_contents_user_can_access_all_content() {
         $this->resetAfterTest(true);
 
-        // Create a course in 'Miscellaneous' category by default.
+        // Create a course in default category by default.
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = \context_course::instance($course->id);
         // Create a course category without a course.
@@ -172,7 +172,7 @@ class repository_contentbank_search_testcase extends advanced_testcase {
             \repository_contentbank\helper::create_contentbank_content_node($categorycontent),
             \repository_contentbank\helper::create_contentbank_content_node($coursecontent),
         ];
-        $this->assertEquals($expected, $searchcontentnodes, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $searchcontentnodes);
     }
 
     /**
@@ -182,6 +182,8 @@ class repository_contentbank_search_testcase extends advanced_testcase {
      * and system content. Other authenticated users should be able to access only the system content.
      */
     public function test_get_search_contents_user_can_access_certain_content() {
+        global $CFG;
+
         $this->resetAfterTest(true);
 
         $systemcontext = \context_system::instance();
@@ -201,16 +203,17 @@ class repository_contentbank_search_testcase extends advanced_testcase {
         // Add some content to the content bank in different contexts.
         $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
         // Add a content bank file in the system context.
+        $filepath = $CFG->dirroot . '/h5p/tests/fixtures/ipsums.h5p';
         $systemcontents = $generator->generate_contentbank_data('contenttype_h5p', 1, $admin->id,
-            $systemcontext, true, 'file.h5p', 'systemcontentfile');
+            $systemcontext, true, $filepath, 'systemcontentfile');
         $systemcontent = reset($systemcontents);
         // Add a content bank file in the course1 context.
         $course1contents = $generator->generate_contentbank_data('contenttype_h5p', 1, $admin->id,
-            $course1context, true, 'file.h5p', 'coursecontentfile1');
+            $course1context, true, $filepath, 'coursecontentfile1');
         $course1content = reset($course1contents);
         // Add a content bank file in the course2 context.
         $generator->generate_contentbank_data('contenttype_h5p', 1, $admin->id,
-            $course2context, true, 'file.h5p', 'coursecontentfile2');
+            $course2context, true, $filepath, 'coursecontentfile2');
 
         // Log in as an editing teacher.
         $this->setUser($editingteacher);
@@ -224,7 +227,7 @@ class repository_contentbank_search_testcase extends advanced_testcase {
             \repository_contentbank\helper::create_contentbank_content_node($systemcontent),
             \repository_contentbank\helper::create_contentbank_content_node($course1content),
         ];
-        $this->assertEquals($expected, $searchcontentnodes, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $searchcontentnodes);
 
         // Log in as a teacher.
         $this->setUser($teacher);
@@ -236,6 +239,6 @@ class repository_contentbank_search_testcase extends advanced_testcase {
         $expected = [
             \repository_contentbank\helper::create_contentbank_content_node($systemcontent),
         ];
-        $this->assertEquals($expected, $searchcontentnodes, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $searchcontentnodes);
     }
 }

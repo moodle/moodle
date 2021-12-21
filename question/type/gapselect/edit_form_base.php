@@ -136,7 +136,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         $mform->setExpanded('choicehdr', 1);
 
         $mform->addElement('checkbox', 'shuffleanswers', get_string('shuffle', 'qtype_gapselect'));
-        $mform->setDefault('shuffleanswers', 0);
+        $mform->setDefault('shuffleanswers', $this->get_default_value('shuffleanswers', 0));
 
         $textboxgroup = array();
         $textboxgroup[] = $mform->createElement('group', 'choices',

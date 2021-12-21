@@ -88,6 +88,14 @@ class core_message_external extends external_api {
             'messages' => $messages
         ]);
 
+        // Validate messages content before posting them.
+        foreach ($params['messages'] as $message) {
+            // Check message length.
+            if (strlen($message['text']) > \core_message\api::MESSAGE_MAX_LENGTH) {
+                throw new moodle_exception('errormessagetoolong', 'message');
+            }
+        }
+
         $messages = [];
         foreach ($params['messages'] as $message) {
             $createdmessage = \core_message\api::send_message_to_conversation($USER->id, $params['conversationid'], $message['text'],
@@ -187,6 +195,12 @@ class core_message_external extends external_api {
                 $errormessage = get_string('touserdoesntexist', 'message', $message['touserid']);
             }
 
+            // Check message length.
+            if ($success && strlen($message['text']) > \core_message\api::MESSAGE_MAX_LENGTH) {
+                $success = false;
+                $errormessage = get_string('errormessagetoolong', 'message');
+            }
+
             // TODO MDL-31118 performance improvement - edit the function so we can pass an array instead userid
             // Check if the recipient can be messaged by the sender.
             if ($success && !\core_message\api::can_send_message($tousers[$message['touserid']]->id, $USER->id)) {
@@ -215,6 +229,9 @@ class core_message_external extends external_api {
                 //          We should have thrown exceptions as these errors prevent results to be returned.
                 // See http://docs.moodle.org/dev/Errors_handling_in_web_services#When_to_send_a_warning_on_the_server_side .
                 $resultmsg['msgid'] = -1;
+                if (!isset($errormessage)) { // Nobody has set a message error or thrown an exception, let's set it.
+                    $errormessage = get_string('messageundeliveredbynotificationsettings', 'error');
+                }
                 $resultmsg['errormessage'] = $errormessage;
             }
 
@@ -1946,7 +1963,8 @@ class core_message_external extends external_api {
                 'type' => new external_value(
                     PARAM_ALPHA, 'type of message to return, expected values are: notifications, conversations and both',
                     VALUE_DEFAULT, 'both'),
-                'read' => new external_value(PARAM_BOOL, 'true for getting read messages, false for unread', VALUE_DEFAULT, true),
+                'read' => new external_value(PARAM_INT, '1 for getting read messages, 0 for unread, 2 for both',
+                    VALUE_DEFAULT, 1),
                 'newestfirst' => new external_value(
                     PARAM_BOOL, 'true for ordering by newest first, false for oldest first',
                     VALUE_DEFAULT, true),
@@ -1965,15 +1983,15 @@ class core_message_external extends external_api {
      * @param  int      $useridto       the user id who received the message
      * @param  int      $useridfrom     the user id who send the message. -10 or -20 for no-reply or support user
      * @param  string   $type           type of message to return, expected values: notifications, conversations and both
-     * @param  bool     $read           true for retreiving read messages, false for unread
+     * @param  int      $read           1 for getting read messages, 0 for unread, 2 for both
      * @param  bool     $newestfirst    true for ordering by newest first, false for oldest first
      * @param  int      $limitfrom      limit from
      * @param  int      $limitnum       limit num
      * @return external_description
      */
-    public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = true,
+    public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = MESSAGE_GET_READ,
                                         $newestfirst = true, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $USER;
+        global $CFG, $USER, $PAGE;
 
         $warnings = array();
 
@@ -2071,13 +2089,26 @@ class core_message_external extends external_api {
             }
             foreach ($messages as $mid => $message) {
 
-                // Do not return deleted messages.
                 if (!$message->notification) {
+                    // Do not return deleted messages.
                     if (($useridto == $USER->id and $message->timeusertodeleted) or
                         ($useridfrom == $USER->id and $message->timeuserfromdeleted)) {
                         unset($messages[$mid]);
                         continue;
                     }
+                } else {
+                    // Return iconurl for notifications.
+                    if (!isset($output)) {
+                        $output = $PAGE->get_renderer('core');
+                    }
+
+                    if (!empty($message->component) && substr($message->component, 0, 4) == 'mod_') {
+                        $iconurl = $output->image_url('icon', $message->component);
+                    } else {
+                        $iconurl = $output->image_url('i/marker', 'core');
+                    }
+
+                    $message->iconurl = clean_param($iconurl->out(), PARAM_URL);
                 }
 
                 // We need to get the user from the query.
@@ -2150,6 +2181,7 @@ class core_message_external extends external_api {
                             'eventtype' => new external_value(PARAM_TEXT, 'The type of notification', VALUE_OPTIONAL),
                             'customdata' => new external_value(PARAM_RAW, 'Custom data to be passed to the message processor.
                                 The data here is serialised using json_encode().', VALUE_OPTIONAL),
+                            'iconurl' => new external_value(PARAM_URL, 'URL for icon, only for notifications.', VALUE_OPTIONAL),
                         ), 'message'
                     )
                 ),
@@ -2841,11 +2873,6 @@ class core_message_external extends external_api {
     public static function message_processor_config_form($userid, $name, $formvalues) {
         global $USER, $CFG;
 
-        // Check if messaging is enabled.
-        if (empty($CFG->messaging)) {
-            throw new moodle_exception('disabled', 'message');
-        }
-
         $params = self::validate_parameters(
             self::message_processor_config_form_parameters(),
             array(
@@ -2908,7 +2935,7 @@ class core_message_external extends external_api {
      * @throws moodle_exception
      * @since 3.2
      */
-    public static function get_message_processor($userid = 0, $name) {
+    public static function get_message_processor($userid, $name) {
         global $USER, $PAGE, $CFG;
 
         // Check if messaging is enabled.
@@ -3565,13 +3592,13 @@ class core_message_external extends external_api {
      * Deletes a message for all users
      *
      * @param  int $messageid the message id
-     * @param  int $userid the user id of who we want to delete the message for all users
+     * @param  int $userid the user id of who we want to delete the message for all users, is no longer used.
      * @return external_description
      * @throws moodle_exception
      * @since 3.7
      */
     public static function delete_message_for_all_users(int $messageid, int $userid) {
-        global $CFG;
+        global $CFG, $USER;
 
         // Check if private messaging between users is allowed.
         if (empty($CFG->messaging)) {
@@ -3589,11 +3616,10 @@ class core_message_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
-        core_user::require_active_user($user);
+        core_user::require_active_user($USER);
 
         // Checks if a user can delete a message for all users.
-        if (core_message\api::can_delete_message_for_all_users($user->id, $params['messageid'])) {
+        if (core_message\api::can_delete_message_for_all_users($USER->id, $params['messageid'])) {
             \core_message\api::delete_message_for_all_users($params['messageid']);
         } else {
             throw new moodle_exception('You do not have permission to delete this message for everyone.');

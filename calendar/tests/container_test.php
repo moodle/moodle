@@ -47,7 +47,7 @@ class core_calendar_container_testcase extends advanced_testcase {
     /**
      * Test setup.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
     }

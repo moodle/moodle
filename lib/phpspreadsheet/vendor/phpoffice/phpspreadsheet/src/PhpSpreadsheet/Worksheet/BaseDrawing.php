@@ -154,7 +154,7 @@ class BaseDrawing implements IComparable
      *
      * @param string $pValue
      *
-     * @return BaseDrawing
+     * @return $this
      */
     public function setName($pValue)
     {
@@ -178,7 +178,7 @@ class BaseDrawing implements IComparable
      *
      * @param string $description
      *
-     * @return BaseDrawing
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -203,11 +203,9 @@ class BaseDrawing implements IComparable
      * @param Worksheet $pValue
      * @param bool $pOverrideOld If a Worksheet has already been assigned, overwrite it and remove image from old Worksheet?
      *
-     * @throws PhpSpreadsheetException
-     *
-     * @return BaseDrawing
+     * @return $this
      */
-    public function setWorksheet(Worksheet $pValue = null, $pOverrideOld = false)
+    public function setWorksheet(?Worksheet $pValue = null, $pOverrideOld = false)
     {
         if ($this->worksheet === null) {
             // Add drawing to \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
@@ -220,7 +218,7 @@ class BaseDrawing implements IComparable
                 $iterator = $this->worksheet->getDrawingCollection()->getIterator();
 
                 while ($iterator->valid()) {
-                    if ($iterator->current()->getHashCode() == $this->getHashCode()) {
+                    if ($iterator->current()->getHashCode() === $this->getHashCode()) {
                         $this->worksheet->getDrawingCollection()->offsetUnset($iterator->key());
                         $this->worksheet = null;
 
@@ -253,7 +251,7 @@ class BaseDrawing implements IComparable
      *
      * @param string $pValue eg: 'A1'
      *
-     * @return BaseDrawing
+     * @return $this
      */
     public function setCoordinates($pValue)
     {
@@ -277,7 +275,7 @@ class BaseDrawing implements IComparable
      *
      * @param int $pValue
      *
-     * @return BaseDrawing
+     * @return $this
      */
     public function setOffsetX($pValue)
     {
@@ -301,7 +299,7 @@ class BaseDrawing implements IComparable
      *
      * @param int $pValue
      *
-     * @return BaseDrawing
+     * @return $this
      */
     public function setOffsetY($pValue)
     {
@@ -325,7 +323,7 @@ class BaseDrawing implements IComparable
      *
      * @param int $pValue
      *
-     * @return BaseDrawing
+     * @return $this
      */
     public function setWidth($pValue)
     {
@@ -356,7 +354,7 @@ class BaseDrawing implements IComparable
      *
      * @param int $pValue
      *
-     * @return BaseDrawing
+     * @return $this
      */
     public function setHeight($pValue)
     {
@@ -386,7 +384,7 @@ class BaseDrawing implements IComparable
      * @param int $width
      * @param int $height
      *
-     * @return BaseDrawing
+     * @return $this
      */
     public function setWidthAndHeight($width, $height)
     {
@@ -423,7 +421,7 @@ class BaseDrawing implements IComparable
      *
      * @param bool $pValue
      *
-     * @return BaseDrawing
+     * @return $this
      */
     public function setResizeProportional($pValue)
     {
@@ -447,7 +445,7 @@ class BaseDrawing implements IComparable
      *
      * @param int $pValue
      *
-     * @return BaseDrawing
+     * @return $this
      */
     public function setRotation($pValue)
     {
@@ -471,9 +469,9 @@ class BaseDrawing implements IComparable
      *
      * @param Drawing\Shadow $pValue
      *
-     * @return BaseDrawing
+     * @return $this
      */
-    public function setShadow(Drawing\Shadow $pValue = null)
+    public function setShadow(?Drawing\Shadow $pValue = null)
     {
         $this->shadow = $pValue;
 
@@ -519,10 +517,7 @@ class BaseDrawing implements IComparable
         }
     }
 
-    /**
-     * @param null|Hyperlink $pHyperlink
-     */
-    public function setHyperlink(Hyperlink $pHyperlink = null)
+    public function setHyperlink(?Hyperlink $pHyperlink = null): void
     {
         $this->hyperlink = $pHyperlink;
     }

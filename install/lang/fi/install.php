@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -37,6 +36,7 @@ $string['chooselanguagesub'] = 'Valitse kieli asennusohjelmaa varten. Tätä kie
 $string['clialreadyconfigured'] = 'Tiedosto config.php on jo olemassa, käytä admin/cli/install_database.php -tiedostoa jos haluat asentaa tämän sivuston.';
 $string['clialreadyinstalled'] = 'Tiedosto config.php on jo olemassa, ole hyvä ja käytä admin/cli/upgrade.php:ta jos haluat päivittää sivustosi';
 $string['cliinstallheader'] = 'Moodlen {$a} komentoriviasennusohjelma';
+$string['clitablesexist'] = 'Tietokantataulut on jo luotu, cli-asennusta ei voida jatkaa.';
 $string['databasehost'] = 'Tietokannan isäntä';
 $string['databasename'] = 'Tietokannan nimi';
 $string['databasetypehead'] = 'Valitse tietokannan ajuri';

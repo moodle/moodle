@@ -34,10 +34,7 @@ function message_popup_render_navbar_output(\renderer_base $renderer) {
     global $USER, $CFG;
 
     // Early bail out conditions.
-    if (!isloggedin() || isguestuser() || user_not_fully_set_up($USER) ||
-        get_user_preferences('auth_forcepasswordchange') ||
-        (!$USER->policyagreed && !is_siteadmin() &&
-            ($manager = new \core_privacy\local\sitepolicy\manager()) && $manager->is_defined())) {
+    if (!isloggedin() || isguestuser() || \core_user::awaiting_action()) {
         return '';
     }
 

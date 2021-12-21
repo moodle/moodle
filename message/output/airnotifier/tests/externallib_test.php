@@ -42,7 +42,7 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
         require_once($CFG->dirroot . '/message/output/airnotifier/externallib.php');
     }

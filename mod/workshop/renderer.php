@@ -102,7 +102,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         if (!$anonymous) {
             $author = new stdclass();
-            $additionalfields = explode(',', user_picture::fields());
+            $additionalfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
             $author = username_load_fields_from_object($author, $submission, 'author', $additionalfields);
             $userpic            = $this->output->user_picture($author, array('courseid' => $this->page->course->id, 'size' => 64));
             $userurl            = new moodle_url('/user/view.php',
@@ -180,7 +180,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         if (!$anonymous) {
             $author             = new stdClass();
-            $additionalfields = explode(',', user_picture::fields());
+            $additionalfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
             $author = username_load_fields_from_object($author, $summary, 'author', $additionalfields);
             $userpic            = $this->output->user_picture($author, array('courseid' => $this->page->course->id, 'size' => 35));
             $userurl            = new moodle_url('/user/view.php',

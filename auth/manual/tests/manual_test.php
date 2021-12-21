@@ -44,7 +44,7 @@ class auth_manual_testcase extends advanced_testcase {
     /**
      * Setup test data.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest(true);
         $this->authplugin = new auth_plugin_manual();
         set_config('expiration', '1', 'auth_manual');

@@ -136,9 +136,9 @@ if (empty($preventskip) && empty($launch) && (has_capability('mod/scorm:skipview
 
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
+// Let the module handle the display.
+$PAGE->activityheader->set_description('');
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($scorm->name));
-
 if (!empty($action) && confirm_sesskey() && has_capability('mod/scorm:deleteownresponses', $contextmodule)) {
     if ($action == 'delete') {
         $confirmurl = new moodle_url($PAGE->url, array('action' => 'deleteconfirm'));
@@ -153,27 +153,23 @@ if (!empty($action) && confirm_sesskey() && has_capability('mod/scorm:deleteownr
     }
 }
 
-$currenttab = 'info';
-require($CFG->dirroot . '/mod/scorm/tabs.php');
-
 // Print the main part of the page.
 $attemptstatus = '';
 if (empty($launch) && ($scorm->displayattemptstatus == SCORM_DISPLAY_ATTEMPTSTATUS_ALL ||
          $scorm->displayattemptstatus == SCORM_DISPLAY_ATTEMPTSTATUS_ENTRY)) {
     $attemptstatus = scorm_get_attempt_status($USER, $scorm, $cm);
 }
-echo $OUTPUT->box(format_module_intro('scorm', $scorm, $cm->id).$attemptstatus, 'container', 'intro');
+echo $OUTPUT->box(format_module_intro('scorm', $scorm, $cm->id), 'container', 'intro');
 
-// Check if SCORM available.
+// Check if SCORM available. No need to display warnings because activity dates are displayed at the top of the page.
 list($available, $warnings) = scorm_get_availability_status($scorm);
-if (!$available) {
-    $reason = current(array_keys($warnings));
-    echo $OUTPUT->box(get_string($reason, "scorm", $warnings[$reason]), "container");
-}
 
 if ($available && empty($launch)) {
     scorm_print_launch($USER, $scorm, 'view.php?id='.$cm->id, $cm);
 }
+
+echo $OUTPUT->box($attemptstatus, 'container');
+
 if (!empty($forcejs)) {
     $message = $OUTPUT->box(get_string("forcejavascriptmessage", "scorm"), "container forcejavascriptmessage");
     echo html_writer::tag('noscript', $message);

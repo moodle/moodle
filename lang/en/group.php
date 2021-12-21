@@ -134,7 +134,6 @@ $string['groupspreview'] = 'Groups preview';
 $string['groupsseparate'] = 'Separate groups';
 $string['groupsvisible'] = 'Visible groups';
 $string['grouptemplate'] = 'Group @';
-$string['hidepicture'] = 'Hide picture';
 $string['importgroups'] = 'Import groups';
 $string['importgroups_help'] = 'Groups may be imported via text file. The format of the file should be as follows:
 
@@ -165,8 +164,8 @@ $string['nogroupsassigned'] = 'No groups assigned';
 $string['nopermissionforcreation'] = 'Can\'t create group "{$a}" as you don\'t have the required permissions';
 $string['nosmallgroups'] = 'Prevent last small group';
 $string['notingroup'] = 'Ignore users in groups';
-$string['notingrouping'] = '[Not in a grouping]';
-$string['notingrouplist'] = '[Not in a group]';
+$string['notingrouping'] = 'Not in a grouping';
+$string['notingrouplist'] = 'Not in a group';
 $string['nousersinrole'] = 'There are no suitable users in the selected role';
 $string['number'] = 'Group/member count';
 $string['numgroups'] = 'Number of groups';
@@ -199,3 +198,6 @@ $string['usercount'] = 'User count';
 $string['usercounttotal'] = 'User count ({$a})';
 $string['usergroupmembership'] = 'Selected user\'s membership:';
 $string['memberofgroup'] = 'Group member of: {$a}';
+
+// Deprecated since Moodle 3.11.
+$string['hidepicture'] = 'Hide picture';

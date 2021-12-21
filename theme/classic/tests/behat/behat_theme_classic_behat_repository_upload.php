@@ -64,7 +64,7 @@ class behat_theme_classic_behat_repository_upload extends behat_repository_uploa
             $filepickercontainer = $this->find(
                 'xpath',
                 "//input[./@id = substring-before(//p[normalize-space(.)=$filepickerelement]/@id, '_label')]" .
-                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' felement ')]",
+                    "//ancestor::*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']",
                 $exception
             );
         }

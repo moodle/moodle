@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GeoIp2\Model;
 
 /**
@@ -11,20 +13,16 @@ abstract class AbstractModel implements \JsonSerializable
 
     /**
      * @ignore
-     *
-     * @param mixed $raw
      */
-    public function __construct($raw)
+    public function __construct(array $raw)
     {
         $this->raw = $raw;
     }
 
     /**
      * @ignore
-     *
-     * @param mixed $field
      */
-    protected function get($field)
+    protected function get(string $field)
     {
         if (isset($this->raw[$field])) {
             return $this->raw[$field];
@@ -38,10 +36,8 @@ abstract class AbstractModel implements \JsonSerializable
 
     /**
      * @ignore
-     *
-     * @param mixed $attr
      */
-    public function __get($attr)
+    public function __get(string $attr)
     {
         if ($attr !== 'instance' && property_exists($this, $attr)) {
             return $this->$attr;
@@ -52,15 +48,13 @@ abstract class AbstractModel implements \JsonSerializable
 
     /**
      * @ignore
-     *
-     * @param mixed $attr
      */
-    public function __isset($attr)
+    public function __isset(string $attr): bool
     {
         return $attr !== 'instance' && isset($this->$attr);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->raw;
     }

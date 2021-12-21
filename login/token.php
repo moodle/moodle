@@ -31,15 +31,23 @@ require_once($CFG->libdir . '/externallib.php');
 // Allow CORS requests.
 header('Access-Control-Allow-Origin: *');
 
+if (!$CFG->enablewebservices) {
+    throw new moodle_exception('enablewsdescription', 'webservice');
+}
+
+// This script is used by the mobile app to check that the site is available and web services
+// are allowed. In this mode, no further action is needed.
+if (optional_param('appsitecheck', 0, PARAM_INT)) {
+    echo json_encode((object)['appsitecheck' => 'ok']);
+    exit;
+}
+
 $username = required_param('username', PARAM_USERNAME);
 $password = required_param('password', PARAM_RAW);
 $serviceshortname  = required_param('service',  PARAM_ALPHANUMEXT);
 
 echo $OUTPUT->header();
 
-if (!$CFG->enablewebservices) {
-    throw new moodle_exception('enablewsdescription', 'webservice');
-}
 $username = trim(core_text::strtolower($username));
 if (is_restored_user($username)) {
     throw new moodle_exception('restoredaccountresetpassword', 'webservice');

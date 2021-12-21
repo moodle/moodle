@@ -720,6 +720,15 @@ class quiz_attempt {
     }
 
     /**
+     * Preload all attempt step users to show in Response history.
+     *
+     * @throws dml_exception
+     */
+    public function preload_all_attempt_step_users(): void {
+        $this->quba->preload_all_step_users();
+    }
+
+    /**
      * Let each slot know which section it is part of.
      */
     protected function link_sections_and_slots() {
@@ -996,6 +1005,15 @@ class quiz_attempt {
             }
         }
         return false;
+    }
+
+    /**
+     * Do any questions in this attempt need to be graded manually?
+     *
+     * @return bool True if we have at least one question still needs manual grading.
+     */
+    public function requires_manual_grading(): bool {
+        return $this->quba->get_total_mark() === null;
     }
 
     /**
@@ -2002,7 +2020,7 @@ class quiz_attempt {
         // Transition to the appropriate state.
         switch ($this->quizobj->get_quiz()->overduehandling) {
             case 'autosubmit':
-                $this->process_finish($timestamp, false);
+                $this->process_finish($timestamp, false, $studentisonline ? $timestamp : $timeclose, $studentisonline);
                 return;
 
             case 'graceperiod':
@@ -2098,7 +2116,7 @@ class quiz_attempt {
         } else {
             $tagids = quiz_retrieve_slot_tag_ids($this->slots[$slot]->id);
 
-            $randomloader = new \core_question\bank\random_question_loader($qubaids, array());
+            $randomloader = new \core_question\local\bank\random_question_loader($qubaids, array());
             $newqusetionid = $randomloader->get_next_question_id($questiondata->category,
                     (bool) $questiondata->questiontext, $tagids);
             if ($newqusetionid === null) {
@@ -2126,6 +2144,7 @@ class quiz_attempt {
         $this->quba->set_max_mark($newslot, 0);
         $this->quba->set_question_attempt_metadata($newslot, 'originalslot', $slot);
         question_engine::save_questions_usage_by_activity($this->quba);
+        $this->fire_attempt_question_restarted_event($slot, $newquestion->id);
 
         $transaction->allow_commit();
     }
@@ -2143,6 +2162,7 @@ class quiz_attempt {
 
         $this->quba->process_all_autosaves($timestamp);
         question_engine::save_questions_usage_by_activity($this->quba);
+        $this->fire_attempt_autosaved_event();
 
         $transaction->allow_commit();
     }
@@ -2160,7 +2180,21 @@ class quiz_attempt {
         $transaction->allow_commit();
     }
 
-    public function process_finish($timestamp, $processsubmitted) {
+    /**
+     * Submit the attempt.
+     *
+     * The separate $timefinish argument should be used when the quiz attempt
+     * is being processed asynchronously (for example when cron is submitting
+     * attempts where the time has expired).
+     *
+     * @param int $timestamp the time to record as last modified time.
+     * @param bool $processsubmitted if true, and question responses in the current
+     *      POST request are stored to be graded, before the attempt is finished.
+     * @param ?int $timefinish if set, use this as the finish time for the attempt.
+     *      (otherwise use $timestamp as the finish time as well).
+     * @param bool $studentisonline is the student currently interacting with Moodle?
+     */
+    public function process_finish($timestamp, $processsubmitted, $timefinish = null, $studentisonline = false) {
         global $DB;
 
         $transaction = $DB->start_delegated_transaction();
@@ -2173,17 +2207,25 @@ class quiz_attempt {
         question_engine::save_questions_usage_by_activity($this->quba);
 
         $this->attempt->timemodified = $timestamp;
-        $this->attempt->timefinish = $timestamp;
+        $this->attempt->timefinish = $timefinish ?? $timestamp;
         $this->attempt->sumgrades = $this->quba->get_total_mark();
         $this->attempt->state = self::FINISHED;
         $this->attempt->timecheckstate = null;
+        $this->attempt->gradednotificationsenttime = null;
+
+        if (!$this->requires_manual_grading() ||
+                !has_capability('mod/quiz:emailnotifyattemptgraded', $this->get_quizobj()->get_context(),
+                        $this->get_userid())) {
+            $this->attempt->gradednotificationsenttime = $this->attempt->timefinish;
+        }
+
         $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview()) {
             quiz_save_best_grade($this->get_quiz(), $this->attempt->userid);
 
             // Trigger event.
-            $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp);
+            $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp, $studentisonline);
 
             // Tell any access rules that care that the attempt is over.
             $this->get_access_manager($timestamp)->current_attempt_finished();
@@ -2222,7 +2264,7 @@ class quiz_attempt {
         $this->attempt->timecheckstate = $timestamp;
         $DB->update_record('quiz_attempts', $this->attempt);
 
-        $this->fire_state_transition_event('\mod_quiz\event\attempt_becameoverdue', $timestamp);
+        $this->fire_state_transition_event('\mod_quiz\event\attempt_becameoverdue', $timestamp, $studentisonline);
 
         $transaction->allow_commit();
 
@@ -2244,7 +2286,7 @@ class quiz_attempt {
         $this->attempt->timecheckstate = null;
         $DB->update_record('quiz_attempts', $this->attempt);
 
-        $this->fire_state_transition_event('\mod_quiz\event\attempt_abandoned', $timestamp);
+        $this->fire_state_transition_event('\mod_quiz\event\attempt_abandoned', $timestamp, $studentisonline);
 
         $transaction->allow_commit();
     }
@@ -2254,8 +2296,9 @@ class quiz_attempt {
      *
      * @param string $eventclass the event class name.
      * @param int $timestamp the timestamp to include in the event.
+     * @param bool $studentisonline is the student currently interacting with Moodle?
      */
-    protected function fire_state_transition_event($eventclass, $timestamp) {
+    protected function fire_state_transition_event($eventclass, $timestamp, $studentisonline) {
         global $USER;
         $quizrecord = $this->get_quiz();
         $params = array(
@@ -2265,10 +2308,10 @@ class quiz_attempt {
             'relateduserid' => $this->attempt->userid,
             'other' => array(
                 'submitterid' => CLI_SCRIPT ? null : $USER->id,
-                'quizid' => $quizrecord->id
+                'quizid' => $quizrecord->id,
+                'studentisonline' => $studentisonline
             )
         );
-
         $event = $eventclass::create($params);
         $event->add_record_snapshot('quiz', $this->get_quiz());
         $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
@@ -2394,14 +2437,12 @@ class quiz_attempt {
             }
         }
 
-        // Don't log - we will end with a redirect to a page that is logged.
-
         if (!$finishattempt) {
             // Just process the responses for this page and go to the next page.
             if (!$toolate) {
                 try {
                     $this->process_submitted_actions($timenow, $becomingoverdue);
-
+                    $this->fire_attempt_updated_event();
                 } catch (question_out_of_sequence_exception $e) {
                     throw new moodle_exception('submissionoutofsequencefriendlymessage', 'question',
                             $this->attempt_url(null, $thispage));
@@ -2440,7 +2481,7 @@ class quiz_attempt {
             if ($becomingabandoned) {
                 $this->process_abandon($timenow, true);
             } else {
-                $this->process_finish($timenow, !$toolate);
+                $this->process_finish($timenow, !$toolate, $toolate ? $timeclose : $timenow, true);
             }
 
         } catch (question_out_of_sequence_exception $e) {
@@ -2509,10 +2550,78 @@ class quiz_attempt {
             'courseid' => $this->get_courseid(),
             'context' => context_module::instance($this->get_cmid()),
             'other' => array(
-                'quizid' => $this->get_quizid()
+                'quizid' => $this->get_quizid(),
+                'page' => $this->get_currentpage()
             )
         );
         $event = \mod_quiz\event\attempt_viewed::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
+     * Trigger the attempt_updated event.
+     *
+     * @return void
+     */
+    public function fire_attempt_updated_event(): void {
+        $params = [
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'page' => $this->get_currentpage()
+            ]
+        ];
+        $event = \mod_quiz\event\attempt_updated::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
+     * Trigger the attempt_autosaved event.
+     *
+     * @return void
+     */
+    public function fire_attempt_autosaved_event(): void {
+        $params = [
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'page' => $this->get_currentpage()
+            ]
+        ];
+        $event = \mod_quiz\event\attempt_autosaved::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
+     * Trigger the attempt_question_restarted event.
+     *
+     * @param int $slot Slot number
+     * @param int $newquestionid New question id.
+     * @return void
+     */
+    public function fire_attempt_question_restarted_event(int $slot, int $newquestionid): void {
+        $params = [
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'page' => $this->get_currentpage(),
+                'slot' => $slot,
+                'newquestionid' => $newquestionid
+            ]
+        ];
+        $event = \mod_quiz\event\attempt_question_restarted::create($params);
         $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
         $event->trigger();
     }
@@ -2560,6 +2669,25 @@ class quiz_attempt {
     }
 
     /**
+     * Trigger the attempt manual grading completed event.
+     */
+    public function fire_attempt_manual_grading_completed_event() {
+        $params = [
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => [
+                'quizid' => $this->get_quizid()
+            ]
+        ];
+
+        $event = \mod_quiz\event\attempt_manual_grading_completed::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
      * Update the timemodifiedoffline attempt field.
      *
      * This function should be used only when web services are being used.
@@ -2576,7 +2704,6 @@ class quiz_attempt {
         }
         return false;
     }
-
 }
 
 
@@ -2664,8 +2791,12 @@ abstract class quiz_nav_panel_base {
     public function get_question_buttons() {
         $buttons = array();
         foreach ($this->attemptobj->get_slots() as $slot) {
-            if ($heading = $this->attemptobj->get_heading_before_slot($slot)) {
-                $buttons[] = new quiz_nav_section_heading(format_string($heading));
+            $heading = $this->attemptobj->get_heading_before_slot($slot);
+            if (!is_null($heading)) {
+                $sections = $this->attemptobj->get_quizobj()->get_sections();
+                if (!(empty($heading) && count($sections) == 1)) {
+                    $buttons[] = new quiz_nav_section_heading(format_string($heading));
+                }
             }
 
             $qa = $this->attemptobj->get_question_attempt($slot);

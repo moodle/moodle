@@ -38,7 +38,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // "debugging" settingpage
     $temp = new admin_settingpage('debugging', new lang_string('debugging', 'admin'));
     $temp->add(new admin_setting_special_debug());
-    $temp->add(new admin_setting_configcheckbox('debugdisplay', new lang_string('debugdisplay', 'admin'), new lang_string('configdebugdisplay', 'admin'), ini_get_bool('display_errors')));
+    $temp->add(new admin_setting_configcheckbox('debugdisplay', new lang_string('debugdisplay', 'admin'),
+        new lang_string('configdebugdisplay', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('perfdebug', new lang_string('perfdebug', 'admin'), new lang_string('configperfdebug', 'admin'), '7', '15', '7'));
     $temp->add(new admin_setting_configcheckbox('debugstringids', new lang_string('debugstringids', 'admin'), new lang_string('debugstringids_desc', 'admin'), 0));
     $temp->add(new admin_setting_configselect('debugsqltrace',

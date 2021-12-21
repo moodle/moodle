@@ -729,7 +729,7 @@ class qformat_gift_test extends question_testcase {
                     'files' => array(),
                 ),
             ),
-            'tolerance' => array(2, 0),
+            'tolerance' => array(2, ''),
         );
 
         // Repeated test for better failure messages.

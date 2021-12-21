@@ -40,6 +40,7 @@
  *  - $CFG->tempdir  - Path to moodle's temp file directory on server's filesystem.
  *  - $CFG->cachedir - Path to moodle's cache directory on server's filesystem (shared by cluster nodes).
  *  - $CFG->localcachedir - Path to moodle's local cache directory (not shared by cluster nodes).
+ *  - $CFG->localrequestdir - Path to moodle's local temp request directory (not shared by cluster nodes).
  *
  * @global object $CFG
  * @name $CFG
@@ -140,13 +141,23 @@ if (defined('BEHAT_SITE_RUNNING')) {
         $CFG->wwwroot = $CFG->behat_wwwroot;
         $CFG->prefix = $CFG->behat_prefix;
         $CFG->dataroot = $CFG->behat_dataroot;
+
+        // And we do the same with the optional ones.
+        $allowedconfigoverride = ['dbname', 'dbuser', 'dbpass', 'dbhost'];
+        foreach ($allowedconfigoverride as $config) {
+            $behatconfig = 'behat_' . $config;
+            if (!isset($CFG->$behatconfig)) {
+                continue;
+            }
+            $CFG->$config = $CFG->$behatconfig;
+        }
     }
 }
 
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
 if (!isset($CFG->dataroot)) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
-        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error ');
     }
     echo('Fatal error: $CFG->dataroot is not specified in config.php! Exiting.'."\n");
     exit(1);
@@ -154,13 +165,13 @@ if (!isset($CFG->dataroot)) {
 $CFG->dataroot = realpath($CFG->dataroot);
 if ($CFG->dataroot === false) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
-        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error ');
     }
     echo('Fatal error: $CFG->dataroot is not configured properly, directory does not exist or is not accessible! Exiting.'."\n");
     exit(1);
 } else if (!is_writable($CFG->dataroot)) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
-        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error ');
     }
     echo('Fatal error: $CFG->dataroot is not writable, admin has to fix directory permissions! Exiting.'."\n");
     exit(1);
@@ -169,7 +180,7 @@ if ($CFG->dataroot === false) {
 // wwwroot is mandatory
 if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
     if (isset($_SERVER['REMOTE_ADDR'])) {
-        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error ');
     }
     echo('Fatal error: $CFG->wwwroot is not configured! Exiting.'."\n");
     exit(1);
@@ -206,6 +217,11 @@ if (!isset($CFG->cachedir)) {
 // Allow overriding of localcachedir.
 if (!isset($CFG->localcachedir)) {
     $CFG->localcachedir = "$CFG->dataroot/localcache";
+}
+
+// Allow overriding of localrequestdir.
+if (!isset($CFG->localrequestdir)) {
+    $CFG->localrequestdir = sys_get_temp_dir() . '/requestdir';
 }
 
 // Location of all languages except core English pack.
@@ -645,6 +661,23 @@ if (PHPUNIT_TEST and !PHPUNIT_UTIL) {
     unset($dbhash);
 }
 
+// Load any immutable bootstrap config from local cache.
+$bootstrapcachefile = $CFG->localcachedir . '/bootstrap.php';
+if (is_readable($bootstrapcachefile)) {
+    try {
+        require_once($bootstrapcachefile);
+        // Verify the file is not stale.
+        if (!isset($CFG->bootstraphash) || $CFG->bootstraphash !== hash_local_config_cache()) {
+            // Something has changed, the bootstrap.php file is stale.
+            unset($CFG->siteidentifier);
+            @unlink($bootstrapcachefile);
+        }
+    } catch (Throwable $e) {
+        // If it is corrupted then attempt to delete it and it will be rebuilt.
+        @unlink($bootstrapcachefile);
+    }
+}
+
 // Load up any configuration from the config table or MUC cache.
 if (PHPUNIT_TEST) {
     phpunit_util::initialise_cfg();
@@ -722,11 +755,6 @@ ini_set('arg_separator.output', '&amp;');
 // Work around for a PHP bug   see MDL-11237
 ini_set('pcre.backtrack_limit', 20971520);  // 20 MB
 
-// Work around for PHP7 bug #70110. See MDL-52475 .
-if (ini_get('pcre.jit')) {
-    ini_set('pcre.jit', 0);
-}
-
 // Set PHP default timezone to server timezone.
 core_date::set_default_server_timezone();
 
@@ -746,8 +774,7 @@ if (isset($_SERVER['PHP_SELF'])) {
 // initialise ME's - this must be done BEFORE starting of session!
 initialise_fullme();
 
-// define SYSCONTEXTID in config.php if you want to save some queries,
-// after install it must match the system context record id.
+// SYSCONTEXTID is cached in local cache to eliminate 1 query per page.
 if (!defined('SYSCONTEXTID')) {
     context_system::instance();
 }
@@ -794,6 +821,10 @@ if (CLI_SCRIPT) {
 // Start session and prepare global $SESSION, $USER.
 if (empty($CFG->sessiontimeout)) {
     $CFG->sessiontimeout = 8 * 60 * 60;
+}
+// Set sessiontimeoutwarning 20 minutes.
+if (empty($CFG->sessiontimeoutwarning)) {
+    $CFG->sessiontimeoutwarning = 20 * 60;
 }
 \core\session\manager::start();
 
@@ -1045,6 +1076,9 @@ if (false) {
     $OUTPUT = new core_renderer(null, null);
     $PAGE = new moodle_page();
 }
+
+// Cache any immutable config locally to avoid constant DB lookups.
+initialise_local_config_cache();
 
 // Allow plugins to callback as soon possible after setup.php is loaded.
 $pluginswithfunction = get_plugins_with_function('after_config', 'lib.php');

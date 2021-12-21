@@ -50,6 +50,43 @@ class webservice extends base {
         return $enabled;
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $CFG;
+
+        $haschanged = false;
+        $plugins = [];
+        if (!empty($CFG->webserviceprotocols)) {
+            $plugins = array_flip(explode(',', $CFG->webserviceprotocols));
+        }
+
+        // Remove plugins that are no longer available.
+        $availablews = \core_component::get_plugin_list('webservice');
+        foreach ($plugins as $key => $notused) {
+            if (empty($availablews[$key])) {
+                unset($plugins[$key]);
+            }
+        }
+
+        // Only set visibility if it's different from the current value.
+        if ($enabled && !array_key_exists($pluginname, $plugins)) {
+            $plugins[$pluginname] = $pluginname;
+            $haschanged = true;
+        } else if (!$enabled && array_key_exists($pluginname, $plugins)) {
+            unset($plugins[$pluginname]);
+            $haschanged = true;
+        }
+
+        if ($haschanged) {
+            $new = implode(',', array_flip($plugins));
+            add_to_config_log('webserviceprotocols', $CFG->webserviceprotocols ?? '', $new, 'core');
+            set_config('webserviceprotocols', $new);
+            // Reset caches.
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
     public function get_settings_section_name() {
         return 'webservicesetting' . $this->name;
     }

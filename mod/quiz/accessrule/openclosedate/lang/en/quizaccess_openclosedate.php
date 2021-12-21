@@ -30,4 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['notavailable'] = 'This quiz is not currently available';
 $string['pluginname'] = 'Open and close date access rule';
 $string['privacy:metadata'] = 'The Open and close date quiz access rule plugin does not store any personal data.';
+
+// Deprecated since Moodle 3.11.
 $string['quiznotavailable'] = 'The quiz will not be available until {$a}';
+

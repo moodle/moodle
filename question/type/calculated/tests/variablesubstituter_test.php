@@ -48,32 +48,23 @@ class qtype_calculated_variable_substituter_test extends advanced_testcase {
         $this->assertEquals(1, $vs->calculate('{a}-{b}'));
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_cannot_use_nonnumbers() {
+        $this->expectException(moodle_exception::class);
         $vs = new qtype_calculated_variable_substituter(array('a' => 'frog', 'b' => -2), '.');
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_invalid_expression() {
         $vs = new qtype_calculated_variable_substituter(array('a' => 1, 'b' => 2), '.');
+        $this->expectException(moodle_exception::class);
         $vs->calculate('{a} + {b}?');
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_tricky_invalid_expression() {
         $vs = new qtype_calculated_variable_substituter(array('a' => 1, 'b' => 2), '.');
+        $this->expectException(moodle_exception::class);
         $vs->calculate('{a}{b}'); // Have to make sure this does not just evaluate to 12.
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_division_by_zero_expression() {
 
         if (intval(PHP_VERSION) < 7) {
@@ -81,6 +72,7 @@ class qtype_calculated_variable_substituter_test extends advanced_testcase {
         }
 
         $vs = new qtype_calculated_variable_substituter(array('a' => 1, 'b' => 0), '.');
+        $this->expectException(moodle_exception::class);
         $vs->calculate('{a} / {b}');
     }
 
@@ -141,5 +133,13 @@ class qtype_calculated_variable_substituter_test extends advanced_testcase {
 
         $this->assertSame('0,12', $vs->format_float(0.12345, 2, 2));
         $this->assertSame('0,0012', $vs->format_float(0.0012345, 4, 1));
+    }
+
+    public function test_format_float_nan_inf() {
+        $vs = new qtype_calculated_variable_substituter([ ], '.');
+
+        $this->assertSame('NAN', $vs->format_float(NAN));
+        $this->assertSame('INF', $vs->format_float(INF));
+        $this->assertSame('-INF', $vs->format_float(-INF));
     }
 }

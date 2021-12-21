@@ -28,7 +28,7 @@ use html_table;
 use html_table_cell;
 use html_table_row;
 use html_writer;
-use auth\oauth2\linked_login;
+use auth_oauth2\linked_login;
 use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
@@ -43,7 +43,7 @@ class renderer extends plugin_renderer_base {
     /**
      * This function will render one beautiful table with all the linked_logins.
      *
-     * @param \auth\oauth2\linked_login[] $linkedlogins - list of all linked logins.
+     * @param linked_login[] $linkedlogins - list of all linked logins.
      * @return string HTML to output.
      */
     public function linked_logins_table($linkedlogins) {

@@ -140,15 +140,16 @@ class atto_texteditor extends texteditor {
             $jsplugins[] = array('group'=>$group, 'plugins'=>$groupplugins);
         }
 
-        $PAGE->requires->strings_for_js(array(
+        $PAGE->requires->strings_for_js([
                 'editor_command_keycode',
                 'editor_control_keycode',
                 'plugin_title_shortcut',
                 'textrecovered',
                 'autosavefailed',
                 'autosavesucceeded',
-                'errortextrecovery'
-            ), 'editor_atto');
+                'errortextrecovery',
+                'richtexteditor',
+            ], 'editor_atto');
         $PAGE->requires->strings_for_js(array(
                 'warning',
                 'info'

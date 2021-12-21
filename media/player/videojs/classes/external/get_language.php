@@ -57,7 +57,11 @@ class get_language extends external_api {
      * @return string
      */
     public static function execute(string $lang) {
-        external_api::validate_parameters(self::execute_parameters(), ['lang' => $lang]);
+        [
+            'lang' => $lang,
+        ] = external_api::validate_parameters(self::execute_parameters(), [
+            'lang' => $lang,
+        ]);
 
         return \media_videojs_plugin::get_language_content($lang);
     }

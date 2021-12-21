@@ -28,13 +28,13 @@ Feature: See running scheduled tasks
     And I should see "1914" in the "Automated backups" "table_row"
 
     # Check the "asynchronous_backup_task" adhoc task details.
-    And I should see "Ad-hoc" in the "\core\task\asynchronous_backup_task" "table_row"
+    And I should see "Ad hoc" in the "\core\task\asynchronous_backup_task" "table_row"
     And I should see "2 hours" in the "core\task\asynchronous_backup_task" "table_row"
     And I should see "c69335460f7f" in the "core\task\asynchronous_backup_task" "table_row"
     And I should see "1915" in the "core\task\asynchronous_backup_task" "table_row"
 
     # Check the "asynchronous_restore_task" adhoc task details.
-    And I should see "Ad-hoc" in the "\core\task\asynchronous_restore_task" "table_row"
+    And I should see "Ad hoc" in the "\core\task\asynchronous_restore_task" "table_row"
     And I should see "2 days" in the "core\task\asynchronous_restore_task" "table_row"
     And I should see "c69335460f7f" in the "core\task\asynchronous_restore_task" "table_row"
     And I should see "1916" in the "core\task\asynchronous_restore_task" "table_row"

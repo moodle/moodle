@@ -84,6 +84,7 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
 
         $displaylist = core_course_category::make_categories_list('moodle/course:create');
         $mform->addElement('autocomplete', 'defaults[category]', get_string('coursecategory'), $displaylist);
+        $mform->addRule('defaults[category]', null, 'required', null, 'client');
         $mform->addHelpButton('defaults[category]', 'coursecategory');
 
         $choices = array();
@@ -92,6 +93,24 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->addElement('select', 'defaults[visible]', get_string('coursevisibility'), $choices);
         $mform->addHelpButton('defaults[visible]', 'coursevisibility');
         $mform->setDefault('defaults[visible]', $courseconfig->visible);
+
+        if ($CFG->downloadcoursecontentallowed &&
+                has_capability('moodle/course:configuredownloadcontent', context::instance_by_id($contextid))) {
+
+            $downloadchoices = [
+                DOWNLOAD_COURSE_CONTENT_DISABLED => get_string('no'),
+                DOWNLOAD_COURSE_CONTENT_ENABLED => get_string('yes'),
+            ];
+
+            $sitedefaultstring = $downloadchoices[$courseconfig->downloadcontentsitedefault];
+            $downloadchoices[DOWNLOAD_COURSE_CONTENT_SITE_DEFAULT] = get_string('sitedefaultspecified', '', $sitedefaultstring);
+            $downloadselectdefault = $courseconfig->downloadcontent ?? DOWNLOAD_COURSE_CONTENT_SITE_DEFAULT;
+
+            $mform->addElement('select', 'defaults[downloadcontent]', get_string('enabledownloadcoursecontent', 'course'),
+                $downloadchoices);
+            $mform->addHelpButton('defaults[downloadcontent]', 'downloadcoursecontent', 'course');
+            $mform->setDefault('defaults[downloadcontent]', $downloadselectdefault);
+        }
 
         $mform->addElement('date_time_selector', 'defaults[startdate]', get_string('startdate'));
         $mform->addHelpButton('defaults[startdate]', 'startdate');

@@ -33,12 +33,16 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @param array $args Arguments to the form.
  * @return null|string The rendered form.
+ * @deprecated since Moodle 4.0
+ * @see /question/bank/qbank_tagquestion/lib.php
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function core_question_output_fragment_tags_form($args) {
+    debugging('Function core_question_output_fragment_tags_form() is deprecated,
+         please use core_question_output_fragment_tags_form() from qbank_tagquestion instead.', DEBUG_DEVELOPER);
 
     if (!empty($args['id'])) {
         global $CFG, $DB;
-        require_once($CFG->dirroot . '/question/type/tags_form.php');
         require_once($CFG->libdir . '/questionlib.php');
         $id = clean_param($args['id'], PARAM_INT);
         $editingcontext = $args['context'];
@@ -83,7 +87,7 @@ function core_question_output_fragment_tags_form($args) {
         ];
 
         $cantag = question_has_capability_on($question, 'tag');
-        $mform = new \core_question\form\tags(null, $formoptions, 'post', '', null, $cantag, $data);
+        $mform = new \qbank_tagquestion\form\tags_form(null, $formoptions, 'post', '', null, $cantag, $data);
         $mform->set_data($data);
 
         return $mform->render();

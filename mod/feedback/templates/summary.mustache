@@ -31,8 +31,7 @@
     Example context (json):
     {
         "completedcount" : 15,
-        "itemscount" : 5,
-        "timeopen" : "May 15, 2016"
+        "itemscount" : 5
     }
 
 }}
@@ -48,20 +47,3 @@
         class="feedback_info">{{#str}}questions, mod_feedback{{/str}}: </span><span
         class="feedback_info_value">{{itemscount}}</span>
 </div>
-
-{{#timeopen}}
-    <div class="feedback_info">
-        <span
-            class="feedback_info">{{#str}}feedbackopen, mod_feedback{{/str}}: </span><span
-            class="feedback_info_value">{{timeopen}}</span>
-    </div>
-{{/timeopen}}
-
-{{#timeclose}}
-    <div class="feedback_info">
-        <span
-            class="feedback_info">{{#str}}feedbackclose, mod_feedback{{/str}}: </span><span
-            class="feedback_info_value">{{timeclose}}</span>
-    </div>
-{{/timeclose}}
-

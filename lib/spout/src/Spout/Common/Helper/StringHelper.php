@@ -13,12 +13,20 @@ class StringHelper
     /** @var bool Whether the mbstring extension is loaded */
     protected $hasMbstringSupport;
 
+    /** @var bool Whether the code is running with PHP7 or older versions */
+    private $isRunningPhp7OrOlder;
+
+    /** @var array Locale info, used for number formatting */
+    private $localeInfo;
+
     /**
      *
      */
     public function __construct()
     {
-        $this->hasMbstringSupport = extension_loaded('mbstring');
+        $this->hasMbstringSupport = \extension_loaded('mbstring');
+        $this->isRunningPhp7OrOlder = \version_compare(PHP_VERSION, '8.0.0') < 0;
+        $this->localeInfo = \localeconv();
     }
 
     /**
@@ -32,7 +40,7 @@ class StringHelper
      */
     public function getStringLength($string)
     {
-        return $this->hasMbstringSupport ? mb_strlen($string) : strlen($string);
+        return $this->hasMbstringSupport ? \mb_strlen($string) : \strlen($string);
     }
 
     /**
@@ -47,7 +55,7 @@ class StringHelper
      */
     public function getCharFirstOccurrencePosition($char, $string)
     {
-        $position = $this->hasMbstringSupport ? mb_strpos($string, $char) : strpos($string, $char);
+        $position = $this->hasMbstringSupport ? \mb_strpos($string, $char) : \strpos($string, $char);
 
         return ($position !== false) ? $position : -1;
     }
@@ -64,8 +72,34 @@ class StringHelper
      */
     public function getCharLastOccurrencePosition($char, $string)
     {
-        $position = $this->hasMbstringSupport ? mb_strrpos($string, $char) : strrpos($string, $char);
+        $position = $this->hasMbstringSupport ? \mb_strrpos($string, $char) : \strrpos($string, $char);
 
         return ($position !== false) ? $position : -1;
+    }
+
+    /**
+     * Formats a numeric value (int or float) in a way that's compatible with the expected spreadsheet format.
+     *
+     * Formatting of float values is locale dependent in PHP < 8.
+     * Thousands separators and decimal points vary from locale to locale (en_US: 12.34 vs pl_PL: 12,34).
+     * However, float values must be formatted with no thousands separator and a "." as decimal point
+     * to work properly. This method can be used to convert the value to the correct format before storing it.
+     *
+     * @see https://wiki.php.net/rfc/locale_independent_float_to_string for the changed behavior in PHP8.
+     *
+     * @param int|float $numericValue
+     * @return string
+     */
+    public function formatNumericValue($numericValue)
+    {
+        if ($this->isRunningPhp7OrOlder && is_float($numericValue)) {
+            return str_replace(
+                [$this->localeInfo['thousands_sep'], $this->localeInfo['decimal_point']],
+                ['', '.'],
+                $numericValue
+            );
+        }
+
+        return $numericValue;
     }
 }

@@ -61,6 +61,13 @@ class UpdateMany implements Executable, Explainable
      *    This is not supported for server versions < 3.4 and will result in an
      *    exception at execution time if used.
      *
+     *  * hint (string|document): The index to use. Specify either the index
+     *    name as a string or the index key pattern as a document. If specified,
+     *    then the query system will only consider plans using the hinted index.
+     *
+     *    This is not supported for server versions < 4.2 and will result in an
+     *    exception at execution time if used.
+     *
      *  * session (MongoDB\Driver\Session): Client session.
      *
      *    Sessions are not supported for server versions < 3.6.

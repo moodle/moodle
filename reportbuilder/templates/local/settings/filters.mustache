@@ -1,0 +1,99 @@
+{{!
+  This file is part of Moodle - http://moodle.org/
+
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_reportbuilder/local/settings/filters
+
+    Template for custom report filters settings area
+
+    Example context (json):
+    {
+        "filters": [{
+            "hasavailablefilters": true,
+            "availablefilters": [{
+                "optiongroup": [{
+                    "text": "User",
+                    "values": [{
+                        "value": 1,
+                        "visiblename": "User name"
+                    }]
+                }]
+            }],
+            "hasactivefilters": true,
+            "activefilters": [{
+                "heading": "Email address",
+                "entityname": "user",
+                "headingeditable": "Email address"
+            }]
+        }]
+    }
+}}
+
+<div class="p-2" data-region="settings-filters">
+    {{#filters}}
+        {{#hasavailablefilters}}
+            <div>
+                <label for="addfilterselect" class="sr-only">{{#str}}selectafilter, core_reportbuilder{{/str}}</label>
+                <select id="addfilterselect" name="addfilterselect" data-action="report-add-filter" class="w-100 custom-select">
+                    <option value="0">{{#str}}selectafilter, core_reportbuilder{{/str}}&hellip;</option>
+                    {{#availablefilters}}
+                        {{#optiongroup}}
+                            <optgroup label="{{text}}">
+                                {{#values}}
+                                    <option value="{{value}}">{{visiblename}}</option>
+                                {{/values}}
+                            </optgroup>
+                        {{/optiongroup}}
+                    {{/availablefilters}}
+                </select>
+            </div>
+        {{/hasavailablefilters}}
+
+        <div data-region="active-filters" class="form-vertical">
+            {{#hasactivefilters}}
+                <ul class="list-group reportbuilder-sortable-list mt-2 ml-0">
+                    {{#activefilters}}
+                        <li class="list-group-item list-group-item-action d-flex align-items-start text-dark"
+                            data-region="active-filter" data-filter-id="{{id}}" data-filter-name="{{heading}}" data-filter-position="{{sortorder}}">
+                            {{>core/drag_handle}}
+                            <div>
+                                <div class="d-flex">
+                                    <small class="text-muted text-uppercase">{{entityname}} • {{heading}}</small>
+                                </div>
+                                <div>
+                                    {{{headingeditable}}}
+                                </div>
+                            </div>
+                            <button class="btn btn-link p-0 ml-auto"
+                                    type="button"
+                                    data-action="report-remove-filter"
+                                    title="{{#str}}deletefilter, core_reportbuilder, {{{heading}}}{{/str}}"
+                                    aria-label="{{#str}}deletefilter, core_reportbuilder, {{{heading}}}{{/str}}">
+                                {{#pix}}e/cancel, core{{/pix}}
+                            </button>
+                        </li>
+                    {{/activefilters}}
+                </ul>
+            {{/hasactivefilters}}
+
+            {{^hasactivefilters}}
+                {{< core_reportbuilder/local/settings/empty_message }}
+                    {{$nothingtoshow}} {{#str}} nofilters, core_reportbuilder {{/str}} {{/nothingtoshow}}
+                {{/ core_reportbuilder/local/settings/empty_message }}
+            {{/hasactivefilters}}
+        </div>
+    {{/filters}}
+</div>

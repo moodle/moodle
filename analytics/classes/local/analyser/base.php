@@ -106,21 +106,10 @@ abstract class base {
     }
 
     /**
-     * Returns the list of analysable elements available on the site.
-     *
-     * \core_analytics\local\analyser\by_course and \core_analytics\local\analyser\sitewide are implementing
-     * this method returning site courses (by_course) and the whole system (sitewide) as analysables.
-     *
-     * @todo MDL-65284 This will be removed in Moodle 3.11
-     * @deprecated
-     * @see get_analysables_iterator
-     * @throws  \coding_exception
-     * @return \core_analytics\analysable[] Array of analysable elements using the analysable id as array key.
+     * @deprecated since Moodle 3.7
      */
     public function get_analysables() {
-        // This function should only be called from get_analysables_iterator and we keep it here until Moodle 3.11
-        // for backwards compatibility.
-        throw new \coding_exception('This method is deprecated in favour of get_analysables_iterator.');
+        throw new \coding_exception('get_analysables() method has been removed and cannot be used any more.');
     }
 
     /**
@@ -134,15 +123,7 @@ abstract class base {
      * @param \context[] $contexts Only analysables that depend on the provided contexts. All analysables in the system if empty.
      * @return \Iterator
      */
-    public function get_analysables_iterator(?string $action = null, array $contexts = []) {
-
-        debugging('Please overwrite get_analysables_iterator with your own implementation, we only keep this default
-            implementation for backwards compatibility purposes with get_analysables(). note that $action param will
-            be ignored so the analysable elements will be processed using get_analysables order, regardless of the
-            last time they were processed.');
-
-        return new \ArrayIterator($this->get_analysables());
-    }
+    abstract public function get_analysables_iterator(?string $action = null, array $contexts = []);
 
     /**
      * This function returns this analysable list of samples.

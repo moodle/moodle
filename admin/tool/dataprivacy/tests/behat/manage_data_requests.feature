@@ -9,10 +9,8 @@ Feature: Manage data requests
       | username | firstname | lastname | email          |
       | student1 | John      | Doe      | s1@example.com |
       | student2 | Jane      | Doe      | s2@example.com |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | contactdataprotectionofficer | 1 |
-    And I log out
+    And the following config values are set as admin:
+      | contactdataprotectionofficer | 1 | tool_dataprivacy |
 
   @javascript
   Scenario: Marking general enquiries as complete
@@ -46,7 +44,7 @@ Feature: Manage data requests
     And I open the action menu in "John Doe" "table_row"
     And I should see "View the request"
     But I should not see "Mark as complete"
-    And I press key "27" in ".moodle-actionmenu" "css_element"
+    And I press the escape key
     And I open the action menu in "Jane Doe" "table_row"
     And I choose "Mark as complete" in the open action menu
     And I should see "Do you really want to mark this user enquiry as complete?"

@@ -18,62 +18,49 @@ Feature: A teacher can choose whether glossary entries require approval
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    Given I add a "Glossary" to section "1" and I fill the form with:
-      | Name | Test glossary name |
-      | Description | Test glossary entries require approval |
-      | Approved by default | No |
-    And I log out
+    And the following "activity" exists:
+      | activity                      | glossary                               |
+      | course                        | C1                                     |
+      | idnumber                      | 0001                                   |
+      | name                          | Test glossary name                     |
+      | intro                         | Test glossary entries require approval |
+      | section                       | 1                                      |
+      | defaultapproval               | 0                                      |
 
   Scenario: Approve and undo approve glossary entries
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    Given I am on the "Test glossary name" "glossary activity" page logged in as student1
     When I add a glossary entry with the following data:
       | Concept | Just a test concept |
       | Definition | Concept definition |
       | Keyword(s) | Black |
     And I log out
     # Test that students can not see the unapproved entry.
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as student2
     Then I should see "No entries found in this section"
     And I log out
     # Approve the entry.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
-    And I follow "Waiting approval"
+    And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
+    And I follow "Pending approval"
     Then I should see "(this entry is currently hidden)"
     And I follow "Approve"
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page
     Then I should see "Concept definition"
     And I log out
     # Check that the entry can now be viewed by students.
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as student2
     Then I should see "Concept definition"
     And I log out
     # Undo the approval of the previous entry.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
     And I follow "Undo approval"
     And I log out
     # Check that the entry is no longer visible by students.
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page logged in as student2
     Then I should see "No entries found in this section"
 
   @javascript
   Scenario: View pending approval glossary items
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    Given I am on the "Test glossary name" "glossary activity" page logged in as student1
     When I add a glossary entry with the following data:
       | Concept | Just a test concept |
       | Definition | Concept definition |
@@ -81,7 +68,7 @@ Feature: A teacher can choose whether glossary entries require approval
       | Tags       | Test  |
     And I log out
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     And I click on "Tags" "link" in the "Navigation" "block"

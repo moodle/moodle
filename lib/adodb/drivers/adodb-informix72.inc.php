@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim. All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -8,7 +8,7 @@
   the BSD license will take precedence.
   Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   Informix port by Mitchell T. Young (mitch@youngfamily.org)
 
@@ -403,7 +403,7 @@ class ADORecordset_informix72 extends ADORecordSet {
 			$mode = $ADODB_FETCH_MODE;
 		}
 		$this->fetchMode = $mode;
-		return parent::__construct($id);
+		parent::__construct($id);
 	}
 
 
@@ -501,7 +501,7 @@ class ADORecordset_informix72 extends ADORecordSet {
 
 }
 /** !Eos
-* Auxiliar function to Parse coltype,collength. Used by Metacolumns
+* Auxiliary function to Parse coltype,collength. Used by Metacolumns
 * return: array ($mtype,$length,$precision,$nullable) (similar to ifx_fieldpropierties)
 */
 function ifx_props($coltype,$collength){

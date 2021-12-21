@@ -124,7 +124,7 @@ class moodle_google_curlio extends Google_IO_Curl {
         $curlerrornum = $curl->get_errno();
         $curlerror = $curl->error;
 
-        if ($respdata != CURLE_OK) {
+        if ($curlerrornum != CURLE_OK) {
             throw new Google_IO_Exception($curlerror);
         }
 

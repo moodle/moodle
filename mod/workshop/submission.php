@@ -45,6 +45,8 @@ $workshop = new workshop($workshoprecord, $cm, $course);
 
 $PAGE->set_url($workshop->submission_url(), array('cmid' => $cmid, 'id' => $id));
 
+$PAGE->set_secondary_active_tab("modulepage");
+
 if ($edit) {
     $PAGE->url->param('edit', $edit);
 }
@@ -173,6 +175,10 @@ if (!$edit and ($canoverride or $canpublish)) {
 
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 if ($edit) {
     $PAGE->navbar->add(get_string('mysubmission', 'workshop'), $workshop->submission_url(), navigation_node::TYPE_CUSTOM);
     $PAGE->navbar->add(get_string('editingsubmission', 'workshop'));
@@ -185,7 +191,6 @@ if ($edit) {
 // Output starts here
 $output = $PAGE->get_renderer('mod_workshop');
 echo $output->header();
-echo $output->heading(format_string($workshop->name), 2);
 echo $output->heading(get_string('mysubmission', 'workshop'), 3);
 
 // show instructions for submitting as thay may contain some list of questions and we need to know them

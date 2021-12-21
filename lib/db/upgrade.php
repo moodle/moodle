@@ -92,639 +92,13 @@ function xmldb_main_upgrade($oldversion) {
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
     // Always keep this upgrade step with version being the minimum
-    // allowed version to upgrade from (v3.5.0 right now).
-    if ($oldversion < 2018051700) {
+    // allowed version to upgrade from (v3.6.0 right now).
+    if ($oldversion < 2018120300) {
         // Just in case somebody hacks upgrade scripts or env, we really can not continue.
-        echo("You need to upgrade to 3.5.x or higher first!\n");
+        echo("You need to upgrade to 3.6.x or higher first!\n");
         exit(1);
         // Note this savepoint is 100% unreachable, but needed to pass the upgrade checks.
-        upgrade_main_savepoint(true, 2018051700);
-    }
-
-    // Automatically generated Moodle v3.5.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2018062800.01) {
-        // Add foreign key fk_user to the comments table.
-        $table = new xmldb_table('comments');
-        $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-        $dbman->add_key($table, $key);
-
-        upgrade_main_savepoint(true, 2018062800.01);
-    }
-
-    if ($oldversion < 2018062800.02) {
-        // Add composite index ix_concomitem to the table comments.
-        $table = new xmldb_table('comments');
-        $index = new xmldb_index('ix_concomitem', XMLDB_INDEX_NOTUNIQUE, array('contextid', 'commentarea', 'itemid'));
-
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        upgrade_main_savepoint(true, 2018062800.02);
-    }
-
-    if ($oldversion < 2018062800.03) {
-        // Define field location to be added to event.
-        $table = new xmldb_table('event');
-        $field = new xmldb_field('location', XMLDB_TYPE_TEXT, null, null, null, null, null, 'priority');
-
-        // Conditionally launch add field location.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018062800.03);
-    }
-
-    if ($oldversion < 2018072500.00) {
-        // Find all duplicate top level categories per context.
-        $duplicates = $DB->get_records_sql("SELECT qc1.*
-                                              FROM {question_categories} qc1
-                                              JOIN {question_categories} qc2
-                                                ON qc1.contextid = qc2.contextid AND qc1.id <> qc2.id
-                                             WHERE qc1.parent = 0 AND qc2.parent = 0
-                                          ORDER BY qc1.contextid, qc1.id");
-
-        // For each context, let the first top category to remain as top category and make the rest its children.
-        $currentcontextid = 0;
-        $chosentopid = 0;
-        foreach ($duplicates as $duplicate) {
-            if ($currentcontextid != $duplicate->contextid) {
-                $currentcontextid = $duplicate->contextid;
-                $chosentopid = $duplicate->id;
-            } else {
-                $DB->set_field('question_categories', 'parent', $chosentopid, ['id' => $duplicate->id]);
-            }
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018072500.00);
-    }
-
-    if ($oldversion < 2018073000.00) {
-        // Main savepoint reached.
-        if (!file_exists($CFG->dirroot . '/admin/tool/assignmentupgrade/version.php')) {
-            unset_all_config_for_plugin('tool_assignmentupgrade');
-        }
-        upgrade_main_savepoint(true, 2018073000.00);
-    }
-
-    if ($oldversion < 2018083100.01) {
-        // Remove module associated blog posts for non-existent (deleted) modules.
-        $sql = "SELECT ba.contextid as modcontextid
-                  FROM {blog_association} ba
-                  JOIN {post} p
-                       ON p.id = ba.blogid
-             LEFT JOIN {context} c
-                       ON c.id = ba.contextid
-                 WHERE p.module = :module
-                       AND c.contextlevel IS NULL
-              GROUP BY ba.contextid";
-        if ($deletedmodules = $DB->get_records_sql($sql, array('module' => 'blog'))) {
-            foreach ($deletedmodules as $module) {
-                $assocblogids = $DB->get_fieldset_select('blog_association', 'blogid',
-                    'contextid = :contextid', ['contextid' => $module->modcontextid]);
-                list($sql, $params) = $DB->get_in_or_equal($assocblogids, SQL_PARAMS_NAMED);
-
-                $DB->delete_records_select('tag_instance', "itemid $sql", $params);
-                $DB->delete_records_select('post', "id $sql AND module = :module",
-                    array_merge($params, ['module' => 'blog']));
-                $DB->delete_records('blog_association', ['contextid' => $module->modcontextid]);
-            }
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018083100.01);
-    }
-
-    if ($oldversion < 2018091200.00) {
-        if (!file_exists($CFG->dirroot . '/cache/stores/memcache/settings.php')) {
-            unset_all_config_for_plugin('cachestore_memcache');
-        }
-
-        upgrade_main_savepoint(true, 2018091200.00);
-    }
-
-    if ($oldversion < 2018091700.01) {
-        // Remove unused setting.
-        unset_config('messaginghidereadnotifications');
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018091700.01);
-    }
-
-    // Add idnumber fields to question and question_category tables.
-    // This is done in four parts to aid error recovery during upgrade, should that occur.
-    if ($oldversion < 2018092100.01) {
-        $table = new xmldb_table('question');
-        $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'modifiedby');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_main_savepoint(true, 2018092100.01);
-    }
-
-    if ($oldversion < 2018092100.02) {
-        $table = new xmldb_table('question');
-        $index = new xmldb_index('categoryidnumber', XMLDB_INDEX_UNIQUE, array('category', 'idnumber'));
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-        upgrade_main_savepoint(true, 2018092100.02);
-    }
-
-    if ($oldversion < 2018092100.03) {
-        $table = new xmldb_table('question_categories');
-        $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'sortorder');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_main_savepoint(true, 2018092100.03);
-    }
-
-    if ($oldversion < 2018092100.04) {
-        $table = new xmldb_table('question_categories');
-        $index = new xmldb_index('contextididnumber', XMLDB_INDEX_UNIQUE, array('contextid', 'idnumber'));
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018092100.04);
-    }
-
-    if ($oldversion < 2018092800.00) {
-        // Alter the table 'message_contacts'.
-        $table = new xmldb_table('message_contacts');
-
-        // Remove index so we can alter the fields.
-        $index = new xmldb_index('userid-contactid', XMLDB_INDEX_UNIQUE, ['userid', 'contactid']);
-        if ($dbman->index_exists($table, $index)) {
-            $dbman->drop_index($table, $index);
-        }
-
-        // Remove defaults of '0' from the 'userid' and 'contactid' fields.
-        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
-        $dbman->change_field_default($table, $field);
-
-        $field = new xmldb_field('contactid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'userid');
-        $dbman->change_field_default($table, $field);
-
-        // Add the missing FKs that will now be added to new installs.
-        $key = new xmldb_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
-        $dbman->add_key($table, $key);
-
-        $key = new xmldb_key('contactid', XMLDB_KEY_FOREIGN, ['contactid'], 'user', ['id']);
-        $dbman->add_key($table, $key);
-
-        // Re-add the index.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        // Add the field 'timecreated'. Allow null, since existing records won't have an accurate value we can use.
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'blocked');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Create new 'message_contact_requests' table.
-        $table = new xmldb_table('message_contact_requests');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
-        $table->add_field('requesteduserid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'userid');
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'requesteduserid');
-
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id'], null, null);
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
-        $table->add_key('requesteduserid', XMLDB_KEY_FOREIGN, ['requesteduserid'], 'user', ['id']);
-
-        $table->add_index('userid-requesteduserid', XMLDB_INDEX_UNIQUE, ['userid', 'requesteduserid']);
-
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Create new 'message_users_blocked' table.
-        $table = new xmldb_table('message_users_blocked');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
-        $table->add_field('blockeduserid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'userid');
-        // Allow NULLs in the 'timecreated' field because we will be moving existing data here that has no timestamp.
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'blockeduserid');
-
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id'], null, null);
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
-        $table->add_key('blockeduserid', XMLDB_KEY_FOREIGN, ['blockeduserid'], 'user', ['id']);
-
-        $table->add_index('userid-blockeduserid', XMLDB_INDEX_UNIQUE, ['userid', 'blockeduserid']);
-
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        upgrade_main_savepoint(true, 2018092800.00);
-    }
-
-    if ($oldversion < 2018092800.01) {
-        // Move all the 'blocked' contacts to the new table 'message_users_blocked'.
-        $updatesql = "INSERT INTO {message_users_blocked} (userid, blockeduserid, timecreated)
-                           SELECT userid, contactid, null as timecreated
-                             FROM {message_contacts}
-                            WHERE blocked = :blocked";
-        $DB->execute($updatesql, ['blocked' => 1]);
-
-        // Removed the 'blocked' column from 'message_contacts'.
-        $table = new xmldb_table('message_contacts');
-        $field = new xmldb_field('blocked');
-        $dbman->drop_field($table, $field);
-
-        upgrade_main_savepoint(true, 2018092800.01);
-    }
-
-    if ($oldversion < 2018092800.02) {
-        // Delete any contacts that are not mutual (meaning they both haven't added each other).
-        do {
-            $sql = "SELECT c1.id
-                      FROM {message_contacts} c1
-                 LEFT JOIN {message_contacts} c2
-                        ON c1.userid = c2.contactid
-                       AND c1.contactid = c2.userid
-                     WHERE c2.id IS NULL";
-            if ($contacts = $DB->get_records_sql($sql, null, 0, 1000)) {
-                list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contacts));
-                $DB->delete_records_select('message_contacts', "id $insql", $inparams);
-            }
-        } while ($contacts);
-
-        upgrade_main_savepoint(true, 2018092800.02);
-    }
-
-    if ($oldversion < 2018092800.03) {
-        // Remove any duplicate rows - from now on adding contacts just requires 1 row.
-        // The person who made the contact request (userid) and the person who approved
-        // it (contactid). Upgrade the table so that the first person to add the contact
-        // was the one who made the request.
-        $sql = "SELECT c1.id
-                  FROM {message_contacts} c1
-            INNER JOIN {message_contacts} c2
-                    ON c1.userid = c2.contactid
-                   AND c1.contactid = c2.userid
-                 WHERE c1.id > c2.id";
-        if ($contacts = $DB->get_records_sql($sql)) {
-            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contacts));
-            $DB->delete_records_select('message_contacts', "id $insql", $inparams);
-        }
-
-        upgrade_main_savepoint(true, 2018092800.03);
-    }
-
-    if ($oldversion < 2018101700.01) {
-        if (empty($CFG->keepmessagingallusersenabled)) {
-            // When it is not set, $CFG->messagingallusers should be disabled by default.
-            // When $CFG->messagingallusers = false, the default user preference is MESSAGE_PRIVACY_COURSEMEMBER
-            // (contacted by users sharing a course).
-            set_config('messagingallusers', false);
-        } else {
-            // When $CFG->keepmessagingallusersenabled is set to true, $CFG->messagingallusers is set to true.
-            set_config('messagingallusers', true);
-
-            // When $CFG->messagingallusers = true, the default user preference is MESSAGE_PRIVACY_SITE
-            // (contacted by all users site). So we need to set existing values from 0 (MESSAGE_PRIVACY_COURSEMEMBER)
-            // to 2 (MESSAGE_PRIVACY_SITE).
-            $DB->set_field(
-                'user_preferences',
-                'value',
-                \core_message\api::MESSAGE_PRIVACY_SITE,
-                array('name' => 'message_blocknoncontacts', 'value' => 0)
-            );
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018101700.01);
-    }
-
-    if ($oldversion < 2018101800.00) {
-        // Define table 'favourite' to be created.
-        $table = new xmldb_table('favourite');
-
-        // Adding fields to table favourite.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('itemtype', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('ordering', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-
-        // Adding keys to table favourite.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('contextid', XMLDB_KEY_FOREIGN, ['contextid'], 'context', ['id']);
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
-
-        // Adding indexes to table favourite.
-        $table->add_index('uniqueuserfavouriteitem', XMLDB_INDEX_UNIQUE, ['component', 'itemtype', 'itemid', 'contextid', 'userid']);
-
-        // Conditionally launch create table for favourite.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018101800.00);
-    }
-
-    if ($oldversion < 2018102200.00) {
-        // Add field 'type' to 'message_conversations'.
-        $table = new xmldb_table('message_conversations');
-        $field = new xmldb_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 1, 'id');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Add field 'name' to 'message_conversations'.
-        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'type');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Conditionally launch add index 'type'.
-        $index = new xmldb_index('type', XMLDB_INDEX_NOTUNIQUE, ['type']);
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        // Define table 'message_conversations' to be updated.
-        $table = new xmldb_table('message_conversations');
-
-        // Remove the unique 'convhash' index, change to null and add a new non unique index.
-        $index = new xmldb_index('convhash', XMLDB_INDEX_UNIQUE, ['convhash']);
-        if ($dbman->index_exists($table, $index)) {
-            $dbman->drop_index($table, $index);
-        }
-
-        $field = new xmldb_field('convhash', XMLDB_TYPE_CHAR, '40', null, null, null, null, 'name');
-        $dbman->change_field_notnull($table, $field);
-
-        $index = new xmldb_index('convhash', XMLDB_INDEX_NOTUNIQUE, ['convhash']);
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        upgrade_main_savepoint(true, 2018102200.00);
-    }
-
-    if ($oldversion < 2018102300.02) {
-        // Alter 'message_conversations' table to support groups.
-        $table = new xmldb_table('message_conversations');
-        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'convhash');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('itemtype', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'component');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('itemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'itemtype');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'itemid');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'contextid');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'enabled');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Add key.
-        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, ['contextid'], 'context', ['id']);
-        $dbman->add_key($table, $key);
-
-        // Add index.
-        $index = new xmldb_index('component-itemtype-itemid-contextid', XMLDB_INDEX_NOTUNIQUE, ['component', 'itemtype',
-            'itemid', 'contextid']);
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        upgrade_main_savepoint(true, 2018102300.02);
-    }
-
-    if ($oldversion < 2018102900.00) {
-        // Define field predictionsprocessor to be added to analytics_models.
-        $table = new xmldb_table('analytics_models');
-        $field = new xmldb_field('predictionsprocessor', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'timesplitting');
-
-        // Conditionally launch add field predictionsprocessor.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018102900.00);
-    }
-
-    if ($oldversion < 2018110500.01) {
-        // Define fields to be added to the 'badge' table.
-        $tablebadge = new xmldb_table('badge');
-        $fieldversion = new xmldb_field('version', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'nextcron');
-        $fieldlanguage = new xmldb_field('language', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'version');
-        $fieldimageauthorname = new xmldb_field('imageauthorname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'language');
-        $fieldimageauthoremail = new xmldb_field('imageauthoremail', XMLDB_TYPE_CHAR, '255', null, null,
-            null, null, 'imageauthorname');
-        $fieldimageauthorurl = new xmldb_field('imageauthorurl', XMLDB_TYPE_CHAR, '255', null, null,
-            null, null, 'imageauthoremail');
-        $fieldimagecaption = new xmldb_field('imagecaption', XMLDB_TYPE_TEXT, null, null, null, null, null, 'imageauthorurl');
-
-        if (!$dbman->field_exists($tablebadge, $fieldversion)) {
-            $dbman->add_field($tablebadge, $fieldversion);
-        }
-        if (!$dbman->field_exists($tablebadge, $fieldlanguage)) {
-            $dbman->add_field($tablebadge, $fieldlanguage);
-        }
-        if (!$dbman->field_exists($tablebadge, $fieldimageauthorname)) {
-            $dbman->add_field($tablebadge, $fieldimageauthorname);
-        }
-        if (!$dbman->field_exists($tablebadge, $fieldimageauthoremail)) {
-            $dbman->add_field($tablebadge, $fieldimageauthoremail);
-        }
-        if (!$dbman->field_exists($tablebadge, $fieldimageauthorurl)) {
-            $dbman->add_field($tablebadge, $fieldimageauthorurl);
-        }
-        if (!$dbman->field_exists($tablebadge, $fieldimagecaption)) {
-            $dbman->add_field($tablebadge, $fieldimagecaption);
-        }
-
-        // Define table badge_endorsement to be created.
-        $table = new xmldb_table('badge_endorsement');
-
-        // Adding fields to table badge_endorsement.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('badgeid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('issuername', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('issuerurl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('issueremail', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('claimid', XMLDB_TYPE_CHAR, '255', null, null, null, null);
-        $table->add_field('claimcomment', XMLDB_TYPE_TEXT, null, null, null, null, null);
-        $table->add_field('dateissued', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-
-        // Adding keys to table badge_endorsement.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('endorsementbadge', XMLDB_KEY_FOREIGN, ['badgeid'], 'badge', ['id']);
-
-        // Conditionally launch create table for badge_endorsement.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Define table badge_related to be created.
-        $table = new xmldb_table('badge_related');
-
-        // Adding fields to table badge_related.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('badgeid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('relatedbadgeid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-
-        // Adding keys to table badge_related.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('badgeid', XMLDB_KEY_FOREIGN, ['badgeid'], 'badge', ['id']);
-        $table->add_key('relatedbadgeid', XMLDB_KEY_FOREIGN, ['relatedbadgeid'], 'badge', ['id']);
-        $table->add_key('badgeid-relatedbadgeid', XMLDB_KEY_UNIQUE, ['badgeid', 'relatedbadgeid']);
-
-        // Conditionally launch create table for badge_related.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Define table badge_competencies to be created.
-        $table = new xmldb_table('badge_competencies');
-
-        // Adding fields to table badge_competencies.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('badgeid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('targetname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('targeturl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('targetdescription', XMLDB_TYPE_TEXT, null, null, null, null, null);
-        $table->add_field('targetframework', XMLDB_TYPE_CHAR, '255', null, null, null, null);
-        $table->add_field('targetcode', XMLDB_TYPE_CHAR, '255', null, null, null, null);
-
-        // Adding keys to table badge_competencies.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('competenciesbadge', XMLDB_KEY_FOREIGN, ['badgeid'], 'badge', ['id']);
-
-        // Conditionally launch create table for badge_competencies.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018110500.01);
-    }
-
-    if ($oldversion < 2018110700.01) {
-        // This config setting added and then removed.
-        unset_config('showcourseimages', 'moodlecourse');
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018110700.01);
-    }
-
-    if ($oldversion < 2018111301.00) {
-        // Define field locked to be added to context.
-        $table = new xmldb_table('context');
-        $field = new xmldb_field('locked', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'depth');
-
-        // Conditionally launch add field locked.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field locked to be added to context_temp.
-        $table = new xmldb_table('context_temp');
-        $field = new xmldb_field('locked', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'depth');
-
-        // Conditionally launch add field locked.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Note: This change also requires a bump in is_major_upgrade_required.
-        upgrade_main_savepoint(true, 2018111301.00);
-    }
-
-    if ($oldversion < 2018111900.00) {
-        // Update favourited courses, so they are saved in the particular course context instead of the system.
-        $favouritedcourses = $DB->get_records('favourite', ['component' => 'core_course', 'itemtype' => 'courses']);
-
-        foreach ($favouritedcourses as $fc) {
-            $coursecontext = \context_course::instance($fc->itemid);
-            $fc->contextid = $coursecontext->id;
-            $DB->update_record('favourite', $fc);
-        }
-
-        upgrade_main_savepoint(true, 2018111900.00);
-    }
-
-    if ($oldversion < 2018111900.01) {
-        // Define table oauth2_access_token to be created.
-        $table = new xmldb_table('oauth2_access_token');
-
-        // Adding fields to table oauth2_access_token.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('issuerid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('token', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
-        $table->add_field('expires', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('scope', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
-
-        // Adding keys to table oauth2_access_token.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('issueridkey', XMLDB_KEY_FOREIGN_UNIQUE, ['issuerid'], 'oauth2_issuer', ['id']);
-
-        // Conditionally launch create table for oauth2_access_token.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2018111900.01);
-    }
-
-    if ($oldversion < 2018112000.00) {
-        // Update favourited conversations, so they are saved in the proper context instead of the system.
-        $sql = "SELECT f.*, mc.contextid as conversationctx
-                  FROM {favourite} f
-                  JOIN {message_conversations} mc
-                    ON mc.id = f.itemid";
-        $favouritedconversations = $DB->get_records_sql($sql);
-        foreach ($favouritedconversations as $fc) {
-            if (empty($fc->conversationctx)) {
-                $conversationidctx = \context_user::instance($fc->userid)->id;
-            } else {
-                $conversationidctx = $fc->conversationctx;
-            }
-
-            $DB->set_field('favourite', 'contextid', $conversationidctx, ['id' => $fc->id]);
-        }
-
-        upgrade_main_savepoint(true, 2018112000.00);
+        upgrade_main_savepoint(true, 2018120300);
     }
 
     // Automatically generated Moodle v3.6.0 release upgrade line.
@@ -2543,21 +1917,6 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021052500.01) {
-
-        // Define field timecreated to be added to task_adhoc.
-        $table = new xmldb_table('task_adhoc');
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'blocking');
-
-        // Conditionally launch add field timecreated.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2021052500.01);
-    }
-
-    if ($oldversion < 2021052500.02) {
         // Delete all user evidence files from users that have been deleted.
         $sql = "SELECT DISTINCT f.*
                   FROM {files} f
@@ -2572,6 +1931,21 @@ function xmldb_main_upgrade($oldversion) {
             $fs->get_file_instance($stalefile)->delete();
         }
 
+        upgrade_main_savepoint(true, 2021052500.01);
+    }
+
+    if ($oldversion < 2021052500.02) {
+
+        // Define field timecreated to be added to task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'blocking');
+
+        // Conditionally launch add field timecreated.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
         upgrade_main_savepoint(true, 2021052500.02);
     }
 
@@ -2706,6 +2080,1123 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2021052500.15);
+    }
+
+    if ($oldversion < 2021052500.19) {
+        // Define table oauth2_refresh_token to be created.
+        $table = new xmldb_table('oauth2_refresh_token');
+
+        // Adding fields to table oauth2_refresh_token.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('issuerid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('token', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('scopehash', XMLDB_TYPE_CHAR, 40, null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table oauth2_refresh_token.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('issueridkey', XMLDB_KEY_FOREIGN, ['issuerid'], 'oauth2_issuer', ['id']);
+        $table->add_key('useridkey', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+
+        // Adding indexes to table oauth2_refresh_token.
+        $table->add_index('userid-issuerid-scopehash', XMLDB_INDEX_UNIQUE, array('userid', 'issuerid', 'scopehash'));
+
+        // Conditionally launch create table for oauth2_refresh_token.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.19);
+    }
+
+    if ($oldversion < 2021052500.20) {
+
+        // Define index modulename-instance-eventtype (not unique) to be added to event.
+        $table = new xmldb_table('event');
+        $index = new xmldb_index('modulename-instance-eventtype', XMLDB_INDEX_NOTUNIQUE, ['modulename', 'instance', 'eventtype']);
+
+        // Conditionally launch add index modulename-instance-eventtype.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index modulename-instance (not unique) to be dropped form event.
+        $table = new xmldb_table('event');
+        $index = new xmldb_index('modulename-instance', XMLDB_INDEX_NOTUNIQUE, ['modulename', 'instance']);
+
+        // Conditionally launch drop index modulename-instance.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.20);
+    }
+
+    if ($oldversion < 2021052500.24) {
+        // Define fields tutorial and example to be added to h5p_libraries.
+        $table = new xmldb_table('h5p_libraries');
+
+        // Add tutorial field.
+        $field = new xmldb_field('tutorial', XMLDB_TYPE_TEXT, null, null, null, null, null, 'metadatasettings');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add example field.
+        $field = new xmldb_field('example', XMLDB_TYPE_TEXT, null, null, null, null, null, 'tutorial');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.24);
+    }
+
+    if ($oldversion < 2021052500.26) {
+        // Delete orphaned course_modules_completion rows; these were not deleted properly
+        // by remove_course_contents function.
+        $DB->delete_records_select('course_modules_completion', "
+                NOT EXISTS (
+                        SELECT 1
+                          FROM {course_modules} cm
+                         WHERE cm.id = {course_modules_completion}.coursemoduleid
+                )");
+        upgrade_main_savepoint(true, 2021052500.26);
+    }
+
+    if ($oldversion < 2021052500.27) {
+        // Script to fix incorrect records of "hidden" field in existing grade items.
+        $sql = "SELECT cm.instance, cm.course
+                  FROM {course_modules} cm
+                  JOIN {modules} m ON m.id = cm.module
+                 WHERE m.name = :module AND cm.visible = :visible";
+        $hidequizlist = $DB->get_recordset_sql($sql, ['module' => 'quiz', 'visible' => 0]);
+
+        foreach ($hidequizlist as $hidequiz) {
+            $params = [
+                'itemmodule'    => 'quiz',
+                'courseid'      => $hidequiz->course,
+                'iteminstance'  => $hidequiz->instance,
+            ];
+
+            $DB->set_field('grade_items', 'hidden', 1, $params);
+        }
+        $hidequizlist->close();
+
+        upgrade_main_savepoint(true, 2021052500.27);
+    }
+
+    if ($oldversion < 2021052500.29) {
+        // Get the current guest user which is also set as 'deleted'.
+        $guestuser = $DB->get_record('user', ['id' => $CFG->siteguest, 'deleted' => 1]);
+        // If there is a deleted guest user, reset the user to not be deleted and make sure the related
+        // user context exists.
+        if ($guestuser) {
+            $guestuser->deleted = 0;
+            $DB->update_record('user', $guestuser);
+
+            // Get the guest user context.
+            $guestusercontext = $DB->get_record('context',
+                ['contextlevel' => CONTEXT_USER, 'instanceid' => $guestuser->id]);
+
+            // If the guest user context does not exist, create it.
+            if (!$guestusercontext) {
+                $record = new stdClass();
+                $record->contextlevel = CONTEXT_USER;
+                $record->instanceid = $guestuser->id;
+                $record->depth = 0;
+                // The path is not known before insert.
+                $record->path = null;
+                $record->locked = 0;
+
+                $record->id = $DB->insert_record('context', $record);
+
+                // Update the path.
+                $record->path = '/' . SYSCONTEXTID . '/' . $record->id;
+                $record->depth = substr_count($record->path, '/');
+                $DB->update_record('context', $record);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.29);
+    }
+
+    if ($oldversion < 2021052500.30) {
+        // Reset analytics model output dir if it's the default value.
+        $modeloutputdir = get_config('analytics', 'modeloutputdir');
+        if (strcasecmp($modeloutputdir, $CFG->dataroot . DIRECTORY_SEPARATOR . 'models') == 0) {
+            set_config('modeloutputdir', '', 'analytics');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.30);
+    }
+
+    if ($oldversion < 2021052500.32) {
+        // Define field downloadcontent to be added to course.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('downloadcontent', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'visibleold');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.32);
+    }
+
+    if ($oldversion < 2021052500.33) {
+        $table = new xmldb_table('badge_backpack');
+
+        // There is no key_exists, so test the equivalent index.
+        $oldindex = new xmldb_index('backpackcredentials', XMLDB_KEY_UNIQUE, ['userid', 'externalbackpackid']);
+        if (!$dbman->index_exists($table, $oldindex)) {
+            // All external backpack providers/hosts are now exclusively stored in badge_external_backpack.
+            // All credentials are stored in badge_backpack and are unique per user, backpack.
+            $uniquekey = new xmldb_key('backpackcredentials', XMLDB_KEY_UNIQUE, ['userid', 'externalbackpackid']);
+            $dbman->add_key($table, $uniquekey);
+        }
+
+        // Drop the password field as this is moved to badge_backpack.
+        $table = new xmldb_table('badge_external_backpack');
+        $field = new xmldb_field('password', XMLDB_TYPE_CHAR, '50');
+        if ($dbman->field_exists($table, $field)) {
+            // If there is a current backpack set then copy it across to the new structure.
+            if ($CFG->badges_defaultissuercontact) {
+                // Get the currently used site backpacks.
+                $records = $DB->get_records_select('badge_external_backpack', "password IS NOT NULL AND password != ''");
+                $backpack = [
+                    'userid' => '0',
+                    'email' => $CFG->badges_defaultissuercontact,
+                    'backpackuid' => -1
+                ];
+
+                // Create records corresponding to the site backpacks.
+                foreach ($records as $record) {
+                    $backpack['password'] = $record->password;
+                    $backpack['externalbackpackid'] = $record->id;
+                    $DB->insert_record('badge_backpack', (object) $backpack);
+                }
+            }
+
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.33);
+    }
+
+    if ($oldversion < 2021052500.36) {
+        // Define table payment_accounts to be created.
+        $table = new xmldb_table('payment_accounts');
+
+        // Adding fields to table payment_accounts.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('idnumber', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('archived', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table payment_accounts.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for payment_accounts.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table payment_gateways to be created.
+        $table = new xmldb_table('payment_gateways');
+
+        // Adding fields to table payment_gateways.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('accountid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('gateway', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('config', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table payment_gateways.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('accountid', XMLDB_KEY_FOREIGN, ['accountid'], 'payment_accounts', ['id']);
+
+        // Conditionally launch create table for payment_gateways.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table payments to be created.
+        $table = new xmldb_table('payments');
+
+        // Adding fields to table payments.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('paymentarea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('amount', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('currency', XMLDB_TYPE_CHAR, '3', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('accountid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('gateway', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table payments.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+        $table->add_key('accountid', XMLDB_KEY_FOREIGN, ['accountid'], 'payment_accounts', ['id']);
+
+        // Adding indexes to table payments.
+        $table->add_index('gateway', XMLDB_INDEX_NOTUNIQUE, ['gateway']);
+        $table->add_index('component-paymentarea-itemid', XMLDB_INDEX_NOTUNIQUE, ['component', 'paymentarea', 'itemid']);
+
+        // Conditionally launch create table for payments.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.36);
+    }
+
+    if ($oldversion < 2021052500.42) {
+        // Get all lessons that are set with a completion criteria of 'requires grade' but with no grade type set.
+        $sql = "SELECT cm.id
+                  FROM {course_modules} cm
+                  JOIN {lesson} l ON l.id = cm.instance
+                  JOIN {modules} m ON m.id = cm.module
+                 WHERE m.name = :name AND cm.completiongradeitemnumber IS NOT NULL AND l.grade = :grade";
+
+        do {
+            if ($invalidconfigrations = $DB->get_records_sql($sql, ['name' => 'lesson', 'grade' => 0], 0, 1000)) {
+                list($insql, $inparams) = $DB->get_in_or_equal(array_keys($invalidconfigrations), SQL_PARAMS_NAMED);
+                $DB->set_field_select('course_modules', 'completiongradeitemnumber', null, "id $insql", $inparams);
+            }
+        } while ($invalidconfigrations);
+
+        upgrade_main_savepoint(true, 2021052500.42);
+    }
+
+    if ($oldversion < 2021052500.55) {
+        $DB->delete_records_select('event', "eventtype = 'category' AND categoryid = 0 AND userid <> 0");
+
+        upgrade_main_savepoint(true, 2021052500.55);
+    }
+
+    if ($oldversion < 2021052500.59) {
+        // Define field visibility to be added to contentbank_content.
+        $table = new xmldb_table('contentbank_content');
+        $field = new xmldb_field('visibility', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'contextid');
+
+        // Conditionally launch add field visibility.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.59);
+    }
+
+    if ($oldversion < 2021052500.60) {
+
+        // We are going to remove the field 'hidepicture' from the groups
+        // so we need to remove the pictures from those groups. But we prevent
+        // the execution twice because this could be executed again when upgrading
+        // to different versions.
+        if ($dbman->field_exists('groups', 'hidepicture')) {
+
+            $sql = "SELECT g.id, g.courseid, ctx.id AS contextid
+                       FROM {groups} g
+                       JOIN {context} ctx
+                         ON ctx.instanceid = g.courseid
+                        AND ctx.contextlevel = :contextlevel
+                      WHERE g.hidepicture = 1";
+
+            // Selecting all the groups that have hide picture enabled, and organising them by context.
+            $groupctx = [];
+            $records = $DB->get_recordset_sql($sql, ['contextlevel' => CONTEXT_COURSE]);
+            foreach ($records as $record) {
+                if (!isset($groupctx[$record->contextid])) {
+                    $groupctx[$record->contextid] = [];
+                }
+                $groupctx[$record->contextid][] = $record->id;
+            }
+            $records->close();
+
+            // Deleting the group files.
+            $fs = get_file_storage();
+            foreach ($groupctx as $contextid => $groupids) {
+                list($in, $inparams) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED);
+                $fs->delete_area_files_select($contextid, 'group', 'icon', $in, $inparams);
+            }
+
+            // Updating the database to remove picture from all those groups.
+            $sql = "UPDATE {groups} SET picture = :pic WHERE hidepicture = :hide";
+            $DB->execute($sql, ['pic' => 0, 'hide' => 1]);
+        }
+
+        // Define field hidepicture to be dropped from groups.
+        $table = new xmldb_table('groups');
+        $field = new xmldb_field('hidepicture');
+
+        // Conditionally launch drop field hidepicture.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.60);
+    }
+
+    if ($oldversion < 2021052500.64) {
+        // Get all the external backpacks and update the sortorder column, to avoid repeated/wrong values. As sortorder was not
+        // used since now, the id column will be the criteria to follow for re-ordering them with a valid value.
+        $i = 1;
+        $records = $DB->get_records('badge_external_backpack', null, 'id ASC');
+        foreach ($records as $record) {
+            $record->sortorder = $i++;
+            $DB->update_record('badge_external_backpack', $record);
+        }
+
+        upgrade_main_savepoint(true, 2021052500.64);
+    }
+
+    if ($oldversion < 2021052500.67) {
+        // The $CFG->badges_site_backpack setting has been removed because it's not required anymore. From now, the default backpack
+        // will be the one with lower sortorder value.
+        unset_config('badges_site_backpack');
+
+        upgrade_main_savepoint(true, 2021052500.67);
+    }
+
+    if ($oldversion < 2021052500.69) {
+
+        // Define field type to be added to oauth2_issuer.
+        $table = new xmldb_table('oauth2_issuer');
+        $field = new xmldb_field('servicetype', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'requireconfirmation');
+
+        // Conditionally launch add field type.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Set existing values to the proper servicetype value.
+        // It's not critical if the servicetype column doesn't contain the proper value for Google, Microsoft, Facebook or
+        // Nextcloud services because, for now, this value is used for services using different discovery method.
+        // However, let's try to upgrade it using the default value for the baseurl or image. If any of these default values
+        // have been changed, the servicetype column will remain NULL.
+        $recordset = $DB->get_recordset('oauth2_issuer');
+        foreach ($recordset as $record) {
+            if ($record->baseurl == 'https://accounts.google.com/') {
+                $record->servicetype = 'google';
+                $DB->update_record('oauth2_issuer', $record);
+            } else if ($record->image == 'https://www.microsoft.com/favicon.ico') {
+                $record->servicetype = 'microsoft';
+                $DB->update_record('oauth2_issuer', $record);
+            } else if ($record->image == 'https://facebookbrand.com/wp-content/uploads/2016/05/flogo_rgb_hex-brc-site-250.png') {
+                $record->servicetype = 'facebook';
+                $DB->update_record('oauth2_issuer', $record);
+            } else if ($record->image == 'https://nextcloud.com/wp-content/themes/next/assets/img/common/favicon.png?x16328') {
+                $record->servicetype = 'nextcloud';
+                $DB->update_record('oauth2_issuer', $record);
+            }
+        }
+        $recordset->close();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.69);
+    }
+
+    if ($oldversion < 2021052500.74) {
+        // Define field 'showactivitydates' to be added to course table.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('showactivitydates', XMLDB_TYPE_INTEGER, '1', null,
+            XMLDB_NOTNULL, null, '0', 'originalcourseid');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.74);
+    }
+
+    if ($oldversion < 2021052500.75) {
+        // Define field 'showcompletionconditions' to be added to course.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('showcompletionconditions', XMLDB_TYPE_INTEGER, '1', null,
+            XMLDB_NOTNULL, null, '1', 'completionnotify');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.75);
+    }
+
+    if ($oldversion < 2021052500.78) {
+
+        // Define field enabled to be added to h5p_libraries.
+        $table = new xmldb_table('h5p_libraries');
+        $field = new xmldb_field('enabled', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'example');
+
+        // Conditionally launch add field enabled.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.78);
+    }
+
+    if ($oldversion < 2021052500.83) {
+
+        // Define field loginpagename to be added to oauth2_issuer.
+        $table = new xmldb_table('oauth2_issuer');
+        $field = new xmldb_field('loginpagename', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'servicetype');
+
+        // Conditionally launch add field loginpagename.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.83);
+    }
+
+    if ($oldversion < 2021052500.84) {
+        require_once($CFG->dirroot . '/user/profile/field/social/upgradelib.php');
+        $table = new xmldb_table('user');
+        $tablecolumns = ['icq', 'skype', 'aim', 'yahoo', 'msn', 'url'];
+
+        foreach ($tablecolumns as $column) {
+            $field = new xmldb_field($column);
+            if ($dbman->field_exists($table, $field)) {
+                user_profile_social_moveto_profilefield($column);
+                $dbman->drop_field($table, $field);
+            }
+        }
+
+        // Update all module availability if it relies on the old user fields.
+        user_profile_social_update_module_availability();
+
+        // Remove field mapping for oauth2.
+        $DB->delete_records('oauth2_user_field_mapping', array('internalfield' => 'url'));
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.84);
+    }
+
+    if ($oldversion < 2021052500.85) {
+        require_once($CFG->libdir . '/db/upgradelib.php');
+
+        // Check if this site has executed the problematic upgrade steps.
+        $needsfixing = upgrade_calendar_site_status(false);
+
+        // Only queue the task if this site has been affected by the problematic upgrade step.
+        if ($needsfixing) {
+
+            // Create adhoc task to search and recover orphaned calendar events.
+            $record = new \stdClass();
+            $record->classname = '\core\task\calendar_fix_orphaned_events';
+
+            // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+            $nextruntime = time() - 1;
+            $record->nextruntime = $nextruntime;
+            $DB->insert_record('task_adhoc', $record);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.85);
+    }
+
+    if ($oldversion < 2021052500.87) {
+        // Changing the default of field showcompletionconditions on table course to 0.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('showcompletionconditions', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'showactivitydates');
+
+        // Launch change of nullability for field showcompletionconditions.
+        $dbman->change_field_notnull($table, $field);
+
+        // Launch change of default for field showcompletionconditions.
+        $dbman->change_field_default($table, $field);
+
+        // Set showcompletionconditions to null for courses which don't track completion.
+        $sql = "UPDATE {course}
+                   SET showcompletionconditions = null
+                 WHERE enablecompletion <> 1";
+        $DB->execute($sql);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.87);
+    }
+
+    if ($oldversion < 2021052500.90) {
+        // Remove usemodchooser user preference for every user.
+        $DB->delete_records('user_preferences', ['name' => 'usemodchooser']);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.90);
+    }
+
+    if ($oldversion < 2021060200.00) {
+
+        // Define index name (not unique) to be added to user_preferences.
+        $table = new xmldb_table('user_preferences');
+        $index = new xmldb_index('name', XMLDB_INDEX_NOTUNIQUE, ['name']);
+
+        // Conditionally launch add index name.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021060200.00);
+    }
+
+    if ($oldversion < 2021060900.00) {
+        // Update the externalfield to be larger.
+        $table = new xmldb_table('oauth2_user_field_mapping');
+        $field = new xmldb_field('externalfield', XMLDB_TYPE_CHAR, '500', null, XMLDB_NOTNULL, false, null, 'issuerid');
+        $dbman->change_field_type($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021060900.00);
+    }
+
+    if ($oldversion < 2021072800.01) {
+        // Define table reportbuilder_report to be created.
+        $table = new xmldb_table('reportbuilder_report');
+
+        // Adding fields to table reportbuilder_report.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('source', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('type', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('area', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('usercreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table reportbuilder_report.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('usercreated', XMLDB_KEY_FOREIGN, ['usercreated'], 'user', ['id']);
+        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, ['contextid'], 'context', ['id']);
+
+        // Conditionally launch create table for reportbuilder_report.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021072800.01);
+    }
+
+    if ($oldversion < 2021090200.01) {
+        // Remove qformat_webct (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/question/format/webct/format.php')) {
+            unset_all_config_for_plugin('qformat_webct');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021090200.01);
+    }
+
+    if ($oldversion < 2021091100.01) {
+        // If message_jabber is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/message/output/jabber/message_output_jabber.php')) {
+            // Remove Jabber from the notification plugins list.
+            $DB->delete_records('message_processors', ['name' => 'jabber']);
+
+            // Remove user preference settings.
+            $DB->delete_records('user_preferences', ['name' => 'message_processor_jabber_jabberid']);
+            $sql = 'SELECT *
+                    FROM {user_preferences} up
+                    WHERE ' . $DB->sql_like('up.name', ':name', false, false) . ' AND ' .
+                        $DB->sql_like('up.value', ':value', false, false);
+            $params = [
+                'name' => 'message_provider_%',
+                'value' => '%jabber%',
+            ];
+            $jabbersettings = $DB->get_recordset_sql($sql, $params);
+            foreach ($jabbersettings as $jabbersetting) {
+                // Remove 'jabber' from the value.
+                $jabbersetting->value = implode(',', array_diff(explode(',', $jabbersetting->value), ['jabber']));
+                $DB->update_record('user_preferences', $jabbersetting);
+            }
+            $jabbersettings->close();
+
+            // Clean config settings.
+            unset_config('jabberhost');
+            unset_config('jabberserver');
+            unset_config('jabberusername');
+            unset_config('jabberpassword');
+            unset_config('jabberport');
+
+            // Remove default notification preferences.
+            $like = $DB->sql_like('name', '?', true, true, false, '|');
+            $params = [$DB->sql_like_escape('jabber_provider_', '|') . '%'];
+            $DB->delete_records_select('config_plugins', $like, $params);
+
+            // Clean config config settings.
+            unset_all_config_for_plugin('message_jabber');
+        }
+
+        upgrade_main_savepoint(true, 2021091100.01);
+    }
+
+    if ($oldversion < 2021091100.02) {
+        // Set the description field to HTML format for the Default course category.
+        $category = $DB->get_record('course_categories', ['id' => 1]);
+
+        if ($category->descriptionformat == FORMAT_MOODLE) {
+            // Format should be changed only if it's still set to FORMAT_MOODLE.
+            if (!is_null($category->description)) {
+                // If description is not empty, format the content to HTML.
+                $category->description = format_text($category->description, FORMAT_MOODLE);
+            }
+            $category->descriptionformat = FORMAT_HTML;
+            $DB->update_record('course_categories', $category);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021091100.02);
+    }
+
+    if ($oldversion < 2021091700.01) {
+        // Default 'off' for existing sites as this is the behaviour they had earlier.
+        set_config('enroladminnewcourse', false);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021091700.01);
+    }
+
+    if ($oldversion < 2021091700.02) {
+        // If portfolio_picasa is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/portfolio/picasa/version.php')) {
+            $instance = $DB->get_record('portfolio_instance', ['plugin' => 'picasa']);
+            if (!empty($instance)) {
+                // Remove all records from portfolio_instance_config.
+                $DB->delete_records('portfolio_instance_config', ['instance' => $instance->id]);
+                // Remove all records from portfolio_instance_user.
+                $DB->delete_records('portfolio_instance_user', ['instance' => $instance->id]);
+                // Remove all records from portfolio_log.
+                $DB->delete_records('portfolio_log', ['portfolio' => $instance->id]);
+                // Remove all records from portfolio_tempdata.
+                $DB->delete_records('portfolio_tempdata', ['instance' => $instance->id]);
+                // Remove the record from the portfolio_instance table.
+                $DB->delete_records('portfolio_instance', ['id' => $instance->id]);
+            }
+
+            // Clean config.
+            unset_all_config_for_plugin('portfolio_picasa');
+        }
+
+        upgrade_main_savepoint(true, 2021091700.02);
+    }
+
+    if ($oldversion < 2021091700.03) {
+        // If repository_picasa is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/repository/picasa/version.php')) {
+            $instance = $DB->get_record('repository', ['type' => 'picasa']);
+            if (!empty($instance)) {
+                // Remove all records from repository_instance_config table.
+                $DB->delete_records('repository_instance_config', ['instanceid' => $instance->id]);
+                // Remove all records from repository_instances table.
+                $DB->delete_records('repository_instances', ['typeid' => $instance->id]);
+                // Remove the record from the repository table.
+                $DB->delete_records('repository', ['id' => $instance->id]);
+            }
+
+            // Clean config.
+            unset_all_config_for_plugin('picasa');
+
+            // Remove orphaned files.
+            upgrade_delete_orphaned_file_records();
+        }
+
+        upgrade_main_savepoint(true, 2021091700.03);
+    }
+
+    if ($oldversion < 2021091700.04) {
+        // Remove media_swf (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/media/player/swf/classes/plugin.php')) {
+            unset_all_config_for_plugin('media_swf');
+        }
+
+        upgrade_main_savepoint(true, 2021091700.04);
+    }
+
+    if ($oldversion < 2021092400.01) {
+        // If tool_health is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/admin/tool/health/version.php')) {
+            // Clean config.
+            unset_all_config_for_plugin('tool_health');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021092400.01);
+    }
+
+    if ($oldversion < 2021092400.03) {
+        // Remove repository_picasa configuration (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/repository/picasa/version.php')) {
+            unset_all_config_for_plugin('repository_picasa');
+        }
+
+        upgrade_main_savepoint(true, 2021092400.03);
+    }
+
+    if ($oldversion < 2021100300.01) {
+        // Remove repository_skydrive (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/repository/skydrive/lib.php')) {
+            unset_all_config_for_plugin('repository_skydrive');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021100300.01);
+    }
+
+    if ($oldversion < 2021100300.02) {
+        // Remove filter_censor (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/filter/censor/filter.php')) {
+            unset_all_config_for_plugin('filter_censor');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021100300.02);
+    }
+
+    if ($oldversion < 2021100600.01) {
+        // Remove qformat_examview (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/question/format/examview/format.php')) {
+            unset_all_config_for_plugin('qformat_examview');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021100600.01);
+    }
+
+    if ($oldversion < 2021100600.02) {
+        $table = new xmldb_table('course_completion_defaults');
+
+        // Adding fields to table course_completion_defaults.
+        $field = new xmldb_field('completionpassgrade', XMLDB_TYPE_INTEGER, '1', null,
+            XMLDB_NOTNULL, null, '0', 'completionusegrade');
+
+        // Conditionally launch add field for course_completion_defaults.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2021100600.02);
+    }
+
+    if ($oldversion < 2021100600.03) {
+        $table = new xmldb_table('course_modules');
+
+        // Adding new fields to table course_module table.
+        $field = new xmldb_field('completionpassgrade', XMLDB_TYPE_INTEGER, '1', null,
+            XMLDB_NOTNULL, null, '0', 'completionexpected');
+        // Conditionally launch create table for course_completion_defaults.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2021100600.03);
+    }
+
+    if ($oldversion < 2021100600.04) {
+        // Define index itemtype-mod-inst-course (not unique) to be added to grade_items.
+        $table = new xmldb_table('grade_items');
+        $index = new xmldb_index('itemtype-mod-inst-course', XMLDB_INDEX_NOTUNIQUE,
+            ['itemtype', 'itemmodule', 'iteminstance', 'courseid']);
+
+        // Conditionally launch add index itemtype-mod-inst-course.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021100600.04);
+    }
+
+    if ($oldversion < 2021101900.01) {
+        $table = new xmldb_table('reportbuilder_report');
+
+        // Define field name to be added to reportbuilder_report.
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'id');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field conditiondata to be added to reportbuilder_report.
+        $field = new xmldb_field('conditiondata', XMLDB_TYPE_TEXT, null, null, null, null, null, 'type');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define table reportbuilder_column to be created.
+        $table = new xmldb_table('reportbuilder_column');
+
+        // Adding fields to table reportbuilder_column.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('reportid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('uniqueidentifier', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('aggregation', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+        $table->add_field('heading', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('columnorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sortenabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('sortdirection', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('usercreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table reportbuilder_column.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('reportid', XMLDB_KEY_FOREIGN, ['reportid'], 'reportbuilder_report', ['id']);
+        $table->add_key('usercreated', XMLDB_KEY_FOREIGN, ['usercreated'], 'user', ['id']);
+        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+
+        // Conditionally launch create table for reportbuilder_column.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table reportbuilder_filter to be created.
+        $table = new xmldb_table('reportbuilder_filter');
+
+        // Adding fields to table reportbuilder_filter.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('reportid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('uniqueidentifier', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('heading', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('iscondition', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('filterorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('usercreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table reportbuilder_filter.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('reportid', XMLDB_KEY_FOREIGN, ['reportid'], 'reportbuilder_report', ['id']);
+        $table->add_key('usercreated', XMLDB_KEY_FOREIGN, ['usercreated'], 'user', ['id']);
+        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+
+        // Conditionally launch create table for reportbuilder_filter.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021101900.01);
+    }
+
+    if ($oldversion < 2021102600.01) {
+        // Remove block_quiz_results (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/blocks/quiz_result/block_quiz_results.php')) {
+            // Delete instances.
+            $instances = $DB->get_records_list('block_instances', 'blockname', ['quiz_results']);
+            $instanceids = array_keys($instances);
+
+            if (!empty($instanceids)) {
+                blocks_delete_instances($instanceids);
+            }
+
+            // Delete the block from the block table.
+            $DB->delete_records('block', array('name' => 'quiz_results'));
+
+            // Remove capabilities.
+            capabilities_cleanup('block_quiz_results');
+            // Clean config.
+            unset_all_config_for_plugin('block_quiz_results');
+
+            // Remove Moodle-level quiz_results based capabilities.
+            $capabilitiestoberemoved = ['block/quiz_results:addinstance'];
+            // Delete any role_capabilities for the old roles.
+            $DB->delete_records_list('role_capabilities', 'capability', $capabilitiestoberemoved);
+            // Delete the capability itself.
+            $DB->delete_records_list('capabilities', 'name', $capabilitiestoberemoved);
+        }
+
+        upgrade_main_savepoint(true, 2021102600.01);
+    }
+
+    if ($oldversion < 2021102900.02) {
+        // If portfolio_boxnet is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/portfolio/boxnet/version.php')) {
+            $instance = $DB->get_record('portfolio_instance', ['plugin' => 'boxnet']);
+            if (!empty($instance)) {
+                // Remove all records from portfolio_instance_config.
+                $DB->delete_records('portfolio_instance_config', ['instance' => $instance->id]);
+                // Remove all records from portfolio_instance_user.
+                $DB->delete_records('portfolio_instance_user', ['instance' => $instance->id]);
+                // Remove all records from portfolio_log.
+                $DB->delete_records('portfolio_log', ['portfolio' => $instance->id]);
+                // Remove all records from portfolio_tempdata.
+                $DB->delete_records('portfolio_tempdata', ['instance' => $instance->id]);
+                // Remove the record from the portfolio_instance table.
+                $DB->delete_records('portfolio_instance', ['id' => $instance->id]);
+            }
+
+            // Clean config.
+            unset_all_config_for_plugin('portfolio_boxnet');
+        }
+
+        // If repository_boxnet is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/repository/boxnet/version.php')) {
+            $instance = $DB->get_record('repository', ['type' => 'boxnet']);
+            if (!empty($instance)) {
+                // Remove all records from repository_instance_config table.
+                $DB->delete_records('repository_instance_config', ['instanceid' => $instance->id]);
+                // Remove all records from repository_instances table.
+                $DB->delete_records('repository_instances', ['typeid' => $instance->id]);
+                // Remove the record from the repository table.
+                $DB->delete_records('repository', ['id' => $instance->id]);
+            }
+
+            // Clean config.
+            unset_all_config_for_plugin('repository_boxnet');
+
+            // The boxnet repository plugin stores some config in 'boxnet' incorrectly.
+            unset_all_config_for_plugin('boxnet');
+
+            // Remove orphaned files.
+            upgrade_delete_orphaned_file_records();
+        }
+
+        upgrade_main_savepoint(true, 2021102900.02);
+    }
+
+    if ($oldversion < 2021110100.00) {
+
+        // Define table reportbuilder_audience to be created.
+        $table = new xmldb_table('reportbuilder_audience');
+
+        // Adding fields to table reportbuilder_audience.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('reportid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('classname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('configdata', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('usercreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table reportbuilder_audience.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('reportid', XMLDB_KEY_FOREIGN, ['reportid'], 'reportbuilder_report', ['id']);
+        $table->add_key('usercreated', XMLDB_KEY_FOREIGN, ['usercreated'], 'user', ['id']);
+        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+
+        // Conditionally launch create table for reportbuilder_audience.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021110100.00);
+    }
+
+    if ($oldversion < 2021110800.02) {
+        // Define a field 'downloadcontent' in the 'course_modules' table.
+        $table = new xmldb_table('course_modules');
+        $field = new xmldb_field('downloadcontent', XMLDB_TYPE_INTEGER, '1', null, null, null, 1, 'deletioninprogress');
+
+        // Conditionally launch add field 'downloadcontent'.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021110800.02);
+    }
+
+    if ($oldversion < 2021110800.03) {
+
+        // Define field settingsdata to be added to reportbuilder_report.
+        $table = new xmldb_table('reportbuilder_report');
+        $field = new xmldb_field('settingsdata', XMLDB_TYPE_TEXT, null, null, null, null, null, 'conditiondata');
+
+        // Conditionally launch add field settingsdata.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021110800.03);
+    }
+
+    if ($oldversion < 2021111700.00) {
+        $mycoursespage = new stdClass();
+        $mycoursespage->userid = null;
+        $mycoursespage->name = '__courses';
+        $mycoursespage->private = 0;
+        $mycoursespage->sortorder  = 0;
+        $DB->insert_record('my_pages', $mycoursespage);
+
+        upgrade_main_savepoint(true, 2021111700.00);
+    }
+
+    if ($oldversion < 2021111700.01) {
+
+        // Define field uniquerows to be added to reportbuilder_report.
+        $table = new xmldb_table('reportbuilder_report');
+        $field = new xmldb_field('uniquerows', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'type');
+
+        // Conditionally launch add field uniquerows.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021111700.01);
+    }
+
+    if ($oldversion < 2021120100.01) {
+
+        // Get current configuration data.
+        $currentcustomusermenuitems = str_replace(["\r\n", "\r"], "\n", $CFG->customusermenuitems);
+        $lines = explode("\n", $currentcustomusermenuitems);
+        $lines = array_map('trim', $lines);
+        $calendarcustomusermenu = 'calendar,core_calendar|/calendar/view.php?view=month|i/calendar';
+
+        if (!in_array($calendarcustomusermenu, $lines)) {
+            // Add Calendar item to the menu.
+            array_splice($lines, 1, 0, [$calendarcustomusermenu]);
+            set_config('customusermenuitems', implode("\n", $lines));
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021120100.01);
+    }
+
+    if ($oldversion < 2021121400.01) {
+        // The $CFG->grade_navmethod setting has been removed because it's not required anymore. This setting was used
+        // to set the type of navigation (tabs or dropdown box) which will be displayed in gradebook. However, these
+        // navigation methods are no longer used and replaced with tertiary navigation.
+        unset_config('grade_navmethod');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021121400.01);
     }
 
     return true;

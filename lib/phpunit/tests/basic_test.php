@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 class core_phpunit_basic_testcase extends basic_testcase {
     protected $testassertexecuted = false;
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         if ($this->getName() === 'test_setup_assert') {
             $this->assertTrue(true);
@@ -72,7 +72,7 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $this->assertNotEquals($a, $b);
         $this->assertNotEquals($a, $d);
         $this->assertEquals($a, $c);
-        $this->assertEquals($a, $b, '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($a, $b);
 
         // Objects.
         $a = new stdClass();
@@ -96,7 +96,6 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $this->assertEquals(1, '1');
         $this->assertEquals(null, '');
 
-        $this->assertNotEquals(1, '1 ');
         $this->assertNotEquals(0, '');
         $this->assertNotEquals(null, '0');
         $this->assertNotEquals(array(), '');
@@ -144,6 +143,16 @@ STRING;
     public function test_setup_assert() {
         $this->assertTrue($this->testassertexecuted);
         $this->testassertexecuted = false;
+    }
+
+    /**
+     * Test assert Tag
+     */
+    public function test_assert_tag() {
+        // This should succeed.
+        self::assertTag(['id' => 'testid'], "<div><span id='testid'></span></div>");
+        $this->expectException(\PHPUnit\Framework\ExpectationFailedException::class);
+        self::assertTag(['id' => 'testid'], "<div><div>");
     }
 
     // Uncomment following tests to see logging of unexpected changes in global state and database.

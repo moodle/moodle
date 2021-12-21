@@ -132,8 +132,10 @@ if ($data = data_submitted() and confirm_sesskey()) {
     redirect('course.php?id='.$courseid); // we must redirect to get fresh data
 }
 
-/// Print header
-print_grade_page_head($COURSE->id, 'outcome', 'course');
+$actionbar = new \core_grades\output\course_outcomes_action_bar($context);
+// Print header.
+print_grade_page_head($COURSE->id, 'outcome', 'course', false, false, false,
+    true, null, null, null, $actionbar);
 
 require('course_form.html');
 

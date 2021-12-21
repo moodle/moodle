@@ -54,10 +54,12 @@ function tool_dataprivacy_myprofile_navigation(tree $tree, $user, $iscurrentuser
     // Contact data protection officer link.
     if (\tool_dataprivacy\api::can_contact_dpo() && $iscurrentuser) {
         $renderer = $PAGE->get_renderer('tool_dataprivacy');
-        $content = $renderer->render_contact_dpo_link($USER->email);
+        $content = $renderer->render_contact_dpo_link();
         $node = new core_user\output\myprofile\node('privacyandpolicies', 'contactdpo', null, null, null, $content);
         $category->add_node($node);
-        $PAGE->requires->js_call_amd('tool_dataprivacy/myrequestactions', 'init');
+
+        // Require our Javascript module to handle contact DPO interaction.
+        $PAGE->requires->js_call_amd('tool_dataprivacy/contactdpo', 'init');
 
         $url = new moodle_url('/admin/tool/dataprivacy/mydatarequests.php');
         $node = new core_user\output\myprofile\node('privacyandpolicies', 'datarequests',

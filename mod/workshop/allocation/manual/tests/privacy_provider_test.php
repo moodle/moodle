@@ -63,7 +63,7 @@ class workshopallocation_manual_privacy_provider_testcase extends \core_privacy\
         $prefs = writer::with_context(\context_system::instance())->get_user_preferences('workshopallocation_manual');
         $this->assertNotEmpty($prefs->workshopallocation_manual_perpage);
         $this->assertEquals(81, $prefs->workshopallocation_manual_perpage->value);
-        $this->assertContains(get_string('privacy:metadata:preference:perpage', 'workshopallocation_manual'),
+        $this->assertStringContainsString(get_string('privacy:metadata:preference:perpage', 'workshopallocation_manual'),
             $prefs->workshopallocation_manual_perpage->description);
     }
 }

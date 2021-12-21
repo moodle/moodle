@@ -88,6 +88,9 @@
                     <form id="updateform" action="{{updateurl}}" method="post">
                         <fieldset>
                             <input type="submit" value="{{#str}}updatelangs, tool_langimport{{/str}}" class="btn btn-secondary">
+                            {{#hasmanyinstalledlanguages}}
+                                <p class="mt-2 small">{{#str}} updatelangsnote, tool_langimport, {"taskname": {{#quote}}{{updatelangstaskname}}{{/quote}} }{{/str}}</p>
+                            {{/hasmanyinstalledlanguages}}
                         </fieldset>
                     </form>
                 </div>
@@ -105,6 +108,13 @@
                                 {{/toinstalloptions}}
                             </select>
                         </div>
+                        <div class="mb-3">
+                            {{< core/search_input_auto }}
+                                {{$label}}
+                                    {{#str}} search, tool_langimport {{/str}}
+                                {{/label}}
+                            {{/ core/search_input_auto }}
+                        </div>
                         <div class="form-group">
                             <input type="hidden" name="sesskey" value="{{sesskey}}">
                             <input type="submit" value="{{#str}}install, tool_langimport{{/str}}" class="btn btn-secondary">
@@ -115,3 +125,8 @@
         {{/caninstall}}
     </div>
 </div>
+{{#js}}
+    require(['tool_langimport/search'], function(search) {
+        search.init(document.querySelector('#installform'));
+    });
+{{/js}}

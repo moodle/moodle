@@ -190,7 +190,7 @@ class grader_report_preferences_form extends moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', $course->id);
 
-        $this->add_action_buttons();
+        $this->add_action_buttons(false);
     }
 
 /// perform some extra moodle validation

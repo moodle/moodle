@@ -203,53 +203,7 @@ class completion_criteria_activity extends completion_criteria {
      * Find users who have completed this criteria and mark them accordingly
      */
     public function cron() {
-        global $DB;
-
-        // Get all users who meet this criteria
-        $sql = '
-            SELECT DISTINCT
-                c.id AS course,
-                cr.id AS criteriaid,
-                ra.userid AS userid,
-                mc.timemodified AS timecompleted
-            FROM
-                {course_completion_criteria} cr
-            INNER JOIN
-                {course} c
-             ON cr.course = c.id
-            INNER JOIN
-                {context} con
-             ON con.instanceid = c.id
-            INNER JOIN
-                {role_assignments} ra
-              ON ra.contextid = con.id
-            INNER JOIN
-                {course_modules_completion} mc
-             ON mc.coursemoduleid = cr.moduleinstance
-            AND mc.userid = ra.userid
-            LEFT JOIN
-                {course_completion_crit_compl} cc
-             ON cc.criteriaid = cr.id
-            AND cc.userid = ra.userid
-            WHERE
-                cr.criteriatype = '.COMPLETION_CRITERIA_TYPE_ACTIVITY.'
-            AND con.contextlevel = '.CONTEXT_COURSE.'
-            AND c.enablecompletion = 1
-            AND cc.id IS NULL
-            AND (
-                mc.completionstate = '.COMPLETION_COMPLETE.'
-             OR mc.completionstate = '.COMPLETION_COMPLETE_PASS.'
-             OR mc.completionstate = '.COMPLETION_COMPLETE_FAIL.'
-                )
-        ';
-
-        // Loop through completions, and mark as complete
-        $rs = $DB->get_recordset_sql($sql);
-        foreach ($rs as $record) {
-            $completion = new completion_criteria_completion((array) $record, DATA_OBJECT_FETCH_BY_KEY);
-            $completion->mark_complete($record->timecompleted);
-        }
-        $rs->close();
+        \core_completion\api::mark_course_completions_activity_criteria();
     }
 
     /**
@@ -285,6 +239,10 @@ class completion_criteria_activity extends completion_criteria {
 
             if (!is_null($cm->completiongradeitemnumber)) {
                 $details['requirement'][] = get_string('achievinggrade', 'completion');
+            }
+
+            if ($cm->completionpassgrade) {
+                $details['requirement'][] = get_string('achievingpassinggrade', 'completion');
             }
         }
 

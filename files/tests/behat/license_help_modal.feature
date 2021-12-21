@@ -8,7 +8,6 @@ Feature: View licence links
   Scenario: Uploading a file displays licence list modal
     Given I log in as "admin"
     And I follow "Manage private files..."
-    And I wait until the page is ready
     And I follow "Add..."
     And I follow "Upload a file"
     And I click on "Help with Choose licence" "icon" in the "File picker" "dialogue"
@@ -21,7 +20,7 @@ Feature: View licence links
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I press "Save changes"
     And I follow "Manage private files..."
-    And I click on "empty.txt" "link"
+    And I click on "empty.txt" "link" in the "Manage private files" "dialogue"
     And I click on "Help with Choose licence" "icon"
     Then I should see "Follow these links for further information on the available licence options:"
 

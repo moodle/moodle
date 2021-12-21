@@ -67,7 +67,14 @@ $string['pluginname_link'] = 'question/type/numerical';
 $string['pluginnameadding'] = 'Adding a Numerical question';
 $string['pluginnameediting'] = 'Editing a Numerical question';
 $string['pluginnamesummary'] = 'Allows a numerical response, possibly with units, that is graded by comparing against various model answers, possibly with tolerances.';
-$string['privacy:metadata'] = 'The Numerical question type plugin does not store any personal data.';
+$string['privacy:metadata'] = 'Numerical question type plugin allows question authors to set default options as user preferences.';
+$string['privacy:preference:defaultmark'] = 'The default mark set for a given question.';
+$string['privacy:preference:penalty'] = 'The penalty for each incorrect try when questions are run using the \'Interactive with multiple tries\' or \'Adaptive mode\' behaviour.';
+$string['privacy:preference:unitrole'] = 'Whether the unit is essential, optional or not expected.';
+$string['privacy:preference:unitpenalty'] = 'What fraction (0-1) of the response grade or the question grade should apply?';
+$string['privacy:preference:unitgradingtypes'] = 'Whether unit penalty applies as a fraction (0-1) of the response grade or the question grade.';
+$string['privacy:preference:multichoicedisplay'] = 'Whether units are displayed as the text input element, multiple choice selection or a drop-down menu.';
+$string['privacy:preference:unitsleft'] = 'Whether unit displays on the left (eg. $, £) or on the right (eg. kg, km, cm).';
 $string['relative'] = 'Relative';
 $string['rightexample'] = 'on the right, for example 1.00cm or 1.00km';
 $string['selectunits'] = 'Select units';
@@ -106,14 +113,6 @@ $string['unitposition'] = 'Units go';
 $string['units'] = 'Units';
 $string['unitselect'] = 'a drop-down menu';
 $string['unitx'] = 'Unit {no} ';
-$string['validnumberformats'] = 'Valid number formats';
-$string['validnumberformats_help'] = '* regular numbers 13500.67, 13 500.67, 13500,67 or 13 500,67
-
-* if your language pack settings (langconfig.php file) uses a comma (,) as thousand separator *always* put the decimal point (.) as in 13,500.67 : 13,500.
-
-* for exponent form, say 1.350067 * 10<sup>4</sup>, use 1.350067 E4 : 1.350067 E04';
-
-$string['validnumbers'] = '13500.67, 13 500.67, 13,500.67, 13500,67, 13 500,67, 1.350067 E4 or 1.350067 E04';
 $string['xmustbenumeric'] = '{$a} must be a number.';
 $string['xmustnotbenumeric'] = '{$a} cannot be a number.';
 $string['youmustenteramultiplierhere'] = 'You must enter a multiplier here.';

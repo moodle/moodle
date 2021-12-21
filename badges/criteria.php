@@ -61,7 +61,7 @@ $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
 $PAGE->set_heading($badge->name);
 $PAGE->set_title($badge->name);
-$PAGE->navbar->add($badge->name);
+$PAGE->navbar->add($badge->name, $currenturl);
 
 $output = $PAGE->get_renderer('core', 'badges');
 $msg = optional_param('msg', '', PARAM_TEXT);

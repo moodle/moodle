@@ -44,7 +44,7 @@ class core_blog_external_testcase extends advanced_testcase {
     private $tagid;
     private $postid;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB, $CFG;
         parent::setUp();
 

@@ -25,7 +25,7 @@
 
 declare(strict_types = 1);
 
-namespace tests\mod_forum\grades;
+namespace mod_forum\grade;
 
 use advanced_testcase;
 use core_grades\component_gradeitems;
@@ -39,7 +39,7 @@ use coding_exception;
  * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradeitems_test extends advanced_testcase {
+class grades_gradeitems_test extends advanced_testcase {
 
     /**
      * Ensure that the mappings are present and correct.
@@ -48,8 +48,12 @@ class gradeitems_test extends advanced_testcase {
         $mappings = component_gradeitems::get_itemname_mapping_for_component('mod_forum');
         $this->assertIsArray($mappings);
         $this->assertCount(2, $mappings);
-        $this->assertArraySubset([0 => 'rating'], $mappings);
-        $this->assertArraySubset([1 => 'forum'], $mappings);
+        $expected = [0 => 'rating', 1 => 'forum'];
+        // Verify each expected element exists and its value matches.
+        foreach ($expected as $key => $value) {
+            $this->assertArrayHasKey($key, $mappings);
+            $this->assertSame($value, $mappings[$key]);
+        }
     }
 
     /**

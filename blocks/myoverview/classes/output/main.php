@@ -202,8 +202,9 @@ class main implements renderable, templatable {
         // Check and remember the given view.
         $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_CARD;
 
-        // Check and remember the given page size.
-        if ($paging == BLOCK_MYOVERVIEW_PAGING_ALL) {
+        // Check and remember the given page size, `null` indicates no page size set
+        // while a `0` indicates a paging size of `All`.
+        if (!is_null($paging) && $paging == BLOCK_MYOVERVIEW_PAGING_ALL) {
             $this->paging = BLOCK_MYOVERVIEW_PAGING_ALL;
         } else {
             $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_PAGING_12;
@@ -370,8 +371,9 @@ class main implements renderable, templatable {
         $select = "instanceid $csql AND fieldid = :fieldid";
         $params['fieldid'] = $fieldid;
         $distinctablevalue = $DB->sql_compare_text('value');
-        $values = $DB->get_records_select_menu('customfield_data', $select, $params, $DB->sql_order_by_text('value'),
+        $values = $DB->get_records_select_menu('customfield_data', $select, $params, '',
             "DISTINCT $distinctablevalue, $distinctablevalue AS value2");
+        \core_collator::asort($values, \core_collator::SORT_NATURAL);
         $values = array_filter($values);
         if (!$values) {
             return [];

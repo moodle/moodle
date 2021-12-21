@@ -88,6 +88,9 @@ class Horde_Idna
      */
     protected static function _checkForError($info)
     {
+        if (!isset($info['errors'])) {
+            return;
+        }
         switch (true) {
         case $info['errors'] & IDNA_ERROR_EMPTY_LABEL:
             throw new Horde_Idna_Exception(Horde_Idna_Translation::t(

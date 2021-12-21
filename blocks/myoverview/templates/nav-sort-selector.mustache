@@ -36,21 +36,21 @@
                 {{#shortname}}{{#str}} shortname, block_myoverview {{/str}}{{/shortname}}
             </span>
         </button>
-        <ul class="dropdown-menu" data-show-active-item aria-labelledby="sortingdropdown">
+        <ul class="dropdown-menu" role="menu" data-show-active-item data-skip-active-class="true" aria-labelledby="sortingdropdown">
             <li>
-                <a class="dropdown-item {{#title}}active{{/title}}" href="#" data-filter="sort" data-pref="title" data-value="fullname" aria-label="{{#str}} aria:title, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+                <a class="dropdown-item" href="#" data-filter="sort" data-pref="title" data-value="fullname" aria-label="{{#str}} aria:title, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#title}}aria-current="true"{{/title}}>
                     {{#str}} title, block_myoverview {{/str}}
                 </a>
             </li>
             {{#showsortbyshortname}}
             <li>
-                <a class="dropdown-item {{#shortname}}active{{/shortname}}" href="#" data-filter="sort" data-pref="shortname" data-value="shortname" aria-label="{{#str}} aria:shortname, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+                <a class="dropdown-item" href="#" data-filter="sort" data-pref="shortname" data-value="shortname" aria-label="{{#str}} aria:shortname, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#shortname}}aria-current="true"{{/shortname}}>
                     {{#str}} shortname, block_myoverview {{/str}}
                 </a>
             </li>
              {{/showsortbyshortname}}
             <li>
-                <a class="dropdown-item {{#lastaccessed}}active{{/lastaccessed}}" href="#" data-filter="sort" data-pref="lastaccessed" data-value="ul.timeaccess desc" aria-label="{{#str}} aria:lastaccessed, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+                <a class="dropdown-item" href="#" data-filter="sort" data-pref="lastaccessed" data-value="ul.timeaccess desc" aria-label="{{#str}} aria:lastaccessed, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#lastaccessed}}aria-current="true"{{/lastaccessed}}>
                     {{#str}} lastaccessed, block_myoverview {{/str}}
                 </a>
             </li>

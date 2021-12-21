@@ -37,7 +37,7 @@ class CellHelper
         $columnIndex = 0;
 
         // Remove row information
-        $columnLetters = preg_replace('/\d/', '', $cellIndex);
+        $columnLetters = \preg_replace('/\d/', '', $cellIndex);
 
         // strlen() is super slow too... Using isset() is way faster and not too unreadable,
         // since we checked before that there are between 1 and 3 letters.
@@ -75,6 +75,6 @@ class CellHelper
      */
     protected static function isValidCellIndex($cellIndex)
     {
-        return (preg_match('/^[A-Z]{1,3}\d+$/', $cellIndex) === 1);
+        return (\preg_match('/^[A-Z]{1,3}\d+$/', $cellIndex) === 1);
     }
 }

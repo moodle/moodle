@@ -42,11 +42,11 @@ class qtype_match_test extends advanced_testcase {
     /** @var qtype_match instance of the question type class to test. */
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = new qtype_match();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 
@@ -134,7 +134,7 @@ class qtype_match_test extends advanced_testcase {
 
     public function test_get_random_guess_score() {
         $q = $this->get_test_question_data();
-        $this->assertEquals(0.3333333, $this->qtype->get_random_guess_score($q), '', 0.0000001);
+        $this->assertEqualsWithDelta(0.3333333, $this->qtype->get_random_guess_score($q), 0.0000001);
     }
 
     public function test_get_possible_responses() {
@@ -185,13 +185,13 @@ class qtype_match_test extends advanced_testcase {
 
         foreach ($questiondata as $property => $value) {
             if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated', 'options', 'stamp'))) {
-                $this->assertAttributeEquals($value, $property, $actualquestiondata);
+                $this->assertEquals($value, $actualquestiondata->$property);
             }
         }
 
         foreach ($questiondata->options as $optionname => $value) {
             if ($optionname != 'subquestions') {
-                $this->assertAttributeEquals($value, $optionname, $actualquestiondata->options);
+                $this->assertEquals($value, $actualquestiondata->options->$optionname);
             }
         }
 
@@ -202,7 +202,7 @@ class qtype_match_test extends advanced_testcase {
             $actualsubq = array_shift($actualquestiondata->options->subquestions);
             foreach ($subq as $subqproperty => $subqvalue) {
                 if (!in_array($subqproperty, $subqpropstoignore)) {
-                    $this->assertAttributeEquals($subqvalue, $subqproperty, $actualsubq);
+                    $this->assertEquals($subqvalue, $actualsubq->$subqproperty);
                 }
             }
         }

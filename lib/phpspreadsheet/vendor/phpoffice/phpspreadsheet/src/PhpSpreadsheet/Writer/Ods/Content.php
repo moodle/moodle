@@ -16,11 +16,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Cell\Comment;
 
 /**
- * @category   PhpSpreadsheet
- *
- * @method Ods getParentWriter
- *
- * @copyright  Copyright (c) 2006 - 2015 PhpSpreadsheet (https://github.com/PHPOffice/PhpSpreadsheet)
  * @author     Alexander Pervakov <frost-nzcr4@jagmort.com>
  */
 class Content extends WriterPart
@@ -29,10 +24,20 @@ class Content extends WriterPart
     const NUMBER_ROWS_REPEATED_MAX = 1048576;
     const CELL_STYLE_PREFIX = 'ce';
 
+    private $formulaConvertor;
+
+    /**
+     * Set parent Ods writer.
+     */
+    public function __construct(Ods $writer)
+    {
+        parent::__construct($writer);
+
+        $this->formulaConvertor = new Formula($this->getParentWriter()->getSpreadsheet()->getDefinedNames());
+    }
+
     /**
      * Write content.xml to XML format.
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      *
      * @return string XML Output
      */
@@ -98,7 +103,9 @@ class Content extends WriterPart
 
         $this->writeSheets($objWriter);
 
-        $objWriter->writeElement('table:named-expressions');
+        // Defined names (ranges and formulae)
+        (new NamedExpressions($objWriter, $this->getParentWriter()->getSpreadsheet(), $this->formulaConvertor))->write();
+
         $objWriter->endElement();
         $objWriter->endElement();
         $objWriter->endElement();
@@ -108,13 +115,10 @@ class Content extends WriterPart
 
     /**
      * Write sheets.
-     *
-     * @param XMLWriter $objWriter
      */
-    private function writeSheets(XMLWriter $objWriter)
+    private function writeSheets(XMLWriter $objWriter): void
     {
-        $spreadsheet = $this->getParentWriter()->getSpreadsheet(); // @var $spreadsheet Spreadsheet
-
+        $spreadsheet = $this->getParentWriter()->getSpreadsheet(); /** @var Spreadsheet $spreadsheet */
         $sheetCount = $spreadsheet->getSheetCount();
         for ($i = 0; $i < $sheetCount; ++$i) {
             $objWriter->startElement('table:table');
@@ -130,11 +134,8 @@ class Content extends WriterPart
 
     /**
      * Write rows of the specified sheet.
-     *
-     * @param XMLWriter $objWriter
-     * @param Worksheet $sheet
      */
-    private function writeRows(XMLWriter $objWriter, Worksheet $sheet)
+    private function writeRows(XMLWriter $objWriter, Worksheet $sheet): void
     {
         $numberRowsRepeated = self::NUMBER_ROWS_REPEATED_MAX;
         $span_row = 0;
@@ -166,13 +167,8 @@ class Content extends WriterPart
 
     /**
      * Write cells of the specified row.
-     *
-     * @param XMLWriter $objWriter
-     * @param Row $row
-     *
-     * @throws Exception
      */
-    private function writeCells(XMLWriter $objWriter, Row $row)
+    private function writeCells(XMLWriter $objWriter, Row $row): void
     {
         $numberColsRepeated = self::NUMBER_COLS_REPEATED_MAX;
         $prevColumn = -1;
@@ -212,7 +208,7 @@ class Content extends WriterPart
                             // don't do anything
                         }
                     }
-                    $objWriter->writeAttribute('table:formula', 'of:' . $cell->getValue());
+                    $objWriter->writeAttribute('table:formula', $this->formulaConvertor->convertFormula($cell->getValue()));
                     if (is_numeric($formulaValue)) {
                         $objWriter->writeAttribute('office:value-type', 'float');
                     } else {
@@ -258,11 +254,10 @@ class Content extends WriterPart
     /**
      * Write span.
      *
-     * @param XMLWriter $objWriter
      * @param int $curColumn
      * @param int $prevColumn
      */
-    private function writeCellSpan(XMLWriter $objWriter, $curColumn, $prevColumn)
+    private function writeCellSpan(XMLWriter $objWriter, $curColumn, $prevColumn): void
     {
         $diff = $curColumn - $prevColumn - 1;
         if (1 === $diff) {
@@ -276,11 +271,8 @@ class Content extends WriterPart
 
     /**
      * Write XF cell styles.
-     *
-     * @param XMLWriter $writer
-     * @param Spreadsheet $spreadsheet
      */
-    private function writeXfStyles(XMLWriter $writer, Spreadsheet $spreadsheet)
+    private function writeXfStyles(XMLWriter $writer, Spreadsheet $spreadsheet): void
     {
         foreach ($spreadsheet->getCellXfCollection() as $style) {
             $writer->startElement('style:style');
@@ -370,13 +362,8 @@ class Content extends WriterPart
 
     /**
      * Write attributes for merged cell.
-     *
-     * @param XMLWriter $objWriter
-     * @param Cell $cell
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    private function writeCellMerge(XMLWriter $objWriter, Cell $cell)
+    private function writeCellMerge(XMLWriter $objWriter, Cell $cell): void
     {
         if (!$cell->isMergeRangeValueCell()) {
             return;

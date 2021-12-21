@@ -17,8 +17,7 @@
 /**
  * Renderers for outputting parts of the question bank.
  *
- * @package    moodlecore
- * @subpackage questionbank
+ * @package    core_question
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,9 +37,10 @@ class core_question_bank_renderer extends plugin_renderer_base {
     /**
      * Display additional navigation if needed.
      *
+     * @param string $active
      * @return string
      */
-    public function extra_horizontal_navigation() {
+    public function extra_horizontal_navigation($active = null) {
         // Horizontal navigation for question bank.
         if ($questionnode = $this->page->settingsnav->find("questionbank", \navigation_node::TYPE_CONTAINER)) {
             if ($children = $questionnode->children) {
@@ -48,8 +48,11 @@ class core_question_bank_renderer extends plugin_renderer_base {
                 foreach ($children as $key => $node) {
                     $tabs[] = new \tabobject($node->key, $node->action, $node->text);
                 }
-                $active = $questionnode->find_active_node()->key;
-                return \html_writer::div(print_tabs([$tabs], $active, null, null, true), 'questionbank-navigation');
+                if (empty($active) && $questionnode->find_active_node()) {
+                    $active = $questionnode->find_active_node()->key;
+                }
+                return \html_writer::div(print_tabs([$tabs], $active, null, null, true),
+                        'questionbank-navigation');
             }
         }
         return '';
@@ -69,13 +72,98 @@ class core_question_bank_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render the column headers.
+     *
+     * @param array $qbankheaderdata
+     * @return bool|string
+     */
+    public function render_column_header($qbankheaderdata) {
+        return $this->render_from_template('core_question/column_header', $qbankheaderdata);
+    }
+
+    /**
+     * Render the column sort elements.
+     *
+     * @param array $sortdata
+     * @return bool|string
+     */
+    public function render_column_sort($sortdata) {
+        return $this->render_from_template('core_question/column_sort', $sortdata);
+    }
+
+    /**
      * Render a qbank_chooser.
      *
      * @param renderable $qbankchooser The chooser.
      * @return string
+     * @deprecated since Moodle 4.0
+     * @see \qbank_editquestion\output\renderer
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public function render_qbank_chooser(renderable $qbankchooser) {
+        debugging('Function render_qbank_chooser is deprecated,
+         please use qbank_editquestion renderer instead.', DEBUG_DEVELOPER);
         return $this->render_from_template('core_question/qbank_chooser', $qbankchooser->export_for_template($this));
+    }
+
+    /**
+     * Render category condition.
+     *
+     * @param array $displaydata
+     * @return bool|string
+     */
+    public function render_category_condition($displaydata) {
+        return $this->render_from_template('core_question/category_condition', $displaydata);
+    }
+
+    /**
+     * Render category condition advanced.
+     *
+     * @param array $displaydata
+     * @return bool|string
+     */
+    public function render_category_condition_advanced($displaydata) {
+        return $this->render_from_template('core_question/category_condition_advanced', $displaydata);
+    }
+
+    /**
+     * Render hidden condition advanced.
+     *
+     * @param array $displaydata
+     * @return bool|string
+     */
+    public function render_hidden_condition_advanced($displaydata) {
+        return $this->render_from_template('core_question/hidden_condition_advanced', $displaydata);
+    }
+
+    /**
+     * Render question pagination.
+     *
+     * @param array $displaydata
+     * @return bool|string
+     */
+    public function render_question_pagination($displaydata) {
+        return $this->render_from_template('core_question/question_pagination', $displaydata);
+    }
+
+    /**
+     * Render question showtext checkbox.
+     *
+     * @param array $displaydata
+     * @return bool|string
+     */
+    public function render_showtext_checkbox($displaydata) {
+        return $this->render_from_template('core_question/showtext_checkbox', $displaydata);
+    }
+
+    /**
+     * Render bulk actions ui.
+     *
+     * @param array $displaydata
+     * @return bool|string
+     */
+    public function render_bulk_actions_ui($displaydata) {
+        return $this->render_from_template('core_question/bulk_actions_ui', $displaydata);
     }
 
     /**
@@ -86,11 +174,23 @@ class core_question_bank_renderer extends plugin_renderer_base {
      * @param object $course The course that will be displayed
      * @param array $hiddenparams Any hidden parameters to add to the form
      * @return string The composed HTML for the questionbank chooser
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public function qbank_chooser($real, $fake, $course, $hiddenparams) {
         debugging('Method core_question_bank_renderer::qbank_chooser() is deprecated, ' .
-            'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
+                'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
         return '';
+    }
+
+    /**
+     * Get the rendered HTML for the action area in Question bank.
+     *
+     * @param \core_question\output\qbank_actionbar $qbankactionbar qbankactionbar object.
+     * @return string rendered HTML string from template.
+     */
+    public function qbank_action_menu(\core_question\output\qbank_actionbar $qbankactionbar): string {
+        return $this->render_from_template('core_question/qbank_action_menu',
+                $qbankactionbar->export_for_template($this));
     }
 
     /**
@@ -98,10 +198,11 @@ class core_question_bank_renderer extends plugin_renderer_base {
      *
      * @param array $types A set of question types as used by the qbank_chooser_module function
      * @return string The composed HTML for the module
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     protected function qbank_chooser_types($types) {
         debugging('Method core_question_bank_renderer::qbank_chooser_types() is deprecated, ' .
-            'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
+                'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
         return '';
     }
 
@@ -112,10 +213,11 @@ class core_question_bank_renderer extends plugin_renderer_base {
      * If the module contains subtypes in the types option, then these will also be displayed.
      * @param array $classes Additional classes to add to the encompassing div element
      * @return string The composed HTML for the question type
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     protected function qbank_chooser_qtype($qtype, $classes = array()) {
         debugging('Method core_question_bank_renderer::qbank_chooser_qtype() is deprecated, ' .
-            'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
+                'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
         return '';
     }
 
@@ -125,10 +227,12 @@ class core_question_bank_renderer extends plugin_renderer_base {
      * @param string $title The language string identifier
      * @param string $identifier The component identifier
      * @return string The composed HTML for the title
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     protected function qbank_chooser_title($title, $identifier = null) {
         debugging('Method core_question_bank_renderer::qbank_chooser_title() is deprecated, ' .
-            'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
+                'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
         return '';
     }
+
 }

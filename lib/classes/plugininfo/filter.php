@@ -58,6 +58,51 @@ class filter extends base {
         return $enabled;
     }
 
+    /**
+     * Enable or disable a plugin.
+     * When possible, the change will be stored into the config_log table, to let admins check when/who has modified it.
+     *
+     * @param string $pluginname The plugin name to enable/disable.
+     * @param int $enabled Whether the pluginname should be TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
+     *
+     * @return bool It always return true because we don't know if the value has changed or not. That way, we guarantee any action
+     * required if it's changed will be executed.
+     */
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $CFG;
+        require_once("$CFG->libdir/filterlib.php");
+        require_once("$CFG->libdir/weblib.php");
+
+        filter_set_global_state($pluginname, $enabled);
+        if ($enabled == TEXTFILTER_DISABLED) {
+            filter_set_applies_to_strings($pluginname, false);
+        }
+
+        reset_text_filters_cache();
+        \core_plugin_manager::reset_caches();
+
+        return true;
+    }
+
+    /**
+     * Returns current status for a pluginname.
+     *
+     * Filters have different values for enabled/disabled plugins so the current value needs to be calculated in a
+     * different way than the default method in the base class.
+     *
+     * @param string $pluginname The plugin name to check.
+     * @return int The current status (enabled, disabled...) of $pluginname.
+     */
+    public static function get_enabled_plugin(string $pluginname): int {
+        global $DB, $CFG;
+        require_once("$CFG->libdir/filterlib.php");
+
+        $conditions = ['filter' => $pluginname, 'contextid' => \context_system::instance()->id];
+        $record = $DB->get_record('filter_active', $conditions, 'active');
+
+        return $record ? (int) $record->active : TEXTFILTER_DISABLED;
+    }
+
     public function get_settings_section_name() {
         return 'filtersetting' . $this->name;
     }

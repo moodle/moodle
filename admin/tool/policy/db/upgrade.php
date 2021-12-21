@@ -34,32 +34,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_tool_policy_upgrade($oldversion) {
     global $DB;
 
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2018082900) {
-        // Add field agreementstyle to the table tool_policy_versions.
-        $table = new xmldb_table('tool_policy_versions');
-        $field = new xmldb_field('agreementstyle', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'policyid');
-
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_plugin_savepoint(true, 2018082900, 'tool', 'policy');
-    }
-
-    if ($oldversion < 2018091800) {
-        // Add field "optional" to the table "tool_policy_versions".
-        $table = new xmldb_table('tool_policy_versions');
-        $field = new xmldb_field('optional', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'agreementstyle');
-
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_plugin_savepoint(true, 2018091800, 'tool', 'policy');
-    }
-
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
 

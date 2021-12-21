@@ -967,6 +967,35 @@ class question_usage_by_activity {
 
         return $quba;
     }
+
+    /**
+     * Preload users of all question attempt steps.
+     *
+     * @throws dml_exception
+     */
+    public function preload_all_step_users(): void {
+        global $DB;
+
+        // Get all user ids.
+        $userids = [];
+        foreach ($this->questionattempts as $qa) {
+            foreach ($qa->get_full_step_iterator() as $step) {
+                $userids[$step->get_user_id()] = 1;
+            }
+        }
+
+        // Load user information.
+        $users = $DB->get_records_list('user', 'id', array_keys($userids), '', '*');
+        // Update user information for steps.
+        foreach ($this->questionattempts as $qa) {
+            foreach ($qa->get_full_step_iterator() as $step) {
+                $user = $users[$step->get_user_id()];
+                if (isset($user)) {
+                    $step->add_full_user_object($user);
+                }
+            }
+        }
+    }
 }
 
 

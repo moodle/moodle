@@ -22,7 +22,7 @@
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tests\core_course;
+namespace core_course;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +35,7 @@ use core_course\local\repository\caching_content_item_readonly_repository;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class caching_content_item_readonly_repository_testcase extends \advanced_testcase {
+class caching_content_item_readonly_repository_test extends \advanced_testcase {
     /**
      * Test verifying that content items are cached and returned from the cache in subsequent same-request calls.
      */

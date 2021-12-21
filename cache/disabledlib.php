@@ -313,13 +313,13 @@ class cache_factory_disabled extends cache_factory {
             self::set_state(self::STATE_INITIALISING);
             if ($class === 'cache_config_disabled') {
                 $configuration = $class::create_default_configuration();
+                $this->configs[$class] = new $class;
             } else {
                 $configuration = false;
-                if (!cache_config::config_file_exists()) {
-                    cache_config_writer::create_default_configuration(true);
-                }
+                // If we need a writer, we should get the classname from the generic factory.
+                // This is so alternative classes can be used if a different writer is required.
+                $this->configs[$class] = parent::get_disabled_writer();
             }
-            $this->configs[$class] = new $class;
             $this->configs[$class]->load($configuration);
         }
         self::set_state(self::STATE_READY);

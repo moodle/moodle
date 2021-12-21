@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die;
 $functions = [
     'gradingform_rubric_grader_gradingpanel_fetch' => [
         'classname' => 'gradingform_rubric\\grades\\grader\\gradingpanel\\external\\fetch',
-        'methodname' => 'execute',
         'description' => 'Fetch the data required to display the grader grading panel, ' .
             'creating the grade item if required',
         'type' => 'write',
@@ -35,7 +34,6 @@ $functions = [
     ],
     'gradingform_rubric_grader_gradingpanel_store' => [
         'classname' => 'gradingform_rubric\\grades\\grader\\gradingpanel\\external\\store',
-        'methodname' => 'execute',
         'description' => 'Store the grading data for a user from the grader grading panel.',
         'type' => 'write',
         'ajax' => true,

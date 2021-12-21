@@ -34,17 +34,17 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 return new class extends phpunit_coverage_info {
-    /** @var array The list of folders relative to the plugin root to whitelist in coverage generation. */
-    protected $whitelistfolders = [
+    /** @var array The list of folders relative to the plugin root to include in coverage generation. */
+    protected $includelistfolders = [
         'classes',
     ];
 
-    /** @var array The list of files relative to the plugin root to whitelist in coverage generation. */
-    protected $whitelistfiles = [];
+    /** @var array The list of files relative to the plugin root to include in coverage generation. */
+    protected $includelistfiles = [];
 
-    /** @var array The list of folders relative to the plugin root to excludelist in coverage generation. */
+    /** @var array The list of folders relative to the plugin root to exclude from coverage generation. */
     protected $excludelistfolders = [];
 
-    /** @var array The list of files relative to the plugin root to excludelist in coverage generation. */
+    /** @var array The list of files relative to the plugin root to exclude from coverage generation. */
     protected $excludelistfiles = [];
 };

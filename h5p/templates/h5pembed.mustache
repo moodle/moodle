@@ -18,9 +18,13 @@
     @template core_h5p/h5pembed
 
     This template will render the embed code shown in the H5P content embed popup.
+    H5P implements iframe autoheight but if the content is not available it does
+    not work and we need ensure a minimum height using javascript. Otherwise the user
+    will not see the error.
 
     Variables required for this template:
     * embedurl - The URL with the H5P file to embed
+    * editurl - The URL for the edit button; if it's empty, the edit button won't be displayed.
 
     Example context (json):
     {
@@ -30,5 +34,9 @@
 }}
 <iframe src="{{embedurl}}" name="h5player" width=":w" height=":h"
    allowfullscreen="allowfullscreen" class="h5p-player w-100 border-0"
-   style="min-height: 230px;">
+   style="height: 0px;" id="{{uniqid}}-h5player">
 </iframe>
+
+{{#editurl}}
+    <a href="{{editurl}}">{{#str}}editcontent, core_h5p{{/str}}</a>
+{{/editurl}}

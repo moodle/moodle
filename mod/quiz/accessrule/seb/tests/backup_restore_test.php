@@ -44,7 +44,7 @@ class quizaccess_seb_backup_restore_testcase extends advanced_testcase {
     /**
      * Called before every test.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $USER;
 
         parent::setUp();

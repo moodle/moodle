@@ -157,6 +157,15 @@ class qtype_numerical extends question_type {
         return true;
     }
 
+    public function save_defaults_for_new_questions(stdClass $fromform): void {
+        parent::save_defaults_for_new_questions($fromform);
+        $this->set_default_value('unitrole', $fromform->unitrole);
+        $this->set_default_value('unitpenalty', $fromform->unitpenalty);
+        $this->set_default_value('unitgradingtypes', $fromform->unitgradingtypes);
+        $this->set_default_value('multichoicedisplay', $fromform->multichoicedisplay);
+        $this->set_default_value('unitsleft', $fromform->unitsleft);
+    }
+
     /**
      * Save the units and the answers associated with this question.
      */
@@ -359,6 +368,7 @@ class qtype_numerical extends question_type {
         $question->unitdisplay = $questiondata->options->showunits;
         $question->unitgradingtype = $questiondata->options->unitgradingtype;
         $question->unitpenalty = $questiondata->options->unitpenalty;
+        $question->unitsleft = $questiondata->options->unitsleft;
         $question->ap = $this->make_answer_processor($questiondata->options->units,
                 $questiondata->options->unitsleft);
     }

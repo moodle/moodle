@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20200911" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20211106" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -89,6 +89,7 @@
         <FIELD NAME="showreports" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="visibleold" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="the state of visible field when hiding parent category, this helps us to recover hidden states when unhiding the parent category later"/>
+        <FIELD NAME="downloadcontent" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="groupmode" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="groupmodeforce" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="defaultgroupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="default grouping used in course modules, does not have key intentionally"/>
@@ -102,6 +103,8 @@
         <FIELD NAME="completionnotify" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Notify users when they complete this course"/>
         <FIELD NAME="cacherev" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Incrementing revision for validating the course content cache"/>
         <FIELD NAME="originalcourseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the id of the source course when a new course originates from a restore of another course on the same site."/>
+        <FIELD NAME="showactivitydates" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether to display activity dates to user. 0 = do not display, 1 = display activity dates"/>
+        <FIELD NAME="showcompletionconditions" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether to display completion conditions to user. 0 = do not display, 1 = display conditions"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -301,9 +304,11 @@
         <FIELD NAME="completiongradeitemnumber" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Grade-item number used to track automatic completion, if applicable."/>
         <FIELD NAME="completionview" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Controls whether a page view is part of the automatic completion requirements for this activity. 0 = view not required 1 = view required"/>
         <FIELD NAME="completionexpected" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Date at which students are expected to complete this activity. This field is used when displaying student progress."/>
+        <FIELD NAME="completionpassgrade" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Enable completion check on passing grade."/>
         <FIELD NAME="showdescription" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Some module types support a 'description' which shows within the module pages. This option controls whether it also displays on the course main page. 0 = does not display (default), 1 = displays"/>
         <FIELD NAME="availability" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Availability restrictions for viewing this activity, in JSON format. Null if no restrictions."/>
         <FIELD NAME="deletioninprogress" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="downloadcontent" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether the ability to download course module content is enabled for this activity" DEFAULT="1"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -464,8 +469,8 @@
         <INDEX NAME="type-timesort" UNIQUE="false" FIELDS="type, timesort"/>
         <INDEX NAME="groupid-courseid-categoryid-visible-userid" UNIQUE="false" FIELDS="groupid, courseid, categoryid, visible, userid" COMMENT="used for calendar view"/>
         <INDEX NAME="eventtype" UNIQUE="false" FIELDS="eventtype"/>
-        <INDEX NAME="modulename-instance" UNIQUE="false" FIELDS="modulename, instance"/>
         <INDEX NAME="component" UNIQUE="false" FIELDS="component, eventtype, instance"/>
+        <INDEX NAME="modulename-instance-eventtype" UNIQUE="false" FIELDS="modulename, instance, eventtype" COMMENT="Improve performance on assign adhoc tasks."/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="cache_filters" COMMENT="For keeping information about cached data">
@@ -834,11 +839,6 @@
         <FIELD NAME="lastname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="emailstop" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="icq" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="skype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="yahoo" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="aim" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="msn" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="phone1" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="phone2" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="institution" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
@@ -857,7 +857,6 @@
         <FIELD NAME="lastip" TYPE="char" LENGTH="45" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="secret" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="picture" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 means no image uploaded, positive values are revisions thta prevent caching problems, negative values are reserved for future use"/>
-        <FIELD NAME="url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="mailformat" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
@@ -908,6 +907,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid-name" UNIQUE="true" FIELDS="userid, name"/>
+        <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="user_lastaccess" COMMENT="To keep track of course page access times, used in online participants block, and participants list">
@@ -1919,6 +1919,7 @@
         <INDEX NAME="itemtype-needsupdate" UNIQUE="false" FIELDS="itemtype, needsupdate" COMMENT="used in grading cron"/>
         <INDEX NAME="gradetype" UNIQUE="false" FIELDS="gradetype" COMMENT="index for gradetype"/>
         <INDEX NAME="idnumber-courseid" UNIQUE="false" FIELDS="idnumber, courseid" COMMENT="non unique index (although programatically we are guarantying some sort of uniqueness both under this table and the course_modules one). TODO: We need a central store of module idnumbers in the future."/>
+        <INDEX NAME="itemtype-mod-inst-course" UNIQUE="false" FIELDS="itemtype, itemmodule, iteminstance, courseid" COMMENT="used in grading and course views"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="grade_grades" COMMENT="grade_grades  This table keeps individual grades for each user and each item, exactly as imported or submitted by modules. The rawgrademax/min and rawscaleid are stored here to record the values at the time the grade was stored, because teachers might change this for an activity! All the results are normalised/resampled for the final grade value.">
@@ -2244,7 +2245,6 @@
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="enrolmentkey" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="picture" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="hidepicture" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
@@ -3188,6 +3188,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="backpackcredentials" TYPE="unique" FIELDS="userid, externalbackpackid"/>
         <KEY NAME="externalbackpack" TYPE="foreign" FIELDS="externalbackpackid" REFTABLE="badge_external_backpack" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
@@ -3275,7 +3276,6 @@
         <FIELD NAME="backpackweburl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="apiversion" TYPE="char" LENGTH="12" NOTNULL="true" DEFAULT="1.0" SEQUENCE="false"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Password to login into external backpack and issue badges."/>
         <FIELD NAME="oauth2_issuerid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="OAuth 2 Issuer"/>
       </FIELDS>
       <KEYS>
@@ -3821,6 +3821,8 @@
         <FIELD NAME="basicauth" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Use HTTP Basic authentication scheme when sending client ID and password"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The defined sort order."/>
         <FIELD NAME="requireconfirmation" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="servicetype" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Issuer service type, such as 'google' or 'facebook'."/>
+        <FIELD NAME="loginpagename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -3850,7 +3852,7 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time this record was created."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who modified this record."/>
         <FIELD NAME="issuerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The oauth issuer."/>
-        <FIELD NAME="externalfield" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The fieldname returned by the userinfo endpoint."/>
+        <FIELD NAME="externalfield" TYPE="char" LENGTH="500" NOTNULL="true" SEQUENCE="false" COMMENT="The fieldname returned by the userinfo endpoint."/>
         <FIELD NAME="internalfield" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the Moodle field this user field maps to."/>
       </FIELDS>
       <KEYS>
@@ -3867,6 +3869,7 @@
         <FIELD NAME="completion" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="completionview" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="completionusegrade" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completionpassgrade" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="completionexpected" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="customrules" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
@@ -4198,6 +4201,9 @@
         <FIELD NAME="coremajor" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="H5P core API major version required"/>
         <FIELD NAME="coreminor" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="H5P core API minor version required"/>
         <FIELD NAME="metadatasettings" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Library metadata settings"/>
+        <FIELD NAME="tutorial" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Tutorial URL"/>
+        <FIELD NAME="example" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Example URL"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Defines if this library is enabled (1) or not (0)"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -4268,6 +4274,7 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="contenttype" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="References context.id."/>
+        <FIELD NAME="visibility" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="configdata" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The original author of the content"/>
@@ -4286,6 +4293,60 @@
         <INDEX NAME="instance" UNIQUE="false" FIELDS="contextid, contenttype, instanceid"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="payment_accounts" COMMENT="Payment accounts">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="archived" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="payment_gateways" COMMENT="Configuration for one gateway for one payment account">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="accountid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="gateway" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="config" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="accountid" TYPE="foreign" FIELDS="accountid" REFTABLE="payment_accounts" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="payments" COMMENT="Stores information about payments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The plugin this payment belongs to."/>
+        <FIELD NAME="paymentarea" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="The name of payable area"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="amount" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="accountid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="gateway" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="accountid" TYPE="foreign" FIELDS="accountid" REFTABLE="payment_accounts" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="gateway" UNIQUE="false" FIELDS="gateway"/>
+        <INDEX NAME="component-paymentarea-itemid" UNIQUE="false" FIELDS="component, paymentarea, itemid"/>
+      </INDEXES>
+    </TABLE>
     <TABLE NAME="infected_files" COMMENT="Table to store infected file details.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
@@ -4298,6 +4359,111 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key for the userid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="oauth2_refresh_token" COMMENT="Stores refresh tokens which can be exchanged for access tokens">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time this record was created."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time this record was modified."/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user to whom this refresh token belongs."/>
+        <FIELD NAME="issuerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Corresponding oauth2 issuer"/>
+        <FIELD NAME="token" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="refresh token"/>
+        <FIELD NAME="scopehash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="sha1 hash of the scopes used when requesting the refresh token"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="issueridkey" TYPE="foreign" FIELDS="issuerid" REFTABLE="oauth2_issuer" REFFIELDS="id" COMMENT="Issuer id foreign key"/>
+        <KEY NAME="useridkey" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="User id foreign key"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-issuerid-scopehash" UNIQUE="true" FIELDS="userid, issuerid, scopehash"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="reportbuilder_report" COMMENT="Table to represent a report">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="uniquerows" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="conditiondata" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="settingsdata" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="area" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="reportbuilder_column" COMMENT="Table to represent a report column">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="reportid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="uniqueidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="aggregation" TYPE="char" LENGTH="32" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="heading" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="columnorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sortenabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="sortdirection" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="reportid" TYPE="foreign" FIELDS="reportid" REFTABLE="reportbuilder_report" REFFIELDS="id"/>
+        <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="reportbuilder_filter" COMMENT="Table to represent a report filter/condition">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="reportid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="uniqueidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="heading" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="iscondition" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="filterorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="reportid" TYPE="foreign" FIELDS="reportid" REFTABLE="reportbuilder_report" REFFIELDS="id"/>
+        <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="reportbuilder_audience" COMMENT="Defines report audience">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="reportid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="classname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="configdata" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="reportid" TYPE="foreign" FIELDS="reportid" REFTABLE="reportbuilder_report" REFFIELDS="id"/>
+        <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

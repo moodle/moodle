@@ -234,9 +234,32 @@ class mod_wiki_renderer extends plugin_renderer_base {
 
         return $output;
     }
+
+    /**
+     * Print the wiki activity information and intro
+     *
+     * @return string
+     * @deprecated since 4.0. Now handled in PAGE's activity header
+     */
     public function wiki_info() {
-        return $this->output->box(format_module_intro('wiki',
+        global $USER;
+
+        debugging(
+            'wiki_info() is deprecated. Output is handled within the $PAGE->activityheader instead.',
+            DEBUG_DEVELOPER
+        );
+
+        // Display any activity information (eg completion requirements / dates).
+        $cminfo = cm_info::create($this->page->cm);
+        $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+        $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+        $info = $this->output->activity_information($cminfo, $completiondetails, $activitydates);
+
+        // Add the rest of the wiki info.
+        $info .= $this->output->box(format_module_intro('wiki',
                 $this->page->activityrecord, $this->page->cm->id), 'generalbox', 'intro');
+
+        return $info;
     }
 
     public function tabs($page, $tabitems, $options) {
@@ -530,6 +553,17 @@ class mod_wiki_renderer extends plugin_renderer_base {
         $result .= '</ul>';
 
         return $result;
+    }
+
+    /**
+     * Renders the action bar.
+     *
+     * @param \mod_wiki\output\action_bar $actionbar
+     * @return string The HTML output
+     */
+    public function render_action_bar(\mod_wiki\output\action_bar $actionbar): string {
+        $data = $actionbar->export_for_template($this);
+        return $this->render_from_template('mod_wiki/action_bar', $data);
     }
 }
 

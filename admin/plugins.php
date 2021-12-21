@@ -53,7 +53,6 @@ $pageurl = new moodle_url('/admin/plugins.php', $pageparams);
 $pluginman = core_plugin_manager::instance();
 
 if ($uninstall) {
-    require_sesskey();
 
     if (!$confirmed) {
         admin_externalpage_setup('pluginsoverview', '', $pageparams);
@@ -92,6 +91,7 @@ if ($uninstall) {
         exit();
 
     } else {
+        require_sesskey();
         $SESSION->pluginuninstallreturn = $pluginfo->get_return_url_after_uninstall($return);
         $progress = new progress_trace_buffer(new text_progress_trace(), false);
         $pluginman->uninstall_plugin($pluginfo->component, $progress);

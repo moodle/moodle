@@ -17,7 +17,6 @@
  * Message users.
  *
  * @module     report_insights/message_users
- * @package    report_insights
  * @copyright  2019 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -95,7 +94,7 @@ define(['jquery', 'core/str', 'core/log', 'core/modal_factory', 'core/modal_even
      * @method showSendMessage
      * @private
      * @param {Object} users Prediction id to user id mapping.
-     * @return {Promise}
+     * @returns {Promise}
      */
     MessageUsers.prototype.showSendMessage = function(users) {
 
@@ -145,8 +144,7 @@ define(['jquery', 'core/str', 'core/log', 'core/modal_factory', 'core/modal_even
      * @method submitSendMessage
      * @private
      * @param {Object} users Prediction id to user id mapping.
-     * @param {Event} e Form submission event.
-     * @return {Promise}
+     * @returns {Promise}
      */
     MessageUsers.prototype.submitSendMessage = function(users) {
 
@@ -199,7 +197,7 @@ define(['jquery', 'core/str', 'core/log', 'core/modal_factory', 'core/modal_even
          * @method init
          * @param {String} rootNode
          * @param {String} actionName
-         * @return {MessageUsers}
+         * @returns {MessageUsers}
          */
         'init': function(rootNode, actionName) {
             return new MessageUsers(rootNode, actionName);

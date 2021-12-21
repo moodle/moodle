@@ -1,17 +1,22 @@
-<?xml version="1.0"?>
-<!DOCTYPE adodb_schema [
 <!ELEMENT schema (table*, sql*)>
 <!ATTLIST schema version CDATA #REQUIRED>
 <!ELEMENT table (descr?, (field+|DROP), constraint*, opt*, index*, data*)>
-<!ATTLIST table name CDATA #REQUIRED platform CDATA #IMPLIED version CDATA #IMPLIED>
+<!ATTLIST table
+	name CDATA #REQUIRED
+	platform CDATA #IMPLIED
+	version CDATA #IMPLIED>
 <!ELEMENT field (descr?, (NOTNULL|KEY|PRIMARY)?, (AUTO|AUTOINCREMENT)?, (DEFAULT|DEFDATE|DEFTIMESTAMP)?, NOQUOTE?, UNSIGNED?, constraint*, opt*)>
-<!ATTLIST field name CDATA #REQUIRED type (C|C2|X|X2|B|D|T|L|I|F|N) #REQUIRED size CDATA #IMPLIED opts CDATA #IMPLIED>
+<!ATTLIST
+	field name CDATA #REQUIRED
+	type (C|C2|X|X2|XL|B|D|T|L|I|I1|I2|I4|I8|F|N) #REQUIRED
+	size CDATA #IMPLIED
+	opts CDATA #IMPLIED>
 <!ELEMENT data (descr?, row+)>
 <!ATTLIST data platform CDATA #IMPLIED>
 <!ELEMENT row (f+)>
-<!ELEMENT f (#CDATA)>
+<!ELEMENT f (#PCDATA)>
 <!ATTLIST f name CDATA #IMPLIED>
-<!ELEMENT descr (#CDATA)>
+<!ELEMENT descr (#PCDATA)>
 <!ELEMENT NOTNULL EMPTY>
 <!ELEMENT KEY EMPTY>
 <!ELEMENT PRIMARY EMPTY>
@@ -24,20 +29,25 @@
 <!ELEMENT NOQUOTE EMPTY>
 <!ELEMENT UNSIGNED EMPTY>
 <!ELEMENT DROP EMPTY>
-<!ELEMENT constraint (#CDATA)>
+<!ELEMENT constraint (#PCDATA)>
 <!ATTLIST constraint platform CDATA #IMPLIED>
-<!ELEMENT opt (#CDATA)>
+<!ELEMENT opt (#PCDATA)>
 <!ATTLIST opt platform CDATA #IMPLIED>
 <!ELEMENT index ((col+|DROP), CLUSTERED?, BITMAP?, UNIQUE?, FULLTEXT?, HASH?, descr?)>
-<!ATTLIST index name CDATA #REQUIRED platform CDATA #IMPLIED>
-<!ELEMENT col (#CDATA)>
+<!ATTLIST index
+	name CDATA #REQUIRED
+	platform CDATA #IMPLIED>
+<!ELEMENT col (#PCDATA)>
 <!ELEMENT CLUSTERED EMPTY>
 <!ELEMENT BITMAP EMPTY>
 <!ELEMENT UNIQUE EMPTY>
 <!ELEMENT FULLTEXT EMPTY>
 <!ELEMENT HASH EMPTY>
 <!ELEMENT sql (query+, descr?)>
-<!ATTLIST sql name CDATA #IMPLIED platform CDATA #IMPLIED, key CDATA, prefixmethod (AUTO|MANUAL|NONE)>
-<!ELEMENT query (#CDATA)>
+<!ATTLIST sql
+	name CDATA #IMPLIED
+	platform CDATA #IMPLIED
+	key CDATA #IMPLIED
+	prefixmethod (AUTO|MANUAL|NONE) #IMPLIED>
+<!ELEMENT query (#PCDATA)>
 <!ATTLIST query platform CDATA #IMPLIED>
-]>

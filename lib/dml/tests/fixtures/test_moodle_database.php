@@ -249,7 +249,7 @@ abstract class test_moodle_database extends moodle_database {
     /**
      * Default implementation, throws Exception
      * @param string $table
-     * @param StdObject $dataobject
+     * @param object|array $dataobject
      * @param bool $returnid
      * @param bool $bulk
      * @return bool|int true or new id
@@ -338,6 +338,19 @@ abstract class test_moodle_database extends moodle_database {
      */
     public function sql_concat_join($separator = "' '", $elements = []) {
         throw new Exception("sql_concat_join() not implemented");
+    }
+
+    /**
+     * Default implementation, throws Exception
+     *
+     * @param string $field
+     * @param string $separator
+     * @param string $sort
+     * @return string
+     * @throws Exception
+     */
+    public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {
+        throw new Exception('sql_group_concat() not implemented');
     }
 
     /**

@@ -20,13 +20,11 @@
  * This is also responsible for opening the pop-up window, if the quiz requires to be in one.
  *
  * @module    mod_quiz/preflightcheck
- * @class     preflightcheck
- * @package   mod_quiz
  * @copyright 2016 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     3.1
  */
-define(['jquery', 'core/yui'], function($, Y) {
+define(['jquery', 'core/yui', 'core_form/changechecker'], function($, Y, FormChangeChecker) {
 
     /**
      * @alias module:mod_quiz/preflightcheck
@@ -94,14 +92,15 @@ define(['jquery', 'core/yui'], function($, Y) {
 
         /**
          * Event handler for the quiz start attempt button.
-          * @param {Event} e the event being responded to
-          * @param {Object} popupoptions
+         * @param {Event} e the event being responded to
+         * @param {Object} popupoptions
          */
         launchQuizPopup: function(e, popupoptions) {
             e.halt();
-            Y.use('moodle-core-formchangechecker', 'io-form', function() {
-                M.core_formchangechecker.reset_form_dirty_state();
+            Y.use('io-form', function() {
                 var form = e.target.ancestor('form');
+
+                FormChangeChecker.resetFormDirtyState(form.getDOMNode());
                 window.openpopup(e, {
                     url: form.get('action') + '?' + Y.IO.stringify(form).replace(/\bcancel=/, 'x='),
                     windowname: 'quizpopup',

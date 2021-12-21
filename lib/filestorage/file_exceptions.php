@@ -46,7 +46,7 @@ class file_exception extends moodle_exception {
 }
 
 /**
- * Can not create file exception.
+ * Cannot create file exception.
  *
  * @package   core_files
  * @category  files

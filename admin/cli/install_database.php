@@ -56,6 +56,7 @@ Options:
 --agree-license       Indicates agreement with software license.
 --fullname=STRING     Name of the site
 --shortname=STRING    Name of the site
+--summary=STRING      The summary to be displayed on the front page
 -h, --help            Print out this help
 
 Example:
@@ -96,6 +97,7 @@ list($options, $unrecognized) = cli_get_params(
         'adminemail'        => '',
         'fullname'          => '',
         'shortname'         => '',
+        'summary'           => '',
         'agree-license'     => false,
         'help'              => false
     ),
@@ -103,6 +105,11 @@ list($options, $unrecognized) = cli_get_params(
         'h' => 'help'
     )
 );
+
+if ($unrecognized) {
+    $unrecognized = implode("\n  ", $unrecognized);
+    cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
+}
 
 // We show help text even if tables are installed.
 if ($options['help']) {

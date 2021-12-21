@@ -114,6 +114,17 @@ class provider implements
             'info' => 'privacy:metadata:log:info'
         ], 'privacy:metadata:log');
 
+        // The oauth2_refresh_token stores refresh tokens, allowing ongoing access to select oauth2 services.
+        // Such tokens are not considered to be user data.
+        $collection->add_database_table('oauth2_refresh_token', [
+            'timecreated' => 'privacy:metadata:oauth2_refresh_token:timecreated',
+            'timemodified' => 'privacy:metadata:oauth2_refresh_token:timemodified',
+            'userid' => 'privacy:metadata:oauth2_refresh_token:userid',
+            'issuerid' => 'privacy:metadata:oauth2_refresh_token:issuerid',
+            'token' => 'privacy:metadata:oauth2_refresh_token:token',
+            'scopehash' => 'privacy:metadata:oauth2_refresh_token:scopehash'
+        ], 'privacy:metadata:oauth2_refresh_token');
+
         return $collection;
     }
 

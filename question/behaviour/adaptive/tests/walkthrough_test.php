@@ -110,7 +110,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_incorrect_expectation(),
                 $this->get_contains_penalty_info_expectation(1.00),
                 $this->get_does_not_contain_total_penalty_expectation());
-        $this->assertRegExp('/B|C/',
+        $this->assertMatchesRegularExpression('/B|C/',
                 $this->quba->get_response_summary($this->slot));
 
         // Process a change of answer to the right one, but not sumbitted.
@@ -124,7 +124,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_mc_radio_expectation($rightindex, true, true),
                 $this->get_contains_mc_radio_expectation(($rightindex + 1) % 3, true, false),
                 $this->get_contains_mc_radio_expectation(($rightindex + 2) % 3, true, false));
-        $this->assertRegExp('/B|C/',
+        $this->assertMatchesRegularExpression('/B|C/',
                 $this->quba->get_response_summary($this->slot));
 
         // Now submit the right answer.
@@ -181,7 +181,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_partcorrect_expectation());
 
         $autogradedstep = $this->get_step($this->get_step_count() - 2);
-        $this->assertEquals($autogradedstep->get_fraction(), 1, '', 0.0000001);
+        $this->assertEqualsWithDelta($autogradedstep->get_fraction(), 1, 0.0000001);
     }
 
     public function test_adaptive_multichoice2() {

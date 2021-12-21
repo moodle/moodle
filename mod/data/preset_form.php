@@ -30,11 +30,17 @@ class data_import_preset_zip_form extends moodleform {
 
         $this->_form->addElement('hidden', 'd');
         $this->_form->setType('d', PARAM_INT);
+        $this->_form->addElement('hidden', 'mode', 'import');
+        $this->_form->setType('mode', PARAM_ALPHANUM);
         $this->_form->addElement('hidden', 'action', 'importzip');
         $this->_form->setType('action', PARAM_ALPHANUM);
         $this->_form->addElement('filepicker', 'importfile', get_string('chooseorupload', 'data'));
         $this->_form->addRule('importfile', null, 'required');
-        $this->_form->addElement('submit', 'uploadzip', get_string('import'));
+        $buttons = [
+            $this->_form->createElement('submit', 'submitbutton', get_string('save')),
+            $this->_form->createElement('cancel'),
+        ];
+        $this->_form->addGroup($buttons, 'buttonar', '', [' '], false);
     }
 }
 

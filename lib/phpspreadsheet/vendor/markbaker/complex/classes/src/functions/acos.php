@@ -16,7 +16,7 @@ namespace Complex;
  * @return    Complex          The inverse cosine of the complex argument.
  * @throws    Exception        If argument isn't a valid real or complex number.
  */
-function acos($complex)
+function acos($complex): Complex
 {
     $complex = Complex::validateComplexArgument($complex);
 

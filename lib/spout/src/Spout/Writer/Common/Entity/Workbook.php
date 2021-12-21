@@ -19,7 +19,7 @@ class Workbook
      */
     public function __construct()
     {
-        $this->internalId = uniqid();
+        $this->internalId = \uniqid();
     }
 
     /**

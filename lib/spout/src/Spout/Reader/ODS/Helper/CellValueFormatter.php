@@ -22,9 +22,11 @@ class CellValueFormatter
 
     /** Definition of XML nodes names used to parse data */
     const XML_NODE_P = 'p';
-    const XML_NODE_S = 'text:s';
-    const XML_NODE_A = 'text:a';
-    const XML_NODE_SPAN = 'text:span';
+    const XML_NODE_TEXT_A = 'text:a';
+    const XML_NODE_TEXT_SPAN = 'text:span';
+    const XML_NODE_TEXT_S = 'text:s';
+    const XML_NODE_TEXT_TAB = 'text:tab';
+    const XML_NODE_TEXT_LINE_BREAK = 'text:line-break';
 
     /** Definition of XML attributes used to parse data */
     const XML_ATTRIBUTE_TYPE = 'office:value-type';
@@ -40,6 +42,13 @@ class CellValueFormatter
 
     /** @var \Box\Spout\Common\Helper\Escaper\ODS Used to unescape XML data */
     protected $escaper;
+
+    /** @var array List of XML nodes representing whitespaces and their corresponding value */
+    private static $WHITESPACE_XML_NODES = [
+        self::XML_NODE_TEXT_S => ' ',
+        self::XML_NODE_TEXT_TAB => "\t",
+        self::XML_NODE_TEXT_LINE_BREAK => "\n",
+    ];
 
     /**
      * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
@@ -96,27 +105,69 @@ class CellValueFormatter
         $pNodes = $node->getElementsByTagName(self::XML_NODE_P);
 
         foreach ($pNodes as $pNode) {
-            $currentPValue = '';
-
-            foreach ($pNode->childNodes as $childNode) {
-                if ($childNode instanceof \DOMText) {
-                    $currentPValue .= $childNode->nodeValue;
-                } elseif ($childNode->nodeName === self::XML_NODE_S) {
-                    $spaceAttribute = $childNode->getAttribute(self::XML_ATTRIBUTE_C);
-                    $numSpaces = (!empty($spaceAttribute)) ? (int) $spaceAttribute : 1;
-                    $currentPValue .= str_repeat(' ', $numSpaces);
-                } elseif ($childNode->nodeName === self::XML_NODE_A || $childNode->nodeName === self::XML_NODE_SPAN) {
-                    $currentPValue .= $childNode->nodeValue;
-                }
-            }
-
-            $pNodeValues[] = $currentPValue;
+            $pNodeValues[] = $this->extractTextValueFromNode($pNode);
         }
 
-        $escapedCellValue = implode("\n", $pNodeValues);
+        $escapedCellValue = \implode("\n", $pNodeValues);
         $cellValue = $this->escaper->unescape($escapedCellValue);
 
         return $cellValue;
+    }
+
+    /**
+     * @param $pNode
+     * @return string
+     */
+    private function extractTextValueFromNode($pNode)
+    {
+        $textValue = '';
+
+        foreach ($pNode->childNodes as $childNode) {
+            if ($childNode instanceof \DOMText) {
+                $textValue .= $childNode->nodeValue;
+            } elseif ($this->isWhitespaceNode($childNode->nodeName)) {
+                $textValue .= $this->transformWhitespaceNode($childNode);
+            } elseif ($childNode->nodeName === self::XML_NODE_TEXT_A || $childNode->nodeName === self::XML_NODE_TEXT_SPAN) {
+                $textValue .= $this->extractTextValueFromNode($childNode);
+            }
+        }
+
+        return $textValue;
+    }
+
+    /**
+     * Returns whether the given node is a whitespace node. It must be one of these:
+     *  - <text:s />
+     *  - <text:tab />
+     *  - <text:line-break />
+     *
+     * @param string $nodeName
+     * @return bool
+     */
+    private function isWhitespaceNode($nodeName)
+    {
+        return isset(self::$WHITESPACE_XML_NODES[$nodeName]);
+    }
+
+    /**
+     * The "<text:p>" node can contain the string value directly
+     * or contain child elements. In this case, whitespaces contain in
+     * the child elements should be replaced by their XML equivalent:
+     *  - space => <text:s />
+     *  - tab => <text:tab />
+     *  - line break => <text:line-break />
+     *
+     * @see https://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#__RefHeading__1415200_253892949
+     *
+     * @param \DOMNode $node The XML node representing a whitespace
+     * @return string The corresponding whitespace value
+     */
+    private function transformWhitespaceNode($node)
+    {
+        $countAttribute = $node->getAttribute(self::XML_ATTRIBUTE_C); // only defined for "<text:s>"
+        $numWhitespaces = (!empty($countAttribute)) ? (int) $countAttribute : 1;
+
+        return \str_repeat(self::$WHITESPACE_XML_NODES[$node->nodeName], $numWhitespaces);
     }
 
     /**

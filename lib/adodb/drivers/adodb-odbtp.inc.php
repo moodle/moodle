@@ -1,13 +1,13 @@
 <?php
 /*
-  @version   v5.20.16  12-Jan-2020
+  @version   v5.21.0  2021-02-27
   @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence. See License.txt.
   Set tabs to 4 for best viewing.
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 */
 // Code contributed by "stefan bogdan" <sbogdan#rsb.ro>
 
@@ -34,10 +34,6 @@ class ADODB_odbtp extends ADOConnection{
 	var $_useUnicodeSQL = false;
 	var $_canPrepareSP = false;
 	var $_dontPoolDBC = true;
-
-	function __construct()
-	{
-	}
 
 	function ServerInfo()
 	{
@@ -792,48 +788,28 @@ class ADORecordSet_odbtp_mssql extends ADORecordSet_odbtp {
 
 	var $databaseType = 'odbtp_mssql';
 
-	function __construct($id,$mode=false)
-	{
-		return parent::__construct($id,$mode);
-	}
 }
 
 class ADORecordSet_odbtp_access extends ADORecordSet_odbtp {
 
 	var $databaseType = 'odbtp_access';
 
-	function __construct($id,$mode=false)
-	{
-		return parent::__construct($id,$mode);
-	}
 }
 
 class ADORecordSet_odbtp_vfp extends ADORecordSet_odbtp {
 
 	var $databaseType = 'odbtp_vfp';
 
-	function __construct($id,$mode=false)
-	{
-		return parent::__construct($id,$mode);
-	}
 }
 
 class ADORecordSet_odbtp_oci8 extends ADORecordSet_odbtp {
 
 	var $databaseType = 'odbtp_oci8';
 
-	function __construct($id,$mode=false)
-	{
-		return parent::__construct($id,$mode);
-	}
 }
 
 class ADORecordSet_odbtp_sybase extends ADORecordSet_odbtp {
 
 	var $databaseType = 'odbtp_sybase';
 
-	function __construct($id,$mode=false)
-	{
-		return parent::__construct($id,$mode);
-	}
 }

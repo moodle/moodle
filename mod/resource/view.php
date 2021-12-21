@@ -106,4 +106,3 @@ switch ($displaytype) {
         resource_print_workaround($resource, $cm, $course, $file);
         break;
 }
-

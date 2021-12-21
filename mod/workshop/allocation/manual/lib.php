@@ -224,7 +224,7 @@ class workshop_manual_allocator implements workshop_allocator {
 
         // load the participants' submissions
         $submissions = $this->workshop->get_submissions(array_keys($participants));
-        $allnames = get_all_user_name_fields();
+        $allnames = \core_user\fields::get_name_fields();
         foreach ($submissions as $submission) {
             if (!isset($userinfo[$submission->authorid])) {
                 $userinfo[$submission->authorid]            = new stdclass();
@@ -243,7 +243,8 @@ class workshop_manual_allocator implements workshop_allocator {
         $reviewers = array();
         if ($submissions) {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
-            $picturefields = user_picture::fields('r', array(), 'reviewerid');
+            $userfieldsapi = \core_user\fields::for_userpic();
+            $picturefields = $userfieldsapi->get_sql('r', false, '', 'reviewerid', false)->selects;
             $sql = "SELECT a.id AS assessmentid, a.submissionid, $picturefields,
                            s.id AS submissionid, s.authorid
                       FROM {workshop_assessments} a
@@ -269,7 +270,8 @@ class workshop_manual_allocator implements workshop_allocator {
         $reviewees = array();
         if ($participants) {
             list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
-            $namefields = get_all_user_name_fields(true, 'e');
+            $userfieldsapi = \core_user\fields::for_name();
+            $namefields = $userfieldsapi->get_sql('e', false, '', '', false)->selects;
             $params['workshopid'] = $this->workshop->id;
             $sql = "SELECT a.id AS assessmentid, a.submissionid,
                            u.id AS reviewerid,

@@ -17,7 +17,6 @@
  * Initialise the add random question modal on the quiz page.
  *
  * @module    mod_quiz/add_random_question
- * @package   mod_quiz
  * @copyright 2018 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,8 +38,9 @@ define(
          * @param  {string} category Category id and category context id comma separated.
          * @param  {string} returnUrl URL to return to after form submission.
          * @param  {int} cmid Current course module id.
+         * @param  {boolean} showNewCategory Display the New category tab when selecting random questions.
          */
-        init: function(contextId, category, returnUrl, cmid) {
+        init: function(contextId, category, returnUrl, cmid, showNewCategory = true) {
             AddQuestionModalLauncher.init(
                 ModalAddRandomQuestion.TYPE,
                 '.menu [data-action="addarandomquestion"]',
@@ -50,7 +50,8 @@ define(
                     modal.setCategory(category);
                     modal.setReturnUrl(returnUrl);
                     modal.setCMID(cmid);
-                }
+                },
+                showNewCategory
             );
         }
     };

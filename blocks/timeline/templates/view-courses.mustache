@@ -31,7 +31,7 @@
 </div>
 <ul class="list-group unstyled" data-region="courses-list"></ul>
 <div class="hidden text-xs-center text-center pt-3" data-region="more-courses-button-container">
-    <button type="button" class="btn btn-secondary" data-action="more-courses">
+    <button type="button" class="btn btn-primary" data-action="more-courses">
         {{#str}} morecourses, block_timeline {{/str}}
         <span class="hidden" data-region="loading-icon-container">
             {{> core/loading }}
@@ -41,8 +41,7 @@
 <div class="hidden text-xs-center text-center mt-3" data-region="no-courses-empty-message">
     <img
         src="{{urls.noevents}}"
-        alt="{{#str}} nocoursesinprogress, block_timeline {{/str}}"
-        role="presentation"
+        alt=""
         style="height: 70px; width: 70px"
     >
     <p class="text-muted mt-1">{{#str}} nocoursesinprogress, block_timeline {{/str}}</p>

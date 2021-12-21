@@ -14,22 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/fixtures/testable_antivirus.php');
+
 /**
  * Tests for antivirus manager.
  *
  * @package    core_antivirus
- * @category   phpunit
+ * @category   test
  * @copyright  2016 Ruslan Kabalin, Lancaster University.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class antivirus_test extends advanced_testcase {
 
-defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__ . '/fixtures/testable_antivirus.php');
-
-class core_antivirus_testcase extends advanced_testcase {
+    /**
+     * @var string Path to the tempfile created for use with AV scanner tests
+     */
     protected $tempfile;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
         // Use our special testable fixture plugin.
         $CFG->antiviruses = 'testable';
@@ -42,7 +45,29 @@ class core_antivirus_testcase extends advanced_testcase {
         touch($this->tempfile);
     }
 
-    protected function tearDown() {
+    /**
+     * Enable logging.
+     *
+     * @return void
+     */
+    protected function enable_logging() {
+        $this->preventResetByRollback();
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        set_config('buffersize', 0, 'logstore_standard');
+        set_config('logguests', 1, 'logstore_standard');
+    }
+
+    /**
+     * Return check api status for the antivirus check.
+     *
+     * @return    string Based on status of \core\check\result.
+     */
+    protected function get_check_api_antivirus_status_result() {
+        $av = new \core\check\environment\antivirus();
+        return $av->get_result()->status;
+    }
+
+    protected function tearDown(): void {
         @unlink($this->tempfile);
     }
 
@@ -70,6 +95,57 @@ class core_antivirus_testcase extends advanced_testcase {
         $this->assertFileExists($this->tempfile);
     }
 
+    // Check API for NA status i.e. when no scanners are enabled.
+    public function test_antivirus_check_na() {
+        global $CFG;
+        $CFG->antiviruses = '';
+        // Enable logs.
+        $this->enable_logging();
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        // Run mock scanning.
+        $this->assertFileExists($this->tempfile);
+        $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'OK', true));
+        $this->assertEquals(\core\check\result::NA, $this->get_check_api_antivirus_status_result());
+        // File expected to remain in place.
+        $this->assertFileExists($this->tempfile);
+    }
+
+    // Check API for UNKNOWN status i.e. when the system's logstore reader is not '\core\log\sql_internal_table_reader'.
+    public function test_antivirus_check_unknown() {
+        // Run mock scanning.
+        $this->assertFileExists($this->tempfile);
+        $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'OK', true));
+        $this->assertEquals(\core\check\result::UNKNOWN, $this->get_check_api_antivirus_status_result());
+        // File expected to remain in place.
+        $this->assertFileExists($this->tempfile);
+    }
+
+    // Check API for OK status i.e. antivirus enabled, logstore is ok, no scanner issues occurred recently.
+    public function test_antivirus_check_ok() {
+        // Enable logs.
+        $this->enable_logging();
+        // Run mock scanning.
+        $this->assertFileExists($this->tempfile);
+        $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'OK', true));
+        $this->assertEquals(\core\check\result::OK, $this->get_check_api_antivirus_status_result());
+        // File expected to remain in place.
+        $this->assertFileExists($this->tempfile);
+    }
+
+    // Check API for ERROR status i.e. scanner issue within a certain timeframe/threshold.
+    public function test_antivirus_check_error() {
+        global $USER, $DB;
+        // Enable logs.
+        $this->enable_logging();
+        // Set threshold / lookback.
+        // Run mock scanning.
+        $this->assertFileExists($this->tempfile);
+        $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'ERROR', true));
+        $this->assertEquals(\core\check\result::ERROR, $this->get_check_api_antivirus_status_result());
+        // File expected to remain in place.
+        $this->assertFileExists($this->tempfile);
+    }
+
     public function test_manager_scan_file_virus() {
         // Run mock scanning without deleting infected file.
         $this->assertFileExists($this->tempfile);
@@ -82,7 +158,7 @@ class core_antivirus_testcase extends advanced_testcase {
         $this->expectException(\core\antivirus\scanner_exception::class);
         $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'FOUND', true));
         // File expected to be deleted.
-        $this->assertFileNotExists($this->tempfile);
+        $this->assertFileDoesNotExist($this->tempfile);
     }
 
     public function test_manager_send_message_to_user_email_scan_file_virus() {
@@ -97,7 +173,7 @@ class core_antivirus_testcase extends advanced_testcase {
         $this->assertNotEmpty($exception);
         $result = $sink->get_messages();
         $this->assertCount(1, $result);
-        $this->assertContains('fake@example.com', $result[0]->to);
+        $this->assertStringContainsString('fake@example.com', $result[0]->to);
         $sink->close();
     }
 
@@ -174,7 +250,7 @@ class core_antivirus_testcase extends advanced_testcase {
         $this->assertNotEmpty($exception);
         $result = $sink->get_messages();
         $this->assertCount(1, $result);
-        $this->assertContains('fake@example.com', $result[0]->to);
+        $this->assertStringContainsString('fake@example.com', $result[0]->to);
         $sink->close();
     }
 

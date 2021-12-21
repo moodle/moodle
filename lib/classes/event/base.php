@@ -134,7 +134,7 @@ abstract class base implements \IteratorAggregate {
     /**
      * Private constructor, use create() or restore() methods instead.
      */
-    private final function __construct() {
+    final private function __construct() {
         $this->data = array_fill_keys(self::$fields, null);
 
         // Define some basic details.

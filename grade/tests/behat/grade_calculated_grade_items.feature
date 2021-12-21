@@ -65,7 +65,7 @@ Feature: Calculated grade items can be used in the gradebook
     And I set the following settings for grade item "Calc cat":
       | Maximum grade | 50 |
     And I navigate to "View > Grader report" in the course gradebook
-    And I press "Turn editing on"
+    And I turn editing mode on
     And I give the grade "75.00" to the user "Student 1" for the grade item "grade item 1"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
@@ -131,7 +131,7 @@ Feature: Calculated grade items can be used in the gradebook
       | Min and max grades used in calculation | Initial min and max grades |
     And I press "Save changes"
     And I navigate to "View > Grader report" in the course gradebook
-    And I press "Turn editing on"
+    And I turn editing mode on
     And I give the grade "75.00" to the user "Student 1" for the grade item "grade item 1"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook

@@ -14,14 +14,12 @@
 
 #page-mod-quiz-attempt .submitbtns,
 #page-mod-quiz-review .submitbtns {
-    clear: left;
-    text-align: left;
-    padding-top: 1.5em;
+    display: flex;
 }
 
 #page-mod-quiz-attempt .submitbtns .mod_quiz-next-nav,
 #page-mod-quiz-review .submitbtns .mod_quiz-next-nav {
-    float: right;
+    margin-left: auto;
 }
 
 .path-mod-quiz .mod_quiz-redo_question_button {
@@ -196,6 +194,12 @@
     margin: 0.5em 0;
 }
 
+#mod_quiz_navblock.nav-disabled > * {
+    opacity: .65;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
 /** mod quiz mod **/
 #page-mod-quiz-mod #id_reviewoptionshdr .fitem {
     width: 23%;
@@ -303,33 +307,14 @@ table.quizattemptsummary .noreviewmessage {
 .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup {
     width: 600px;
 }
-
 .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-wrap {
     overflow: hidden;
 }
 
 .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd {
-    padding: 0;
+    padding: 1rem;
 }
 
-.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd #mod_quiz_preflight_form legend {
-    padding: 0 10px;
-    margin: 0;
-    border: 0 none;
-}
-
-.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd #mod_quiz_preflight_form .fitem {
-    margin-left: 10px;
-}
-
-.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-bd #mod_quiz_preflight_form #fgroup_id_buttonar {
-    padding: 10px 0 0;
-    margin: 0;
-}
-
-.moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup .moodle-dialogue-content .moodle-dialogue-ft {
-    margin: 0;
-}
 /* Standard Moodle rule that needs to be more specific here. */
 .moodle-dialogue-bd #mod_quiz_preflight_form fieldset.hidden {
     display: inherit;
@@ -876,14 +861,6 @@ table.quizreviewsummary td.cell {
     display: none;
 }
 
-#categoryquestions > tbody > tr:nth-of-type(even) {
-    background: #e4e4e4;
-}
-
-#categoryquestions > tbody > tr.highlight {
-    background-color: #afa;
-}
-
 #categoryquestions .header {
     text-align: center;
     padding: 0 2px;
@@ -994,16 +971,6 @@ table#categoryquestions {
 
 .mod_quiz_qbank_dialogue #advancedsearch label {
     font-size: 100%;
-}
-
-.modulespecificbuttonscontainer {
-    padding-left: 0.3em;
-    padding-right: 0.3em;
-}
-
-.questionbankformforpopup .modulespecificbuttonscontainer {
-    padding-top: 10px;
-    padding-left: 0;
 }
 
 .quizquestionlistcontrols {

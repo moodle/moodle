@@ -31,6 +31,7 @@ $id = required_param('id', PARAM_INT); // Course Module ID.
 $userid = required_param('user', PARAM_INT); // User ID.
 $attempt = optional_param('attempt', 1, PARAM_INT); // attempt number.
 $download = optional_param('download', '', PARAM_ALPHA);
+$mode = optional_param('mode', '', PARAM_ALPHA); // Scorm mode from which reached here.
 
 // Building the url to use for links.+ data details buildup.
 $url = new moodle_url('/mod/scorm/report/userreportinteractions.php', array('id' => $id,
@@ -40,11 +41,12 @@ $url = new moodle_url('/mod/scorm/report/userreportinteractions.php', array('id'
 $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
 $course = get_course($cm->course);
 $scorm = $DB->get_record('scorm', array('id' => $cm->instance), '*', MUST_EXIST);
-$user = $DB->get_record('user', array('id' => $userid), user_picture::fields(), MUST_EXIST);
+$user = $DB->get_record('user', array('id' => $userid), implode(',', \core_user\fields::get_picture_fields()), MUST_EXIST);
 // Get list of attempts this user has made.
 $attemptids = scorm_get_all_attempts($scorm->id, $userid);
 
 $PAGE->set_url($url);
+$PAGE->set_secondary_active_tab('scormreport');
 // END of url setting + data buildup.
 
 // Checking login +logging +getting context.
@@ -96,7 +98,10 @@ if (!$table->is_downloading($download, $exportfilename)) {
     echo $OUTPUT->heading(format_string($scorm->name));
     // End of Print the page header.
     $currenttab = 'interactions';
-    require($CFG->dirroot . '/mod/scorm/report/userreporttabs.php');
+
+    $renderer = $PAGE->get_renderer('mod_scorm');
+    $useractionreport = new \mod_scorm\output\userreportsactionbar($id, $userid, $attempt, 'interact', $mode);
+    echo $renderer->user_report_actionbar($useractionreport);
 
     // Printing user details.
     $output = $PAGE->get_renderer('mod_scorm');

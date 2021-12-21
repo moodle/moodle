@@ -149,6 +149,6 @@ class ListIndexes implements Executable
 
         $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
 
-        return new IndexInfoIteratorIterator(new CachingIterator($cursor));
+        return new IndexInfoIteratorIterator(new CachingIterator($cursor), $this->databaseName . '.' . $this->collectionName);
     }
 }

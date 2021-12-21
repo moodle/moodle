@@ -179,6 +179,33 @@ class prediction {
     }
 
     /**
+     * Get the executed actions.
+     *
+     * Actions could be filtered by actionname.
+     *
+     * @param array $actionnamefilter Limit the results obtained to this list of action names.
+     * @param int $userid the user id. Current user by default.
+     * @return array of actions.
+     */
+    public function get_executed_actions(array $actionnamefilter = null, int $userid = 0): array {
+        global $USER, $DB;
+
+        $conditions[] = "predictionid = :predictionid";
+        $params['predictionid'] = $this->get_prediction_data()->id;
+        if (!$userid) {
+            $userid = $USER->id;
+        }
+        $conditions[] = "userid = :userid";
+        $params['userid'] = $userid;
+        if ($actionnamefilter) {
+            list($actionsql, $actionparams) = $DB->get_in_or_equal($actionnamefilter, SQL_PARAMS_NAMED);
+            $conditions[] = "actionname $actionsql";
+            $params = $params + $actionparams;
+        }
+        return $DB->get_records_select('analytics_prediction_actions', implode(' AND ', $conditions), $params);
+    }
+
+    /**
      * format_calculations
      *
      * @return \stdClass[]

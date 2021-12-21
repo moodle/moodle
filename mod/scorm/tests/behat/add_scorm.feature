@@ -26,13 +26,11 @@ Feature: Add scorm activity
     And I upload "mod/scorm/tests/packages/singlesco_scorm12.zip" file to "Package file" filemanager
     And I click on "Save and display" "button"
     Then I should see "Awesome SCORM package"
-    And I should see "Normal"
+    And I should see "Enter"
     And I should see "Preview"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Awesome SCORM package"
-    And I should see "Normal"
+    And I am on the "Awesome SCORM package" "scorm activity" page logged in as student1
+    And I should see "Enter"
     And I press "Enter"
     And I switch to "scorm_object" iframe
     And I should see "Not implemented yet"

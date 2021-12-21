@@ -28,26 +28,24 @@ Feature: Preview a Multiple choice question
   @javascript @_switch_window
   Scenario: Preview a Multiple choice question and submit a partially correct response.
     When I choose "Preview" action for "Multi-choice-001" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
-    And I click on "One" "checkbox"
-    And I click on "Two" "checkbox"
+    And I click on "One" "qtype_multichoice > Answer"
+    And I click on "Two" "qtype_multichoice > Answer"
     And I press "Check"
     Then I should see "One is odd"
     And I should see "Two is even"
     And I should see "Mark 0.50 out of 1.00"
     And I should see "Parts, but only parts, of your response are correct."
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript @_switch_window
   Scenario: Preview a Multiple choice question and submit a correct response.
     When I choose "Preview" action for "Multi-choice-001" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
-    And I click on "One" "checkbox"
-    And I click on "Three" "checkbox"
+    And I click on "One" "qtype_multichoice > Answer"
+    And I click on "Three" "qtype_multichoice > Answer"
     And I press "Check"
     Then I should see "One is odd"
     And I should see "Three is odd"
@@ -55,30 +53,28 @@ Feature: Preview a Multiple choice question
     And I should see "Well done!"
     And I should see "The odd numbers are One and Three."
     And I should see "The correct answers are: One, Three"
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript @_switch_window
   Scenario: Preview a Multiple choice question and submit a correct response.
     When I choose "Preview" action for "Multi-choice-002" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
-    And I click on "One" "radio"
+    And I click on "One" "qtype_multichoice > Answer"
     And I press "Check"
     Then I should see "The oddest number is One."
     And I should see "Mark 1.00 out of 1.00"
     And I should see "Well done!"
     And I should see "The correct answer is: One"
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript @_switch_window
   Scenario: Preview a multiple choice question (single response) and clear a previous selected option.
     When I choose "Preview" action for "Multi-choice-002" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
-    And I click on "One" "radio"
+    And I click on "One" "qtype_multichoice > Answer"
     Then I should see "Clear my choice"
     And I click on "Clear my choice" "text"
     And I should not see "Clear my choice"
-    And I switch to the main window
+    And I press "Close preview"

@@ -1,0 +1,37 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template my/dropdown
+
+    Simple dropdown for the my/courses page
+
+    Example context (json):
+    {
+        "newcourseurl": "https://moodle.test/course/edit.php?category=1",
+        "manageurl": "https://moodle.test/course/management.php?categoryid=1"
+    }
+}}
+<div class="btn-group">
+    <!-- Set as a link to appease Goutte behat. -->
+    <a href="#" class="btn btn-link btn-icon icon-size-3 rounded-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{#str}}coursemanagementoptions, my{{/str}}">
+        <i class="fa fa-ellipsis-v text-dark  py-2" aria-hidden="true"></i>
+    </a>
+    <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" href="{{newcourseurl}}">{{#str}}newcourse, core{{/str}}</a>
+        <a class="dropdown-item" href="{{manageurl}}">{{#str}}managecourses, core{{/str}}</a>
+    </div>
+</div>

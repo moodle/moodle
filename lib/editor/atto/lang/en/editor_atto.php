@@ -33,6 +33,7 @@ $string['errorpluginnotfound'] = 'The plugin \'{$a}\' cannot be used; it does no
 $string['errorpluginisusedtwice'] = 'The plugin \'{$a}\' is used twice; plugins can only be defined once.';
 $string['errortextrecovery'] = 'Unfortunately the draft version could not be restored.';
 $string['pluginname'] = 'Atto HTML editor';
+$string['richtexteditor'] = 'Rich text editor';
 $string['subplugintype_atto'] = 'Atto plugin';
 $string['subplugintype_atto_plural'] = 'Atto plugins';
 $string['settings'] = 'Atto toolbar settings';

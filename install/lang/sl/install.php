@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -30,28 +29,31 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Skrbniška mapa';
+$string['admindirname'] = 'Skrbniški imenik';
 $string['availablelangs'] = 'Jezikovni paketi na voljo';
 $string['chooselanguagehead'] = 'Izberite jezik';
-$string['chooselanguagesub'] = 'Izberite jezika SAMO za namestitev. Pozneje boste lahko izbrali tudi jezike strani in uporabniške jezike.';
-$string['clialreadyinstalled'] = 'Datoteka config.php že obstaja, prosimo uporabite admin/cli/upgrade.php, če želite posodobiti vašo stran.';
+$string['chooselanguagesub'] = 'Izberite jezik za namestitev. Ta jezik bo uporabljen tudi kot privzeti jezik za spletno mesto, a ga je mogoče pozneje spremeniti.';
+$string['clialreadyconfigured'] = 'Konfiguracijska datoteka config.php že obstaja. Uporabite admin/cli/install_database.php, če želite namestiti Moodle na to spletno mesto.';
+$string['clialreadyinstalled'] = 'Datoteka config.php že obstaja, prosimo uporabite admin/cli/install_database.php, če želite posodobiti to spletno mesto.';
 $string['cliinstallheader'] = 'Moodle {$a} namestitveni program z ukazno vrstico';
+$string['clitablesexist'] = 'Tabele podatkovne baze so že prisotne, namestitev CLI se ne more nadaljevati.';
 $string['databasehost'] = 'Gostitelj podatkovne baze';
 $string['databasename'] = 'Ime podatkovne baze';
 $string['databasetypehead'] = 'Izberite gonilnik podatkovne baze';
-$string['dataroot'] = 'Podatkovna mapa';
-$string['datarootpermission'] = 'Pravice za podatkovno mapo';
+$string['dataroot'] = 'Podatkovni imenik';
+$string['datarootpermission'] = 'Dovoljenje za podatkovne imenike';
 $string['dbprefix'] = 'Predpona tabel';
-$string['dirroot'] = 'Mapa Moodle';
+$string['dirroot'] = 'Moodle imenik';
 $string['environmenthead'] = 'Preverjanje vašega okolja ...';
-$string['environmentsub2'] = 'Vsaka moodle izdaja ima nekatere minimalne PHP zahteve in številne mandatorne PHP razširitve. Pred vsako namestitvijo ali posodobitvijo se izvede popolna preverba okolja. Prosimo kontaktirajte strežniškega administratorja, če ne veste kako namestiti novo verzijo ali omogočiti PHP razširitev.';
+$string['environmentsub2'] = 'Vsaka Moodle različica ima nekatere minimalne PHP zahteve in številne obvezne PHP razširitve.
+Pred vsako namestitvijo ali posodobitvijo se izvede popolna preverba okolja. Kontaktirajte skrbnika strežnika, če ne veste, kako namestiti novo verzijo ali omogočiti PHP razširitev.';
 $string['errorsinenvironment'] = 'Preverjanje okolja ni uspelo!';
 $string['installation'] = 'Namestitev';
-$string['langdownloaderror'] = 'Žal jezik »{$a}« ni bil nameščen. Postopek namestitve se bo nadaljeval v angleščini.';
+$string['langdownloaderror'] = 'Žal jezika »{$a}« ni mogoče namestiti. Postopek namestitve se bo nadaljeval v angleščini.';
 $string['memorylimithelp'] = '<p>Omejitev pomnilnika PHP je trenutno na vašem strežniku nastavljena na {$a}.</p>
 
 <p>To lahko povzroči, da bo imel Moodle pozneje težave s pomnilnikom. Še posebej,
-   če imate vključenih veliko modulov oziroma veliko uporabnikov.</p>
+   če imate omogočenih veliko modulov oziroma veliko uporabnikov.</p>
 
 <p>Priporočamo, da konfigurirate PHP z višjo omejitvijo, če je možno npr. 40M.
    To lahko poskusite storiti na več načinov:</p>
@@ -63,27 +65,32 @@ $string['memorylimithelp'] = '<p>Omejitev pomnilnika PHP je trenutno na vašem s
     lahko prosili vašega skrbnika, da to naredi za vas.</li>
 <li>Na nekaterih strežnikih PHP lahko ustvarite datoteko .htaccess v imeniku Moodle,
     ki naj vsebuje to vrstico:
-    <p><blockquote>php_value memory_limit 40M</blockquote></p>
-    <p>Vendar lahko to prepreči delovanje <b>vseh</b> PHP strani
+    <blockquote><div>php_value memory_limit 40M</div></blockquote>
+    <p>Vendar lahko to na nekaterih strežnikih prepreči delovanje <b>vseh</b> PHP strani
     (ob prikazu strani boste videli napake) in boste morali odstraniti datoteko .htaccess.</p></li>
 </ol>';
 $string['paths'] = 'Poti';
-$string['pathserrcreatedataroot'] = 'Podatkovna mapa ({$a->dataroot}) ne more biti ustvarjena z namestitvenim programom.';
+$string['pathserrcreatedataroot'] = 'Podatkovni imenik ({$a->dataroot}) ne more biti ustvarjen z namestitvenim programom.';
 $string['pathshead'] = 'Potrdite poti';
-$string['pathsrodataroot'] = 'Korenska mapa ni za pisanje.';
-$string['pathsroparentdataroot'] = 'Starševska mapa ({$a->parent}) ni za pisanje. Podatkovna mapa ({$a->dataroot}) ne more biti ustvarjena preko namestitvenega programa.';
-$string['pathssubadmindir'] = 'Zelo malo Spletnih gostiteljev uporablja /admin kot posebni URL preko katerega dostopate do nadzorn plošče. Na žalost je to v konfliktu s standardno lokacijo za Moodlove skrbniške strani. To lahko popravite s preimenovanjemskrbniške mape v vaši namestitvi in vnesete tukaj to novo ime. Na primer: <em>moodleadmin</em>. To bo popravilo skrbniške povezave v Moodlu.';
-$string['pathssubdataroot'] = 'Potrebujete prostor, kamor bo Moodle shranjeval naložene datoteke. Ta mapa naj ima omogočeno branje IN PISANJE s strani uporabnika spletnega strežnika (po navadi \'brez\' ali \'apache\'), ampak ne sme biti dostopno neposredno preko spleta. Namestitveni program jo bo poskušal ustvariti, če že ne obstaja.';
-$string['pathssubdirroot'] = '<p>Polna pot do mape s kodo Moodle.</p>';
-$string['pathssubwwwroot'] = 'Polni spletni naslov kjer bo Moodle dostopan. Dostop do Moodla z uporabo več naslovov ni mogoč. Če ima vaša stran več javnih naslovov, morate nastaviti trajne preusmeritve na vse naslove razen tega. Če je vaša stran dosropana preko interneta in omrežja, uporabite tukaj javne naslove in nastaviet DNS tako, da lahko uporabniki znotraj omrežja uporabljajo tudi javne naslove. Če naslovi niso pravilni prosimo spremenite URL v vašem brskalniku in ponovno poženite namestitev z drugo vrednostjo.';
-$string['pathsunsecuredataroot'] = '({$a->dataroot})';
-$string['pathswrongadmindir'] = 'Skrbniška mapa ne obstaja';
+$string['pathsrodataroot'] = 'Korenski imenik ni zapisljiv.';
+$string['pathsroparentdataroot'] = 'Nadrejeni imenik ({$a->parent}) ni zapisljiv. Podatkovna mapa ({$a->dataroot}) ne more biti ustvarjena preko namestitvenega programa.';
+$string['pathssubadmindir'] = 'Zelo malo spletnih gostiteljev uporablja /admin kot posebni URL preko katerega dostopate do nadzorne plošče. Na žalost je to v sporu s privzeto lokacijo za Moodlove skrbniške strani. To lahko popravite s preimenovanjem skrbniškega imenika v vaši namestitvi in vnesete tukaj to novo ime. Na primer: <em>moodleadmin</em>. To bo popravilo skrbniške povezave v Moodlu.';
+$string['pathssubdataroot'] = '<p>Imenik, kamor bo Moodle shranjeval vso vsebino datoteke, ki jo nalagajo uporabniki.</p>
+<p>Ta imenik mora biti tako berljiv kot zapisljiv za uporabnika spletnega strežnika (po navadi \'www-data\', \'nobody\' ali ‚apache‘)</p>
+<p>Imenik ne sme biti dostopen neposredno preko spleta.</p>
+<p>Če imenik trenutno še ne obstaja ga bo namestitveni proces poskušal ustvariti.</p>';
+$string['pathssubdirroot'] = '<p>Polna pot do imenika s kodo Moodle.</p>';
+$string['pathssubwwwroot'] = '<p>Polni spletni naslov na katerem bo Moodle dostopen. To je naslov, ki ga bodo uporabniki, za dostop do Moodla, vnesli v naslovno vrstico brskalnika.</p>
+<p>Dostop do Moodla z uporabo več naslovov ni mogoč. Če je vaše spletno mesto dostopno z javnih naslovov, izberite najlažjega in za ostale nastavite trajne preusmeritve.</p>
+<p>Če je vaše spletno mesto dostopno tako s spleta kot z javnega omrežja (včasih imenovano Intranet), tukaj uporabite javni naslov.</p>
+<p>Če trenutni naslov ni pravilen, spremenite URL v naslovni vrstici vašega brskalnika in ponovno začnite z namestitvijo.</p>';
+$string['pathsunsecuredataroot'] = 'Lokacija korenske podatkovne mape ni varna';
+$string['pathswrongadmindir'] = 'Skrbniški imenik ne obstaja';
 $string['phpextension'] = '{$a} PHP razširitev';
 $string['phpversion'] = 'Različica PHP';
-$string['phpversionhelp'] = '<p>Moodle zahteva različico PHP vsaj 4.3.0 ali 5.1.0 (5.0.x ima vrsto znanih težav).</p>
+$string['phpversionhelp'] = '<p>Moodle zahteva različico PHP vsaj 5.6.5 ali 7.1 (7.0.x ima vrsto mehanskih težav).</p>
 <p>Vaša trenutna različica je {$a}</p>
-<p>Posodobiti in nadgraditi morate PHP ali premakniti program na strežnik s novejšo različico PHP!<br />
-(V primeru različice 5.0.x lahko namestite tudi različico 4.4.x)</p>';
+<p>Posodobiti in nadgraditi morate PHP ali premakniti program na gostitelja z novejšo različico PHP!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'To stran vidite, ker ste uspešno namestili in
     zagnali paket <strong>{$a->packname} {$a->packversion}</strong> na vašem računalniku. Čestitamo!';

@@ -68,8 +68,8 @@ class user_filtering {
             $fieldnames = array('realname' => 1, 'lastname' => 1, 'firstname' => 1, 'username' => 1, 'email' => 1, 'city' => 1,
                                 'country' => 1, 'confirmed' => 1, 'suspended' => 1, 'profile' => 1, 'courserole' => 1,
                                 'anycourses' => 1, 'systemrole' => 1, 'cohort' => 1, 'firstaccess' => 1, 'lastaccess' => 1,
-                                'neveraccessed' => 1, 'timemodified' => 1, 'nevermodified' => 1, 'auth' => 1, 'mnethostid' => 1,
-                                'idnumber' => 1, 'institution' => 1, 'department' => 1, 'lastip' => 1);
+                                'neveraccessed' => 1, 'timecreated' => 1, 'timemodified' => 1, 'nevermodified' => 1, 'auth' => 1,
+                                'mnethostid' => 1, 'idnumber' => 1, 'institution' => 1, 'department' => 1, 'lastip' => 1);
 
             // Get the config which filters the admin wanted to show by default.
             $userfiltersdefault = get_config('core', 'userfiltersdefault');
@@ -101,6 +101,12 @@ class user_filtering {
         // Fist the new filter form.
         $this->_addform = new user_add_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
         if ($adddata = $this->_addform->get_data()) {
+            // Clear previous filters.
+            if (!empty($adddata->replacefilters)) {
+                $SESSION->user_filtering = [];
+            }
+
+            // Add new filters.
             foreach ($this->_fields as $fname => $field) {
                 $data = $field->check_data($adddata);
                 if ($data === false) {
@@ -111,19 +117,16 @@ class user_filtering {
                 }
                 $SESSION->user_filtering[$fname][] = $data;
             }
-            // Clear the form.
-            $_POST = array();
-            $this->_addform = new user_add_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
         }
 
         // Now the active filters.
         $this->_activeform = new user_active_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
-        if ($adddata = $this->_activeform->get_data()) {
-            if (!empty($adddata->removeall)) {
+        if ($activedata = $this->_activeform->get_data()) {
+            if (!empty($activedata->removeall)) {
                 $SESSION->user_filtering = array();
 
-            } else if (!empty($adddata->removeselected) and !empty($adddata->filter)) {
-                foreach ($adddata->filter as $fname => $instances) {
+            } else if (!empty($activedata->removeselected) and !empty($activedata->filter)) {
+                foreach ($activedata->filter as $fname => $instances) {
                     foreach ($instances as $i => $val) {
                         if (empty($val)) {
                             continue;
@@ -135,11 +138,14 @@ class user_filtering {
                     }
                 }
             }
-            // Clear+reload the form.
-            $_POST = array();
-            $this->_activeform = new user_active_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
         }
-        // Now the active filters.
+
+        // Rebuild the forms if filters data was processed.
+        if ($adddata || $activedata) {
+            $_POST = []; // Reset submitted data.
+            $this->_addform = new user_add_filter_form($baseurl, ['fields' => $this->_fields, 'extraparams' => $extraparams]);
+            $this->_activeform = new user_active_filter_form($baseurl, ['fields' => $this->_fields, 'extraparams' => $extraparams]);
+        }
     }
 
     /**
@@ -169,6 +175,7 @@ class user_filtering {
             case 'firstaccess': return new user_filter_date('firstaccess', get_string('firstaccess', 'filters'), $advanced, 'firstaccess');
             case 'lastaccess':  return new user_filter_date('lastaccess', get_string('lastaccess'), $advanced, 'lastaccess');
             case 'neveraccessed': return new user_filter_checkbox('neveraccessed', get_string('neveraccessed', 'filters'), $advanced, 'firstaccess', array('lastaccess_sck', 'lastaccess_eck', 'firstaccess_eck', 'firstaccess_sck'));
+            case 'timecreated': return new user_filter_date('timecreated', get_string('timecreated'), $advanced, 'timecreated');
             case 'timemodified': return new user_filter_date('timemodified', get_string('lastmodified'), $advanced, 'timemodified');
             case 'nevermodified': return new user_filter_checkbox('nevermodified', get_string('nevermodified', 'filters'), $advanced, array('timemodified', 'timecreated'), array('timemodified_sck', 'timemodified_eck'));
             case 'cohort':      return new user_filter_cohort($advanced);

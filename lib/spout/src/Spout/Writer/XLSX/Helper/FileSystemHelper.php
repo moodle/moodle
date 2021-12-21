@@ -112,7 +112,7 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper impleme
      */
     private function createRootFolder()
     {
-        $this->rootFolder = $this->createFolder($this->baseFolderRealPath, uniqid('xlsx', true));
+        $this->rootFolder = $this->createFolder($this->baseFolderRealPath, \uniqid('xlsx', true));
 
         return $this;
     }

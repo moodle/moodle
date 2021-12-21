@@ -18,7 +18,6 @@
  * the forum view.
  *
  * @module     mod_forum/favourite_toggle
- * @package    mod_forum
  * @copyright  2019 Peter Dias <peter@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

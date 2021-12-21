@@ -47,13 +47,17 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertInstanceOf('mod_quiz_generator', $generator);
     }
 
+    public function test_get_default_generator() {
+        $generator = $this->getDataGenerator()->get_plugin_generator('block_somethingthatdoesnotexist');
+        $this->assertInstanceOf('default_block_generator', $generator);
+    }
+
     /**
      * Test plugin generator, with no component directory.
-     *
-     * @expectedException        coding_exception
-     * @expectedExceptionMessage Component core_completion does not support generators yet. Missing tests/generator/lib.php.
      */
     public function test_get_plugin_generator_no_component_dir() {
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Component core_completion does not support generators yet. Missing tests/generator/lib.php.');
         $generator = $this->getDataGenerator()->get_plugin_generator('core_completion');
     }
 
@@ -143,18 +147,18 @@ class core_test_generator_testcase extends advanced_testcase {
         $count = $DB->count_records('course_categories');
         $category = $generator->create_category();
         $this->assertEquals($count+1, $DB->count_records('course_categories'));
-        $this->assertRegExp('/^Course category \d/', $category->name);
+        $this->assertMatchesRegularExpression('/^Course category \d/', $category->name);
         $this->assertSame('', $category->idnumber);
-        $this->assertRegExp('/^Test course category \d/', $category->description);
+        $this->assertMatchesRegularExpression('/^Test course category \d/', $category->description);
         $this->assertSame(FORMAT_MOODLE, $category->descriptionformat);
 
         $count = $DB->count_records('cohort');
         $cohort = $generator->create_cohort();
         $this->assertEquals($count+1, $DB->count_records('cohort'));
         $this->assertEquals(context_system::instance()->id, $cohort->contextid);
-        $this->assertRegExp('/^Cohort \d/', $cohort->name);
+        $this->assertMatchesRegularExpression('/^Cohort \d/', $cohort->name);
         $this->assertSame('', $cohort->idnumber);
-        $this->assertRegExp("/^Description for '{$cohort->name}' \\n/", $cohort->description);
+        $this->assertMatchesRegularExpression("/^Description for '{$cohort->name}' \\n/", $cohort->description);
         $this->assertSame(FORMAT_MOODLE, $cohort->descriptionformat);
         $this->assertSame('', $cohort->component);
         $this->assertLessThanOrEqual(time(), $cohort->timecreated);
@@ -163,13 +167,13 @@ class core_test_generator_testcase extends advanced_testcase {
         $count = $DB->count_records('course');
         $course = $generator->create_course();
         $this->assertEquals($count+1, $DB->count_records('course'));
-        $this->assertRegExp('/^Test course \d/', $course->fullname);
-        $this->assertRegExp('/^tc_\d/', $course->shortname);
+        $this->assertMatchesRegularExpression('/^Test course \d/', $course->fullname);
+        $this->assertMatchesRegularExpression('/^tc_\d/', $course->shortname);
         $this->assertSame('', $course->idnumber);
         $this->assertSame('topics', $course->format);
         $this->assertEquals(0, $course->newsitems);
         $this->assertEquals(5, course_get_format($course)->get_last_section_number());
-        $this->assertRegExp('/^Test course \d/', $course->summary);
+        $this->assertMatchesRegularExpression('/^Test course \d/', $course->summary);
         $this->assertSame(FORMAT_MOODLE, $course->summaryformat);
 
         $section = $generator->create_course_section(array('course'=>$course->id, 'section'=>3));
@@ -259,6 +263,7 @@ class core_test_generator_testcase extends advanced_testcase {
             'completion' => COMPLETION_TRACKING_AUTOMATIC, // "Show activity as complete when conditions are met."
             'completionview' => 1, // "Student must view this activity to complete it"
             'completionusegrade' => 1, // "Student must receive a grade to complete this activity"
+            'completionpassgrade' => 1, // "Student must receive a passing grade to complete this activity"
         );
 
         // Module supports FEATURE_RATE:
@@ -328,6 +333,7 @@ class core_test_generator_testcase extends advanced_testcase {
         $cm3 = $modinfo->cms[$m3->cmid];
         $this->assertEquals($featurecompletionautomatic['completion'], $cm3->completion);
         $this->assertEquals($featurecompletionautomatic['completionview'], $cm3->completionview);
+        $this->assertEquals($featurecompletionautomatic['completionpassgrade'], $cm3->completionpassgrade);
         $this->assertEquals(0, $cm3->completiongradeitemnumber); // Zero instead of default null since 'completionusegrade' was set.
         $gradingitem = grade_item::fetch(array('courseid'=>$course->id, 'itemtype'=>'mod', 'itemmodule' => 'assign', 'iteminstance' => $m3->id));
         $this->assertEquals(0, $gradingitem->grademin);
@@ -466,5 +472,120 @@ class core_test_generator_testcase extends advanced_testcase {
                 array('courseid' => $course->id,
                     'parent' => $gradecategory->id));
         $this->assertEquals($gradecategory->id, $gradecategory2->parent);
+    }
+
+    public function test_create_custom_profile_field_category() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Insert first category without specified sortorder.
+        $result = $generator->create_custom_profile_field_category(['name' => 'Frogs']);
+        $record = $DB->get_record('user_info_category', ['name' => 'Frogs']);
+        $this->assertEquals(1, $record->sortorder);
+
+        // Also check the return value.
+        $this->assertEquals(1, $result->sortorder);
+        $this->assertEquals('Frogs', $result->name);
+        $this->assertEquals($record->id, $result->id);
+
+        // Insert next category without specified sortorder.
+        $generator->create_custom_profile_field_category(['name' => 'Zombies']);
+        $record = $DB->get_record('user_info_category', ['name' => 'Zombies']);
+        $this->assertEquals(2, $record->sortorder);
+
+        // Insert category with specified sortorder.
+        $generator->create_custom_profile_field_category(['name' => 'Toads', 'sortorder' => 9]);
+        $record = $DB->get_record('user_info_category', ['name' => 'Toads']);
+        $this->assertEquals(9, $record->sortorder);
+
+        // Insert another with unspecified sortorder.
+        $generator->create_custom_profile_field_category(['name' => 'Werewolves']);
+        $record = $DB->get_record('user_info_category', ['name' => 'Werewolves']);
+        $this->assertEquals(10, $record->sortorder);
+    }
+
+    public function test_create_custom_profile_field() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Insert minimal field without specified category.
+        $field1 = $generator->create_custom_profile_field(
+                ['datatype' => 'text', 'shortname' => 'colour', 'name' => 'Colour']);
+        $record = $DB->get_record('user_info_field', ['shortname' => 'colour']);
+
+        // Check specified values.
+        $this->assertEquals('Colour', $record->name);
+        $this->assertEquals('text', $record->datatype);
+
+        // Check sortorder (first in category).
+        $this->assertEquals(1, $record->sortorder);
+
+        // Check shared defaults for most datatypes.
+        $this->assertEquals('', $record->description);
+        $this->assertEquals(0, $record->descriptionformat);
+        $this->assertEquals(0, $record->required);
+        $this->assertEquals(0, $record->locked);
+        $this->assertEquals(PROFILE_VISIBLE_ALL, $record->visible);
+        $this->assertEquals(0, $record->forceunique);
+        $this->assertEquals(0, $record->signup);
+        $this->assertEquals('', $record->defaultdata);
+        $this->assertEquals(0, $record->defaultdataformat);
+
+        // Check specific defaults for text datatype.
+        $this->assertEquals(30, $record->param1);
+        $this->assertEquals(2048, $record->param2);
+
+        // Check the returned value matches the database data.
+        $this->assertEquals($record, $field1);
+
+        // The category should relate to a new 'testing' category.
+        $catrecord = $DB->get_record('user_info_category', ['id' => $record->categoryid]);
+        $this->assertEquals('Testing', $catrecord->name);
+        $this->assertEquals(1, $catrecord->sortorder);
+
+        // Create another field, this time supplying values for a few of the fields.
+        $generator->create_custom_profile_field(
+                ['datatype' => 'text', 'shortname' => 'brightness', 'name' => 'Brightness',
+                'required' => 1, 'forceunique' => 1]);
+        $record = $DB->get_record('user_info_field', ['shortname' => 'brightness']);
+
+        // Same testing category, next sortorder.
+        $this->assertEquals($catrecord->id, $record->categoryid);
+        $this->assertEquals(2, $record->sortorder);
+
+        // Check modified fields.
+        $this->assertEquals(1, $record->required);
+        $this->assertEquals(1, $record->forceunique);
+
+        // Create a field in specified category by id or name...
+        $category = $generator->create_custom_profile_field_category(['name' => 'Amphibians']);
+        $field3 = $generator->create_custom_profile_field(
+                ['datatype' => 'text', 'shortname' => 'frog', 'name' => 'Frog',
+                'categoryid' => $category->id]);
+        $this->assertEquals($category->id, $field3->categoryid);
+        $this->assertEquals(1, $field3->sortorder);
+        $field4 = $generator->create_custom_profile_field(
+                ['datatype' => 'text', 'shortname' => 'toad', 'name' => 'Toad',
+                'category' => 'Amphibians', 'sortorder' => 4]);
+        $this->assertEquals($category->id, $field4->categoryid);
+        $this->assertEquals(4, $field4->sortorder);
+
+        // Check defaults for menu, datetime, and checkbox.
+        $field5 = $generator->create_custom_profile_field(
+                ['datatype' => 'menu', 'shortname' => 'cuisine', 'name' => 'Cuisine']);
+        $this->assertEquals("Yes\nNo", $field5->param1);
+        $this->assertEquals('No', $field5->defaultdata);
+        $field6 = $generator->create_custom_profile_field(
+                ['datatype' => 'datetime', 'shortname' => 'epoch', 'name' => 'Epoch']);
+        $this->assertEquals(2010, $field6->param1);
+        $this->assertEquals(2015, $field6->param2);
+        $this->assertEquals(1, $field6->param3);
+        $field7 = $generator->create_custom_profile_field(
+                ['datatype' => 'checkbox', 'shortname' => 'areyousure', 'name' => 'Are you sure?']);
+        $this->assertEquals(0, $field7->defaultdata);
     }
 }

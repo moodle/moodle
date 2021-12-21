@@ -18,7 +18,7 @@ Feature: Scorm multi-sco review mode.
   Scenario: Test review mode with a single sco completion.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -32,10 +32,8 @@ Feature: Scorm multi-sco review mode.
     And I click on "Save and display" "button"
     And I should see "Basic Multi-sco SCORM package"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
-    And I should see "Normal"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
+    And I should see "Enter"
     And I press "Enter"
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
@@ -43,9 +41,8 @@ Feature: Scorm multi-sco review mode.
     And I follow "Exit activity"
     And I wait until the page is ready
     And I should see "Basic Multi-sco SCORM package"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
-    And I should see "Normal"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page
+    And I should see "Enter"
     And I press "Enter"
     Then I should not see "Review mode"
 
@@ -53,7 +50,7 @@ Feature: Scorm multi-sco review mode.
   Scenario: Test review mode with all scos completed.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -69,10 +66,8 @@ Feature: Scorm multi-sco review mode.
     And I click on "Save and display" "button"
     And I should see "ADV Multi-sco SCORM package"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "ADV Multi-sco SCORM package"
-    And I should see "Normal"
+    And I am on the "ADV Multi-sco SCORM package" "scorm activity" page logged in as student1
+    And I should see "Enter"
     And I press "Enter"
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
@@ -165,9 +160,8 @@ Feature: Scorm multi-sco review mode.
     And I follow "Exit activity"
     And I wait until the page is ready
     And I should see "ADV Multi-sco SCORM package"
-    And I am on "Course 1" course homepage
-    And I follow "ADV Multi-sco SCORM package"
-    And I should see "Normal"
+    And I am on the "ADV Multi-sco SCORM package" "scorm activity" page
+    And I should see "Enter"
     And I press "Enter"
     Then I should see "Review mode"
 
@@ -184,10 +178,8 @@ Feature: Scorm multi-sco review mode.
     And I click on "Save and display" "button"
     And I should see "Basic Multi-sco SCORM package"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
-    And I should see "Normal"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
+    And I should see "Enter"
     And I press "Enter"
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
@@ -195,9 +187,8 @@ Feature: Scorm multi-sco review mode.
     And I follow "Exit activity"
     And I wait until the page is ready
     And I should see "Basic Multi-sco SCORM package"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
-    And I should see "Normal"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page
+    And I should see "Enter"
     And I should not see "Start a new attempt"
     And I press "Enter"
     Then I should not see "Review mode"
@@ -217,10 +208,8 @@ Feature: Scorm multi-sco review mode.
     And I click on "Save and display" "button"
     And I should see "Basic Multi-sco SCORM package"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
-    And I should see "Normal"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
+    And I should see "Enter"
     And I press "Enter"
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
@@ -228,9 +217,8 @@ Feature: Scorm multi-sco review mode.
     And I follow "Exit activity"
     And I wait until the page is ready
     And I should see "Basic Multi-sco SCORM package"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
-    And I should see "Normal"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page
+    And I should see "Enter"
     And I should not see "Start a new attempt"
     And I press "Enter"
     And I should not see "Review mode"
@@ -275,9 +263,8 @@ Feature: Scorm multi-sco review mode.
     And I follow "Exit activity"
     And I wait until the page is ready
     And I should see "Basic Multi-sco SCORM package"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
-    And I should see "Normal"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page
+    And I should see "Enter"
     And I press "Enter"
     Then I should not see "Review mode"
     And I switch to "scorm_object" iframe
@@ -297,17 +284,14 @@ Feature: Scorm multi-sco review mode.
     And I click on "Save and display" "button"
     And I should see "Basic Multi-sco SCORM package"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
     And I switch to the main frame
     And I follow "Exit activity"
     And I wait until the page is ready
     And I should see "Basic Multi-sco SCORM package"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page
     Then I should not see "Review mode"
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
@@ -326,17 +310,14 @@ Feature: Scorm multi-sco review mode.
     And I click on "Save and display" "button"
     And I should see "Basic Multi-sco SCORM package"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
     And I switch to the main frame
     And I follow "Exit activity"
     And I wait until the page is ready
     And I should see "Basic Multi-sco SCORM package"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page
     And I should not see "Review mode"
     And I switch to "scorm_object" iframe
     And I should see "Par"
@@ -379,8 +360,7 @@ Feature: Scorm multi-sco review mode.
     And I follow "Exit activity"
     And I wait until the page is ready
     And I should see "Basic Multi-sco SCORM package"
-    And I am on "Course 1" course homepage
-    And I follow "Basic Multi-sco SCORM package"
+    And I am on the "Basic Multi-sco SCORM package" "scorm activity" page
     Then I should not see "Review mode"
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"

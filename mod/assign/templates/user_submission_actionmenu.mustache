@@ -1,0 +1,185 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_assign/user_submission_actionmenu
+
+    Actions for editing and submitting assignments.
+
+    Classes required for JS:
+    * none
+
+    Context variables required for this template:
+    * see mod/assign/classes/output/user_submission_actionmenu.php
+
+    Example context (json):
+    {
+        "submit": {
+            "button": {
+                "method" : "get",
+                "url" : "#",
+                "formid": "submit_button_1",
+                "primary" : true,
+                "tooltip" : "Submit tooltip",
+                "label" : "Submit",
+                "attributes": [
+                    {
+                      "name": "data-attribute",
+                      "value": "yeah"
+                    }
+                ]
+            },
+            "help": {
+                "title": "Help with something",
+                "url": "http://example.org/help",
+                "linktext": "",
+                "icon":{
+                    "attributes": [
+                        {"name": "class", "value": "iconhelp"},
+                        {"name": "src", "value": "../../../pix/help.svg"},
+                        {"name": "alt", "value": "Help icon"}
+                    ]
+                }
+            }
+        },
+        "previoussubmission": {
+            "button": {
+                "method" : "get",
+                "url" : "#",
+                "formid": "previous_button_2",
+                "primary" : true,
+                "tooltip" : "Submit tooltip",
+                "label" : "Previous submission",
+                "attributes": [
+                    {
+                      "name": "data-attribute",
+                      "value": "yeah"
+                    }
+                ]
+            },
+            "help": {
+                "title": "Help with something",
+                "url": "http://example.org/help",
+                "linktext": "",
+                "icon":{
+                    "attributes": [
+                        {"name": "class", "value": "iconhelp"},
+                        {"name": "src", "value": "../../../pix/help.svg"},
+                        {"name": "alt", "value": "Help icon"}
+                    ]
+                }
+            }
+        },
+        "edit": {
+            "button": {
+                "method" : "get",
+                "url" : "#",
+                "formid": "edit_button_3",
+                "primary" : true,
+                "tooltip" : "Submit tooltip",
+                "label" : "Edit",
+                "attributes": [
+                    {
+                      "name": "data-attribute",
+                      "value": "yeah"
+                    }
+                ]
+            },
+            "help": {
+                "title": "Help with something",
+                "url": "http://example.org/help",
+                "linktext": "",
+                "icon":{
+                    "attributes": [
+                        {"name": "class", "value": "iconhelp"},
+                        {"name": "src", "value": "../../../pix/help.svg"},
+                        {"name": "alt", "value": "Help icon"}
+                    ]
+                }
+            }
+        },
+        "remove": {
+            "button": {
+                "method" : "get",
+                "url" : "#",
+                "formid": "remove_button_4",
+                "primary" : true,
+                "tooltip" : "Submit tooltip",
+                "label" : "Remove",
+                "attributes": [
+                    {
+                      "name": "data-attribute",
+                      "value": "yeah"
+                    }
+                ]
+            },
+            "help": {
+                "title": "Help with something",
+                "url": "http://example.org/help",
+                "linktext": "",
+                "icon":{
+                    "attributes": [
+                        {"name": "class", "value": "iconhelp"},
+                        {"name": "src", "value": "../../../pix/help.svg"},
+                        {"name": "alt", "value": "Help icon"}
+                    ]
+                }
+            }
+        }
+    }
+
+}}
+<div class="container-fluid mb-1">
+    <div class="row">
+        {{#submit}}
+        <div class="col-xs-6 mr-3">
+            {{#button}}
+                {{>core/single_button}}
+            {{/button}}
+            {{#help}}
+                {{>core/help_icon}}
+            {{/help}}
+        </div>
+        {{/submit}}
+        {{#previoussubmission}}
+        <div class="col-xs-6 mr-3">
+            {{#button}}
+                {{>core/single_button}}
+            {{/button}}
+            {{#help}}
+                {{>core/help_icon}}
+            {{/help}}
+        </div>
+        {{/previoussubmission}}
+        {{#edit}}
+        <div class="col-xs-6 mr-3">
+            {{#button}}
+                {{>core/single_button}}
+            {{/button}}
+            {{#help}}
+                {{>core/help_icon}}
+            {{/help}}
+        </div>
+        {{/edit}}
+        {{#remove}}
+        <div class="col-xs-6">
+            {{#button}}
+                {{>core/single_button}}
+            {{/button}}
+        </div>
+        {{/remove}}
+    </div>
+</div>

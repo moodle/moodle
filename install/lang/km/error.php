@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -41,7 +40,7 @@ $string['cannotunzipfile'] = 'មិនអាចពន្លាឯកសារ�
 $string['componentisuptodate'] = 'សមាសភាគគឺទាន់សម័យ ។';
 $string['downloadedfilecheckfailed'] = 'បានបរាជ័យក្នុងការពិនិត្យឯកសារដែលបានទាញយក ។';
 $string['invalidmd5'] = 'md5 មិនត្រឹមត្រូវ';
-$string['missingrequiredfield'] = 'បាត់វាលដែលត្រូវការមួយចំនួន';
+$string['missingrequiredfield'] = 'បាត់ប្រអប់ទិន្នន័យដែលត្រូវទាមទារមួយចំនួន';
 $string['remotedownloaderror'] = 'បរាជ័យក្នុងការទាញយកសមាសភាគទៅម៉ាស៊ីនបម្រើរបស់អ្នក សូមផ្ទៀងផ្ទាត់ប្រូកស៊ី ផ្នែកបន្ថែម PHP cURL ត្រូវបានផ្ដល់អនុសាសន៍ ។<br /><br />អ្នកត្រូវតែទាញយកឯកសារ <a href="{$a->url}">{$a->url}</a> ដោយដៃ ចម្លងវាទៅ "{$a->dest}" ក្នុងម៉ាស៊ីនបម្រើរបស់អ្នក និងពន្លាវានៅទីនោះ ។';
 $string['wrongdestpath'] = 'ផ្លូវទិសដៅមិនត្រឹមត្រូវ ។';
 $string['wrongsourcebase'] = 'មូលដ្ឋាន URL ប្រភពមិនត្រឹមត្រូវ ។';

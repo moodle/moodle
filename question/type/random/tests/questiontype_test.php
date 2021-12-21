@@ -40,11 +40,11 @@ require_once($CFG->dirroot . '/question/type/random/questiontype.php');
 class qtype_random_test extends advanced_testcase {
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = new qtype_random();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 
@@ -127,6 +127,6 @@ class qtype_random_test extends advanced_testcase {
 
         $q = question_bank::load_question($randomquestion->id);
 
-        $this->assertContains($q->id, array($question1->id, $question2->id));
+        $this->assertContainsEquals($q->id, array($question1->id, $question2->id));
     }
 }

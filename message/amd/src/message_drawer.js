@@ -84,7 +84,7 @@ function(
      * @param {string} selector The route container.
      *
      * @return {array} elements Found route container objects.
-    */
+     */
     var getParametersForRoute = function(namespace, root, selector) {
 
         var header = root.find(SELECTORS.HEADER_CONTAINER).find(selector);
@@ -254,7 +254,7 @@ function(
         });
 
         $(SELECTORS.JUMPTO).focus(function() {
-            var firstInput = $(SELECTORS.HEADER_CONTAINER).find('input:visible');
+            var firstInput = root.find(SELECTORS.CLOSE_BUTTON);
             if (firstInput.length) {
                 firstInput.focus();
             } else {
@@ -297,7 +297,13 @@ function(
         });
 
         var closebutton = root.find(SELECTORS.CLOSE_BUTTON);
-        closebutton.on(CustomEvents.events.activate, function() {
+        closebutton.on(CustomEvents.events.activate, function(e, data) {
+            data.originalEvent.preventDefault();
+
+            var button = $(SELECTORS.DRAWER).attr('data-origin');
+            if (button) {
+                $('#' + button).focus();
+            }
             PubSub.publish(Events.TOGGLE_VISIBILITY);
         });
 

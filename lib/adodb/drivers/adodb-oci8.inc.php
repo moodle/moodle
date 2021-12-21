@@ -1,7 +1,7 @@
 <?php
 /*
 
-  @version   v5.20.16  12-Jan-2020
+  @version   v5.21.0  2021-02-27
   @copyright (c) 2000-2013 John Lim. All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 
@@ -9,7 +9,7 @@
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   Code contributed by George Fourlanos <fou@infomap.gr>
 
@@ -89,7 +89,6 @@ END;
 	var $connectSID = false;
 	var $_bind = false;
 	var $_nestedSQL = true;
-	var $_hasOciFetchStatement = false;
 	var $_getarray = false; // currently not working
 	var $leftOuter = '';  // oracle wierdness, $col = $value (+) for LEFT OUTER, $col (+)= $value for RIGHT OUTER
 	var $session_sharing_force_blob = false; // alter session on updateblob if set to true
@@ -103,13 +102,20 @@ END;
 
 	// var $ansiOuter = true; // if oracle9
 
-	function __construct()
-	{
-		$this->_hasOciFetchStatement = ADODB_PHPVER >= 0x4200;
-		if (defined('ADODB_EXTENSION')) {
-			$this->rsPrefix .= 'ext_';
-		}
-	}
+	/*
+	 * Legacy compatibility for sequence names for emulated auto-increments
+	 */
+	public $useCompactAutoIncrements = false;
+	
+	/*
+	 * Defines the schema name for emulated auto-increment columns
+	 */
+	public $schema = false;
+	
+	/*
+	 * Defines the prefix for emulated auto-increment columns
+	 */
+	public $seqPrefix = 'SEQ_';
 
 	/*  function MetaColumns($table, $normalize=true) added by smondino@users.sourceforge.net*/
 	function MetaColumns($table, $normalize=true)
@@ -306,6 +312,43 @@ END;
 	function IfNull( $field, $ifNull )
 	{
 		return " NVL($field, $ifNull) "; // if Oracle
+	}
+	
+	function _insertid($tabname,$column='')
+	{
+		
+		if (!$this->seqField) 
+			return false;
+
+		
+		if ($this->schema) 
+		{
+			$t = strpos($tabname,'.');
+			if ($t !== false) 
+				$tab = substr($tabname,$t+1);
+			else 
+				$tab = $tabname;
+			
+			if ($this->useCompactAutoIncrements)
+				$tab = sprintf('%u',crc32(strtolower($tab)));
+				
+			$seqname = $this->schema.'.'.$this->seqPrefix.$tab;
+		} 
+		else 
+		{
+			if ($this->useCompactAutoIncrements)
+				$tabname = sprintf('%u',crc32(strtolower($tabname)));
+			
+			$seqname = $this->seqPrefix.$tabname;
+		}
+
+		if (strlen($seqname) > 30)
+			/*
+			* We cannot successfully identify the sequence
+			*/
+			return false;
+		
+		return $this->getOne("SELECT $seqname.currval FROM dual");
 	}
 
 	// format and return date string in database date format
@@ -947,7 +990,7 @@ END;
 			$element0 = reset($inputarr);
 			$array2d =  $this->bulkBind && is_array($element0) && !is_object(reset($element0));
 
-			# see http://phplens.com/lens/lensforum/msgs.php?id=18786
+			# see PHPLens Issue No: 18786
 			if ($array2d || !$this->_bindInputArray) {
 
 				# is_object check because oci8 descriptors can be passed in
@@ -1497,37 +1540,27 @@ SELECT /*+ RULE */ distinct b.column_name
 	}
 
 	/**
-	 * Quotes a string.
-	 * An example is  $db->qstr("Don't bother",magic_quotes_runtime());
+	 * Correctly quotes a string so that all strings are escaped.
+	 * We prefix and append to the string single-quotes.
+	 * An example is  $db->qstr("Don't bother");
 	 *
-	 * @param string $s the string to quote
-	 * @param bool $magic_quotes if $s is GET/POST var, set to get_magic_quotes_gpc().
-	 *             This undoes the stupidity of magic quotes for GPC.
+	 * @param string $s            The string to quote
+	 * @param bool   $magic_quotes This param is not used since 5.21.0.
+	 *                             It remains for backwards compatibility.
 	 *
-	 * @return string quoted string to be sent back to database
+	 * @return string Quoted string to be sent back to database
+	 *
+	 * @noinspection PhpUnusedParameterInspection
 	 */
-	function qstr($s,$magic_quotes=false)
+	function qStr($s, $magic_quotes=false)
 	{
-		//$nofixquotes=false;
-
-		if ($this->noNullStrings && strlen($s)==0) {
+		if ($this->noNullStrings && strlen($s) == 0) {
 			$s = ' ';
 		}
-		if (!$magic_quotes) {
-			if ($this->replaceQuote[0] == '\\'){
-				$s = str_replace('\\','\\\\',$s);
-			}
-			return  "'".str_replace("'",$this->replaceQuote,$s)."'";
+		if ($this->replaceQuote[0] == '\\'){
+			$s = str_replace('\\','\\\\',$s);
 		}
-
-		// undo magic quotes for " unless sybase is on
-		if (!ini_get('magic_quotes_sybase')) {
-			$s = str_replace('\\"','"',$s);
-			$s = str_replace('\\\\','\\',$s);
-			return "'".str_replace("\\'",$this->replaceQuote,$s)."'";
-		} else {
-			return "'".$s."'";
-		}
+		return  "'" . str_replace("'", $this->replaceQuote, $s) . "'";
 	}
 
 }
@@ -1591,7 +1624,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 
 			/*
 			// based on idea by Gaetano Giunta to detect unusual oracle errors
-			// see http://phplens.com/lens/lensforum/msgs.php?id=6771
+			// see PHPLens Issue No: 6771
 			$err = oci_error($this->_queryID);
 			if ($err && $this->connection->debug) {
 				ADOConnection::outp($err);
@@ -1751,7 +1784,8 @@ class ADORecordset_oci8 extends ADORecordSet {
 			oci_free_cursor($this->_refcursor);
 			$this->_refcursor = false;
 		}
-		@oci_free_statement($this->_queryID);
+		if (is_resource($this->_queryID))
+		   @oci_free_statement($this->_queryID);
 		$this->_queryID = false;
 	}
 
@@ -1808,16 +1842,12 @@ class ADORecordset_oci8 extends ADORecordSet {
 			return 'I';
 
 		default:
-			return 'N';
+			return ADODB_DEFAULT_METATYPE;
 		}
 	}
 }
 
 class ADORecordSet_ext_oci8 extends ADORecordSet_oci8 {
-	function __construct($queryID,$mode=false)
-	{
-		parent::__construct($queryID, $mode);
-	}
 
 	function MoveNext()
 	{

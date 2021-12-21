@@ -186,10 +186,18 @@ class manager {
             $localisedeventdata->fullmessage = $eventdata->fullmessage;
             $localisedeventdata->fullmessagehtml = $eventdata->fullmessagehtml;
             if (!empty($localisedeventdata->fullmessage)) {
+                // Prevent unclosed HTML elements.
+                $localisedeventdata->fullmessage =
+                    \core_message\helper::prevent_unclosed_html_tags($localisedeventdata->fullmessage, true);
+
                 $localisedeventdata->fullmessage .= "\n\n---------------------------------------------------------------------\n"
                     . $emailtagline;
             }
             if (!empty($localisedeventdata->fullmessagehtml)) {
+                // Prevent unclosed HTML elements.
+                $localisedeventdata->fullmessagehtml =
+                    \core_message\helper::prevent_unclosed_html_tags($localisedeventdata->fullmessagehtml, true);
+
                 $localisedeventdata->fullmessagehtml .=
                     "<br><br>---------------------------------------------------------------------<br>" . $emailtagline;
             }
@@ -354,6 +362,7 @@ class manager {
      * @param \stdClass|\core\message\message $eventdata
      * @param \stdClass $savemessage
      * @param array $processorlist
+     * @throws \moodle_exception
      * @return int $messageid
      */
     protected static function send_message_to_processors($eventdata, \stdClass $savemessage, array
@@ -377,7 +386,9 @@ class manager {
         }
 
         // Send the message to processors.
-        self::call_processors($eventdata, $processorlist);
+        if (!self::call_processors($eventdata, $processorlist)) {
+            throw new \moodle_exception("Message was not sent.");
+        }
 
         // Trigger event for sending a message or notification - we need to do this before marking as read!
         self::trigger_message_events($eventdata, $savemessage);
@@ -478,11 +489,12 @@ class manager {
      *
      * @param message $eventdata the message object.
      * @param array $processorlist the list of processors for a single user.
+     * @return bool false if error calling message processor
      */
     protected static function call_processors(message $eventdata, array $processorlist) {
         // Allow plugins to change the message/notification data before sending it.
         $pluginsfunction = get_plugins_with_function('pre_processor_message_send');
-
+        $sendmsgsuccessful = true;
         foreach ($processorlist as $procname) {
             // Let new messaging class add custom content based on the processor.
             $proceventdata = ($eventdata instanceof message) ? $eventdata->get_eventobject_for_processor($procname) : $eventdata;
@@ -500,7 +512,9 @@ class manager {
             $processor = \core_message\api::get_processed_processor_object($stdproc);
             if (!$processor->object->send_message($proceventdata)) {
                 debugging('Error calling message processor ' . $procname);
+                $sendmsgsuccessful = false;
             }
         }
+        return $sendmsgsuccessful;
     }
 }

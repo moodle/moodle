@@ -36,9 +36,9 @@ class StyleRegistry
     {
         $serializedStyle = $this->serialize($style);
 
-        if (!$this->hasStyleAlreadyBeenRegistered($style)) {
-            $nextStyleId = count($this->serializedStyleToStyleIdMappingTable);
-            $style->setId($nextStyleId);
+        if (!$this->hasSerializedStyleAlreadyBeenRegistered($serializedStyle)) {
+            $nextStyleId = \count($this->serializedStyleToStyleIdMappingTable);
+            $style->markAsRegistered($nextStyleId);
 
             $this->serializedStyleToStyleIdMappingTable[$serializedStyle] = $nextStyleId;
             $this->styleIdToStyleMappingTable[$nextStyleId] = $style;
@@ -48,15 +48,13 @@ class StyleRegistry
     }
 
     /**
-     * Returns whether the given style has already been registered.
+     * Returns whether the serialized style has already been registered.
      *
-     * @param Style $style
+     * @param string $serializedStyle The serialized style
      * @return bool
      */
-    protected function hasStyleAlreadyBeenRegistered(Style $style)
+    protected function hasSerializedStyleAlreadyBeenRegistered(string $serializedStyle)
     {
-        $serializedStyle = $this->serialize($style);
-
         // Using isset here because it is way faster than array_key_exists...
         return isset($this->serializedStyleToStyleIdMappingTable[$serializedStyle]);
     }
@@ -79,7 +77,7 @@ class StyleRegistry
      */
     public function getRegisteredStyles()
     {
-        return array_values($this->styleIdToStyleMappingTable);
+        return \array_values($this->styleIdToStyleMappingTable);
     }
 
     /**
@@ -101,13 +99,13 @@ class StyleRegistry
      */
     public function serialize(Style $style)
     {
-        // In order to be able to properly compare style, set static ID value
+        // In order to be able to properly compare style, set static ID value and reset registration
         $currentId = $style->getId();
-        $style->setId(0);
+        $style->unmarkAsRegistered();
 
-        $serializedStyle = serialize($style);
+        $serializedStyle = \serialize($style);
 
-        $style->setId($currentId);
+        $style->markAsRegistered($currentId);
 
         return $serializedStyle;
     }

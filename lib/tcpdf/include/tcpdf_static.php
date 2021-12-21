@@ -1,9 +1,9 @@
 <?php
 //============================================================+
 // File name   : tcpdf_static.php
-// Version     : 1.1.3
+// Version     : 1.1.4
 // Begin       : 2002-08-03
-// Last Update : 2015-04-28
+// Last Update : 2019-11-01
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
@@ -55,7 +55,7 @@ class TCPDF_STATIC {
 	 * Current TCPDF version.
 	 * @private static
 	 */
-	private static $tcpdf_version = '6.3.2';
+	private static $tcpdf_version = '6.3.5';
 
 	/**
 	 * String alias for total number of pages.
@@ -125,7 +125,7 @@ class TCPDF_STATIC {
 	 * @public static
 	 */
 	public static function getTCPDFProducer() {
-		return "\x54\x43\x50\x44\x46\x20".self::getTCPDFVersion()."\x20\x28\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x63\x70\x64\x66\x2e\x6f\x72\x67\x29";
+		return "\x54\x43\x50\x44\x46\x20\x28\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x63\x70\x64\x66\x2e\x6f\x72\x67\x29";
 	}
 
 	/**
@@ -276,7 +276,7 @@ class TCPDF_STATIC {
 	/**
 	 * Determine whether a string is empty.
 	 * @param $str (string) string to be checked
-	 * @return boolean true if string is empty
+	 * @return bool true if string is empty
 	 * @since 4.5.044 (2009-04-16)
 	 * @public static
 	 */
@@ -1136,7 +1136,7 @@ class TCPDF_STATIC {
 	 * @see setHtmlVSpace()
 	 * @public static
 	 */
-	public static function fixHTMLCode($html, $default_css='', $tagvs='', $tidy_options='', &$tagvspaces) {
+	public static function fixHTMLCode($html, $default_css, $tagvs, $tidy_options, &$tagvspaces) {
 		// configure parameters for HTML Tidy
 		if ($tidy_options === '') {
 			$tidy_options = array (
@@ -1440,6 +1440,10 @@ class TCPDF_STATIC {
 	 */
 	public static function intToRoman($number) {
 		$roman = '';
+		if ($number >= 4000) {
+			// do not represent numbers above 4000 in Roman numerals
+			return strval($number);
+		}
 		while ($number >= 1000) {
 			$roman .= 'M';
 			$number -= 1000;
@@ -1808,8 +1812,8 @@ class TCPDF_STATIC {
 	/**
 	 * Wrapper to use fopen only with local files
 	 * @param filename (string) Name of the file to open
-	 * @param $mode (string) 
-	 * @return Returns a file pointer resource on success, or FALSE on error.  
+	 * @param $mode (string)
+	 * @return Returns a file pointer resource on success, or FALSE on error.
 	 * @public static
 	 */
 	public static function fopenLocal($filename, $mode) {
@@ -1829,6 +1833,8 @@ class TCPDF_STATIC {
 	 */
 	public static function url_exists($url) {
 		$crs = curl_init();
+		// encode query params in URL to get right response form the server
+		$url = self::encodeUrlQuery($url);
 		curl_setopt($crs, CURLOPT_URL, $url);
 		curl_setopt($crs, CURLOPT_NOBODY, true);
 		curl_setopt($crs, CURLOPT_FAILONERROR, true);
@@ -1840,6 +1846,10 @@ class TCPDF_STATIC {
 		curl_setopt($crs, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($crs, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($crs, CURLOPT_USERAGENT, 'tc-lib-file');
+		curl_setopt($crs, CURLOPT_MAXREDIRS, 5);
+		if (defined('CURLOPT_PROTOCOLS')) {
+		    curl_setopt($crs, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS | CURLPROTO_HTTP |  CURLPROTO_FTP | CURLPROTO_FTPS);
+		}
 		curl_exec($crs);
 		$code = curl_getinfo($crs, CURLINFO_HTTP_CODE);
 		curl_close($crs);
@@ -1847,11 +1857,31 @@ class TCPDF_STATIC {
 	}
 
 	/**
+	 * Encode query params in URL
+	 *
+	 * @param string $url
+	 * @return string
+	 * @since 6.3.3 (2019-11-01)
+	 * @public static
+	 */
+	public static function encodeUrlQuery($url) {
+		$urlData = parse_url($url);
+		if (isset($urlData['query']) && $urlData['query']) {
+			$urlQueryData = array();
+			parse_str(urldecode($urlData['query']), $urlQueryData);
+			$updatedUrl = $urlData['scheme'] . '://' . $urlData['host'] . $urlData['path'] . '?' . http_build_query($urlQueryData);
+		} else {
+			$updatedUrl = $url;
+		}
+		return $updatedUrl;
+	}
+
+	/**
 	 * Wrapper for file_exists.
 	 * Checks whether a file or directory exists.
 	 * Only allows some protocols and local files.
-	 * @param filename (string) Path to the file or directory. 
-	 * @return Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.  
+	 * @param filename (string) Path to the file or directory.
+	 * @return Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.
 	 * @public static
 	 */
 	public static function file_exists($filename) {
@@ -1868,7 +1898,7 @@ class TCPDF_STATIC {
 	 * Reads entire file into a string.
 	 * The file can be also an URL.
 	 * @param $file (string) Name of the file or URL to read.
-	 * @return The function returns the read data or FALSE on failure. 
+	 * @return The function returns the read data or FALSE on failure.
 	 * @author Nicola Asuni
 	 * @since 6.0.025
 	 * @public static
@@ -1951,6 +1981,10 @@ class TCPDF_STATIC {
 				curl_setopt($crs, CURLOPT_SSL_VERIFYPEER, false);
 				curl_setopt($crs, CURLOPT_SSL_VERIFYHOST, false);
 				curl_setopt($crs, CURLOPT_USERAGENT, 'tc-lib-file');
+				curl_setopt($crs, CURLOPT_MAXREDIRS, 5);
+				if (defined('CURLOPT_PROTOCOLS')) {
+				    curl_setopt($crs, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS | CURLPROTO_HTTP |  CURLPROTO_FTP | CURLPROTO_FTPS);
+				}
 				$ret = curl_exec($crs);
 				curl_close($crs);
 				if ($ret !== false) {
@@ -2098,7 +2132,7 @@ class TCPDF_STATIC {
 		return $a['i'];
 	}
 
-	
+
 	/**
 	 * Array of page formats
 	 * measures are calculated in this way: (inches * 72) or (millimeters * 72 / 25.4)
@@ -2485,7 +2519,7 @@ class TCPDF_STATIC {
 	 * @since 5.0.010 (2010-05-17)
 	 * @public static
 	 */
-	public static function setPageBoxes($page, $type, $llx, $lly, $urx, $ury, $points=false, $k, $pagedim=array()) {
+	public static function setPageBoxes($page, $type, $llx, $lly, $urx, $ury, $points, $k, $pagedim=array()) {
 		if (!isset($pagedim[$page])) {
 			// initialize array
 			$pagedim[$page] = array();

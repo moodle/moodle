@@ -24,14 +24,14 @@ Feature: Restore Moodle 2 course backups with different user data settings
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
-    And I follow "Templates"
+    And I navigate to "Templates" in current page administration
     And I wait until the page is ready
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I add an entry to "Test database name" database with:
       | Test field name | Student entry |
-    And I press "Save and view"
+    And I press "Save"
     And I log out
     And I log in as "admin"
     And I backup "Course 1" course using this options:
@@ -47,7 +47,7 @@ Feature: Restore Moodle 2 course backups with different user data settings
       | Schema | User data | 1 |
       | Schema | - | 1 |
     Then I should see "Test database name"
-    When I follow "Test database name"
+    When I click on "Test database name" "link" in the "region-main" "region"
     Then I should see "Student entry"
 
   @javascript
@@ -59,7 +59,7 @@ Feature: Restore Moodle 2 course backups with different user data settings
       | Schema | User data | 1 |
       | Schema | - | 0 |
     Then I should see "Test database name"
-    When I follow "Test database name"
+    When I click on "Test database name" "link" in the "region-main" "region"
     Then I should not see "Student entry"
 
   @javascript
@@ -71,7 +71,7 @@ Feature: Restore Moodle 2 course backups with different user data settings
       | Schema | User data | 0 |
       | Schema | - | 0 |
     Then I should see "Test database name"
-    When I follow "Test database name"
+    When I click on "Test database name" "link" in the "region-main" "region"
     Then I should not see "Student entry"
 
   @javascript
@@ -83,7 +83,7 @@ Feature: Restore Moodle 2 course backups with different user data settings
       | Schema | - | 1 |
       | Schema | User data | 0 |
     Then I should see "Test database name"
-    When I follow "Test database name"
+    When I click on "Test database name" "link" in the "region-main" "region"
     Then I should not see "Student entry"
 
   @javascript
@@ -91,7 +91,7 @@ Feature: Restore Moodle 2 course backups with different user data settings
     And I restore "test_backup.mbz" backup into a new course using this options:
       | Settings |  Include enrolled users | 0 |
     Then I should see "Test database name"
-    When I follow "Test database name"
+    When I click on "Test database name" "link" in the "region-main" "region"
     Then I should not see "Student entry"
 
   @javascript
@@ -99,8 +99,7 @@ Feature: Restore Moodle 2 course backups with different user data settings
     Given I navigate to "Courses > Backups > General restore defaults" in site administration
     And I set the field "s_restore_restore_general_users" to ""
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I navigate to "Restore" in current page administration
+    And I am on the "Course 1" "restore" page
     # "User data" marks the user data field for the section
     # "-" marks the user data field for the data activity
     And I restore "test_backup.mbz" backup into a new course using this options:
@@ -108,7 +107,7 @@ Feature: Restore Moodle 2 course backups with different user data settings
       | Schema | User data | 1 |
       | Schema | - | 1 |
     Then I should see "Test database name"
-    When I follow "Test database name"
+    When I click on "Test database name" "link" in the "region-main" "region"
     Then I should see "Student entry"
 
   @javascript
@@ -116,10 +115,9 @@ Feature: Restore Moodle 2 course backups with different user data settings
     Given I navigate to "Courses > Backups > General restore defaults" in site administration
     And I set the field "s_restore_restore_general_users" to ""
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I navigate to "Restore" in current page administration
+    And I am on the "Course 1" "restore" page
     When I restore "test_backup.mbz" backup into a new course using this options:
       | Settings |  Include enrolled users | 0 |
     Then I should see "Test database name"
-    When I follow "Test database name"
+    When I click on "Test database name" "link" in the "region-main" "region"
     Then I should not see "Student entry"

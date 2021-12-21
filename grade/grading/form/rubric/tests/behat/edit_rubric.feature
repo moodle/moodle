@@ -17,12 +17,17 @@ Feature: Rubrics can be created and edited
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity                          | assign                      |
+      | course                            | C1                          |
+      | section                           | 1                           |
+      | name                              | Test assignment 1 name      |
+      | intro                             | Test assignment description |
+      | assignfeedback_comments_enabled   | 1                           |
+      | assignfeedback_editpdf_enabled    | 1                           |
+      | advancedgradingmethod_submissions | rubric                      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment 1 name |
-      | Description | Test assignment description |
-      | Grading method | Rubric |
     When I go to "Test assignment 1 name" advanced grading definition page
     # Defining a rubric.
     And I set the following fields to these values:
@@ -44,6 +49,7 @@ Feature: Rubrics can be created and edited
     And I press "Save rubric and make it ready"
     Then I should see "Ready for use"
     # Grading two students.
+    And I navigate to "Assignment" in current page administration
     And I go to "Student 1" "Test assignment 1 name" activity advanced grading page
     And I grade by filling the rubric with:
       | Criterion 1 | 50 | Very good |
@@ -59,6 +65,7 @@ Feature: Rubrics can be created and edited
     # Checking that the user grade is correct.
     And I should see "65" in the "Student 1" "table_row"
     # Updating the user grade.
+    And I am on the "Test assignment 1 name" "assign activity" page
     And I go to "Student 1" "Test assignment 1 name" activity advanced grading page
     And I grade by filling the rubric with:
       | Criterion 1 | 20 | Bad, I changed my mind |
@@ -70,9 +77,7 @@ Feature: Rubrics can be created and edited
     And I should see "35" in the "Student 1" "table_row"
     And I log out
     # Viewing it as a student.
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment 1 name"
+    And I am on the "Test assignment 1 name" "assign activity" page logged in as student1
     And I should see "35" in the ".feedback" "css_element"
     And I should see "Rubric test description" in the ".feedback" "css_element"
     And I should see "In general... work harder..."
@@ -80,8 +85,7 @@ Feature: Rubrics can be created and edited
     And the level with "20" points is selected for the rubric criterion "Criterion 1"
     And the level with "5" points is selected for the rubric criterion "Criterion 3"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     # Editing a rubric definition without regrading students.
     And I go to "Test assignment 1 name" advanced grading definition page
     And "Save as draft" "button" should not exist
@@ -93,9 +97,7 @@ Feature: Rubrics can be created and edited
     And I press "Continue"
     And I log out
     # Check that the student still sees the grade.
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment 1 name"
+    And I am on the "Test assignment 1 name" "assign activity" page logged in as student1
     And I should see "35" in the ".feedback" "css_element"
     And the level with "20" points is selected for the rubric criterion "Criterion 1"
     And I log out
@@ -110,30 +112,23 @@ Feature: Rubrics can be created and edited
     And I press "Continue"
     And I log out
     # Check that the student doesn't see the grade.
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment 1 name"
+    And I am on the "Test assignment 1 name" "assign activity" page logged in as student1
     And I should see "35" in the ".feedback" "css_element"
     And the level with "20" points is not selected for the rubric criterion "Criterion 1"
     And I log out
     # Regrade student.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment 1 name"
+    And I am on the "Test assignment 1 name" "assign activity" page logged in as teacher1
     And I go to "Student 1" "Test assignment 1 name" activity advanced grading page
     And I should see "The rubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade."
     And I save the advanced grading form
     And I log out
     # Check that the student sees the grade again.
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment 1 name"
+    And I am on the "Test assignment 1 name" "assign activity" page logged in as student1
     And I should see "31.82" in the ".feedback" "css_element"
     And the level with "20" points is not selected for the rubric criterion "Criterion 1"
     # Hide all rubric info for students
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And I go to "Test assignment 1 name" advanced grading definition page
     And I set the field "Allow users to preview rubric (otherwise it will only be displayed after grading)" to ""
     And I set the field "Display rubric description during evaluation" to ""
@@ -145,9 +140,7 @@ Feature: Rubrics can be created and edited
     And I press "Continue"
     And I log out
     # Students should not see anything.
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment 1 name"
+    And I am on the "Test assignment 1 name" "assign activity" page logged in as student1
     And I should not see "Criterion 1" in the ".submissionstatustable" "css_element"
     And I should not see "Criterion 2" in the ".submissionstatustable" "css_element"
     And I should not see "Criterion 3" in the ".submissionstatustable" "css_element"

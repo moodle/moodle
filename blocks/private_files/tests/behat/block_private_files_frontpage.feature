@@ -13,7 +13,7 @@ Feature: The private files block allows users to store files privately in moodle
       | teacher1 | Teacher | 1 | teacher1@example.com |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Private files" block
     And I log out
 

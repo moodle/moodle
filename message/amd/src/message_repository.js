@@ -17,8 +17,6 @@
  * Retrieves messages from the server.
  *
  * @module     core_message/message_repository
- * @class      message_repository
- * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -765,6 +763,7 @@ define(
      * @param {int} limit Limit for results
      * @param {int} offset Offset for results
      * @param {bool|null} favourites If favourites should be included or not
+     * @param {bool} mergeself
      * @return {object} jQuery promise
      */
     var getConversations = function(

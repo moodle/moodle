@@ -43,7 +43,7 @@ class block_comments_events_testcase extends advanced_testcase {
     /**
      * Setup test data.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

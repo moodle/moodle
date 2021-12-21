@@ -30,7 +30,7 @@ use core_table\local\filter\filterset;
 use core_user;
 use moodle_recordset;
 use stdClass;
-use user_picture;
+use core_user\fields;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -77,7 +77,7 @@ class participants_search {
         $this->context = $context;
         $this->filterset = $filterset;
 
-        $this->userfields = get_extra_user_fields($this->context);
+        $this->userfields = fields::get_identity_fields($this->context);
     }
 
     /**
@@ -192,7 +192,15 @@ class participants_search {
             'params' => $params,
         ] = $this->get_enrolled_sql();
 
-        $userfieldssql = user_picture::fields('u', $this->userfields);
+        // Get the fields for all contexts because there is a special case later where it allows
+        // matches of fields you can't access if they are on your own account.
+        $userfields = fields::for_identity(null)->with_userpic();
+        ['selects' => $userfieldssql, 'joins' => $userfieldsjoin, 'params' => $userfieldsparams, 'mappings' => $mappings] =
+                (array)$userfields->get_sql('u', true);
+        if ($userfieldsjoin) {
+            $outerjoins[] = $userfieldsjoin;
+            $params = array_merge($params, $userfieldsparams);
+        }
 
         // Include any compulsory enrolment SQL (eg capability related filtering that must be applied).
         if (!empty($esqlforced)) {
@@ -206,12 +214,12 @@ class participants_search {
         }
 
         if ($isfrontpage) {
-            $outerselect = "SELECT {$userfieldssql}, u.lastaccess";
+            $outerselect = "SELECT u.lastaccess $userfieldssql";
             if ($accesssince) {
                 $wheres[] = user_get_user_lastaccess_sql($accesssince, 'u', $matchaccesssince);
             }
         } else {
-            $outerselect = "SELECT {$userfieldssql}, COALESCE(ul.timeaccess, 0) AS lastaccess";
+            $outerselect = "SELECT COALESCE(ul.timeaccess, 0) AS lastaccess $userfieldssql";
             // Not everybody has accessed the course yet.
             $outerjoins[] = 'LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid2)';
             $params['courseid2'] = $this->course->id;
@@ -249,12 +257,28 @@ class participants_search {
             }
         }
 
+        // Apply any country filtering.
+        if ($this->filterset->has_filter('country')) {
+            [
+                'where' => $countrywhere,
+                'params' => $countryparams,
+            ] = $this->get_country_sql();
+
+            if (!empty($countrywhere)) {
+                $wheres[] = "($countrywhere)";
+            }
+
+            if (!empty($countryparams)) {
+                $params = array_merge($params, $countryparams);
+            }
+        }
+
         // Apply any keyword text searches.
         if ($this->filterset->has_filter('keywords')) {
             [
                 'where' => $keywordswhere,
                 'params' => $keywordsparams,
-            ] = $this->get_keywords_search_sql();
+            ] = $this->get_keywords_search_sql($mappings);
 
             if (!empty($keywordswhere)) {
                 $wheres[] = $keywordswhere;
@@ -870,11 +894,38 @@ class participants_search {
     }
 
     /**
-     * Prepare SQL where clause and associated parameters for any keyword searches being performed.
+     * Prepare SQL where clause and associated parameters for country filtering
      *
      * @return array SQL query data in the format ['where' => '', 'params' => []].
      */
-    protected function get_keywords_search_sql(): array {
+    protected function get_country_sql(): array {
+        global $DB;
+
+        $where = '';
+        $params = [];
+
+        $countryfilter = $this->filterset->get_filter('country');
+        if ($countrycodes = $countryfilter->get_filter_values()) {
+            // If filter type is "None", then we negate the comparison.
+            [$countrywhere, $params] = $DB->get_in_or_equal($countrycodes, SQL_PARAMS_NAMED, 'country',
+                $countryfilter->get_join_type() !== $countryfilter::JOINTYPE_NONE);
+
+            $where = "(u.country {$countrywhere})";
+        }
+
+        return [
+            'where' => $where,
+            'params' => $params,
+        ];
+    }
+
+    /**
+     * Prepare SQL where clause and associated parameters for any keyword searches being performed.
+     *
+     * @param array $mappings Array of field mappings (fieldname => SQL code for the value)
+     * @return array SQL query data in the format ['where' => '', 'params' => []].
+     */
+    protected function get_keywords_search_sql(array $mappings): array {
         global $CFG, $DB, $USER;
 
         $keywords = [];
@@ -909,6 +960,8 @@ class participants_search {
             $keywords = $keywordsfilter->get_filter_values();
         }
 
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
+
         foreach ($keywords as $index => $keyword) {
             $searchkey1 = 'search' . $index . '1';
             $searchkey2 = 'search' . $index . '2';
@@ -919,9 +972,11 @@ class participants_search {
             $searchkey7 = 'search' . $index . '7';
 
             $conditions = [];
+
             // Search by fullname.
-            $fullname = $DB->sql_fullname('u.firstname', 'u.lastname');
+            [$fullname, $fullnameparams] = fields::get_sql_fullname('u', $canviewfullnames);
             $conditions[] = $DB->sql_like($fullname, ':' . $searchkey1, false, false);
+            $params = array_merge($params, $fullnameparams);
 
             // Search by email.
             $email = $DB->sql_like('email', ':' . $searchkey2, false, false);
@@ -962,30 +1017,30 @@ class participants_search {
 
             $conditions[] = $idnumber;
 
-            if (!empty($CFG->showuseridentity)) {
-                // Search all user identify fields.
-                $extrasearchfields = explode(',', $CFG->showuseridentity);
-                foreach ($extrasearchfields as $extrasearchfield) {
-                    if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
-                        // Already covered above. Search by country not supported.
-                        continue;
-                    }
-                    $param = $searchkey3 . $extrasearchfield;
-                    $condition = $DB->sql_like($extrasearchfield, ':' . $param, false, false);
-                    $params[$param] = "%$keyword%";
-
-                    if ($notjoin) {
-                        $condition = "($extrasearchfield IS NOT NULL AND {$condition})";
-                    }
-
-                    if (!in_array($extrasearchfield, $this->userfields)) {
-                        // User cannot see this field, but allow match if their own account.
-                        $userid3 = 'userid' . $index . '3' . $extrasearchfield;
-                        $condition = "(". $condition . " AND u.id = :$userid3)";
-                        $params[$userid3] = $USER->id;
-                    }
-                    $conditions[] = $condition;
+            // Search all user identify fields.
+            $extrasearchfields = fields::get_identity_fields(null);
+            foreach ($extrasearchfields as $fieldindex => $extrasearchfield) {
+                if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
+                    // Already covered above.
+                    continue;
                 }
+                // The param must be short (max 32 characters) so don't include field name.
+                $param = $searchkey3 . '_ident' . $fieldindex;
+                $fieldsql = $mappings[$extrasearchfield];
+                $condition = $DB->sql_like($fieldsql, ':' . $param, false, false);
+                $params[$param] = "%$keyword%";
+
+                if ($notjoin) {
+                    $condition = "($fieldsql IS NOT NULL AND {$condition})";
+                }
+
+                if (!in_array($extrasearchfield, $this->userfields)) {
+                    // User cannot see this field, but allow match if their own account.
+                    $userid3 = 'userid' . $index . '3_ident' . $fieldindex;
+                    $condition = "(". $condition . " AND u.id = :$userid3)";
+                    $params[$userid3] = $USER->id;
+                }
+                $conditions[] = $condition;
             }
 
             // Search by middlename.

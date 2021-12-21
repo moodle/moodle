@@ -95,3 +95,4 @@ $string['templatetypeown'] = 'Own form';
 $string['templatetypeshared'] = 'Shared template';
 $string['templatesource'] = 'Location: {$a->component} ({$a->area})';
 $string['error:notinrange'] = 'Invalid grade \'{$a->grade}\' provided. Grades must be between 0 and {$a->maxgrade}.';
+$string['error:gradingunavailable'] = 'The advanced grading method is not correctly set. Please check the whole forum grading options in the forum settings.';

@@ -80,7 +80,7 @@ class core_completion_bulk_update_testcase extends advanced_testcase {
             'lti-2' => ['lti', ['completion' => COMPLETION_TRACKING_MANUAL]],
             'page-1' => ['page', ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]],
             'page-2' => ['page', ['completion' => COMPLETION_TRACKING_MANUAL]],
-            'quiz-1' => ['quiz', ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionpass' => 1]],
+            'quiz-1' => ['quiz', ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionpassgrade' => 1]],
             'quiz-2' => ['quiz', ['completion' => COMPLETION_TRACKING_MANUAL]],
             'resource-1' => ['resource', ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]],
             'resource-2' => ['resource', ['completion' => COMPLETION_TRACKING_MANUAL]],

@@ -57,7 +57,7 @@ class qbehaviour_interactive_renderer extends qbehaviour_renderer {
             'id' => $qa->get_behaviour_field_name('tryagain'),
             'name' => $qa->get_behaviour_field_name('tryagain'),
             'value' => get_string('tryagain', 'qbehaviour_interactive'),
-            'class' => 'submit btn',
+            'class' => 'submit btn btn-secondary',
         );
         if ($options->readonly === qbehaviour_interactive::TRY_AGAIN_VISIBLE_READONLY) {
             // This means the question really was rendered with read-only option.

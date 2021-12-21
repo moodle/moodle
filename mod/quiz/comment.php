@@ -33,6 +33,7 @@ $cmid = optional_param('cmid', null, PARAM_INT);
 $PAGE->set_url('/mod/quiz/comment.php', array('attempt' => $attemptid, 'slot' => $slot));
 
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
+$attemptobj->preload_all_attempt_step_users();
 $student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
 
 // Can only grade finished attempts.

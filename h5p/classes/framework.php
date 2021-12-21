@@ -24,8 +24,8 @@
 
 namespace core_h5p;
 
-defined('MOODLE_INTERNAL') || die();
-
+use Moodle\H5PFrameworkInterface;
+use Moodle\H5PCore;
 /**
  * Moodle's implementation of the H5P framework interface.
  *
@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class framework implements \H5PFrameworkInterface {
+class framework implements H5PFrameworkInterface {
 
     /** @var string The path to the last uploaded h5p */
     private $lastuploadedfolder;
@@ -115,7 +115,16 @@ class framework implements \H5PFrameworkInterface {
      * @param string $url
      */
     public function setLibraryTutorialUrl($libraryname, $url) {
-        // Tutorial url is currently not being used or stored in libraries.
+        global $DB;
+
+        $sql = 'UPDATE {h5p_libraries}
+                   SET tutorial = :tutorial
+                 WHERE machinename = :machinename';
+        $params = [
+            'tutorial' => $url,
+            'machinename' => $libraryname,
+        ];
+        $DB->execute($sql, $params);
     }
 
     /**
@@ -481,7 +490,7 @@ class framework implements \H5PFrameworkInterface {
 
         // Extract num from records.
         foreach ($records as $addon) {
-            $addons[] = \H5PCore::snakeToCamel($addon);
+            $addons[] = H5PCore::snakeToCamel($addon);
         }
 
         return $addons;
@@ -511,7 +520,7 @@ class framework implements \H5PFrameworkInterface {
 
         $results = $DB->get_records('h5p_libraries', [], 'title ASC, majorversion ASC, minorversion ASC',
             'id, machinename AS machine_name, majorversion AS major_version, minorversion AS minor_version,
-            patchversion AS patch_version, runnable, title');
+            patchversion AS patch_version, runnable, title, enabled');
 
         $libraries = array();
         foreach ($results as $library) {
@@ -568,7 +577,7 @@ class framework implements \H5PFrameworkInterface {
     }
 
     /**
-     * Get file extension whitelist.
+     * Get allowed file extension list.
      * Implements getWhitelist.
      *
      * The default extension list is part of h5p, but admins should be allowed to modify it.
@@ -1189,7 +1198,7 @@ class framework implements \H5PFrameworkInterface {
             'embedType' => 'iframe',
             'disable' => $data->displayoptions,
             'title' => $data->title,
-            'slug' => \H5PCore::slugify($data->title) . '-' . $data->id,
+            'slug' => H5PCore::slugify($data->title) . '-' . $data->id,
             'filtered' => $data->filtered,
             'libraryId' => $data->libraryid,
             'libraryName' => $data->machinename,
@@ -1258,7 +1267,7 @@ class framework implements \H5PFrameworkInterface {
         $dependencies = array();
         foreach ($data as $dependency) {
             unset($dependency->unidepid);
-            $dependencies[$dependency->machine_name] = \H5PCore::snakeToCamel($dependency);
+            $dependencies[$dependency->machine_name] = H5PCore::snakeToCamel($dependency);
         }
 
         return $dependencies;
@@ -1269,7 +1278,7 @@ class framework implements \H5PFrameworkInterface {
      * Implements getOption.
      *
      * To avoid updating the cache libraries when using the Hub selector,
-     * {@link \H5PEditorAjax::isContentTypeCacheUpdated}, the setting content_type_cache_updated_at
+     * {@see \Moodle\H5PEditorAjax::isContentTypeCacheUpdated}, the setting content_type_cache_updated_at
      * always return the current time.
      *
      * @param string $name Identifier for the setting
@@ -1281,7 +1290,7 @@ class framework implements \H5PFrameworkInterface {
             // For now, the download and the embed displayoptions are disabled by default, so only will be rendered when
             // defined in the displayoptions DB field.
             // This check should be removed if they are added as new H5P settings, to let admins to define the default value.
-            return \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
+            return \Moodle\H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
         }
 
         // To avoid update the libraries cache using the Hub selector.
@@ -1532,7 +1541,7 @@ class framework implements \H5PFrameworkInterface {
      * Check whether a user has permissions to execute an action, such as embed H5P content.
      * Implements hasPermission.
      *
-     * @param  \H5PPermission $permission Permission type
+     * @param  H5PPermission $permission Permission type
      * @param  int $id Id need by platform to determine permission
      * @return boolean true if the user can execute the action defined in $permission; false otherwise
      */

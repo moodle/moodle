@@ -82,6 +82,8 @@ $PAGE->set_url($manager->get_management_url($returnurl));
 navigation_node::override_active_url($manager->get_management_url());
 $PAGE->set_title(get_string('gradingmanagement', 'core_grading'));
 $PAGE->set_heading(get_string('gradingmanagement', 'core_grading'));
+// We don't need to show the default header on a management page.
+$PAGE->activityheader->disable();
 $output = $PAGE->get_renderer('core_grading');
 
 // process the eventual change of the active grading method
@@ -231,7 +233,7 @@ if (!empty($method)) {
         } else {
             $tag = html_writer::tag('span', get_string('statusdraft', 'core_grading'), array('class' => 'status draft'));
         }
-        echo $output->heading(s($definition->name) . ' ' . $tag, 3, 'definition-name');
+        echo $output->heading(format_string($definition->name) . ' ' . $tag, 3, 'definition-name');
         echo $output->box($controller->render_preview($PAGE), 'definition-preview');
     }
 }

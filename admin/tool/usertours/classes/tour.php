@@ -24,6 +24,8 @@
 
 namespace tool_usertours;
 
+use tool_usertours\local\clientside_filter\clientside_filter;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -88,6 +90,11 @@ class tour {
     protected $enabled;
 
     /**
+     * @var $endtourlabel The end tour label.
+     */
+    protected $endtourlabel;
+
+    /**
      * @var $sortorder The sort order.
      */
     protected $sortorder;
@@ -111,6 +118,11 @@ class tour {
      * @var $steps  The steps in this tour.
      */
     protected $steps = [];
+
+    /**
+     * @var bool $displaystepnumbers Display the step numbers in this tour.
+     */
+    protected $displaystepnumbers = true;
 
     /**
      * Create an instance of the specified tour.
@@ -185,9 +197,11 @@ class tour {
         if (isset($record->sortorder)) {
             $this->sortorder = $record->sortorder;
         }
+        $this->endtourlabel = $record->endtourlabel ?? null;
         $this->config       = json_decode($record->configdata);
         $this->dirty        = false;
         $this->steps        = [];
+        $this->displaystepnumbers = !empty($record->displaystepnumbers);
 
         return $this;
     }
@@ -321,6 +335,36 @@ class tour {
     }
 
     /**
+     * The end tour label for the tour.
+     *
+     * @return string
+     */
+    public function get_endtourlabel(): string {
+        if ($this->endtourlabel) {
+            $label = $this->endtourlabel;
+        } else if ($this->count_steps() == 1) {
+            $label = get_string('endonesteptour', 'tool_usertours');
+        } else {
+            $label = get_string('endtour', 'tool_usertours');
+        }
+
+        return $label;
+    }
+
+    /**
+     * Set the endtourlabel of the tour to the specified value.
+     *
+     * @param string $value
+     * @return $this
+     */
+    public function set_endtourlabel(string $value): tour {
+        $this->endtourlabel = $value;
+        $this->dirty = true;
+
+        return $this;
+    }
+
+    /**
      * The link to view this tour.
      *
      * @return  moodle_url
@@ -387,7 +431,9 @@ class tour {
             'pathmatch'     => $this->pathmatch,
             'enabled'       => $this->enabled,
             'sortorder'     => $this->sortorder,
+            'endtourlabel'  => $this->endtourlabel,
             'configdata'    => json_encode($this->config),
+            'displaystepnumbers' => $this->displaystepnumbers,
         );
     }
 
@@ -769,11 +815,14 @@ class tour {
     /**
      * Check whether this tour matches all filters.
      *
-     * @param   context     $context    The context to check
+     * @param   \context     $context    The context to check.
+     * @param   array|null   $filters    Optional array of filters.
      * @return  bool
      */
-    public function matches_all_filters(\context $context) {
-        $filters = helper::get_all_filters();
+    public function matches_all_filters(\context $context, array $filters = null): bool {
+        if (!$filters) {
+            $filters = helper::get_all_filters();
+        }
 
         // All filters must match.
         // If any one filter fails to match, we return false.
@@ -784,5 +833,43 @@ class tour {
         }
 
         return true;
+    }
+
+    /**
+     * Gets all filter values for use in client side filters.
+     *
+     * @param   array     $filters    Array of clientside filters.
+     * @return  array
+     */
+    public function get_client_filter_values(array $filters): array {
+        $results = [];
+
+        foreach ($filters as $filter) {
+            $results[$filter::get_filter_name()] = $filter::get_client_side_values($this);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Set the value for the display step numbers setting.
+     *
+     * @param bool $value True for enable.
+     * @return $this
+     */
+    public function set_display_step_numbers(bool $value): tour {
+        $this->displaystepnumbers = $value;
+        $this->dirty = true;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of the display step numbers setting.
+     *
+     * @return bool
+     */
+    public function get_display_step_numbers(): bool {
+        return $this->displaystepnumbers;
     }
 }

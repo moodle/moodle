@@ -162,7 +162,7 @@ class mod_glossary_external extends external_api {
      * @param  int $id The glossary ID.
      * @return array Contains glossary, context, course and cm.
      */
-    protected static function validate_glossary($id) {
+    public static function validate_glossary($id) {
         global $DB;
         $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
@@ -1397,7 +1397,7 @@ class mod_glossary_external extends external_api {
 
         // Get and validate the glossary.
         $entry = $DB->get_record('glossary_entries', array('id' => $id), '*', MUST_EXIST);
-        list($glossary, $context) = self::validate_glossary($entry->glossaryid);
+        list($glossary, $context, $course, $cm) = self::validate_glossary($entry->glossaryid);
 
         if (empty($entry->approved) && $entry->userid != $USER->id && !has_capability('mod/glossary:approve', $context)) {
             throw new invalid_parameter_exception('invalidentry');
@@ -1406,10 +1406,17 @@ class mod_glossary_external extends external_api {
         $entry = glossary_get_entry_by_id($id);
         self::fill_entry_details($entry, $context);
 
+        // Permissions (for entry edition).
+        $permissions = [
+            'candelete' => mod_glossary_can_delete_entry($entry, $glossary, $context),
+            'canupdate' => mod_glossary_can_update_entry($entry, $glossary, $context, $cm),
+        ];
+
         return array(
             'entry' => $entry,
             'ratinginfo' => \core_rating\external\util::get_rating_info($glossary, $context, 'mod_glossary', 'entry',
                 array($entry)),
+            'permissions' => $permissions,
             'warnings' => $warnings
         );
     }
@@ -1424,6 +1431,13 @@ class mod_glossary_external extends external_api {
         return new external_single_structure(array(
             'entry' => self::get_entry_return_structure(),
             'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
+            'permissions' => new external_single_structure(
+                [
+                    'candelete' => new external_value(PARAM_BOOL, 'Whether the user can delete the entry.'),
+                    'canupdate' => new external_value(PARAM_BOOL, 'Whether the user can update the entry.'),
+                ],
+                'User permissions for the managing the entry.', VALUE_OPTIONAL
+            ),
             'warnings' => new external_warnings()
         ));
     }

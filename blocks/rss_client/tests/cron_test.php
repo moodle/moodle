@@ -64,8 +64,8 @@ class block_rss_client_cron_testcase extends advanced_testcase {
         error_reporting($errorlevel);
 
         $cronoutput = ob_get_clean();
-        $this->assertContains('skipping until ' . userdate($record->skipuntil), $cronoutput);
-        $this->assertContains('0 feeds refreshed (took ', $cronoutput);
+        $this->assertStringContainsString('skipping until ' . userdate($record->skipuntil), $cronoutput);
+        $this->assertStringContainsString('0 feeds refreshed (took ', $cronoutput);
     }
 
     /**
@@ -121,11 +121,11 @@ class block_rss_client_cron_testcase extends advanced_testcase {
 
         // Run the scheduled task and have it fail.
         $task = $this->getMockBuilder(\block_rss_client\task\refreshfeeds::class)
-            ->setMethods(['fetch_feed'])
+            ->onlyMethods(['fetch_feed'])
             ->getMock();
 
         $piemock = $this->getMockBuilder(\moodle_simplepie::class)
-            ->setMethods(['error'])
+            ->onlyMethods(['error'])
             ->getMock();
 
         $piemock->method('error')

@@ -17,210 +17,56 @@
  * AMD module to enable users to manage their own data requests.
  *
  * @module     tool_dataprivacy/myrequestactions
- * @package    tool_dataprivacy
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define([
-    'jquery',
-    'core/ajax',
-    'core/notification',
-    'core/str',
-    'core/modal_factory',
-    'core/modal_events',
-    'core/templates',
-    'core/pending'],
-function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Pending) {
 
-    /**
-     * List of action selectors.
-     *
-     * @type {{CANCEL_REQUEST: string}}
-     * @type {{CONTACT_DPO: string}}
-     */
-    var ACTIONS = {
-        CANCEL_REQUEST: '[data-action="cancel"]',
-        CONTACT_DPO: '[data-action="contactdpo"]',
-    };
+import Ajax from 'core/ajax';
+import Notification from 'core/notification';
+import Pending from 'core/pending';
+import {get_strings as getStrings} from 'core/str';
 
-    /**
-     * MyRequestActions class.
-     */
-    var MyRequestActions = function() {
-        this.registerEvents();
-    };
+const SELECTORS = {
+    CANCEL_REQUEST: '[data-action="cancel"][data-requestid]',
+};
 
-    /**
-     * Register event listeners.
-     */
-    MyRequestActions.prototype.registerEvents = function() {
-        $(ACTIONS.CANCEL_REQUEST).click(function(e) {
-            e.preventDefault();
-
-            var requestId = $(this).data('requestid');
-            var stringkeys = [
-                {
-                    key: 'cancelrequest',
-                    component: 'tool_dataprivacy'
-                },
-                {
-                    key: 'cancelrequestconfirmation',
-                    component: 'tool_dataprivacy'
-                }
-            ];
-
-            Str.get_strings(stringkeys).then(function(langStrings) {
-                var title = langStrings[0];
-                var confirmMessage = langStrings[1];
-                return ModalFactory.create({
-                    title: title,
-                    body: confirmMessage,
-                    type: ModalFactory.types.SAVE_CANCEL
-                }).then(function(modal) {
-                    modal.setSaveButtonText(title);
-
-                    // Handle save event.
-                    modal.getRoot().on(ModalEvents.save, function() {
-                        // Cancel the request.
-                        var params = {
-                            'requestid': requestId
-                        };
-
-                        var request = {
-                            methodname: 'tool_dataprivacy_cancel_data_request',
-                            args: params
-                        };
-
-                        Ajax.call([request])[0].done(function(data) {
-                            if (data.result) {
-                                window.location.reload();
-                            } else {
-                                Notification.addNotification({
-                                    message: data.warnings[0].message,
-                                    type: 'error'
-                                });
-                            }
-                        }).fail(Notification.exception);
-                    });
-
-                    // Handle hidden event.
-                    modal.getRoot().on(ModalEvents.hidden, function() {
-                        // Destroy when hidden.
-                        modal.destroy();
-                    });
-
-                    return modal;
-                });
-            }).done(function(modal) {
-                // Show the modal!
-                modal.show();
-
-            }).fail(Notification.exception);
-        });
-
-        $(ACTIONS.CONTACT_DPO).click(function(e) {
-            var pendingPromise = new Pending('dataprivacy/crud:initModal:contactdpo');
-            e.preventDefault();
-
-            var replyToEmail = $(this).data('replytoemail');
-
-            var keys = [
-                {
-                    key: 'contactdataprotectionofficer',
-                    component: 'tool_dataprivacy'
-                },
-                {
-                    key: 'send',
-                    component: 'tool_dataprivacy'
-                },
-            ];
-
-            var sendButtonText = '';
-            Str.get_strings(keys).then(function(langStrings) {
-                var modalTitle = langStrings[0];
-                sendButtonText = langStrings[1];
-                var context = {
-                    'replytoemail': replyToEmail
-                };
-                return ModalFactory.create({
-                    title: modalTitle,
-                    body: Templates.render('tool_dataprivacy/contact_dpo', context),
-                    type: ModalFactory.types.SAVE_CANCEL,
-                    large: true
-                });
-            }).then(function(modal) {
-                modal.setSaveButtonText(sendButtonText);
-
-                // Show the modal!
-                modal.show();
-
-                // Handle send event.
-                modal.getRoot().on(ModalEvents.save, function(e) {
-                    var message = $('#message').val().trim();
-                    if (message.length === 0) {
-                        e.preventDefault();
-                        // Show validation error when the message is empty.
-                        $('[data-region="messageinput"]').addClass('has-danger notifyproblem');
-                        $('#id_error_message').removeAttr('hidden');
-                    } else {
-                        // Send the message.
-                        sendMessageToDPO(message);
-                    }
-                });
-
-                // Handle hidden event.
-                modal.getRoot().on(ModalEvents.hidden, function() {
-                    // Destroy when hidden.
-                    modal.destroy();
-                });
-
-                return;
-            }).then(pendingPromise.resolve)
-            .catch(Notification.exception);
-        });
-    };
-
-    /**
-     * Send message to the Data Protection Officer.
-     *
-     * @param {String} message The message to send.
-     */
-    function sendMessageToDPO(message) {
-        var request = {
-            methodname: 'tool_dataprivacy_contact_dpo',
-            args: {
-                message: message
-            }
-        };
-
-        var requestType = 'success';
-        Ajax.call([request])[0].then(function(data) {
-            if (data.result) {
-                return Str.get_string('requestsubmitted', 'tool_dataprivacy');
-            }
-            requestType = 'error';
-            return data.warnings.join('<br>');
-
-        }).done(function(message) {
-            Notification.addNotification({
-                message: message,
-                type: requestType
-            });
-
-        }).fail(Notification.exception);
-    }
-
-    return /** @alias module:tool_dataprivacy/myrequestactions */ {
-        // Public variables and functions.
-
-        /**
-         * Initialise the unified user filter.
-         *
-         * @method init
-         * @return {MyRequestActions}
-         */
-        'init': function() {
-            return new MyRequestActions();
+/**
+ * Initialize module
+ */
+export const init = () => {
+    document.addEventListener('click', event => {
+        const triggerElement = event.target.closest(SELECTORS.CANCEL_REQUEST);
+        if (triggerElement === null) {
+            return;
         }
-    };
-});
+
+        event.preventDefault();
+
+        const requiredStrings = [
+            {key: 'cancelrequest', component: 'tool_dataprivacy'},
+            {key: 'cancelrequestconfirmation', component: 'tool_dataprivacy'},
+        ];
+
+        getStrings(requiredStrings).then(([cancelRequest, cancelConfirm]) => {
+            return Notification.confirm(cancelRequest, cancelConfirm, cancelRequest, null, () => {
+                const pendingPromise = new Pending('tool/dataprivacy:cancelRequest');
+                const request = {
+                    methodname: 'tool_dataprivacy_cancel_data_request',
+                    args: {requestid: triggerElement.dataset.requestid}
+                };
+
+                Ajax.call([request])[0].then(response => {
+                    if (response.result) {
+                        window.location.reload();
+                    } else {
+                        Notification.addNotification({
+                            type: 'error',
+                            message: response.warnings[0].message
+                        });
+                    }
+                    return pendingPromise.resolve();
+                }).catch(Notification.exception);
+            });
+        }).catch();
+    });
+};

@@ -63,7 +63,10 @@ $string['pluginnamesummary'] = 'Images or text labels are dragged and dropped in
 Note: This question type is not accessible to users who are visually impaired.';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = 'Select a background image, specify draggable items and define drop zones on the background image into which they must be dragged.';
-$string['privacy:metadata'] = 'The Drag and drop onto image question type plugin does not store any personal data.';
+$string['privacy:metadata'] = 'Drag and drop onto image question type plugin allows question authors to set default options as user preferences.';
+$string['privacy:preference:defaultmark'] = 'The default mark set for a given question.';
+$string['privacy:preference:penalty'] = 'The penalty for each incorrect try when questions are run using the \'Interactive with multiple tries\' or \'Adaptive mode\' behaviour.';
+$string['privacy:preference:shuffleanswers'] = 'Whether the answers should be automatically shuffled.';
 $string['refresh'] = 'Refresh preview';
 $string['shuffleimages'] = 'Shuffle drag items each time question is attempted';
 $string['summarisechoice'] = '{$a->no}. {$a->text}';

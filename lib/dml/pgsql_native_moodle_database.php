@@ -192,7 +192,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $dberr = ob_get_contents();
         ob_end_clean();
 
-        $status = pg_connection_status($this->pgsql);
+        $status = $this->pgsql ? pg_connection_status($this->pgsql) : false;
 
         if ($status === false or $status === PGSQL_CONNECTION_BAD) {
             $this->pgsql = null;
@@ -295,7 +295,7 @@ class pgsql_native_moodle_database extends moodle_database {
         }
 
         // ... a nuisance - temptables use this.
-        if (preg_match('/\bpg_constraint/', $sql) && $this->temptables->get_temptables()) {
+        if (preg_match('/\bpg_catalog/', $sql) && $this->temptables->get_temptables()) {
             return false;
         }
 
@@ -409,6 +409,63 @@ class pgsql_native_moodle_database extends moodle_database {
             pg_free_result($result);
         }
         return $this->tables;
+    }
+
+    /**
+     * Constructs 'IN()' or '=' sql fragment
+     *
+     * Method overriding {@see moodle_database::get_in_or_equal} to be able to use
+     * more than 65535 elements in $items array.
+     *
+     * @param mixed $items A single value or array of values for the expression.
+     * @param int $type Parameter bounding type : SQL_PARAMS_QM or SQL_PARAMS_NAMED.
+     * @param string $prefix Named parameter placeholder prefix (a unique counter value is appended to each parameter name).
+     * @param bool $equal True means we want to equate to the constructed expression, false means we don't want to equate to it.
+     * @param mixed $onemptyitems This defines the behavior when the array of items provided is empty. Defaults to false,
+     *              meaning throw exceptions. Other values will become part of the returned SQL fragment.
+     * @throws coding_exception | dml_exception
+     * @return array A list containing the constructed sql fragment and an array of parameters.
+     */
+    public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $prefix='param', $equal=true, $onemptyitems=false): array {
+        // We only interfere if number of items in expression exceeds 16 bit value.
+        if (!is_array($items) || count($items) < 65535) {
+            return parent::get_in_or_equal($items, $type, $prefix,  $equal, $onemptyitems);
+        }
+
+        // Determine the type from the first value. We don't need to be very smart here,
+        // it is developer's responsibility to make sure that variable type is matching
+        // field type, if not the case, DB engine will hint. Also mixing types won't work
+        // here anyway, so we ignore NULL or boolean (unlikely you need 56k values of
+        // these types only).
+        $cast = is_string(current($items)) ? '::text' : '::bigint';
+
+        if ($type == SQL_PARAMS_QM) {
+            if ($equal) {
+                $sql = 'IN (VALUES ('.implode('),(', array_fill(0, count($items), '?'.$cast)).'))';
+            } else {
+                $sql = 'NOT IN (VALUES ('.implode('),(', array_fill(0, count($items), '?'.$cast)).'))';
+            }
+            $params = array_values($items);
+        } else if ($type == SQL_PARAMS_NAMED) {
+            if (empty($prefix)) {
+                $prefix = 'param';
+            }
+            $params = [];
+            $sql = [];
+            foreach ($items as $item) {
+                $param = $prefix.$this->inorequaluniqueindex++;
+                $params[$param] = $item;
+                $sql[] = ':'.$param.$cast;
+            }
+            if ($equal) {
+                $sql = 'IN (VALUES ('.implode('),(', $sql).'))';
+            } else {
+                $sql = 'NOT IN (VALUES ('.implode('),(', $sql).'))';
+            }
+        } else {
+            throw new dml_exception('typenotimplement');
+        }
+        return [$sql, $params];
     }
 
     /**
@@ -890,6 +947,37 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
+     * A faster version of pg_field_type
+     *
+     * The pg_field_type function in the php postgres driver internally makes an sql call
+     * to get the list of field types which it statically caches only for a single request.
+     * This wraps it in a cache keyed by oid to avoid these DB calls on every request.
+     *
+     * @param resource $result
+     * @param int $fieldnumber
+     * @return string Field type
+     */
+    public function pg_field_type($result, int $fieldnumber) {
+        static $map;
+        $cache = $this->get_metacache();
+
+        // Getting the oid doesn't make an internal query.
+        $oid = pg_field_type_oid($result, $fieldnumber);
+        if (!$map) {
+            $map = $cache->get('oid2typname');
+        }
+        if ($map === false) {
+            $map = [];
+        }
+        if (isset($map[$oid])) {
+            return $map[$oid];
+        }
+        $map[$oid] = pg_field_type($result, $fieldnumber);
+        $cache->set('oid2typname', $map);
+        return $map[$oid];
+    }
+
+    /**
      * Get a number of records as an array of objects using a SQL statement.
      *
      * Return value is like:
@@ -923,7 +1011,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $numfields = pg_num_fields($result);
         $blobs = array();
         for ($i = 0; $i < $numfields; $i++) {
-            $type = pg_field_type($result, $i);
+            $type = $this->pg_field_type($result, $i);
             if ($type == 'bytea') {
                 $blobs[] = pg_field_name($result, $i);
             }
@@ -964,7 +1052,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $return = pg_fetch_all_columns($result, 0);
 
-        if (pg_field_type($result, 0) == 'bytea') {
+        if ($this->pg_field_type($result, 0) == 'bytea') {
             foreach ($return as $key => $value) {
                 $return[$key] = ($value === null ? $value : pg_unescape_bytea($value));
             }
@@ -1044,7 +1132,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * If the return ID isn't required, then this just reports success as true/false.
      * $data is an object containing needed data
      * @param string $table The database table to be inserted into
-     * @param object $data A data object with values for one or more fields in the record
+     * @param object|array $dataobject A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @return bool|int true or new id
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1393,6 +1481,19 @@ class pgsql_native_moodle_database extends moodle_database {
             return " '' ";
         }
         return " $s ";
+    }
+
+    /**
+     * Return SQL for performing group concatenation on given field/expression
+     *
+     * @param string $field
+     * @param string $separator
+     * @param string $sort
+     * @return string
+     */
+    public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {
+        $fieldsort = $sort ? "ORDER BY {$sort}" : '';
+        return "STRING_AGG(CAST({$field} AS VARCHAR), '{$separator}' {$fieldsort})";
     }
 
     public function sql_regex_supported() {

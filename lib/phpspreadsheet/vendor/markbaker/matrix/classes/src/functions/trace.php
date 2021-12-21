@@ -17,7 +17,7 @@ namespace Matrix;
  * @return float The trace of the matrix
  * @throws Exception If argument isn't a valid matrix or array.
  */
-function trace($matrix)
+function trace($matrix): float
 {
     if (is_array($matrix)) {
         $matrix = new Matrix($matrix);

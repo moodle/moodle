@@ -11,6 +11,6 @@ class InvalidNameException extends WriterException
     {
         $msg = '%s is not a valid name identifier for a border. Valid identifiers are: %s.';
 
-        parent::__construct(sprintf($msg, $name, implode(',', BorderPart::getAllowedNames())));
+        parent::__construct(\sprintf($msg, $name, \implode(',', BorderPart::getAllowedNames())));
     }
 }

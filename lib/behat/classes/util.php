@@ -125,6 +125,10 @@ class behat_util extends testing_util {
         // Set noreplyaddress to an example domain, as it should be valid email address and test site can be a localhost.
         set_config('noreplyaddress', 'noreply@example.com');
 
+        // Remove any default blocked hosts and port restrictions, to avoid blocking tests (eg those using local files).
+        set_config('curlsecurityblockedhosts', '');
+        set_config('curlsecurityallowedport', '');
+
         // Keeps the current version of database and dataroot.
         self::store_versions_hash();
 
@@ -135,7 +139,7 @@ class behat_util extends testing_util {
     /**
      * Build theme CSS.
      */
-    public static function build_themes() {
+    public static function build_themes($mtraceprogress = false) {
         global $CFG;
         require_once("{$CFG->libdir}/outputlib.php");
 
@@ -147,7 +151,7 @@ class behat_util extends testing_util {
         }, $themenames);
 
         // Build the list of themes and cache them in local cache.
-        $themes = theme_build_css_for_themes($themeconfigs, ['ltr'], true);
+        $themes = theme_build_css_for_themes($themeconfigs, ['ltr'], true, $mtraceprogress);
 
         $framework = self::get_framework();
         $storageroot = self::get_dataroot() . "/{$framework}/themedata";
@@ -278,7 +282,6 @@ class behat_util extends testing_util {
      * @return void
      */
     public static function start_test_mode($themesuitewithallfeatures = false, $tags = '', $parallelruns = 0, $run = 0) {
-        global $CFG;
 
         if (!defined('BEHAT_UTIL')) {
             throw new coding_exception('This method can be only used by Behat CLI tool');
@@ -411,11 +414,10 @@ class behat_util extends testing_util {
 
         filter_manager::reset_caches();
 
+        \core_reportbuilder\manager::reset_caches();
+
         // Reset course and module caches.
-        if (class_exists('format_base')) {
-            // If file containing class is not loaded, there is no cache there anyway.
-            format_base::reset_course_cache(0);
-        }
+        core_courseformat\base::reset_course_cache(0);
         get_fast_modinfo(0, 0, true);
 
         // Inform data generator.

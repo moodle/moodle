@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass record_userfeedback_action
  */
-class record_userfeedback_action_testcase extends externallib_advanced_testcase {
+class record_userfeedback_action_test extends externallib_advanced_testcase {
 
     /**
      * Data provider for test_record_userfeedback_action.

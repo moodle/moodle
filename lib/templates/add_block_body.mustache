@@ -34,4 +34,9 @@
 {{#blocks}}
     <a href="{{url}}&amp;bui_addblock={{name}}" class="list-group-item list-group-item-action">{{title}}</a>
 {{/blocks}}
+{{^blocks}}
+    <div class="alert alert-primary" role="alert">
+        {{#str}} noblockstoaddhere {{/str}}
+    </div>
+{{/blocks}}
 </div>

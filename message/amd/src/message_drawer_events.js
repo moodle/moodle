@@ -17,7 +17,6 @@
  * Events for the message drawer.
  *
  * @module     core_message/message_drawer_events
- * @package    message
  * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

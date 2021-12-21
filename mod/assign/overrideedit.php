@@ -96,7 +96,7 @@ if ($overrideid) {
 }
 
 // Merge assign defaults with data.
-$keys = array('duedate', 'cutoffdate', 'allowsubmissionsfromdate');
+$keys = array('duedate', 'cutoffdate', 'allowsubmissionsfromdate', 'timelimit');
 foreach ($keys as $key) {
     if (!isset($data->{$key}) || $reset) {
         $data->{$key} = $assigninstance->{$key};
@@ -187,6 +187,8 @@ if ($mform->is_cancelled()) {
     if (!empty($override->id)) {
         $fromform->id = $override->id;
         $DB->update_record('assign_overrides', $fromform);
+        $cachekey = $groupmode ? "{$fromform->assignid}_g_{$fromform->groupid}" : "{$fromform->assignid}_u_{$fromform->userid}";
+        cache::make('mod_assign', 'overrides')->delete($cachekey);
 
         // Determine which override updated event to fire.
         $params['objectid'] = $override->id;
@@ -219,6 +221,8 @@ if ($mform->is_cancelled()) {
             $DB->update_record('assign_overrides', $fromform);
             reorder_group_overrides($assigninstance->id);
         }
+        $cachekey = $groupmode ? "{$fromform->assignid}_g_{$fromform->groupid}" : "{$fromform->assignid}_u_{$fromform->userid}";
+        cache::make('mod_assign', 'overrides')->delete($cachekey);
 
         // Determine which override created event to fire.
         $params['objectid'] = $fromform->id;
@@ -253,8 +257,13 @@ $PAGE->navbar->add($pagetitle);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
+$activityheader = $PAGE->activityheader;
+$activityheader->set_attrs([
+    'description' => '',
+    'hidecompletion' => true,
+    'title' => $activityheader->is_title_allowed() ? format_string($assigninstance->name, true, ['context' => $context]) : ""
+]);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($assigninstance->name, true, array('context' => $context)));
 
 $mform->display();
 

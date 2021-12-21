@@ -101,9 +101,11 @@ class tour extends external_api {
      */
     public static function fetch_and_start_tour_returns() {
         return new external_single_structure([
-            'tourconfig'    => new external_single_structure([
-                'name'      => new external_value(PARAM_RAW, 'Tour Name'),
-                'steps'     => new external_multiple_structure(self::step_structure_returns()),
+            'tourconfig'        => new external_single_structure([
+                'name'          => new external_value(PARAM_RAW, 'Tour Name'),
+                'steps'         => new external_multiple_structure(self::step_structure_returns()),
+                'endtourlabel'  => new external_value(PARAM_RAW, 'Label of the end tour button'),
+                'displaystepnumbers' => new external_value(PARAM_BOOL, 'display step number'),
             ], 'Tour config', VALUE_OPTIONAL)
         ]);
     }
@@ -131,8 +133,9 @@ class tour extends external_api {
 
         $result = [];
 
-        if ($tourinstance = \tool_usertours\manager::get_matching_tours(new \moodle_url($params['pageurl']))) {
-            if ($tour->get_id() === $tourinstance->get_id()) {
+        $matchingtours = \tool_usertours\manager::get_matching_tours(new \moodle_url($params['pageurl']));
+        foreach ($matchingtours as $match) {
+            if ($tour->get_id() === $match->get_id()) {
                 $result['startTour'] = $tour->get_id();
 
                 \tool_usertours\event\tour_reset::create([
@@ -142,7 +145,7 @@ class tour extends external_api {
                         'pageurl'   => $params['pageurl'],
                     ],
                 ])->trigger();
-
+                break;
             }
         }
 

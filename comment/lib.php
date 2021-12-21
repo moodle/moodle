@@ -551,7 +551,8 @@ class comment {
         $params = array();
         $perpage = (!empty($CFG->commentsperpage))?$CFG->commentsperpage:15;
         $start = $page * $perpage;
-        $ufields = user_picture::fields('u');
+        $userfieldsapi = \core_user\fields::for_userpic();
+        $ufields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
         list($componentwhere, $component) = $this->get_component_select_sql('c');
         if ($component) {

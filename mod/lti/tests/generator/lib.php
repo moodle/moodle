@@ -26,6 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/mod/lti/locallib.php');
+
 /**
  * LTI module data generator class
  *
@@ -65,5 +68,33 @@ class mod_lti_generator extends testing_module_generator {
             $record->typeid = null;
         }
         return parent::create_instance($record, (array)$options);
+    }
+
+    /**
+     * Create a tool proxy.
+     *
+     * @param array $config
+     */
+    public function create_tool_proxies(array $config) {
+        if (!isset($config['capabilityoffered'])) {
+            $config['capabilityoffered'] = '';
+        }
+        if (!isset($config['serviceoffered'])) {
+            $config['serviceoffered'] = '';
+        }
+        lti_add_tool_proxy((object) $config);
+    }
+
+    /**
+     * Create a tool type.
+     *
+     * @param array $type
+     * @param array|null $config
+     */
+    public function create_tool_types(array $type, ?array $config = null) {
+        if (!isset($type['baseurl'])) {
+            throw new coding_exception('Must specify baseurl when creating a LTI tool type.');
+        }
+        lti_add_type((object) $type, (object) $config);
     }
 }

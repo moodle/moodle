@@ -32,10 +32,7 @@ $action   = optional_param('action', '', PARAM_ALPHA);
 
 $redirect = $CFG->wwwroot.'/user/profile/index.php';
 
-$strchangessaved    = get_string('changessaved');
-$strcancelled       = get_string('cancelled');
 $strdefaultcategory = get_string('profiledefaultcategory', 'admin');
-$strnofields        = get_string('profilenofieldsdefined', 'admin');
 $strcreatefield     = get_string('profilecreatefield', 'admin');
 
 
@@ -91,19 +88,6 @@ switch ($action) {
         echo $OUTPUT->footer();
         die;
         break;
-    case 'editfield':
-        $id       = optional_param('id', 0, PARAM_INT);
-        $datatype = optional_param('datatype', '', PARAM_ALPHA);
-
-        profile_edit_field($id, $datatype, $redirect);
-        die;
-        break;
-    case 'editcategory':
-        $id = optional_param('id', 0, PARAM_INT);
-
-        profile_edit_category($id, $redirect);
-        die;
-        break;
     default:
         // Normal form.
 }
@@ -124,149 +108,60 @@ if (empty($categories)) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('profilefields', 'admin'));
 
-foreach ($categories as $category) {
-    $table = new html_table();
-    $table->head  = array(get_string('profilefield', 'admin'), get_string('edit'));
-    $table->align = array('left', 'right');
-    $table->width = '95%';
-    $table->attributes['class'] = 'generaltable profilefield';
-    $table->data = array();
+$outputcategories = [];
+$options = profile_list_datatypes();
 
+foreach ($categories as $category) {
+    // Category fields.
+    $outputfields = [];
     if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id), 'sortorder ASC')) {
         foreach ($fields as $field) {
-            $table->data[] = array(format_string($field->name), profile_field_icons($field));
+            $fieldname = format_string($field->name);
+            $component = 'profilefield_' . $field->datatype;
+            $classname = "\\$component\\helper";
+            if (class_exists($classname) && method_exists($classname, 'get_fieldname')) {
+                $fieldname = $classname::get_fieldname($field->name);
+            }
+            $outputfields[] = [
+                'id' => $field->id,
+                'shortname' => $field->shortname,
+                'datatype' => $field->datatype,
+                'name' => $fieldname,
+                'isfirst' => !count($outputfields),
+                'islast' => count($outputfields) == count($fields) - 1,
+            ];
         }
     }
 
-    echo $OUTPUT->heading(format_string($category->name) .' '.profile_category_icons($category));
-    if (count($table->data)) {
-        echo html_writer::table($table);
-    } else {
-        echo $OUTPUT->notification($strnofields);
+    // Add new field menu.
+    $menu = new \action_menu();
+    $menu->set_alignment(\action_menu::BL, \action_menu::BL);
+    $menu->set_menu_trigger($strcreatefield);
+    foreach ($options as $type => $fieldname) {
+        $action = new \action_menu_link_secondary(new \moodle_url('#'), null, $fieldname,
+            ['data-action' => 'createfield', 'data-categoryid' => $category->id, 'data-datatype' => $type,
+                'data-datatypename' => $fieldname]);
+        $menu->add($action);
     }
+    $menu->attributes['class'] .= ' float-left mr-1';
 
-} // End of $categories foreach.
+    // Add category information to the template.
+    $outputcategories[] = [
+        'id' => $category->id,
+        'name' => format_string($category->name),
+        'fields' => $outputfields,
+        'hasfields' => count($outputfields),
+        'isfirst' => !count($outputcategories),
+        'islast' => count($outputcategories) == count($categories) - 1,
+        'candelete' => count($categories) > 1,
+        'addfieldmenu' => $menu->export_for_template($OUTPUT),
+    ];
+}
 
-echo '<hr />';
-echo '<div class="profileeditor">';
-
-// Create a new field link.
-$options = profile_list_datatypes();
-$popupurl = new moodle_url('/user/profile/index.php?id=0&action=editfield');
-echo $OUTPUT->single_select($popupurl, 'datatype', $options, '', array('' => get_string('choosedots')), 'newfieldform', array('label' => $strcreatefield));
-
-// Add a div with a class so themers can hide, style or reposition the text.
-html_writer::start_tag('div', array('class' => 'adminuseractionhint'));
-echo get_string('or', 'lesson');
-html_writer::end_tag('div');
-
-// Create a new category link.
-$options = array('action' => 'editcategory');
-echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string('profilecreatecategory', 'admin'));
-
-echo '</div>';
+echo $OUTPUT->render_from_template('core_user/edit_profile_fields', [
+    'categories' => $outputcategories,
+    'sesskey' => sesskey(),
+    'baseurl' => (new moodle_url('/user/profile/index.php'))->out(false)
+]);
 
 echo $OUTPUT->footer();
-die;
-
-
-/***** Some functions relevant to this script *****/
-
-/**
- * Create a string containing the editing icons for the user profile categories
- * @param stdClass $category the category object
- * @return string the icon string
- */
-function profile_category_icons($category) {
-    global $CFG, $USER, $DB, $OUTPUT;
-
-    $strdelete   = get_string('delete');
-    $strmoveup   = get_string('moveup');
-    $strmovedown = get_string('movedown');
-    $stredit     = get_string('edit');
-
-    $categorycount = $DB->count_records('user_info_category');
-    $fieldcount    = $DB->count_records('user_info_field', array('categoryid' => $category->id));
-
-    // Edit.
-    $editstr = '<a title="'.$stredit.'" href="index.php?id='.$category->id.'&amp;action=editcategory">' .
-               $OUTPUT->pix_icon('t/edit', $stredit) .'</a> ';
-
-    // Delete.
-    // Can only delete the last category if there are no fields in it.
-    if (($categorycount > 1) or ($fieldcount == 0)) {
-        $editstr .= '<a title="'.$strdelete.'"';
-        $editstr .= ' href="index.php?id='.$category->id.'&amp;action=deletecategory&amp;sesskey='.sesskey() . '">';
-        $editstr .= $OUTPUT->pix_icon('t/delete', $strdelete).'</a> ';
-    } else {
-        $editstr .= $OUTPUT->spacer() . ' ';
-    }
-
-    // Move up.
-    if ($category->sortorder > 1) {
-        $editstr .= '<a title="'.$strmoveup.'" ';
-        $editstr .= ' href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=up&amp;sesskey='.sesskey().'">';
-        $editstr .= $OUTPUT->pix_icon('t/up', $strmoveup) . '</a> ';
-    } else {
-        $editstr .= $OUTPUT->spacer() . ' ';
-    }
-
-    // Move down.
-    if ($category->sortorder < $categorycount) {
-        $editstr .= '<a title="'.$strmovedown.'" ';
-        $editstr .= ' href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=down&amp;sesskey='.sesskey().'">';
-        $editstr .= $OUTPUT->pix_icon('t/down', $strmovedown) . '</a> ';
-    } else {
-        $editstr .= $OUTPUT->spacer() . ' ';
-    }
-
-    return $editstr;
-}
-
-/**
- * Create a string containing the editing icons for the user profile fields
- * @param stdClass $field the field object
- * @return string the icon string
- */
-function profile_field_icons($field) {
-    global $CFG, $USER, $DB, $OUTPUT;
-
-    $strdelete   = get_string('delete');
-    $strmoveup   = get_string('moveup');
-    $strmovedown = get_string('movedown');
-    $stredit     = get_string('edit');
-
-    $fieldcount = $DB->count_records('user_info_field', array('categoryid' => $field->categoryid));
-    $datacount  = $DB->count_records('user_info_data', array('fieldid' => $field->id));
-
-    // Edit.
-    $editstr = '<a title="'.$stredit.'" href="index.php?id='.$field->id.'&amp;action=editfield">';
-    $editstr .= $OUTPUT->pix_icon('t/edit', $stredit) . '</a> ';
-
-    // Delete.
-    $editstr .= '<a title="'.$strdelete.'" href="index.php?id='.$field->id.'&amp;action=deletefield&amp;sesskey='.sesskey().'">';
-    $editstr .= $OUTPUT->pix_icon('t/delete', $strdelete) . '</a> ';
-
-    // Move up.
-    if ($field->sortorder > 1) {
-        $editstr .= '<a title="'.$strmoveup.'" ';
-        $editstr .= ' href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=up&amp;sesskey='.sesskey().'">';
-        $editstr .= $OUTPUT->pix_icon('t/up', $strmoveup) . '</a> ';
-    } else {
-        $editstr .= $OUTPUT->spacer() . ' ';
-    }
-
-    // Move down.
-    if ($field->sortorder < $fieldcount) {
-        $editstr .= '<a title="'.$strmovedown.'" ';
-        $editstr .= ' href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=down&amp;sesskey='.sesskey().'">';
-        $editstr .= $OUTPUT->pix_icon('t/down', $strmovedown) . '</a> ';
-    } else {
-        $editstr .= $OUTPUT->spacer() . ' ';
-    }
-
-    return $editstr;
-}
-
-
-

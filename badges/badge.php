@@ -65,9 +65,6 @@ if (!empty($badge->recipient->id)) {
         navigation_node::override_active_url($url);
     }
 
-    // Include JS files for backpack support.
-    badges_setup_backpack_js();
-
     echo $OUTPUT->header();
 
     echo $output->render($badge);

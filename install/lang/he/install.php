@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -40,6 +39,7 @@ admin/cli/install_database.php
 $string['clialreadyinstalled'] = 'קובץ ה-config.php קיים כבר, אנא השתמש ב- admin/cli/upgrade.php
 אם ברצונך לשדרג את האתר שלך.';
 $string['cliinstallheader'] = 'תוכנית התקנת Moodle {$a} בשורת הפקודה';
+$string['clitablesexist'] = 'טבלאות מסד הנתונים נוחכות כבר, התקנת CLI לא יכולה להימשך.';
 $string['databasehost'] = 'מסד הנתונים המארח (host)';
 $string['databasename'] = 'שם מסד הנתונים';
 $string['databasetypehead'] = 'בחירת התקן מסד הנתונים';
@@ -57,7 +57,7 @@ $string['memorylimithelp'] = '<p>
 גבול הזיכרון של ה-PHP לשרת שלך כרגע מכוון ל-{$a}
 </p>
 <p>
-דבר זה עלול לגרום בעיות זיכרון בהמשך, במיוחד אם יש לך מודולים רבים פעילים אוו הרבה משתמשים. </p>
+דבר זה עלול לגרום בעיות זיכרון בהמשך, במיוחד אם יש לך רכיבים רבים פעילים אוו הרבה משתמשים. </p>
 <p> אנו ממליצים שתעצב את הגדרת ה-PHP עם ערך גבוה להגבלת הזיכרון, כמו 40M.
 ישנן דרכים רבות לכך:
 <ol>
@@ -106,5 +106,5 @@ $string['welcomep50'] = 'השימוש בכל היישומים בחבילה זו 
 <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>';
 $string['welcomep60'] = 'העמודים הבאים יובילו אותך בצורה פשוטה דרך כמה צעדים לקביעת הגדרות <strong>Moodle</strong> בשרת.
 ניתן לאשר הגדרות בררת־המחדל או לשנותם לפי צרכיך.';
-$string['welcomep70'] = 'הקש על לחצן ה"המשך" למטה כדי להמשיך עם הגדרת ה-<strong>Moodle</strong>';
+$string['welcomep70'] = 'לחצו "המשך" למטה כדי להמשיך עם הגדרת ה-<strong>Moodle</strong>';
 $string['wwwroot'] = 'כתובת האתר';

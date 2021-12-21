@@ -17,7 +17,6 @@
  * This module adds ajax search functions to the template library page.
  *
  * @module     tool_templatelibrary/search
- * @package    tool_templatelibrary
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -52,9 +51,8 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
         } else {
             $('[data-region="list-templates"] [data-action="clearsearch"]').addClass('d-none');
         }
-        // Trigger the search.
-        document.location.hash = searchStr;
 
+        // Trigger the search.
         ajax.call([
             {methodname: 'tool_templatelibrary_list_templates',
               args: {component: componentStr, search: searchStr, themename: themename},
@@ -96,7 +94,6 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
         $(this).addClass('d-none');
     });
 
-    $('[data-region="input"]').val(document.location.hash.replace('#', ''));
     refreshSearch(config.theme);
     return {};
 });

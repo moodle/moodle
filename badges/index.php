@@ -104,7 +104,6 @@ if (!has_any_capability(array(
 }
 
 $PAGE->set_title($hdr);
-badges_local_backpack_js(true);
 $output = $PAGE->get_renderer('core', 'badges');
 
 if (($delete || $archive) && has_capability('moodle/badges:deletebadge', $PAGE->context)) {

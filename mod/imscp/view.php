@@ -69,11 +69,6 @@ if (!$imscp->structure) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($imscp->name));
-// Info box.
-if ($imscp->intro) {
-    echo $OUTPUT->box(format_module_intro('imscp', $imscp, $cm->id), 'generalbox', 'intro');
-}
 
 imscp_print_content($imscp, $cm, $course);
 

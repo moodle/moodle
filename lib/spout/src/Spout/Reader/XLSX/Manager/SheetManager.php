@@ -116,7 +116,7 @@ class SheetManager
     {
         // Using "filter_var($x, FILTER_VALIDATE_BOOLEAN)" here because the value of the "date1904" attribute
         // may be the string "false", that is not mapped to the boolean "false" by default...
-        $shouldUse1904Dates = filter_var($xmlReader->getAttribute(self::XML_ATTRIBUTE_DATE_1904), FILTER_VALIDATE_BOOLEAN);
+        $shouldUse1904Dates = \filter_var($xmlReader->getAttribute(self::XML_ATTRIBUTE_DATE_1904), FILTER_VALIDATE_BOOLEAN);
         $this->optionsManager->setOption(Options::SHOULD_USE_1904_DATES, $shouldUse1904Dates);
 
         return XMLProcessor::PROCESSING_CONTINUE;
@@ -211,7 +211,7 @@ class SheetManager
                         $sheetDataXMLFilePath = $xmlReader->getAttribute(self::XML_ATTRIBUTE_TARGET);
 
                         // sometimes, the sheet data file path already contains "/xl/"...
-                        if (strpos($sheetDataXMLFilePath, '/xl/') !== 0) {
+                        if (\strpos($sheetDataXMLFilePath, '/xl/') !== 0) {
                             $sheetDataXMLFilePath = '/xl/' . $sheetDataXMLFilePath;
                             break;
                         }

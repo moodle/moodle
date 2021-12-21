@@ -47,7 +47,7 @@ class tool_usertours_manager_testcase extends advanced_testcase {
     /**
      * Setup to store the DB reference.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
 
         $this->db = $DB;
@@ -56,7 +56,7 @@ class tool_usertours_manager_testcase extends advanced_testcase {
     /**
      * Tear down to restore the original DB reference.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         global $DB;
 
         $DB = $this->db;
@@ -224,6 +224,13 @@ class tool_usertours_manager_testcase extends advanced_testcase {
                 ],
             [
                     'pathmatch'     => '/my/%',
+                    'enabled'       => true,
+                    'name'          => 'My tour enabled 2',
+                    'description'   => '',
+                    'configdata'    => '',
+                ],
+            [
+                    'pathmatch'     => '/my/%',
                     'enabled'       => false,
                     'name'          => 'Failure',
                     'description'   => '',
@@ -277,32 +284,32 @@ class tool_usertours_manager_testcase extends advanced_testcase {
                 'No matches found' => [
                         $alltours,
                         $CFG->wwwroot . '/some/invalid/value',
-                        null,
+                        [],
                     ],
                 'Never return a disabled tour' => [
                         $alltours,
                         $CFG->wwwroot . '/my/index.php',
-                        'My tour enabled',
+                        ['My tour enabled', 'My tour enabled 2'],
                     ],
                 'My not course' => [
                         $alltours,
                         $CFG->wwwroot . '/my/index.php',
-                        'My tour enabled',
+                        ['My tour enabled', 'My tour enabled 2'],
                     ],
                 'My with params' => [
                         $alltours,
                         $CFG->wwwroot . '/my/index.php?id=42',
-                        'My tour enabled',
+                        ['My tour enabled', 'My tour enabled 2'],
                     ],
                 'Course with params' => [
                         $alltours,
                         $CFG->wwwroot . '/course/?id=42',
-                        'course tour enabled',
+                        ['course tour enabled'],
                     ],
                 'Course with params and trailing content' => [
                         $alltours,
                         $CFG->wwwroot . '/course/?id=42&foo=bar',
-                        'course tour with additional params enabled',
+                        ['course tour with additional params enabled', 'course tour enabled'],
                     ],
             ];
     }
@@ -311,24 +318,54 @@ class tool_usertours_manager_testcase extends advanced_testcase {
      * Tests for the get_matching_tours function.
      *
      * @dataProvider get_matching_tours_provider
-     * @param   array   $alltours   The list of tours to insert
-     * @param   string  $url        The URL to test
-     * @param   string  $expected   The name of the expected matching tour
+     * @param   array   $alltours   The list of tours to insert.
+     * @param   string  $url        The URL to test.
+     * @param   array   $expected   List of names of the expected matching tours.
      */
-    public function test_get_matching_tours($alltours, $url, $expected) {
+    public function test_get_matching_tours(array $alltours, string $url, array $expected) {
         $this->resetAfterTest();
+
+        $this->setGuestUser();
 
         foreach ($alltours as $tourconfig) {
             $tour = $this->helper_create_tour((object) $tourconfig);
             $this->helper_create_step((object) ['tourid' => $tour->get_id()]);
         }
 
-        $match = \tool_usertours\manager::get_matching_tours(new moodle_url($url));
-        if ($expected === null) {
-            $this->assertNull($match);
-        } else {
-            $this->assertNotNull($match);
-            $this->assertEquals($expected, $match->get_name());
+        $matches = \tool_usertours\manager::get_matching_tours(new moodle_url($url));
+        $this->assertEquals(count($expected), count($matches));
+        for ($i = 0; $i < count($matches); $i++) {
+            $this->assertEquals($expected[$i], $matches[$i]->get_name());
         }
+    }
+
+    /**
+     * Test that no matching tours are returned if there is pending site policy agreement.
+     */
+    public function test_get_matching_tours_for_user_without_site_policy_agreed() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setGuestUser();
+
+        $tour = $this->helper_create_tour((object) [
+            'pathmatch' => '/%',
+            'enabled' => true,
+            'name' => 'Test tour',
+            'description' => '',
+            'configdata' => '',
+        ]);
+
+        $this->helper_create_step((object) [
+            'tourid' => $tour->get_id(),
+        ]);
+
+        $matches = \tool_usertours\manager::get_matching_tours(new moodle_url('/'));
+        $this->assertEquals(1, count($matches));
+
+        $CFG->sitepolicyguest = 'https://example.com';
+
+        $matches = \tool_usertours\manager::get_matching_tours(new moodle_url('/'));
+        $this->assertEmpty($matches);
     }
 }

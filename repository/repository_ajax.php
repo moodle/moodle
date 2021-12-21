@@ -300,7 +300,7 @@ switch ($action) {
 
                 // Check if exceed maxbytes.
                 if ($maxbytes != -1 && filesize($downloadedfile['path']) > $maxbytes) {
-                    $maxbytesdisplay = display_size($maxbytes);
+                    $maxbytesdisplay = display_size($maxbytes, 0);
                     throw new file_exception('maxbytesfile', (object) array('file' => $record->filename,
                                                                             'size' => $maxbytesdisplay));
                 }
@@ -308,6 +308,10 @@ switch ($action) {
                 // Check if we exceed the max bytes of the area.
                 if (file_is_draft_area_limit_reached($itemid, $areamaxbytes, filesize($downloadedfile['path']))) {
                     throw new file_exception('maxareabytes');
+                }
+                // Ensure the user does not upload too many draft files in a short period.
+                if (file_is_draft_areas_limit_reached($USER->id)) {
+                    throw new file_exception('maxdraftitemids');
                 }
 
                 $info = repository::move_to_filepool($downloadedfile['path'], $record);

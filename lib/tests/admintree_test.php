@@ -95,19 +95,15 @@ class core_admintree_testcase extends advanced_testcase {
         $this->assertEquals(array('zero', 'one', 'two', 'three', 'four', 'five', 'six'), $map);
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_add_nodes_before_invalid1() {
         $tree = new admin_root(true);
+        $this->expectException(coding_exception::class);
         $tree->add('root', new admin_externalpage('foo', 'Foo', 'http://foo.bar'), array('moodle:site/config'));
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_add_nodes_before_invalid2() {
         $tree = new admin_root(true);
+        $this->expectException(coding_exception::class);
         $tree->add('root', new admin_category('bar', 'Bar'), '');
     }
 
@@ -160,15 +156,15 @@ class core_admintree_testcase extends advanced_testcase {
 
         // Check for an invalid path.
         $result = $executable->output_html($CFG->dirroot . '/lib/tests/other/file_does_not_exist');
-        $this->assertRegexp('/class="text-danger"/', $result);
+        $this->assertMatchesRegularExpression('/class="text-danger"/', $result);
 
         // Check for a directory.
         $result = $executable->output_html($CFG->dirroot);
-        $this->assertRegexp('/class="text-danger"/', $result);
+        $this->assertMatchesRegularExpression('/class="text-danger"/', $result);
 
         // Check for a file which is not executable.
         $result = $executable->output_html($CFG->dirroot . '/filter/tex/readme_moodle.txt');
-        $this->assertRegexp('/class="text-danger"/', $result);
+        $this->assertMatchesRegularExpression('/class="text-danger"/', $result);
 
         // Check for an executable file.
         if ($CFG->ostype == 'WINDOWS') {
@@ -177,12 +173,12 @@ class core_admintree_testcase extends advanced_testcase {
             $filetocheck = 'mimetex.darwin';
         }
         $result = $executable->output_html($CFG->dirroot . '/filter/tex/' . $filetocheck);
-        $this->assertRegexp('/class="text-success"/', $result);
+        $this->assertMatchesRegularExpression('/class="text-success"/', $result);
 
         // Check for no file specified.
         $result = $executable->output_html('');
-        $this->assertRegexp('/name="s__test1"/', $result);
-        $this->assertRegexp('/value=""/', $result);
+        $this->assertMatchesRegularExpression('/name="s__test1"/', $result);
+        $this->assertMatchesRegularExpression('/value=""/', $result);
     }
 
     /**

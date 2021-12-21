@@ -49,6 +49,8 @@ class posts extends exporter {
     private $authorcontextids;
     /** @var array $attachmentsbypostid List of attachments indexed by post id */
     private $attachmentsbypostid;
+    /** @var array $inlineattachmentsbypostid List of inline attachments indexed by post id */
+    private $inlineattachmentsbypostid;
     /** @var array $groupsbyauthorid List of author's groups indexed by author id */
     private $groupsbyauthorid;
     /** @var array $tagsbypostid List of tags indexed by post id */
@@ -67,6 +69,7 @@ class posts extends exporter {
      * @param array $tagsbypostid List of tags indexed by post id
      * @param array $ratingbypostid List of ratings indexed by post id
      * @param array $related The related objects for exporting
+     * @param array $inlineattachmentsbypostid List of inline attachments indexed by post id
      */
     public function __construct(
         array $posts,
@@ -76,12 +79,14 @@ class posts extends exporter {
         array $groupsbyauthorid = [],
         array $tagsbypostid = [],
         array $ratingbypostid = [],
-        array $related = []
+        array $related = [],
+        array $inlineattachmentsbypostid = []
     ) {
         $this->posts = $posts;
         $this->authorsbyid = $authorsbyid;
         $this->authorcontextids = $authorcontextids;
         $this->attachmentsbypostid = $attachmentsbypostid;
+        $this->inlineattachmentsbypostid = $inlineattachmentsbypostid;
         $this->groupsbyauthorid = $groupsbyauthorid;
         $this->tagsbypostid = $tagsbypostid;
         $this->ratingbypostid = $ratingbypostid;
@@ -113,6 +118,7 @@ class posts extends exporter {
         $authorsbyid = $this->authorsbyid;
         $authorcontextids = $this->authorcontextids;
         $attachmentsbypostid = $this->attachmentsbypostid;
+        $inlineattachmentsbypostid = $this->inlineattachmentsbypostid;
         $groupsbyauthorid = $this->groupsbyauthorid;
         $tagsbypostid = $this->tagsbypostid;
         $ratingbypostid = $this->ratingbypostid;
@@ -125,13 +131,15 @@ class posts extends exporter {
                 $groupsbyauthorid,
                 $tagsbypostid,
                 $ratingbypostid,
-                $output
+                $output,
+                $inlineattachmentsbypostid
             ) {
                 $authorid = $post->get_author_id();
                 $postid = $post->get_id();
                 $author = isset($authorsbyid[$authorid]) ? $authorsbyid[$authorid] : [];
                 $authorcontextid = isset($authorcontextids[$authorid]) ? $authorcontextids[$authorid] : null;
                 $attachments = isset($attachmentsbypostid[$postid]) ? $attachmentsbypostid[$postid] : [];
+                $inlineattachments = isset($inlineattachmentsbypostid[$postid]) ? $inlineattachmentsbypostid[$postid] : [];
                 $authorgroups = isset($groupsbyauthorid[$authorid]) ? $groupsbyauthorid[$authorid] : [];
                 $tags = isset($tagsbypostid[$postid]) ? $tagsbypostid[$postid] : [];
                 $rating = isset($ratingbypostid[$postid]) ? $ratingbypostid[$postid] : null;
@@ -139,6 +147,7 @@ class posts extends exporter {
                     'author' => $author,
                     'authorcontextid' => $authorcontextid,
                     'attachments' => $attachments,
+                    'messageinlinefiles' => $inlineattachments,
                     'authorgroups' => $authorgroups,
                     'tags' => $tags,
                     'rating' => $rating

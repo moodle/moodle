@@ -27,6 +27,7 @@ require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->libdir.'/plagiarismlib.php');
 
+use core\content\export\exporters\component_exporter;
 use core_grades\component_gradeitems;
 
 /**
@@ -370,6 +371,15 @@ abstract class moodleform_mod extends moodleform {
                 if ($mform->elementExists('completionusegrade')) {
                     $mform->freeze('completionusegrade');
                 }
+                if ($mform->elementExists('completionpassgrade')) {
+                    $mform->freeze('completionpassgrade');
+
+                    // Has the completion pass grade completion criteria been set?
+                    // If it has then we shouldn't change the gradepass field.
+                    if ($mform->exportValue('completionpassgrade')) {
+                        $mform->freeze('gradepass');
+                    }
+                }
                 if ($mform->elementExists('completiongradeitemnumber')) {
                     $mform->freeze('completiongradeitemnumber');
                 }
@@ -379,6 +389,8 @@ abstract class moodleform_mod extends moodleform {
 
         // Freeze admin defaults if required (and not different from default)
         $this->apply_admin_locked_flags();
+
+        $this->plugin_extend_coursemodule_definition_after_data();
     }
 
     // form verification
@@ -466,6 +478,28 @@ abstract class moodleform_mod extends moodleform {
                     );
                 }
             }
+
+            if (isset($data['completionpassgrade']) && $data['completionpassgrade']) {
+                // We need to check whether there's a valid gradepass value.
+                // This can either be in completiongradeitemnumber when there are multiple options OR,
+                // The first grade item if completionusegrade is specified.
+                $validategradepass = false;
+                if (isset($data['completiongradeitemnumber'])) {
+                    if ($data['completiongradeitemnumber'] == (string)$itemnumber) {
+                        $validategradepass = true;
+                    }
+                } else if (isset($data['completionusegrade']) && $data['completionusegrade']) {
+                    $validategradepass = true;
+                }
+
+                // Confirm gradepass is a valid non-zero value.
+                if ($validategradepass && (!isset($data[$gradepassfieldname]) || grade_floatval($data[$gradepassfieldname]) == 0)) {
+                    $errors['completionpassgrade'] = get_string(
+                        'activitygradetopassnotset',
+                        'completion'
+                    );
+                }
+            }
         }
 
         // Completion: Don't let them choose automatic completion without turning
@@ -480,7 +514,7 @@ abstract class moodleform_mod extends moodleform {
             $rulesenabled = !empty($data['completionview']);
 
             // Use grade to complete (only one grade item).
-            $rulesenabled = $rulesenabled || !empty($data['completionusegrade']);
+            $rulesenabled = $rulesenabled || !empty($data['completionusegrade']) || !empty($data['completionpassgrade']);
 
             // Use grade to complete (specific grade item).
             if (!$rulesenabled && isset($data['completiongradeitemnumber'])) {
@@ -604,6 +638,22 @@ abstract class moodleform_mod extends moodleform {
             $mform->addHelpButton('groupmode', 'groupmode', 'group');
         }
 
+        if ($CFG->downloadcoursecontentallowed) {
+                $choices = [
+                    DOWNLOAD_COURSE_CONTENT_DISABLED => get_string('no'),
+                    DOWNLOAD_COURSE_CONTENT_ENABLED => get_string('yes'),
+                ];
+                $mform->addElement('select', 'downloadcontent', get_string('downloadcontent', 'course'), $choices);
+                $downloadcontentdefault = $this->_cm->downloadcontent ?? DOWNLOAD_COURSE_CONTENT_ENABLED;
+                $mform->addHelpButton('downloadcontent', 'downloadcontent', 'course');
+                if (has_capability('moodle/course:configuredownloadcontent', $this->get_context())) {
+                    $mform->setDefault('downloadcontent', $downloadcontentdefault);
+                } else {
+                    $mform->hardFreeze('downloadcontent');
+                    $mform->setConstant('downloadcontent', $downloadcontentdefault);
+                }
+        }
+
         if ($this->_features->groupings) {
             // Groupings selector - used to select grouping for groups in activity.
             $options = array();
@@ -621,10 +671,23 @@ abstract class moodleform_mod extends moodleform {
         if (!empty($CFG->enableavailability)) {
             // Add special button to end of previous section if groups/groupings
             // are enabled.
-            if ($this->_features->groups || $this->_features->groupings) {
+
+            $availabilityplugins = \core\plugininfo\availability::get_enabled_plugins();
+            $groupavailability = $this->_features->groups && array_key_exists('group', $availabilityplugins);
+            $groupingavailability = $this->_features->groupings && array_key_exists('grouping', $availabilityplugins);
+
+            if ($groupavailability || $groupingavailability) {
+                // When creating the button, we need to set type=button to prevent it behaving as a submit.
                 $mform->addElement('static', 'restrictgroupbutton', '',
-                        html_writer::tag('button', get_string('restrictbygroup', 'availability'),
-                        array('id' => 'restrictbygroup', 'disabled' => 'disabled', 'class' => 'btn btn-secondary')));
+                    html_writer::tag('button', get_string('restrictbygroup', 'availability'), [
+                        'id' => 'restrictbygroup',
+                        'type' => 'button',
+                        'disabled' => 'disabled',
+                        'class' => 'btn btn-secondary',
+                        'data-groupavailability' => $groupavailability,
+                        'data-groupingavailability' => $groupingavailability
+                    ])
+                );
             }
 
             // Availability field. This is just a textarea; the user interface
@@ -709,16 +772,28 @@ abstract class moodleform_mod extends moodleform {
                     $mform->hideIf('completionusegrade', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
                     $mform->addHelpButton('completionusegrade', 'completionusegrade', 'completion');
 
+                    // Complete if the user has reached the pass grade.
+                    $mform->addElement(
+                        'checkbox',
+                        'completionpassgrade', null,
+                        get_string('completionpassgrade_desc', 'completion')
+                    );
+                    $mform->hideIf('completionpassgrade', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
+                    $mform->disabledIf('completionpassgrade', 'completionusegrade', 'notchecked');
+                    $mform->addHelpButton('completionpassgrade', 'completionpassgrade', 'completion');
+
                     // The disabledIf logic differs between ratings and other grade items due to different field types.
                     if ($this->_features->rating) {
                         // If using the rating system, there is no grade unless ratings are enabled.
                         $mform->disabledIf('completionusegrade', 'assessed', 'eq', 0);
+                        $mform->disabledIf('completionpassgrade', 'assessed', 'eq', 0);
                     } else {
                         // All other field types use the '$gradefieldname' field's modgrade_type.
                         $itemnumbers = array_keys($itemnames);
                         $itemnumber = array_shift($itemnumbers);
                         $gradefieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'grade');
                         $mform->disabledIf('completionusegrade', "{$gradefieldname}[modgrade_type]", 'eq', 'none');
+                        $mform->disabledIf('completionpassgrade', "{$gradefieldname}[modgrade_type]", 'eq', 'none');
                     }
                 } else if (count($itemnames) > 1) {
                     // There are multiple grade items in this activity.
@@ -737,6 +812,16 @@ abstract class moodleform_mod extends moodleform {
                         $options
                     );
                     $mform->hideIf('completiongradeitemnumber', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
+
+                    // Complete if the user has reached the pass grade.
+                    $mform->addElement(
+                        'checkbox',
+                        'completionpassgrade', null,
+                        get_string('completionpassgrade_desc', 'completion')
+                    );
+                    $mform->hideIf('completionpassgrade', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
+                    $mform->disabledIf('completionpassgrade', 'completiongradeitemnumber', 'eq', '');
+                    $mform->addHelpButton('completionpassgrade', 'completionpassgrade', 'completion');
                 }
             }
 
@@ -897,6 +982,18 @@ abstract class moodleform_mod extends moodleform {
     }
 
     /**
+     * Plugins can extend the coursemodule settings form after the data is set.
+     */
+    protected function plugin_extend_coursemodule_definition_after_data() {
+        $callbacks = get_plugins_with_function('coursemodule_definition_after_data', 'lib.php');
+        foreach ($callbacks as $type => $plugins) {
+            foreach ($plugins as $plugin => $pluginfunction) {
+                $pluginfunction($this, $this->_form);
+            }
+        }
+    }
+
+    /**
      * Can be overridden to add custom completion rules if the module wishes
      * them. If overriding this, you should also override completion_rule_enabled.
      * <p>
@@ -981,7 +1078,7 @@ abstract class moodleform_mod extends moodleform {
 
         if ($this->_features->hasgrades) {
             if ($this->_features->gradecat) {
-                $mform->addElement('header', 'modstandardgrade', get_string('grade'));
+                $mform->addElement('header', 'modstandardgrade', get_string('gradenoun'));
             }
 
             //if supports grades and grades arent being handled via ratings
@@ -998,7 +1095,7 @@ abstract class moodleform_mod extends moodleform {
                     $gradeoptions['hasgrades'] = $gradeitem->has_grades();
                 }
             }
-            $mform->addElement('modgrade', $gradefieldname, get_string('grade'), $gradeoptions);
+            $mform->addElement('modgrade', $gradefieldname, get_string('gradenoun'), $gradeoptions);
             $mform->addHelpButton($gradefieldname, 'modgrade', 'grades');
             $mform->setDefault($gradefieldname, $CFG->gradepointdefault);
 
@@ -1110,6 +1207,10 @@ abstract class moodleform_mod extends moodleform {
 
         $mform = $this->_form;
 
+        $mform->addElement('checkbox', 'coursecontentnotification', get_string('coursecontentnotification', 'course'));
+        $mform->addHelpButton('coursecontentnotification', 'coursecontentnotification', 'course');
+        $mform->closeHeaderBefore('coursecontentnotification');
+
         // elements in a row need a group
         $buttonarray = array();
 
@@ -1129,7 +1230,6 @@ abstract class moodleform_mod extends moodleform {
 
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->setType('buttonar', PARAM_RAW);
-        $mform->closeHeaderBefore('buttonar');
     }
 
     /**
@@ -1256,6 +1356,11 @@ abstract class moodleform_mod extends moodleform {
             // they can be added to the DB.
             if (isset($data->gradepass)) {
                 $data->gradepass = unformat_float($data->gradepass);
+            }
+
+            // Trim name for all activity name.
+            if (isset($data->name)) {
+                $data->name = trim($data->name);
             }
 
             $this->data_postprocessing($data);

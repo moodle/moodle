@@ -43,7 +43,7 @@ class workshopeval_best_evaluation_testcase extends advanced_testcase {
     /**
      * Setup testing environment
      */
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -54,7 +54,7 @@ class workshopeval_best_evaluation_testcase extends advanced_testcase {
         $this->evaluator = new testable_workshop_best_evaluation($this->workshop);
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->workshop = null;
         $this->evaluator = null;
         parent::tearDown();

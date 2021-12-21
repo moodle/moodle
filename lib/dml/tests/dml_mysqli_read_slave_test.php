@@ -48,12 +48,12 @@ class core_dml_mysqli_read_slave_testcase extends base_testcase {
         $this->assertEquals(0, $DB->perf_get_reads_slave());
 
         $DB->query_start("SELECT GET_LOCK('lock',1)", null, SQL_QUERY_SELECT);
-        $this->assertEquals('test_rw', $DB->get_db_handle());
+        $this->assertTrue($DB->db_handle_is_rw());
         $DB->query_end(null);
         $this->assertEquals(0, $DB->perf_get_reads_slave());
 
         $DB->query_start("SELECT RELEASE_LOCK('lock',1)", null, SQL_QUERY_SELECT);
-        $this->assertEquals('test_rw', $DB->get_db_handle());
+        $this->assertTrue($DB->db_handle_is_rw());
         $DB->query_end(null);
         $this->assertEquals(0, $DB->perf_get_reads_slave());
     }

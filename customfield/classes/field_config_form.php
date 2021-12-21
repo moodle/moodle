@@ -26,9 +26,6 @@ namespace core_customfield;
 
 defined('MOODLE_INTERNAL') || die;
 
-global $CFG;
-require_once($CFG->libdir . '/formslib.php');
-
 /**
  * Class field_config_form
  *
@@ -36,7 +33,10 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright 2018 David Matamoros <davidmc@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class field_config_form extends \moodleform {
+class field_config_form extends \core_form\dynamic_form {
+
+    /** @var field_controller */
+    protected $field;
 
     /**
      * Class definition
@@ -44,13 +44,9 @@ class field_config_form extends \moodleform {
      * @throws \coding_exception
      */
     public function definition() {
-        global $PAGE;
         $mform = $this->_form;
 
-        $field = $this->_customdata['field'];
-        if (!($field && $field instanceof field_controller)) {
-            throw new \coding_exception('Field must be passed in customdata');
-        }
+        $field = $this->get_field();
         $handler = $field->get_handler();
 
         $mform->addElement('header', '_commonsettings', get_string('commonsettings', 'core_customfield'));
@@ -97,7 +93,7 @@ class field_config_form extends \moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $this->add_action_buttons(true);
+        // This form is only used inside modal dialogues and never needs action buttons.
     }
 
     /**
@@ -111,8 +107,7 @@ class field_config_form extends \moodleform {
         global $DB;
 
         $errors = array();
-        /** @var field_controller $field */
-        $field = $this->_customdata['field'];
+        $field = $this->get_field();
         $handler = $field->get_handler();
 
         // Check the shortname is specified and is unique for this component-area-itemid combination.
@@ -130,5 +125,90 @@ class field_config_form extends \moodleform {
         $errors = array_merge($errors, $field->config_form_validation($data, $files));
 
         return $errors;
+    }
+
+    /**
+     * Get field
+     *
+     * @return field_controller
+     * @throws \moodle_exception
+     */
+    protected function get_field(): field_controller {
+        if ($this->field === null) {
+            if (!empty($this->_ajaxformdata['id'])) {
+                $this->field = \core_customfield\field_controller::create((int)$this->_ajaxformdata['id']);
+            } else if (!empty($this->_ajaxformdata['categoryid']) && !empty($this->_ajaxformdata['type'])) {
+                $category = \core_customfield\category_controller::create((int)$this->_ajaxformdata['categoryid']);
+                $type = clean_param($this->_ajaxformdata['type'], PARAM_PLUGIN);
+                $this->field = \core_customfield\field_controller::create(0, (object)['type' => $type], $category);
+            } else {
+                throw new \moodle_exception('fieldnotfound', 'core_customfield');
+            }
+        }
+        return $this->field;
+    }
+
+    /**
+     * Check if current user has access to this form, otherwise throw exception
+     *
+     * Sometimes permission check may depend on the action and/or id of the entity.
+     * If necessary, form data is available in $this->_ajaxformdata
+     */
+    protected function check_access_for_dynamic_submission(): void {
+        $field = $this->get_field();
+        $handler = $field->get_handler();
+        if (!$handler->can_configure()) {
+            print_error('nopermissionconfigure', 'core_customfield');
+        }
+    }
+
+    /**
+     * Load in existing data as form defaults
+     *
+     * Can be overridden to retrieve existing values from db by entity id and also
+     * to preprocess editor and filemanager elements
+     *
+     * Example:
+     *     $this->set_data(get_entity($this->_ajaxformdata['id']));
+     */
+    public function set_data_for_dynamic_submission(): void {
+        $this->set_data(api::prepare_field_for_config_form($this->get_field()));
+    }
+
+    /**
+     * Process the form submission
+     *
+     * This method can return scalar values or arrays that can be json-encoded, they will be passed to the caller JS.
+     *
+     * @return mixed
+     */
+    public function process_dynamic_submission() {
+        $data = $this->get_data();
+        $field = $this->get_field();
+        $handler = $field->get_handler();
+        $handler->save_field_configuration($field, $data);
+        return null;
+    }
+
+    /**
+     * Form context
+     * @return \context
+     */
+    protected function get_context_for_dynamic_submission(): \context {
+        return $this->get_field()->get_handler()->get_configuration_context();
+    }
+
+    /**
+     * Page url
+     * @return \moodle_url
+     */
+    protected function get_page_url_for_dynamic_submission(): \moodle_url {
+        $field = $this->get_field();
+        if ($field->get('id')) {
+            $params = ['action' => 'editfield', 'id' => $field->get('id')];
+        } else {
+            $params = ['action' => 'addfield', 'categoryid' => $field->get('categoryid'), 'type' => $field->get('type')];
+        }
+        return new \moodle_url($field->get_handler()->get_configuration_url(), $params);
     }
 }

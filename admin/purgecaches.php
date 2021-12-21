@@ -38,12 +38,11 @@ $form = new core_admin\form\purge_caches(null, ['returnurl' => $returnurl]);
 if ($data = $form->get_data()) {
 
     // Valid request. Purge, and redirect the user back to where they came from.
-    $selected = $data->purgeselectedoptions;
-    purge_caches($selected);
-
     if (isset($data->all)) {
+        purge_caches();
         $message = get_string('purgecachesfinished', 'admin');
     } else {
+        purge_caches($data->purgeselectedoptions);
         $message = get_string('purgeselectedcachesfinished', 'admin');
     }
 
@@ -52,8 +51,14 @@ if ($data = $form->get_data()) {
     $message = get_string('purgecachesfinished', 'admin');
 }
 
+// Redirect and/or show notification message confirming cache(s) were purged.
 if (isset($message)) {
-    redirect($returnurl, $message);
+    if (!$PAGE->url->compare($returnurl, URL_MATCH_BASE)) {
+        redirect($returnurl, $message);
+    }
+
+    // We are already on the purge caches page, add the notification.
+    \core\notification::add($message, \core\output\notification::NOTIFY_INFO);
 }
 
 // Otherwise, show a form to actually purge the caches.

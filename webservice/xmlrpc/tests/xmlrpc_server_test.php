@@ -41,7 +41,7 @@ class xmlrpc_server_test extends advanced_testcase {
     /**
      * Setup.
      */
-    public function setUp() {
+    public function setUp(): void {
         if (!function_exists('xmlrpc_decode')) {
             $this->markTestSkipped('XMLRPC is not installed.');
         }
@@ -57,12 +57,12 @@ class xmlrpc_server_test extends advanced_testcase {
      */
     public function test_parse_request($input, $expectfunction, $expectparams) {
         $server = $this->getMockBuilder('\webservice_xmlrpc_server')
-                       ->setMethods(['fetch_input_content'])
-                       ->disableOriginalConstructor()
-                       ->getMock();
+            ->onlyMethods(['fetch_input_content'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $server->method('fetch_input_content')
-               ->willReturn($input);
+            ->willReturn($input);
 
         $rc = new \ReflectionClass('\webservice_xmlrpc_server');
         $rcm = $rc->getMethod('parse_request');

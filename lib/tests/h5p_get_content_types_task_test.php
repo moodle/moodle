@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class h5p_get_content_types_task_testcase extends advanced_testcase {
 
-    protected function setup() {
+    protected function setup(): void {
         global $CFG;
         parent::setUp();
 
@@ -73,7 +73,7 @@ class h5p_get_content_types_task_testcase extends advanced_testcase {
 
         // Mock implementation of \core\task\h5p_get_content_types_task::get_core to avoid external systems.
         $mocktask = $this->getMockBuilder(\core\task\h5p_get_content_types_task::class)
-            ->setMethods(['get_core'])
+            ->onlyMethods(['get_core'])
             ->getMock();
 
         $mocktask->expects($this->any())

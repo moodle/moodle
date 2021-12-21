@@ -65,6 +65,29 @@ class qtype extends base {
         return $enabled;
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        $haschanged = false;
+
+        $settingname = $pluginname . '_disabled';
+        $oldvalue = get_config('question', $settingname);
+        $disabled = !$enabled;
+        // Only set value if there is no config setting or if the value is different from the previous one.
+        if ($oldvalue == false && $disabled) {
+            set_config($settingname, $disabled, 'question');
+            $haschanged = true;
+        } else if ($oldvalue != false && !$disabled) {
+            unset_config($settingname, 'question');
+            $haschanged = true;
+        }
+
+        if ($haschanged) {
+            add_to_config_log($settingname, $oldvalue, $disabled, 'question');
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
     public function is_uninstall_allowed() {
         global $DB;
 

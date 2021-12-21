@@ -40,6 +40,19 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class redis extends handler {
+    /**
+     * Compressor: none.
+     */
+    const COMPRESSION_NONE      = 'none';
+    /**
+     * Compressor: PHP GZip.
+     */
+    const COMPRESSION_GZIP      = 'gzip';
+    /**
+     * Compressor: PHP Zstandard.
+     */
+    const COMPRESSION_ZSTD      = 'zstd';
+
     /** @var string $host save_path string  */
     protected $host = '';
     /** @var int $port The port to connect to */
@@ -56,6 +69,11 @@ class redis extends handler {
     protected $lockretry = 100;
     /** @var int $serializer The serializer to use */
     protected $serializer = \Redis::SERIALIZER_PHP;
+    /** @var int $compressor The compressor to use */
+    protected $compressor = self::COMPRESSION_NONE;
+    /** @var string $lasthash hash of the session data content */
+    protected $lasthash = null;
+
     /**
      * @var int $lockexpire how long to wait in seconds before expiring the lock automatically
      * so that other requests may continue execution, ignored if PECL redis is below version 2.2.0.
@@ -119,6 +137,10 @@ class redis extends handler {
         if (isset($CFG->session_redis_lock_expire)) {
             $this->lockexpire = (int)$CFG->session_redis_lock_expire;
         }
+
+        if (isset($CFG->session_redis_compressor)) {
+            $this->compressor = $CFG->session_redis_compressor;
+        }
     }
 
     /**
@@ -171,7 +193,7 @@ class redis extends handler {
 
             try {
 
-                $delay = rand(100000, 500000);
+                $delay = rand(100, 500);
 
                 // One second timeout was chosen as it is long for connection, but short enough for a user to be patient.
                 if (!$this->connection->connect($this->host, $this->port, 1, null, $delay)) {
@@ -237,6 +259,7 @@ class redis extends handler {
      * @return bool true on success.  false on unable to unlock sessions.
      */
     public function handler_close() {
+        $this->lasthash = null;
         try {
             foreach ($this->locks as $id => $expirytime) {
                 if ($expirytime > $this->time()) {
@@ -264,11 +287,13 @@ class redis extends handler {
             if ($this->requires_write_lock()) {
                 $this->lock_session($id);
             }
-            $sessiondata = $this->connection->get($id);
+            $sessiondata = $this->uncompress($this->connection->get($id));
+
             if ($sessiondata === false) {
                 if ($this->requires_write_lock()) {
                     $this->unlock_session($id);
                 }
+                $this->lasthash = sha1('');
                 return '';
             }
             $this->connection->expire($id, $this->timeout);
@@ -276,7 +301,55 @@ class redis extends handler {
             error_log('Failed talking to redis: '.$e->getMessage());
             throw $e;
         }
+        $this->lasthash = sha1(base64_encode($sessiondata));
         return $sessiondata;
+    }
+
+    /**
+     * Compresses session data.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    private function compress($value) {
+        switch ($this->compressor) {
+            case self::COMPRESSION_NONE:
+                return $value;
+            case self::COMPRESSION_GZIP:
+                return gzencode($value);
+            case self::COMPRESSION_ZSTD:
+                return zstd_compress($value);
+            default:
+                debugging("Invalid compressor: {$this->compressor}");
+                return $value;
+        }
+    }
+
+    /**
+     * Uncompresses session data.
+     *
+     * @param string $value
+     * @return mixed
+     */
+    private function uncompress($value) {
+        if ($value === false) {
+            return false;
+        }
+
+        switch ($this->compressor) {
+            case self::COMPRESSION_NONE:
+                break;
+            case self::COMPRESSION_GZIP:
+                $value = gzdecode($value);
+                break;
+            case self::COMPRESSION_ZSTD:
+                $value = zstd_uncompress($value);
+                break;
+            default:
+                debugging("Invalid compressor: {$this->compressor}");
+        }
+
+        return $value;
     }
 
     /**
@@ -287,6 +360,14 @@ class redis extends handler {
      * @return bool true on write success, false on failure
      */
     public function handler_write($id, $data) {
+
+        $hash = sha1(base64_encode($data));
+
+        // If the content has not changed don't bother writing.
+        if ($hash === $this->lasthash) {
+            return true;
+        }
+
         if (is_null($this->connection)) {
             // The session has already been closed, don't attempt another write.
             error_log('Tried to write session: '.$id.' before open or after close.');
@@ -298,6 +379,8 @@ class redis extends handler {
         // There can be race conditions on new sessions racing each other but we can
         // address that in the future.
         try {
+            $data = $this->compress($data);
+
             $this->connection->setex($id, $this->timeout, $data);
         } catch (RedisException $e) {
             error_log('Failed talking to redis: '.$e->getMessage());
@@ -313,6 +396,7 @@ class redis extends handler {
      * @return bool true if the session was deleted, false otherwise.
      */
     public function handler_destroy($id) {
+        $this->lasthash = null;
         try {
             $this->connection->del($id);
             $this->unlock_session($id);

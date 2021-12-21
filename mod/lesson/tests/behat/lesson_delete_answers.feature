@@ -17,11 +17,11 @@ branch table contents
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber    |
+      | lesson     | Test lesson name | Test lesson description | C1     | lesson1     |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I follow "Add a content page"
     And I set the following fields to these values:
@@ -47,7 +47,7 @@ branch table contents
       | id_jumpto_1 | First page name |
       | id_score_1 | 0 |
     And I press "Save page"
-    And I follow "Expanded"
+    And I select edit type "Expanded"
 
   Scenario: Edit lesson content page
     Given I click on "//th[normalize-space(.)='First page name']/descendant::a[3]" "xpath_element"

@@ -58,7 +58,7 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
     /**
      * Basic setup for these tests.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
 
         $this->course = $this->getDataGenerator()->create_course();
@@ -92,7 +92,7 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $expectedids = [$coursectx->id, $activityctx->id];
 
         $actualids = $contextlist->get_contextids();
-        $this->assertEquals($expectedids, $actualids, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedids, $actualids);
     }
 
     /**
@@ -211,10 +211,9 @@ class enrol_lti_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $userlist = new \core_privacy\local\request\userlist($coursecontext, 'enrol_paypal');
         provider::get_users_in_context($userlist);
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$this->user->id, $this->anotheruser->id],
-                $userlist->get_userids(),
-                '', 0.0, 10, true);
+                $userlist->get_userids());
     }
 
     /**

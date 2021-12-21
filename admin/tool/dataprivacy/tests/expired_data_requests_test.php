@@ -44,7 +44,7 @@ class tool_dataprivacy_expired_data_requests_testcase extends data_privacy_testc
     /**
      * Test tearDown.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         \core_privacy\local\request\writer::reset();
     }
 

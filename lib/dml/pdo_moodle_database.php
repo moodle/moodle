@@ -390,7 +390,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * If the return ID isn't required, then this just reports success as true/false.
      * $data is an object containing needed data
      * @param string $table The database table to be inserted into
-     * @param object $data A data object with values for one or more fields in the record
+     * @param object|array $dataobject A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @param bool $bulk true means repeated inserts expected
      * @return bool|int true or new id
@@ -540,6 +540,18 @@ abstract class pdo_moodle_database extends moodle_database {
 
     public function sql_concat_join($separator="' '", $elements=array()) {
         print_error('TODO');
+    }
+
+    /**
+     * Return SQL for performing group concatenation on given field/expression
+     *
+     * @param string $field
+     * @param string $separator
+     * @param string $sort
+     * @return string
+     */
+    public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {
+        return ''; // TODO.
     }
 
     protected function begin_transaction() {

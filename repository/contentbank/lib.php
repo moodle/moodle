@@ -108,6 +108,15 @@ class repository_contentbank extends repository {
     }
 
     /**
+     * Which return type should be selected by default.
+     *
+     * @return int
+     */
+    public function default_returntype() {
+        return FILE_REFERENCE;
+    }
+
+    /**
      * Is this repository accessing private data?
      *
      * @return bool

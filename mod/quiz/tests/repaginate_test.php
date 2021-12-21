@@ -68,12 +68,12 @@ class mod_quiz_repaginate_test extends advanced_testcase {
     /** @var mod_quiz_repaginate_testable the object being tested. */
     private $repaginate = null;
 
-    public function setUp() {
+    public function setUp(): void {
         $this->set_quiz_slots($this->get_quiz_object()->get_slots());
         $this->repaginate = new mod_quiz_repaginate_testable(0, $this->quizslots);
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         $this->repaginate = null;
     }
 

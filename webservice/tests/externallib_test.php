@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  */
 class core_webservice_externallib_testcase extends externallib_advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         // Calling parent is good, always
         parent::setUp();
 
@@ -166,6 +166,24 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertTrue($siteinfo['userissiteadmin']);
         $this->assertEmpty($USER->theme);
         $this->assertEquals($PAGE->theme->name, $siteinfo['theme']);
+        $this->assertEquals($CFG->limitconcurrentlogins, $siteinfo['limitconcurrentlogins']);
+        $this->assertFalse(isset($siteinfo['usersessionscount']));
+
+        $CFG->limitconcurrentlogins = 1;
+        $record = new stdClass();
+        $record->state        = 0;
+        $record->sessdata     = null;
+        $record->userid       = $USER->id;
+        $record->timemodified = time();
+        $record->firstip      = $record->lastip = '10.0.0.1';
+        $record->sid = md5('hokus1');
+        $record->timecreated = time();
+        $DB->insert_record('sessions', $record);
+
+        $siteinfo = core_webservice_external::get_site_info();
+        $siteinfo = external_api::clean_returnvalue(core_webservice_external::get_site_info_returns(), $siteinfo);
+        $this->assertEquals($CFG->limitconcurrentlogins, $siteinfo['limitconcurrentlogins']);
+        $this->assertEquals(1, $siteinfo['usersessionscount']);
     }
 
     /**

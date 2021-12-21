@@ -1,0 +1,20 @@
+{{- /*
+  Usage: `moodleicons`
+*/ -}}
+
+<div class="card-deck">
+  {{ range $.Site.Data.fontawesomeicons }}
+  <div class="card mb-2 p-1 d-flex flex-column justify-content-around text-center" style="flex: 0 0 20%; height: 150px">
+    <div class="small text-truncate" data-toggle="tooltip" data-placement="bottom" title="{{ .name }}">{{ .name }}</div>
+    <div class="row no-gutters">
+      <div class="col-sm-6 d-flex align-items-center justify-content-center">
+        <i class="fa {{ .icon }} fa-2x"></i>
+      </div>
+      <div class="col-sm-6 d-flex align-items-center justify-content-center">
+        {{ .standardicon | safeHTML }}
+      </div>
+    </div>
+      <div class="small text-truncate mb-1" title="{{ .icon }}">{{ .icon }}</div>
+  </div>
+  {{ end }}
+</div>

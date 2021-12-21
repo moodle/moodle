@@ -8,26 +8,7 @@
         "formhtml": "<p>(Form html would go here)</p>"
     }
 }}
-<div class="container-fluid mt-1 mt-md-5">
-    <div class="row justify-content-md-center">
-        <div class="col-md-8 col-xl-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title text-xs-center">
-                        {{#logourl}}
-                            <h2><img class="img-fluid" src="{{logourl}}" title="{{sitename}}" alt="{{sitename}}"/></h2>
-                        {{/logourl}}
-                        {{^logourl}}
-                            <h2>{{sitename}}</h2>
-                        {{/logourl}}
-                        <hr>
-                    </div>
-                    <div class="card-title">
-                        <h3>{{#str}}newaccount{{/str}}</h3>
-                    </div>
-                    {{{formhtml}}}
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="signupform">
+    <h1 class="login-heading">{{#str}} newaccount {{/str}}</h1>
+    {{{formhtml}}}
 </div>

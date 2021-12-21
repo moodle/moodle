@@ -122,6 +122,8 @@ if (!$canpreview) {
 $mygradeoverridden = false;
 $gradebookfeedback = '';
 
+$item = null;
+
 $grading_info = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $USER->id);
 if (!empty($grading_info->items)) {
     $item = $grading_info->items[0];
@@ -141,7 +143,16 @@ if (!empty($grading_info->items)) {
 $title = $course->shortname . ': ' . format_string($quiz->name);
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
+if (html_is_blank($quiz->intro)) {
+    $PAGE->activityheader->set_description('');
+}
+$PAGE->add_body_class('limitedwidth');
 $output = $PAGE->get_renderer('mod_quiz');
+// MDL-71915 Will remove this place holder.
+if (defined('BEHAT_SITE_RUNNING')) {
+    $PAGE->has_secondary_navigation_setter(false);
+}
+$PAGE->add_header_action($OUTPUT->region_main_settings_menu());
 
 // Print table with existing attempts.
 if ($attempts) {
@@ -183,6 +194,14 @@ $viewobj->infomessages = $viewobj->accessmanager->describe_rules();
 if ($quiz->attempts != 1) {
     $viewobj->infomessages[] = get_string('gradingmethod', 'quiz',
             quiz_get_grading_option_name($quiz->grademethod));
+}
+
+// Inform user of the grade to pass if non-zero.
+if ($item && grade_floats_different($item->gradepass, 0)) {
+    $a = new stdClass();
+    $a->grade = quiz_format_grade($quiz, $item->gradepass);
+    $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
+    $viewobj->infomessages[] = get_string('gradetopassoutof', 'quiz', $a);
 }
 
 // Determine wheter a start attempt button should be displayed.
@@ -235,11 +254,11 @@ echo $OUTPUT->header();
 
 if (isguestuser()) {
     // Guests can't do a quiz, so offer them a choice of logging in or going back.
-    echo $output->view_page_guest($course, $quiz, $cm, $context, $viewobj->infomessages);
+    echo $output->view_page_guest($course, $quiz, $cm, $context, $viewobj->infomessages, $viewobj->quizhasquestions);
 } else if (!isguestuser() && !($canattempt || $canpreview
           || $viewobj->canreviewmine)) {
     // If they are not enrolled in this course in a good enough role, tell them to enrol.
-    echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $viewobj->infomessages);
+    echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $viewobj->infomessages, $viewobj->quizhasquestions);
 } else {
     echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
 }

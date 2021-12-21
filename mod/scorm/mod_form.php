@@ -198,7 +198,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'timeclose', get_string("scormclose", "scorm"), array('optional' => true));
 
         // Grade Settings.
-        $mform->addElement('header', 'gradesettings', get_string('grade'));
+        $mform->addElement('header', 'gradesettings', get_string('gradenoun'));
 
         // Grade Method.
         $mform->addElement('select', 'grademethod', get_string('grademethod', 'scorm'), scorm_get_grade_method_array());
@@ -275,12 +275,15 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         $this->standard_coursemodule_elements();
 
+        // A SCORM module should define this within itself and is not needed here.
+        $mform->removeElement('completionpassgrade');
+
         // Buttons.
         $this->add_action_buttons();
     }
 
     public function data_preprocessing(&$defaultvalues) {
-        global $COURSE;
+        global $CFG, $COURSE;
 
         if (isset($defaultvalues['popup']) && ($defaultvalues['popup'] == 1) && isset($defaultvalues['options'])) {
             if (!empty($defaultvalues['options'])) {
@@ -313,10 +316,10 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         if (($COURSE->format == 'singleactivity') && ((count($scorms) == 0) || ($defaultvalues['instance'] == $coursescorm->id))) {
             $defaultvalues['redirect'] = 'yes';
-            $defaultvalues['redirecturl'] = '../course/view.php?id='.$defaultvalues['course'];
+            $defaultvalues['redirecturl'] = $CFG->wwwroot.'/course/view.php?id='.$defaultvalues['course'];
         } else {
             $defaultvalues['redirect'] = 'no';
-            $defaultvalues['redirecturl'] = '../mod/scorm/view.php?id='.$defaultvalues['coursemodule'];
+            $defaultvalues['redirecturl'] = $CFG->wwwroot.'/mod/scorm/view.php?id='.$defaultvalues['coursemodule'];
         }
         if (isset($defaultvalues['version'])) {
             $defaultvalues['pkgtype'] = (substr($defaultvalues['version'], 0, 5) == 'SCORM') ? 'scorm' : 'aicc';

@@ -47,7 +47,11 @@ class behat_grading extends behat_base {
      */
     public function i_go_to_advanced_grading_page($activityname) {
 
-        $this->execute('behat_general::click_link', $this->escape($activityname));
+        try {
+            $this->execute("behat_general::i_click_on_in_the", [$this->escape($activityname), 'link', 'page', 'region']);
+        } catch (Exception $e) {
+            $this->execute('behat_navigation::go_to_breadcrumb_location', $this->escape($activityname));
+        }
 
         $this->execute('behat_navigation::i_navigate_to_in_current_page_administration',
             get_string('gradingmanagement', 'grading'));
@@ -83,12 +87,11 @@ class behat_grading extends behat_base {
     public function i_go_to_activity_advanced_grading_page($userfullname, $activityname) {
 
         // Step to access the user grade page from the grading page.
-        $gradetext = get_string('grade');
+        $gradetext = get_string('gradeverb');
 
-        $this->execute('behat_general::click_link', $this->escape($activityname));
+        $this->execute('behat_navigation::go_to_breadcrumb_location', $this->escape($activityname));
 
-        $this->execute('behat_navigation::i_navigate_to_in_current_page_administration',
-            get_string('viewgrading', 'mod_assign'));
+        $this->execute('behat_general::click_link', get_string('viewgrading', 'mod_assign'));
 
         $this->execute('behat_general::i_click_on_in_the',
                        array(
@@ -156,11 +159,9 @@ class behat_grading extends behat_base {
     public function i_save_the_advanced_grading_form() {
 
         $this->execute('behat_forms::press_button', get_string('savechanges'));
-        $this->execute('behat_forms::press_button', 'OK');
         $this->execute('behat_general::i_click_on', array($this->escape(get_string('editsettings')), 'link'));
         $this->execute('behat_forms::press_button', get_string('cancel'));
-        $this->execute('behat_navigation::i_navigate_to_in_current_page_administration',
-            get_string('viewgrading', 'mod_assign'));
+        $this->execute('behat_general::click_link', get_string('viewgrading', 'mod_assign'));
     }
 
     /**

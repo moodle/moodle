@@ -32,6 +32,7 @@ Feature: Test creating a drag and drop onto image question
     And I follow "Draggable items"
     And I press "Blanks for 3 more draggable items"
 
+    And I set the field "id_shuffleanswers" to "1"
     And I set the field "id_drags_0_dragitemtype" to "Draggable text"
     And I set the field "id_draglabel_0" to "island<br/>arc"
 
@@ -94,3 +95,9 @@ Feature: Test creating a drag and drop onto image question
 
     And I press "id_submitbutton"
     Then I should see "Drag and drop onto image 001"
+    # Checking that the next new question form displays user preferences settings.
+    When I press "Create a new question ..."
+    And I set the field "item_qtype_ddimageortext" to "1"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
+    Then the following fields match these values:
+      | id_shuffleanswers | 1   |

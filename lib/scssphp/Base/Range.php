@@ -1,8 +1,9 @@
 <?php
+
 /**
  * SCSSPHP
  *
- * @copyright 2015-2019 Leaf Corcoran
+ * @copyright 2015-2020 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *

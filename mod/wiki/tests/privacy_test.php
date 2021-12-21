@@ -71,7 +71,7 @@ class mod_wiki_privacy_testcase extends provider_testcase {
      *   In the export data they have paths:
      *   $this->pagepaths[1][1], $this->pagepaths[1][2], $this->pagepaths[1][3]
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -247,26 +247,26 @@ class mod_wiki_privacy_testcase extends provider_testcase {
 
         // Get contexts for the first user.
         $contextids = provider::get_contexts_for_userid($this->users[1]->id)->get_contextids();
-        $this->assertEquals([
+        $this->assertEqualsCanonicalizing([
             $this->contexts[1]->id,
             $this->contexts[2]->id,
-        ], $contextids, '', 0.0, 10, true);
+        ], $contextids);
 
         // Get contexts for the second user.
         $contextids = provider::get_contexts_for_userid($this->users[2]->id)->get_contextids();
-        $this->assertEquals([
+        $this->assertEqualsCanonicalizing([
             $this->contexts[1]->id,
             $this->contexts[2]->id,
             $this->contexts[3]->id,
-        ], $contextids, '', 0.0, 10, true);
+        ], $contextids);
 
         // Get contexts for the third user.
         $contextids = provider::get_contexts_for_userid($this->users[3]->id)->get_contextids();
-        $this->assertEquals([
+        $this->assertEqualsCanonicalizing([
             $this->contexts[1]->id,
             $this->contexts[2]->id,
             $this->contexts[3]->id,
-        ], $contextids, '', 0.0, 10, true);
+        ], $contextids);
     }
 
     /**
@@ -361,7 +361,7 @@ class mod_wiki_privacy_testcase extends provider_testcase {
 
         // There is one file that was used in this user's contents - "Dog face.jpg" and one file in page cachedcontents.
         $files = writer::with_context($this->contexts[1])->get_files([$this->subwikis[1]]);
-        $this->assertEquals(['Dog jump.jpg', 'Hamster.jpg'], array_keys($files), '', 0, 10, true);
+        $this->assertEqualsCanonicalizing(['Dog jump.jpg', 'Hamster.jpg'], array_keys($files));
 
         // Second (individual) wiki for the first user, two pages are returned for this user's subwiki.
         $data = writer::with_context($this->contexts[2])->get_related_data([$this->subwikis[21]]);

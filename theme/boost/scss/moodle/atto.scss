@@ -28,6 +28,8 @@ div.editor_atto_toolbar {
     border: 1px solid $input-border-color;
     width: 100%;
     padding: 0 0 9px 0;
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
 }
 
 div.editor_atto_toolbar button {
@@ -39,8 +41,15 @@ div.editor_atto_toolbar button {
     cursor: pointer;
 }
 
-div.editor_atto_toolbar button + button {
-    border-left: 1px solid #ccc;
+div.editor_atto_toolbar .menuplaceholder {
+    display: inline-block;
+}
+
+div.editor_atto_toolbar {
+    button + button,
+    .menuplaceholder + button {
+        border-left: 1px solid #ccc;
+    }
 }
 
 div.editor_atto_toolbar button[disabled] {
@@ -78,6 +87,14 @@ div.editor_atto_toolbar div.atto_group {
     border-radius: 4px;
     margin: 9px 0 0 9px;
     background: #fff;
+}
+
+div.editor_atto_toolbar .atto_toolbar_row {
+    margin: 6px 0 -3px 5px;
+    display: table;
+    div.atto_group {
+        margin: 3px 5px 3px 4px;
+    }
 }
 
 .editor_atto_content img {
@@ -203,6 +220,8 @@ div.editor_atto_content:hover .atto_control {
 .editor_atto_content.form-control {
     width: 100%;
     border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 /** Atto fields do not have form-control because that would break the layout of the editor.

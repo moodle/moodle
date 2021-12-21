@@ -50,23 +50,10 @@ class helper {
      */
     public static function save_h5p(factory $factory, \stored_file $file, \stdClass $config, bool $onlyupdatelibs = false,
             bool $skipcontent = false) {
-        // This may take a long time.
-        \core_php_time_limit::raise();
 
-        $core = $factory->get_core();
-        $core->h5pF->set_file($file);
-        $path = $core->fs->getTmpPath();
-        $core->h5pF->getUploadedH5pFolderPath($path);
-        // Add manually the extension to the file to avoid the validation fails.
-        $path .= '.h5p';
-        $core->h5pF->getUploadedH5pPath($path);
-
-        // Copy the .h5p file to the temporary folder.
-        $file->copy_content_to($path);
-
-        // Check if the h5p file is valid before saving it.
-        $h5pvalidator = $factory->get_validator();
-        if ($h5pvalidator->isValidPackage($skipcontent, $onlyupdatelibs)) {
+        if (api::is_valid_package($file, $onlyupdatelibs, $skipcontent, $factory, false)) {
+            $core = $factory->get_core();
+            $h5pvalidator = $factory->get_validator();
             $h5pstorage = $factory->get_storage();
 
             $content = [
@@ -83,6 +70,7 @@ class helper {
 
             return $h5pstorage->contentId;
         }
+
         return false;
     }
 
@@ -343,7 +331,11 @@ class helper {
         $core = $factory->get_core();
 
         // When there is a logged in user, her information will be passed to the player. It will be used for tracking.
-        $usersettings = isloggedin() ? ['name' => $USER->username, 'mail' => $USER->email] : [];
+        $usersettings = [];
+        if (isloggedin()) {
+            $usersettings['name'] = $USER->username;
+            $usersettings['id'] = $USER->id;
+        }
         $settings = array(
             'baseUrl' => $basepath,
             'url' => "{$basepath}pluginfile.php/{$systemcontext->instanceid}/core_h5p",
@@ -356,7 +348,7 @@ class helper {
             'user' => $usersettings,
             'hubIsEnabled' => true,
             'reportingIsEnabled' => false,
-            'crossorigin' => null,
+            'crossorigin' => !empty($CFG->h5pcrossorigin) ? $CFG->h5pcrossorigin : null,
             'libraryConfig' => $core->h5pF->getLibraryConfig(),
             'pluginCacheBuster' => self::get_cache_buster(),
             'libraryUrl' => autoloader::get_h5p_core_library_url('js')->out(),
@@ -421,6 +413,8 @@ class helper {
      * @return array The JS array converted to PHP array.
      */
     public static function parse_js_array(string $jscontent): array {
+        // Convert all line-endings to UNIX format first.
+        $jscontent = str_replace(array("\r\n", "\r"), "\n", $jscontent);
         $jsarray = preg_split('/,\n\s+/', substr($jscontent, 0, -1));
         $jsarray = preg_replace('~{?\\n~', '', $jsarray);
 

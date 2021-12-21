@@ -25,7 +25,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__  . '/behat_form_field.php');
+require_once(__DIR__ . '/behat_form_textarea.php');
 
 /**
  * Availability form field class.

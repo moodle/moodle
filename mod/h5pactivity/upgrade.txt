@@ -1,0 +1,7 @@
+This files describes API changes in /mod/h5pactivity/*,
+information provided here is intended especially for developers.
+
+=== 3.11 ===
+
+* Added mod_h5pactivity\local\manager::get_active_users_join method to query all active
+  users from a specific activity, even in a freeze context.

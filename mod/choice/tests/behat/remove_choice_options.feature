@@ -18,15 +18,9 @@ Feature: Update a choice activity removing options
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
-      | option[2] | Option 3 |
-    And I log out
+    And the following "activities" exist:
+      | activity | name        | intro              | course | idnumber | option                       | section |
+      | choice   | Choice name | Choice Description | C1     | choice1  | Option 1, Option 2, Option 3 | 1       |
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I choose "Option 3" from "Choice name" choice activity
@@ -41,9 +35,9 @@ Feature: Update a choice activity removing options
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I follow "Choice name"
-    And I should see "View 2 responses"
-    And I navigate to "Edit settings" in current page administration
+    And I click on "Choice name" "link" in the "region-main" "region"
+    And I navigate to "Settings" in current page administration
     And I set the field "option[2]" to ""
     And I press "Save and display"
-    Then I should see "View 1 responses"
+    Then I navigate to "Responses" in current page administration
+    And I should see "1" in the "Number of responses" "table_row"

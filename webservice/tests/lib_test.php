@@ -40,7 +40,7 @@ class webservice_test extends advanced_testcase {
     /**
      * Setup.
      */
-    public function setUp() {
+    public function setUp(): void {
         // Calling parent is good, always.
         parent::setUp();
 
@@ -191,6 +191,106 @@ class webservice_test extends advanced_testcase {
         webservice::update_token_lastaccess($token, $before + 60);
         $token = $DB->get_record('external_tokens', ['token' => $tokenstr]);
         $this->assertEquals($before + 60, $token->lastaccess);
+    }
+
+    /**
+     * Tests for the {@see webservice::get_missing_capabilities_by_users()} implementation.
+     */
+    public function test_get_missing_capabilities_by_users() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $wsman = new webservice();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        // Add a test web service.
+        $serviceid = $wsman->add_external_service((object)[
+            'name' => 'Test web service',
+            'enabled' => 1,
+            'requiredcapability' => '',
+            'restrictedusers' => false,
+            'component' => 'moodle',
+            'downloadfiles' => false,
+            'uploadfiles' => false,
+        ]);
+
+        // Add a function to the service that does not declare any capability as required.
+        $wsman->add_external_function_to_service('core_webservice_get_site_info', $serviceid);
+
+        // Users can be provided as an array of objects, arrays or integers (ids).
+        $this->assertEmpty($wsman->get_missing_capabilities_by_users([$user1, array($user2), $user3->id], $serviceid));
+
+        // Add a function to the service that declares some capability as required, but that capability is common for
+        // any user. Here we use 'core_message_delete_conversation' which declares 'moodle/site:deleteownmessage' which
+        // in turn is granted to the authenticated user archetype by default.
+        $wsman->add_external_function_to_service('core_message_delete_conversation', $serviceid);
+
+        // So all three users should have this capability implicitly.
+        $this->assertEmpty($wsman->get_missing_capabilities_by_users([$user1, $user2, $user3], $serviceid));
+
+        // Add a function to the service that declares some non-common capability. Here we use
+        // 'core_group_add_group_members' that wants 'moodle/course:managegroups'.
+        $wsman->add_external_function_to_service('core_group_add_group_members', $serviceid);
+
+        // Make it so that the $user1 has the capability in some course.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'editingteacher');
+
+        // Check that no missing capability is reported for the $user1. We don't care at what actual context the
+        // external function call will evaluate the permission. We just check that there is a chance that the user has
+        // the capability somewhere.
+        $this->assertEmpty($wsman->get_missing_capabilities_by_users([$user1], $serviceid));
+
+        // But there is no place at the site where the capability would be granted to the other two users, so it is
+        // reported as missing.
+        $missing = $wsman->get_missing_capabilities_by_users([$user1, $user2, $user3], $serviceid);
+        $this->assertArrayNotHasKey($user1->id, $missing);
+        $this->assertContains('moodle/course:managegroups', $missing[$user2->id]);
+        $this->assertContains('moodle/course:managegroups', $missing[$user3->id]);
+    }
+
+    /**
+     * Data provider for {@see test_get_active_tokens}
+     *
+     * @return array
+     */
+    public function get_active_tokens_provider(): array {
+        return [
+            'No expiration' => [0, true],
+            'Active' => [time() + DAYSECS, true],
+            'Expired' => [time() - DAYSECS, false],
+        ];
+    }
+
+    /**
+     * Test getting active tokens for a user
+     *
+     * @param int $validuntil
+     * @param bool $expectedactive
+     *
+     * @dataProvider get_active_tokens_provider
+     */
+    public function test_get_active_tokens(int $validuntil, bool $expectedactive): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        /** @var core_webservice_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_webservice');
+
+        $service = $generator->create_service(['name' => 'My test service', 'shortname' => 'mytestservice']);
+        $generator->create_token(['userid' => $user->id, 'service' => $service->shortname, 'validuntil' => $validuntil]);
+
+        $tokens = webservice::get_active_tokens($user->id);
+        if ($expectedactive) {
+            $this->assertCount(1, $tokens);
+            $this->assertEquals($service->id, reset($tokens)->externalserviceid);
+        } else {
+            $this->assertEmpty($tokens);
+        }
     }
 
     /**

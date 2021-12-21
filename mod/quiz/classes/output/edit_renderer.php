@@ -55,11 +55,6 @@ class edit_renderer extends \plugin_renderer_base {
             \question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars) {
         $output = '';
 
-        // Page title.
-        $output .= $this->heading_with_help(get_string('editingquizx', 'quiz',
-                format_string($quizobj->get_quiz_name())), 'editingquiz', 'quiz', '',
-                get_string('basicideasofquiz', 'quiz'), 2);
-
         // Information at the top.
         $output .= $this->quiz_state_warnings($structure);
 
@@ -119,7 +114,8 @@ class edit_renderer extends \plugin_renderer_base {
                 $thiscontext->id,
                 $pagevars['cat'],
                 $pageurl->out_as_local_url(true),
-                $pageurl->param('cmid')
+                $pageurl->param('cmid'),
+                \core\plugininfo\qbank::is_plugin_enabled(\qbank_managecategories\helper::PLUGINNAME),
             ]);
 
             // Include the question chooser.
@@ -213,7 +209,7 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'repaginate',
             'id'    => 'repaginatecommand',
             'value' => get_string('repaginatecommand', 'quiz'),
-            'class' => 'btn btn-secondary',
+            'class' => 'btn btn-secondary mr-1',
             'data-header' => $header,
             'data-form'   => $form,
         );
@@ -650,7 +646,7 @@ class edit_renderer extends \plugin_renderer_base {
                 'addonpage' => $page, 'appendqnumstring' => 'addquestion');
 
         $actions['addaquestion'] = new \action_menu_link_secondary(
-            new \moodle_url('/question/addquestion.php', $params),
+            new \moodle_url('/question/bank/editquestion/addquestion.php', $params),
             new \pix_icon('t/add', $str->addaquestion, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->addaquestion, array('class' => 'cm-edit-action addquestion', 'data-action' => 'addquestion')
         );
@@ -721,7 +717,7 @@ class edit_renderer extends \plugin_renderer_base {
 
         return html_writer::tag('form', html_writer::div($output),
                 array('class' => 'addnewquestion', 'method' => 'post',
-                        'action' => new \moodle_url('/question/addquestion.php')));
+                        'action' => new \moodle_url('/question/bank/editquestion/addquestion.php')));
     }
 
     /**
@@ -835,7 +831,7 @@ class edit_renderer extends \plugin_renderer_base {
         $image = $this->pix_icon('t/preview', $strpreviewquestion);
 
         $action = new \popup_action('click', $url, 'questionpreview',
-                                        question_preview_popup_params());
+                \qbank_previewquestion\helper::question_preview_popup_params());
 
         return $this->action_link($url, $image . $strpreviewlabel, $action,
                 array('title' => $strpreviewquestion, 'class' => 'preview'));
@@ -945,7 +941,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output = '';
 
         $question = $structure->get_question_in_slot($slot);
-        $editurl = new \moodle_url('/question/question.php', array(
+        $editurl = new \moodle_url('/question/bank/editquestion/question.php', array(
                 'returnurl' => $pageurl->out_as_local_url(),
                 'cmid' => $structure->get_cmid(), 'id' => $question->id));
 
@@ -1251,9 +1247,7 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function question_bank_contents(\mod_quiz\question\bank\custom_view $questionbank, array $pagevars) {
 
-        $qbank = $questionbank->render('editq', $pagevars['qpage'], $pagevars['qperpage'],
-                $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['qbshowtext'],
-                $pagevars['qtagids']);
+        $qbank = $questionbank->render($pagevars, 'editq');
         return html_writer::div(html_writer::div($qbank, 'bd'), 'questionbankformforpopup');
     }
 }

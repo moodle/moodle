@@ -126,7 +126,7 @@ if (!$ratings) {
             continue;
         }
 
-        // Undo the aliasing of the user id column from user_picture::fields().
+        // Undo the aliasing of the user id column from fields::get_sql().
         // We could clone the rating object or preserve the rating id if we needed it again
         // but we don't.
         $rating->id = $rating->userid;

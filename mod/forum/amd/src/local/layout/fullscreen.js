@@ -16,6 +16,7 @@
 /**
  * Full screen window layout.
  *
+ * @module mod_forum/local/layout/fullscreen
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,11 +26,15 @@ import {addToastRegion} from 'core/toast';
 import * as FocusLockManager from 'core/local/aria/focuslock';
 
 /**
+ * Get the composed layout.
+ *
+ * @method
  * @param {string} templateName
  * @param {object} context
- * @return {object}
+ * @returns {LayoutHelper}
  */
-const getComposedLayout = ({
+
+export const createLayout = ({
     fullscreen = true,
     showLoader = false,
     focusOnClose = null,
@@ -60,6 +65,31 @@ const getComposedLayout = ({
     return helpers;
 };
 
+/**
+ * LayoutHelper A helper object containing functions for managing the current fullscreen layout
+ *
+ * @typedef {object}
+ * @property {Function} close A function to close the fullscreen layout
+ * @property {Function} toggleFullscreen A function to toggle the fullscreen from active to disabled and back
+ * @property {Function} requestFullscreen Make a request to the browser to make the window full screen.
+ * Note: This must be called in response to a direct user action
+ * @property {Function} exitFullscreen Exit the fullscreen mode
+ * @property {Function} getContainer Get the container of the fullscreen layout
+ * @property {Function} setContent Set the content of the fullscreen layout
+ * @property {Function} showLoadingIcon Display the loading icon
+ * @property {Function} hideLoadingIcon Hide the loading icon
+ */
+
+/**
+ * Get the layout helpers.
+ *
+ * @method
+ * @private
+ * @param {HTMLElement} layoutNode
+ * @param {FocusLockManager} FocusLockManager
+ * @param {Boolean} focusOnClose
+ * @returns {LayoutHelper}
+ */
 const getLayoutHelpers = (layoutNode, FocusLockManager, focusOnClose) => {
     const contentNode = document.createElement('div');
     layoutNode.append(contentNode);
@@ -219,5 +249,3 @@ const lockBodyScroll = () => {
 const unlockBodyScroll = () => {
     document.querySelector('body').classList.remove('overflow-hidden');
 };
-
-export const createLayout = getComposedLayout;

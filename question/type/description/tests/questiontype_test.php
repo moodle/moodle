@@ -41,11 +41,11 @@ require_once($CFG->dirroot . '/question/type/description/edit_description_form.p
 class qtype_description_test extends advanced_testcase {
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = new qtype_description();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 
@@ -95,7 +95,7 @@ class qtype_description_test extends advanced_testcase {
 
         foreach ($questiondata as $property => $value) {
             if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated'))) {
-                $this->assertAttributeEquals($value, $property, $actualquestiondata);
+                $this->assertEquals($value, $actualquestiondata->$property);
             }
         }
     }

@@ -17,23 +17,24 @@
  * This module handles the in page replying to forum posts.
  *
  * @module     mod_forum/inpage_reply
- * @package    mod_forum
  * @copyright  2019 Peter Dias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([
-        'jquery',
-        'core/templates',
-        'core/notification',
-        'mod_forum/repository',
-        'mod_forum/selectors',
-    ], function(
-        $,
-        Templates,
-        Notification,
-        Repository,
-        Selectors
-    ) {
+    'jquery',
+    'core/templates',
+    'core/notification',
+    'mod_forum/repository',
+    'mod_forum/selectors',
+    'core_form/changechecker',
+], function(
+    $,
+    Templates,
+    Notification,
+    Repository,
+    Selectors,
+    FormChangeChecker
+) {
 
     var DISPLAYCONSTANTS = {
         NESTED_V2: 4,
@@ -169,6 +170,10 @@ define([
                         submitButton.trigger(EVENTS.POST_CREATED, newid);
                         hideSubmitButtonLoadingIcon(submitButton);
                         allButtons.prop('disabled', false);
+
+                        // Tell formchangechecker we submitted the form.
+                        FormChangeChecker.resetFormDirtyState(submitButton[0]);
+
                         return currentRoot.find(Selectors.post.inpageReplyContent).hide();
                     })
                     .then(function() {

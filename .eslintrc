@@ -2,6 +2,7 @@
   'plugins': [
     'babel',
     'promise',
+    'jsdoc',
   ],
   'env': {
     'browser': true,
@@ -191,7 +192,6 @@
         'property': 'str',
         'message': 'Use AMD module "core/str" or M.util.get_string()'
     }],
-
   },
   overrides: [
     {
@@ -200,11 +200,27 @@
       rules: {
         'no-undef': 'off',
         'no-unused-vars': 'off',
-        'no-unused-expressions': 'off'
+        'no-unused-expressions': 'off',
+
+        // === JSDocs ===
+        "jsdoc/check-access": 'off',
+        "jsdoc/check-alignment": 'off',
+        "jsdoc/check-param-names": 'off',
+        "jsdoc/check-property-names": 'off',
+        "jsdoc/empty-tags": 'off',
+        "jsdoc/implements-on-classes": 'off',
+        "jsdoc/multiline-blocks": 'off',
+        "jsdoc/require-jsdoc": 'off',
+        "jsdoc/require-param": 'off',
+        "jsdoc/require-param-name": 'off',
+        "jsdoc/require-param-type": 'off',
+        "jsdoc/require-property": 'off',
+        "jsdoc/require-property-name": 'off',
+        "jsdoc/require-property-type": 'off',
       }
     },
     {
-      files: ["**/amd/src/*.js", "**/amd/src/**/*.js", "Gruntfile*.js", "babel-plugin-add-module-to-define.js"],
+      files: ["**/amd/src/*.js", "**/amd/src/**/*.js", "Gruntfile.js", ".grunt/*.js", ".grunt/tasks/*.js", "jsdoc.conf.js"],
       // We support es6 now. Woot!
       env: {
         es6: true
@@ -238,7 +254,49 @@
         // === Promises ===
         // We have Promise now that we're using ES6.
         'promise/no-native': 'off',
-        'promise/avoid-new': 'off'
+        'promise/avoid-new': 'off',
+
+        // === JSDocs ===
+        "jsdoc/check-access": [
+          'error',
+        ],
+        "jsdoc/check-alignment": 1, // Recommended.
+        "jsdoc/check-param-names": [
+          'error',
+        ],
+        "jsdoc/check-property-names": [
+          'error',
+        ],
+        "jsdoc/empty-tags": [
+          'error',
+        ],
+        "jsdoc/implements-on-classes": [
+          'error',
+        ],
+        "jsdoc/multiline-blocks": [
+          'error',
+        ],
+        "jsdoc/require-jsdoc": [
+          'error',
+        ],
+        "jsdoc/require-param": [
+          'error',
+        ],
+        "jsdoc/require-param-name": [
+          'error',
+        ],
+        "jsdoc/require-param-type": [
+          'error',
+        ],
+        "jsdoc/require-property": [
+          'error',
+        ],
+        "jsdoc/require-property-name": [
+          'error',
+        ],
+        "jsdoc/require-property-type": [
+          'error',
+        ],
       },
       parserOptions: {
         'ecmaVersion': 9,

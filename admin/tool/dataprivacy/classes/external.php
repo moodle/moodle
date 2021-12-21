@@ -107,7 +107,7 @@ class external extends external_api {
             $request = reset($requests);
             $datasubject = $request->get('userid');
 
-            if ($datasubject !== $USER->id) {
+            if ($datasubject !== (int) $USER->id) {
                 // The user is not the subject. Check that they can cancel this request.
                 if (!api::can_create_data_request_for_user($datasubject)) {
                     $forusercontext = \context_user::instance($datasubject);
@@ -212,7 +212,8 @@ class external extends external_api {
                 $warnings[] = [
                     'item' => $dpo->id,
                     'warningcode' => 'errorsendingtodpo',
-                    'message' => get_string('errorsendingmessagetodpo', 'tool_dataprivacy')
+                    'message' => get_string('errorsendingmessagetodpo', 'tool_dataprivacy',
+                        fullname($dpo))
                 ];
             }
         }
@@ -700,13 +701,15 @@ class external extends external_api {
         self::validate_context($context);
         require_capability('tool/dataprivacy:managedatarequests', $context);
 
-        $allusernames = get_all_user_name_fields(true);
+        $userfieldsapi = \core_user\fields::for_name();
+        $allusernames = $userfieldsapi->get_sql('', false, '', '', false)->selects;
         // Exclude admins and guest user.
         $excludedusers = array_keys(get_admins()) + [guest_user()->id];
         $sort = 'lastname ASC, firstname ASC';
         $fields = 'id,' . $allusernames;
 
-        $extrafields = get_extra_user_fields($context);
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrafields = \core_user\fields::get_identity_fields($context, false);
         if (!empty($extrafields)) {
             $fields .= ',' . implode(',', $extrafields);
         }

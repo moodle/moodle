@@ -49,13 +49,27 @@ class qtype_ddwtos extends qtype_gapselect_base {
         return serialize($output);
     }
 
+    /**
+     * Safely convert given serialized feedback string into valid feedback object
+     *
+     * @param string $feedback
+     * @return stdClass
+     */
+    protected function unserialize_feedback(string $feedback): stdClass {
+        $feedbackobject = unserialize_object($feedback);
+
+        return (object) [
+            'draggroup' => $feedbackobject->draggroup ?? 1,
+            'infinite' => !empty($feedbackobject->infinite),
+        ];
+    }
+
     protected function feedback_to_choice_options($feedback) {
-        $feedbackobj = unserialize($feedback);
-        return array('draggroup' => $feedbackobj->draggroup, 'infinite' => $feedbackobj->infinite);
+        return (array) $this->unserialize_feedback($feedback);
     }
 
     protected function make_choice($choicedata) {
-        $options = unserialize($choicedata->feedback);
+        $options = $this->unserialize_feedback($choicedata->feedback);
         return new qtype_ddwtos_choice(
                 $choicedata->answer, $options->draggroup, $options->infinite);
     }
@@ -102,7 +116,7 @@ class qtype_ddwtos extends qtype_gapselect_base {
                                                     $question->contextid);
 
         foreach ($question->options->answers as $answer) {
-            $options = unserialize($answer->feedback);
+            $options = $this->unserialize_feedback($answer->feedback);
 
             $output .= "    <dragbox>\n";
             $output .= $format->writetext($answer->answer, 3);

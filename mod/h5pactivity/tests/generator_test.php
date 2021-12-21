@@ -109,4 +109,260 @@ class mod_h5pactivity_generator_testcase extends advanced_testcase {
         $this->expectException(coding_exception::class);
         $activity = $this->getDataGenerator()->create_module('h5pactivity', $params);
     }
+
+    /**
+     * Test to create H5P attempts
+     *
+     * @dataProvider create_attempt_data
+     *
+     * @param array $tracks the attempt tracks objects
+     * @param int $attempts the final registered attempts
+     * @param int $results the final registered attempts results
+     * @param bool $exception if an exception is expected
+     *
+     */
+    public function test_create_attempt(array $tracks, int $attempts, int $results, bool $exception) {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $this->assertEquals(0, $DB->count_records('h5pactivity_attempts'));
+        $this->assertEquals(0, $DB->count_records('h5pactivity_attempts_results'));
+
+        if ($exception) {
+            $this->expectException(Exception::class);
+        }
+
+        foreach ($tracks as $track) {
+            $attemptinfo = [
+                'userid' => $user->id,
+                'h5pactivityid' => $activity->id,
+                'attempt' => $track['attempt'],
+                'interactiontype' => $track['interactiontype'],
+                'rawscore' => $track['rawscore'],
+                'maxscore' => $track['maxscore'],
+                'duration' => $track['duration'],
+                'completion' => $track['completion'],
+                'success' => $track['success'],
+            ];
+
+            $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
+            $generator->create_attempt($attemptinfo);
+
+            $this->assert_attempt_matches_info($attemptinfo);
+        }
+
+        $this->assertEquals($attempts, $DB->count_records('h5pactivity_attempts'));
+        $this->assertEquals($results, $DB->count_records('h5pactivity_attempts_results'));
+    }
+
+    /**
+     * Data provider for create attempt test.
+     *
+     * @return array
+     */
+    public function create_attempt_data(): array {
+        return [
+            'Compound statement' => [
+                [
+                    [
+                        'interactiontype' => 'compound', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 1, false,
+            ],
+            'Choice statement' => [
+                [
+                    [
+                        'interactiontype' => 'choice', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 1, false,
+            ],
+            'Matching statement' => [
+                [
+                    [
+                        'interactiontype' => 'matching', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 1, false,
+            ],
+            'Fill-in statement' => [
+                [
+                    [
+                        'interactiontype' => 'fill-in', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 1, false,
+            ],
+            'True-false statement' => [
+                [
+                    [
+                        'interactiontype' => 'true-false', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 1, false,
+            ],
+            'Long-fill-in statement' => [
+                [
+                    [
+                        'interactiontype' => 'long-fill-in', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 1, false,
+            ],
+            'Sequencing statement' => [
+                [
+                    [
+                        'interactiontype' => 'sequencing', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 1, false,
+            ],
+            'Other statement' => [
+                [
+                    [
+                        'interactiontype' => 'other', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 1, false,
+            ],
+            'Other statement' => [
+                [
+                    [
+                        'interactiontype' => 'other', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 1, false,
+            ],
+            'No graded statement' => [
+                [
+                    [
+                        'interactiontype' => 'other', 'attempt' => 1, 'rawscore' => 0,
+                        'maxscore' => 0, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 1, false,
+            ],
+            'Invalid statement type' => [
+                [
+                    [
+                        'interactiontype' => 'no-valid-statement-type', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 0, 0, true,
+            ],
+            'Adding a second statement to attempt' => [
+                [
+                    [
+                        'interactiontype' => 'true-false', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                    [
+                        'interactiontype' => 'compound', 'attempt' => 1, 'rawscore' => 3,
+                        'maxscore' => 3, 'duration' => 2, 'completion' => 1, 'success' => 0
+                    ],
+                ], 1, 2, false,
+            ],
+            'Creating two attempts' => [
+                [
+                    [
+                        'interactiontype' => 'compound', 'attempt' => 1, 'rawscore' => 2,
+                        'maxscore' => 2, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                    [
+                        'interactiontype' => 'compound', 'attempt' => 2, 'rawscore' => 3,
+                        'maxscore' => 3, 'duration' => 1, 'completion' => 1, 'success' => 0
+                    ],
+                ], 2, 2, false,
+            ],
+        ];
+    }
+
+    /**
+     * Insert track into attempt, creating the attempt if necessary.
+     *
+     * @param array $attemptinfo the attempt track information
+     */
+    private function assert_attempt_matches_info($attemptinfo): void {
+        global $DB;
+
+        $attempt = $DB->get_record('h5pactivity_attempts', [
+            'userid' => $attemptinfo['userid'],
+            'h5pactivityid' => $attemptinfo['h5pactivityid'],
+            'attempt' => $attemptinfo['attempt'],
+        ]);
+        $this->assertEquals($attemptinfo['rawscore'], $attempt->rawscore);
+        $this->assertEquals($attemptinfo['maxscore'], $attempt->maxscore);
+        $this->assertEquals($attemptinfo['duration'], $attempt->duration);
+        $this->assertEquals($attemptinfo['completion'], $attempt->completion);
+        $this->assertEquals($attemptinfo['success'], $attempt->success);
+
+        $track = $DB->get_record('h5pactivity_attempts_results', [
+            'attemptid' => $attempt->id,
+            'interactiontype' => $attemptinfo['interactiontype'],
+        ]);
+        $this->assertEquals($attemptinfo['rawscore'], $track->rawscore);
+        $this->assertEquals($attemptinfo['maxscore'], $track->maxscore);
+        $this->assertEquals($attemptinfo['duration'], $track->duration);
+        $this->assertEquals($attemptinfo['completion'], $track->completion);
+        $this->assertEquals($attemptinfo['success'], $track->success);
+    }
+
+    /**
+     * Test exceptions when creating an invalid attempt.
+     *
+     * @dataProvider create_attempt_exceptions_data
+     *
+     * @param bool $validmod if the activity id is provided
+     * @param bool $validuser if the user id is provided
+     */
+    public function test_create_attempt_exceptions(bool $validmod, bool $validuser) {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $this->expectException(coding_exception::class);
+
+        $attemptinfo = [
+            'attempt' => 1,
+            'interactiontype' => 'compound',
+            'rawscore' => 2,
+            'maxscore' => 1,
+            'duration' => 1,
+            'completion' => 1,
+            'success' => 0,
+        ];
+
+        if ($validmod) {
+            $attemptinfo['h5pactivityid'] = $activity->id;
+        }
+
+        if ($validuser) {
+            $attemptinfo['userid'] = $user->id;
+        }
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
+        $generator->create_attempt($attemptinfo);
+    }
+
+    /**
+     * Data provider for data request creation tests.
+     *
+     * @return array
+     */
+    public function create_attempt_exceptions_data(): array {
+        return [
+            'Invalid user'                  => [true, false],
+            'Invalid activity'              => [false, true],
+            'Invalid user and activity'     => [false, false],
+        ];
+    }
 }

@@ -21,9 +21,7 @@ Feature: Lesson user override
     And the following "activities" exist:
       | activity | name             | intro                   | course | idnumber |
       | lesson   | Test lesson name | Test lesson description | C1     | lesson1  |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
@@ -41,11 +39,9 @@ Feature: Lesson user override
 
   @javascript
   Scenario: Add, modify then delete a user override
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    When I follow "Test lesson name"
-    And I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I follow "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1 |
       | id_deadline_enabled | 1 |
@@ -67,11 +63,9 @@ Feature: Lesson user override
 
   @javascript
   Scenario: Duplicate a user override
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    When I follow "Test lesson name"
-    And I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I follow "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1 |
       | id_deadline_enabled | 1 |
@@ -92,67 +86,55 @@ Feature: Lesson user override
 
   @javascript
   Scenario: Allow a single user to have re-take the lesson
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    When I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Re-takes allowed | 0 |
     And I press "Save and display"
-    And I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    And I navigate to "Overrides" in current page administration
+    And I follow "Add user override"
     And I set the following fields to these values:
       | Override user    | Student1  |
       | Re-takes allowed | 1 |
     And I press "Save"
     And I should see "Re-takes allowed"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | False | 1 |
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    And I follow "Test lesson name"
+    When I am on the "Test lesson name" "lesson activity" page
     Then I should not see "You are not allowed to retake this lesson."
     And I should see "Cat is an amphibian"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | False | 1 |
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page
     And I should see "You are not allowed to retake this lesson."
 
   @javascript
   Scenario: Allow a single user to have a different password
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    When I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Password protected lesson | Yes |
       | id_password               | moodle_rules |
     And I press "Save and display"
-    And I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    And I navigate to "Overrides" in current page administration
+    And I follow "Add user override"
     And I set the following fields to these values:
       | Override user             | Student1  |
       | Password protected lesson | 12345 |
     And I press "Save"
     And I should see "Password protected lesson"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "Test lesson name is a password protected lesson"
     And I should not see "Cat is an amphibian"
     And I set the field "userpassword" to "moodle_rules"
@@ -168,9 +150,7 @@ Feature: Lesson user override
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Test lesson name is a password protected lesson"
     And I should not see "Cat is an amphibian"
     And I set the field "userpassword" to "12345"
@@ -182,10 +162,7 @@ Feature: Lesson user override
 
   @javascript
   Scenario: Allow a user to have a different due date
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    When I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | id_deadline_enabled | 1 |
       | deadline[day]       | 1 |
@@ -194,8 +171,8 @@ Feature: Lesson user override
       | deadline[hour]      | 08 |
       | deadline[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    And I navigate to "Overrides" in current page administration
+    And I follow "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1 |
       | id_deadline_enabled | 1 |
@@ -207,24 +184,17 @@ Feature: Lesson user override
     And I press "Save"
     And I should see "Lesson closes"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I wait until the page is ready
-    Then I should see "This lesson closed on Saturday, 1 January 2000, 8:00"
+    Then the activity date in "Test lesson name" should contain "Closed: Saturday, 1 January 2000, 8:00"
     And I should not see "Cat is an amphibian"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
 
   @javascript
   Scenario: Allow a user to have a different start date
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    When I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | id_available_enabled | 1 |
       | available[day]       | 1 |
@@ -233,8 +203,8 @@ Feature: Lesson user override
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    And I navigate to "Overrides" in current page administration
+    And I follow "Add user override"
     And I set the following fields to these values:
       | Override user        | Student1 |
       | id_available_enabled | 1 |
@@ -246,38 +216,29 @@ Feature: Lesson user override
     And I press "Save"
     And I should see "Lesson opens"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I wait until the page is ready
-    Then I should see "This lesson will be open on Tuesday, 1 January 2030, 8:00"
+    Then the activity date in "Test lesson name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
     And I should not see "Cat is an amphibian"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
 
   @javascript
   Scenario: Allow a single user to have multiple attempts at each question
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    When I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Re-takes allowed | 1 |
     And I press "Save and display"
-    And I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    And I navigate to "Overrides" in current page administration
+    And I follow "Add user override"
     And I set the following fields to these values:
       | Override user              | Student1  |
-      | Maximum number of attempts | 2 |
+      | Maximum number of attempts per question | 2 |
     And I press "Save"
-    And I should see "Maximum number of attempts"
+    And I should see "Maximum number of attempts per question"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | True | 1 |
@@ -290,9 +251,7 @@ Feature: Lesson user override
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | True | 1 |
@@ -307,12 +266,10 @@ Feature: Lesson user override
     And the following "activities" exist:
       | activity | name     | intro                | course | idnumber | groupmode |
       | lesson   | Lesson 2 | Lesson 2 description | C1     | lesson2  | 1         |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Lesson 2"
-    And I navigate to "User overrides" in current page administration
+    When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
     Then I should see "No groups you can access."
-    And the "Add user override" "button" should be disabled
+    And I should not see "Add user override"
 
   Scenario: A teacher without accessallgroups permission should only be able to add user override for their group-mates, when the activity's group mode is 'separate groups'
     Given the following "permission overrides" exist:
@@ -330,11 +287,10 @@ Feature: Lesson user override
       | teacher1 | G1    |
       | student1 | G1    |
       | student2 | G2    |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Lesson 2"
-    And I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
+    And I follow "Add user override"
     Then the "Override user" select box should contain "Sam1 Student1, student1@example.com"
     And the "Override user" select box should not contain "Sam2 Student2, student2@example.com"
 
@@ -355,11 +311,10 @@ Feature: Lesson user override
       | teacher1 | G1    |
       | student1 | G1    |
       | student2 | G2    |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I follow "Lesson 2"
-    And I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    And I am on the "Lesson 2" "lesson activity" page logged in as admin
+    And I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
+    And I follow "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1 |
       | id_deadline_enabled | 1        |
@@ -379,27 +334,23 @@ Feature: Lesson user override
       | deadline[minute]    | 00       |
     And I press "Save"
     And I log out
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Lesson 2"
-    And I navigate to "User overrides" in current page administration
+    When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
     Then I should see "Student1" in the ".generaltable" "css_element"
     And I should not see "Student2" in the ".generaltable" "css_element"
 
   @javascript
   Scenario: Create a user override when the lesson is not available to the student
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test lesson name"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "Availability" to "Hide from students"
     And I click on "Save and display" "button"
-    When I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    When I navigate to "Overrides" in current page administration
+    And I follow "Add user override"
     And I set the following fields to these values:
       | Override user              | Student1 |
-      | Maximum number of attempts | 2 |
+      | Maximum number of attempts per question | 2 |
     And I press "Save"
     Then I should see "This override is inactive"
     And "Edit" "icon" should exist in the "Sam1 Student1" "table_row"

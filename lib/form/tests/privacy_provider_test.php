@@ -23,6 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_form\privacy\provider;
 use core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
@@ -43,7 +44,7 @@ class core_form_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        \core_form\privacy\provider::export_user_preferences($USER->id);
+        provider::export_user_preferences($USER->id);
         $this->assertFalse(writer::with_context(\context_system::instance())->has_any_data());
     }
 
@@ -55,13 +56,19 @@ class core_form_privacy_provider_testcase extends \core_privacy\tests\provider_t
      * @param string $desc Text describing the preference
      */
     public function test_filemanager_recentviewmode(string $val, string $desc) {
-        global $USER;
         $this->resetAfterTest();
+
+        // Create test user, add some preferences.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        set_user_preference('filemanager_recentviewmode', $val, $user);
+
+        // Switch to admin user (so we can validate preferences of the correct user are being exported).
         $this->setAdminUser();
 
-        set_user_preference('filemanager_recentviewmode', $val);
-
-        core_form\privacy\provider::export_user_preferences($USER->id);
+        // Export test users preferences.
+        provider::export_user_preferences($user->id);
         $this->assertTrue(writer::with_context(\context_system::instance())->has_any_data());
 
         $prefs = writer::with_context(\context_system::instance())->get_user_preferences('core_form');
@@ -69,7 +76,7 @@ class core_form_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $this->assertNotEmpty($prefs->filemanager_recentviewmode->value);
         $this->assertNotEmpty($prefs->filemanager_recentviewmode->description);
         $this->assertEquals($val, $prefs->filemanager_recentviewmode->value);
-        $this->assertContains($desc, $prefs->filemanager_recentviewmode->description);
+        $this->assertStringContainsString($desc, $prefs->filemanager_recentviewmode->description);
     }
 
     /**

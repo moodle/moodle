@@ -5,6 +5,8 @@ namespace PhpOffice\PhpSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
 use PhpOffice\PhpSpreadsheet\Chart\Renderer\IRenderer;
 use PhpOffice\PhpSpreadsheet\Collection\Memory;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\SimpleCache\CacheInterface;
 
 class Settings
@@ -28,8 +30,6 @@ class Settings
      * Allow/disallow libxml_disable_entity_loader() call when not thread safe.
      * Default behaviour is to do the check, but if you're running PHP versions
      *      7.2 < 7.2.1
-     *      7.1 < 7.1.13
-     *      7.0 < 7.0.27
      * then you may need to disable this check to prevent unwanted behaviour in other threads
      * SECURITY WARNING: Changing this flag is not recommended.
      *
@@ -43,6 +43,18 @@ class Settings
      * @var CacheInterface
      */
     private static $cache;
+
+    /**
+     * The HTTP client implementation to be used for network request.
+     *
+     * @var null|ClientInterface
+     */
+    private static $httpClient;
+
+    /**
+     * @var null|RequestFactoryInterface
+     */
+    private static $requestFactory;
 
     /**
      * Set the locale code to use for formula translations and any special formatting.
@@ -61,10 +73,8 @@ class Settings
      *
      * @param string $rendererClass Class name of the chart renderer
      *    eg: PhpOffice\PhpSpreadsheet\Chart\Renderer\JpGraph
-     *
-     * @throws Exception
      */
-    public static function setChartRenderer($rendererClass)
+    public static function setChartRenderer($rendererClass): void
     {
         if (!is_a($rendererClass, IRenderer::class, true)) {
             throw new Exception('Chart renderer must implement ' . IRenderer::class);
@@ -89,7 +99,7 @@ class Settings
      *
      * @param int $options Default options for libxml loader
      */
-    public static function setLibXmlLoaderOptions($options)
+    public static function setLibXmlLoaderOptions($options): void
     {
         if ($options === null && defined('LIBXML_DTDLOAD')) {
             $options = LIBXML_DTDLOAD | LIBXML_DTDATTR;
@@ -119,14 +129,12 @@ class Settings
      * Allow/disallow libxml_disable_entity_loader() call when not thread safe.
      * Default behaviour is to do the check, but if you're running PHP versions
      *      7.2 < 7.2.1
-     *      7.1 < 7.1.13
-     *      7.0 < 7.0.27
      * then you may need to disable this check to prevent unwanted behaviour in other threads
      * SECURITY WARNING: Changing this flag to false is not recommended.
      *
      * @param bool $state
      */
-    public static function setLibXmlDisableEntityLoader($state)
+    public static function setLibXmlDisableEntityLoader($state): void
     {
         self::$libXmlDisableEntityLoader = (bool) $state;
     }
@@ -143,10 +151,8 @@ class Settings
 
     /**
      * Sets the implementation of cache that should be used for cell collection.
-     *
-     * @param CacheInterface $cache
      */
-    public static function setCache(CacheInterface $cache)
+    public static function setCache(CacheInterface $cache): void
     {
         self::$cache = $cache;
     }
@@ -163,5 +169,50 @@ class Settings
         }
 
         return self::$cache;
+    }
+
+    /**
+     * Set the HTTP client implementation to be used for network request.
+     */
+    public static function setHttpClient(ClientInterface $httpClient, RequestFactoryInterface $requestFactory): void
+    {
+        self::$httpClient = $httpClient;
+        self::$requestFactory = $requestFactory;
+    }
+
+    /**
+     * Unset the HTTP client configuration.
+     */
+    public static function unsetHttpClient(): void
+    {
+        self::$httpClient = null;
+        self::$requestFactory = null;
+    }
+
+    /**
+     * Get the HTTP client implementation to be used for network request.
+     */
+    public static function getHttpClient(): ClientInterface
+    {
+        self::assertHttpClient();
+
+        return self::$httpClient;
+    }
+
+    /**
+     * Get the HTTP request factory.
+     */
+    public static function getRequestFactory(): RequestFactoryInterface
+    {
+        self::assertHttpClient();
+
+        return self::$requestFactory;
+    }
+
+    private static function assertHttpClient(): void
+    {
+        if (!self::$httpClient || !self::$requestFactory) {
+            throw new Exception('HTTP client must be configured via Settings::setHttpClient() to be able to use WEBSERVICE function.');
+        }
     }
 }

@@ -46,7 +46,7 @@ class behat_mod_forum extends behat_base {
      * @param TableNode $table
      */
     public function i_add_a_new_topic_to_forum_with($forumname, TableNode $table) {
-        $this->add_new_discussion($forumname, $table, get_string('addanewtopic', 'forum'));
+        $this->add_new_discussion($forumname, $table, get_string('addanewdiscussion', 'forum'));
     }
 
     /**
@@ -57,7 +57,7 @@ class behat_mod_forum extends behat_base {
      * @param TableNode $table
      */
     public function i_add_a_new_question_to_forum_with($forumname, TableNode $table) {
-        $this->add_new_discussion($forumname, $table, get_string('addanewquestion', 'forum'));
+        $this->add_new_discussion($forumname, $table, get_string('addanewdiscussion', 'forum'));
     }
 
     /**
@@ -112,16 +112,15 @@ class behat_mod_forum extends behat_base {
      * @param TableNode $table
      */
     public function i_reply_post_from_forum_using_an_inpage_reply_with($postsubject, $forumname, TableNode $table) {
-
         // Navigate to forum.
-        $this->execute('behat_general::click_link', $this->escape($forumname));
+        $this->execute('behat_navigation::i_am_on_page_instance', [$this->escape($forumname), 'forum activity']);
         $this->execute('behat_general::click_link', $this->escape($postsubject));
         $this->execute('behat_general::click_link', get_string('reply', 'forum'));
 
         // Fill form and post.
         $this->execute('behat_forms::i_set_the_following_fields_to_these_values', $table);
 
-        $this->execute('behat_forms::press_button', get_string('submit', 'core'));
+        $this->execute('behat_forms::press_button', get_string('posttoforum', 'mod_forum'));
     }
 
     /**
@@ -132,9 +131,8 @@ class behat_mod_forum extends behat_base {
      * @param string $forumname The forum name
      */
     public function i_navigate_to_post_in_forum($postsubject, $forumname) {
-
         // Navigate to forum discussion.
-        $this->execute('behat_general::click_link', $this->escape($forumname));
+        $this->execute('behat_navigation::i_am_on_page_instance', [$this->escape($forumname), 'forum activity']);
         $this->execute('behat_general::click_link', $this->escape($postsubject));
     }
 
@@ -275,15 +273,7 @@ class behat_mod_forum extends behat_base {
      * @Given /^I can subscribe to this forum$/
      */
     public function i_can_subscribe_to_this_forum() {
-        if ($this->running_javascript()) {
-            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
-        }
-
         $this->execute('behat_general::assert_page_contains_text', [get_string('subscribe', 'mod_forum')]);
-
-        if ($this->running_javascript()) {
-            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
-        }
     }
 
     /**
@@ -292,15 +282,7 @@ class behat_mod_forum extends behat_base {
      * @Given /^I can unsubscribe from this forum$/
      */
     public function i_can_unsubscribe_from_this_forum() {
-        if ($this->running_javascript()) {
-            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
-        }
-
         $this->execute('behat_general::assert_page_contains_text', [get_string('unsubscribe', 'mod_forum')]);
-
-        if ($this->running_javascript()) {
-            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
-        }
     }
 
     /**
@@ -309,10 +291,6 @@ class behat_mod_forum extends behat_base {
      * @Given /^I subscribe to this forum$/
      */
     public function i_subscribe_to_this_forum() {
-        if ($this->running_javascript()) {
-            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
-        }
-
         $this->execute('behat_general::click_link', [get_string('subscribe', 'mod_forum')]);
     }
 
@@ -322,10 +300,6 @@ class behat_mod_forum extends behat_base {
      * @Given /^I unsubscribe from this forum$/
      */
     public function i_unsubscribe_from_this_forum() {
-        if ($this->running_javascript()) {
-            $this->execute('behat_general::i_click_on', [get_string('actionsmenu'), 'link']);
-        }
-
         $this->execute('behat_general::click_link', [get_string('unsubscribe', 'mod_forum')]);
     }
 
@@ -475,9 +449,8 @@ class behat_mod_forum extends behat_base {
      * @param string $buttonstr
      */
     protected function add_new_discussion($forumname, TableNode $table, $buttonstr) {
-
         // Navigate to forum.
-        $this->execute('behat_general::click_link', $this->escape($forumname));
+        $this->execute('behat_navigation::i_am_on_page_instance', [$this->escape($forumname), 'forum activity']);
         $this->execute('behat_general::click_link', $buttonstr);
         $this->execute('behat_forms::press_button', get_string('showadvancededitor'));
 
@@ -495,9 +468,8 @@ class behat_mod_forum extends behat_base {
      * @param string $buttonstr
      */
     protected function add_new_discussion_inline($forumname, TableNode $table, $buttonstr) {
-
         // Navigate to forum.
-        $this->execute('behat_general::click_link', $this->escape($forumname));
+        $this->execute('behat_navigation::i_am_on_page_instance', [$this->escape($forumname), 'forum activity']);
         $this->execute('behat_general::click_link', $buttonstr);
         $this->fill_new_discussion_form($table);
     }

@@ -16,8 +16,7 @@
 /**
  * Question class for drag and drop marker question type, used to support the question and preview pages.
  *
- * @package    qtype_ddmarker
- * @subpackage question
+ * @module     qtype_ddmarker/question
  * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -142,7 +141,10 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
                 for (var i = 0; i < coords.length; i++) {
                     var dragInDrop = drag.clone();
                     dragInDrop.data('pagex', coords[i].x).data('pagey', coords[i].y);
-                    thisQ.sendDragToDrop(dragInDrop, false);
+                    // We always save the coordinates in the 1:1 ratio.
+                    // So we need to set the scale ratio to 1 for the initial load.
+                    dragInDrop.data('scaleRatio', 1);
+                    thisQ.sendDragToDrop(dragInDrop, false, true);
                 }
                 thisQ.getDragClone(drag).addClass('active');
                 thisQ.cloneDragIfNeeded(drag);
@@ -303,6 +305,10 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
             items.each(function() {
                 var drag = $(this);
                 if (!drag.hasClass('beingdragged')) {
+                    if (drag.data('scaleRatio') !== bgRatio) {
+                        // The scale ratio for the draggable item was changed. We need to update that.
+                        drag.data('pagex', drag.offset().left).data('pagey', drag.offset().top);
+                    }
                     var dragXY = new Shapes.Point(drag.data('pagex'), drag.data('pagey'));
                     if (thiQ.coordsInBgImg(dragXY)) {
                         var bgImgXY = thiQ.convertToBgImgXY(dragXY);
@@ -473,8 +479,10 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
             var drag = $(draghome);
             var placeHolder = drag.clone();
             placeHolder.removeClass();
-            placeHolder.addClass('marker choice' +
-                thisQ.getChoiceNoFromElement(drag) + ' dragno' + thisQ.getDragNo(drag) + ' dragplaceholder');
+            placeHolder.addClass('marker');
+            placeHolder.addClass('choice' + thisQ.getChoiceNoFromElement(drag));
+            placeHolder.addClass(thisQ.getDragNoClass(drag, false));
+            placeHolder.addClass('dragplaceholder');
             drag.before(placeHolder);
         });
     };
@@ -490,6 +498,26 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
     };
 
     /**
+     * Get the drag number prefix of a drag.
+     *
+     * @param {jQuery} drag the drag.
+     * @param {Boolean} includeSelector include the CSS selector prefix or not.
+     * @return {String} Class name
+     */
+    DragDropMarkersQuestion.prototype.getDragNoClass = function(drag, includeSelector) {
+        var className = 'dragno' + this.getDragNo(drag);
+        if (this.isInfiniteDrag(drag)) {
+            className = 'infinite';
+        }
+
+        if (includeSelector) {
+            return '.' + className;
+        }
+
+        return className;
+    };
+
+    /**
      * Get drag clone for a given drag.
      *
      * @param {jQuery} drag the drag.
@@ -497,7 +525,7 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
      */
     DragDropMarkersQuestion.prototype.getDragClone = function(drag) {
         return this.getRoot().find('.draghomes' + ' span.marker' +
-            '.choice' + this.getChoiceNoFromElement(drag) + '.dragno' + this.getDragNo(drag) + '.dragplaceholder');
+            '.choice' + this.getChoiceNoFromElement(drag) + this.getDragNoClass(drag, true) + '.dragplaceholder');
     };
 
     /**
@@ -528,9 +556,10 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
      * Animate a drag item into a given place.
      *
      * @param {jQuery} drag the item to place.
-     * @param {boolean} isScaling Scaling or not
+     * @param {boolean} isScaling Scaling or not.
+     * @param {boolean} initialLoad Whether it is the initial load or not.
      */
-    DragDropMarkersQuestion.prototype.sendDragToDrop = function(drag, isScaling) {
+    DragDropMarkersQuestion.prototype.sendDragToDrop = function(drag, isScaling, initialLoad = false) {
         var dropArea = this.dropArea(),
             bgRatio = this.bgRatio();
         drag.removeClass('beingdragged').removeClass('unneeded');
@@ -541,6 +570,11 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
         } else {
             drag.data('originX', dragXY.x).data('originY', dragXY.y);
             drag.css('left', dragXY.x * bgRatio).css('top', dragXY.y * bgRatio);
+        }
+        // We need to save the original scale ratio for each draggable item.
+        if (!initialLoad) {
+            // Only set the scale ratio for a current being-dragged item, not for the initial loading.
+            drag.data('scaleRatio', bgRatio);
         }
         dropArea.append(drag);
         this.handleElementScale(drag, 'left top');
@@ -555,20 +589,21 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
         var inputNode = this.getInput(drag),
             noOfDrags = Number(this.getClassnameNumericSuffix(inputNode, 'noofdrags')),
             displayedDragsInDropArea = this.getRoot().find('div.droparea .marker.choice' +
-                this.getChoiceNoFromElement(drag) + '.dragno' + this.getDragNo(drag)).length,
+                this.getChoiceNoFromElement(drag) + this.getDragNoClass(drag, true)).length,
             displayedDragsInDragHomes = this.getRoot().find('div.draghomes .marker.choice' +
-                this.getChoiceNoFromElement(drag) + '.dragno' + this.getDragNo(drag)).not('.dragplaceholder').length;
+                this.getChoiceNoFromElement(drag) + this.getDragNoClass(drag, true)).not('.dragplaceholder').length;
 
-        if (displayedDragsInDropArea < noOfDrags && displayedDragsInDragHomes === 0) {
-            var dragclone = drag.clone();
-            dragclone.addClass('unneeded')
+        if ((this.isInfiniteDrag(drag) ||
+                !this.isInfiniteDrag(drag) && displayedDragsInDropArea < noOfDrags) && displayedDragsInDragHomes === 0) {
+            var dragClone = drag.clone();
+            dragClone.addClass('unneeded')
                 .css('top', '')
                 .css('left', '')
                 .css('transform', '');
             this.getDragClone(drag)
                 .removeClass('active')
-                .after(dragclone);
-            questionManager.addEventHandlersToMarker(dragclone);
+                .after(dragClone);
+            questionManager.addEventHandlersToMarker(dragClone);
         }
     };
 
@@ -578,11 +613,12 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
      * @param {jQuery} drag the item to place.
      */
     DragDropMarkersQuestion.prototype.removeDragIfNeeded = function(drag) {
-        var displayeddrags = this.getRoot().find('div.draghomes .marker.choice' +
-            this.getChoiceNoFromElement(drag) + '.dragno' + this.getDragNo(drag)).not('.dragplaceholder').length;
-        if (displayeddrags > 1) {
-            this.getRoot().find('div.draghomes .marker.choice' +
-                this.getChoiceNoFromElement(drag) + '.dragno' + this.getDragNo(drag)).not('.dragplaceholder').first().remove();
+        var dragsInHome = this.getRoot().find('div.draghomes .marker.choice' +
+            this.getChoiceNoFromElement(drag) + this.getDragNoClass(drag, true)).not('.dragplaceholder');
+        var displayedDrags = dragsInHome.length;
+        while (displayedDrags > 1) {
+            dragsInHome.first().remove();
+            displayedDrags--;
         }
     };
 
@@ -632,6 +668,15 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
     };
 
     /**
+     * Check if the given drag is in infinite mode or not.
+     *
+     * @param {jQuery} drag The drag item need to check.
+     */
+    DragDropMarkersQuestion.prototype.isInfiniteDrag = function(drag) {
+        return drag.hasClass('infinite');
+    };
+
+    /**
      * Singleton that tracks all the DragDropToTextQuestions on this page, and deals
      * with event dispatching.
      *
@@ -643,6 +688,12 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
          * {boolean} ensures that the event handlers are only initialised once per page.
          */
         eventHandlersInitialised: false,
+
+        /**
+         * {Object} ensures that the marker event handlers are only initialised once per question,
+         * indexed by containerId (id on the .que div).
+         */
+        markerEventHandlersInitialised: {},
 
         /**
          * {boolean} is printing or not.
@@ -673,15 +724,23 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
                 questionManager.setupEventHandlers();
                 questionManager.eventHandlersInitialised = true;
             }
+            if (!questionManager.markerEventHandlersInitialised.hasOwnProperty(containerId)) {
+                questionManager.markerEventHandlersInitialised[containerId] = true;
+                // We do not use the body event here to prevent the other event on Mobile device, such as scroll event.
+                var questionContainer = document.getElementById(containerId);
+                if (questionContainer.classList.contains('ddmarker') &&
+                    !questionContainer.classList.contains('qtype_ddmarker-readonly')) {
+                    // TODO: Convert all the jQuery selectors and events to native Javascript.
+                    questionManager.addEventHandlersToMarker($(questionContainer).find('div.draghomes .marker'));
+                    questionManager.addEventHandlersToMarker($(questionContainer).find('div.droparea .marker'));
+                }
+            }
         },
 
         /**
          * Set up the event handlers that make this question type work. (Done once per page.)
          */
         setupEventHandlers: function() {
-            // We do not use the body event here to prevent the other event on Mobile device, such as scroll event.
-            questionManager.addEventHandlersToMarker($('.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker'));
-            questionManager.addEventHandlersToMarker($('.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker'));
             $(window).on('resize', function() {
                 questionManager.handleWindowResize(false);
             });

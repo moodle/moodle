@@ -68,31 +68,14 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($moduleinstance->name));
 
 $instance = $manager->get_instance();
-if (!empty($instance->intro)) {
-    echo $OUTPUT->box(format_module_intro('h5pactivity', $instance, $cm->id), 'generalbox', 'intro');
-}
-
-// Attempts review.
-if ($manager->can_view_all_attempts()) {
-    $reviewurl = new moodle_url('report.php', ['a' => $cm->instance]);
-    $reviewmessage = get_string('review_all_attempts', 'mod_h5pactivity', $manager->count_attempts());
-} else if ($manager->can_view_own_attempts() && $manager->count_attempts($USER->id)) {
-    $reviewurl = new moodle_url('report.php', ['a' => $cm->instance, 'userid' => $USER->id]);
-    $reviewmessage = get_string('review_my_attempts', 'mod_h5pactivity');
-}
-if (isset($reviewurl)) {
-    $widget = new mod_h5pactivity\output\reportlink($reviewurl, $reviewmessage);
-    echo $OUTPUT->render($widget);
-}
 
 if (!$manager->is_tracking_enabled()) {
     $message = get_string('previewmode', 'mod_h5pactivity');
     echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
 }
 
-echo player::display($fileurl, $config, true, 'mod_h5pactivity');
+echo player::display($fileurl, $config, true, 'mod_h5pactivity', true);
 
 echo $OUTPUT->footer();

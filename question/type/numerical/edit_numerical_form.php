@@ -88,11 +88,12 @@ class qtype_numerical_edit_form extends question_edit_form {
         );
         $mform->addElement('select', 'unitrole',
                 get_string('unithandling', 'qtype_numerical'), $unitoptions);
+        $mform->setDefault('unitrole', $this->get_default_value('unitrole', qtype_numerical::UNITNONE));
 
         $penaltygrp = array();
         $penaltygrp[] = $mform->createElement('float', 'unitpenalty',
                 get_string('unitpenalty', 'qtype_numerical'), array('size' => 6));
-        $mform->setDefault('unitpenalty', 0.1000000);
+        $mform->setDefault('unitpenalty', $this->get_default_value('unitpenalty', 0.1000000));
 
         $unitgradingtypes = array(
             qtype_numerical::UNITGRADEDOUTOFMARK =>
@@ -101,7 +102,8 @@ class qtype_numerical_edit_form extends question_edit_form {
                     get_string('decfractionofquestiongrade', 'qtype_numerical'),
         );
         $penaltygrp[] = $mform->createElement('select', 'unitgradingtypes', '', $unitgradingtypes);
-        $mform->setDefault('unitgradingtypes', 1);
+        $mform->setDefault('unitgradingtypes',
+                $this->get_default_value('unitgradingtypes', qtype_numerical::UNITGRADEDOUTOFMARK));
 
         $mform->addGroup($penaltygrp, 'penaltygrp',
                 get_string('unitpenalty', 'qtype_numerical'), ' ', false);
@@ -114,6 +116,8 @@ class qtype_numerical_edit_form extends question_edit_form {
         );
         $mform->addElement('select', 'multichoicedisplay',
                 get_string('studentunitanswer', 'qtype_numerical'), $unitinputoptions);
+        $mform->setDefault('multichoicedisplay',
+                $this->get_default_value('multichoicedisplay', qtype_numerical::UNITINPUT));
 
         $unitsleftoptions = array(
             0 => get_string('rightexample', 'qtype_numerical'),
@@ -121,7 +125,7 @@ class qtype_numerical_edit_form extends question_edit_form {
         );
         $mform->addElement('select', 'unitsleft',
                 get_string('unitposition', 'qtype_numerical'), $unitsleftoptions);
-        $mform->setDefault('unitsleft', 0);
+        $mform->setDefault('unitsleft', $this->get_default_value('unitsleft', 0));
 
         $mform->disabledIf('penaltygrp', 'unitrole', 'eq', qtype_numerical::UNITNONE);
         $mform->disabledIf('penaltygrp', 'unitrole', 'eq', qtype_numerical::UNITOPTIONAL);

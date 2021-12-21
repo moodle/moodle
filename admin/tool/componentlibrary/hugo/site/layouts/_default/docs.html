@@ -1,0 +1,71 @@
+{{ partial "skippy" . }}
+
+<div class="container-fluid p-0 bg-white" data-region="componentlibrary">
+    <div class="row no-gutters flex-xl-nowrap">
+        <div class="col-md-3 col-xl-2 sidebar">
+            <div class="controls d-flex justify-content-between">
+                <div class="simplesearchform w-100">
+                    <form autocomplete="off" method="get" accept-charset="utf-8"
+                        class="mform form-inline simplesearchform p-2 justify-content-center">
+                        <div class="input-group w-100" data-region="docsearch">
+                            <label for="searchinput-componentlibrary">
+                                <span class="sr-only">Search component library</span>
+                            </label>
+                            <input type="text" id="searchinput-componentlibrary" class="form-control rounded" placeholder="Search"
+                                aria-label="Search component library" name="clsearch" data-region="input" autocomplete="off">
+                            <ul class="dropdown-menu w-100">
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+                <button class="btn bd-search-docs-toggle d-md-none p-0 ml-3" type="button" data-toggle="collapse"
+                    data-target="#docssidebar" aria-controls="docssidebar" aria-expanded="false" aria-label="Toggle docs navigation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" role="img" focusable="false">
+                        <title>Menu</title>
+                        <path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"
+                            d="M4 7h22M4 15h22M4 23h22"></path>
+                    </svg>
+                </button>
+            </div>
+            {{ partial "docs-sidebar" . }}
+        </div>
+        {{ if (eq .Page.Params.toc true) }}
+        <div class="col-md-7 col-xl-8 py-md-3 pl-md-3 pr-md-3 bd-content">
+        {{ else }}
+        <div class="col-md-9 col-xl-10 py-md-3 pl-md-5 pr-md-5 bd-content">
+        {{ end }}
+            <h1 class="bd-title" id="content">{{ .Title | markdownify }}</h1>
+            <p class="bd-lead">{{ .Page.Params.Description | markdownify }}</p>
+
+            {{ if .Page.Params.sections }}
+                <div class="row my-5">
+                    {{ range .Page.Params.sections }}
+                        <div class="col-md-6 mb-4">
+                            <a class="d-block text-decoration-none" href="../{{ urlize .title }}/">
+                                <strong class="d-block h5 mb-0">{{ .title }}</strong>
+                                <span class="text-secondary">{{ .description }}</span>
+                            </a>
+                        </div>
+                    {{ end }}
+                </div>
+            {{ end }}
+
+            {{ if .Page.Params.tags }}
+              {{ range .Page.Params.tags }}
+
+                  <div class="badge badge-info">{{.}}</div>
+
+              {{ end }}
+            {{ end }}
+
+            {{ .Content }}
+        </div>
+        {{ if (eq .Page.Params.toc true) }}
+        <div class="d-none d-xl-block col-md-2 col-xl-2">
+            <div class="secondnav" aria-label="Secondary navigation">
+                {{ .TableOfContents }}
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>

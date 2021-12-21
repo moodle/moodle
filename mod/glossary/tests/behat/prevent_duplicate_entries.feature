@@ -15,17 +15,17 @@ Feature: A teacher can choose whether to allow duplicate entries in a glossary
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Glossary" to section "1" and I fill the form with:
-      | Name | Test glossary name |
-      | Description | Test glossary description |
-      | Duplicate entries allowed | No |
-    And I follow "Test glossary name"
+    And the following "activity" exists:
+      | course                 | C1                        |
+      | activity               | glossary                  |
+      | name                   | Test glossary name        |
+      | intro                  | Test glossary description |
+      | allowduplicatedentries | 0                         |
+    And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
     And I add a glossary entry with the following data:
       | Concept | Unique concept |
       | Definition | I'm the definition of an unique concept |
-    When I press "Add a new entry"
+    When I press "Add entry"
     And I set the following fields to these values:
       | Concept | Unique concept |
       | Definition | There is no definition restriction |

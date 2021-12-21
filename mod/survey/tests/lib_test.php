@@ -42,7 +42,7 @@ class mod_survey_lib_testcase extends advanced_testcase {
      * Prepares things before this test case is initialised
      * @return void
      */
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/survey/lib.php');
     }

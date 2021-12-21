@@ -1,0 +1,141 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_user/edit_profile_fields
+
+    UI for editing profile fields
+
+    Example context (json):
+    {
+        "baseurl": "index.php",
+        "sesskey": "12345",
+        "categories": [
+            {
+                "id": 1,
+                "name": "Cat1",
+                "fields": [
+                    {"id": 1, "name": "Field1", "isfirst": true, "islast": false},
+                    {"id": 2, "name": "Field2", "isfirst": false, "islast": false},
+                    {"id": 3, "name": "Field3", "isfirst": false, "islast": true}
+                ],
+                "hasfields": true,
+                "isfirst": true,
+                "candelete": true
+            },
+            {
+                "id": 2,
+                "name": "Cat2",
+                "candelete": true
+            },
+            {
+                "id": 3,
+                "name": "Cat3",
+                "islast": true,
+                "candelete": true
+            }
+        ]
+    }
+}}
+
+<div class="row profileeditor">
+    <div class="col align-self-end">
+        <a tabindex="0" role="button" class="btn btn-secondary float-right" data-action="editcategory">{{#str}}profilecreatecategory, admin{{/str}}</a>
+    </div>
+</div>
+
+<div class="categorieslist">
+{{#categories}}
+<div data-category-id="{{id}}" id="category-{{id}}" class="mt-2">
+    <div class="row justify-content-between align-items-end">
+        <div class="col-6 categoryinstance">
+            <h3>
+                {{{name}}}
+                <a href="#" data-action="editcategory" data-id="{{id}}" data-name="{{name}}">
+                    {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}</a>
+                {{#candelete}}
+                    <a href="{{baseurl}}?action=deletecategory&id={{id}}&sesskey={{sesskey}}">
+                    {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                {{/candelete}}
+                {{^isfirst}}
+                    <a href="{{baseurl}}?id={{id}}&action=movecategory&dir=up&amp;sesskey={{sesskey}}">
+                    {{#pix}}t/up, core, {{#str}}moveup{{/str}}{{/pix}}</a>
+                {{/isfirst}}
+                {{#isfirst}}{{#pix}}spacer, moodle{{/pix}}{{/isfirst}}
+                {{^islast}}
+                    <a href="{{baseurl}}?id={{id}}&action=movecategory&dir=down&amp;sesskey={{sesskey}}">
+                    {{#pix}}t/down, core, {{#str}}movedown{{/str}}{{/pix}}</a>
+                {{/islast}}
+            </h3>
+        </div>
+        <div class="col-auto text-right">
+            {{#addfieldmenu}}{{> core/action_menu}}{{/addfieldmenu}}
+        </div>
+    </div>
+
+    <table class="generaltable fullwidth profilefield">
+        {{#hasfields}}
+            <thead>
+                <tr>
+                    <th scope="col" class="col-8">{{#str}}profilefield, admin{{/str}}</th>
+                    <th scope="col" class="col-3 text-right">{{#str}}edit{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#fields}}
+                    <tr>
+                        <td class="col-8">
+                            {{{name}}}
+                        </td>
+                        <td class="col-3 text-right">
+                            <a href="#" data-action="editfield" data-id="{{id}}" data-name="{{name}}">
+                                {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}</a>
+                            <a href="{{baseurl}}?action=deletefield&id={{id}}&sesskey={{sesskey}}">
+                                {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                            {{^isfirst}}
+                                <a href="{{baseurl}}?id={{id}}&action=movefield&dir=up&amp;sesskey={{sesskey}}">
+                                {{#pix}}t/up, core, {{#str}}moveup{{/str}}{{/pix}}</a>
+                            {{/isfirst}}
+                            {{#isfirst}}{{#pix}}spacer, moodle{{/pix}}{{/isfirst}}
+                            {{^islast}}
+                                <a href="{{baseurl}}?id={{id}}&action=movefield&dir=down&amp;sesskey={{sesskey}}">
+                                {{#pix}}t/down, core, {{#str}}movedown{{/str}}{{/pix}}</a>
+                            {{/islast}}
+                            {{#islast}}{{#pix}}spacer, moodle{{/pix}}{{/islast}}
+                        </td>
+                    </tr>
+                {{/fields}}
+            </tbody>
+        {{/hasfields}}
+        {{^hasfields}}
+            <thead>
+                <tr class="nofields alert alert-danger alert-block fade in">
+                    <td>
+                        {{#str}}profilenofieldsdefined, admin{{/str}}
+                    </td>
+                </tr>
+            </thead>
+        {{/hasfields}}
+    </table>
+</div>
+{{/categories}}
+</div>
+
+{{#js}}
+    require(['core_user/edit_profile_fields'], function(s) {
+        s.init();
+    });
+{{/js}}

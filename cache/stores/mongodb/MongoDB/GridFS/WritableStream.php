@@ -114,15 +114,15 @@ class WritableStream
             throw InvalidArgumentException::invalidType('"aliases" option', $options['aliases'], 'array of strings');
         }
 
-        if (isset($options['chunkSizeBytes']) && ! is_integer($options['chunkSizeBytes'])) {
+        if (! is_integer($options['chunkSizeBytes'])) {
             throw InvalidArgumentException::invalidType('"chunkSizeBytes" option', $options['chunkSizeBytes'], 'integer');
         }
 
-        if (isset($options['chunkSizeBytes']) && $options['chunkSizeBytes'] < 1) {
+        if ($options['chunkSizeBytes'] < 1) {
             throw new InvalidArgumentException(sprintf('Expected "chunkSizeBytes" option to be >= 1, %d given', $options['chunkSizeBytes']));
         }
 
-        if (isset($options['disableMD5']) && ! is_bool($options['disableMD5'])) {
+        if (! is_bool($options['disableMD5'])) {
             throw InvalidArgumentException::invalidType('"disableMD5" option', $options['disableMD5'], 'boolean');
         }
 

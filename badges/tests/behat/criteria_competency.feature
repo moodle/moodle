@@ -27,8 +27,7 @@ Feature: Award badges based on competency completion
   Scenario: Award badge for completing a competency in a course
     # Add a competency to the course
     When I am on "Course 1" course homepage
-    And I follow "Competencies"
-    And I press "Add competencies to course"
+    And I navigate to "Competencies > Add competencies to course" in current page administration
     And "Competency picker" "dialogue" should be visible
     And I select "comp1" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
@@ -39,8 +38,8 @@ Feature: Award badges based on competency completion
     And I click on "Save changes" "button" in the "Configure course competencies" "dialogue"
     # Add a badge to the course
     And I am on "Course 1" course homepage
+    And I change window size to "large"
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
@@ -58,12 +57,13 @@ Feature: Award badges based on competency completion
     And I press "Continue"
     # Rate the competency in the course
     And I am on "Course 1" course homepage
-    And I follow "Competencies"
+    And I navigate to "Competencies" in current page administration
     And I click on "comp1" "link" in the "[data-region='coursecompetencies']" "css_element"
     And I press "Rate"
     And I set the following fields to these values:
       | Rating | C |
     And I click on "Rate" "button" in the "Rate" "dialogue"
+    And I should see "The competency rating was manually set in the course"
     And I log out
     # See if we got the badge
     Then I log in as "user1"
@@ -74,8 +74,7 @@ Feature: Award badges based on competency completion
   Scenario: Award badge for completing a competency in the site
     # Add a competency to the course
     When I am on "Course 1" course homepage
-    And I follow "Competencies"
-    And I press "Add competencies to course"
+    And I navigate to "Competencies > Add competencies to course" in current page administration
     And "Competency picker" "dialogue" should be visible
     And I select "comp1" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
@@ -109,13 +108,13 @@ Feature: Award badges based on competency completion
     And I press "Continue"
     # Rate the competency in the course
     And I am on "Course 1" course homepage
-    And I follow "Competencies"
+    And I navigate to "Competencies" in current page administration
     And I click on "comp1" "link" in the "[data-region='coursecompetencies']" "css_element"
     And I press "Rate"
     And I set the following fields to these values:
       | Rating | C |
-    And I wait until the page is ready
     And I click on "Rate" "button" in the "Rate" "dialogue"
+    And I should see "The competency rating was manually set in the course"
     And I log out
     # See if we got the badge
     Then I log in as "user1"
@@ -126,8 +125,7 @@ Feature: Award badges based on competency completion
   Scenario: Award badge for completing all competencies in the site
     # Add a competency to the course
     When I am on "Course 1" course homepage
-    And I follow "Competencies"
-    And I press "Add competencies to course"
+    And I navigate to "Competencies > Add competencies to course" in current page administration
     And "Competency picker" "dialogue" should be visible
     And I select "comp1" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
@@ -163,13 +161,13 @@ Feature: Award badges based on competency completion
     And I press "Continue"
     # Rate the competency in the course
     And I am on "Course 1" course homepage
-    And I follow "Competencies"
+    And I navigate to "Competencies" in current page administration
     And I click on "comp1" "link" in the "[data-region='coursecompetencies']" "css_element"
     And I press "Rate"
     And I set the following fields to these values:
       | Rating | C |
-    And I wait until the page is ready
     And I click on "Rate" "button" in the "Rate" "dialogue"
+    And I should see "The competency rating was manually set in the course"
     And I log out
     # We should not get the badge yet.
     Then I log in as "user1"
@@ -179,13 +177,13 @@ Feature: Award badges based on competency completion
     # Rate the other competency.
     And I log in as "admin"
     And I am on "Course 1" course homepage
-    And I follow "Competencies"
+    And I navigate to "Competencies" in current page administration
     And I click on "comp2" "link" in the "[data-region='coursecompetencies']" "css_element"
     And I press "Rate"
     And I set the following fields to these values:
       | Rating | C |
-    And I wait until the page is ready
     And I click on "Rate" "button" in the "Rate" "dialogue"
+    And I should see "The competency rating was manually set in the course"
     And I log out
     # See if we got the badge now.
     Then I log in as "user1"

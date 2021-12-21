@@ -4,7 +4,7 @@
  *
  * @package   php-markdown
  * @author    Michel Fortin <michel.fortin@michelf.com>
- * @copyright 2004-2018 Michel Fortin <https://michelf.com/projects/php-markdown/>
+ * @copyright 2004-2019 Michel Fortin <https://michelf.com/projects/php-markdown/>
  * @copyright (Original Markdown) 2004-2006 John Gruber <https://daringfireball.net/projects/markdown/>
  */
 

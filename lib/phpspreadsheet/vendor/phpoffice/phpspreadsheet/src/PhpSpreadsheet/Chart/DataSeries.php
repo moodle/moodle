@@ -40,6 +40,10 @@ class DataSeries
     const STYLE_MARKER = 'marker';
     const STYLE_FILLED = 'filled';
 
+    const EMPTY_AS_GAP = 'gap';
+    const EMPTY_AS_ZERO = 'zero';
+    const EMPTY_AS_SPAN = 'span';
+
     /**
      * Series Plot Type.
      *
@@ -157,7 +161,7 @@ class DataSeries
      *
      * @param string $plotType
      *
-     * @return DataSeries
+     * @return $this
      */
     public function setPlotType($plotType)
     {
@@ -181,7 +185,7 @@ class DataSeries
      *
      * @param string $groupingType
      *
-     * @return DataSeries
+     * @return $this
      */
     public function setPlotGrouping($groupingType)
     {
@@ -205,7 +209,7 @@ class DataSeries
      *
      * @param string $plotDirection
      *
-     * @return DataSeries
+     * @return $this
      */
     public function setPlotDirection($plotDirection)
     {
@@ -297,7 +301,7 @@ class DataSeries
      *
      * @param null|string $plotStyle
      *
-     * @return DataSeries
+     * @return $this
      */
     public function setPlotStyle($plotStyle)
     {
@@ -360,7 +364,7 @@ class DataSeries
      *
      * @param bool $smoothLine
      *
-     * @return DataSeries
+     * @return $this
      */
     public function setSmoothLine($smoothLine)
     {
@@ -369,7 +373,7 @@ class DataSeries
         return $this;
     }
 
-    public function refresh(Worksheet $worksheet)
+    public function refresh(Worksheet $worksheet): void
     {
         foreach ($this->plotValues as $plotValues) {
             if ($plotValues !== null) {

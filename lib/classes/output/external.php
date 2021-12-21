@@ -70,6 +70,7 @@ class external extends external_api {
     public static function load_template($component, $template, $themename, $includecomments = false) {
         global $DB, $CFG, $PAGE;
 
+        $PAGE->set_context(context_system::instance());
         $params = self::validate_parameters(self::load_template_parameters(),
                                             array('component' => $component,
                                                   'template' => $template,

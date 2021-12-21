@@ -10,7 +10,7 @@ Feature: User must accept policy when logging in and signing up
       | passwordpolicy  | 0     |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     Then I should not see "I understand and agree"
     And I set the following fields to these values:
       | Username      | user1                 |
@@ -40,7 +40,7 @@ Feature: User must accept policy when logging in and signing up
       | sitepolicy      | https://moodle.org |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     Then the field "I understand and agree" matches value "0"
     And I set the following fields to these values:
       | Username      | user1                 |
@@ -74,7 +74,7 @@ Feature: User must accept policy when logging in and signing up
       | s1       | John      | Doe      | s1@example.com |
     And I am on site homepage
     And I follow "Log in"
-    When I press "Create new account"
+    When I click on "Create new account" "link"
     And I set the following fields to these values:
       | Username      | s2      |
       | Password      | test    |

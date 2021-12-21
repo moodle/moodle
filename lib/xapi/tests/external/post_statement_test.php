@@ -48,7 +48,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class post_statement_testcase extends externallib_advanced_testcase {
+class post_statement_test extends externallib_advanced_testcase {
 
     /** @var test_helper for generating valid xapi statements. */
     private $testhelper;
@@ -64,7 +64,7 @@ class post_statement_testcase extends externallib_advanced_testcase {
     /**
      * Setup test.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
         // We disable group actors on the test xapi_handler.
         $CFG->xapitestforcegroupactors = false;

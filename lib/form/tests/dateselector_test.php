@@ -50,7 +50,7 @@ class core_form_dateselector_testcase extends advanced_testcase {
     /**
      * Initalize test wide variable, it is called in start of the testcase
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
         parent::setUp();
 

@@ -1,0 +1,89 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_previewquestion/preview_question
+
+    The preview page for the question type preview.
+    * actionurl - Url to post to
+    * session - Moodle session
+    * slot - The identifying number of the first question that was added to this usage
+    * question - The html of the actual question from the engine
+    * restartdisabled - The attributes to enable or disable the button, same for finishdisabled and filldisabled
+    * techinfo - Technical information like fraction, state, behaviour etc
+    * exporttoxml - Link to export the question to xml
+    * redirecturl - Url to the base view
+    * comments - Comments api html
+    * extrapreviewelements - Any plugin implementing the callback and sending extra html to view something in the preview page
+
+    Example context (json):
+    {
+        "previewdata": [
+          {
+                "actionurl": "/",
+                "session": "E2PwCfrnzz",
+                "slot": "1",
+                "question": "<div>question html</div>",
+                "restartdisabled": "disabled='disabled'",
+                "finishdisabled": "disabled='disabled'",
+                "filldisabled": "disabled='disabled'",
+                "techinfo": "<div>Behaviour being used: Deferred feedback</div>",
+                "redirecturl": "/",
+                "exporttoxml": "Download this question in Moodle XML format",
+                "comments": "html from comments api",
+                "extrapreviewelements": "<div>callback to get html from plugins need to show info in preview</div>"
+          }
+        ]
+    }
+}}
+<form id="responseform" method="post" action="{{{actionurl}}}" enctype="multipart/form-data" autocomplete="off">
+    <div>
+        <input type="hidden" name="sesskey" value="{{session}}">
+        <input type="hidden" name="slots" value="{{slot}}">
+        <input type="hidden" name="scrollpos" value="" id="scrollpos">
+    </div>
+    {{{question}}}
+    <div id="previewcontrols" class="controls input-group">
+        <input type="submit" name="restart" value="{{#str}} restart, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="id_restart_question_preview" {{{restartdisabled}}}>
+        <input type="submit" name="save" value="{{#str}} save, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="id_save_question_preview" {{{finishdisabled}}}>
+        <input type="submit" name="fill" value="{{#str}} fillincorrect, question{{/str}}" class="btn btn-secondary mr-1 mb-1" {{{filldisabled}}}>
+        <input type="submit" name="finish" value="{{#str}} submitandfinish, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="id_finish_question_preview" {{{finishdisabled}}}>
+        {{^redirect}}
+            <input type="button" name="close" value="{{#str}} closepreview, question{{/str}}" class="btn btn-secondary mr-1 mb-1" id="close-previewquestion-page">
+        {{/redirect}}
+        {{#redirect}}
+            <a href="{{{redirecturl}}}" class="btn btn-secondary mr-1 mb-1" role="button">{{#str}} closepreview, question{{/str}}</a>
+        {{/redirect}}
+    </div>
+</form>
+{{{techinfo}}}
+{{{exporttoxml}}}
+{{#comments}}
+    <div class="row">
+        <div class="col-6 text-left">
+            {{{options}}}
+        </div>
+        <div class="col-6 question-comment-view">
+            {{{comments}}}
+        </div>
+    </div>
+{{/comments}}
+{{^comments}}
+    {{{options}}}
+{{/comments}}
+{{#extrapreviewelements}}
+    {{{extrapreviewelements}}}
+{{/extrapreviewelements}}

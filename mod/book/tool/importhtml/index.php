@@ -38,7 +38,7 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('booktool/importhtml:import', $context);
 
-$PAGE->set_url('/mod/book/tool/importhtml/index.php', array('id'=>$id, 'chapterid'=>$chapterid));
+$PAGE->set_url('/mod/book/tool/importhtml/index.php', array('id' => $id));
 
 if ($chapterid) {
     if (!$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id))) {
@@ -50,7 +50,10 @@ if ($chapterid) {
 
 $PAGE->set_title($book->name);
 $PAGE->set_heading($course->fullname);
-
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 // Prepare the page header.
 $strbook = get_string('modulename', 'mod_book');
 $strbooks = get_string('modulenameplural', 'mod_book');
@@ -67,7 +70,6 @@ if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($book->name));
     echo $OUTPUT->heading(get_string('importingchapters', 'booktool_importhtml'), 3);
 
     // this is a bloody hack - children do not try this at home!
@@ -85,7 +87,6 @@ if ($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($book->name));
 
 $mform->display();
 

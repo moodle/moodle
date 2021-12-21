@@ -137,7 +137,7 @@ class send_email_task extends scheduled_task {
         // now this will have to do before 3.7 code freeze.
         // See related MDL-63814.
         $sql = "SELECT DISTINCT mc.id, mc.name, c.id as courseid, c.fullname as coursename, g.id as groupid,
-                                g.picture, g.hidepicture
+                                g.picture
                   FROM {message_conversations} mc
                   JOIN {groups} g
                     ON mc.itemid = g.id
@@ -161,7 +161,8 @@ class send_email_task extends scheduled_task {
     protected function get_users_messages_for_conversation(int $conversationid, int $userid) : moodle_recordset {
         global $DB;
 
-        $usernamefields = \user_picture::fields('u');
+        $userfieldsapi = \core_user\fields::for_userpic();
+        $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $sql = "SELECT $usernamefields, m.*
                   FROM {messages} m
                   JOIN {user} u

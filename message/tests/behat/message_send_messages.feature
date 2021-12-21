@@ -35,7 +35,7 @@ Feature: Message send messages
     And I select "Group 1" conversation in messaging
     When I send "Hi!" message in the message area
     Then I should see "Hi!" in the "Group 1" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Group 1" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Group 1" "core_message > Message conversation"
     And I log out
     And I log in as "student2"
     And I open messaging
@@ -57,7 +57,7 @@ Feature: Message send messages
     And I select "Group 1" conversation in the "favourites" conversations list
     And I send "Hi!" message in the message area
     And I should see "Hi!" in the "Group 1" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Group 1" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Group 1" "core_message > Message conversation"
     And I go back in "view-conversation" message drawer
     And I open the "Group" conversations list
     And I should not see "Group 1" in the "Group" "core_message > Message tab"
@@ -72,14 +72,14 @@ Feature: Message send messages
     And I click on "Student 2" "link" in the "//*[@data-section='contacts']" "xpath_element"
     When I send "Hi!" message in the message area
     Then I should see "Hi!" in the "Student 2" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Student 2" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Student 2" "core_message > Message conversation"
 
   Scenario: Try to send a message to a private conversation is not contact but you are allowed to send a message
     Given I log in as "student1"
     And I open messaging
     When I send "Hi!" message to "Student 2" user
     Then I should see "Hi!" in the "Student 2" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Student 2" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Student 2" "core_message > Message conversation"
     And I log out
     And I log in as "student2"
     And I open messaging

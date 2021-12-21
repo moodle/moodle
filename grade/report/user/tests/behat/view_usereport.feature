@@ -13,4 +13,4 @@ Feature: We can use the user report
     And I am on "Course 1" course homepage
     And I navigate to "View > User report" in the course gradebook
     And I select "All users (0)" from the "Select all or one user" singleselect
-    Then I should see "No students enrolled in this course yet"
+    Then I should see "There are no students enrolled in this course."

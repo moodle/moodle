@@ -81,4 +81,13 @@ class basicoutcomes extends \mod_lti\local\ltiservice\service_base {
 
     }
 
+    /**
+     * Get the scope(s) permitted for the tool relevant to this service.
+     *
+     * @return array
+     */
+    public function get_scopes() {
+        return [self::SCOPE_BASIC_OUTCOMES];
+    }
+
 }

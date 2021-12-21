@@ -60,6 +60,6 @@ function report_competency_extend_navigation_module($navigation, $cm) {
             context_course::instance($cm->course))) {
         $url = new moodle_url('/report/competency/index.php', array('id' => $cm->course, 'mod' => $cm->id));
         $name = get_string('pluginname', 'report_competency');
-        $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, null);
+        $navigation->add($name, $url, navigation_node::TYPE_SETTING, null, 'competencybreakdown');
     }
 }

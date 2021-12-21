@@ -28,7 +28,7 @@ class XLSX implements EscaperInterface
         if (!$this->isAlreadyInitialized) {
             $this->escapableControlCharactersPattern = $this->getEscapableControlCharactersPattern();
             $this->controlCharactersEscapingMap = $this->getControlCharactersEscapingMap();
-            $this->controlCharactersEscapingReverseMap = array_flip($this->controlCharactersEscapingMap);
+            $this->controlCharactersEscapingReverseMap = \array_flip($this->controlCharactersEscapingMap);
 
             $this->isAlreadyInitialized = true;
         }
@@ -47,7 +47,7 @@ class XLSX implements EscaperInterface
         $escapedString = $this->escapeControlCharacters($string);
         // @NOTE: Using ENT_QUOTES as XML entities ('<', '>', '&') as well as
         //        single/double quotes (for XML attributes) need to be encoded.
-        $escapedString = htmlspecialchars($escapedString, ENT_QUOTES, 'UTF-8');
+        $escapedString = \htmlspecialchars($escapedString, ENT_QUOTES, 'UTF-8');
 
         return $escapedString;
     }
@@ -103,10 +103,10 @@ class XLSX implements EscaperInterface
 
         // control characters values are from 0 to 1F (hex values) in the ASCII table
         for ($charValue = 0x00; $charValue <= 0x1F; $charValue++) {
-            $character = chr($charValue);
-            if (preg_match("/{$this->escapableControlCharactersPattern}/", $character)) {
-                $charHexValue = dechex($charValue);
-                $escapedChar = '_x' . sprintf('%04s', strtoupper($charHexValue)) . '_';
+            $character = \chr($charValue);
+            if (\preg_match("/{$this->escapableControlCharactersPattern}/", $character)) {
+                $charHexValue = \dechex($charValue);
+                $escapedChar = '_x' . \sprintf('%04s', \strtoupper($charHexValue)) . '_';
                 $controlCharactersEscapingMap[$escapedChar] = $character;
             }
         }
@@ -132,11 +132,11 @@ class XLSX implements EscaperInterface
         $escapedString = $this->escapeEscapeCharacter($string);
 
         // if no control characters
-        if (!preg_match("/{$this->escapableControlCharactersPattern}/", $escapedString)) {
+        if (!\preg_match("/{$this->escapableControlCharactersPattern}/", $escapedString)) {
             return $escapedString;
         }
 
-        return preg_replace_callback("/({$this->escapableControlCharactersPattern})/", function ($matches) {
+        return \preg_replace_callback("/({$this->escapableControlCharactersPattern})/", function ($matches) {
             return $this->controlCharactersEscapingReverseMap[$matches[0]];
         }, $escapedString);
     }
@@ -149,7 +149,7 @@ class XLSX implements EscaperInterface
      */
     protected function escapeEscapeCharacter($string)
     {
-        return preg_replace('/_(x[\dA-F]{4})_/', '_x005F_$1_', $string);
+        return \preg_replace('/_(x[\dA-F]{4})_/', '_x005F_$1_', $string);
     }
 
     /**
@@ -171,7 +171,7 @@ class XLSX implements EscaperInterface
 
         foreach ($this->controlCharactersEscapingMap as $escapedCharValue => $charValue) {
             // only unescape characters that don't contain the escaped escape character for now
-            $unescapedString = preg_replace("/(?<!_x005F)($escapedCharValue)/", $charValue, $unescapedString);
+            $unescapedString = \preg_replace("/(?<!_x005F)($escapedCharValue)/", $charValue, $unescapedString);
         }
 
         return $this->unescapeEscapeCharacter($unescapedString);
@@ -185,6 +185,6 @@ class XLSX implements EscaperInterface
      */
     protected function unescapeEscapeCharacter($string)
     {
-        return preg_replace('/_x005F(_x[\dA-F]{4}_)/', '$1', $string);
+        return \preg_replace('/_x005F(_x[\dA-F]{4}_)/', '$1', $string);
     }
 }

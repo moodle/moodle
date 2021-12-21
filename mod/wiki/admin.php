@@ -105,7 +105,7 @@ if (!empty($toversion) && !empty($fromversion) && confirm_sesskey()) {
 }
 
 //show actual page
-$wikipage = new page_wiki_admin($wiki, $subwiki, $cm);
+$wikipage = new page_wiki_admin($wiki, $subwiki, $cm, 'modulepage');
 
 $wikipage->set_page($page);
 $wikipage->print_header();

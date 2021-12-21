@@ -43,11 +43,11 @@ class qtype_multianswer_test extends advanced_testcase {
     /** @var qtype_multianswer instance of the question type class to test. */
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = new qtype_multianswer();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 
@@ -112,7 +112,7 @@ class qtype_multianswer_test extends advanced_testcase {
 
     public function test_get_random_guess_score() {
         $q = test_question_maker::get_question_data('multianswer', 'twosubq');
-        $this->assertEquals(0.1666667, $this->qtype->get_random_guess_score($q), '', 0.0000001);
+        $this->assertEqualsWithDelta(0.1666667, $this->qtype->get_random_guess_score($q), 0.0000001);
     }
 
     public function test_load_question() {
@@ -251,13 +251,13 @@ class qtype_multianswer_test extends advanced_testcase {
 
         foreach ($questiondata as $property => $value) {
             if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated', 'options', 'hints', 'stamp'))) {
-                $this->assertAttributeEquals($value, $property, $actualquestiondata);
+                $this->assertEquals($value, $actualquestiondata->$property);
             }
         }
 
         foreach ($questiondata->options as $optionname => $value) {
             if ($optionname != 'questions') {
-                $this->assertAttributeEquals($value, $optionname, $actualquestiondata->options);
+                $this->assertEquals($value, $actualquestiondata->options->$optionname);
             }
         }
 
@@ -265,7 +265,7 @@ class qtype_multianswer_test extends advanced_testcase {
             $actualhint = array_shift($actualquestiondata->hints);
             foreach ($hint as $property => $value) {
                 if (!in_array($property, array('id', 'questionid', 'options'))) {
-                    $this->assertAttributeEquals($value, $property, $actualhint);
+                    $this->assertEquals($value, $actualhint->$property);
                 }
             }
         }
@@ -279,12 +279,12 @@ class qtype_multianswer_test extends advanced_testcase {
             $actualsubq = $actualquestiondata->options->questions[$subqno];
             foreach ($subq as $subqproperty => $subqvalue) {
                 if (!in_array($subqproperty, $subqpropstoignore)) {
-                    $this->assertAttributeEquals($subqvalue, $subqproperty, $actualsubq);
+                    $this->assertEquals($subqvalue, $actualsubq->$subqproperty);
                 }
             }
             foreach ($subq->options as $optionname => $value) {
                 if (!in_array($optionname, array('answers'))) {
-                    $this->assertAttributeEquals($value, $optionname, $actualsubq->options);
+                    $this->assertEquals($value, $actualsubq->options->$optionname);
                 }
             }
             foreach ($subq->options->answers as $answer) {
@@ -292,17 +292,16 @@ class qtype_multianswer_test extends advanced_testcase {
                 foreach ($answer as $ansproperty => $ansvalue) {
                     // These questions do not use 'answerformat', will ignore it.
                     if (!in_array($ansproperty, array('id', 'question', 'answerformat'))) {
-                        $this->assertAttributeEquals($ansvalue, $ansproperty, $actualanswer);
+                        $this->assertEquals($ansvalue, $actualanswer->$ansproperty);
                     }
                 }
             }
         }
     }
+
     /**
      *  Verify that the multiplechoice variants parameters are correctly interpreted from
      *  the question text
-     *
-     *
      */
     public function test_questiontext_extraction_of_multiplechoice_subquestions_variants() {
         $questiontext = array();
@@ -310,18 +309,18 @@ class qtype_multianswer_test extends advanced_testcase {
         $questiontext['itemid'] = '';
         $questiontext['text'] = '<p>Match the following cities with the correct state:</p>
             <ul>
-            <li>1 San Francisco:{1:MULTICHOICE:=California#OK~Arizona#Wrong}</li>
-            <li>2 Tucson:{1:MC:%0%California#Wrong~=Arizona#OK}</li>
-            <li>3 Los Angeles:{1:MULTICHOICE_S:=California#OK~Arizona#Wrong}</li>
-            <li>4 Phoenix:{1:MCS:%0%California#Wrong~=Arizona#OK}</li>
-            <li>5 San Francisco:{1:MULTICHOICE_H:=California#OK~Arizona#Wrong}</li>
-            <li>6 Tucson:{1:MCH:%0%California#Wrong~=Arizona#OK}</li>
-            <li>7 Los Angeles:{1:MULTICHOICE_HS:=California#OK~Arizona#Wrong}</li>
-            <li>8 Phoenix:{1:MCHS:%0%California#Wrong~=Arizona#OK}</li>
-            <li>9 San Francisco:{1:MULTICHOICE_V:=California#OK~Arizona#Wrong}</li>
-            <li>10 Tucson:{1:MCV:%0%California#Wrong~=Arizona#OK}</li>
-            <li>11 Los Angeles:{1:MULTICHOICE_VS:=California#OK~Arizona#Wrong}</li>
-            <li>12 Phoenix:{1:MCVS:%0%California#Wrong~=Arizona#OK}</li>
+            <li>1 San Francisco:{1:MULTICHOICE:=California#OK~%33.33333%Ohio#Not really~Arizona#Wrong}</li>
+            <li>2 Tucson:{1:MC:%0%California#Wrong~%33,33333%Ohio#Not really~=Arizona#OK}</li>
+            <li>3 Los Angeles:{1:MULTICHOICE_S:=California#OK~%33.33333%Ohio#Not really~Arizona#Wrong}</li>
+            <li>4 Phoenix:{1:MCS:%0%California#Wrong~%33,33333%Ohio#Not really~=Arizona#OK}</li>
+            <li>5 San Francisco:{1:MULTICHOICE_H:=California#OK~%33.33333%Ohio#Not really~Arizona#Wrong}</li>
+            <li>6 Tucson:{1:MCH:%0%California#Wrong~%33,33333%Ohio#Not really~=Arizona#OK}</li>
+            <li>7 Los Angeles:{1:MULTICHOICE_HS:=California#OK~%33.33333%Ohio#Not really~Arizona#Wrong}</li>
+            <li>8 Phoenix:{1:MCHS:%0%California#Wrong~%33,33333%Ohio#Not really~=Arizona#OK}</li>
+            <li>9 San Francisco:{1:MULTICHOICE_V:=California#OK~%33.33333%Ohio#Not really~Arizona#Wrong}</li>
+            <li>10 Tucson:{1:MCV:%0%California#Wrong~%33,33333%Ohio#Not really~=Arizona#OK}</li>
+            <li>11 Los Angeles:{1:MULTICHOICE_VS:=California#OK~%33.33333%Ohio#Not really~Arizona#Wrong}</li>
+            <li>12 Phoenix:{1:MCVS:%0%California#Wrong~%33,33333%Ohio#Not really~=Arizona#OK}</li>
             </ul>';
 
         $q = qtype_multianswer_extract_question($questiontext);
@@ -338,6 +337,16 @@ class qtype_multianswer_test extends advanced_testcase {
                 $this->assertSame($sub->layout, qtype_multichoice_base::LAYOUT_HORIZONTAL);
             } else if ($key == 9 || $key == 10 || $key == 11 || $key == 12) {
                 $this->assertSame($sub->layout, qtype_multichoice_base::LAYOUT_VERTICAL);
+            }
+            foreach ($sub->feedback as $key => $feedback) {
+                if ($feedback['text'] === 'OK') {
+                    $this->assertEquals(1, $sub->fraction[$key]);
+                } else if ($feedback['text'] === 'Wrong') {
+                    $this->assertEquals(0, $sub->fraction[$key]);
+                } else {
+                    $this->assertEquals('Not really', $feedback['text']);
+                    $this->assertEquals(0.3333333, $sub->fraction[$key]);
+                }
             }
         }
     }

@@ -238,4 +238,19 @@ class qtype_multianswer_question_test extends advanced_testcase {
         $finalgrade = $question->compute_final_grade($responses, 1);
         $this->assertEquals(1 / 3 * (1 - 3 * 0.2) + 2 / 3 * (1 - 2 * 0.2), $finalgrade);
     }
+
+    /**
+     * test_get_question_definition_for_external_rendering
+     */
+    public function test_get_question_definition_for_external_rendering() {
+        $this->resetAfterTest();
+
+        $question = test_question_maker::make_question('multianswer');
+        $question->start_attempt(new question_attempt_step(), 1);
+        $qa = test_question_maker::get_a_qa($question);
+        $displayoptions = new question_display_options();
+
+        $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
+        $this->assertNull($options);
+    }
 }

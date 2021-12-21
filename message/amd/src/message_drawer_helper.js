@@ -17,7 +17,6 @@
  * Provides some helper functions to trigger actions in the message drawer.
  *
  * @module     core_message/message_drawer_helper
- * @package    message
  * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +33,8 @@ function(
     /**
      * Trigger an event to create a new conversation in the message drawer.
      *
-     * @param {Number} userId The user id to start a conversation.
+     * @param {object} args
+     * @param {Number} args.userId The user id to start a conversation.
      */
     var createConversationWithUser = function(args) {
         PubSub.publish(MessageDrawerEvents.CREATE_CONVERSATION_WITH_USER, args);
@@ -57,7 +57,8 @@ function(
     /**
      * Trigger an event to show the given conversation.
      *
-     * @param {int} conversationId Id for the conversation to show.
+     * @param {object} args
+     * @param {int} args.conversationId Id for the conversation to show.
      */
     var showConversation = function(args) {
         PubSub.publish(MessageDrawerEvents.SHOW_CONVERSATION, args);

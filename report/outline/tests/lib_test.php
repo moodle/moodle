@@ -60,7 +60,7 @@ class report_outline_lib_testcase extends advanced_testcase {
      */
     private $roleid;
 
-    public function setUp() {
+    public function setUp(): void {
         $this->user = $this->getDataGenerator()->create_user();
         $this->user2 = $this->getDataGenerator()->create_user();
         $this->course = $this->getDataGenerator()->create_course();

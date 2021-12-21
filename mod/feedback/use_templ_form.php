@@ -28,7 +28,18 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * The mod_feedback_use_templ_form
+ *
+ * @deprecated since 4.0. New dynamic forms have been created instead.
+ */
 class mod_feedback_use_templ_form extends moodleform {
+    public function __construct($action = null, $customdata = null, $method = 'post', $target = '',
+            $attributes = null, $editable = true, $ajaxformdata = null) {
+        debugging('Class mod_feedback_use_templ_form is deprecated. Replaced with dynamic forms.', DEBUG_DEVELOPER);
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+    }
+
     public function definition() {
         $mform =& $this->_form;
 
@@ -51,6 +62,60 @@ class mod_feedback_use_templ_form extends moodleform {
         // buttons
         $this->add_action_buttons();
 
+    }
+
+    /**
+     * Overrides parent static method for deprecation purposes.
+     *
+     * @deprecated since 4.0
+     * @return array
+     */
+    public static function get_js_module() {
+        debugging('Class mod_feedback_use_templ_form is deprecated. Replaced with dynamic forms.', DEBUG_DEVELOPER);
+        return parent::get_js_module();
+    }
+
+    /**
+     * Overrides parent static method for deprecation purposes.
+     *
+     * @deprecated since 4.0
+     * @param array $simulatedsubmitteddata
+     * @param array $simulatedsubmittedfiles
+     * @param string $method
+     * @param null $formidentifier
+     * @return array
+     */
+    public static function mock_ajax_submit($simulatedsubmitteddata, $simulatedsubmittedfiles = array(),
+            $method = 'post', $formidentifier = null) {
+        debugging('Class mod_feedback_use_templ_form is deprecated. Replaced with dynamic forms.', DEBUG_DEVELOPER);
+        return parent::mock_ajax_submit($simulatedsubmitteddata, $simulatedsubmittedfiles, $method, $formidentifier);
+    }
+
+    /**
+     * Overrides parent static method for deprecation purposes.
+     *
+     * @deprecated since 4.0
+     * @param array $data
+     * @return array
+     */
+    public static function mock_generate_submit_keys($data = []) {
+        debugging('Class mod_feedback_use_templ_form is deprecated. Replaced with dynamic forms.', DEBUG_DEVELOPER);
+        return parent::mock_generate_submit_keys($data);
+    }
+
+    /**
+     * Overrides parent static method for deprecation purposes.
+     *
+     * @deprecated since 4.0
+     * @param array $simulatedsubmitteddata
+     * @param array $simulatedsubmittedfiles
+     * @param string $method
+     * @param null $formidentifier
+     */
+    public static function mock_submit($simulatedsubmitteddata, $simulatedsubmittedfiles = array(),
+            $method = 'post', $formidentifier = null) {
+        debugging('Class mod_feedback_use_templ_form is deprecated. Replaced with dynamic forms.', DEBUG_DEVELOPER);
+        parent::mock_submit($simulatedsubmitteddata, $simulatedsubmittedfiles, $method, $formidentifier);
     }
 }
 

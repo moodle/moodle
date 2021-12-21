@@ -1,17 +1,21 @@
-@core @core_contentbank @_file_upload @_switch_iframe @javascript
+@core @core_contentbank @core_h5p @contentbank_h5p @_file_upload @_switch_iframe @javascript
 Feature: Confirm content bank events are triggered
   In order to log content bank actions
   As an admin
   I need to be able to check triggered events
 
   Background:
+    Given I log in as "admin"
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "contentbank content" exist:
-      | contextlevel | reference | contenttype     | user  | contentname |
-      | Course       | C1        | contenttype_h5p | admin | Existing    |
-    And I log in as "admin"
+      | contextlevel | reference | contenttype     | user  | contentname | filepath                                   |
+      | Course       | C1        | contenttype_h5p | admin | Existing    | /h5p/tests/fixtures/filltheblanks.h5p      |
+    And I follow "Dashboard" in the user menu
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"

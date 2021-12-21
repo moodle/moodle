@@ -30,6 +30,10 @@ $blockspost = $OUTPUT->blocks('side-post');
 
 $hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
 $hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
+$PAGE->has_secondary_navigation_setter(false);
+$renderer = $PAGE->get_renderer('core');
+$header = $PAGE->activityheader;
+$headercontent = $header->export_for_template($renderer);
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
@@ -38,7 +42,8 @@ $templatecontext = [
     'sidepostblocks' => $blockspost,
     'haspreblocks' => $hassidepre,
     'haspostblocks' => $hassidepost,
-    'bodyattributes' => $bodyattributes
+    'bodyattributes' => $bodyattributes,
+    'headercontent' => $headercontent,
 ];
 
 echo $OUTPUT->render_from_template('theme_classic/columns', $templatecontext);

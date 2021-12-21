@@ -17,7 +17,6 @@
  * Base Filter class for a filter type in the participants filter UI.
  *
  * @module     core_user/local/participantsfilter/filter
- * @package    core_user
  * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -90,6 +89,18 @@ export default class {
         filterValueNode.innerHTML = this.getSourceDataForFilter().outerHTML;
 
         const dataSource = filterValueNode.querySelector('select');
+
+        // Set an ID for this filter value element.
+        dataSource.id = 'filter-value-' + dataSource.getAttribute('data-field-name');
+
+        // Create a hidden label for the filter value.
+        const filterValueLabel = document.createElement('label');
+        filterValueLabel.setAttribute('for', dataSource.id);
+        filterValueLabel.classList.add('sr-only');
+        filterValueLabel.innerText = dataSource.getAttribute('data-field-title');
+
+        // Append this label to the filter value container.
+        filterValueNode.appendChild(filterValueLabel);
 
         // If there are any initial values then attempt to apply them.
         initialValues.forEach(filterValue => {

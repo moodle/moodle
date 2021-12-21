@@ -41,6 +41,14 @@ Feature: The activity results block displays students in groups low scores as sc
       | student4 | G2 |
       | student5 | G3 |
       | student6 | G3 |
+    And the following "activity" exists:
+      | activity                      | assign             |
+      | course                        | C1                 |
+      | idnumber                      | 0001               |
+      | name                          | Test assignment    |
+      | description                   | Offline text       |
+      | assignsubmission_file_enabled | 0                  |
+      | groupmode                     | 1                  |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Scales" in the course gradebook
@@ -49,14 +57,13 @@ Feature: The activity results block displays students in groups low scores as sc
       | Name | My Scale |
       | Scale | Disappointing, Not good enough, Average, Good, Very good, Excellent! |
     And I press "Save changes"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment"
+    And I navigate to "Settings" in current page administration
+    And I set the following fields to these values:
       | id_grade_modgrade_type | Scale |
       | id_grade_modgrade_scale | My Scale |
-      | Group mode | Separate groups |
+    And I press "Save and return to course"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
@@ -108,7 +115,9 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Good" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple high scores using ID numbers
-    Given I add the "Activity results" block
+    Given the following config values are set as admin:
+      | showuseridentity | idnumber,email |
+    And I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -120,11 +129,13 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
     And I log out
+    # Students cannot see user identity fields.
     And I log in as "student5"
     And I am on "Course 1" course homepage
-    And I should see "User S5" in the "Activity results" "block"
+    And I should see "User" in the "Activity results" "block"
+    And I should not see "User S5" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
-    And I should see "User S6" in the "Activity results" "block"
+    And I should not see "User S6" in the "Activity results" "block"
     And I should see "Average" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple high scores using anonymous names

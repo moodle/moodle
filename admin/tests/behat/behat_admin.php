@@ -53,11 +53,8 @@ class behat_admin extends behat_base {
         }
 
         foreach ($data as $label => $value) {
-            $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', [get_string('administrationsite')]);
-
-            // Search by label.
-            $this->execute('behat_forms::i_set_the_field_to', [get_string('search'), $label]);
-            $this->execute("behat_forms::press_button", get_string('search', 'admin'));
+            // Navigate straight to the search results fo rthis label.
+            $this->execute('behat_general::i_visit', ["/admin/search.php?query=" . urlencode($label)]);
 
             // Admin settings does not use the same DOM structure than other moodle forms
             // but we also need to use lib/behat/form_field/* to deal with the different moodle form elements.
@@ -89,7 +86,7 @@ class behat_admin extends behat_base {
     }
 
     /**
-     * Sets the specified site settings. A table with | config | value | (optional)plugin | is expected.
+     * Sets the specified site settings. A table with | config | value | (optional)plugin | (optional)encrypted | is expected.
      *
      * @Given /^the following config values are set as admin:$/
      * @param TableNode $table
@@ -103,11 +100,20 @@ class behat_admin extends behat_base {
         foreach ($data as $config => $value) {
             // Default plugin value is null.
             $plugin = null;
+            $encrypted = false;
 
             if (is_array($value)) {
                 $plugin = $value[1];
+                if (array_key_exists(2, $value)) {
+                    $encrypted = $value[2] === 'encrypted';
+                }
                 $value = $value[0];
             }
+
+            if ($encrypted) {
+                $value = \core\encryption::encrypt($value);
+            }
+
             set_config($config, $value, $plugin);
         }
     }

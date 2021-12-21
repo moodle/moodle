@@ -745,7 +745,7 @@ class structure {
         }
 
         // Check the target page number is OK.
-        if ($page == 0) {
+        if ($page == 0 || $page === '') {
             $page = 1;
         }
         if (($moveafterslotnumber > 0 && $page < $this->get_page_number_for_slot($moveafterslotnumber)) ||

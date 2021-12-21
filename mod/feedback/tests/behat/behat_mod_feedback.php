@@ -50,9 +50,7 @@ class behat_mod_feedback extends behat_base {
     public function i_add_question_to_the_feedback_with($questiontype, TableNode $questiondata) {
 
         $questiontype = $this->escape($questiontype);
-        $additem = $this->escape(get_string('add_item', 'feedback'));
-
-        $this->execute('behat_forms::i_select_from_the_singleselect', array($questiontype, $additem));
+        $this->execute('behat_forms::i_select_from_the_singleselect', array($questiontype, 'typ'));
 
         // Wait again, for page to reloaded.
         $this->execute('behat_general::i_wait_to_be_redirected');
@@ -69,7 +67,7 @@ class behat_mod_feedback extends behat_base {
 
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $newdata);
 
-        $saveitem = $this->escape(get_string('save_item', 'feedback'));
+        $saveitem = $this->escape(get_string('save'));
         $this->execute("behat_forms::press_button", $saveitem);
     }
 
@@ -83,9 +81,7 @@ class behat_mod_feedback extends behat_base {
     public function i_add_a_page_break_to_the_feedback() {
 
         $questiontype = $this->escape(get_string('add_pagebreak', 'feedback'));
-        $additem = $this->escape(get_string('add_item', 'feedback'));
-
-        $this->execute('behat_forms::i_select_from_the_singleselect', array($questiontype, $additem));
+        $this->execute('behat_forms::i_select_from_the_singleselect', array($questiontype, 'typ'));
 
         // Wait again, for page to reloaded.
         $this->execute('behat_general::i_wait_to_be_redirected');
@@ -108,8 +104,7 @@ class behat_mod_feedback extends behat_base {
         $this->execute('behat_auth::i_log_in_as', $username);
 
         // Navigate to feedback complete form.
-        $this->execute('behat_navigation::i_am_on_course_homepage', $coursename);
-        $this->execute('behat_general::click_link', $feedbackname);
+        $this->execute('behat_navigation::i_am_on_page_instance', [$feedbackname, 'feedback activity']);
         $this->execute('behat_general::click_link', $completeform);
 
         // Fill form and submit.
@@ -165,9 +160,7 @@ class behat_mod_feedback extends behat_base {
         // If chart data is not visible then expand.
         $node = $this->get_selected_node("xpath_element", $charttabledataxpath);
         if ($node) {
-            if (!$node->isVisible()) {
-                // Focus on node, before checking if it's visible.
-                $node->focus();
+            if ($node->getAttribute('aria-expanded') === 'false') {
                 $this->execute('behat_general::i_click_on_in_the', array(
                     get_string('showchartdata'),
                     'link',

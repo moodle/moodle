@@ -1,4 +1,4 @@
-@customfield @customfield_select
+@customfield @customfield_select @javascript
 Feature: Managers can manage course custom fields select
   In order to have additional data on the course
   As a manager
@@ -22,7 +22,7 @@ Feature: Managers can manage course custom fields select
     a
     b
     """
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Dropdown menu" "dialogue"
     Then I should see "Test field"
     And I log out
 
@@ -37,16 +37,15 @@ Feature: Managers can manage course custom fields select
     a
     b
     """
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Dropdown menu" "dialogue"
     And I click on "Edit" "link" in the "Test field" "table_row"
     And I set the following fields to these values:
       | Name | Edited field |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Updating Test field" "dialogue"
     Then I should see "Edited field"
     And I should not see "Test field"
     And I log out
 
-  @javascript
   Scenario: Delete a custom course select field
     When I click on "Add a new custom field" "link"
     And I click on "Dropdown menu" "link"
@@ -58,7 +57,7 @@ Feature: Managers can manage course custom fields select
     a
     b
     """
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Dropdown menu" "dialogue"
     And I click on "Delete" "link" in the "Test field" "table_row"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
     Then I should not see "Test field"
@@ -70,7 +69,7 @@ Feature: Managers can manage course custom fields select
     And I set the following fields to these values:
       | Name       | Test field |
       | Short name | testfield  |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Dropdown menu" "dialogue"
     And I should see "Please provide at least two options, with each on a new line." in the "Menu options (one per line)" "form_row"
     And I set the field "Menu options (one per line)" to multiline:
     """
@@ -78,9 +77,9 @@ Feature: Managers can manage course custom fields select
     b
     """
     And I set the field "Default value" to "c"
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Dropdown menu" "dialogue"
     And I should see "The default value must be one of the options from the list above" in the "Default value" "form_row"
     And I set the field "Default value" to "b"
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Dropdown menu" "dialogue"
     And "testfield" "text" should exist in the "Test field" "table_row"
     And I log out

@@ -54,9 +54,9 @@
         <ul class="mt-1 pagination " data-page-size="{{pagesize}}">
             {{#previous}}
                 <li class="page-item" data-page-number="{{page}}">
-                    <a href="{{url}}" class="page-link" aria-label="Previous">
+                    <a href="{{url}}" class="page-link" aria-label="{{# str }} previouspage, moodle {{/ str }}">
                         <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">{{#str}}previous{{/str}}</span>
+                        <span class="sr-only">{{#str}}previouspage, moodle{{/str}}</span>
                     </a>
                 </li>
             {{/previous}}
@@ -88,9 +88,9 @@
             {{/last}}
             {{#next}}
                 <li class="page-item" data-page-number="{{page}}">
-                    <a href="{{url}}" class="page-link" aria-label="Next">
+                    <a href="{{url}}" class="page-link" aria-label="{{# str }} nextpage, moodle {{/ str }}">
                         <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">{{#str}}next{{/str}}</span>
+                        <span class="sr-only">{{#str}}nextpage, moodle{{/str}}</span>
                     </a>
                 </li>
             {{/next}}

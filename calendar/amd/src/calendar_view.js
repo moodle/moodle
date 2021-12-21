@@ -17,7 +17,6 @@
  * This module is responsible for handle calendar day and upcoming view.
  *
  * @module     core_calendar/calendar
- * @package    core_calendar
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -74,9 +73,7 @@ define([
                         return root.find(CalendarSelectors.courseSelector).val(courseId);
                     })
                     .then(function() {
-                        window.history.pushState({}, '', '?view=upcoming&course=' + courseId);
-
-                        return;
+                        CalendarViewManager.updateUrl('?view=upcoming&course=' + courseId);
                     })
                     .fail(Notification.exception);
             });
@@ -88,6 +85,7 @@ define([
                 } else {
                     daysWithEvent.removeClass('hidden');
                 }
+                CalendarViewManager.foldDayEvents(root);
             });
 
             var eventFormPromise = CalendarCrud.registerEventFormModal(root);

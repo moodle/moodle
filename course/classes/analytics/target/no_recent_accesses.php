@@ -103,6 +103,10 @@ class no_recent_accesses extends course_enrolments {
             return get_string('nocoursestudents', 'course');
         }
 
+        if (!$fortraining && !$course->get_course_data()->visible) {
+            return get_string('hiddenfromstudents');
+        }
+
         if ($course->get_end() && $course->get_end() < $course->get_start()) {
             return get_string('errorendbeforestart', 'course');
         }

@@ -22,11 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core_competency;
-defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
-use stdClass;
 use lang_string;
+use core_course\external\course_summary_exporter;
 
 /**
  * Class for loading/storing course_competencies from the DB.
@@ -243,9 +242,13 @@ class course_competency extends persistent {
     public static function list_courses($competencyid) {
         global $DB;
 
-        $results = $DB->get_records_sql('SELECT course.id, course.visible, course.shortname, course.idnumber,
-                                                course.fullname, course.summary, course.summaryformat, course.startdate,
-                                                course.enddate, course.category
+        // We need all the course summary exporter properties, plus category.
+        $coursefields = course_summary_exporter::properties_definition();
+        $coursefields = array_map(function(string $field): string {
+            return "course.{$field}";
+        }, array_keys($coursefields));
+
+        $results = $DB->get_records_sql('SELECT ' . implode(',', $coursefields) . ', course.category
                                            FROM {course} course
                                            JOIN {' . self::TABLE . '} coursecomp
                                              ON coursecomp.courseid = course.id

@@ -29,7 +29,7 @@ use stdClass;
 use core_h5p\editor_ajax;
 use core_h5p\file_storage;
 use core_h5p\local\library\autoloader;
-use H5PCore;
+use Moodle\H5PCore;
 
 /**
  * H5P content bank manager class
@@ -148,22 +148,25 @@ class contenttype extends \core_contentbank\contenttype {
         $types = [];
         $h5pfilestorage = new file_storage();
         foreach ($h5pcontenttypes as $h5pcontenttype) {
-            $library = [
-                'name' => $h5pcontenttype->machine_name,
-                'majorVersion' => $h5pcontenttype->major_version,
-                'minorVersion' => $h5pcontenttype->minor_version,
-            ];
-            $key = H5PCore::libraryToString($library);
-            $type = new stdClass();
-            $type->key = $key;
-            $type->typename = $h5pcontenttype->title;
-            $type->typeeditorparams = 'library=' . $key;
-            $type->typeicon = $h5pfilestorage->get_icon_url(
-                $h5pcontenttype->id,
-                $h5pcontenttype->machine_name,
-                $h5pcontenttype->major_version,
-                $h5pcontenttype->minor_version);
-            $types[] = $type;
+            if ($h5pcontenttype->enabled) {
+                // Only enabled content-types will be displayed.
+                $library = [
+                    'name' => $h5pcontenttype->machine_name,
+                    'majorVersion' => $h5pcontenttype->major_version,
+                    'minorVersion' => $h5pcontenttype->minor_version,
+                ];
+                $key = H5PCore::libraryToString($library);
+                $type = new stdClass();
+                $type->key = $key;
+                $type->typename = $h5pcontenttype->title;
+                $type->typeeditorparams = 'library=' . $key;
+                $type->typeicon = $h5pfilestorage->get_icon_url(
+                    $h5pcontenttype->id,
+                    $h5pcontenttype->machine_name,
+                    $h5pcontenttype->major_version,
+                    $h5pcontenttype->minor_version);
+                $types[] = $type;
+            }
         }
 
         return $types;

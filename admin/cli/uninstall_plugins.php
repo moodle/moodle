@@ -39,6 +39,8 @@ Options:
     --purge-missing             Uninstall all missing from disk plugins.
     --plugins=<plugin name>     A comma separated list of plugins to be uninstalled. E.g. mod_assign,mod_forum
     --run                       Execute uninstall. If this option is not set, then the script will be run in a dry mode.
+    --showsql                   Show sql queries before they are executed.
+    --showdebugging             Show developer level debugging information.
 
 Examples:
 
@@ -72,6 +74,8 @@ list($options, $unrecognised) = cli_get_params([
     'purge-missing' => false,
     'plugins' => false,
     'run' => false,
+    'showsql' => false,
+    'showdebugging' => false,
 ], [
     'h' => 'help'
 ]);
@@ -84,6 +88,14 @@ if ($unrecognised) {
 if ($options['help']) {
     cli_writeln($help);
     exit(0);
+}
+
+if ($options['showdebugging']) {
+    set_debugging(DEBUG_DEVELOPER, true);
+}
+
+if ($options['showsql']) {
+    $DB->set_debug(true);
 }
 
 $pluginman = core_plugin_manager::instance();

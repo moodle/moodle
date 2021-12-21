@@ -30,7 +30,7 @@ Feature: Add and configure blocks throughout the site
   Scenario: Add and configure a block throughtout the site
     Given I log in as "manager1"
     And I am on site homepage
-    And I follow "Turn editing on"
+    And I turn editing mode on
     And I add the "Comments" block
     And I configure the "Comments" block
     And I set the following fields to these values:
@@ -46,11 +46,11 @@ Feature: Add and configure blocks throughout the site
     And I press "Save changes"
     And I am on "Course 1" course homepage
     # The first block matching the pattern should be top-left block
-    And I should see "Comments" in the "//*[@id='region-pre' or @id='block-region-side-pre']/descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' block ')]" "xpath_element"
+    And I should see "Comments" in the "//*[@id='region-pre' or @id='block-region-side-pre']/descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' block_comments ')]" "xpath_element"
 
   Scenario: Blocks on the dashboard page can have roles assigned to them
     Given I log in as "manager1"
-    When I press "Customise this page"
+    When I turn editing mode on
     Then I should see "Assign roles in Private files block"
 
   Scenario: Blocks on courses can have roles assigned to them
@@ -63,11 +63,11 @@ Feature: Add and configure blocks throughout the site
   Scenario: Blocks can safely be customised
     Given I log in as "admin"
     And I am on homepage
-    And I press "Customise this page"
-    And I add the "HTML" block
-    And I configure the "(new HTML block)" block
+    And I turn editing mode on
+    And I add the "Text" block
+    And I configure the "(new text block)" block
     And I set the following fields to these values:
-      | HTML block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt=" |
+      | Text block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt=" |
       | Content     | Example |
     When I press "Save changes"
-    Then I should see "Course overview"
+    Then I should see "Example"

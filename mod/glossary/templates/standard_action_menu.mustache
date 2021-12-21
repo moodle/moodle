@@ -1,0 +1,168 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_glossary/standard_action_menu
+    Actions panel at the bottom of the assignment grading UI.
+    Classes required for JS:
+        * none
+    Data attributes required for JS:
+        * none
+    Context variables required for this template:
+        * see mod/glossary/classes/output/standard_action_bar.php
+    Example context (json):
+    {
+        "addnewbutton": {
+            "method" : "get",
+            "url" : "#",
+            "primary" : true,
+            "tooltip" : "This is a tooltip",
+            "label" : "This is a the button text",
+            "attributes": [
+                {
+                  "name": "data-attribute",
+                  "value": "yeah"
+                }
+            ]
+        },
+        "tools": {
+            "button": {
+                "method" : "get",
+                "url" : "#",
+                "primary" : true,
+                "tooltip" : "This is a tooltip",
+                "label" : "This is a the button text",
+                "attributes": [
+                    {
+                      "name": "data-attribute",
+                      "value": "yeah"
+                    }
+                ]
+            },
+            "select": {
+                "options": [
+                    {
+                        "url": "www.google.com",
+                        "string": "Google"
+                    },
+                    {
+                        "url": "www.yahoo.com",
+                        "string": "Yahoo"
+                    }
+                ]
+            }
+        },
+        "tabjumps":
+        {
+            "id": "url_select_test",
+            "action": "https://example.com/post",
+            "formid": "url_select_form",
+            "sesskey": "sesskey",
+            "label": "core/url_select",
+            "helpicon": {
+                "title": "Help with something",
+                "text": "Help with something",
+                "url": "http://example.org/help",
+                "linktext": "",
+                "icon":{
+                    "extraclasses": "iconhelp",
+                    "attributes": [
+                        {"name": "src", "value": "../../../pix/help.svg"},
+                        {"name": "alt", "value": "Help icon"}
+                    ]
+                }
+            },
+            "showbutton": "Go",
+            "options": [{
+                "name": "Group 1", "isgroup": true, "options":
+                [
+                    {"name": "Item 1", "isgroup": false, "value": "1"},
+                    {"name": "Item 2", "isgroup": false, "value": "2"}
+                ]},
+                {"name": "Group 2", "isgroup": true, "options":
+                [
+                    {"name": "Item 3", "isgroup": false, "value": "3"},
+                    {"name": "Item 4", "isgroup": false, "value": "4"}
+                ]}],
+            "disabled": false,
+            "title": "Some cool title"
+        },
+        "searchbox": {
+            "action": "http://localhost/stable/mod/glossary/view.php",
+            "hiddenfields": [
+                {
+                    "name": "id",
+                    "value": 23
+                },
+                {
+                    "name": "mode",
+                    "value": "search"
+                }
+            ],
+            "otherfields": "<input type='checkbox'>Rendered checkbox",
+            "inputname": "hook",
+            "query": "hook",
+            "searchstring": "Search"
+        }
+    }
+}}
+<div class="container-fluid px-0">
+    <div class="row mx-0">
+        <div class="d-flex">
+            <div class="col-xs">
+                {{#addnewbutton}}
+                    {{> core/single_button }}
+                {{/addnewbutton}}
+            </div>
+        </div>
+
+        <div class="d-flex ml-auto">
+            {{#tools}}
+                {{#button}}
+                    <div class="pr-1">
+                        {{> core/single_button}}
+                    </div>
+                {{/button}}
+                {{#select}}
+                <div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            ...
+                            <span class="sr-only">{{#str}} exportentries, mod_glossary {{/str}}</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            {{#options}}
+                                <a class="dropdown-item" href="{{url}}">{{string}}</a>
+                            {{/options}}
+                        </div>
+                    </div>
+                </div>
+                {{/select}}
+            {{/tools}}
+        </div>
+    </div>
+    <div class="row mt-2 ml-0">
+        <div class="d-flex">
+            {{#tabjumps}}
+            <div class="col-xs pr-1">
+                {{> core/url_select }}
+            </div>
+            {{/tabjumps}}
+            {{#searchbox}}
+            <div class="col-xs">
+                {{> core/search_input }}
+            </div>
+            {{/searchbox}}
+        </div>
+    </div>
+</div>

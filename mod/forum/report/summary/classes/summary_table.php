@@ -543,12 +543,13 @@ class summary_table extends table_sql {
     protected function define_base_sql(): void {
         global $USER;
 
-        $userfields = get_extra_user_fields($this->userfieldscontext);
-        $userfieldssql = \user_picture::fields('u', $userfields);
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $userfieldsapi = \core_user\fields::for_identity($this->userfieldscontext, false)->with_userpic();
+        $userfieldssql = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
         // Define base SQL query format.
-        $this->sql->basefields = ' ue.userid AS userid,
-                                   e.courseid AS courseid,
+        $this->sql->basefields = ' u.id AS userid,
+                                   d.course AS courseid,
                                    SUM(CASE WHEN p.parent = 0 THEN 1 ELSE 0 END) AS postcount,
                                    SUM(CASE WHEN p.parent != 0 THEN 1 ELSE 0 END) AS replycount,
                                    ' . $userfieldssql . ',
@@ -567,27 +568,24 @@ class summary_table extends table_sql {
             $privaterepliesparams['privatereplyfrom'] = $USER->id;
         }
 
-        $this->sql->basefromjoins = '    {enrol} e
-                                    JOIN {user_enrolments} ue ON ue.enrolid = e.id
-                                    JOIN {user} u ON u.id = ue.userid
-                                    JOIN {forum} f ON f.course = e.courseid
-                                    JOIN {forum_discussions} d ON d.forum = f.id
-                               LEFT JOIN {forum_posts} p ON p.discussion =  d.id
-                                     AND p.userid = ue.userid
-                                     ' . $privaterepliessql
-                                       . $this->sql->filterbase['dates'] . '
-                               LEFT JOIN (
-                                            SELECT COUNT(fi.id) AS attcount, fi.itemid AS postid, fi.userid
-                                              FROM {files} fi
-                                             WHERE fi.component = :component
-                                               AND fi.filesize > 0
-                                          GROUP BY fi.itemid, fi.userid
-                                         ) att ON att.postid = p.id
-                                         AND att.userid = ue.userid';
+        list($enrolleduserssql, $enrolledusersparams) = get_enrolled_sql($this->get_context());
+        $this->sql->params += $enrolledusersparams;
 
-        $this->sql->basewhere = 'e.courseid = :courseid';
+        $queryattachments = 'SELECT COUNT(fi.id) AS attcount, fi.itemid AS postid, fi.userid
+                               FROM {files} fi
+                              WHERE fi.component = :component AND fi.filesize > 0
+                           GROUP BY fi.itemid, fi.userid';
+        $this->sql->basefromjoins = ' {user} u
+                                 JOIN (' . $enrolleduserssql . ') enrolledusers ON enrolledusers.id = u.id
+                                 JOIN {forum} f ON f.course = :forumcourseid
+                                 JOIN {forum_discussions} d ON d.forum = f.id
+                            LEFT JOIN {forum_posts} p ON p.discussion = d.id AND p.userid = u.id '
+                                    . $privaterepliessql
+                                    . $this->sql->filterbase['dates'] . '
+                            LEFT JOIN (' . $queryattachments . ') att ON att.postid = p.id AND att.userid = u.id';
 
-        $this->sql->basegroupby = 'ue.userid, e.courseid, u.id, ' . $userfieldssql;
+        $this->sql->basewhere = '1 = 1';
+        $this->sql->basegroupby = "$userfieldssql, d.course";
 
         if ($this->logreader) {
             $this->fill_log_summary_temp_table();
@@ -605,12 +603,12 @@ class summary_table extends table_sql {
 
         $this->sql->params += [
             'component' => 'mod_forum',
-            'courseid' => $this->courseid,
+            'forumcourseid' => $this->courseid,
         ] + $privaterepliesparams;
 
         // Handle if a user is limited to viewing their own summary.
         if (!empty($this->userid)) {
-            $this->sql->basewhere .= ' AND ue.userid = :userid';
+            $this->sql->basewhere .= ' AND u.id = :userid';
             $this->sql->params['userid'] = $this->userid;
         }
     }
@@ -719,11 +717,11 @@ class summary_table extends table_sql {
 
             $groupby = ' GROUP BY ' . $this->sql->basegroupby . $this->sql->filtergroupby;
 
-            if (($sort = $this->get_sql_sort())) {
+            if ($sort = $this->get_sql_sort()) {
                 $orderby = " ORDER BY {$sort}";
             }
         } else {
-            $selectfields = 'COUNT(DISTINCT(ue.userid))';
+            $selectfields = 'COUNT(u.id)';
         }
 
         $sql = "SELECT {$selectfields}

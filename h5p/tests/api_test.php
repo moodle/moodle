@@ -27,6 +27,8 @@ declare(strict_types = 1);
 
 namespace core_h5p;
 
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -35,8 +37,9 @@ defined('MOODLE_INTERNAL') || die();
  * @package    core_h5p
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_h5p\api
  */
-class api_testcase extends \advanced_testcase {
+class api_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of delete_library().
@@ -333,6 +336,413 @@ class api_testcase extends \advanced_testcase {
     }
 
     /**
+     * Test the behaviour of get_original_content_from_pluginfile_url().
+     *
+     * @covers ::get_original_content_from_pluginfile_url
+     */
+    public function test_get_original_content_from_pluginfile_url(): void {
+        $this->setRunTestInSeparateProcess(true);
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $factory = new factory();
+        $syscontext = \context_system::instance();
+
+        // Create the original file.
+        $filename = 'greeting-card-887.h5p';
+        $path = __DIR__ . '/fixtures/' . $filename;
+        $originalfile = helper::create_fake_stored_file_from_path($path);
+        $originalfilerecord = [
+            'contextid' => $originalfile->get_contextid(),
+            'component' => $originalfile->get_component(),
+            'filearea'  => $originalfile->get_filearea(),
+            'itemid'    => $originalfile->get_itemid(),
+            'filepath'  => $originalfile->get_filepath(),
+            'filename'  => $originalfile->get_filename(),
+        ];
+
+        $config = (object)[
+            'frame' => 1,
+            'export' => 1,
+            'embed' => 0,
+            'copyright' => 0,
+        ];
+
+        $originalurl = \moodle_url::make_pluginfile_url(
+            $originalfile->get_contextid(),
+            $originalfile->get_component(),
+            $originalfile->get_filearea(),
+            $originalfile->get_itemid(),
+            $originalfile->get_filepath(),
+            $originalfile->get_filename()
+        );
+
+        // Create a reference to the original file.
+        $reffilerecord = [
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'phpunit',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => $filename
+        ];
+
+        $fs = get_file_storage();
+        $ref = $fs->pack_reference($originalfilerecord);
+        $repos = \repository::get_instances(['type' => 'user']);
+        $userrepository = reset($repos);
+        $referencedfile = $fs->create_file_from_reference($reffilerecord, $userrepository->id, $ref);
+        $this->assertEquals($referencedfile->get_contenthash(), $originalfile->get_contenthash());
+
+        $referencedurl = \moodle_url::make_pluginfile_url(
+            $syscontext->id,
+            'core',
+            'phpunit',
+            0,
+            '/',
+            $filename
+        );
+
+        // Scenario 1: Original file (without any reference).
+        $originalh5pid = helper::save_h5p($factory, $originalfile, $config);
+        list($source, $h5p, $file) = api::get_original_content_from_pluginfile_url($originalurl->out());
+        $this->assertEquals($originalfile->get_pathnamehash(), $source->get_pathnamehash());
+        $this->assertEquals($originalfile->get_contenthash(), $source->get_contenthash());
+        $this->assertEquals($originalh5pid, $h5p->id);
+        $this->assertFalse($file);
+
+        // Scenario 2: Referenced file (alias to originalfile).
+        list($source, $h5p, $file) = api::get_original_content_from_pluginfile_url($referencedurl->out());
+        $this->assertEquals($originalfile->get_pathnamehash(), $source->get_pathnamehash());
+        $this->assertEquals($originalfile->get_contenthash(), $source->get_contenthash());
+        $this->assertEquals($originalfile->get_contenthash(), $source->get_contenthash());
+        $this->assertEquals($originalh5pid, $h5p->id);
+        $this->assertEquals($referencedfile->get_pathnamehash(), $file->get_pathnamehash());
+        $this->assertEquals($referencedfile->get_contenthash(), $file->get_contenthash());
+        $this->assertEquals($referencedfile->get_contenthash(), $file->get_contenthash());
+
+        // Scenario 3: Unexisting file.
+        $unexistingurl = \moodle_url::make_pluginfile_url(
+            $syscontext->id,
+            'core',
+            'phpunit',
+            0,
+            '/',
+            'unexisting.h5p'
+        );
+        list($source, $h5p, $file) = api::get_original_content_from_pluginfile_url($unexistingurl->out());
+        $this->assertFalse($source);
+        $this->assertFalse($h5p);
+        $this->assertFalse($file);
+    }
+
+    /**
+     * Test the behaviour of can_edit_content().
+     *
+     * @covers ::can_edit_content
+     * @dataProvider can_edit_content_provider
+     *
+     * @param string $currentuser User who will call the method.
+     * @param string $fileauthor Author of the file to check.
+     * @param string $filecomponent Component of the file to check.
+     * @param bool $expected Expected result after calling the can_edit_content method.
+     * @param string $filearea Area of the file to check.
+     *
+     * @return void
+     */
+    public function test_can_edit_content(string $currentuser, string $fileauthor, string $filecomponent, bool $expected,
+            $filearea = 'unittest'): void {
+        global $USER, $DB;
+
+        $this->setRunTestInSeparateProcess(true);
+        $this->resetAfterTest();
+
+        // Create course.
+        $course = $this->getDataGenerator()->create_course();
+        $context = \context_course::instance($course->id);
+
+        // Create some users.
+        $this->setAdminUser();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $users = [
+            'admin' => $USER,
+            'teacher' => $teacher,
+            'student' => $student,
+        ];
+
+        // Set current user.
+        if ($currentuser !== 'admin') {
+            $this->setUser($users[$currentuser]);
+        }
+
+        $itemid = rand();
+        if ($filearea === 'post') {
+            // Create a forum and add a discussion.
+            $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+            $record = new stdClass();
+            $record->course = $course->id;
+            $record->userid = $users[$fileauthor]->id;
+            $record->forum = $forum->id;
+            $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+            $post = $DB->get_record('forum_posts', ['discussion' => $discussion->id]);
+            $itemid = $post->id;
+        }
+
+        // Create the file.
+        $filename = 'greeting-card-887.h5p';
+        $path = __DIR__ . '/fixtures/' . $filename;
+        if ($filecomponent === 'contentbank') {
+            $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+            $contents = $generator->generate_contentbank_data(
+                'contenttype_h5p',
+                1,
+                (int)$users[$fileauthor]->id,
+                $context,
+                true,
+                $path
+            );
+            $content = array_shift($contents);
+            $file = $content->get_file();
+        } else {
+            $filerecord = [
+                'contextid' => $context->id,
+                'component' => $filecomponent,
+                'filearea'  => $filearea,
+                'itemid'    => $itemid,
+                'filepath'  => '/',
+                'filename'  => basename($path),
+                'userid'    => $users[$fileauthor]->id,
+            ];
+            $fs = get_file_storage();
+            $file = $fs->create_file_from_pathname($filerecord, $path);
+        }
+
+        // Check if the currentuser can edit the file.
+        $result = api::can_edit_content($file);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Data provider for test_can_edit_content().
+     *
+     * @return array
+     */
+    public function can_edit_content_provider(): array {
+        return [
+            // Component = user.
+            'user: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'user',
+                'expected' => true,
+            ],
+            'user: Admin user, teacher is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'user',
+                'expected' => false,
+            ],
+            'user: Teacher user, teacher is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'user',
+                'expected' => true,
+            ],
+            'user: Teacher user, admin is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'user',
+                'expected' => false,
+            ],
+            'user: Student user, student is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'student',
+                'filecomponent' => 'user',
+                'expected' => true,
+            ],
+            'user: Student user, teacher is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'user',
+                'expected' => false,
+            ],
+
+            // Component = mod_h5pactivity.
+            'mod_h5pactivity: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => true,
+            ],
+            'mod_h5pactivity: Admin user, teacher is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => true,
+            ],
+            'mod_h5pactivity: Teacher user, teacher is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => true,
+            ],
+            'mod_h5pactivity: Teacher user, admin is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => true,
+            ],
+            'mod_h5pactivity: Student user, student is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'student',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => false,
+            ],
+            'mod_h5pactivity: Student user, teacher is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_h5pactivity',
+                'expected' => false,
+            ],
+
+            // Component = mod_book.
+            'mod_book: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_book',
+                'expected' => true,
+            ],
+            'mod_book: Admin user, teacher is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_book',
+                'expected' => true,
+            ],
+
+            // Component = mod_forum.
+            'mod_forum: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_forum',
+                'expected' => true,
+            ],
+            'mod_forum: Admin user, teacher is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_forum',
+                'expected' => true,
+            ],
+            'mod_forum: Teacher user, admin is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_forum',
+                'expected' => true,
+            ],
+            'mod_forum: Student user, teacher is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_forum',
+                'expected' => false,
+            ],
+            'mod_forum/post: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_forum',
+                'expected' => true,
+                'filearea' => 'post',
+            ],
+            'mod_forum/post: Teacher user, admin is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_forum',
+                'expected' => true,
+                'filearea' => 'post',
+            ],
+            'mod_forum/post: Student user, teacher is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'mod_forum',
+                'expected' => false,
+                'filearea' => 'post',
+            ],
+
+            // Component = block_html.
+            'block_html: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'block_html',
+                'expected' => true,
+            ],
+            'block_html: Admin user, teacher is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'block_html',
+                'expected' => true,
+            ],
+
+            // Component = contentbank.
+            'contentbank: Admin user is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'contentbank',
+                'expected' => true,
+            ],
+            'contentbank: Admin user, teacher is author' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'contentbank',
+                'expected' => true,
+            ],
+            'contentbank: Teacher user, teacher is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'contentbank',
+                'expected' => true,
+            ],
+            'contentbank: Teacher user, admin is author' => [
+                'currentuser' => 'teacher',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'contentbank',
+                'expected' => false,
+            ],
+            'contentbank: Student user, student is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'student',
+                'filecomponent' => 'contentbank',
+                'expected' => false,
+            ],
+            'contentbank: Student user, teacher is author' => [
+                'currentuser' => 'student',
+                'fileauthor' => 'teacher',
+                'filecomponent' => 'contentbank',
+                'expected' => false,
+            ],
+
+            // Unexisting components.
+            'Unexisting component' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'unexisting_component',
+                'expected' => false,
+            ],
+            'Unexisting module activity' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'mod_unexisting',
+                'expected' => false,
+            ],
+            'Unexisting block' => [
+                'currentuser' => 'admin',
+                'fileauthor' => 'admin',
+                'filecomponent' => 'block_unexisting',
+                'expected' => false,
+            ],
+        ];
+    }
+
+    /**
      * Test the behaviour of create_content_from_pluginfile_url().
      */
     public function test_create_content_from_pluginfile_url(): void {
@@ -502,5 +912,340 @@ class api_testcase extends \advanced_testcase {
             \core_h5p\file_storage::COMPONENT,
             \core_h5p\file_storage::EXPORT_FILEAREA);
         $this->assertNull($exportfile);
+    }
+
+    /**
+     * Test the behaviour of set_library_enabled().
+     *
+     * @covers ::set_library_enabled
+     * @dataProvider set_library_enabled_provider
+     *
+     * @param string $libraryname Library name to enable/disable.
+     * @param string $action Action to be done with the library. Supported values: enable, disable.
+     * @param int $expected Expected value for the enabled library field. -1 will be passed if the library doesn't exist.
+     */
+    public function test_set_library_enabled(string $libraryname, string $action, int $expected): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create libraries.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $generator->generate_h5p_data();
+
+        // Check by default the library is enabled.
+        $library = $DB->get_record('h5p_libraries', ['machinename' => $libraryname]);
+        if ($expected >= 0) {
+            $this->assertEquals(1, $library->enabled);
+            $libraryid = (int) $library->id;
+        } else {
+            // Unexisting library. Set libraryid to some unexisting id.
+            $libraryid = -1;
+            $this->expectException('dml_missing_record_exception');
+        }
+
+        \core_h5p\api::set_library_enabled($libraryid, ($action == 'enable'));
+
+        // Check the value of the "enabled" field after calling enable/disable method.
+        $libraries = $DB->get_records('h5p_libraries');
+        foreach ($libraries as $libraryid => $library) {
+            if ($library->machinename == $libraryname) {
+                $this->assertEquals($expected, $library->enabled);
+            } else {
+                // Check that only $libraryname has been enabled/disabled.
+                $this->assertEquals(1, $library->enabled);
+            }
+        }
+    }
+
+    /**
+     * Data provider for test_set_library_enabled().
+     *
+     * @return array
+     */
+    public function set_library_enabled_provider(): array {
+        return [
+            'Disable existing library' => [
+                'libraryname' => 'MainLibrary',
+                'action' => 'disable',
+                'expected' => 0,
+            ],
+            'Enable existing library' => [
+                'libraryname' => 'MainLibrary',
+                'action' => 'enable',
+                'expected' => 1,
+            ],
+            'Disable existing library (not main)' => [
+                'libraryname' => 'Library1',
+                'action' => 'disable',
+                'expected' => 0,
+            ],
+            'Enable existing library (not main)' => [
+                'libraryname' => 'Library1',
+                'action' => 'enable',
+                'expected' => 1,
+            ],
+            'Disable existing library (not runnable)' => [
+                'libraryname' => 'Library3',
+                'action' => 'disable',
+                'expected' => 1, // Not runnable libraries can't be disabled.
+            ],
+            'Enable existing library (not runnable)' => [
+                'libraryname' => 'Library3',
+                'action' => 'enable',
+                'expected' => 1,
+            ],
+            'Enable unexisting library' => [
+                'libraryname' => 'Unexisting library',
+                'action' => 'enable',
+                'expected' => -1,
+            ],
+            'Disable unexisting library' => [
+                'libraryname' => 'Unexisting library',
+                'action' => 'disable',
+                'expected' => -1,
+            ],
+        ];
+    }
+
+    /**
+     * Test the behaviour of is_library_enabled().
+     *
+     * @covers ::is_library_enabled
+     * @dataProvider is_library_enabled_provider
+     *
+     * @param string $libraryname Library name to check.
+     * @param bool $expected Expected result after calling the method.
+     * @param bool $exception Exception expected or not.
+     * @param bool $useid Whether to use id for calling is_library_enabled method.
+     * @param bool $uselibraryname Whether to use libraryname for calling is_library_enabled method.
+     */
+    public function test_is_library_enabled(string $libraryname, bool $expected, bool $exception = false,
+        bool $useid = false, bool $uselibraryname = true): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create the following libraries:
+        // - H5P.Lib1: 1 version enabled, 1 version disabled.
+        // - H5P.Lib2: 2 versions enabled.
+        // - H5P.Lib3: 2 versions disabled.
+        // - H5P.Lib4: 1 version disabled.
+        // - H5P.Lib5: 1 version enabled.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $libraries = [
+            'H5P.Lib1.1' => $generator->create_library_record('H5P.Lib1', 'Lib1', 1, 1, 0, '', null, null, null, false),
+            'H5P.Lib1.2' => $generator->create_library_record('H5P.Lib1', 'Lib1', 1, 2),
+            'H5P.Lib2.1' => $generator->create_library_record('H5P.Lib2', 'Lib2', 2, 1),
+            'H5P.Lib2.2' => $generator->create_library_record('H5P.Lib2', 'Lib2', 2, 2),
+            'H5P.Lib3.1' => $generator->create_library_record('H5P.Lib3', 'Lib3', 3, 1, 0, '', null, null, null, false),
+            'H5P.Lib3.2' => $generator->create_library_record('H5P.Lib3', 'Lib3', 3, 2, 0, '', null, null, null, false),
+            'H5P.Lib4.1' => $generator->create_library_record('H5P.Lib4', 'Lib4', 4, 1, 0, '', null, null, null, false),
+            'H5P.Lib5.1' => $generator->create_library_record('H5P.Lib5', 'Lib5', 5, 1),
+        ];
+
+        $countenabledlibraries = $DB->count_records('h5p_libraries', ['enabled' => 1]);
+        $this->assertEquals(4, $countenabledlibraries);
+
+        if ($useid) {
+            $librarydata = ['id' => $libraries[$libraryname]->id];
+        } else if ($uselibraryname) {
+            $librarydata = ['machinename' => $libraryname];
+        } else {
+            $librarydata = ['invalid' => true];
+        }
+
+        if ($exception) {
+            $this->expectException(\moodle_exception::class);
+        }
+
+        $result = api::is_library_enabled((object) $librarydata);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Data provider for test_is_library_enabled().
+     *
+     * @return array
+     */
+    public function is_library_enabled_provider(): array {
+        return [
+            'Library with 2 versions, one of them disabled' => [
+                'libraryname' => 'H5P.Lib1',
+                'expected' => false,
+            ],
+            'Library with 2 versions, all enabled' => [
+                'libraryname' => 'H5P.Lib2',
+                'expected' => true,
+            ],
+            'Library with 2 versions, all disabled' => [
+                'libraryname' => 'H5P.Lib3',
+                'expected' => false,
+            ],
+            'Library with only one version, disabled' => [
+                'libraryname' => 'H5P.Lib4',
+                'expected' => false,
+            ],
+            'Library with only one version, enabled' => [
+                'libraryname' => 'H5P.Lib5',
+                'expected' => true,
+            ],
+            'Library with 2 versions, one of them disabled (using id) - 1.1 (disabled)' => [
+                'libraryname' => 'H5P.Lib1.1',
+                'expected' => false,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with 2 versions, one of them disabled (using id) - 1.2 (enabled)' => [
+                'libraryname' => 'H5P.Lib1.2',
+                'expected' => true,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with 2 versions, all enabled (using id) - 2.1' => [
+                'libraryname' => 'H5P.Lib2.1',
+                'expected' => true,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with 2 versions, all enabled (using id) - 2.2' => [
+                'libraryname' => 'H5P.Lib2.2',
+                'expected' => true,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with 2 versions, all disabled (using id) - 3.1' => [
+                'libraryname' => 'H5P.Lib3.1',
+                'expected' => false,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with 2 versions, all disabled (using id) - 3.2' => [
+                'libraryname' => 'H5P.Lib3.2',
+                'expected' => false,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with only one version, disabled (using id)' => [
+                'libraryname' => 'H5P.Lib4.1',
+                'expected' => false,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with only one version, enabled (using id)' => [
+                'libraryname' => 'H5P.Lib5.1',
+                'expected' => true,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Unexisting library' => [
+                'libraryname' => 'H5P.Unexisting',
+                'expected' => true,
+            ],
+            'Missing required parameters' => [
+                'libraryname' => 'H5P.Unexisting',
+                'expected' => false,
+                'exception' => true,
+                'useid' => false,
+                'uselibraryname' => false,
+            ],
+        ];
+    }
+
+    /**
+     * Test the behaviour of is_valid_package().
+     * @runInSeparateProcess
+     *
+     * @covers ::is_valid_package
+     * @dataProvider is_valid_package_provider
+     *
+     * @param string $filename The H5P content to validate.
+     * @param bool $expected Expected result after calling the method.
+     * @param bool $isadmin Whether the user calling the method will be admin or not.
+     * @param bool $onlyupdatelibs Whether new libraries can be installed or only the existing ones can be updated.
+     * @param bool $skipcontent Should the content be skipped (so only the libraries will be saved)?
+     */
+    public function test_is_valid_package(string $filename, bool $expected, bool $isadmin = false, bool $onlyupdatelibs = false,
+            bool $skipcontent = false): void {
+        global $USER;
+
+        $this->resetAfterTest();
+
+        if ($isadmin) {
+            $this->setAdminUser();
+            $user = $USER;
+        } else {
+            // Create a user.
+            $user = $this->getDataGenerator()->create_user();
+            $this->setUser($user);
+        }
+
+        // Prepare the file.
+        $path = __DIR__ . $filename;
+        $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
+
+        // Check if the H5P content is valid or not.
+        $result = api::is_valid_package($file, $onlyupdatelibs, $skipcontent);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Data provider for test_is_valid_package().
+     *
+     * @return array
+     */
+    public function is_valid_package_provider(): array {
+        return [
+            'Valid H5P file (as admin)' => [
+                'filename' => '/fixtures/greeting-card-887.h5p',
+                'expected' => true,
+                'isadmin' => true,
+            ],
+            'Valid H5P file (as user) without library update and checking content' => [
+                'filename' => '/fixtures/greeting-card-887.h5p',
+                'expected' => false, // Libraries are missing and user hasn't the right permissions to upload them.
+                'isadmin' => false,
+                'onlyupdatelibs' => false,
+                'skipcontent' => false,
+            ],
+            'Valid H5P file (as user) with library update and checking content' => [
+                'filename' => '/fixtures/greeting-card-887.h5p',
+                'expected' => false, // Libraries are missing and user hasn't the right permissions to upload them.
+                'isadmin' => false,
+                'onlyupdatelibs' => true,
+                'skipcontent' => false,
+            ],
+            'Valid H5P file (as user) without library update and skipping content' => [
+                'filename' => '/fixtures/greeting-card-887.h5p',
+                'expected' => true, // Content check is skipped so the package will be considered valid.
+                'isadmin' => false,
+                'onlyupdatelibs' => false,
+                'skipcontent' => true,
+            ],
+            'Valid H5P file (as user) with library update and skipping content' => [
+                'filename' => '/fixtures/greeting-card-887.h5p',
+                'expected' => true, // Content check is skipped so the package will be considered valid.
+                'isadmin' => false,
+                'onlyupdatelibs' => true,
+                'skipcontent' => true,
+            ],
+            'Invalid H5P file (as admin)' => [
+                'filename' => '/fixtures/h5ptest.zip',
+                'expected' => false,
+                'isadmin' => true,
+            ],
+            'Invalid H5P file (as user)' => [
+                'filename' => '/fixtures/h5ptest.zip',
+                'expected' => false,
+                'isadmin' => false,
+            ],
+            'Invalid H5P file (as user) skipping content' => [
+                'filename' => '/fixtures/h5ptest.zip',
+                'expected' => true, // Content check is skipped so the package will be considered valid.
+                'isadmin' => false,
+                'onlyupdatelibs' => false,
+                'skipcontent' => true,
+            ],
+        ];
     }
 }

@@ -207,7 +207,8 @@ abstract class base_moodleform extends moodleform {
             $this->add_html_formatting($setting);
 
             // Then call the add method with the get_element_properties array.
-            call_user_func_array(array($this->_form, 'addElement'), $setting->get_ui()->get_element_properties($task, $OUTPUT));
+            call_user_func_array(array($this->_form, 'addElement'),
+                array_values($setting->get_ui()->get_element_properties($task, $OUTPUT)));
             $this->_form->setType($setting->get_ui_name(), $setting->get_param_validation());
             $defaults[$setting->get_ui_name()] = $setting->get_value();
             if ($setting->has_help()) {
@@ -317,7 +318,7 @@ abstract class base_moodleform extends moodleform {
             $label = format_string($settingui->get_label($task), true, array('context' => $context));
             $labelicon = $settingui->get_icon();
             if (!empty($labelicon)) {
-                $label .= '&nbsp;'.$OUTPUT->render($labelicon);
+                $label .= $OUTPUT->render($labelicon);
             }
             $this->_form->addElement('static', 'static_'.$settingui->get_name(), $label, $settingui->get_static_value().$icon);
             $this->_form->addElement('html', html_writer::end_tag('div'));
@@ -335,7 +336,7 @@ abstract class base_moodleform extends moodleform {
         $mform = $this->_form;
         // Apply all dependencies for backup.
         foreach ($setting->get_my_dependency_properties() as $key => $dependency) {
-            call_user_func_array(array($this->_form, 'disabledIf'), $dependency);
+            call_user_func_array(array($this->_form, 'disabledIf'), array_values($dependency));
         }
     }
 

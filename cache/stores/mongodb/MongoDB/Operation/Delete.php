@@ -27,6 +27,7 @@ use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
 use function is_array;
 use function is_object;
+use function is_string;
 use function MongoDB\server_supports_feature;
 
 /**
@@ -42,6 +43,9 @@ class Delete implements Executable, Explainable
 {
     /** @var integer */
     private static $wireVersionForCollation = 5;
+
+    /** @var int */
+    private static $wireVersionForHintServerSideError = 5;
 
     /** @var string */
     private $databaseName;
@@ -66,6 +70,13 @@ class Delete implements Executable, Explainable
      *  * collation (document): Collation specification.
      *
      *    This is not supported for server versions < 3.4 and will result in an
+     *    exception at execution time if used.
+     *
+     *  * hint (string|document): The index to use. Specify either the index
+     *    name as a string or the index key pattern as a document. If specified,
+     *    then the query system will only consider plans using the hinted index.
+     *
+     *    This is not supported for server versions < 4.4 and will result in an
      *    exception at execution time if used.
      *
      *  * session (MongoDB\Driver\Session): Client session.
@@ -95,6 +106,10 @@ class Delete implements Executable, Explainable
 
         if (isset($options['collation']) && ! is_array($options['collation']) && ! is_object($options['collation'])) {
             throw InvalidArgumentException::invalidType('"collation" option', $options['collation'], 'array or object');
+        }
+
+        if (isset($options['hint']) && ! is_string($options['hint']) && ! is_array($options['hint']) && ! is_object($options['hint'])) {
+            throw InvalidArgumentException::invalidType('"hint" option', $options['hint'], ['string', 'array', 'object']);
         }
 
         if (isset($options['session']) && ! $options['session'] instanceof Session) {
@@ -128,6 +143,13 @@ class Delete implements Executable, Explainable
     {
         if (isset($this->options['collation']) && ! server_supports_feature($server, self::$wireVersionForCollation)) {
             throw UnsupportedException::collationNotSupported();
+        }
+
+        /* Server versions >= 3.4.0 raise errors for unknown update
+         * options. For previous versions, the CRUD spec requires a client-side
+         * error. */
+        if (isset($this->options['hint']) && ! server_supports_feature($server, self::$wireVersionForHintServerSideError)) {
+            throw UnsupportedException::hintNotSupported();
         }
 
         $inTransaction = isset($this->options['session']) && $this->options['session']->isInTransaction();
@@ -168,6 +190,10 @@ class Delete implements Executable, Explainable
 
         if (isset($this->options['collation'])) {
             $deleteOptions['collation'] = (object) $this->options['collation'];
+        }
+
+        if (isset($this->options['hint'])) {
+            $deleteOptions['hint'] = $this->options['hint'];
         }
 
         return $deleteOptions;

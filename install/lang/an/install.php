@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -37,6 +36,7 @@ $string['chooselanguagesub'] = 'Per favor, tríe un idioma pa lo proceso d\'inst
 $string['clialreadyconfigured'] = 'Lo fichero de configuración config.php ya existe. Per favor, faga servir admin/cli/install_database.php pa instalar Moodle en este puesto.';
 $string['clialreadyinstalled'] = 'Lo fichero de configuración config.php ya existe. Per favor, faga servir admin/cli/install_database.php pa actualizar Moodle en este puesto.';
 $string['cliinstallheader'] = 'Programa d\'instalación Moodle de linia de comando {$a}';
+$string['clitablesexist'] = 'Tablas de base de datos ya existents, la instalación CLI no puede continar.';
 $string['databasehost'] = 'Servidor d\'a base de datos';
 $string['databasename'] = 'Nombre d\'a base de datos';
 $string['databasetypehead'] = 'Tríe lo controlador d\'a base de datos';

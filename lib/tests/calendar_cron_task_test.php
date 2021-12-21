@@ -39,7 +39,7 @@ class core_calendar_cron_task_testcase extends advanced_testcase {
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
     }
 
@@ -58,9 +58,13 @@ class core_calendar_cron_task_testcase extends advanced_testcase {
         $subscription->lastupdated = 0;
         calendar_add_subscription($subscription);
 
-        $this->expectOutputRegex('/Events imported: .* Events skipped: .* Events updated:/');
         $task = new \core\task\calendar_cron_task();
+        ob_start();
         $task->execute();
+        $output = ob_get_clean();
+        $this->assertStringContainsString('events were imported', $output);
+        $this->assertStringContainsString('events were skipped', $output);
+        $this->assertStringContainsString('events were updated', $output);
     }
 
     /**

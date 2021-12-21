@@ -526,10 +526,6 @@ class core_competency_plan_testcase extends advanced_testcase {
         $this->assertCount(0, $plans);
     }
 
-    /**
-     * @expectedException        coding_exception
-     * @expectedExceptionMessage The competency does not belong to this template:
-     */
     public function test_get_competency() {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -571,6 +567,8 @@ class core_competency_plan_testcase extends advanced_testcase {
         $this->assertEquals($c4->to_record(), $p4->get_competency($c4->get('id'))->to_record());
 
         // Getting the competency 4 from the non-completed plan based on a template p4, will throw an exception.
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('The competency does not belong to this template:');
         $p3->get_competency($c4->get('id'));
     }
 }

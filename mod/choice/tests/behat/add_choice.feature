@@ -16,14 +16,9 @@ Feature: Add choice activity
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
-    And I log out
+    And the following "activities" exist:
+      | activity | name        | intro              | course | idnumber | option             | section |
+      | choice   | Choice name | Choice Description | C1     | choice1  | Option 1, Option 2 | 1       |
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I choose "Option 1" from "Choice name" choice activity

@@ -17,29 +17,28 @@
  * Contain the logic for the add random question modal.
  *
  * @module     mod_quiz/modal_add_random_question
- * @package    mod_quiz
  * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([
     'jquery',
-    'core/yui',
     'core/notification',
     'core/modal',
     'core/modal_events',
     'core/modal_registry',
     'core/fragment',
     'core/templates',
+    'core_form/changechecker',
 ],
 function(
     $,
-    Y,
     Notification,
     Modal,
     ModalEvents,
     ModalRegistry,
     Fragment,
-    Templates
+    Templates,
+    FormChangeChecker,
 ) {
 
     var registered = false;
@@ -273,12 +272,9 @@ function(
             return;
         }.bind(this))
         .then(function() {
-            // Make sure the form change checker is disabled otherwise it'll
-            // stop the user from navigating away from the page once the modal
-            // is hidden.
-            Y.use('moodle-core-formchangechecker', function() {
-                M.core_formchangechecker.reset_form_dirty_state();
-            });
+            // Make sure the form change checker is disabled otherwise it'll stop the user from navigating away from the
+            // page once the modal is hidden.
+            FormChangeChecker.disableAllChecks();
             return;
         })
         .fail(Notification.exception);

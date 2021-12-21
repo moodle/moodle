@@ -17,7 +17,6 @@
  * JavaScript to allow dragging options to slots (using mouse down or touch) or tab through slots using keyboard.
  *
  * @module     qtype_ddimageortext/question
- * @package    qtype_ddimageortext
  * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -311,7 +310,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             newIndex = currentIndex + 2;
 
         var info = dragDrop.prepare(e);
-        if (!info.start) {
+        if (!info.start || drag.hasClass('beingdragged')) {
             return;
         }
 
@@ -364,10 +363,12 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      * @param {jQuery} drag the item being moved.
      */
     DragDropOntoImageQuestion.prototype.dragMove = function(pageX, pageY, drag) {
-        var thisQ = this;
+        var thisQ = this,
+            highlighted = false;
         this.getRoot().find('.dropzone.group' + this.getGroup(drag)).each(function(i, dropNode) {
             var drop = $(dropNode);
-            if (thisQ.isPointInDrop(pageX, pageY, drop)) {
+            if (thisQ.isPointInDrop(pageX, pageY, drop) && !highlighted) {
+                highlighted = true;
                 drop.addClass('valid-drag-over-drop');
             } else {
                 drop.removeClass('valid-drag-over-drop');
@@ -375,7 +376,8 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         });
         this.getRoot().find('.draghome.placed.group' + this.getGroup(drag)).not('.beingdragged').each(function(i, dropNode) {
             var drop = $(dropNode);
-            if (thisQ.isPointInDrop(pageX, pageY, drop)) {
+            if (thisQ.isPointInDrop(pageX, pageY, drop) && !highlighted && !thisQ.isDragSameAsDrop(drag, drop)) {
+                highlighted = true;
                 drop.addClass('valid-drag-over-drop');
             } else {
                 drop.removeClass('valid-drag-over-drop');
@@ -394,6 +396,8 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         var thisQ = this,
             root = this.getRoot(),
             placed = false;
+
+        // Looking for drag that was dropped on a dropzone.
         root.find('.dropzone.group' + this.getGroup(drag)).each(function(i, dropNode) {
             var drop = $(dropNode);
             if (!thisQ.isPointInDrop(pageX, pageY, drop)) {
@@ -408,21 +412,24 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             return false; // Stop the each() here.
         });
 
-        root.find('.draghome.placed.group' + this.getGroup(drag)).not('.beingdragged').each(function(i, placedNode) {
-            var placedDrag = $(placedNode);
-            if (!thisQ.isPointInDrop(pageX, pageY, placedDrag)) {
-                // Not this placed drag.
-                return true;
-            }
+        if (!placed) {
+            // Looking for drag that was dropped on a placed drag.
+            root.find('.draghome.placed.group' + this.getGroup(drag)).not('.beingdragged').each(function(i, placedNode) {
+                var placedDrag = $(placedNode);
+                if (!thisQ.isPointInDrop(pageX, pageY, placedDrag) || thisQ.isDragSameAsDrop(drag, placedDrag)) {
+                    // Not this placed drag.
+                    return true;
+                }
 
-            // Now put this drag into the drop.
-            placedDrag.removeClass('valid-drag-over-drop');
-            var currentPlace = thisQ.getClassnameNumericSuffix(placedDrag, 'inplace');
-            var drop = thisQ.getDrop(drag, currentPlace);
-            thisQ.sendDragToDrop(drag, drop);
-            placed = true;
-            return false; // Stop the each() here.
-        });
+                // Now put this drag into the drop.
+                placedDrag.removeClass('valid-drag-over-drop');
+                var currentPlace = thisQ.getClassnameNumericSuffix(placedDrag, 'inplace');
+                var drop = thisQ.getDrop(drag, currentPlace);
+                thisQ.sendDragToDrop(drag, drop);
+                placed = true;
+                return false; // Stop the each() here.
+            });
+        }
 
         if (!placed) {
             this.sendDragHome(drag);
@@ -918,6 +925,17 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
     };
 
     /**
+     * Check that the drag is drop to it's clone.
+     *
+     * @param {jQuery} drag The drag.
+     * @param {jQuery} drop The drop.
+     * @returns {boolean}
+     */
+    DragDropOntoImageQuestion.prototype.isDragSameAsDrop = function(drag, drop) {
+        return this.getChoice(drag) === this.getChoice(drop) && this.getGroup(drag) === this.getGroup(drop);
+    };
+
+    /**
      * Singleton object that handles all the DragDropOntoImageQuestions
      * on the page, and deals with event dispatching.
      * @type {Object}
@@ -928,6 +946,12 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
          * {boolean} ensures that the event handlers are only initialised once per page.
          */
         eventHandlersInitialised: false,
+
+        /**
+         * {Object} ensures that the drag event handlers are only initialised once per question,
+         * indexed by containerId (id on the .que div).
+         */
+        dragEventHandlersInitialised: {},
 
         /**
          * {boolean} is printing or not.
@@ -947,6 +971,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         /**
          * Initialise one question.
          *
+         * @method
          * @param {String} containerId the id of the div.que that contains this question.
          * @param {boolean} readOnly whether the question is read-only.
          * @param {Array} places data.
@@ -958,14 +983,22 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                 questionManager.setupEventHandlers();
                 questionManager.eventHandlersInitialised = true;
             }
+            if (!questionManager.dragEventHandlersInitialised.hasOwnProperty(containerId)) {
+                questionManager.dragEventHandlersInitialised[containerId] = true;
+                // We do not use the body event here to prevent the other event on Mobile device, such as scroll event.
+                var questionContainer = document.getElementById(containerId);
+                if (questionContainer.classList.contains('ddimageortext') &&
+                    !questionContainer.classList.contains('qtype_ddimageortext-readonly')) {
+                    // TODO: Convert all the jQuery selectors and events to native Javascript.
+                    questionManager.addEventHandlersToDrag($(questionContainer).find('.draghome'));
+                }
+            }
         },
 
         /**
          * Set up the event handlers that make this question type work. (Done once per page.)
          */
         setupEventHandlers: function() {
-            // We do not use the body event here to prevent the other event on Mobile device, such as scroll event.
-            questionManager.addEventHandlersToDrag($('.que.ddimageortext:not(.qtype_ddimageortext-readonly) .draghome'));
             $('body')
                 .on('keydown',
                     '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .dropzones .dropzone',
@@ -996,6 +1029,8 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
          * @param {jQuery} element Element to bind the event
          */
         addEventHandlersToDrag: function(element) {
+            // Unbind all the mousedown and touchstart events to prevent double binding.
+            element.unbind('mousedown touchstart');
             element.on('mousedown touchstart', questionManager.handleDragStart);
         },
 
@@ -1108,13 +1143,6 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      * @alias module:qtype_ddimageortext/question
      */
     return {
-        /**
-         * Initialise one drag-drop onto image question.
-         *
-         * @param {String} containerId id of the outer div for this question.
-         * @param {boolean} readOnly whether the question is being displayed read-only.
-         * @param {Array} Information about the drop places.
-         */
         init: questionManager.init
     };
 });

@@ -51,7 +51,7 @@ abstract class restore_date_testcase extends advanced_testcase {
     /**
      * Setup.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
 
         parent::setUp();

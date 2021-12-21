@@ -40,7 +40,7 @@
     }
 }}
 
-<div id="core_user-participantsfilter-{{uniqid}}" class="filter-group my-2 p-2 bg-light border-radius border" data-table-region="{{tableregionid}}" data-table-course-id="{{courseid}}" data-filterverb="1">
+<div id="core_user-participantsfilter-{{uniqid}}" class="filter-group my-2 p-2 bg-light border-radius border" data-table-region="{{tableregionid}}" data-table-course-id="{{courseid}}" data-filterverb="2">
     <div data-filterregion="filtermatch" class="hidden">
         <label for="core_user-local-participantsfilter-jointype-{{uniqid}}" class="my-0" aria-hidden="true">
             {{#str}}match, core_user{{/str}}
@@ -48,8 +48,8 @@
         <select class="custom-select" data-filterfield="join" id="core_user-local-participantsfilter-jointype-{{uniqid}}"
                 aria-label="{{#str}}filtersetmatchdescription, core_user{{/str}}">
             <option value="0">{{#str}}none{{/str}}</option>
-            <option selected=selected value="1">{{#str}}any{{/str}}</option>
-            <option value="2">{{#str}}all{{/str}}</option>
+            <option value="1">{{#str}}any{{/str}}</option>
+            <option value="2" selected>{{#str}}all{{/str}}</option>
         </select>
         <span aria-hidden="true">{{#str}}matchofthefollowing, core_user{{/str}}</span>
     </div>

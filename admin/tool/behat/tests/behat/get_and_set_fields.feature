@@ -33,8 +33,7 @@ Feature: Verify that all form fields values can be get and set
       | activity | course | idnumber | name | intro | firstpagetitle | wikimode | visible |
       | wiki | C1 | wiki1 | Test this one | Test this one | Test this one | collaborative | 0 |
     And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    And I am on the "Course 1" "reset" page
     # Select (multi-select) - Checking "the select box should contain".
     And I expand all fieldsets
     And the "Unenrol users" select box should contain "No roles"
@@ -48,7 +47,7 @@ Feature: Verify that all form fields values can be get and set
     And the "Unenrol users" select box should not contain "Baker"
     And the "Unenrol users" select box should not contain "President, Baker"
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test this one"
+    And I am on the "Test this one" "wiki activity" page
     And I press "Create page"
     # Text (textarea & editor) & Select (multi-select) - Checking "I set the following fields to these values".
     When I set the following fields to these values:
@@ -56,23 +55,21 @@ Feature: Verify that all form fields values can be get and set
     And I press "Save"
     Then I should see "Student page contents" in the "region-main" "region"
     # Select (multi-select) - Checking "I set the field".
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     # Checkbox - Checking "I set the field" and "The field matches value" ticked.
     And I set the field "Force format" to "1"
     And I press "Save and return to course"
-    And I should see "Test this one"
-    And I follow "Test this one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test this one" "wiki activity" page
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And the field "Force format" matches value "1"
     And the field "Force format" does not match value ""
     # Checkbox - Checking "I set the field" and "The field matches value" unticked.
     And I set the field "Force format" to ""
     And I press "Save and return to course"
-    And I should see "Test this one"
-    And I follow "Test this one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test this one" "wiki activity" page
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And the field "Force format" matches value ""
     And the field "Force format" does not match value "1"
@@ -80,9 +77,8 @@ Feature: Verify that all form fields values can be get and set
     And I set the following fields to these values:
       | Force format | 1 |
     And I press "Save and return to course"
-    And I should see "Test this one"
-    And I follow "Test this one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test this one" "wiki activity" page
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And the following fields match these values:
       | Force format | 1 |
@@ -92,9 +88,8 @@ Feature: Verify that all form fields values can be get and set
     And I set the following fields to these values:
       | Force format | |
     And I press "Save and return to course"
-    And I should see "Test this one"
-    And I follow "Test this one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test this one" "wiki activity" page
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And the following fields match these values:
       | Force format | |
@@ -106,7 +101,7 @@ Feature: Verify that all form fields values can be get and set
     # Select (simple) - Checking "I set the field".
     And I set the field "Group mode" to "Separate groups"
     And I press "Save and display"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the following fields match these values:
       | Default format | NWiki |
       | Group mode | Separate groups |
@@ -115,36 +110,43 @@ Feature: Verify that all form fields values can be get and set
       | Wiki name | Test this one baby |
       | Default format | HTML |
     And I press "Cancel"
-    And I am on "Course 1" course homepage
     # Radio - Checking "I set the field" and "the field matches value".
-    And I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Test choice name |
-      | Description | Test choice description |
-      | Allow choice to be updated | Yes |
-      | Option 1 | one |
-      | Option 2 | two |
-      | Option 3 | three |
-    And I follow "Test choice name"
+    And the following "activity" exists:
+      | activity         | choice                       |
+      | course           | C1                           |
+      | idnumber         | choice1                      |
+      | intro            | Test choice description      |
+      | name             | Test choice name             |
+      | choice1          | Option 1, Option 2, Option 3 |
+      | section          | 1                            |
+      | allowupdate      | 1                            |
+    And I am on "Course 1" course homepage
+    And I am on the "Test choice name" "choice activity editing" page
+    And I set the field "Option 1" to "one"
+    And I set the field "Option 2" to "two"
+    And I set the field "Option 3" to "three"
+    And I press "Save and return to course"
+    And I am on "Course 1" course homepage
+    And I am on the "Test choice name" "choice activity" page
     And I set the field "one" to "1"
     And I press "Save my choice"
     And the field "one" matches value "1"
     And the field "two" matches value ""
     # Check if field xpath set/match works.
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field with xpath "//input[@id='id_idnumber']" to "Course id number"
     And the field with xpath "//input[@name='idnumber']" matches value "Course id number"
     And the field with xpath "//input[@name='idnumber']" does not match value ""
     And I press "Save and display"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the field "Course ID number" matches value "Course id number"
 
   Scenario: with JS disabled all form fields getters and setters works as expected
 
   @javascript
   Scenario: with JS enabled all form fields getters and setters works as expected
-    Then I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    Then I am on the "Course 1" "groups" page
     # Select (multi-select & AJAX) - Checking "I set the field" and "select box should contain".
     And I set the field "groups" to "Group 2"
     And the "members" select box should contain "Student 2 (s2@example.com)"
@@ -167,38 +169,30 @@ Feature: Verify that all form fields values can be get and set
     And the "available[day]" "field" should be enabled
     And the field "deadline[enabled]" matches value "1"
     And I press "Save and display"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the field "available[enabled]" matches value "1"
     And the "available[day]" "field" should be enabled
     And the field "deadline[enabled]" matches value "1"
     And I press "Cancel"
     # Advanced checkbox requires real browser to allow uncheck to work. MDL-58681. MDL-55386.
     # Advanced checkbox - Checking "I set the field" and "The field matches value" ticked.
-    And I am on "Course 1" course homepage
-    And I follow "Test this one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test choice name" "choice activity editing" page
     And I set the field "Display description on course page" to "1"
     And I press "Save and return to course"
-    And I should see "Test this one"
-    And I follow "Test this one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test choice name" "choice activity editing" page
     And the field "Display description on course page" matches value "1"
     And the field "Display description on course page" does not match value ""
     # Advanced checkbox - Checking "I set the field" and "The field matches value" unticked.
     And I set the field "Display description on course page" to ""
     And I press "Save and return to course"
-    And I should see "Test this one"
-    And I follow "Test this one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test choice name" "choice activity editing" page
     And the field "Display description on course page" matches value ""
     And the field "Display description on course page" does not match value "1"
     # Advanced checkbox - Checking "I set the following fields to these values:" and "The following fields match these values" ticked.
     And I set the following fields to these values:
       | Display description on course page | 1 |
     And I press "Save and return to course"
-    And I should see "Test this one"
-    And I follow "Test this one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test choice name" "choice activity editing" page
     And the following fields match these values:
       | Display description on course page | 1 |
     And the following fields do not match these values:
@@ -207,9 +201,7 @@ Feature: Verify that all form fields values can be get and set
     And I set the following fields to these values:
       | Display description on course page | |
     And I press "Save and return to course"
-    And I should see "Test this one"
-    And I follow "Test this one"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test choice name" "choice activity editing" page
     And the following fields match these values:
       | Display description on course page | |
     And the following fields do not match these values:

@@ -240,6 +240,10 @@ class gradeimport_csv_load_data {
                 $select = "{$field} = :{$field}";
             }
 
+            // Validate if the user id value is numerical.
+            if ($field === 'id' && !is_numeric($value)) {
+                $errorkey = 'usermappingerror';
+            }
             // Make sure the record exists and that there's only one matching record found.
             $user = $DB->get_record_select('user', $select, array($userfields['field'] => $value), '*', MUST_EXIST);
         } catch (dml_missing_record_exception $missingex) {

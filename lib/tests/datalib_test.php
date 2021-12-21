@@ -60,17 +60,11 @@ class core_datalib_testcase extends advanced_testcase {
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
-            'icq' => 'testuser1',
-            'skype' => 'testuser1',
-            'yahoo' => 'testuser1',
-            'aim' => 'testuser1',
-            'msn' => 'testuser1',
             'department' => 'Department of user 1',
             'institution' => 'Institution of user 1',
             'description' => 'This is a description for user 1',
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
-            'url' => 'http://moodle.org',
             'country' => 'AU'
             );
         $user1 = self::getDataGenerator()->create_user($user1);
@@ -83,17 +77,11 @@ class core_datalib_testcase extends advanced_testcase {
             'address' => '222 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
-            'icq' => 'testuser1',
-            'skype' => 'testuser1',
-            'yahoo' => 'testuser1',
-            'aim' => 'testuser1',
-            'msn' => 'testuser1',
             'department' => 'Department of user 2',
             'institution' => 'Institution of user 2',
             'description' => 'This is a description for user 2',
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
-            'url' => 'http://moodle.org',
             'country' => 'AU'
             );
         $user2 = self::getDataGenerator()->create_user($user2);
@@ -153,6 +141,21 @@ class core_datalib_testcase extends advanced_testcase {
         foreach ($results as $record) {
             $this->assertSame('frog', $record->value);
         }
+
+        // Join with another table and include other table fields in search.
+        set_user_preference('reptile', 'snake', $user1);
+        set_user_preference('reptile', 'lizard', $user2);
+        list($sql, $params) = users_search_sql('snake', 'qq', true, ['up.value']);
+        $results = $DB->get_records_sql("
+                SELECT up.id, up.value
+                  FROM {user} qq
+                  JOIN {user_preferences} up ON up.userid = qq.id
+                 WHERE up.name = :prefname
+                       AND $sql", array_merge(array('prefname' => 'reptile'), $params));
+        $this->assertEquals(1, count($results));
+        foreach ($results as $record) {
+            $this->assertSame('snake', $record->value);
+        }
     }
 
     public function test_users_order_by_sql_simple() {
@@ -200,6 +203,25 @@ class core_datalib_testcase extends advanced_testcase {
                 THEN 0 ELSE 1 END, u.lastname, u.firstname, u.id', $sort);
         $this->assertEquals(array('usersortexact1' => 'search', 'usersortexact2' => 'search',
                 'usersortexact3' => 'search', 'usersortexact4' => 'search', 'usersortexact5' => 'search'), $params);
+    }
+
+    public function test_users_order_by_sql_search_with_custom_fields(): void {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+
+        $CFG->showuseridentity = 'email,idnumber';
+        $this->setAdminUser();
+
+        list($sort, $params) =
+                users_order_by_sql('u', 'search', context_system::instance(), ['profile_field_customfield' => 'x.customfield']);
+        $this->assert_same_sql('CASE WHEN
+                    ' . $DB->sql_fullname('u.firstname', 'u.lastname') . ' = :usersortexact1 OR
+                    LOWER(u.firstname) = LOWER(:usersortexact2) OR
+                    LOWER(u.lastname) = LOWER(:usersortexact3) OR
+                    LOWER(x.customfield) = LOWER(:usersortexact4)
+                THEN 0 ELSE 1 END, u.lastname, u.firstname, u.id', $sort);
+        $this->assertEquals(array('usersortexact1' => 'search', 'usersortexact2' => 'search',
+                'usersortexact3' => 'search', 'usersortexact4' => 'search'), $params);
     }
 
     public function test_get_admin() {
@@ -288,6 +310,36 @@ class core_datalib_testcase extends advanced_testcase {
         $result = get_course($course2obj->id);
         $this->assertSame('ZOMBIES', $result->shortname);
         $this->assertEquals($before + 1, $DB->perf_get_queries());
+    }
+
+    /**
+     * Test that specifying fields when calling get_courses always returns required fields "id, category, visible"
+     */
+    public function test_get_courses_with_fields(): void {
+        $this->resetAfterTest();
+
+        $category = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course(['category' => $category->id]);
+
+        // Specify "id" only.
+        $courses = get_courses($category->id, 'c.sortorder', 'c.id');
+        $this->assertCount(1, $courses);
+        $this->assertEquals((object) [
+            'id' => $course->id,
+            'category' => $course->category,
+            'visible' => $course->visible,
+        ], reset($courses));
+
+        // Specify some optional fields.
+        $courses = get_courses($category->id, 'c.sortorder', 'c.id, c.shortname, c.fullname');
+        $this->assertCount(1, $courses);
+        $this->assertEquals((object) [
+            'id' => $course->id,
+            'category' => $course->category,
+            'visible' => $course->visible,
+            'shortname' => $course->shortname,
+            'fullname' => $course->fullname,
+        ], reset($courses));
     }
 
     public function test_increment_revision_number() {
@@ -745,5 +797,302 @@ class core_datalib_testcase extends advanced_testcase {
             "Please set higher value for \$CFG->maxcoursesincategory in config.php. " .
             "Please also make sure \$CFG->maxcoursesincategory * MAX_COURSE_CATEGORIES less than max integer. " .
             "See tracker issues: MDL-25669 and MDL-69573");
+    }
+
+    /**
+     * Tests the get_users_listing function.
+     */
+    public function test_get_users_listing(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+
+        // Set up profile field.
+        $generator->create_custom_profile_field(['datatype' => 'text',
+                'shortname' => 'specialid', 'name' => 'Special user id']);
+
+        // Set up the show user identity option.
+        set_config('showuseridentity', 'department,profile_field_specialid');
+
+        // Get all the existing user ids (we're going to remove these from test results).
+        $existingids = array_fill_keys($DB->get_fieldset_select('user', 'id', '1 = 1'), true);
+
+        // Create some test user accounts.
+        $userids = [];
+        foreach (['a', 'b', 'c', 'd'] as $key) {
+            $record = [
+                'username' => 'user_' . $key,
+                'firstname' => $key . '_first',
+                'lastname' => 'last_' . $key,
+                'department' => 'department_' . $key,
+                'profile_field_specialid' => 'special_' . $key,
+                'lastaccess' => ord($key)
+            ];
+            $user = $generator->create_user($record);
+            $userids[] = $user->id;
+        }
+
+        // Check default result with no parameters.
+        $results = get_users_listing();
+        $results = array_diff_key($results, $existingids);
+
+        // It should return all the results in order.
+        $this->assertEquals($userids, array_keys($results));
+
+        // Results should have some general fields and name fields, check some samples.
+        $this->assertEquals('user_a', $results[$userids[0]]->username);
+        $this->assertEquals('user_a@example.com', $results[$userids[0]]->email);
+        $this->assertEquals(1, $results[$userids[0]]->confirmed);
+        $this->assertEquals('a_first', $results[$userids[0]]->firstname);
+        $this->assertObjectHasAttribute('firstnamephonetic', $results[$userids[0]]);
+
+        // Should not have the custom field or department because no context specified.
+        $this->assertObjectNotHasAttribute('department', $results[$userids[0]]);
+        $this->assertObjectNotHasAttribute('profile_field_specialid', $results[$userids[0]]);
+
+        // Check sorting.
+        $results = get_users_listing('username', 'DESC');
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals([$userids[3], $userids[2], $userids[1], $userids[0]], array_keys($results));
+
+        // Add the options to showuseridentity and check it returns those fields but only if you
+        // specify a context AND have permissions.
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', '', '', null,
+                \context_system::instance());
+        $this->assertObjectNotHasAttribute('department', $results[$userids[0]]);
+        $this->assertObjectNotHasAttribute('profile_field_specialid', $results[$userids[0]]);
+        $this->setAdminUser();
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', '', '', null,
+                \context_system::instance());
+        $this->assertEquals('department_a', $results[$userids[0]]->department);
+        $this->assertEquals('special_a', $results[$userids[0]]->profile_field_specialid);
+
+        // Check search (full name, email, username).
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, 'b_first last_b');
+        $this->assertEquals([$userids[1]], array_keys($results));
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, 'c@example');
+        $this->assertEquals([$userids[2]], array_keys($results));
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, 'user_d');
+        $this->assertEquals([$userids[3]], array_keys($results));
+
+        // Check first and last initial restriction (all the test ones have same last initial).
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', 'C');
+        $this->assertEquals([$userids[2]], array_keys($results));
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', 'L');
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals($userids, array_keys($results));
+
+        // Check the extra where clause, either with the 'u.' prefix or not.
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', '', 'id IN (:x,:y)',
+                ['x' => $userids[1], 'y' => $userids[3]]);
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals([$userids[1], $userids[3]], array_keys($results));
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', '', 'u.id IN (:x,:y)',
+                ['x' => $userids[1], 'y' => $userids[3]]);
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals([$userids[1], $userids[3]], array_keys($results));
+    }
+
+    /**
+     * Data provider for test_get_safe_orderby().
+     *
+     * @return array
+     */
+    public function get_safe_orderby_provider(): array {
+        $orderbymap = [
+            'courseid' => 'c.id',
+            'somecustomvalue' => 'c.startdate, c.shortname',
+            'default' => 'c.fullname',
+        ];
+        $orderbymapnodefault = [
+            'courseid' => 'c.id',
+            'somecustomvalue' => 'c.startdate, c.shortname',
+        ];
+
+        return [
+            'Valid option, no direction specified' => [
+                $orderbymap,
+                'somecustomvalue',
+                '',
+                ' ORDER BY c.startdate, c.shortname',
+            ],
+            'Valid option, valid direction specified' => [
+                $orderbymap,
+                'courseid',
+                'DESC',
+                ' ORDER BY c.id DESC',
+            ],
+            'Valid option, valid lowercase direction specified' => [
+                $orderbymap,
+                'courseid',
+                'asc',
+                ' ORDER BY c.id ASC',
+            ],
+            'Valid option, invalid direction specified' => [
+                $orderbymap,
+                'courseid',
+                'BOOP',
+                ' ORDER BY c.id',
+            ],
+            'Valid option, invalid lowercase direction specified' => [
+                $orderbymap,
+                'courseid',
+                'boop',
+                ' ORDER BY c.id',
+            ],
+            'Invalid option default fallback, with valid direction' => [
+                $orderbymap,
+                'thisdoesnotexist',
+                'ASC',
+                ' ORDER BY c.fullname ASC',
+            ],
+            'Invalid option default fallback, with invalid direction' => [
+                $orderbymap,
+                'thisdoesnotexist',
+                'BOOP',
+                ' ORDER BY c.fullname',
+            ],
+            'Invalid option without default, with valid direction' => [
+                $orderbymapnodefault,
+                'thisdoesnotexist',
+                'ASC',
+                '',
+            ],
+            'Invalid option without default, with invalid direction' => [
+                $orderbymapnodefault,
+                'thisdoesnotexist',
+                'NOPE',
+                '',
+            ],
+        ];
+    }
+
+    /**
+     * Tests the get_safe_orderby function.
+     *
+     * @dataProvider get_safe_orderby_provider
+     * @param array $orderbymap The ORDER BY parameter mapping array.
+     * @param string $orderbykey The string key being provided, to check against the map.
+     * @param string $direction The optional direction to order by.
+     * @param string $expected The expected string output of the method.
+     */
+    public function test_get_safe_orderby(array $orderbymap, string $orderbykey, string $direction, string $expected): void {
+        $actual = get_safe_orderby($orderbymap, $orderbykey, $direction);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Data provider for test_get_safe_orderby_multiple().
+     *
+     * @return array
+     */
+    public function get_safe_orderby_multiple_provider(): array {
+        $orderbymap = [
+            'courseid' => 'c.id',
+            'firstname' => 'u.firstname',
+            'default' => 'c.startdate',
+        ];
+        $orderbymapnodefault = [
+            'courseid' => 'c.id',
+            'firstname' => 'u.firstname',
+        ];
+
+        return [
+            'Valid options, no directions specified' => [
+                $orderbymap,
+                ['courseid', 'firstname'],
+                [],
+                ' ORDER BY c.id, u.firstname',
+            ],
+            'Valid options, some direction specified' => [
+                $orderbymap,
+                ['courseid', 'firstname'],
+                ['DESC'],
+                ' ORDER BY c.id DESC, u.firstname',
+            ],
+            'Valid options, all directions specified' => [
+                $orderbymap,
+                ['courseid', 'firstname'],
+                ['ASC', 'desc'],
+                ' ORDER BY c.id ASC, u.firstname DESC',
+            ],
+            'Valid options, valid and invalid directions specified' => [
+                $orderbymap,
+                ['courseid', 'firstname'],
+                ['BOOP', 'DESC'],
+                ' ORDER BY c.id, u.firstname DESC',
+            ],
+            'Valid options, all invalid directions specified' => [
+                $orderbymap,
+                ['courseid', 'firstname'],
+                ['BOOP', 'SNOOT'],
+                ' ORDER BY c.id, u.firstname',
+            ],
+            'Valid and invalid option default fallback, with valid directions' => [
+                $orderbymap,
+                ['thisdoesnotexist', 'courseid'],
+                ['asc', 'DESC'],
+                ' ORDER BY c.startdate ASC, c.id DESC',
+            ],
+            'Valid and invalid option default fallback, with invalid direction' => [
+                $orderbymap,
+                ['courseid', 'thisdoesnotexist'],
+                ['BOOP', 'SNOOT'],
+                ' ORDER BY c.id, c.startdate',
+            ],
+            'Valid and invalid option without default, with valid direction' => [
+                $orderbymapnodefault,
+                ['thisdoesnotexist', 'courseid'],
+                ['ASC', 'DESC'],
+                ' ORDER BY c.id DESC',
+            ],
+            'Valid and invalid option without default, with invalid direction' => [
+                $orderbymapnodefault,
+                ['thisdoesnotexist', 'courseid'],
+                ['BOOP', 'SNOOT'],
+                ' ORDER BY c.id',
+            ],
+            'Invalid option only without default, with valid direction' => [
+                $orderbymapnodefault,
+                ['thisdoesnotexist'],
+                ['ASC'],
+                '',
+            ],
+            'Invalid option only without default, with invalid direction' => [
+                $orderbymapnodefault,
+                ['thisdoesnotexist'],
+                ['BOOP'],
+                '',
+            ],
+            'Single valid option, direction specified' => [
+                $orderbymap,
+                ['firstname'],
+                ['ASC'],
+                ' ORDER BY u.firstname ASC',
+            ],
+            'Single valid option, direction not specified' => [
+                $orderbymap,
+                ['firstname'],
+                [],
+                ' ORDER BY u.firstname',
+            ],
+        ];
+    }
+
+    /**
+     * Tests the get_safe_orderby_multiple function.
+     *
+     * @dataProvider get_safe_orderby_multiple_provider
+     * @param array $orderbymap The ORDER BY parameter mapping array.
+     * @param array $orderbykeys The array of string keys being provided, to check against the map.
+     * @param array $directions The optional directions to order by.
+     * @param string $expected The expected string output of the method.
+     */
+    public function test_get_safe_orderby_multiple(array $orderbymap, array $orderbykeys, array $directions,
+            string $expected): void {
+        $actual = get_safe_orderby_multiple($orderbymap, $orderbykeys, $directions);
+        $this->assertEquals($expected, $actual);
     }
 }

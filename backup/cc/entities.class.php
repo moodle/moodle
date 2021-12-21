@@ -76,7 +76,7 @@ class entities {
         cc2moodle::log_action('Load the XML resource file: '.$path_to_file);
 
         if (!$resource->load($path_to_file)) {
-            cc2moodle::log_action('Cannot load the XML resource file: ' . $path_to_file, true);
+            cc2moodle::log_action('Cannot load the XML resource file: ' . $path_to_file, false);
         }
 
         return $resource;

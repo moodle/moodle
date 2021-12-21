@@ -60,7 +60,7 @@ if ($languageform->is_cancelled()) {
         $USER->lang = $lang;
     }
 
-    redirect($redirect);
+    redirect($redirect, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
 // Display page header.

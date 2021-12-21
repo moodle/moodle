@@ -41,11 +41,11 @@ class qtype_ddmarker_test extends advanced_testcase {
     /** @var qtype_ddmarker instance of the question type class to test. */
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = question_bank::get_qtype('ddmarker');;
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 

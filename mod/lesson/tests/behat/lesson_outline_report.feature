@@ -15,14 +15,15 @@ Feature: Teachers can review student progress on all lessons in a course by view
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity      | lesson                  |
+      | course        | C1                      |
+      | idnumber      | 0001                    |
+      | name          | Test lesson name        |
+      | intro         | Test lesson description |
+      | retake        | 1                       |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1"
-    And I set the following fields to these values:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-      | Re-takes allowed | Yes |
-    And I press "Save and return to course"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
 
   Scenario: View student progress for lesson that was never attempted

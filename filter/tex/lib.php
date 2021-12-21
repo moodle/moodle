@@ -51,9 +51,14 @@ function filter_tex_get_executable($debug=false) {
     }
 
     switch (PHP_OS) {
-        case "Linux":   return "$CFG->dirroot/filter/tex/mimetex.linux";
         case "Darwin":  return "$CFG->dirroot/filter/tex/mimetex.darwin";
         case "FreeBSD": return "$CFG->dirroot/filter/tex/mimetex.freebsd";
+        case "Linux":
+            if (php_uname('m') == 'aarch64') {
+                return "$CFG->dirroot/filter/tex/mimetex.linux.aarch64";
+            }
+
+            return "$CFG->dirroot/filter/tex/mimetex.linux";
     }
 
     print_error('mimetexisnotexist', 'error');
@@ -81,7 +86,35 @@ function filter_tex_sanitize_formula(string $texexp): string {
         '\noexpand', '\line', '\mathcode', '\item', '\section', '\mbox', '\declarerobustcommand',
     ];
 
-    return str_ireplace($denylist, 'forbiddenkeyword', $texexp);
+    $allowlist = ['inputenc'];
+
+    // Prepare the denylist for regular expression.
+    $denylist = array_map(function($value){
+        return '/' . preg_quote($value, '/') . '/i';
+    }, $denylist);
+
+    // Prepare the allowlist for regular expression.
+    $allowlist = array_map(function($value){
+        return '/\bforbiddenkeyword_(' . preg_quote($value, '/') . ')\b/i';
+    }, $allowlist);
+
+    // First, mangle all denied words.
+    $texexp = preg_replace_callback($denylist,
+        function($matches) {
+            return 'forbiddenkeyword_' . $matches[0];
+        },
+        $texexp
+    );
+
+    // Then, change back the allowed words.
+    $texexp = preg_replace_callback($allowlist,
+        function($matches) {
+            return $matches[1];
+        },
+        $texexp
+    );
+
+    return $texexp;
 }
 
 function filter_tex_get_cmd($pathname, $texexp) {

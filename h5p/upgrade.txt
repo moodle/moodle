@@ -1,6 +1,27 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+* Added new methods to api: get_original_content_from_pluginfile_url and can_edit_content.
+* Added edit.php and editcontent_form class, for modifying H5P content given an H5P identifier (from the h5p table).
+* Added a new parameter to the player::display method, to define whether the edit button should be displayed below the
+H5P content or not. Default value for this parameter is false.
+* H5P subsystem is allowed to act as an API (level 2) too.
+* Plugins can now implement h5p\canedit::can_edit_content method to define, if required, any custom behaviour for deciding
+whether an H5P content can be edited or not. The specific plugin check will completely override the generic check.
+
+=== 3.11 ===
+* Added $skipcapcheck parameter to H5P constructor, api::create_content_from_pluginfile_url() and
+api::get_content_from_pluginfile_url() to let skip capabilities check to get the pluginfile URL.
+* Added new field "enabled" to h5p_libraries to let define if a content type is enabled (1) or not (0).
+For now, only runnable content-types can be disabled/enabled. When a content-type is disabled, their
+contents are not displayed and no new contents using it can be created/uploaded.
+Some extra methods have been added to the api too in order to support this field:
+- set_library_enabled
+- is_library_enabled
+- is_valid_package
+* The third-party library h5p/h5plib/v124/core has been updated to version 1.24.2.
+
 === 3.10 ===
 * Added a new cache for h5p_library_files (MDL-69207)
 

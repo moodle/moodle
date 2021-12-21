@@ -14,44 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * A column type for the name followed by the start of the question text.
- *
- * @package   mod_quiz
- * @category  question
- * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_quiz\question\bank;
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * A column type for the name followed by the start of the question text.
  *
+ * @package    mod_quiz
+ * @category   question
  * @copyright  2009 Tim Hunt
+ * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_name_text_column extends \core_question\bank\question_name_column {
-    public function get_name() {
+class question_name_text_column extends question_name_column {
+
+    public function get_name(): string {
         return 'questionnametext';
     }
 
-    protected function display_content($question, $rowclasses) {
-        echo '<div>';
+    protected function display_content($question, $rowclasses): void {
+        echo \html_writer::start_tag('div');
         $labelfor = $this->label_for($question);
         if ($labelfor) {
-            echo '<label for="' . $labelfor . '">';
+            echo \html_writer::start_tag('label', ['for' => $labelfor]);
         }
         echo quiz_question_tostring($question, false, true, true, $question->tags);
         if ($labelfor) {
-            echo '</label>';
+            echo \html_writer::end_tag('label');
         }
-        echo '</div>';
+        echo \html_writer::end_tag('div');
     }
 
-    public function get_required_fields() {
+    public function get_required_fields(): array {
         $fields = parent::get_required_fields();
         $fields[] = 'q.questiontext';
         $fields[] = 'q.questiontextformat';

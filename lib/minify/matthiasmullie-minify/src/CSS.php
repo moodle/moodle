@@ -736,7 +736,8 @@ class CSS extends Minify
             return $placeholder.$rest;
         };
 
-        $this->registerPattern('/calc(\(.+?)(?=$|;|calc\()/', $callback);
+        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/', $callback);
+        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/m', $callback);
     }
 
     /**

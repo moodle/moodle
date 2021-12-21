@@ -23,5 +23,5 @@ Feature: Enable the calendar block in a course
     Then I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Calendar" block
-    And I hover over today in the calendar
+    And I hover over today in the mini-calendar block
     And I should see "Site Event"

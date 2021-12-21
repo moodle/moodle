@@ -110,18 +110,25 @@ if ($groupingid) {
 
 list($sort, $sortparams) = users_order_by_sql('u');
 
-$extrafields = get_extra_user_fields($context);
-$allnames = 'u.id, ' . user_picture::fields('u', $extrafields);
+$userfieldsapi = \core_user\fields::for_identity($context)->with_userpic();
+[
+    'selects' => $userfieldsselects,
+    'joins' => $userfieldsjoin,
+    'params' => $userfieldsparams
+] = (array)$userfieldsapi->get_sql('u', true);
+$extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
+$allnames = 'u.id ' . $userfieldsselects;
 
 $sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, $allnames, u.idnumber, u.username
           FROM {groups} g
                LEFT JOIN {groupings_groups} gg ON g.id = gg.groupid
                LEFT JOIN {groups_members} gm ON g.id = gm.groupid
                LEFT JOIN {user} u ON gm.userid = u.id
+               $userfieldsjoin
          WHERE g.courseid = :courseid $groupwhere $groupingwhere
       ORDER BY g.name, $sort";
 
-$rs = $DB->get_recordset_sql($sql, array_merge($params, $sortparams));
+$rs = $DB->get_recordset_sql($sql, array_merge($params, $sortparams, $userfieldsparams));
 foreach ($rs as $row) {
     $user = username_load_fields_from_object((object) [], $row, null,
         array_merge(['id' => 'userid', 'username', 'idnumber'], $extrafields));
@@ -152,7 +159,6 @@ $groups[OVERVIEW_NO_GROUP] = (object)array(
     'descriptionformat' => FORMAT_HTML,
     'enrolmentkey' => '',
     'picture' => 0,
-    'hidepicture' => 0,
     'timecreated' => 0,
     'timemodified' => 0,
 );
@@ -169,10 +175,11 @@ if ($groupid <= 0 && $groupingid <= 0) {
                     JOIN {groups} g ON g.id = gm.groupid
                    WHERE g.courseid = :courseid
                    ) grouped ON grouped.userid = u.id
+                  $userfieldsjoin
              WHERE grouped.userid IS NULL";
     $params['courseid'] = $courseid;
 
-    $nogroupusers = $DB->get_records_sql($sql, $params);
+    $nogroupusers = $DB->get_records_sql($sql, array_merge($params, $userfieldsparams));
 
     if ($nogroupusers) {
         $members[OVERVIEW_GROUPING_NO_GROUP][OVERVIEW_NO_GROUP] = $nogroupusers;
@@ -188,10 +195,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
-// Add tabs
-$currenttab = 'overview';
-require('tabs.php');
-
+echo $OUTPUT->render_participants_tertiary_nav($course);
 /// Print overview
 echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) .' '.$stroverview, 3);
 
@@ -221,7 +225,6 @@ echo $OUTPUT->render($select);
 
 /// Print table
 $printed = false;
-$hoverevents = array();
 foreach ($members as $gpgid=>$groupdata) {
     if ($groupingid and $groupingid != $gpgid) {
         if ($groupingid > 0 || $gpgid > 0) { // Still show 'not in group' when 'no grouping' selected.
@@ -244,13 +247,7 @@ foreach ($members as $gpgid=>$groupdata) {
         $options = new stdClass;
         $options->noclean = true;
         $options->overflowdiv = true;
-        $jsdescription = trim(format_text($description, $groups[$gpid]->descriptionformat, $options));
-        if (empty($jsdescription)) {
-            $line[] = $name;
-        } else {
-            $line[] = html_writer::tag('span', $name, array('class' => 'group_hoverdescription', 'data-groupid' => $gpid));
-            $hoverevents[$gpid] = get_string('descriptiona', null, $jsdescription);
-        }
+        $line[] = $name;
         $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
         $fullnames = array();
         foreach ($users as $user) {
@@ -289,11 +286,6 @@ foreach ($members as $gpgid=>$groupdata) {
     }
     echo html_writer::table($table);
     $printed = true;
-}
-
-if (count($hoverevents)>0) {
-    $PAGE->requires->string_for_js('description', 'moodle');
-    $PAGE->requires->js_init_call('M.core_group.init_hover_events', array($hoverevents));
 }
 
 echo $OUTPUT->footer();

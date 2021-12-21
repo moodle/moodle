@@ -98,7 +98,7 @@ class core_completion_privacy_test extends \core_privacy\tests\provider_testcase
         $this->create_course_completion();
         $this->complete_course($user);
         $coursecompletion = \core_completion\privacy\provider::get_course_completion_info($user, $this->course);
-        $this->assertEquals('In progress', $coursecompletion['status']);
+        $this->assertEquals('Complete', $coursecompletion['status']);
         $this->assertCount(2, $coursecompletion['criteria']);
     }
 

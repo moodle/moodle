@@ -50,7 +50,6 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $attempt->preview = 0;
 
         $rule = new quizaccess_openclosedate($quizobj, 10000);
-        $this->assertEmpty($rule->description());
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
@@ -59,7 +58,6 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $this->assertFalse($rule->time_left_display($attempt, 0));
 
         $rule = new quizaccess_openclosedate($quizobj, 0);
-        $this->assertEmpty($rule->description());
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
@@ -79,8 +77,6 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $attempt->preview = 0;
 
         $rule = new quizaccess_openclosedate($quizobj, 9999);
-        $this->assertEquals($rule->description(),
-            array(get_string('quiznotavailable', 'quizaccess_openclosedate', userdate(10000))));
         $this->assertEquals($rule->prevent_access(),
             get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
@@ -89,8 +85,6 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $this->assertFalse($rule->time_left_display($attempt, 0));
 
         $rule = new quizaccess_openclosedate($quizobj, 10000);
-        $this->assertEquals($rule->description(),
-            array(get_string('quizopenedon', 'quiz', userdate(10000))));
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
@@ -110,8 +104,6 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $attempt->preview = 0;
 
         $rule = new quizaccess_openclosedate($quizobj, 20000);
-        $this->assertEquals($rule->description(),
-            array(get_string('quizcloseson', 'quiz', userdate(20000))));
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
@@ -123,8 +115,6 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $this->assertEquals($rule->time_left_display($attempt, 20100), -100);
 
         $rule = new quizaccess_openclosedate($quizobj, 20001);
-        $this->assertEquals($rule->description(),
-            array(get_string('quizclosed', 'quiz', userdate(20000))));
         $this->assertEquals($rule->prevent_access(),
             get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
@@ -148,33 +138,22 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $attempt->preview = 0;
 
         $rule = new quizaccess_openclosedate($quizobj, 9999);
-        $this->assertEquals($rule->description(),
-            array(get_string('quiznotavailable', 'quizaccess_openclosedate', userdate(10000)),
-                    get_string('quizcloseson', 'quiz', userdate(20000))));
         $this->assertEquals($rule->prevent_access(),
             get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
 
         $rule = new quizaccess_openclosedate($quizobj, 10000);
-        $this->assertEquals($rule->description(),
-            array(get_string('quizopenedon', 'quiz', userdate(10000)),
-                get_string('quizcloseson', 'quiz', userdate(20000))));
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
 
         $rule = new quizaccess_openclosedate($quizobj, 20000);
-        $this->assertEquals($rule->description(),
-            array(get_string('quizopenedon', 'quiz', userdate(10000)),
-                get_string('quizcloseson', 'quiz', userdate(20000))));
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
 
         $rule = new quizaccess_openclosedate($quizobj, 20001);
-        $this->assertEquals($rule->description(),
-            array(get_string('quizclosed', 'quiz', userdate(20000))));
         $this->assertEquals($rule->prevent_access(),
             get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));

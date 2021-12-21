@@ -61,6 +61,7 @@ if ($returnurl) {
 }
 $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
+$PAGE->activityheader->disable();
 
 $contextname = $context->get_context_name();
 $courseid = $course->id;
@@ -184,6 +185,25 @@ switch ($context->contextlevel) {
 
 echo $OUTPUT->header();
 
+$backurl = null;
+// We are looking at a particular role. The page URL has been set correctly.
+if ($roleid) {
+    $backurl = $pageurl;
+} else if ($context->contextlevel == CONTEXT_COURSE && !$isfrontpage) {
+    // Return to the intermediary page when within the course context.
+    $backurl = new moodle_url('/enrol/otherusers.php', ['id' => $course->id]);
+} else if ($returnurl) {
+    // Factor in for $returnurl being passed.
+    $backurl = new moodle_url($returnurl);
+}
+
+if ($backurl) {
+    echo $OUTPUT->render(new single_button($backurl, get_string('back'), 'get'));
+} else if ($isfrontpage) {
+    // The front page doesn't have an intermediate page 'other users' but needs similar tertiary nav like a standard course.
+    echo $OUTPUT->render_participants_tertiary_nav($course);
+}
+
 // Print heading.
 echo $OUTPUT->heading_with_help($title, 'assignroles', 'core_role');
 
@@ -245,7 +265,6 @@ if ($roleid) {
     $select = new single_select($PAGE->url, 'roleid', $nameswithcounts, $roleid, null);
     $select->label = get_string('assignanotherrole', 'core_role');
     echo $OUTPUT->render($select);
-    echo '<p><a href="' . $url . '">' . get_string('backtoallroles', 'core_role') . '</a></p>';
     echo '</div>';
 
 } else if (empty($assignableroles)) {
@@ -271,7 +290,8 @@ if ($roleid) {
     foreach ($assignableroles as $roleid => $notused) {
         $roleusers = '';
         if (0 < $assigncounts[$roleid] && $assigncounts[$roleid] <= MAX_USERS_TO_LIST_PER_ROLE) {
-            $userfields = 'u.id, u.username, ' . get_all_user_name_fields(true, 'u');
+            $userfieldsapi = \core_user\fields::for_name();
+            $userfields = 'u.id, u.username' . $userfieldsapi->get_sql('u')->selects;
             $roleusers = get_role_users($roleid, $context, false, $userfields);
             if (!empty($roleusers)) {
                 $strroleusers = array();
@@ -313,17 +333,13 @@ if ($roleid) {
 
     echo html_writer::table($table);
 
-    if ($context->contextlevel > CONTEXT_USER) {
-
-        if ($returnurl) {
-            $url = new moodle_url($returnurl);
-        } else {
+    if (!$PAGE->has_secondary_navigation() && $context->contextlevel > CONTEXT_USER) {
+        if (!$returnurl) {
             $url = $context->get_url();
+            echo html_writer::start_tag('div', array('class' => 'backlink'));
+            echo html_writer::tag('a', get_string('backto', '', $contextname), array('href' => $url));
+            echo html_writer::end_tag('div');
         }
-
-        echo html_writer::start_tag('div', array('class'=>'backlink'));
-        echo html_writer::tag('a', get_string('backto', '', $contextname), array('href' => $url));
-        echo html_writer::end_tag('div');
     }
 }
 

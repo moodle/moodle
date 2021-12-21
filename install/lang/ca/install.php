@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -37,6 +36,7 @@ $string['chooselanguagesub'] = 'Trieu un idioma per a la instal·lació. S\'util
 $string['clialreadyconfigured'] = 'El fitxer config.php ja existeix; feu servir admin/cli/install_database.php si voleu instal·lar Moodle en aquest lloc web.';
 $string['clialreadyinstalled'] = 'El fitxer de configuració config.php ja existeix. Feu servir admin/cli/upgrade.php si voleu actualitzar Moodle per a aquest lloc web.';
 $string['cliinstallheader'] = 'Programa d\'instal·lació de línia d\'ordres de Moodle {$a}';
+$string['clitablesexist'] = 'Les taules de la base de dades ja existeixen. La instal·lació per línia d\'ordres no pot continuar.';
 $string['databasehost'] = 'Servidor de base de dades:';
 $string['databasename'] = 'Nom de la base de dades:';
 $string['databasetypehead'] = 'Trieu el controlador de la base de dades';
@@ -67,7 +67,7 @@ $string['pathserrcreatedataroot'] = 'L\'instal·lador no pot crear el directori 
 $string['pathshead'] = 'Confirmeu els camins';
 $string['pathsrodataroot'] = 'No es pot escriure en el directori dataroot.';
 $string['pathsroparentdataroot'] = 'No es pot escriure en el directori pare ({$a->parent}). L\'instal·lador no pot crear el directori ({$a->dataroot}).';
-$string['pathssubadmindir'] = 'Alguns serveis d\'allotjament web (pocs) utilitzen /admin com a URL especial perquè accediu a un tauler de control o quelcom semblant. Malauradament, això entra en conflicte amb la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu arreglar aquest problema canviant el nom del directori d\'administració de Moodle en la vostra instal·lació i posant el nou nom aquí. Per exemple: <em>moodleadmin</em>. Això arreglarà els enllaços d\'administració de Moodle.';
+$string['pathssubadmindir'] = 'Alguns serveis d\'allotjament web (pocs) utilitzen /admin com a URL especial perquè accediu a un tauler de control o quelcom semblant. Malauradament, això entra en conflicte amb la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu arreglar aquest problema canviant el nom del directori d\'administració de Moodle en la vostra instal·lació i posant el nom nou aquí. Per exemple: <em>moodleadmin</em>. Això arreglarà els enllaços d\'administració de Moodle.';
 $string['pathssubdataroot'] = '<p>Directori on Moodle emmagatzemarà els materials pujats pels usuaris.</p>
 <p>Aquest directori hauria de tenir permisos de lectura i escriptura per a l\'usuari del servidor web (normalment «www-data», «nobody», or «apache»).</p>
 <p>No ha de ser accessible directament via web.</p>

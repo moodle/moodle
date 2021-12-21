@@ -116,9 +116,9 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
 
         $qsummary = $mc->get_question_summary();
 
-        $this->assertRegExp('/' . preg_quote($mc->questiontext, '/') . '/', $qsummary);
+        $this->assertMatchesRegularExpression('/' . preg_quote($mc->questiontext, '/') . '/', $qsummary);
         foreach ($mc->answers as $answer) {
-            $this->assertRegExp('/' . preg_quote($answer->answer, '/') . '/', $qsummary);
+            $this->assertMatchesRegularExpression('/' . preg_quote($answer->answer, '/') . '/', $qsummary);
         }
     }
 
@@ -171,8 +171,23 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
         foreach ($correctanswers as $correctanswer) {
             $postdata = $mc->prepare_simulated_post_data($correctanswer);
             $simulatedreponse = $mc->get_student_response_values_for_simulation($postdata);
-            $this->assertEquals($correctanswer, $simulatedreponse, '', 0, 10, true);
+            $this->assertEqualsCanonicalizing($correctanswer, $simulatedreponse);
         }
     }
 
+    /**
+     * test_get_question_definition_for_external_rendering
+     */
+    public function test_get_question_definition_for_external_rendering() {
+        $question = test_question_maker::make_a_multichoice_multi_question();
+        $question->start_attempt(new question_attempt_step(), 1);
+        $qa = test_question_maker::get_a_qa($question);
+        $displayoptions = new question_display_options();
+
+        $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
+        $this->assertEquals(1, $options['shuffleanswers']);
+        $this->assertEquals('abc', $options['answernumbering']);
+        $this->assertEquals(0, $options['showstandardinstruction']);
+        $this->assertEquals(1, $options['shuffleanswers']);
+    }
 }

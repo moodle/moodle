@@ -16,11 +16,11 @@ Feature: Teachers can edit or delete any forum post
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity   | name              | intro                    | course | section | idnumber |
+      | forum      | Test forum name   | Test forum description   | C1     | 1       | forum1   |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
+    And I am on "Course 1" course homepage
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Teacher post subject |
       | Message | Teacher post message |
@@ -57,6 +57,7 @@ Feature: Teachers can edit or delete any forum post
     And I should see "Edited by Teacher 1 - original submission"
 
   Scenario: A student can't edit or delete another user's posts
-    When I follow "Teacher post subject"
+    When I follow "Test forum name"
+    And I follow "Teacher post subject"
     Then I should not see "Edit" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][contains(., 'Teacher post subject')]" "xpath_element"
     And I should not see "Delete" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][contains(., 'Teacher post subject')]" "xpath_element"

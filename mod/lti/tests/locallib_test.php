@@ -52,6 +52,7 @@ defined('MOODLE_INTERNAL') || die;
 global $CFG;
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 require_once($CFG->dirroot . '/mod/lti/servicelib.php');
+require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
 
 /**
  * Local library tests
@@ -60,7 +61,7 @@ require_once($CFG->dirroot . '/mod/lti/servicelib.php');
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lti_locallib_testcase extends advanced_testcase {
+class mod_lti_locallib_testcase extends mod_lti_testcase {
 
     public function test_split_custom_parameters() {
         $this->resetAfterTest();
@@ -627,7 +628,8 @@ class mod_lti_locallib_testcase extends advanced_testcase {
                 'suffix' => 'dl',
                 'group' => 'deep_linking_settings',
                 'claim' => 'accept_copy_advice',
-                'isarray' => false
+                'isarray' => false,
+                'type' => 'boolean'
             ],
             'accept_media_types' => [
                 'suffix' => 'dl',
@@ -639,7 +641,8 @@ class mod_lti_locallib_testcase extends advanced_testcase {
                 'suffix' => 'dl',
                 'group' => 'deep_linking_settings',
                 'claim' => 'accept_multiple',
-                'isarray' => false
+                'isarray' => false,
+                'type' => 'boolean'
             ],
             'accept_presentation_document_targets' => [
                 'suffix' => 'dl',
@@ -657,19 +660,22 @@ class mod_lti_locallib_testcase extends advanced_testcase {
                 'suffix' => 'dl',
                 'group' => 'deep_linking_settings',
                 'claim' => 'accept_unsigned',
-                'isarray' => false
+                'isarray' => false,
+                'type' => 'boolean'
             ],
             'auto_create' => [
                 'suffix' => 'dl',
                 'group' => 'deep_linking_settings',
                 'claim' => 'auto_create',
-                'isarray' => false
+                'isarray' => false,
+                'type' => 'boolean'
             ],
             'can_confirm' => [
                 'suffix' => 'dl',
                 'group' => 'deep_linking_settings',
                 'claim' => 'can_confirm',
-                'isarray' => false
+                'isarray' => false,
+                'type' => 'boolean'
             ],
             'content_item_return_url' => [
                 'suffix' => 'dl',
@@ -890,7 +896,7 @@ class mod_lti_locallib_testcase extends advanced_testcase {
             'tool_consumer_info_product_family_code' => [
                 'suffix' => '',
                 'group' => 'tool_platform',
-                'claim' => 'family_code',
+                'claim' => 'product_family_code',
                 'isarray' => false
             ],
             'tool_consumer_info_version' => [
@@ -929,7 +935,7 @@ class mod_lti_locallib_testcase extends advanced_testcase {
                 'claim' => 'url',
                 'isarray' => false
             ],
-            'custom_context_memberships_url' => [
+            'custom_context_memberships_v2_url' => [
                 'suffix' => 'nrps',
                 'group' => 'namesroleservice',
                 'claim' => 'context_memberships_url',
@@ -984,14 +990,14 @@ class mod_lti_locallib_testcase extends advanced_testcase {
                 'isarray' => false
             ],
             'lis_outcome_service_url' => [
-                'suffix' => 'bos',
-                'group' => 'basicoutcomesservice',
+                'suffix' => 'bo',
+                'group' => 'basicoutcome',
                 'claim' => 'lis_outcome_service_url',
                 'isarray' => false
             ],
             'lis_result_sourcedid' => [
-                'suffix' => 'bos',
-                'group' => 'basicoutcomesservice',
+                'suffix' => 'bo',
+                'group' => 'basicoutcome',
                 'claim' => 'lis_result_sourcedid',
                 'isarray' => false
             ],
@@ -1736,6 +1742,206 @@ MwIDAQAB
     }
 
     /**
+     * Test the lti_get_ims_role helper function.
+     *
+     * @dataProvider lti_get_ims_role_provider
+     * @covers ::lti_get_ims_role()
+     *
+     * @param bool $islti2 whether the method is called with LTI 2.0 role names or not.
+     * @param string $rolename the name of the role (student, teacher, admin)
+     * @param null|string $switchedto the role to switch to, or false if not using the 'switch to' functionality.
+     * @param string $expected the expected role name.
+     */
+    public function test_lti_get_ims_role(bool $islti2, string $rolename, ?string $switchedto, string $expected) {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $rolename == 'admin' ? get_admin() : $this->getDataGenerator()->create_and_enrol($course, $rolename);
+
+        if ($switchedto) {
+            $this->setUser($user);
+            $role = $DB->get_record('role', array('shortname' => $switchedto));
+            role_switch($role->id, context_course::instance($course->id));
+        }
+
+        $this->assertEquals($expected, lti_get_ims_role($user, 0, $course->id, $islti2));
+    }
+
+    /**
+     * Data provider for testing lti_get_ims_role.
+     *
+     * @return array[] the test case data.
+     */
+    public function lti_get_ims_role_provider() {
+        return [
+            'Student, LTI 1.1, no role switch' => [
+                'islti2' => false,
+                'rolename' => 'student',
+                'switchedto' => null,
+                'expected' => 'Learner'
+            ],
+            'Student, LTI 2.0, no role switch' => [
+                'islti2' => true,
+                'rolename' => 'student',
+                'switchedto' => null,
+                'expected' => 'Learner'
+            ],
+            'Teacher, LTI 1.1, no role switch' => [
+                'islti2' => false,
+                'rolename' => 'editingteacher',
+                'switchedto' => null,
+                'expected' => 'Instructor'
+            ],
+            'Teacher, LTI 2.0, no role switch' => [
+                'islti2' => true,
+                'rolename' => 'editingteacher',
+                'switchedto' => null,
+                'expected' => 'Instructor'
+            ],
+            'Admin, LTI 1.1, no role switch' => [
+                'islti2' => false,
+                'rolename' => 'admin',
+                'switchedto' => null,
+                'expected' => 'Instructor,urn:lti:sysrole:ims/lis/Administrator,urn:lti:instrole:ims/lis/Administrator'
+            ],
+            'Admin, LTI 2.0, no role switch' => [
+                'islti2' => true,
+                'rolename' => 'admin',
+                'switchedto' => null,
+                'expected' => 'Instructor,http://purl.imsglobal.org/vocab/lis/v2/person#Administrator'
+            ],
+            'Admin, LTI 1.1, role switch student' => [
+                'islti2' => false,
+                'rolename' => 'admin',
+                'switchedto' => 'student',
+                'expected' => 'Learner'
+            ],
+            'Admin, LTI 2.0, role switch student' => [
+                'islti2' => true,
+                'rolename' => 'admin',
+                'switchedto' => 'student',
+                'expected' => 'Learner'
+            ],
+            'Admin, LTI 1.1, role switch teacher' => [
+                'islti2' => false,
+                'rolename' => 'admin',
+                'switchedto' => 'editingteacher',
+                'expected' => 'Instructor'
+            ],
+            'Admin, LTI 2.0, role switch teacher' => [
+                'islti2' => true,
+                'rolename' => 'admin',
+                'switchedto' => 'editingteacher',
+                'expected' => 'Instructor'
+            ],
+        ];
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies with no limit or offset.
+     */
+    public function test_lti_get_lti_types_and_proxies_with_no_limit() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->generate_tool_types_and_proxies(10);
+        list($proxies, $types) = lti_get_lti_types_and_proxies();
+
+        $this->assertCount(10, $proxies);
+        $this->assertCount(10, $types);
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies with limits.
+     */
+    public function test_lti_get_lti_types_and_proxies_with_limit() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->generate_tool_types_and_proxies(10);
+
+        // Get the middle 10 data sets (of 20 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(10, 5);
+
+        $this->assertCount(5, $proxies);
+        $this->assertCount(5, $types);
+
+        // Get the last 5 data sets with large limit (of 20 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(50, 15);
+
+        $this->assertCount(0, $proxies);
+        $this->assertCount(5, $types);
+
+        // Get the last 13 data sets with large limit (of 20 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(50, 7);
+
+        $this->assertCount(3, $proxies);
+        $this->assertCount(10, $types);
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies with limits and only fetching orphaned proxies.
+     */
+    public function test_lti_get_lti_types_and_proxies_with_limit_and_orphaned_proxies() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->generate_tool_types_and_proxies(10, 5);
+
+        // Get the first 10 data sets (of 15 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(10, 0, true);
+
+        $this->assertCount(5, $proxies);
+        $this->assertCount(5, $types);
+
+        // Get the middle 10 data sets with large limit (of 15 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(10, 2, true);
+
+        $this->assertCount(3, $proxies);
+        $this->assertCount(7, $types);
+
+        // Get the last 5 data sets with large limit (of 15 total).
+        list($proxies, $types) = lti_get_lti_types_and_proxies(50, 10, true);
+
+        $this->assertCount(0, $proxies);
+        $this->assertCount(5, $types);
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies_count.
+     */
+    public function test_lti_get_lti_types_and_proxies_count_with_no_filters() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->generate_tool_types_and_proxies(10, 5);
+
+        $totalcount = lti_get_lti_types_and_proxies_count();
+        $this->assertEquals(25, $totalcount); // 10 types, 15 proxies.
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies_count only counting orphaned proxies.
+     */
+    public function test_lti_get_lti_types_and_proxies_count_with_only_orphaned_proxies() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $this->generate_tool_types_and_proxies(10, 5);
+
+        $orphanedcount = lti_get_lti_types_and_proxies_count(true);
+        $this->assertEquals(15, $orphanedcount); // 10 types, 5 proxies.
+    }
+
+    /**
+     * Test lti_get_lti_types_and_proxies_count only matching tool type with toolproxyid.
+     */
+    public function test_lti_get_lti_types_and_proxies_count_type_with_proxyid() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        ['proxies' => $proxies, 'types' => $types] = $this->generate_tool_types_and_proxies(10, 5);
+
+        $countwithproxyid = lti_get_lti_types_and_proxies_count(false, $proxies[0]->id);
+        $this->assertEquals(16, $countwithproxyid); // 1 type, 15 proxies.
+    }
+
+    /**
      * Create an LTI Tool.
      *
      * @param object $config tool config.
@@ -1773,5 +1979,28 @@ MwIDAQAB
                   'toolurl' => $type->baseurl,
                   'typeid' => $type->id
                   ), array());
+    }
+
+    /**
+     * Generate a number of LTI tool types and proxies.
+     *
+     * @param int $toolandproxycount How many tool types and associated proxies to create. E.g. Value of 10 will create 10 types
+     * and 10 proxies.
+     * @param int $orphanproxycount How many orphaned proxies to create.
+     * @return array[]
+     */
+    private function generate_tool_types_and_proxies(int $toolandproxycount = 0, int $orphanproxycount = 0) {
+        $proxies = [];
+        $types = [];
+        for ($i = 0; $i < $toolandproxycount; $i++) {
+            $proxies[$i] = $this->generate_tool_proxy($i);
+            $types[$i] = $this->generate_tool_type($i, $proxies[$i]->id);
+
+        }
+        for ($i = $toolandproxycount; $i < ($toolandproxycount + $orphanproxycount); $i++) {
+            $proxies[$i] = $this->generate_tool_proxy($i);
+        }
+
+        return ['proxies' => $proxies, 'types' => $types];
     }
 }

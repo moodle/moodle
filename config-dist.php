@@ -38,7 +38,7 @@ $CFG = new stdClass();
 // will be stored.  This database must already have been created         //
 // and a username/password created to access it.                         //
 
-$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mariadb', 'mysqli', 'sqlsrv' or 'oci'
+$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mariadb', 'mysqli', 'auroramysql', 'sqlsrv' or 'oci'
 $CFG->dblibrary = 'native';     // 'native' only at the moment
 $CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
 $CFG->dbname    = 'moodle';     // database name, eg moodle
@@ -166,8 +166,11 @@ $CFG->directorypermissions = 02777;
 
 
 //=========================================================================
-// 5. DIRECTORY LOCATION  (most people can just ignore this setting)
+// 5. ADMIN DIRECTORY LOCATION  (deprecated)
 //=========================================================================
+// Please note: Support from this feature has been deprecated and it will be
+// removed after Moodle 4.2.
+//
 // A very few webhosts use /admin as a special URL for you to access a
 // control panel or something.  Unfortunately this conflicts with the
 // standard location for the Moodle admin pages.  You can work around this
@@ -324,6 +327,9 @@ $CFG->admin = 'admin';
 //      Use the igbinary serializer instead of the php default one. Note that phpredis must be compiled with
 //      igbinary support to make the setting to work. Also, if you change the serializer you have to flush the database!
 //      $CFG->session_redis_serializer_use_igbinary = false; // Optional, default is PHP builtin serializer.
+//      $CFG->session_redis_compressor = 'none'; // Optional, possible values are:
+//                                               // 'gzip' - PHP GZip compression
+//                                               // 'zstd' - PHP Zstandard compression
 //
 // Please be aware that when selecting Memcached for sessions that it is advised to use a dedicated
 // memcache server. The memcached extension does not provide isolated environments for individual uses.
@@ -476,6 +482,7 @@ $CFG->admin = 'admin';
 //     $CFG->tempdir = '/var/www/moodle/temp';        // Directory MUST BE SHARED by all cluster nodes.
 //     $CFG->cachedir = '/var/www/moodle/cache';      // Directory MUST BE SHARED by all cluster nodes, locking required.
 //     $CFG->localcachedir = '/var/local/cache';      // Intended for local node caching.
+//     $CFG->localrequestdir = '/tmp';                // Intended for local only temporary files. The defaults uses sys_get_temp_dir().
 //
 // It is possible to specify a different backup temp directory, use local fast filesystem
 // for normal web servers. Server clusters MUST use shared filesystem for backuptempdir!
@@ -676,29 +683,17 @@ $CFG->admin = 'admin';
 //
 //      $CFG->enable_read_only_sessions = true;
 //
+// To help expose all the edge cases bugs a debug mode is available which shows the same
+// runtime write during readonly errors without actually turning on the readonly sessions:
+//
+//      $CFG->enable_read_only_sessions_debug = true;
+//
 // Uninstall plugins from CLI only. This stops admins from uninstalling plugins from the graphical admin
 // user interface, and forces plugins to be uninstalled from the Command Line tool only, found at
 // admin/cli/plugin_uninstall.php.
 //
 //      $CFG->uninstallclionly = true;
 //
-//
-// Customise question bank display
-//
-// The display of Moodle's question bank is made up of a number of columns.
-// You can customise this display by giving a comma-separated list of column class
-// names here. Each class must be a subclass of \core_question\bank\column_base.
-// For example you might define a class like
-//      class \local_qbank_extensions\my_column extends \core_question\bank\column_base
-// in a local plugin, then add it to the list here. At the time of writing,
-// the default question bank display is equivalent to the following, but you  might like
-// to check the latest default in question/classes/bank/view.php before setting this.
-//
-//      $CFG->questionbankcolumns = 'checkbox_column,question_type_column,'
-//              . 'question_name_idnumber_tags_column,edit_menu_column,'
-//              . 'tags_action_column,edit_action_column,copy_action_column,'
-//              . 'preview_action_column,delete_action_column,export_xml_action_column,'
-//              . 'creator_name_column,modifier_name_column';
 //
 // Forum summary report
 //
@@ -723,6 +718,30 @@ $CFG->admin = 'admin';
 //
 // $CFG->maxcoursesincategory = 10000;
 //
+// Admin setting encryption
+//
+//      $CFG->secretdataroot = '/var/www/my_secret_folder';
+//
+// Location to store encryption keys. By default this is $CFG->dataroot/secret; set this if
+// you want to use a different location for increased security (e.g. if too many people have access
+// to the main dataroot, or if you want to avoid using shared storage). Your web server user needs
+// read access to this location, and write access unless you manually create the keys.
+//
+//      $CFG->nokeygeneration = false;
+//
+// If you change this to true then the server will give an error if keys don't exist, instead of
+// automatically generating them. This is only needed if you want to ensure that keys are consistent
+// across a cluster when not using shared storage. If you stop the server generating keys, you will
+// need to manually generate them by running 'php admin/cli/generate_key.php'.
+//
+// H5P crossorigin
+//
+//      $CFG->h5pcrossorigin = 'anonymous';
+//
+// Settings this to anonymous will enable CORS requests for media elements to have the credentials
+// flag set to 'same-origin'. This may be needed when using tool_objectfs as an alternative file
+// system with CloudFront configured.
+
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
@@ -855,6 +874,10 @@ $CFG->admin = 'admin';
 // $CFG->behat_wwwroot = 'http://127.0.0.1/moodle';
 // $CFG->behat_prefix = 'bht_';
 // $CFG->behat_dataroot = '/home/example/bht_moodledata';
+// $CFG->behat_dbname = 'behat'; // optional
+// $CFG->behat_dbuser = 'username'; // optional
+// $CFG->behat_dbpass = 'password'; // optional
+// $CFG->behat_dbhost = 'localhost'; // optional
 //
 // You can override default Moodle configuration for Behat and add your own
 // params; here you can add more profiles, use different Mink drivers than Selenium...
@@ -873,7 +896,7 @@ $CFG->admin = 'admin';
 //           ),
 //           'extensions' => array(
 //               'Behat\MinkExtension' => array(
-//                   'selenium2' => array(
+//                   'webddriver' => array(
 //                       'browser' => 'firefox',
 //                       'capabilities' => array(
 //                           'platform' => 'OS X 10.6',
@@ -886,7 +909,7 @@ $CFG->admin = 'admin';
 //       'Mac-Safari' => array(
 //           'extensions' => array(
 //               'Behat\MinkExtension' => array(
-//                   'selenium2' => array(
+//                   'webddriver' => array(
 //                       'browser' => 'safari',
 //                       'capabilities' => array(
 //                           'platform' => 'OS X 10.8',
@@ -928,6 +951,12 @@ $CFG->admin = 'admin';
 // seconds, for instance).
 // Example:
 //   $CFG->behat_increasetimeout = 3;
+//
+// Yon can specify a window size modifier for Behat, which is applied to any window szie changes.
+// For example, if a window size of 640x768 is specified, with a modifier of 2, then the final size is 1280x1536.
+// This is particularly useful for behat reruns to eliminate issues with window sizing.
+// Example:
+//   $CFG->behat_window_size_modifier = 1;
 //
 // Including feature files from directories outside the dirroot is possible if required. The setting
 // requires that the running user has executable permissions on all parent directories in the paths.
@@ -1081,6 +1110,62 @@ $CFG->admin = 'admin';
 // The autoloaded factory class name can be specified to use.
 //
 //      $CFG->alternative_cache_factory_class = 'tool_alternativecache_cache_factory';
+//
+//=========================================================================
+// 17. SCHEDULED TASK OVERRIDES
+//=========================================================================
+//
+// It is now possible to define scheduled tasks directly within config.
+// The overridden value will take precedence over the values that have been set VIA the UI from the
+// next time the task is run.
+//
+// Tasks are configured as an array of tasks that can override a task's schedule, as well as setting
+// the task as disabled. I.e:
+//
+//      $CFG->scheduled_tasks = [
+//          '\local_plugin\task\my_task' => [
+//              'schedule' => '*/15 0 0 0 0',
+//              'disabled' => 0,
+//          ],
+//      ];
+//
+// The format for the schedule definition is: '{minute} {hour} {day} {dayofweek} {month}'.
+//
+// The classname of the task also supports wildcards:
+//
+//      $CFG->scheduled_tasks = [
+//          '\local_plugin\*' => [
+//              'schedule' => '*/15 0 0 0 0',
+//              'disabled' => 0,
+//          ],
+//          '*' => [
+//              'schedule' => '0 0 0 0 0',
+//              'disabled' => 0,
+//          ],
+//      ];
+//
+// In this example, any task classnames matching '\local_plugin\*' would match the first rule and
+// use that schedule the next time the task runs. Note that even though the 'local_plugin' tasks match
+// the second rule as well, the highest rule takes precedence. Therefore, the second rule would be
+// applied to all tasks, except for tasks within '\local_plugin\'.
+//
+// When the full classname is used, this rule always takes priority over any wildcard rules.
+//
+//=========================================================================
+// 18. SITE ADMIN PRESETS
+//=========================================================================
+//
+// The site admin presets plugin has been integrated in Moodle LMS. You can use a setting in case you
+// want to apply a preset during the installation:
+//
+//      $CFG->setsitepresetduringinstall = 'starter';
+//
+// This setting accepts the following values:
+// - One of the core preset names (i.e "starter" or "full").
+// - The path of a valid XML preset file, that will be imported and applied. Absolute paths are recommended, to
+//   guarantee the file is found: i.e."MOODLEPATH/admin/tool/admin_presets/tests/fixtures/import_settings_plugins.xml".
+//
+// This setting is only used during the installation process. So once the Moodle site is installed, it is ignored.
 //
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

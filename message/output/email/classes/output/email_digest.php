@@ -102,7 +102,6 @@ class email_digest implements \renderable, \templatable {
             $group = new \stdClass();
             $group->id = $conversation->groupid;
             $group->picture = $conversation->picture;
-            $group->hidepicture = $conversation->hidepicture;
             $group->courseid = $conversation->courseid;
             $grouppictureurl = $renderer->image_url('g/g1')->out(false); // Default image.
             if ($url = get_group_picture_url($group, $group->courseid, false, true)) {

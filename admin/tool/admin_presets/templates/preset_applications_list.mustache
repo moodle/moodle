@@ -1,0 +1,64 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_admin_presets/preset_applications_list
+
+    Template for preset applications list.
+
+    Example context (json):
+    {
+        "noapplications": 0,
+        "applications": {
+            "show": 1,
+            "caption": "Applied settings",
+            "settings": [
+                {
+                    "timeapplied": "Thursday, 9 September 2021, 3:18 PM",
+                    "user": "Joseba Cilarte",
+                    "action": "http://example.com/admin/tool/admin_presets/index.php?action=rollback&mode=execute&id=43"
+                }
+            ]
+        }
+    }
+}}
+
+{{^noapplications}}
+    <div id="id_nopresets" class="box py-3 generalbox">
+        <p id="{{uniqid}}">{{#str}}nopresets, tool_admin_presets{{/str}}</p>
+    </div>
+{{/noapplications}}
+{{#noapplications}}
+        <table class="generaltable boxaligncenter">
+            <caption class="accesshide">{{#str}}presetapplicationslisttable, tool_admin_presets{{/str}}</caption>
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}}timeapplied, tool_admin_presets{{/str}}</th>
+                    <th scope="col">{{#str}}user{{/str}}</th>
+                    <th scope="col">{{#str}}actions{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#applications}}
+                    <tr>
+                        <td>{{{timeapplied}}}</td>
+                        <td>{{{user}}}</td>
+                        <td><a href="{{action}}">{{#str}}rollback, tool_admin_presets{{/str}}</a></td>
+                    </tr>
+                {{/applications}}
+            </tbody>
+        </table>
+{{/noapplications}}

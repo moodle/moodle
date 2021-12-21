@@ -22,7 +22,7 @@ Feature: A privileged user can create cohorts using a CSV file
       | name          | idnumber  | description       | Context       | visible | Status |
       | cohort name 1 | cohortid1 | first description | System        | 1       |        |
       | cohort name 2 | cohortid2 |                   | System        | 1       |        |
-      | cohort name 3 | cohortid3 |                   | Miscellaneous | 0       |        |
+      | cohort name 3 | cohortid3 |                   | Category 1    | 0       |        |
       | cohort name 4 | cohortid4 |                   | Cat 1         | 1       |        |
       | cohort name 5 | cohortid5 |                   | Cat 2         | 0       |        |
       | cohort name 6 | cohortid6 |                   | Cat 3         | 1       |        |
@@ -38,7 +38,7 @@ Feature: A privileged user can create cohorts using a CSV file
       | Category      | Name          | Cohort ID | Description       | Cohort size | Source           |
       | System        | cohort name 1 | cohortid1 | first description | 0           | Created manually |
       | System        | cohort name 2 | cohortid2 |                   | 0           | Created manually |
-      | Miscellaneous | cohort name 3 | cohortid3 |                   | 0           | Created manually |
+      | Category 1    | cohort name 3 | cohortid3 |                   | 0           | Created manually |
       | Cat 1         | cohort name 4 | cohortid4 |                   | 0           | Created manually |
       | Cat 2         | cohort name 5 | cohortid5 |                   | 0           | Created manually |
       | Cat 3         | cohort name 6 | cohortid6 |                   | 0           | Created manually |
@@ -62,7 +62,7 @@ Feature: A privileged user can create cohorts using a CSV file
       | name          | idnumber  | description       | Context                 | Status |
       | cohort name 1 | cohortid1 | first description | Cat 3         |        |
       | cohort name 2 | cohortid2 |                   | Cat 3         |        |
-      | cohort name 3 | cohortid3 |                   | Miscellaneous |        |
+      | cohort name 3 | cohortid3 |                   | Category 1    |        |
       | cohort name 4 | cohortid4 |                   | Cat 1         |        |
       | cohort name 5 | cohortid5 |                   | Cat 2         |        |
       | cohort name 6 | cohortid6 |                   | Cat 3         |        |
@@ -76,7 +76,7 @@ Feature: A privileged user can create cohorts using a CSV file
       | Category      | Name          | Cohort ID | Description       | Cohort size | Source           |
       | Cat 3         | cohort name 1 | cohortid1 | first description | 0           | Created manually |
       | Cat 3         | cohort name 2 | cohortid2 |                   | 0           | Created manually |
-      | Miscellaneous | cohort name 3 | cohortid3 |                   | 0           | Created manually |
+      | Category 1    | cohort name 3 | cohortid3 |                   | 0           | Created manually |
       | Cat 1         | cohort name 4 | cohortid4 |                   | 0           | Created manually |
       | Cat 2         | cohort name 5 | cohortid5 |                   | 0           | Created manually |
       | Cat 3         | cohort name 6 | cohortid6 |                   | 0           | Created manually |
@@ -100,7 +100,7 @@ Feature: A privileged user can create cohorts using a CSV file
       | name          | idnumber  | description       | Context | Status |
       | cohort name 1 | cohortid1 | first description | Cat 1   |        |
       | cohort name 2 | cohortid2 |                   | Cat 1   |        |
-      | cohort name 3 | cohortid3 |                   | Cat 1   | Category Miscellaneous not found or you don't have permission to create a cohort there. The default context will be used. |
+      | cohort name 3 | cohortid3 |                   | Cat 1   | Category Category 1 not found or you don't have permission to create a cohort there. The default context will be used. |
       | cohort name 4 | cohortid4 |                   | Cat 1   |        |
       | cohort name 5 | cohortid5 |                   | Cat 1   | Category CAT2 not found or you don't have permission to create a cohort there. The default context will be used. |
       | cohort name 6 | cohortid6 |                   | Cat 3   |        |
@@ -122,7 +122,7 @@ Feature: A privileged user can create cohorts using a CSV file
       | name | idnumber | description | Context | Status |
       | cohort name 1 | cohortid1 | first description | System |  |
       | cohort name 2 | cohortid2 |  | System | Cohort with the same ID number already exists |
-      | cohort name 3 | cohortid3 |  | Miscellaneous |  |
+      | cohort name 3 | cohortid3 |  | Category 1 |  |
       | cohort name 4 | cohortid4 |  | Cat 1 |  |
       | cohort name 5 | cohortid5 |  | Cat 2 |  |
       | cohort name 6 | cohortid6 |  | Cat 3 |  |
@@ -137,11 +137,11 @@ Feature: A privileged user can create cohorts using a CSV file
     And I click on "Preview" "button"
     Then the following should exist in the "previewuploadedcohorts" table:
       | name                         | idnumber  | description | Context       | Status |
-      | Specify category as name     | cohortid1 |             | Miscellaneous |        |
+      | Specify category as name     | cohortid1 |             | Category 1 |        |
       | Specify category as idnumber | cohortid2 |             | Cat 1         |        |
-      | Specify category as id       | cohortid3 |             | Miscellaneous |        |
+      | Specify category as id       | cohortid3 |             | Category 1 |        |
       | Specify category as path     | cohortid4 |             | Cat 3         |        |
-      | Specify category_id          | cohortid5 |             | Miscellaneous |        |
+      | Specify category_id          | cohortid5 |             | Category 1 |        |
       | Specify category_idnumber    | cohortid6 |             | Cat 1         |        |
       | Specify category_path        | cohortid7 |             | Cat 3         |        |
     And I should not see "not found or you"
@@ -173,7 +173,7 @@ Feature: A privileged user can create cohorts using a CSV file
       | name          | idnumber  | description       | Context       | visible | theme    | Status |
       | cohort name 1 | cohortid1 | first description | System        | 1       | boost    |        |
       | cohort name 2 | cohortid2 |                   | System        | 1       |          |        |
-      | cohort name 3 | cohortid3 |                   | Miscellaneous | 0       | boost    |        |
+      | cohort name 3 | cohortid3 |                   | Category 1    | 0       | boost    |        |
       | cohort name 4 | cohortid4 |                   | Cat 1         | 1       | classic  |        |
       | cohort name 5 | cohortid5 |                   | Cat 2         | 0       |          |        |
       | cohort name 6 | cohortid6 |                   | Cat 3         | 1       | classic  |        |
@@ -189,7 +189,7 @@ Feature: A privileged user can create cohorts using a CSV file
       | Category      | Name          | Cohort ID | Description       | Cohort size | Source           |
       | System        | cohort name 1 | cohortid1 | first description | 0           | Created manually |
       | System        | cohort name 2 | cohortid2 |                   | 0           | Created manually |
-      | Miscellaneous | cohort name 3 | cohortid3 |                   | 0           | Created manually |
+      | Category 1    | cohort name 3 | cohortid3 |                   | 0           | Created manually |
       | Cat 1         | cohort name 4 | cohortid4 |                   | 0           | Created manually |
       | Cat 2         | cohort name 5 | cohortid5 |                   | 0           | Created manually |
       | Cat 3         | cohort name 6 | cohortid6 |                   | 0           | Created manually |

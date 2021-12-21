@@ -10,6 +10,8 @@ Feature: Upload files
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
+    And I turn editing mode on
+    And I add the "Private files" block if not present
     When I follow "Manage private files..."
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     Then I should see "1" elements in "Files" filemanager
@@ -19,4 +21,3 @@ Feature: Upload files
     Then I should see "2" elements in "Files" filemanager
     And I should see "empty.txt"
     And I should see "empty_copy.txt"
-    And I press "Cancel"

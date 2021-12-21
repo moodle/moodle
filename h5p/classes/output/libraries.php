@@ -89,6 +89,17 @@ class libraries implements renderable, templatable {
                     get_string('deletelibraryversion', 'core_h5p')
                 ));
                 $version->actionmenu = $actionmenu->export_for_template($output);
+                if ($version->enabled) {
+                    $version->toggleenabledurl = new moodle_url('/h5p/libraries.php', [
+                        'id' => $version->id,
+                        'action' => 'disable',
+                    ]);
+                } else {
+                    $version->toggleenabledurl = new moodle_url('/h5p/libraries.php', [
+                        'id' => $version->id,
+                        'action' => 'enable',
+                    ]);
+                }
                 $installed[] = $version;
             }
         }

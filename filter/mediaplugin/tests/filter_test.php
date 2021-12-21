@@ -34,9 +34,8 @@ class filter_mediaplugin_testcase extends advanced_testcase {
     function test_filter_mediaplugin_link() {
         $this->resetAfterTest(true);
 
-        // we need to enable the plugins somehow and the flash fallback.
-        \core\plugininfo\media::set_enabled_plugins('vimeo,youtube,videojs,html5video,swf,html5audio');
-        set_config('useflash', true, 'media_videojs');
+        // We need to enable the media plugins.
+        \core\plugininfo\media::set_enabled_plugins('vimeo,youtube,videojs,html5video,html5audio');
 
         $filterplugin = new filter_mediaplugin(null, array());
 
@@ -59,7 +58,6 @@ class filter_mediaplugin_testcase extends advanced_testcase {
             '<a href="http://youtu.be/JghQgA2HMX8" class="href=css">test file</a>',
             '<a href="http://y2u.be/JghQgA2HMX8" class="href=css">test file</a>',
             '<a class="youtube" href="http://www.youtube.com/watch?v=JghQgA2HMX8">test file</a>',
-            '<a class="_blanktarget" href="http://moodle.org/testfile/test.flv?d=100x100">test flv</a>',
             '<a class="hrefcss" href="http://www.youtube.com/watch?v=JghQgA2HMX8">test file</a>',
             '<a  class="content"     href="http://moodle.org/testfile/test.ogg">test ogg</a>',
             '<a     id="audio"      href="http://moodle.org/testfile/test.mp3">test mp3</a>',
@@ -93,7 +91,7 @@ class filter_mediaplugin_testcase extends advanced_testcase {
             '<a href="https://www.youtube.com/watch?v=uUhWl9Lm3OM">Valid link</a></pre><pre style="color: rgb(0, 0, 0); line-height: normal;">';
         $paddedurl = str_pad($originalurl, 6000, 'z');
         $validpaddedurl = '<p>Some text.</p><pre style="color: rgb(0, 0, 0); line-height: normal;"><span class="mediaplugin mediaplugin_youtube">
-<iframe title="Valid link" width="400" height="300"
+<iframe title="Valid link" width="640" height="360"
   src="https://www.youtube.com/embed/uUhWl9Lm3OM?rel=0&amp;wmode=transparent" frameborder="0" allowfullscreen="1"></iframe>
 </span></pre><pre style="color: rgb(0, 0, 0); line-height: normal;">';
         $validpaddedurl = str_pad($validpaddedurl, 6000 + (strlen($validpaddedurl) - strlen($originalurl)), 'z');
@@ -129,7 +127,7 @@ class filter_mediaplugin_testcase extends advanced_testcase {
         $precededlongurl = '<a href="http://moodle.org/testfile/test.mp3">test.mp3</a>'. $longurl;
         $filter = $filterplugin->filter($precededlongurl);
         $this->assertEquals(1, substr_count($filter, '</audio>'));
-        $this->assertContains($longurl, $filter);
+        $this->assertStringContainsString($longurl, $filter);
 
         // Testing for cases where: to be filtered content has 6+ text afterwards.
         $filter = $filterplugin->filter($paddedurl);

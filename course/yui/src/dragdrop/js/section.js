@@ -263,6 +263,9 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                     window.setTimeout(function() {
                         lightbox.hide();
                     }, 250);
+
+                    // Update course state.
+                    M.course.coursebase.invoke_function('updateMovedSectionState');
                 },
 
                 failure: function(tid, response) {

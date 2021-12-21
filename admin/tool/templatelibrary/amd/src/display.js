@@ -17,7 +17,6 @@
  * This module adds ajax display functions to the template library page.
  *
  * @module     tool_templatelibrary/display
- * @package    tool_templatelibrary
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -17,7 +17,7 @@ namespace Complex;
  * @return    float            The theta value of the complex argument.
  * @throws    Exception        If argument isn't a valid real or complex number.
  */
-function theta($complex)
+function theta($complex): float
 {
     $complex = Complex::validateComplexArgument($complex);
 

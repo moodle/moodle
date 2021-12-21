@@ -38,7 +38,7 @@ class core_message_inbound_testcase extends advanced_testcase {
      * This includes:
      * * configuring the messageinbound_mailbox.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
 
         $this->resetAfterTest(true);

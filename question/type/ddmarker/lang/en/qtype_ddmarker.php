@@ -81,7 +81,10 @@ $string['pluginnamesummary'] = 'Markers are dragged and dropped onto a backgroun
 Note: This question type is not accessible to users who are visually impaired.';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = 'Select a background image file, enter text labels for markers and define the drop zones on the background image to which they must be dragged.';
-$string['privacy:metadata'] = 'The Drag and drop markers question type plugin does not store any personal data.';
+$string['privacy:metadata'] = 'Drag and drop markers question type plugin allows question authors to set default options as user preferences.';
+$string['privacy:preference:defaultmark'] = 'The default mark set for a given question.';
+$string['privacy:preference:penalty'] = 'The penalty for each incorrect try when questions are run using the \'Interactive with multiple tries\' or \'Adaptive mode\' behaviour.';
+$string['privacy:preference:shuffleanswers'] = 'Whether the answers should be automatically shuffled.';
 $string['refresh'] = 'Refresh preview';
 $string['clearwrongparts'] = 'Move incorrectly placed markers back to default start position below image';
 $string['shape'] = 'Shape';

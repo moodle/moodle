@@ -8,38 +8,39 @@ namespace Box\Spout\Writer\Common\Helper;
  */
 class CellHelper
 {
-    /** @var array Cache containing the mapping column index => cell index */
-    private static $columnIndexToCellIndexCache = [];
+    /** @var array Cache containing the mapping column index => column letters */
+    private static $columnIndexToColumnLettersCache = [];
 
     /**
-     * Returns the cell index (base 26) associated to the base 10 column index.
+     * Returns the column letters (base 26) associated to the base 10 column index.
      * Excel uses A to Z letters for column indexing, where A is the 1st column,
      * Z is the 26th and AA is the 27th.
      * The mapping is zero based, so that 0 maps to A, B maps to 1, Z to 25 and AA to 26.
      *
-     * @param int $columnIndex The Excel column index (0, 42, ...)
+     * @param int $columnIndexZeroBased The Excel column index (0, 42, ...)
+     *
      * @return string The associated cell index ('A', 'BC', ...)
      */
-    public static function getCellIndexFromColumnIndex($columnIndex)
+    public static function getColumnLettersFromColumnIndex($columnIndexZeroBased)
     {
-        $originalColumnIndex = $columnIndex;
+        $originalColumnIndex = $columnIndexZeroBased;
 
         // Using isset here because it is way faster than array_key_exists...
-        if (!isset(self::$columnIndexToCellIndexCache[$originalColumnIndex])) {
-            $cellIndex = '';
-            $capitalAAsciiValue = ord('A');
+        if (!isset(self::$columnIndexToColumnLettersCache[$originalColumnIndex])) {
+            $columnLetters = '';
+            $capitalAAsciiValue = \ord('A');
 
             do {
-                $modulus = $columnIndex % 26;
-                $cellIndex = chr($capitalAAsciiValue + $modulus) . $cellIndex;
+                $modulus = $columnIndexZeroBased % 26;
+                $columnLetters = \chr($capitalAAsciiValue + $modulus) . $columnLetters;
 
                 // substracting 1 because it's zero-based
-                $columnIndex = (int) ($columnIndex / 26) - 1;
-            } while ($columnIndex >= 0);
+                $columnIndexZeroBased = (int) ($columnIndexZeroBased / 26) - 1;
+            } while ($columnIndexZeroBased >= 0);
 
-            self::$columnIndexToCellIndexCache[$originalColumnIndex] = $cellIndex;
+            self::$columnIndexToColumnLettersCache[$originalColumnIndex] = $columnLetters;
         }
 
-        return self::$columnIndexToCellIndexCache[$originalColumnIndex];
+        return self::$columnIndexToColumnLettersCache[$originalColumnIndex];
     }
 }

@@ -176,7 +176,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
                 $this->get_contains_partcorrect_expectation());
 
         $autogradedstep = $this->get_step($this->get_step_count() - 2);
-        $this->assertEquals($autogradedstep->get_fraction(), 0.6666667, '', 0.0000001);
+        $this->assertEqualsWithDelta($autogradedstep->get_fraction(), 0.6666667, 0.0000001);
     }
 
     public function test_interactive_finish_when_try_again_showing() {

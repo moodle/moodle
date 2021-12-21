@@ -42,6 +42,7 @@ if (!$user || !core_user::is_real_user($userid)) {
 $PAGE->set_context(context_user::instance($userid));
 $PAGE->set_url('/user/preferences.php', array('userid' => $userid));
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('user-preferences');
 $PAGE->set_title(get_string('preferences'));
 $PAGE->set_heading(fullname($user));

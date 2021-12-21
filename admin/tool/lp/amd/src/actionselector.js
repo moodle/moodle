@@ -20,7 +20,7 @@
  * This will receive the information to display in popup.
  * The actions have the format [{'text': sometext, 'value' : somevalue}].
  *
- * @package    tool_lp
+ * @module     tool_lp/actionselector
  * @copyright  2016 Serge Gauthier - <serge.gauthier.2@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,6 +35,8 @@ define(['jquery',
 
     /**
      * Action selector class.
+     *
+     * @class tool_lp/actionselector
      * @param {String} title The title of popup.
      * @param {String} message The message to display.
      * @param {object} actions The actions that can be selected.
@@ -56,19 +58,19 @@ define(['jquery',
 
     ActionSelector.prototype = Object.create(EventBase.prototype);
 
-    /** @type {String} The value that was selected. */
+    /** @property {String} The value that was selected. */
     ActionSelector.prototype._selectedValue = null;
-    /** @type {Dialogue} The reference to the dialogue. */
+    /** @property {Dialogue} The reference to the dialogue. */
     ActionSelector.prototype._popup = null;
-    /** @type {String} The title of popup. */
+    /** @property {String} The title of popup. */
     ActionSelector.prototype._title = null;
-    /** @type {String} The message in popup. */
+    /** @property {String} The message in popup. */
     ActionSelector.prototype._message = null;
-    /** @type {object} The information for radion buttons. */
+    /** @property {object} The information for radion buttons. */
     ActionSelector.prototype._actions = null;
-    /** @type {String} The text for confirm button. */
+    /** @property {String} The text for confirm button. */
     ActionSelector.prototype._confirm = null;
-    /** @type {String} The text for cancel button. */
+    /** @property {String} The text for cancel button. */
     ActionSelector.prototype._cancel = null;
 
     /**
@@ -191,6 +193,6 @@ define(['jquery',
         this._selectedValue = '';
     };
 
-    return /** @alias module:tool_lp/actionselector */ ActionSelector;
+    return ActionSelector;
 
 });

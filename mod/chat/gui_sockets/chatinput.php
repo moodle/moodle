@@ -17,7 +17,7 @@
 define('NO_MOODLE_COOKIES', true); // Session not used here.
 
 require('../../../config.php');
-require('../lib.php');
+require_once('../lib.php');
 
 $chatsid = required_param('chat_sid', PARAM_ALPHANUM);
 

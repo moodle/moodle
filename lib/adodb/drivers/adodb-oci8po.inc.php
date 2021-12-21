@@ -1,13 +1,13 @@
 <?php
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim. All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   Portable version of oci8 driver, to make it more similar to other database drivers.
   The main differences are
@@ -29,12 +29,6 @@ class ADODB_oci8po extends ADODB_oci8 {
 	var $dataProvider = 'oci8';
 	var $metaColumnsSQL = "select lower(cname),coltype,width, SCALE, PRECISION, NULLS, DEFAULTVAL from col where tname='%s' order by colno"; //changed by smondino@users.sourceforge. net
 	var $metaTablesSQL = "select lower(table_name),table_type from cat where table_type in ('TABLE','VIEW')";
-
-	function __construct()
-	{
-		$this->_hasOCIFetchStatement = ADODB_PHPVER >= 0x4200;
-		# oci8po does not support adodb extension: adodb_movenext()
-	}
 
 	function Param($name,$type='C')
 	{
@@ -86,6 +80,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 		}
 		return ADODB_oci8::_query($sql,$inputarr);
 	}
+	
 	/**
 	* Replaces compatibility bind markers with oracle ones and returns a
 	* valid sql statement
@@ -94,13 +89,13 @@ class ADODB_oci8po extends ADODB_oci8 {
 	* to numerous tweaks, as more extreme test cases have appeared. This
 	* is now done this like this to help maintainability and avoid the 
 	* need to rely on regexp experienced maintainers
-        *
+	*
 	* @param	string		$sql		The sql statement
 	* @param	string[]	$inputarr	The bind array
 	*
 	* @return	string	The modified statement
 	*/	
-	final private function extractBinds($sql,$inputarr)
+	private function extractBinds($sql,$inputarr)
 	{
 		$inString  = false;
 		$escaped   = 0;
@@ -120,7 +115,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 			/*
 			* find the next character of the string
 			*/
-            $c = $sql[$i];
+			$c = $sql[$i];
 
 			if ($c == "'" && !$inString && $escaped==0)
 				/*
@@ -172,11 +167,6 @@ class ADODB_oci8po extends ADODB_oci8 {
 class ADORecordset_oci8po extends ADORecordset_oci8 {
 
 	var $databaseType = 'oci8po';
-
-	function __construct($queryID,$mode=false)
-	{
-		parent::__construct($queryID,$mode);
-	}
 
 	function Fields($colname)
 	{

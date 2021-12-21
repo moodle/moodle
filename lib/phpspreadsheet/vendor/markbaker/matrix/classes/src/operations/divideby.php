@@ -19,7 +19,7 @@ use Matrix\Operators\Division;
  * @return Matrix
  * @throws Exception
  */
-function divideby(...$matrixValues)
+function divideby(...$matrixValues): Matrix
 {
     if (count($matrixValues) < 2) {
         throw new Exception('Division operation requires at least 2 arguments');

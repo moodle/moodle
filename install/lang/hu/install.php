@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -34,9 +33,10 @@ $string['admindirname'] = 'Rendszergazda-könyvtár';
 $string['availablelangs'] = 'Elérhető nyelvek listája';
 $string['chooselanguagehead'] = 'Nyelv kiválasztása';
 $string['chooselanguagesub'] = 'Válasszon nyelvet a telepítéshez! Ez lesz a portál alapbeállítás szerinti nyelve, de később módosíthatja.';
-$string['clialreadyconfigured'] = 'A config.php már létezik, a portál telepítéséhez használja az admin/cli/install_database.php állományt.';
+$string['clialreadyconfigured'] = 'A config.php már létezik, a Moodle portálra telepítéséhez használja az admin/cli/install_database.php állományt.';
 $string['clialreadyinstalled'] = 'A config.php már létezik, a portál frissítéséhez használja az admin/cli/upgrade.php állományt.';
 $string['cliinstallheader'] = 'A Moodle {$a} parancssori telepítő programja';
+$string['clitablesexist'] = 'Azt adatbázistáblák már léteznek, a CLI telepítése leáll.';
 $string['databasehost'] = 'Az adatbázis gazdagépe';
 $string['databasename'] = 'Az adatbázis neve';
 $string['databasetypehead'] = 'Adatbázismotor kiválasztása';
@@ -56,8 +56,10 @@ $string['pathserrcreatedataroot'] = 'A telepítő nem tudja létrehozni az adatk
 $string['pathshead'] = 'Útvonalak megerősítése';
 $string['pathsrodataroot'] = 'Az adatok gyökérkönyvtára nem írható.';
 $string['pathsroparentdataroot'] = 'A felettes könyvtár ({$a->parent}) nem írható. A telepítő nem tudja létrehozni az adatkönyvtárat ({$a->dataroot}).';
-$string['pathssubadmindir'] = 'Egy pár webes gazdagép esetén az /admin speciális URL pl. a vezérlőpanel eléréséhez. Ez ütközik a Moodle admin oldalainak standard helyével. Javítás: a telepítésben nevezze át a rendszergazda könyvtárát, az új nevet pedig írja be ide. Például: <em>moodleadmin</em>. Ezzel helyrehozhatók a Moodle rendszergazdai ugrópontjai.';
-$string['pathssubdataroot'] = 'Szüksége van egy helyre, ahol a Moodle mentheti a feltöltött állományokat. Ez a könyvtár a webszerver felhasználója (általában \'nobody\' vagy \'apache\') számára legyen mind olvasható, MIND ÍRHATÓ. Ha nem létezik, a telepítő megpróbálja létrehozni.';
+$string['pathssubadmindir'] = 'Egy pár webes gazdagép esetén az /admin speciális URL pl. a vezérlőpanel eléréséhez. Ez ütközik a Moodle admin oldalainak standard helyével. Javítás: a telepítésben nevezze át a rendszergazda könyvtárát, az új nevet pedig írja be ide. Például: <em>moodleadmin</em>. Ezzel helyrehozhatók a Moodle rendszergazdai hivatkozásai.';
+$string['pathssubdataroot'] = 'Szüksége van egy helyre, ahol a Moodle mentheti a feltöltött állományokat. Ez a könyvtár a webszerver felhasználója (általában \'www-data\', \'nobody\' vagy \'apache\') számára legyen mind olvasható, mind írható.
+A könyvtár a webről közvetlenül nem lehet elérhető.
+Ha nem létezik, a telepítő megpróbálja létrehozni.';
 $string['pathssubdirroot'] = 'Teljes útvonal a Moodle telepítéséhez. ';
 $string['pathssubwwwroot'] = 'A Moodle elérésére használandó teljes webcím. A Moodle egyszerre több címről nem érhető el. Ha portálja több címet használ, a jelen cím kivételével az összeshez állandó
 átirányítást kell beállítania. Ha portálja mind intranetről, mind az internetről elérhető, a nyilvános címet itt adja meg, a DNS-t pedig úgy állítsa be, hogy az intranetről a nyilvános cím is elérhető legyen. Ha a cím hibás, módosítsa böngészőjében a webcímet, hogy a telepítés egy másik értékkel induljon újra.';
@@ -72,10 +74,10 @@ verzió {$a}. </p>
 <p>Frissítse a PHP-verziót, vagy térjen át újabb PHP-verziót
 működtető gazdagépre!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Azért látja ezt az oldalt, mert sikeresen telepítette és futtatja az {$a->packname} {$a->packversion} csomagot számítógépén. Gratulálunk!';
-$string['welcomep30'] = 'A {$a->installername} tartalmazza azokat az alkalmazásokat, amelyekkel a Moodle számára kialakítható a működési környezet, azaz:';
+$string['welcomep20'] = 'Azért látja ezt az oldalt, mert sikeresen telepítette és futtatja a(z) {$a->packname} {$a->packversion} csomagot számítógépén. Gratulálunk!';
+$string['welcomep30'] = 'A(z) {$a->installername} tartalmazza azokat az alkalmazásokat, amelyekkel a Moodle számára kialakítható a működési környezet, azaz:';
 $string['welcomep40'] = 'A csomag tartalmazza a Moodle {$a->moodlerelease} ({$a->moodleversion})-t is.';
 $string['welcomep50'] = 'A csomagban lévő alkalmazások használatára a vonatkozó engedélyek érvényesek. A teljes {$a->installername} csomag <a href="https://www.opensource.org/docs/definition_plain.html">nyílt forráskódú</a>, közreadása pedig a <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a>-licenc alapján történik.';
-$string['welcomep60'] = 'A következő oldalak segítségével számítógépén egyszerűen telepítheti és beállíthatja a Moodle-t. Elfogadhatja az alapbeállításokat, de igényeinek megfelelően módosíthatja is őket.';
+$string['welcomep60'] = 'A következő oldalak segítségével számítógépén egyszerűen telepítheti és állíthatja be a <strong>Moodle</strong>-t. Elfogadhatja az alapbeállításokat, de igényeinek megfelelően módosíthatja is őket.';
 $string['welcomep70'] = 'Kattintson az alábbi "Következő" gombra és folytassa a Moodle telepítését.';
 $string['wwwroot'] = 'Webcím';

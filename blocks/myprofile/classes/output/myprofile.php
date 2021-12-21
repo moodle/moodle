@@ -84,26 +84,6 @@ class myprofile implements renderable, templatable {
             $data->useremail = obfuscate_mailto($USER->email, '');
         }
 
-        if (!empty($this->config->display_icq) && !empty($USER->icq)) {
-            $data->usericq = s($USER->icq);
-        }
-
-        if (!empty($this->config->display_skype) && !empty($USER->skype)) {
-            $data->userskype = s($USER->skype);
-        }
-
-        if (!empty($this->config->display_yahoo) && !empty($USER->yahoo)) {
-            $data->useryahoo = s($USER->yahoo);
-        }
-
-        if (!empty($this->config->display_aim) && !empty($USER->aim)) {
-            $data->useraim = s($USER->aim);
-        }
-
-        if (!empty($this->config->display_msn) && !empty($USER->msn)) {
-            $data->usermsn = s($USER->msn);
-        }
-
         if (!empty($this->config->display_phone1) && !empty($USER->phone1)) {
             $data->userphone1 = s($USER->phone1);
         }

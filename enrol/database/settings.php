@@ -86,7 +86,11 @@ if ($ADMIN->fulltree) {
         $options = get_default_enrol_roles(context_system::instance());
         $student = get_archetype_roles('student');
         $student = reset($student);
-        $settings->add(new admin_setting_configselect('enrol_database/defaultrole', get_string('defaultrole', 'enrol_database'), get_string('defaultrole_desc', 'enrol_database'), $student->id, $options));
+        $settings->add(new admin_setting_configselect('enrol_database/defaultrole',
+            get_string('defaultrole', 'enrol_database'),
+            get_string('defaultrole_desc', 'enrol_database'),
+            $student->id ?? null,
+            $options));
     }
 
     $settings->add(new admin_setting_configcheckbox('enrol_database/ignorehiddencourses', get_string('ignorehiddencourses', 'enrol_database'), get_string('ignorehiddencourses_desc', 'enrol_database'), 0));

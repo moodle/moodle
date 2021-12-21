@@ -2,8 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet\Style;
 
-use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-
 class Font extends Supervisor
 {
     // Underline types
@@ -159,9 +157,7 @@ class Font extends Supervisor
      *
      * @param array $pStyles Array containing style information
      *
-     * @throws PhpSpreadsheetException
-     *
-     * @return Font
+     * @return $this
      */
     public function applyFromArray(array $pStyles)
     {
@@ -219,7 +215,7 @@ class Font extends Supervisor
      *
      * @param string $pValue
      *
-     * @return Font
+     * @return $this
      */
     public function setName($pValue)
     {
@@ -255,7 +251,7 @@ class Font extends Supervisor
      *
      * @param float $pValue
      *
-     * @return Font
+     * @return $this
      */
     public function setSize($pValue)
     {
@@ -291,7 +287,7 @@ class Font extends Supervisor
      *
      * @param bool $pValue
      *
-     * @return Font
+     * @return $this
      */
     public function setBold($pValue)
     {
@@ -327,7 +323,7 @@ class Font extends Supervisor
      *
      * @param bool $pValue
      *
-     * @return Font
+     * @return $this
      */
     public function setItalic($pValue)
     {
@@ -361,21 +357,18 @@ class Font extends Supervisor
     /**
      * Set Superscript.
      *
-     * @param bool $pValue
-     *
-     * @return Font
+     * @return $this
      */
-    public function setSuperscript($pValue)
+    public function setSuperscript(bool $pValue)
     {
-        if ($pValue == '') {
-            $pValue = false;
-        }
         if ($this->isSupervisor) {
             $styleArray = $this->getStyleArray(['superscript' => $pValue]);
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->superscript = $pValue;
-            $this->subscript = !$pValue;
+            if ($this->superscript) {
+                $this->subscript = false;
+            }
         }
 
         return $this;
@@ -398,21 +391,18 @@ class Font extends Supervisor
     /**
      * Set Subscript.
      *
-     * @param bool $pValue
-     *
-     * @return Font
+     * @return $this
      */
-    public function setSubscript($pValue)
+    public function setSubscript(bool $pValue)
     {
-        if ($pValue == '') {
-            $pValue = false;
-        }
         if ($this->isSupervisor) {
             $styleArray = $this->getStyleArray(['subscript' => $pValue]);
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->subscript = $pValue;
-            $this->superscript = !$pValue;
+            if ($this->subscript) {
+                $this->superscript = false;
+            }
         }
 
         return $this;
@@ -439,7 +429,7 @@ class Font extends Supervisor
      *                                    If a boolean is passed, then TRUE equates to UNDERLINE_SINGLE,
      *                                        false equates to UNDERLINE_NONE
      *
-     * @return Font
+     * @return $this
      */
     public function setUnderline($pValue)
     {
@@ -477,7 +467,7 @@ class Font extends Supervisor
      *
      * @param bool $pValue
      *
-     * @return Font
+     * @return $this
      */
     public function setStrikethrough($pValue)
     {
@@ -508,11 +498,7 @@ class Font extends Supervisor
     /**
      * Set Color.
      *
-     * @param Color $pValue
-     *
-     * @throws PhpSpreadsheetException
-     *
-     * @return Font
+     * @return $this
      */
     public function setColor(Color $pValue)
     {
@@ -552,5 +538,21 @@ class Font extends Supervisor
             $this->color->getHashCode() .
             __CLASS__
         );
+    }
+
+    protected function exportArray1(): array
+    {
+        $exportedArray = [];
+        $this->exportArray2($exportedArray, 'bold', $this->getBold());
+        $this->exportArray2($exportedArray, 'color', $this->getColor());
+        $this->exportArray2($exportedArray, 'italic', $this->getItalic());
+        $this->exportArray2($exportedArray, 'name', $this->getName());
+        $this->exportArray2($exportedArray, 'size', $this->getSize());
+        $this->exportArray2($exportedArray, 'strikethrough', $this->getStrikethrough());
+        $this->exportArray2($exportedArray, 'subscript', $this->getSubscript());
+        $this->exportArray2($exportedArray, 'superscript', $this->getSuperscript());
+        $this->exportArray2($exportedArray, 'underline', $this->getUnderline());
+
+        return $exportedArray;
     }
 }

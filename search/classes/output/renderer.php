@@ -94,6 +94,25 @@ class renderer extends \plugin_renderer_base {
     }
 
     /**
+     * Top results content
+     *
+     * @param \core_search\document[] $results Search Results
+     * @return string content of the top result section
+     */
+    public function render_top_results($results): string {
+        $content = $this->output->box_start('topresults');
+        $content .= $this->output->heading(get_string('topresults', 'core_search'));
+        $content .= \html_writer::tag('hr', '');
+        $resultshtml = array();
+        foreach ($results as $hit) {
+            $resultshtml[] = $this->render_result($hit);
+        }
+        $content .= \html_writer::tag('div', implode('<hr/>', $resultshtml), array('class' => 'search-results'));
+        $content .= $this->output->box_end();
+        return $content;
+    }
+
+    /**
      * Displaying search results.
      *
      * @param \core_search\document Containing a single search response to be displayed.a

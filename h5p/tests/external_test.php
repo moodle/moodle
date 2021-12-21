@@ -46,7 +46,7 @@ use core_h5p\local\library\autoloader;
  */
 class core_h5p_external_testcase extends externallib_advanced_testcase {
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         autoloader::register();
     }

@@ -112,9 +112,16 @@ you are using an autoloader, no changes to your code should be necessary.
 
 First install [libmaxminddb](https://github.com/maxmind/libmaxminddb) as
 described in its [README.md
-file](https://github.com/maxmind/libmaxminddb/blob/master/README.md#installing-from-a-tarball).
-After successfully installing libmaxmindb, run the following commands from the
-top-level directory of this distribution:
+file](https://github.com/maxmind/libmaxminddb/blob/main/README.md#installing-from-a-tarball).
+After successfully installing libmaxmindb, you may install the extension
+from [pecl](https://pecl.php.net/package/maxminddb):
+
+```
+pecl install maxminddb
+```
+
+Alternatively, you may install it from the source. To do so, run the following
+commands from the top-level directory of this distribution:
 
 ```
 cd ext
@@ -157,7 +164,7 @@ client API, please see [our support page](https://www.maxmind.com/en/support).
 
 ## Requirements  ##
 
-This library requires PHP 5.6 or greater.
+This library requires PHP 7.2 or greater.
 
 The GMP or BCMath extension may be required to read some databases
 using the pure PHP API.
@@ -173,6 +180,6 @@ The MaxMind DB Reader PHP API uses [Semantic Versioning](https://semver.org/).
 
 ## Copyright and License ##
 
-This software is Copyright (c) 2014-2019 by MaxMind, Inc.
+This software is Copyright (c) 2014-2020 by MaxMind, Inc.
 
 This is free software, licensed under the Apache License, Version 2.0.

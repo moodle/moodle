@@ -49,10 +49,6 @@ class behat_question extends behat_question_base {
      * @param TableNode $questiondata The data to fill the question type form.
      */
     public function i_add_a_question_filling_the_form_with($questiontypename, TableNode $questiondata) {
-
-        // Go to question bank.
-        $this->execute("behat_general::click_link", get_string('questionbank', 'question'));
-
         // Click on create question.
         $this->execute('behat_forms::press_button', get_string('createnewquestion', 'question'));
 
@@ -102,5 +98,41 @@ class behat_question extends behat_question_base {
         // Click the action from the menu.
         $this->execute("behat_general::i_click_on_in_the",
                 [$action, 'link', $questionname, 'table_row']);
+    }
+
+    /**
+     * A particular bulk action is visible in the question bank UI.
+     *
+     * @When I should see question bulk action :action
+     * @param string $action the value of the input for the action.
+     */
+    public function i_should_see_question_bulk_action($action) {
+        // Check if its visible.
+        $this->execute("behat_general::should_be_visible",
+            ["#bulkactionsui-container input[name='$action']", "css_element"]);
+    }
+
+    /**
+     * A particular bulk action should not be visible in the question bank UI.
+     *
+     * @When I should not see question bulk action :action
+     * @param string $action the value of the input for the action.
+     */
+    public function i_should_not_see_question_bulk_action($action) {
+        // Check if its visible.
+        $this->execute("behat_general::should_not_be_visible",
+            ["#bulkactionsui-container input[name='$action']", "css_element"]);
+    }
+
+    /**
+     * A click on a particular bulk action in the question bank UI.
+     *
+     * @When I click on question bulk action :action
+     * @param string $action the value of the input for the action.
+     */
+    public function i_click_on_question_bulk_action($action) {
+        // Click the bulk action.
+        $this->execute("behat_general::i_click_on",
+            ["#bulkactionsui-container input[name='$action']", "css_element"]);
     }
 }

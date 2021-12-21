@@ -25,8 +25,11 @@
     <responseformat>editor</responseformat>
     <responserequired>1</responserequired>
     <responsefieldlines>15</responsefieldlines>
+    <minwordlimit></minwordlimit>
+    <maxwordlimit>20</maxwordlimit>
     <attachments>0</attachments>
     <attachmentsrequired>0</attachmentsrequired>
+    <maxbytes>0</maxbytes>
     <filetypeslist></filetypeslist>
     <graderinfo format="html">
       <text></text>

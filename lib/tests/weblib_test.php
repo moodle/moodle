@@ -76,9 +76,9 @@ class core_weblib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
         $user = $generator->create_user();
-        $rawstring = 'Shortname <a href="#">link</a> curseword';
-        $expectednofilter = strip_links($rawstring);
-        $expectedfilter = 'Shortname link \*\**';
+        $rawstring = '<span lang="en" class="multilang">English</span><span lang="ca" class="multilang">Catalan</span>';
+        $expectednofilter = strip_tags($rawstring);
+        $expectedfilter = 'English';
         $striplinks = true;
         $context = context_course::instance($course->id);
         $options = [
@@ -94,24 +94,23 @@ class core_weblib_testcase extends advanced_testcase {
         $nofilterresult = format_string($rawstring, $striplinks, $options);
         $this->assertEquals($expectednofilter, $nofilterresult);
 
-        // Add the censor filter. Make sure it's enabled globally.
+        // Add the multilang filter. Make sure it's enabled globally.
         $CFG->filterall = true;
-        $CFG->stringfilters = 'censor';
-        $CFG->filter_censor_badwords = 'curseword';
-        filter_set_global_state('censor', TEXTFILTER_ON);
-        filter_set_local_state('censor', $context->id, TEXTFILTER_ON);
+        $CFG->stringfilters = 'multilang';
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_local_state('multilang', $context->id, TEXTFILTER_ON);
         // This time we want to apply the filters.
         $options['filter'] = true;
         $filterresult = format_string($rawstring, $striplinks, $options);
-        $this->assertRegExp("/$expectedfilter/", $filterresult);
+        $this->assertMatchesRegularExpression("/$expectedfilter/", $filterresult);
 
-        filter_set_local_state('censor', $context->id, TEXTFILTER_OFF);
+        filter_set_local_state('multilang', $context->id, TEXTFILTER_OFF);
 
         // Confirm that we get back the cached string. The result should be
         // the same as the filtered text above even though we've disabled the
-        // censor filter in between.
+        // multilang filter in between.
         $cachedresult = format_string($rawstring, $striplinks, $options);
-        $this->assertRegExp("/$expectedfilter/", $cachedresult);
+        $this->assertMatchesRegularExpression("/$expectedfilter/", $cachedresult);
     }
 
     public function test_s() {

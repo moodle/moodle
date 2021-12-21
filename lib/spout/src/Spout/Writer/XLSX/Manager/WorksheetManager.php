@@ -14,6 +14,7 @@ use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Helper\CellHelper;
+use Box\Spout\Writer\Common\Manager\RegisteredStyle;
 use Box\Spout\Writer\Common\Manager\RowManager;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
@@ -107,13 +108,13 @@ EOD;
      */
     public function startSheet(Worksheet $worksheet)
     {
-        $sheetFilePointer = fopen($worksheet->getFilePath(), 'w');
+        $sheetFilePointer = \fopen($worksheet->getFilePath(), 'w');
         $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
 
         $worksheet->setFilePointer($sheetFilePointer);
 
-        fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
-        fwrite($sheetFilePointer, '<sheetData>');
+        \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        \fwrite($sheetFilePointer, '<sheetData>');
     }
 
     /**
@@ -153,21 +154,24 @@ EOD;
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
-        $cellIndex = 0;
         $rowStyle = $row->getStyle();
-        $rowIndex = $worksheet->getLastWrittenRowIndex() + 1;
+        $rowIndexOneBased = $worksheet->getLastWrittenRowIndex() + 1;
         $numCells = $row->getNumCells();
 
-        $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
+        $rowXML = '<row r="' . $rowIndexOneBased . '" spans="1:' . $numCells . '">';
 
-        foreach ($row->getCells() as $cell) {
-            $rowXML .= $this->applyStyleAndGetCellXML($cell, $rowStyle, $rowIndex, $cellIndex);
-            $cellIndex++;
+        foreach ($row->getCells() as $columnIndexZeroBased => $cell) {
+            $registeredStyle = $this->applyStyleAndRegister($cell, $rowStyle);
+            $cellStyle = $registeredStyle->getStyle();
+            if ($registeredStyle->isMatchingRowStyle()) {
+                $rowStyle = $cellStyle; // Replace actual rowStyle (possibly with null id) by registered style (with id)
+            }
+            $rowXML .= $this->getCellXML($rowIndexOneBased, $columnIndexZeroBased, $cell, $cellStyle->getId());
         }
 
         $rowXML .= '</row>';
 
-        $wasWriteSuccessful = fwrite($worksheet->getFilePointer(), $rowXML);
+        $wasWriteSuccessful = \fwrite($worksheet->getFilePointer(), $rowXML);
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$worksheet->getFilePath()}");
         }
@@ -175,41 +179,60 @@ EOD;
 
     /**
      * Applies styles to the given style, merging the cell's style with its row's style
-     * Then builds and returns xml for the cell.
      *
-     * @param Cell $cell
+     * @param Cell  $cell
      * @param Style $rowStyle
-     * @param int $rowIndex
-     * @param int $cellIndex
+     *
      * @throws InvalidArgumentException If the given value cannot be processed
-     * @return string
+     * @return RegisteredStyle
      */
-    private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $rowIndex, $cellIndex)
+    private function applyStyleAndRegister(Cell $cell, Style $rowStyle) : RegisteredStyle
     {
-        // Apply row and extra styles
-        $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
-        $cell->setStyle($mergedCellAndRowStyle);
-        $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+        $isMatchingRowStyle = false;
+        if ($cell->getStyle()->isEmpty()) {
+            $cell->setStyle($rowStyle);
 
-        $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
+            $possiblyUpdatedStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
 
-        return $this->getCellXML($rowIndex, $cellIndex, $cell, $registeredStyle->getId());
+            if ($possiblyUpdatedStyle->isUpdated()) {
+                $registeredStyle = $this->styleManager->registerStyle($possiblyUpdatedStyle->getStyle());
+            } else {
+                $registeredStyle = $this->styleManager->registerStyle($rowStyle);
+                $isMatchingRowStyle = true;
+            }
+        } else {
+            $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
+            $cell->setStyle($mergedCellAndRowStyle);
+
+            $possiblyUpdatedStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+
+            if ($possiblyUpdatedStyle->isUpdated()) {
+                $newCellStyle = $possiblyUpdatedStyle->getStyle();
+            } else {
+                $newCellStyle = $mergedCellAndRowStyle;
+            }
+
+            $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
+        }
+
+        return new RegisteredStyle($registeredStyle, $isMatchingRowStyle);
     }
 
     /**
      * Builds and returns xml for a single cell.
      *
-     * @param int $rowIndex
-     * @param int $cellNumber
+     * @param int  $rowIndexOneBased
+     * @param int  $columnIndexZeroBased
      * @param Cell $cell
-     * @param int $styleId
+     * @param int  $styleId
+     *
      * @throws InvalidArgumentException If the given value cannot be processed
      * @return string
      */
-    private function getCellXML($rowIndex, $cellNumber, Cell $cell, $styleId)
+    private function getCellXML($rowIndexOneBased, $columnIndexZeroBased, Cell $cell, $styleId)
     {
-        $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
-        $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
+        $columnLetters = CellHelper::getColumnLettersFromColumnIndex($columnIndexZeroBased);
+        $cellXML = '<c r="' . $columnLetters . $rowIndexOneBased . '"';
         $cellXML .= ' s="' . $styleId . '"';
 
         if ($cell->isString()) {
@@ -217,7 +240,10 @@ EOD;
         } elseif ($cell->isBoolean()) {
             $cellXML .= ' t="b"><v>' . (int) ($cell->getValue()) . '</v></c>';
         } elseif ($cell->isNumeric()) {
-            $cellXML .= '><v>' . $cell->getValue() . '</v></c>';
+            $cellXML .= '><v>' . $this->stringHelper->formatNumericValue($cell->getValue()) . '</v></c>';
+        } elseif ($cell->isError() && is_string($cell->getValueEvenIfError())) {
+            // only writes the error value if it's a string
+            $cellXML .= ' t="e"><v>' . $cell->getValueEvenIfError() . '</v></c>';
         } elseif ($cell->isEmpty()) {
             if ($this->styleManager->shouldApplyStyleOnEmptyCell($styleId)) {
                 $cellXML .= '/>';
@@ -227,7 +253,7 @@ EOD;
                 $cellXML = '';
             }
         } else {
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cell->getValue()));
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . \gettype($cell->getValue()));
         }
 
         return $cellXML;
@@ -263,12 +289,12 @@ EOD;
     {
         $worksheetFilePointer = $worksheet->getFilePointer();
 
-        if (!is_resource($worksheetFilePointer)) {
+        if (!\is_resource($worksheetFilePointer)) {
             return;
         }
 
-        fwrite($worksheetFilePointer, '</sheetData>');
-        fwrite($worksheetFilePointer, '</worksheet>');
-        fclose($worksheetFilePointer);
+        \fwrite($worksheetFilePointer, '</sheetData>');
+        \fwrite($worksheetFilePointer, '</worksheet>');
+        \fclose($worksheetFilePointer);
     }
 }

@@ -47,7 +47,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
      */
     protected $mailsink;
 
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
 
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
@@ -67,7 +67,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $CFG->maxeditingtime = -1;
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
@@ -888,7 +888,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->assertEquals(2, count($messages));
 
         foreach ($messages as $message) {
-            $this->assertRegExp('/Reply-To: moodlemoodle123\+[^@]*@example.com/', $message->header);
+            $this->assertMatchesRegularExpression('/Reply-To: moodlemoodle123\+[^@]*@example.com/', $message->header);
         }
     }
 
@@ -959,7 +959,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($author, [$post]);
         $this->send_notifications_and_assert($commenter, [$post]);
         $messages = $this->messagesink->get_messages();
-        $this->assertNotContains($strre, $messages[0]->subject);
+        $this->assertStringNotContainsString($strre, $messages[0]->subject);
         $this->messagesink->clear();
 
         // Replies should have Re: in the subject.
@@ -980,8 +980,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($commenter, [$reply]);
         $this->send_notifications_and_assert($author, [$reply]);
         $messages = $this->messagesink->get_messages();
-        $this->assertContains($strre, $messages[0]->subject);
-        $this->assertContains($strre, $messages[1]->subject);
+        $this->assertStringContainsString($strre, $messages[0]->subject);
+        $this->assertStringContainsString($strre, $messages[1]->subject);
     }
 
     /**
@@ -1016,8 +1016,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
                     'contents' => array(
                         '~{$a',
                         '~&(amp|lt|gt|quot|\#039);(?!course)',
-                        'Attachment example.txt:' . PHP_EOL .
-                            'https://www.example.com/moodle/pluginfile.php/\d*/mod_forum/attachment/\d*/example.txt' . PHP_EOL,
+                        'Attachment example.txt:' . '\r*\n' .
+                            'https://www.example.com/moodle/pluginfile.php/\d*/mod_forum/attachment/\d*/example.txt' . '\r*\n',
                         'Hello Moodle', 'Moodle Forum', 'Welcome.*Moodle', 'Love Moodle', '1\d1'
                     ),
                 ),
@@ -1075,12 +1075,12 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $newcase['expectations'][0]['contents'] = array(
             '~{$a',
             '~&(amp|lt|gt|quot|\#039);(?!course)',
-            'Attachment example.txt:' . PHP_EOL .
-            'https://www.example.com/moodle/pluginfile.php/\d*/mod_forum/attachment/\d*/example.txt' .  PHP_EOL ,
+            'Attachment example.txt:' . '\r*\n' .
+            'https://www.example.com/moodle/pluginfile.php/\d*/mod_forum/attachment/\d*/example.txt' .  '\r*\n' ,
             'Text and image', 'Moodle Forum',
-            'Welcome to Moodle, *' . PHP_EOL . '.*'
+            'Welcome to Moodle, *' . '\r*\n' . '.*'
                 .'https://www.example.com/moodle/pluginfile.php/\d+/mod_forum/post/\d+/'
-                .'Screen%20Shot%202016-03-22%20at%205\.54\.36%20AM%20%281%29\.png *' . PHP_EOL . '.*!',
+                .'Screen%20Shot%202016-03-22%20at%205\.54\.36%20AM%20%281%29\.png *' . '\r*\n' . '.*!',
             'Love Moodle', '1\d1');
         $textcases['Text mail with text+image message i.e. @@PLUGINFILE@@ token handling'] = array('data' => $newcase);
 
@@ -1255,10 +1255,10 @@ class mod_forum_mail_testcase extends advanced_testcase {
                 }
                 foreach ($foundexpectation['contents'] as $content) {
                     if (strpos($content, '~') !== 0) {
-                        $this->assertRegexp('#' . $content . '#m', $mail->body);
+                        $this->assertMatchesRegularExpression('#' . $content . '#m', $mail->body);
                     } else {
                         preg_match('#' . substr($content, 1) . '#m', $mail->body, $matches);
-                        $this->assertNotRegexp('#' . substr($content, 1) . '#m', $mail->body);
+                        $this->assertDoesNotMatchRegularExpression('#' . substr($content, 1) . '#m', $mail->body);
                     }
                 }
             }

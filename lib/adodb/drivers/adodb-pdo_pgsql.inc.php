@@ -1,7 +1,7 @@
 <?php
 
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -229,4 +229,64 @@ select viewname,'V' from pg_views where viewname like $mask";
 
 	}
 
+	function BeginTrans()
+	{
+		if (!$this->hasTransactions) {
+			return false;
+		}
+		if ($this->transOff) {
+			return true;
+		}
+		$this->transCnt += 1;
+
+		return $this->_connectionID->beginTransaction();
+	}
+
+	function CommitTrans($ok = true)
+	{
+		if (!$this->hasTransactions) {
+			return false;
+		}
+		if ($this->transOff) {
+			return true;
+		}
+		if (!$ok) {
+			return $this->RollbackTrans();
+		}
+		if ($this->transCnt) {
+			$this->transCnt -= 1;
+		}
+		$this->_autocommit = true;
+
+		$ret = $this->_connectionID->commit();
+		return $ret;
+	}
+
+	function RollbackTrans()
+	{
+		if (!$this->hasTransactions) {
+			return false;
+		}
+		if ($this->transOff) {
+			return true;
+		}
+		if ($this->transCnt) {
+			$this->transCnt -= 1;
+		}
+		$this->_autocommit = true;
+
+		$ret = $this->_connectionID->rollback();
+		return $ret;
+	}
+
+	function SetTransactionMode( $transaction_mode )
+	{
+		$this->_transmode  = $transaction_mode;
+		if (empty($transaction_mode)) {
+			$this->_connectionID->query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+			return;
+		}
+		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
+		$this->_connectionID->query("SET TRANSACTION ".$transaction_mode);
+	}
 }

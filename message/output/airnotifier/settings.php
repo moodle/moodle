@@ -52,4 +52,8 @@ if ($ADMIN->fulltree) {
     $url = new moodle_url('/message/output/airnotifier/requestaccesskey.php', array('sesskey' => sesskey()));
     $link = html_writer::link($url, get_string('requestaccesskey', 'message_airnotifier'));
     $settings->add(new admin_setting_heading('requestaccesskey', '', $link));
+    // Check configuration.
+    $url = new moodle_url('/message/output/airnotifier/checkconfiguration.php');
+    $link = html_writer::link($url, get_string('checkconfiguration', 'message_airnotifier'));
+    $settings->add(new admin_setting_heading('checkconfiguration', '', $link));
 }

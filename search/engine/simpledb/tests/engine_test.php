@@ -59,7 +59,7 @@ class search_simpledb_engine_testcase extends advanced_testcase {
      *
      * @return void
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
 
         if ($this->requires_manual_index_update()) {
@@ -86,7 +86,7 @@ class search_simpledb_engine_testcase extends advanced_testcase {
      *
      * @return void
      */
-    public function tearDown() {
+    public function tearDown(): void {
         // For unit tests before PHP 7, teardown is called even on skip. So only do our teardown if we did setup.
         if ($this->generator) {
             // Moodle DML freaks out if we don't teardown the temp table after each run.

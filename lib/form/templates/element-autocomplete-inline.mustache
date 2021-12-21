@@ -12,7 +12,7 @@
             {{/error}}
             {{{element.attributes}}} >
             {{#element.options}}
-            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
+            <option value="{{value}}" {{#selected}}selected{{/selected}}{{#html}} data-html="{{html}}"{{/html}}>{{{text}}}</option>
             {{/element.options}}
         </select>
         {{/element.frozen}}

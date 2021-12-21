@@ -31,7 +31,7 @@
 namespace core_cache\local;
 
 defined('MOODLE_INTERNAL') || die();
-use cache_store, cache_factory, cache_config_writer, cache_helper, core_cache_renderer;
+use cache_store, cache_factory, cache_config_writer, cache_helper;
 
 /**
  * A cache helper for administration tasks
@@ -765,10 +765,10 @@ class administration_display_helper extends \core_cache\administration_helper {
     /**
      * Outputs the main admin page by generating it through the renderer.
      *
-     * @param core_cache_renderer $renderer the renderer to use to generate the page.
+     * @param \core_cache\output\renderer $renderer the renderer to use to generate the page.
      * @return string the HTML for the admin page.
      */
-    public function generate_admin_page(core_cache_renderer $renderer): string {
+    public function generate_admin_page(\core_cache\output\renderer $renderer): string {
         $context = \context_system::instance();
         $html = '';
 
@@ -791,5 +791,88 @@ class administration_display_helper extends \core_cache\administration_helper {
         $html .= $renderer->mode_mappings($applicationstore, $sessionstore, $requeststore, $editurl);
 
         return $html;
+    }
+
+    /**
+     * Gets usage information about the whole cache system.
+     *
+     * This is a slow function and should only be used on an admin information page.
+     *
+     * The returned array lists all cache definitions with fields 'cacheid' and 'stores'. For
+     * each store, the following fields are available:
+     *
+     * - name (store name)
+     * - class (e.g. cachestore_redis)
+     * - supported (true if we have any information)
+     * - items (number of items stored)
+     * - mean (mean size of item)
+     * - sd (standard deviation for item sizes)
+     * - margin (margin of error for mean at 95% confidence)
+     * - storetotal (total usage for store if known, otherwise null)
+     *
+     * The storetotal field will be the same for every cache that uses the same store.
+     *
+     * @param int $samplekeys Number of keys to sample when checking size of large caches
+     * @return array Details of cache usage
+     */
+    public function get_usage(int $samplekeys): array {
+        $results = [];
+
+        $factory = cache_factory::instance();
+
+        // Check the caches we already have an instance of, so we don't make another one...
+        $got = $factory->get_caches_in_use();
+        $gotid = [];
+        foreach ($got as $longid => $unused) {
+            // The IDs here can be of the form cacheid/morestuff if there are parameters in the
+            // cache. Any entry for a cacheid is good enough to consider that we don't need to make
+            // another entry ourselves, so we remove the extra bits and track the basic cache id.
+            $gotid[preg_replace('~^([^/]+/[^/]+)/.*$~', '$1', $longid)] = true;
+        }
+
+        $storetotals = [];
+
+        $config = $factory->create_config_instance();
+        foreach ($config->get_definitions() as $configdetails) {
+            if (!array_key_exists($configdetails['component'] . '/' .  $configdetails['area'], $gotid)) {
+                // Where possible (if it doesn't need identifiers), make an instance of the cache, otherwise
+                // we can't get the store instances for it (and it won't show up in the list).
+                if (empty($configdetails['requireidentifiers'])) {
+                    \cache::make($configdetails['component'], $configdetails['area']);
+                }
+            }
+            $definition = $factory->create_definition($configdetails['component'], $configdetails['area']);
+            $stores = $factory->get_store_instances_in_use($definition);
+
+            // Create object for results about this cache definition.
+            $currentresult = (object)['cacheid' => $definition->get_id(), 'stores' => []];
+            $results[$currentresult->cacheid] = $currentresult;
+
+            /** @var cache_store $store */
+            foreach ($stores as $store) {
+                // Skip static cache.
+                if ($store instanceof \cachestore_static) {
+                    continue;
+                }
+
+                // Get cache size details from store.
+                $currentstore = $store->cache_size_details($samplekeys);
+
+                // Add in basic information about store.
+                $currentstore->name = $store->my_name();
+                $currentstore->class = get_class($store);
+
+                // Add in store total.
+                if (!array_key_exists($currentstore->name, $storetotals)) {
+                    $storetotals[$currentstore->name] = $store->store_total_size();
+                }
+                $currentstore->storetotal = $storetotals[$currentstore->name];
+
+                $currentresult->stores[] = $currentstore;
+            }
+        }
+
+        ksort($results);
+        return $results;
     }
 }

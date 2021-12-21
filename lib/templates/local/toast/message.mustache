@@ -30,18 +30,27 @@
         "data": 200,
         "autohide": true,
         "Message": "Cubing negative numbers is tough",
+        "title": "Negative numbers",
+        "subtitle": "Cubing",
+        "type": "info",
         "closebutton": true
     }
 }}
-<div id="toast-{{uniqid}}" class="toast bg-dark text-white rounded mx-auto" data-delay="{{delay}}" {{^autohide}}data-autohide="false"{{/autohide}}>
-  <div class="toast-body">
-    <span>{{{message}}}</span>
-    {{#closeButton}}
-    <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="{{#str}}dismissnotification, core{{/str}}">
-      <span aria-hidden="true">&times;</span>
-    </button>
-    {{/closeButton}}
-  </div>
+<div id="toast-{{uniqid}}" class="toast mx-auto {{#type}}toast-{{type}}{{/type}}" data-delay="{{delay}}" {{^autohide}}data-autohide="false"{{/autohide}}>
+    {{#title}}
+    <div class="toast-header">
+        <span class="toast-title">{{{title}}}</span>
+        {{#subtitle}}<span class="toast-subtitle ml-auto small">{{{subtitle}}}</span>{{/subtitle}}
+    </div>
+    {{/title}}
+    <div class="toast-body d-flex">
+        <div class="toast-message px-1">{{{message}}}</div>
+        {{#closeButton}}
+        <button type="button" class="ml-auto align-self-baseline close" data-dismiss="toast" aria-label="{{#str}}dismissnotification, core{{/str}}">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        {{/closeButton}}
+    </div>
 </div>
 {{#js}}
 require(['jquery', 'theme_boost/bootstrap/toast'], function(jQuery) {

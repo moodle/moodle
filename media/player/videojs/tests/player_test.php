@@ -22,7 +22,12 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace media_videojs;
+
+use core_media_manager;
+use html_writer;
+use media_videojs_plugin;
+use moodle_url;
 
 /**
  * Test script for media embedding.
@@ -31,12 +36,12 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Marina Glancy
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class media_videojs_player_testcase extends advanced_testcase {
+class player_test extends \advanced_testcase {
 
     /**
      * Pre-test setup. Preserves $CFG.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
 
         // Reset $CFG and $SERVER.
@@ -46,7 +51,7 @@ class media_videojs_player_testcase extends advanced_testcase {
         \core\plugininfo\media::set_enabled_plugins('videojs');
 
         // Pretend to be using Firefox browser (must support ogg for tests to work).
-        core_useragent::instance(true, 'Mozilla/5.0 (X11; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0 ');
+        \core_useragent::instance(true, 'Mozilla/5.0 (X11; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0 ');
     }
 
     /**
@@ -64,8 +69,6 @@ class media_videojs_player_testcase extends advanced_testcase {
         $supportedextensions = array_merge(file_get_typegroup('extension', 'html_video'),
             file_get_typegroup('extension', 'html_audio'), file_get_typegroup('extension', 'media_source'));
 
-        set_config('useflash', 0, 'media_videojs');
-
         // Make sure that the list of extensions from the setting is filtered to HTML5 natively supported extensions.
         $player = new media_videojs_plugin();
         $this->assertTrue(in_array('.mp3', $player->get_supported_extensions()));
@@ -79,18 +82,11 @@ class media_videojs_player_testcase extends advanced_testcase {
         $this->assertFalse(in_array('.ra', $player->get_supported_extensions()));
         $this->assertEmpty(array_diff($player->get_supported_extensions(), $supportedextensions));
 
-        // Try to use flash extensions and make sure they are not returned as supported.
+        // Check flash extensions are not returned as supported.
         set_config('videoextensions', '.flv,.f4v', 'media_videojs');
         $player = new media_videojs_plugin();
         $this->assertFalse(in_array('.flv', $player->get_supported_extensions()));
         $this->assertFalse(in_array('.f4v', $player->get_supported_extensions()));
-
-        // Enable flash and test if flash extenstions are supported.
-        set_config('useflash', 1, 'media_videojs');
-        set_config('videoextensions', '.flv,.f4v', 'media_videojs');
-        $player = new media_videojs_plugin();
-        $this->assertTrue(in_array('.flv', $player->get_supported_extensions()));
-        $this->assertTrue(in_array('.f4v', $player->get_supported_extensions()));
     }
 
     /**
@@ -110,21 +106,21 @@ class media_videojs_player_testcase extends advanced_testcase {
         $this->assertTrue($manager->can_embed_url($url, $embedoptions));
         $content = $manager->embed_url($url, 'Test & file', 0, 0, $embedoptions);
 
-        $this->assertRegExp('~mediaplugin_videojs~', $content);
-        $this->assertRegExp('~</video>~', $content);
-        $this->assertRegExp('~title="Test &amp; file"~', $content);
-        $this->assertRegExp('~style="max-width:' . $CFG->media_default_width . 'px;~', $content);
+        $this->assertMatchesRegularExpression('~mediaplugin_videojs~', $content);
+        $this->assertMatchesRegularExpression('~</video>~', $content);
+        $this->assertMatchesRegularExpression('~title="Test &amp; file"~', $content);
+        $this->assertMatchesRegularExpression('~style="max-width:' . $CFG->media_default_width . 'px;~', $content);
 
         // Repeat sending the specific size to the manager.
         $content = $manager->embed_url($url, 'New file', 123, 50, $embedoptions);
-        $this->assertRegExp('~style="max-width:123px;~', $content);
+        $this->assertMatchesRegularExpression('~style="max-width:123px;~', $content);
 
         // Repeat without sending the size and with unchecked setting to limit the video size.
         set_config('limitsize', false, 'media_videojs');
 
         $manager = core_media_manager::instance();
         $content = $manager->embed_url($url, 'Test & file', 0, 0, $embedoptions);
-        $this->assertNotRegExp('~style="max-width:~', $content);
+        $this->assertDoesNotMatchRegularExpression('~style="max-width:~', $content);
     }
 
     /**
@@ -138,11 +134,11 @@ class media_videojs_player_testcase extends advanced_testcase {
         $text = html_writer::link($url, 'Watch this one');
         $content = format_text($text, FORMAT_HTML);
 
-        $this->assertRegExp('~mediaplugin_videojs~', $content);
-        $this->assertRegExp('~</video>~', $content);
-        $this->assertRegExp('~title="Watch this one"~', $content);
-        $this->assertNotRegExp('~<track\b~i', $content);
-        $this->assertRegExp('~style="max-width:' . $CFG->media_default_width . 'px;~', $content);
+        $this->assertMatchesRegularExpression('~mediaplugin_videojs~', $content);
+        $this->assertMatchesRegularExpression('~</video>~', $content);
+        $this->assertMatchesRegularExpression('~title="Watch this one"~', $content);
+        $this->assertDoesNotMatchRegularExpression('~<track\b~i', $content);
+        $this->assertMatchesRegularExpression('~style="max-width:' . $CFG->media_default_width . 'px;~', $content);
     }
 
     /**
@@ -159,18 +155,21 @@ class media_videojs_player_testcase extends advanced_testcase {
         $manager = core_media_manager::instance();
         $content = $manager->embed_alternatives($urls, '', 0, 0, []);
 
-        $this->assertRegExp('~mediaplugin_videojs~', $content);
-        $this->assertRegExp('~</video>~', $content);
+        $this->assertMatchesRegularExpression('~mediaplugin_videojs~', $content);
+        $this->assertMatchesRegularExpression('~</video>~', $content);
         // Title is taken from the name of the first supported file.
-        $this->assertRegExp('~title="2"~', $content);
+        $this->assertMatchesRegularExpression('~title="2"~', $content);
         // Only supported files are in <source>'s.
-        $this->assertNotRegExp('~<source src="http://example.org/1.rv"~', $content);
-        $this->assertRegExp('~<source src="http://example.org/2.webm"~', $content);
-        $this->assertRegExp('~<source src="http://example.org/3.ogv"~', $content);
+        $this->assertDoesNotMatchRegularExpression('~<source src="http://example.org/1.rv"~', $content);
+        $this->assertMatchesRegularExpression('~<source src="http://example.org/2.webm"~', $content);
+        $this->assertMatchesRegularExpression('~<source src="http://example.org/3.ogv"~', $content);
         // Links to all files are included.
-        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/1.rv">1.rv</a>~', $content);
-        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/2.webm">2.webm</a>~', $content);
-        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/3.ogv">3.ogv</a>~', $content);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/1.rv">1.rv</a>~', $content);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/2.webm">2.webm</a>~', $content);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/3.ogv">3.ogv</a>~', $content);
     }
 
     /**
@@ -182,10 +181,11 @@ class media_videojs_player_testcase extends advanced_testcase {
         $text = html_writer::link($url, 'Apply one player only');
         $content = format_text($text, FORMAT_HTML);
 
-        $this->assertRegExp('~mediaplugin_videojs~', $content);
+        $this->assertMatchesRegularExpression('~mediaplugin_videojs~', $content);
         $this->assertEquals(1, substr_count($content, '</video>'));
-        $this->assertNotRegExp('~mediaplugin_html5video~', $content);
-        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/some_filename.webm">Apply one player only</a>~', $content);
+        $this->assertDoesNotMatchRegularExpression('~mediaplugin_html5video~', $content);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/some_filename.webm">Apply one player only</a>~', $content);
     }
 
     /**
@@ -201,25 +201,25 @@ class media_videojs_player_testcase extends advanced_testcase {
             '<track src="'.$trackurl.'">Unsupported text</video>';
         $content = format_text($text, FORMAT_HTML);
 
-        $this->assertRegExp('~mediaplugin_videojs~', $content);
-        $this->assertRegExp('~</video>~', $content);
-        $this->assertRegExp('~title="some_filename.mp4"~', $content);
-        $this->assertRegExp('~style="max-width:' . $CFG->media_default_width . 'px;~', $content);
+        $this->assertMatchesRegularExpression('~mediaplugin_videojs~', $content);
+        $this->assertMatchesRegularExpression('~</video>~', $content);
+        $this->assertMatchesRegularExpression('~title="some_filename.mp4"~', $content);
+        $this->assertMatchesRegularExpression('~style="max-width:' . $CFG->media_default_width . 'px;~', $content);
         // Unsupported text and tracks are preserved.
-        $this->assertRegExp('~Unsupported text~', $content);
-        $this->assertRegExp('~<track\b~i', $content);
+        $this->assertMatchesRegularExpression('~Unsupported text~', $content);
+        $this->assertMatchesRegularExpression('~<track\b~i', $content);
         // Invalid sources are removed.
-        $this->assertNotRegExp('~somethinginvalid~i', $content);
+        $this->assertDoesNotMatchRegularExpression('~somethinginvalid~i', $content);
 
         // Video with dimensions and source specified as src attribute without <source> tag.
         $text = '<video controls="true" width="123" height="35" src="'.$url.'">Unsupported text</video>';
         $content = format_text($text, FORMAT_HTML);
-        $this->assertRegExp('~mediaplugin_videojs~', $content);
-        $this->assertRegExp('~</video>~', $content);
-        $this->assertRegExp('~<source\b~', $content);
-        $this->assertRegExp('~style="max-width:123px;~', $content);
-        $this->assertNotRegExp('~width="~', $content);
-        $this->assertNotRegExp('~height="~', $content);
+        $this->assertMatchesRegularExpression('~mediaplugin_videojs~', $content);
+        $this->assertMatchesRegularExpression('~</video>~', $content);
+        $this->assertMatchesRegularExpression('~<source\b~', $content);
+        $this->assertMatchesRegularExpression('~style="max-width:123px;~', $content);
+        $this->assertDoesNotMatchRegularExpression('~width="~', $content);
+        $this->assertDoesNotMatchRegularExpression('~height="~', $content);
 
         // Audio tag.
         $url = new moodle_url('http://example.org/some_filename.mp3');
@@ -228,16 +228,16 @@ class media_videojs_player_testcase extends advanced_testcase {
             '<track src="'.$trackurl.'">Unsupported text</audio>';
         $content = format_text($text, FORMAT_HTML);
 
-        $this->assertRegExp('~mediaplugin_videojs~', $content);
-        $this->assertNotRegExp('~</video>~', $content);
-        $this->assertRegExp('~</audio>~', $content);
-        $this->assertRegExp('~title="some_filename.mp3"~', $content);
-        $this->assertRegExp('~style="max-width:' . $CFG->media_default_width . 'px;~', $content);
+        $this->assertMatchesRegularExpression('~mediaplugin_videojs~', $content);
+        $this->assertDoesNotMatchRegularExpression('~</video>~', $content);
+        $this->assertMatchesRegularExpression('~</audio>~', $content);
+        $this->assertMatchesRegularExpression('~title="some_filename.mp3"~', $content);
+        $this->assertMatchesRegularExpression('~style="max-width:' . $CFG->media_default_width . 'px;~', $content);
         // Unsupported text and tracks are preserved.
-        $this->assertRegExp('~Unsupported text~', $content);
-        $this->assertRegExp('~<track\b~i', $content);
+        $this->assertMatchesRegularExpression('~Unsupported text~', $content);
+        $this->assertMatchesRegularExpression('~<track\b~i', $content);
         // Invalid sources are removed.
-        $this->assertNotRegExp('~somethinginvalid~i', $content);
+        $this->assertDoesNotMatchRegularExpression('~somethinginvalid~i', $content);
     }
 
     /**
@@ -246,8 +246,8 @@ class media_videojs_player_testcase extends advanced_testcase {
      * @param string $t output of core_media_manager::embed_url.
      */
     protected function youtube_plugin_engaged($t) {
-        $this->assertContains('mediaplugin_videojs', $t);
-        $this->assertContains('data-setup-lazy="{&quot;techOrder&quot;: [&quot;youtube&quot;]', $t);
+        $this->assertStringContainsString('mediaplugin_videojs', $t);
+        $this->assertStringContainsString('data-setup-lazy="{&quot;techOrder&quot;: [&quot;youtube&quot;]', $t);
     }
 
     /**
@@ -255,7 +255,6 @@ class media_videojs_player_testcase extends advanced_testcase {
      */
     public function test_youtube() {
         set_config('youtube', 1, 'media_videojs');
-        set_config('useflash', 0, 'media_videojs');
 
         $manager = core_media_manager::instance();
 
@@ -271,18 +270,18 @@ class media_videojs_player_testcase extends advanced_testcase {
         $url = new moodle_url('https://www.youtube.com/watch?v=dv2f_xfmbD8&index=4&list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0');
         $t = $manager->embed_url($url);
         $this->youtube_plugin_engaged($t);
-        $this->assertContains('list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0', $t);
+        $this->assertStringContainsString('list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0', $t);
 
         // Format: youtube playlist - not supported.
         $url = new moodle_url('http://www.youtube.com/view_play_list?p=PL6E18E2927047B662');
         $t = $manager->embed_url($url);
-        $this->assertNotContains('mediaplugin_videojs', $t);
+        $this->assertStringNotContainsString('mediaplugin_videojs', $t);
         $url = new moodle_url('http://www.youtube.com/playlist?list=PL6E18E2927047B662');
         $t = $manager->embed_url($url);
-        $this->assertNotContains('mediaplugin_videojs', $t);
+        $this->assertStringNotContainsString('mediaplugin_videojs', $t);
         $url = new moodle_url('http://www.youtube.com/p/PL6E18E2927047B662');
         $t = $manager->embed_url($url);
-        $this->assertNotContains('mediaplugin_videojs', $t);
+        $this->assertStringNotContainsString('mediaplugin_videojs', $t);
     }
 
     /**
@@ -312,12 +311,11 @@ class media_videojs_player_testcase extends advanced_testcase {
      */
     public function test_youtube_start_time(string $url, int $expectedstart) {
         set_config('youtube', 1, 'media_videojs');
-        set_config('useflash', 0, 'media_videojs');
 
         $embedcode = core_media_manager::instance()->embed_url(new moodle_url($url));
 
         $this->youtube_plugin_engaged($embedcode);
-        $this->assertContains("&quot;youtube&quot;: {&quot;start&quot;: &quot;{$expectedstart}&quot;}", $embedcode);
+        $this->assertStringContainsString("&quot;youtube&quot;: {&quot;start&quot;: &quot;{$expectedstart}&quot;}", $embedcode);
     }
 
     /**
@@ -326,73 +324,33 @@ class media_videojs_player_testcase extends advanced_testcase {
      * @param string $t output of core_media_manager::embed_url.
      */
     protected function flash_plugin_engaged($t) {
-        $this->assertContains('mediaplugin_videojs', $t);
-        $this->assertContains('data-setup-lazy="{&quot;techOrder&quot;: [&quot;flash&quot;, &quot;html5&quot;]', $t);
+        $this->assertStringContainsString('mediaplugin_videojs', $t);
+        $this->assertStringContainsString('data-setup-lazy="{&quot;techOrder&quot;: [&quot;flash&quot;, &quot;html5&quot;]', $t);
     }
 
     /**
-     * Test that VideoJS can embed flash videos.
+     * Test that VideoJS can not embed flash videos.
      */
-    public function test_flash() {
+    public function test_flash_behaviour() {
         $manager = core_media_manager::instance();
 
-        // Flash enabled.
-        set_config('useflash', 1, 'media_videojs');
         $url = new moodle_url('http://example.org/some_filename.flv');
         $t = $manager->embed_url($url);
-        $this->flash_plugin_engaged($t);
-        $this->assertRegExp('~</video>~', $t);
-        $this->assertRegExp('~<source src="http://example.org/some_filename.flv"~', $t);
-        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/some_filename.flv">some_filename.flv</a>~', $t);
-
-        // Flash disabled.
-        set_config('useflash', 0, 'media_videojs');
-        $url = new moodle_url('http://example.org/some_filename.flv');
-        $t = $manager->embed_url($url);
-        $this->assertNotContains('mediaplugin_videojs', $t);
-        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/some_filename.flv">some_filename.flv</a>~', $t);
+        $this->assertStringNotContainsString('mediaplugin_videojs', $t);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/some_filename.flv">some_filename.flv</a>~', $t);
     }
 
     /**
-     * Test that VideoJS can embed RTMP streams.
+     * Test that VideoJS can not embed RTMP streams.
      */
-    public function test_rtmp() {
+    public function test_rtmp_behaviour() {
         $manager = core_media_manager::instance();
 
-        // RTMP disabled, flash disabled.
-        set_config('useflash', 0, 'media_videojs');
-        set_config('rtmp', 0, 'media_videojs');
         $url = new moodle_url('rtmp://example.com/fms&mp4:path/to/file.mp4');
         $t = $manager->embed_url($url);
-        $this->assertNotContains('mediaplugin_videojs', $t);
-        $this->assertRegExp('~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
-
-        // RTMP enabled, flash disabled.
-        set_config('useflash', 0, 'media_videojs');
-        set_config('rtmp', 1, 'media_videojs');
-        $url = new moodle_url('rtmp://example.com/fms&mp4:path/to/file.mp4');
-        $t = $manager->embed_url($url);
-        $this->assertNotContains('mediaplugin_videojs', $t);
-        $this->assertRegExp('~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
-
-        // RTMP enabled, flash enabled, rtmp/mp4 type expected.
-        set_config('useflash', 1, 'media_videojs');
-        set_config('rtmp', 1, 'media_videojs');
-        $url = new moodle_url('rtmp://example.com/fms&mp4:path/to/file.mp4');
-        $t = $manager->embed_url($url);
-        $this->flash_plugin_engaged($t);
-        $this->assertRegExp('~</video>~', $t);
-        $this->assertRegExp('~<source src="rtmp://example.com/fms&mp4:path/to/file.mp4" type="rtmp/mp4"~', $t);
-        $this->assertRegExp('~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
-
-        // RTMP enabled, flash enabled, rtmp/flv type expected.
-        set_config('useflash', 1, 'media_videojs');
-        set_config('rtmp', 1, 'media_videojs');
-        $url = new moodle_url('rtmp://example.com/fms&flv:path/to/file.flv');
-        $t = $manager->embed_url($url);
-        $this->flash_plugin_engaged($t);
-        $this->assertRegExp('~</video>~', $t);
-        $this->assertRegExp('~<source src="rtmp://example.com/fms&flv:path/to/file.flv" type="rtmp/flv"~', $t);
-        $this->assertRegExp('~<a class="mediafallbacklink" href="rtmp://example.com/fms&flv:path/to/file.flv">file.flv</a>~', $t);
+        $this->assertStringNotContainsString('mediaplugin_videojs', $t);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
     }
 }

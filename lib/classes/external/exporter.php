@@ -489,12 +489,15 @@ abstract class exporter {
     /**
      * Returns the read structure.
      *
+     * @param int $required Whether is required.
+     * @param mixed $default The default value.
+     *
      * @return external_single_structure
      */
-    final public static function get_read_structure() {
+    final public static function get_read_structure($required = VALUE_REQUIRED, $default = null) {
         $properties = self::read_properties_definition();
 
-        return self::get_read_structure_from_properties($properties);
+        return self::get_read_structure_from_properties($properties, $required, $default);
     }
 
     /**

@@ -22,7 +22,7 @@ Feature: Configure tool types
   @javascript
   Scenario: Add a tool type from a cartridge URL
     When I set the field "url" to local url "/mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml"
-    And I press "Add"
+    And I press "Add Legacy LTI"
     Then I should see "Enter your consumer key and shared secret"
     And I press "Save changes"
     And I should see "Example tool"
@@ -30,7 +30,7 @@ Feature: Configure tool types
   @javascript
   Scenario: Try to add a non-existant cartridge
     When I set the field "url" to local url "/mod/lti/tests/fixtures/nonexistant.xml"
-    And I press "Add"
+    And I press "Add Legacy LTI"
     Then I should see "Enter your consumer key and shared secret"
     And I press "Save changes"
     And I should see "Failed to create new tool. Please check the URL and try again."
@@ -38,6 +38,6 @@ Feature: Configure tool types
   @javascript
   Scenario: Attempt to add a tool type from a configuration URL, then cancel
     When I set the field "url" to local url "/mod/lti/tests/fixtures/tool_provider.php"
-    And I press "Add"
+    And I press "Add Legacy LTI"
     Then I should see "Cancel"
     And I press "cancel-external-registration"

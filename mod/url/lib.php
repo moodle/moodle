@@ -226,7 +226,7 @@ function url_get_coursemodule_info($coursemodule) {
 
     if ($display == RESOURCELIB_DISPLAY_POPUP) {
         $fullurl = "$CFG->wwwroot/mod/url/view.php?id=$coursemodule->id&amp;redirect=1";
-        $options = empty($url->displayoptions) ? array() : unserialize($url->displayoptions);
+        $options = empty($url->displayoptions) ? [] : (array) unserialize_array($url->displayoptions);
         $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
@@ -242,6 +242,8 @@ function url_get_coursemodule_info($coursemodule) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
         $info->content = format_module_intro('url', $url, $coursemodule->id, false);
     }
+
+    $info->customdata['display'] = $display;
 
     return $info;
 }

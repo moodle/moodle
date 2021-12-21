@@ -229,7 +229,7 @@ function page_get_coursemodule_info($coursemodule) {
     }
 
     $fullurl = "$CFG->wwwroot/mod/page/view.php?id=$coursemodule->id&amp;inpopup=1";
-    $options = empty($page->displayoptions) ? array() : unserialize($page->displayoptions);
+    $options = empty($page->displayoptions) ? [] : (array) unserialize_array($page->displayoptions);
     $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
     $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
     $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";

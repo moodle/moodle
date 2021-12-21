@@ -24,11 +24,13 @@
     * id - element id
     * hours - list of valid hour options containing name, value, selected
     * minutes - list of valid minute options containing name, value, selected
+    * readonly - bool
 
     Example context (json):
     {
         "name": "test",
         "id": "test0",
+        "readonly": false,
         "minutes": [
             { "name": "00", "value": "0", "selected": true },
             { "name": "01", "value": "1", "selected": false }
@@ -45,13 +47,13 @@
 <div class="form-time defaultsnext">
     <div class="form-inline text-ltr">
         <label class="sr-only" for="{{id}}h">{{#str}}hours{{/str}}</label>
-        <select id="{{id}}h" name="{{name}}[h]" class="custom-select">
+        <select id="{{id}}h" name="{{name}}[h]" class="custom-select" {{#readonly}}disabled{{/readonly}}>
             {{#hours}}
                 <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
             {{/hours}}
         </select>:
         <label class="sr-only" for="{{id}}m">{{#str}}minutes{{/str}}</label>
-        <select id="{{id}}m" name="{{name}}[m]" class="custom-select">
+        <select id="{{id}}m" name="{{name}}[m]" class="custom-select" {{#readonly}}disabled{{/readonly}}>
             {{#minutes}}
                 <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
             {{/minutes}}

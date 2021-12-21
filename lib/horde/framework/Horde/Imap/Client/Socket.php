@@ -1543,12 +1543,9 @@ class Horde_Imap_Client_Socket extends Horde_Imap_Client_Base
 
         /* Add in STATUS return, if needed. */
         if (!empty($options['status']) && $this->_capability('LIST-STATUS')) {
-            foreach ($pattern as $val) {
-                $val_utf8 = Horde_Imap_Client_Utf7imap::Utf7ImapToUtf8($val);
-                if (isset($lr[$val_utf8])) {
-                    $lr[$val_utf8]['status'] = $this->_prepareStatusResponse($status_opts, $val_utf8);
-                }
-            }
+           foreach($lr as $val_utf8 => $tmp) {
+               $lr[$val_utf8]['status'] = $this->_prepareStatusResponse($status_opts, $val_utf8);
+           }
         }
 
         return $lr;

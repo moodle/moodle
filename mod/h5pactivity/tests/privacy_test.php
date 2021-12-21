@@ -38,7 +38,7 @@ use \core_privacy\tests\provider_testcase;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_h5pactivity_privacy_testcase extends provider_testcase {
+class privacy_test extends provider_testcase {
 
     /** @var stdClass User without any attempt. */
     protected $student0;
@@ -67,7 +67,7 @@ class mod_h5pactivity_privacy_testcase extends provider_testcase {
         // The student1 has data in the mod_h5pactivity context.
         $contextlist = provider::get_contexts_for_userid($this->student1->id);
         $this->assertCount(1, (array) $contextlist->get_contextids());
-        $this->assertContains($this->context->id, $contextlist->get_contextids());
+        $this->assertContainsEquals($this->context->id, $contextlist->get_contextids());
     }
 
     /**

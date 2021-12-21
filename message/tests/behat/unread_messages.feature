@@ -35,7 +35,7 @@ Feature: Unread messages
     And I select "New group" conversation in messaging
     And I send "Hi!" message in the message area
     And I should see "Hi!" in the "New group" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "New group" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "New group" "core_message > Message conversation"
     And I log out
     And I log in as "student2"
     And I should see "1" in the "//*[@title='Toggle messaging drawer']/../*[@data-region='count-container']" "xpath_element"

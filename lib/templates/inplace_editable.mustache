@@ -56,7 +56,9 @@
         {{^ linkeverything }}{{{displayvalue}}}{{/ linkeverything }}
         <a href="#" class="quickeditlink aalink" data-inplaceeditablelink="1" title="{{edithint}}">
             {{# linkeverything }}{{{displayvalue}}}{{/ linkeverything }}
-            <span class="quickediticon visibleifjs">{{#pix}}t/editstring,core,{{{edithint}}}{{/pix}}</span>
+            <span class="quickediticon visibleifjs">
+                {{#editicon}}{{#pix}}{{key}}, {{component}}, {{{title}}}{{/pix}}{{/editicon}}
+            </span>
         </a>
 </span>
 {{#js}}

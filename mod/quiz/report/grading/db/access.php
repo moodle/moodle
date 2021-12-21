@@ -33,10 +33,12 @@ $capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'mod/quiz:viewreports'
+        'clonepermissionsfrom' => 'mod/quiz:viewreports'
     ),
 
-    // Is the user allowed to see the student's idnumber while grading?
+    // Is the user allowed to see the student's identity fields while grading?
+    // Note that the name of this capability is now out-of-date, but to preserve
+    // backwards compatibility, the name was not changed when the functionality was updated.
     'quiz/grading:viewidnumber' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -44,6 +46,6 @@ $capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'mod/quiz:viewreports'
+        'clonepermissionsfrom' => 'mod/quiz:viewreports'
     )
 );

@@ -34,7 +34,7 @@ class core_user_testcase extends advanced_testcase {
     /**
      * Setup test data.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest(true);
     }
 
@@ -497,14 +497,14 @@ class core_user_testcase extends advanced_testcase {
         try {
             core_user::get_property_definition('fullname');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/Invalid property requested./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Invalid property requested./', $e->getMessage());
         }
 
         // Empty parameter.
         try {
             core_user::get_property_definition('');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/Invalid property requested./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Invalid property requested./', $e->getMessage());
         }
     }
 
@@ -675,10 +675,6 @@ class core_user_testcase extends advanced_testcase {
 
     /**
      * Test get_property_default().
-     *
-     *
-     * @expectedException        coding_exception
-     * @expectedExceptionMessage Invalid property requested, or the property does not has a default value.
      */
     public function test_get_property_default() {
         global $CFG;
@@ -706,6 +702,8 @@ class core_user_testcase extends advanced_testcase {
         $timezone = core_user::get_property_default('timezone');
         $this->assertEquals('Pacific/Auckland', $timezone);
 
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Invalid property requested, or the property does not has a default value.');
         core_user::get_property_default('firstname');
     }
 
@@ -772,4 +770,53 @@ class core_user_testcase extends advanced_testcase {
         $this->assertFalse(\core_user::is_real_user(core_user::get_support_user()->id, true));
     }
 
+    /**
+     * Tests for the {@see \core_user::awaiting_action()} method.
+     */
+    public function test_awaiting_action() {
+        global $CFG, $DB, $USER;
+
+        $guest = \core_user::get_user($CFG->siteguest);
+        $student = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+        $manager = $this->getDataGenerator()->create_user();
+        $admin = get_admin();
+
+        $this->getDataGenerator()->role_assign($DB->get_field('role', 'id', ['shortname' => 'manager']),
+            $manager->id, \context_system::instance()->id);
+
+        // Scenario: Guests required to agree to site policy.
+        $this->assertFalse(\core_user::awaiting_action($guest));
+
+        $CFG->sitepolicyguest = 'https://example.com';
+        $this->assertTrue(\core_user::awaiting_action($guest));
+
+        $guest->policyagreed = 1;
+        $this->assertFalse(\core_user::awaiting_action($guest));
+
+        // Scenario: Student required to fill their profile.
+        $this->assertFalse(\core_user::awaiting_action($student));
+
+        $student->firstname = '';
+        $this->assertTrue(\core_user::awaiting_action($student));
+
+        $student->firstname = 'Alice';
+        $this->assertFalse(\core_user::awaiting_action($student));
+
+        // Scenario: Teacher force to change their password.
+        $this->assertFalse(\core_user::awaiting_action($teacher));
+
+        set_user_preference('auth_forcepasswordchange', 1, $teacher);
+        $this->assertTrue(\core_user::awaiting_action($teacher));
+
+        unset_user_preference('auth_forcepasswordchange', $teacher);
+        $this->assertFalse(\core_user::awaiting_action($teacher));
+
+        // Scenario: Admins do not need to agree to the policy but others do.
+        $this->assertFalse(\core_user::awaiting_action($admin));
+        $this->assertFalse(\core_user::awaiting_action($manager));
+        $CFG->sitepolicy = 'https://example.com';
+        $this->assertFalse(\core_user::awaiting_action($admin));
+        $this->assertTrue(\core_user::awaiting_action($manager));
+    }
 }

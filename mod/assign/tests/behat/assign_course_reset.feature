@@ -22,49 +22,44 @@ Feature: Assign reset
       | name    | course | idnumber |
       | Group 1 | C1     | G1       |
       | Group 2 | C1     | G2       |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | assignsubmission_onlinetext_wordlimit_enabled | 1 |
-      | assignsubmission_onlinetext_wordlimit | 10 |
-      | assignsubmission_file_enabled | 0 |
+    And the following "activity" exists:
+      | activity                                      | assign                  |
+      | course                                        | C1                      |
+      | name                                          | Test assignment name    |
+      | intro                                         | Submit your online text |
+      | assignsubmission_onlinetext_enabled           | 1                       |
+      | assignsubmission_onlinetext_wordlimit_enabled | 1                       |
+      | assignsubmission_onlinetext_wordlimit         | 10                      |
+      | assignsubmission_file_enabled                 | 0                       |
+      | submissiondrafts                              | 0                       |
 
   Scenario: Use course reset to clear all attempt data
-    When I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    When I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm the student first submission |
-    And I press "Save changes"
-    Then I should see "Submitted for grading"
+    Given the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                       |
+      | Test assignment name  | student1  | I'm the student first submission |
+    And I am on the "Test assignment name" Activity page logged in as student1
+    And I should see "Submitted for grading"
     And I should see "I'm the student first submission"
     And I should see "Not graded"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
+    And I follow "View all submissions"
     And I should see "Submitted for grading"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    When I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all submissions | 1  |
     And I press "Reset course"
     And I press "Continue"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I am on the "Test assignment name" Activity page
+    And I follow "View all submissions"
     Then I should not see "Submitted for grading"
 
   @javascript
   Scenario: Use course reset to remove user overrides.
-    When I follow "Test assignment name"
-    And I navigate to "User overrides" in current page administration
+    And I am on the "Test assignment name" Activity page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
     And I press "Add user override"
     And I set the following fields to these values:
         | Override user    | Student1  |
@@ -76,20 +71,20 @@ Feature: Assign reset
         | duedate[minute]    | 00 |
     And I press "Save"
     And I should see "Sam1 Student1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    When I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all user overrides | 1  |
     And I press "Reset course"
     And I press "Continue"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "User overrides" in current page administration
+    And I click on "Test assignment name" "link" in the "region-main" "region"
+    And I navigate to "Overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
   Scenario: Use course reset to remove group overrides.
-    When I follow "Test assignment name"
-    And I navigate to "Group overrides" in current page administration
+    When I am on the "Test assignment name" Activity page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
     And I press "Add group override"
     And I set the following fields to these values:
         | Override group   | Group 1  |
@@ -101,35 +96,32 @@ Feature: Assign reset
         | duedate[minute]    | 00 |
     And I press "Save"
     And I should see "Group 1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all group overrides | 1  |
     And I press "Reset course"
     And I press "Continue"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "Group overrides" in current page administration
+    And I am on the "Test assignment name" Activity page
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
     Then I should not see "Group 1"
 
   Scenario: Use course reset to reset blind marking assignment.
-    Given I follow "Test assignment name"
-    And I navigate to "Edit settings" in current page administration
+    When I am on the "Test assignment name" Activity page logged in as teacher1
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
         | blindmarking | 1 |
     And I press "Save"
-    When I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    When I am on the "Test assignment name" Activity page
+    And I follow "View all submissions"
     And I select "Reveal student identities" from the "Grading action" singleselect
     And I press "Continue"
     And I should see "Sam1 Student1"
-    And I am on "Course 1" course homepage
-    When I navigate to "Reset" in current page administration
+    When I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all submissions | 1 |
     And I press "Reset course"
     And I press "Continue"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I am on the "Test assignment name" Activity page
+    And I follow "View all submissions"
     Then I should not see "Sam1 Student1"

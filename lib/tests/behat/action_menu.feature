@@ -12,7 +12,7 @@ Feature: Navigate action menu
     # The menu should now be visible.
     Then ".usermenu [role='menu']" "css_element" should be visible
     # Press down arrow.
-    And I press key "40" in "#actionmenuaction-1" "css_element"
+    And I press the down key
     # The menu should still be visible.
     And ".usermenu [role='menu']" "css_element" should be visible
 

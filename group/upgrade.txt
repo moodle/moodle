@@ -1,0 +1,7 @@
+This files describes API changes in /group/*,
+information provided here is intended especially for developers.
+
+=== 3.11 ===
+
+* The groups do not support 'hidepicture' any more, and so the column 'hidepicture'
+  from the table {groups} has be dropped.

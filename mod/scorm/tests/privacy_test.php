@@ -66,7 +66,7 @@ class mod_scorm_testcase extends provider_testcase {
         // The student1 has data in the SCORM context.
         $contextlist = provider::get_contexts_for_userid($this->student1->id);
         $this->assertCount(1, (array) $contextlist->get_contextids());
-        $this->assertContains($this->context->id, $contextlist->get_contextids());
+        $this->assertContainsEquals($this->context->id, $contextlist->get_contextids());
     }
 
     /**

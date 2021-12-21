@@ -4,6 +4,8 @@ This files describes API changes in the lti code.
 
 * Select Content supports multiple, allowing a tool to return more than one link at a time.
   Parameter multiple in function lti_build_content_item_selection_request() is now set to true.
+* Deprecated unused function after external function, 'get_tool_proxies()', was refactored:
+    - serialise_tool_proxy()
 
 === 3.8 ===
 

@@ -41,16 +41,18 @@ Feature: The activity results block displays student in visible groups low score
       | student4 | G2 |
       | student5 | G3 |
       | student6 | G3 |
+    And the following "activity" exists:
+      | activity                        | assign          |
+      | course                          | C1              |
+      | idnumber                        | 0001            |
+      | name                            | Test assignment |
+      | intro                           | Offline text    |
+      | section                         | 1               |
+      | assignsubmission_file_enabled   | 0               |
+      | groupmode                       | 2               |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-      | Group mode | Visible groups |
-    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"
@@ -166,7 +168,9 @@ Feature: The activity results block displays student in visible groups low score
     And I should see "75.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores using ID numbers
-    Given I add the "Activity results" block
+    Given the following config values are set as admin:
+      | showuseridentity | idnumber,email |
+    And I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |

@@ -103,18 +103,10 @@ function profiling_start() {
     $script = !empty($SCRIPT) ? $SCRIPT : profiling_get_script();
 
     // Get PGC variables
-    $check = 'PROFILEME';
-    $profileme = isset($_POST[$check]) || isset($_GET[$check]) || isset($_COOKIE[$check]) ? true : false;
-    $profileme = $profileme && !empty($CFG->profilingallowme);
-    $check = 'DONTPROFILEME';
-    $dontprofileme = isset($_POST[$check]) || isset($_GET[$check]) || isset($_COOKIE[$check]) ? true : false;
-    $dontprofileme = $dontprofileme && !empty($CFG->profilingallowme);
-    $check = 'PROFILEALL';
-    $profileall = isset($_POST[$check]) || isset($_GET[$check]) || isset($_COOKIE[$check]) ? true : false;
-    $profileall = $profileall && !empty($CFG->profilingallowall);
-    $check = 'PROFILEALLSTOP';
-    $profileallstop = isset($_POST[$check]) || isset($_GET[$check]) || isset($_COOKIE[$check]) ? true : false;
-    $profileallstop = $profileallstop && !empty($CFG->profilingallowall);
+    $profileme      = profiling_get_flag('PROFILEME')       && !empty($CFG->profilingallowme);
+    $dontprofileme  = profiling_get_flag('DONTPROFILEME')   && !empty($CFG->profilingallowme);
+    $profileall     = profiling_get_flag('PROFILEALL')      && !empty($CFG->profilingallowall);
+    $profileallstop = profiling_get_flag('PROFILEALLSTOP')  && !empty($CFG->profilingallowall);
 
     // DONTPROFILEME detected, nothing to start
     if ($dontprofileme) {
@@ -187,6 +179,18 @@ function profiling_start() {
 
     // Started, return true
     return true;
+}
+
+/**
+ * Check for profiling flags in all possible places
+ * @param string $flag name
+ * @return boolean
+ */
+function profiling_get_flag($flag) {
+    return !empty(getenv($flag)) ||
+        isset($_COOKIE[$flag]) ||
+        isset($_POST[$flag]) ||
+        isset($_GET[$flag]);
 }
 
 /**
@@ -823,10 +827,10 @@ function profiling_get_import_run_schema() {
         <xs:element type="xs:int" name="runreference"/>
         <xs:element type="xs:string" name="runcomment"/>
         <xs:element type="xs:int" name="timecreated"/>
-        <xs:element type="xs:int" name="totalexecutiontime"/>
-        <xs:element type="xs:int" name="totalcputime"/>
-        <xs:element type="xs:int" name="totalcalls"/>
-        <xs:element type="xs:int" name="totalmemory"/>
+        <xs:element type="xs:integer" name="totalexecutiontime"/>
+        <xs:element type="xs:integer" name="totalcputime"/>
+        <xs:element type="xs:integer" name="totalcalls"/>
+        <xs:element type="xs:integer" name="totalmemory"/>
         <xs:element type="xs:string" name="data"/>
       </xs:sequence>
     </xs:complexType>

@@ -56,7 +56,7 @@ class WorkbookManager extends WorkbookManagerAbstract
     protected function writeAllFilesToDiskAndZipThem($finalFilePointer)
     {
         $worksheets = $this->getWorksheets();
-        $numWorksheets = count($worksheets);
+        $numWorksheets = \count($worksheets);
 
         $this->fileSystemHelper
             ->createContentFile($this->worksheetManager, $this->styleManager, $worksheets)

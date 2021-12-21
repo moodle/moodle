@@ -57,8 +57,6 @@ M.course_dndupload = {
     // The selector identifying the list of modules within a section (note changing this may require
     // changes to the get_mods_element function)
     modslistselector: 'ul.section',
-    // Original onbeforeunload event.
-    originalUnloadEvent: null,
 
     /**
      * Initalise the drag and drop upload interface
@@ -97,6 +95,37 @@ M.course_dndupload = {
         if (options.showstatus) {
             this.add_status_div();
         }
+
+        var self = this;
+        require([
+            'core_courseformat/courseeditor',
+            'core_course/events'
+        ], function(
+            Editor,
+            CourseEvents
+        ) {
+            // Any change to the course must be applied also to the course state via the courseeditor module.
+            self.courseeditor = Editor.getCurrentCourseEditor();
+
+            // Some formats can add sections without reloading the page.
+            document.querySelector('#' + self.pagecontentid).addEventListener(
+                CourseEvents.sectionRefreshed,
+                self.sectionRefreshed.bind(self)
+            );
+        });
+    },
+
+    /**
+     * Setup Drag and Drop in a section.
+     * @param {CustomEvent} event The custom event
+     */
+    sectionRefreshed: function(event) {
+        if (event.detail.newSectionElement === undefined) {
+            return;
+        }
+        var element = this.Y.one(event.detail.newSectionElement);
+        this.add_preview_element(element);
+        this.init_events(element);
     },
 
     /**
@@ -765,7 +794,10 @@ M.course_dndupload = {
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 1) {
                 this.originalUnloadEvent = window.onbeforeunload;
-                self.reportUploadDirtyState(true);
+                // Trigger form upload start events.
+                require(['core_form/events'], function(FormEvent) {
+                    FormEvent.notifyUploadStarted(section.get('id'));
+                });
             }
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
@@ -780,6 +812,8 @@ M.course_dndupload = {
                                 resel.li.outerHTML = unescape(resel.li.outerHTML);
                             }
                             self.add_editing(result.elementid);
+                            // Once done, send any new course module id to the courseeditor to update de course state.
+                            self.courseeditor.dispatch('cmState', [result.cmid]);
                             // Fire the content updated event.
                             require(['core/event', 'jquery'], function(event, $) {
                                 event.notifyFilterContentUpdated($(result.fullcontent));
@@ -793,7 +827,10 @@ M.course_dndupload = {
                 } else {
                     new M.core.alert({message: M.util.get_string('servererror', 'moodle')});
                 }
-                self.reportUploadDirtyState(false);
+                // Trigger form upload complete events.
+                require(['core_form/events'], function(FormEvent) {
+                    FormEvent.notifyUploadCompleted(section.get('id'));
+                });
             }
         };
 
@@ -1025,7 +1062,10 @@ M.course_dndupload = {
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 1) {
                 this.originalUnloadEvent = window.onbeforeunload;
-                self.reportUploadDirtyState(true);
+                // Trigger form upload start events.
+                require(['core_form/events'], function(FormEvent) {
+                    FormEvent.notifyUploadStarted(section.get('id'));
+                });
             }
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
@@ -1040,16 +1080,29 @@ M.course_dndupload = {
                                 resel.li.outerHTML = unescape(resel.li.outerHTML);
                             }
                             self.add_editing(result.elementid);
+                            // Once done, send any new course module id to the courseeditor to update de course state.
+                            self.courseeditor.dispatch('cmState', [result.cmid]);
                         } else {
                             // Error - remove the dummy element
                             resel.parent.removeChild(resel.li);
+                            // Trigger form upload complete events.
+                            require(['core_form/events'], function(FormEvent) {
+                                FormEvent.notifyUploadCompleted(section.get('id'));
+                            });
                             new M.core.alert({message: result.error});
                         }
                     }
                 } else {
+                    // Trigger form upload complete events.
+                    require(['core_form/events'], function(FormEvent) {
+                        FormEvent.notifyUploadCompleted(section.get('id'));
+                    });
                     new M.core.alert({message: M.util.get_string('servererror', 'moodle')});
                 }
-                self.reportUploadDirtyState(false);
+                // Trigger form upload complete events.
+                require(['core_form/events'], function(FormEvent) {
+                    FormEvent.notifyUploadCompleted(section.get('id'));
+                });
             }
         };
 
@@ -1082,25 +1135,6 @@ M.course_dndupload = {
         });
         if (M.core.actionmenu && M.core.actionmenu.newDOMNode) {
             M.core.actionmenu.newDOMNode(node);
-        }
-    },
-
-    /**
-     * Set the event to prevent user navigate away when upload progress still running.
-     *
-     * @param {bool} enable true if upload progress is running, false otherwise
-     */
-    reportUploadDirtyState: function(enable) {
-        if (!enable) {
-            window.onbeforeunload = this.originalUnloadEvent;
-        } else {
-            window.onbeforeunload = function(e) {
-                var warningMessage = M.util.get_string('changesmadereallygoaway', 'moodle');
-                if (e) {
-                    e.returnValue = warningMessage;
-                }
-                return warningMessage;
-            };
         }
     }
 };

@@ -16,13 +16,17 @@ Feature: A teacher can password protect a lesson
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity    | lesson                  |
+      | course      | C1                      |
+      | idnumber    | 0001                    |
+      | name        | Test lesson             |
+      | intro       | Test lesson description |
+      | section     | 1                       |
+      | usepassword | 1                       |
+      | password    | moodle_rules            |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson |
-      | Description | Test lesson description |
-      | Password protected lesson | Yes |
-      | id_password | moodle_rules |
+    And I am on "Course 1" course homepage
     And I follow "Test lesson"
     And I follow "Add a content page"
     And I set the following fields to these values:

@@ -22,7 +22,7 @@ Feature: Browsing tagged items
 
   Scenario: Browse tag index with javascript disabled
     When I log in as "user1"
-    And I press "Customise this page"
+    And I turn editing mode on
     # TODO MDL-57120 "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Tags" "link" in the "Navigation" "block"
@@ -69,7 +69,7 @@ Feature: Browsing tagged items
   @javascript
   Scenario: Browse tag index with javascript enabled
     When I log in as "user1"
-    And I press "Customise this page"
+    And I turn editing mode on
     # TODO MDL-57120 "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"

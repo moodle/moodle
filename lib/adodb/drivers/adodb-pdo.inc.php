@@ -1,6 +1,6 @@
 <?php
 /**
-	@version   v5.20.16  12-Jan-2020
+	@version   v5.21.0  2021-02-27
 	@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 	@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 
@@ -10,7 +10,7 @@
 
 	Set tabs to 4 for best viewing.
 
-	Latest version is available at http://adodb.org/
+	Latest version is available at https://adodb.org/
 
 	Requires ODBC. Works on Windows and Unix.
 
@@ -77,7 +77,6 @@ class ADODB_pdo extends ADOConnection {
 	var $_genSeqSQL = "create table %s (id integer)";
 	var $_dropSeqSQL;
 	var $_autocommit = true;
-	var $_haserrorfunctions = true;
 	var $_lastAffectedRows = 0;
 
 	var $_errormsg = false;
@@ -86,10 +85,13 @@ class ADODB_pdo extends ADOConnection {
 	var $dsnType = '';
 	var $stmt = false;
 	var $_driver;
-
-	function __construct()
-	{
-	}
+	
+	/*
+	* Describe parameters passed directly to the PDO driver
+	*
+	* @example $db->pdoOptions = [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION];
+	*/
+	public $pdoParameters = array();
 
 	function _UpdatePDO()
 	{
@@ -102,6 +104,7 @@ class ADODB_pdo extends ADOConnection {
 		$this->random = $d->random;
 		$this->concat_operator = $d->concat_operator;
 		$this->nameQuote = $d->nameQuote;
+		$this->arrayClass = $d->arrayClass;
 
 		$this->hasGenID = $d->hasGenID;
 		$this->_genIDSQL = $d->_genIDSQL;
@@ -144,12 +147,22 @@ class ADODB_pdo extends ADOConnection {
 				case 'oci':
 				case 'pgsql':
 				case 'sqlite':
+				case 'firebird':
 				default:
 					$argDSN .= ';dbname='.$argDatabasename;
 			}
 		}
+		/*
+		* Configure for persistent connection if required,
+		* by adding the the pdo parameter into any provided
+		* ones
+		*/
+		if ($persist) {
+			$this->pdoParameters[\PDO::ATTR_PERSISTENT] = true;
+		} 
+		
 		try {
-			$this->_connectionID = new PDO($argDSN, $argUsername, $argPassword);
+			$this->_connectionID = new \PDO($argDSN, $argUsername, $argPassword, $this->pdoParameters);
 		} catch (Exception $e) {
 			$this->_connectionID = false;
 			$this->_errorno = -1;
@@ -175,6 +188,16 @@ class ADODB_pdo extends ADOConnection {
 			//$this->_connectionID->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT );
 			$this->_connectionID->setAttribute(PDO::ATTR_CASE,$m);
 
+			// Now merge in any provided attributes for PDO
+			foreach ($this->connectionParameters as $options) {
+				foreach($options as $k=>$v) {
+					if ($this->debug) {
+						ADOconnection::outp('Setting attribute: ' . $k . ' to ' . $v);
+					}
+					$this->_connectionID->setAttribute($k,$v);
+				}
+			}
+			
 			$class = 'ADODB_pdo_'.$this->dsnType;
 			//$this->_connectionID->setAttribute(PDO::ATTR_AUTOCOMMIT,true);
 			switch($this->dsnType) {
@@ -184,6 +207,8 @@ class ADODB_pdo extends ADOConnection {
 				case 'pgsql':
 				case 'sqlite':
 				case 'sqlsrv':
+				case 'firebird':
+				case 'dblib':
 					include_once(ADODB_DIR.'/drivers/adodb-pdo_'.$this->dsnType.'.inc.php');
 					break;
 			}
@@ -210,10 +235,7 @@ class ADODB_pdo extends ADOConnection {
 			return call_user_func_array(array($this->_driver, 'Concat'), $args);
 		}
 
-		if (PHP_VERSION >= 5.3) {
-			return call_user_func_array('parent::Concat', $args);
-		}
-		return call_user_func_array(array($this,'parent::Concat'), $args);
+		return call_user_func_array('parent::Concat', $args);
 	}
 
 	// returns true or false
@@ -249,6 +271,64 @@ class ADODB_pdo extends ADOConnection {
 	function MetaColumns($table,$normalize=true)
 	{
 		return $this->_driver->MetaColumns($table,$normalize);
+	}
+
+	public function metaIndexes($table,$normalize=true)
+	{
+		if (method_exists($this->_driver,'metaIndexes'))
+			return $this->_driver->metaIndexes($table,$normalize);
+	}
+
+	/**
+	 * Return a list of Primary Keys for a specified table.
+	 *
+	 * @param string   $table
+	 * @param bool     $owner      (optional) not used in this driver
+	 *
+	 * @return string[]    Array of indexes
+	 */
+	public function metaPrimaryKeys($table,$owner=false)
+	{
+		if (method_exists($this->_driver,'metaPrimaryKeys'))
+			return $this->_driver->metaPrimaryKeys($table,$owner);
+	}
+
+	/**
+	 * Returns a list of Foreign Keys for a specified table.
+	 *
+	 * @param string   $table
+	 * @param bool     $owner      (optional) not used in this driver
+	 * @param bool     $upper
+	 * @param bool     $associative
+	 *
+	 * @return string[] where keys are tables, and values are foreign keys
+	 */
+	public function metaForeignKeys($table, $owner=false, $upper=false,$associative=false) {
+		if (method_exists($this->_driver,'metaForeignKeys'))
+			return $this->_driver->metaForeignKeys($table,$owner,$upper,$associative);
+	}
+
+	/**
+	 * List procedures or functions in an array.
+	 *
+	 * @param $procedureNamePattern A procedure name pattern; must match the procedure name as it is stored in the database.
+	 * @param $catalog              A catalog name; must match the catalog name as it is stored in the database.
+	 * @param $schemaPattern        A schema name pattern.
+	 *
+	 * @return false|array false if not supported, or array of procedures on current database with structure below
+	 *         Array(
+	 *           [name_of_procedure] => Array(
+	 *             [type] => PROCEDURE or FUNCTION
+	 *             [catalog] => Catalog_name
+	 *             [schema] => Schema_name
+	 *             [remarks] => explanatory comment on the procedure
+	 *           )
+	 *         )
+	 */
+	public function metaProcedures($procedureNamePattern = null, $catalog  = null, $schemaPattern  = null) {
+		if (method_exists($this->_driver,'metaProcedures'))
+			return $this->_driver->metaProcedures($procedureNamePattern,$catalog,$schemaPattern);
+		return false;
 	}
 
 	function InParameter(&$stmt,&$var,$name,$maxLen=4000,$type=false)
@@ -335,16 +415,16 @@ class ADODB_pdo extends ADOConnection {
 		return $err;
 	}
 
-    /**
-     * @param bool $auto_commit
-     * @return void
-     */
+	/**
+	 * @param bool $auto_commit
+	 * @return void
+	 */
 	function SetAutoCommit($auto_commit)
-    {
-        if(method_exists($this->_driver, 'SetAutoCommit')) {
-            $this->_driver->SetAutoCommit($auto_commit);
-        }
-    }
+	{
+		if(method_exists($this->_driver, 'SetAutoCommit')) {
+			$this->_driver->SetAutoCommit($auto_commit);
+		}
+	}
 
 	function SetTransactionMode($transaction_mode)
 	{
@@ -352,13 +432,13 @@ class ADODB_pdo extends ADOConnection {
 			return $this->_driver->SetTransactionMode($transaction_mode);
 		}
 
-		return parent::SetTransactionMode($seqname);
+		return parent::SetTransactionMode($transaction_mode);
 	}
 
-	function BeginTrans()
+	function beginTrans()
 	{
-		if(method_exists($this->_driver, 'BeginTrans')) {
-			return $this->_driver->BeginTrans();
+		if(method_exists($this->_driver, 'beginTrans')) {
+			return $this->_driver->beginTrans();
 		}
 
 		if (!$this->hasTransactions) {
@@ -374,10 +454,11 @@ class ADODB_pdo extends ADOConnection {
 		return $this->_connectionID->beginTransaction();
 	}
 
-	function CommitTrans($ok=true)
+	function commitTrans($ok=true)
 	{
-		if(method_exists($this->_driver, 'CommitTrans')) {
-			return $this->_driver->CommitTrans($ok);
+
+		if(method_exists($this->_driver, 'commitTrans')) {
+			return $this->_driver->commitTrans($ok);
 		}
 
 		if (!$this->hasTransactions) {
@@ -387,7 +468,7 @@ class ADODB_pdo extends ADOConnection {
 			return true;
 		}
 		if (!$ok) {
-			return $this->RollbackTrans();
+			return $this->rollbackTrans();
 		}
 		if ($this->transCnt) {
 			$this->transCnt -= 1;
@@ -441,10 +522,10 @@ class ADODB_pdo extends ADOConnection {
 		return $obj;
 	}
 
-	function CreateSequence($seqname='adodbseq',$startID=1)
+	public function createSequence($seqname='adodbseq',$startID=1)
 	{
-		if(method_exists($this->_driver, 'CreateSequence')) {
-			return $this->_driver->CreateSequence($seqname, $startID);
+		if(method_exists($this->_driver, 'createSequence')) {
+			return $this->_driver->createSequence($seqname, $startID);
 		}
 
 		return parent::CreateSequence($seqname, $startID);
@@ -478,10 +559,11 @@ class ADODB_pdo extends ADOConnection {
 		} else {
 			$stmt = $this->_connectionID->prepare($sql);
 		}
-		#adodb_backtrace();
-		#var_dump($this->_bindInputArray);
+		
 		if ($stmt) {
-			$this->_driver->debug = $this->debug;
+			if ($this->_driver instanceof ADODB_pdo) {
+				$this->_driver->debug = $this->debug;
+			}
 			if ($inputarr) {
 				$ok = $stmt->execute($inputarr);
 			}
@@ -523,6 +605,9 @@ class ADODB_pdo extends ADOConnection {
 
 	function _affectedrows()
 	{
+		if(method_exists($this->_driver, '_affectedrows'))
+			return $this->_driver->_affectedrows();
+		
 		return ($this->_stmt) ? $this->_stmt->rowCount() : 0;
 	}
 
@@ -533,25 +618,23 @@ class ADODB_pdo extends ADOConnection {
 
 	/**
 	 * Quotes a string to be sent to the database.
+	 *
 	 * If we have an active connection, delegates quoting to the underlying
-	 * PDO object. Otherwise, replace "'" by the value of $replaceQuote (same
-	 * behavior as mysqli driver)
-	 * @param string  $s            The string to quote
-	 * @param boolean $magic_quotes If false, use PDO::quote().
+	 * PDO object PDO::quote(). Otherwise, replace "'" by the value of
+	 * $replaceQuote (same behavior as mysqli driver).
+	 *
+	 * @param string  $s           The string to quote
+	 * @param bool   $magic_quotes This param is not used since 5.21.0.
+	 *                             It remains for backwards compatibility.
+	 *
 	 * @return string Quoted string
 	 */
-	function qstr($s, $magic_quotes = false)
+	function qStr($s, $magic_quotes = false)
 	{
-		if (!$magic_quotes) {
-			if ($this->_connectionID) {
-				return $this->_connectionID->quote($s);
-			}
-			return "'" . str_replace("'", $this->replaceQuote, $s) . "'";
+		if ($this->_connectionID) {
+			return $this->_connectionID->quote($s);
 		}
-
-		// undo magic quotes for "
-		$s = str_replace('\\"', '"', $s);
-		return "'$s'";
+		return "'" . str_replace("'", $this->replaceQuote, $s) . "'";
 	}
 
 }
@@ -813,3 +896,5 @@ class ADORecordSet_pdo extends ADORecordSet {
 	}
 
 }
+
+class ADORecordSet_array_pdo extends ADORecordSet_array {}

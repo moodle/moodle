@@ -62,14 +62,6 @@ class IndexInput implements Serializable
             }
         }
 
-        if (! isset($index['ns'])) {
-            throw new InvalidArgumentException('Required "ns" option is missing from index specification');
-        }
-
-        if (! is_string($index['ns'])) {
-            throw InvalidArgumentException::invalidType('"ns" option', $index['ns'], 'string');
-        }
-
         if (! isset($index['name'])) {
             $index['name'] = generate_index_name($index['key']);
         }

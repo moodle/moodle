@@ -45,7 +45,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
     /**
      * Set things back to the default before each test.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
         cache_factory::reset();
         cache_config_testing::create_default_configuration();
@@ -54,7 +54,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
     /**
      * Final task is to reset the cache system
      */
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void {
         parent::tearDownAfterClass();
         cache_factory::reset();
     }
@@ -74,7 +74,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         )));
 
         $storesummaries = core_cache\administration_helper::get_store_instance_summaries();
-        $this->assertInternalType('array', $storesummaries);
+        $this->assertIsArray($storesummaries);
         $this->assertArrayHasKey('summariesstore', $storesummaries);
         $summary = $storesummaries['summariesstore'];
         // Check the keys
@@ -92,10 +92,15 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertEquals(0, $summary['default']);
         $this->assertEquals(1, $summary['isready']);
         $this->assertEquals(1, $summary['requirementsmet']);
-        $this->assertEquals(1, $summary['mappings']);
+
+        // Find the number of mappings to sessionstore.
+        $mappingcount = count(array_filter($config->get_definitions(), function($element) {
+            return $element['mode'] === cache_store::MODE_APPLICATION;
+        }));
+        $this->assertEquals($mappingcount, $summary['mappings']);
 
         $definitionsummaries = core_cache\administration_helper::get_definition_summaries();
-        $this->assertInternalType('array', $definitionsummaries);
+        $this->assertIsArray($definitionsummaries);
         $this->assertArrayHasKey('core/eventinvalidation', $definitionsummaries);
         $summary = $definitionsummaries['core/eventinvalidation'];
         // Check the keys
@@ -111,11 +116,11 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertEquals(cache_store::MODE_APPLICATION, $summary['mode']);
         $this->assertEquals('core', $summary['component']);
         $this->assertEquals('eventinvalidation', $summary['area']);
-        $this->assertInternalType('array', $summary['mappings']);
+        $this->assertIsArray($summary['mappings']);
         $this->assertContains('summariesstore', $summary['mappings']);
 
         $pluginsummaries = core_cache\administration_helper::get_store_plugin_summaries();
-        $this->assertInternalType('array', $pluginsummaries);
+        $this->assertIsArray($pluginsummaries);
         $this->assertArrayHasKey('file', $pluginsummaries);
         $summary = $pluginsummaries['file'];
         // Check the keys
@@ -127,18 +132,18 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertArrayHasKey('canaddinstance', $summary);
 
         $locksummaries = core_cache\administration_helper::get_lock_summaries();
-        $this->assertInternalType('array', $locksummaries);
+        $this->assertIsArray($locksummaries);
         $this->assertTrue(count($locksummaries) > 0);
 
         $mappings = core_cache\administration_helper::get_default_mode_stores();
-        $this->assertInternalType('array', $mappings);
+        $this->assertIsArray($mappings);
         $this->assertCount(3, $mappings);
         $this->assertArrayHasKey(cache_store::MODE_APPLICATION, $mappings);
-        $this->assertInternalType('array', $mappings[cache_store::MODE_APPLICATION]);
+        $this->assertIsArray($mappings[cache_store::MODE_APPLICATION]);
         $this->assertContains('summariesstore', $mappings[cache_store::MODE_APPLICATION]);
 
         $potentials = core_cache\administration_helper::get_definition_store_options('core', 'eventinvalidation');
-        $this->assertInternalType('array', $potentials); // Currently used, suitable, default
+        $this->assertIsArray($potentials); // Currently used, suitable, default
         $this->assertCount(3, $potentials);
         $this->assertArrayHasKey('summariesstore', $potentials[0]);
         $this->assertArrayHasKey('summariesstore', $potentials[1]);
@@ -229,5 +234,40 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
 
         $result = cache_helper::hash_key('test/test', $definition);
         $this->assertEquals(sha1($definition->generate_single_key_prefix().'-test/test'), $result);
+    }
+
+    /**
+     * Tests the get_usage function.
+     */
+    public function test_get_usage(): void {
+        // Create a test cache definition and put items in it.
+        $instance = cache_config_testing::instance(true);
+        $instance->phpunit_add_definition('phpunit/test', [
+                'mode' => cache_store::MODE_APPLICATION,
+                'component' => 'phpunit',
+                'area' => 'test',
+                'simplekeys' => true
+        ]);
+        $cache = cache::make('phpunit', 'test');
+        for ($i = 0; $i < 100; $i++) {
+            $cache->set('key' . $i, str_repeat('x', $i));
+        }
+
+        $factory = cache_factory::instance();
+        $adminhelper = $factory->get_administration_display_helper();
+
+        $usage = $adminhelper->get_usage(10)['phpunit/test'];
+        $this->assertEquals('phpunit/test', $usage->cacheid);
+        $this->assertCount(1, $usage->stores);
+        $store = $usage->stores[0];
+        $this->assertEquals('default_application', $store->name);
+        $this->assertEquals('cachestore_file', $store->class);
+        $this->assertEquals(true, $store->supported);
+        $this->assertEquals(100, $store->items);
+
+        // As file store checks all items, the values should be exact.
+        $this->assertEqualsWithDelta(57.4, $store->mean, 0.1);
+        $this->assertEqualsWithDelta(29.0, $store->sd, 0.1);
+        $this->assertEquals(0, $store->margin);
     }
 }

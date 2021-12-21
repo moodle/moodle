@@ -14,7 +14,7 @@ class DirectSum extends Operator
      * @return $this The operation object, allowing multiple additions to be chained
      * @throws Exception If the provided argument is not appropriate for the operation
      */
-    public function execute($value)
+    public function execute($value): Operator
     {
         if (is_array($value)) {
             $value = new Matrix($value);
@@ -33,7 +33,7 @@ class DirectSum extends Operator
      * @param Matrix $value The numeric value to concatenate/direct sum with the current base value
      * @return $this The operation object, allowing multiple additions to be chained
      **/
-    private function directSumMatrix($value)
+    private function directSumMatrix($value): Operator
     {
         $originalColumnCount = count($this->matrix[0]);
         $originalRowCount = count($this->matrix);

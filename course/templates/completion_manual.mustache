@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/completion_manual
+
+    Template for displaying the manual completion button.
+
+    Example context (json):
+    {
+        "cmid": 0,
+        "overallcomplete": true,
+        "overallincomplete": false
+    }
+}}
+{{#istrackeduser}}
+    {{#overallcomplete}}
+        <button class="btn btn-success btn-sm text-nowrap" data-action="toggle-manual-completion" data-toggletype="manual:undo" data-cmid="{{cmid}}" data-activityname="{{activityname}}" data-withavailability="{{withavailability}}" {{!
+        }}{{#accessibledescription}}{{!
+            }}title="{{.}}" {{!
+            }}aria-label="{{.}}" {{!
+        }}{{/accessibledescription}}{{!
+        }}{{^accessibledescription}}{{!
+            }}title="{{#str}}completion_manual:aria:done, course, {{activityname}} {{/str}}" {{!
+            }}aria-label="{{#str}}completion_manual:aria:done, course, {{activityname}} {{/str}}" {{!
+        }}{{/accessibledescription}}>
+            <i class="fa fa-check" aria-hidden="true"></i> {{#str}} completion_manual:done, core_course {{/str}}
+        </button>
+    {{/overallcomplete}}
+    {{#overallincomplete}}
+        <button class="btn btn-outline-secondary btn-sm text-nowrap" data-action="toggle-manual-completion" data-toggletype="manual:mark-done" data-cmid="{{cmid}}" data-activityname="{{activityname}}" data-withavailability="{{withavailability}}" {{!
+        }}{{#accessibledescription}}{{!
+            }}title="{{.}}" {{!
+            }}aria-label="{{.}}" {{!
+        }}{{/accessibledescription}}{{!
+        }}{{^accessibledescription}}{{!
+            }}title="{{#str}}completion_manual:aria:markdone, course, {{activityname}} {{/str}}" {{!
+            }}aria-label="{{#str}}completion_manual:aria:markdone, course, {{activityname}} {{/str}}" {{!
+        }}{{/accessibledescription}}>
+            {{#str}} completion_manual:markdone, core_course {{/str}}
+        </button>
+    {{/overallincomplete}}
+{{/istrackeduser}}
+{{^istrackeduser}}
+    <button class="btn btn-outline-secondary btn-sm text-nowrap" disabled>
+        {{#str}} completion_manual:markdone, core_course {{/str}}
+    </button>
+{{/istrackeduser}}
+
+{{#js}}
+require(['core_course/manual_completion_toggle'], toggle => {
+    toggle.init()
+});
+{{/js}}

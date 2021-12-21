@@ -60,6 +60,11 @@ class step {
     protected $content;
 
     /**
+     * @var     int  $contentformat    The content format: FORMAT_MOODLE/FORMAT_HTML/FORMAT_PLAIN/FORMAT_MARKDOWN.
+     */
+    protected $contentformat;
+
+    /**
      * @var     int     $targettype The type of target.
      */
     protected $targettype;
@@ -147,6 +152,7 @@ class step {
             $this->title    = $record->title;
             $this->content  = $record->content;
         }
+        $this->contentformat = isset($record->contentformat) ? $record->contentformat : 1;
         $this->targettype   = $record->targettype;
         $this->targetvalue  = $record->targetvalue;
         $this->sortorder    = $record->sortorder;
@@ -223,6 +229,15 @@ class step {
     }
 
     /**
+     * Get the content format of the step.
+     *
+     * @return  int
+     */
+    public function get_contentformat(): int {
+        return $this->contentformat;
+    }
+
+    /**
      * Get the body content of the step.
      *
      * @return  string
@@ -235,10 +250,12 @@ class step {
      * Set the content value for this step.
      *
      * @param   string      $value      The new content to use.
+     * @param   int         $format     The new format to use: FORMAT_MOODLE/FORMAT_HTML/FORMAT_PLAIN/FORMAT_MARKDOWN.
      * @return  $this
      */
-    public function set_content($value) {
+    public function set_content($value, $format = FORMAT_HTML) {
         $this->content = clean_text($value);
+        $this->contentformat = $format;
         $this->dirty = true;
 
         return $this;
@@ -443,6 +460,7 @@ class step {
             'tourid'        => $this->tourid,
             'title'         => $this->title,
             'content'       => $this->content,
+            'contentformat' => $this->contentformat,
             'targettype'    => $this->targettype,
             'targetvalue'   => $this->targetvalue,
             'sortorder'     => $this->sortorder,
@@ -486,6 +504,23 @@ class step {
             $this->get_tour()->reset_step_sortorder();
         }
 
+        $systemcontext = \context_system::instance();
+        if ($draftid = file_get_submitted_draft_itemid('content')) {
+            // Take any files added to the stepcontent draft file area and
+            // convert them into the proper event description file area. Also
+            // parse the content text and replace the URLs to the draft files
+            // with the @@PLUGIN_FILE@@ placeholder to be persisted in the DB.
+            $this->content = file_save_draft_area_files(
+                $draftid,
+                $systemcontext->id,
+                'tool_usertours',
+                'stepcontent',
+                $this->id,
+                ['subdirs' => true],
+                $this->content
+            );
+            $DB->set_field('tool_usertours_steps', 'content', $this->content, ['id' => $this->id]);
+        }
         $this->reload();
 
         // Notify of a change to the step configuration.
@@ -613,6 +648,23 @@ class step {
             $this->get_target()->prepare_data_for_form($data);
         }
 
+        // Prepare content for editing in a form 'editor' field type.
+        $draftitemid = file_get_submitted_draft_itemid('tool_usertours');
+        $systemcontext = \context_system::instance();
+        $data->content = [
+            'format' => $data->contentformat,
+            'itemid' => $draftitemid,
+            'text' => file_prepare_draft_area(
+                $draftitemid,
+                $systemcontext->id,
+                'tool_usertours',
+                'stepcontent',
+                $this->id,
+                ['subdirs' => true],
+                $data->content
+            ),
+        ];
+
         return $data;
     }
 
@@ -625,7 +677,7 @@ class step {
      */
     public function handle_form_submission(local\forms\editstep &$mform, \stdClass $data) {
         $this->set_title($data->title);
-        $this->set_content($data->content);
+        $this->set_content($data->content['text'], $data->content['format']);
         $this->set_targettype($data->targettype);
 
         $this->set_targetvalue($this->get_target()->get_value_from_form($data));

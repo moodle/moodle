@@ -42,9 +42,9 @@ class progress_display_test extends \advanced_testcase {
         $this->assertEquals(1, $progress->get_direction());
         $this->assertTimeCurrent($progress->get_last_wibble());
         $output = ob_get_clean();
-        $this->assertContains('wibbler', $output);
-        $this->assertContains('wibble state0', $output);
-        $this->assertContains('wibble state1', $output);
+        $this->assertStringContainsString('wibbler', $output);
+        $this->assertStringContainsString('wibble state0', $output);
+        $this->assertStringContainsString('wibble state1', $output);
     }
 
     /**
@@ -70,9 +70,9 @@ class progress_display_test extends \advanced_testcase {
         $this->assertEquals(1, $progress->get_current_state());
         $this->assertEquals(1, $progress->get_direction());
         $output = ob_get_clean();
-        $this->assertContains('wibbler', $output);
-        $this->assertContains('wibble state0', $output);
-        $this->assertContains('wibble state13', $output);
+        $this->assertStringContainsString('wibbler', $output);
+        $this->assertStringContainsString('wibble state0', $output);
+        $this->assertStringContainsString('wibble state13', $output);
 
     }
 

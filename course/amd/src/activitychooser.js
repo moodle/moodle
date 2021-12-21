@@ -17,7 +17,6 @@
  * A type of dialogue used as for choosing modules in a course.
  *
  * @module     core_course/activitychooser
- * @package    core_course
  * @copyright  2020 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

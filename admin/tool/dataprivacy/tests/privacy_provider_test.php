@@ -142,7 +142,7 @@ class tool_dataprivacy_privacy_provider_testcase extends provider_testcase {
         $this->assertEquals($strs->statusrejected, $data[1]->status);
         $this->assertEquals($strs->creationmanual, $data[1]->creationmethod);
         $this->assertEmpty($data[1]->comments);
-        $this->assertContains('Nope', $data[1]->dpocomment);
+        $this->assertStringContainsString('Nope', $data[1]->dpocomment);
         $this->assertNotEmpty($data[1]->timecreated);
     }
 

@@ -20,7 +20,7 @@ Feature: Confirm that conditions on completion no longer cause a bug
     # Set up course.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Enable completion tracking" to "Yes"
     And I press "Save and display"
@@ -48,10 +48,10 @@ Feature: Confirm that conditions on completion no longer cause a bug
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
     And I set the field with xpath "//div[contains(concat(' ', normalize-space(@class), ' '), ' availability-item ')][preceding-sibling::div]//select[@name='cm']" to "Page2"
     And I press "Save and return to course"
-    And I should see "Not available unless:" in the ".activity.glossary" "css_element"
+    Then I should see "Not available unless:" in the ".activity.glossary" "css_element"
     And I should see "The activity Page1 is marked complete" in the ".activity.glossary" "css_element"
     And I should see "The activity Page2 is marked complete" in the ".activity.glossary" "css_element"
-    And I follow "TestGlossary"
 
     # Behat will automatically check there is no error on this page.
-    Then I should see "TestGlossary"
+    And I am on the TestGlossary "glossary activity" page
+    And I should see "TestGlossary"

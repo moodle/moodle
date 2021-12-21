@@ -44,6 +44,10 @@ $cmid = optional_param('cmid', null, PARAM_INT);
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
 $page = $attemptobj->force_page_number_into_range($page);
 $PAGE->set_url($attemptobj->attempt_url(null, $page));
+// During quiz attempts, the browser back/forwards buttons should force a reload.
+$PAGE->set_cacheable(false);
+
+$PAGE->set_secondary_active_tab("modulepage");
 
 // Check login.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
@@ -114,6 +118,7 @@ if (!$attemptobj->set_currentpage($page)) {
 // Initialise the JavaScript.
 $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());
+\core\session\manager::keepalive(); // Try to prevent sessions expiring during quiz attempts.
 
 // Arrange for the navigation to be displayed in the first region on the page.
 $navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
@@ -122,8 +127,9 @@ $PAGE->blocks->add_fake_block($navbc, reset($regions));
 
 $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->set_title($attemptobj->attempt_page_title($page));
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading($attemptobj->get_course()->fullname);
-
+$PAGE->activityheader->disable();
 if ($attemptobj->is_last_page($page)) {
     $nextpage = -1;
 } else {

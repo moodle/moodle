@@ -35,7 +35,6 @@ use core_table\local\filter\integer_filter;
 use core_table\local\filter\string_filter;
 
 define('DEFAULT_PAGE_SIZE', 20);
-define('SHOW_ALL_PAGE_SIZE', 5000);
 
 $page         = optional_param('page', 0, PARAM_INT); // Which page to show.
 $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How many per page.
@@ -88,7 +87,7 @@ $bulkoperations = has_capability('moodle/course:bulkmessaging', $context);
 
 $PAGE->set_title("$course->shortname: ".get_string('participants'));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagetype('course-view-' . $course->format);
+$PAGE->set_pagetype('course-view-participants');
 $PAGE->set_docs_path('enrol/users');
 $PAGE->add_body_class('path-user');                     // So we can style it independently.
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
@@ -101,12 +100,27 @@ if ($node) {
 }
 
 echo $OUTPUT->header();
+
+$participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
+
+// Manage enrolments.
+$manager = new course_enrolment_manager($PAGE, $course);
+$enrolbuttons = $manager->get_manual_enrol_buttons();
+$enrolrenderer = $PAGE->get_renderer('core_enrol');
+$enrolbuttonsout = '';
+foreach ($enrolbuttons as $enrolbutton) {
+    $enrolbuttonsout .= $enrolrenderer->render($enrolbutton);
+}
+
+echo $OUTPUT->render_participants_tertiary_nav($course, html_writer::div($enrolbuttonsout, '', [
+    'data-region' => 'wrapper',
+    'data-table-uniqueid' => $participanttable->uniqueid,
+]));
+
 echo $OUTPUT->heading(get_string('participants'));
 
 $filterset = new \core_user\table\participants_filterset();
 $filterset->add_filter(new integer_filter('courseid', filter::JOINTYPE_DEFAULT, [(int)$course->id]));
-
-$participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
 
 $canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
 $filtergroupids = $urlgroupid ? [$urlgroupid] : [];
@@ -156,20 +170,6 @@ if ($roleid) {
     }
 }
 
-// Manage enrolments.
-$manager = new course_enrolment_manager($PAGE, $course);
-$enrolbuttons = $manager->get_manual_enrol_buttons();
-$enrolrenderer = $PAGE->get_renderer('core_enrol');
-$enrolbuttonsout = '';
-foreach ($enrolbuttons as $enrolbutton) {
-    $enrolbuttonsout .= $enrolrenderer->render($enrolbutton);
-}
-
-echo html_writer::div($enrolbuttonsout, 'd-flex justify-content-end', [
-    'data-region' => 'wrapper',
-    'data-table-uniqueid' => $participanttable->uniqueid,
-]);
-
 // Render the user filters.
 $userrenderer = $PAGE->get_renderer('core_user');
 echo $userrenderer->participants_filter($context, $participanttable->uniqueid);
@@ -189,7 +189,6 @@ echo html_writer::start_tag('form', [
     'id' => 'participantsform',
     'data-course-id' => $course->id,
     'data-table-unique-id' => $participanttable->uniqueid,
-    'data-table-default-per-page' => ($perpage < DEFAULT_PAGE_SIZE) ? $perpage : DEFAULT_PAGE_SIZE,
 ]);
 echo '<div>';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -204,40 +203,6 @@ echo html_writer::tag(
 );
 
 echo $participanttablehtml;
-
-$perpageurl = new moodle_url('/user/index.php', [
-    'contextid' => $context->id,
-    'id' => $course->id,
-]);
-$perpagesize = DEFAULT_PAGE_SIZE;
-$perpagevisible = false;
-$perpagestring = '';
-
-if ($perpage == SHOW_ALL_PAGE_SIZE && $participanttable->totalrows > DEFAULT_PAGE_SIZE) {
-    $perpageurl->param('perpage', $participanttable->totalrows);
-    $perpagesize = SHOW_ALL_PAGE_SIZE;
-    $perpagevisible = true;
-    $perpagestring = get_string('showperpage', '', DEFAULT_PAGE_SIZE);
-} else if ($participanttable->get_page_size() < $participanttable->totalrows) {
-    $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-    $perpagesize = SHOW_ALL_PAGE_SIZE;
-    $perpagevisible = true;
-    $perpagestring = get_string('showall', '', $participanttable->totalrows);
-}
-
-$perpageclasses = '';
-if (!$perpagevisible) {
-    $perpageclasses = 'hidden';
-}
-echo $OUTPUT->container(html_writer::link(
-    $perpageurl,
-    $perpagestring,
-    [
-        'data-action' => 'showcount',
-        'data-target-page-size' => $perpagesize,
-        'class' => $perpageclasses,
-    ]
-), [], 'showall');
 
 $bulkoptions = (object) [
     'uniqueid' => $participanttable->uniqueid,
@@ -256,7 +221,7 @@ if ($bulkoperations) {
             'id' => 'checkall',
             'class' => 'btn btn-secondary',
             'value' => $label,
-            'data-target-page-size' => $participanttable->totalrows,
+            'data-target-page-size' => TABLE_SHOW_ALL_PAGE_SIZE,
         ]);
     }
     echo html_writer::end_tag('div');
@@ -343,13 +308,5 @@ echo html_writer::div($enrolbuttonsout, 'd-flex justify-content-end', [
     'data-region' => 'wrapper',
     'data-table-uniqueid' => $participanttable->uniqueid,
 ]);
-
-if ($newcourse == 1) {
-    $str = get_string('proceedtocourse', 'enrol');
-    // The margin is to make it line up with the enrol users button when they are both on the same line.
-    $classes = 'my-1';
-    $url = course_get_url($course);
-    echo $OUTPUT->single_button($url, $str, 'GET', array('class' => $classes));
-}
 
 echo $OUTPUT->footer();

@@ -16,12 +16,11 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
     And the following "language customisations" exist:
       | component       | stringid | value |
       | core_langconfig | decsep   | #     |
+    And the following "activities" exist:
+      | activity   | name                   | intro                         | course | idnumber    | section | modattempts |
+      | lesson     | Test lesson name       | Test lesson description       | C1     | lesson1     | 1       | 1           |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-      | Allow student review | Yes |
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I follow "Add a question page"
     And I set the field "Select a question type" to "Numerical"
@@ -44,7 +43,7 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test lesson name"
-    And I click on "Edit" "link" in the "region-main" "region"
+    And I edit the lesson
     And I follow "Hardest question ever"
     Then I should see "2#87"
     And I should see "2#1:2#8"
@@ -54,8 +53,8 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test lesson name"
-    And I click on "Edit" "link" in the "region-main" "region"
-    And I click on "Expanded" "link" in the "region-main" "region"
+    And I edit the lesson
+    And I select edit type "Expanded"
     Then I should see "2#87"
     And I should see "2#1:2#8"
     And I log out
@@ -116,7 +115,7 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
       | core_langconfig | decsep   | ,     |
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test lesson name"
-    Then I click on "Edit" "link" in the "region-main" "region"
+    Then I edit the lesson
     And I follow "Hardest question ever"
     Then I should see "2,87"
     And I should see "2,1:2,8"

@@ -24,6 +24,9 @@
  */
 namespace core\task;
 
+use core_component;
+use core_plugin_manager;
+
 /**
  * Abstract class for common properties of scheduled_task and adhoc_task.
  *
@@ -136,6 +139,28 @@ abstract class task_base {
      * @return string
      */
     public function get_component() {
+        if (empty($this->component)) {
+            // The component should be the root of the class namespace.
+            $classname = get_class($this);
+            $parts = explode('\\', $classname);
+
+            if (count($parts) === 1) {
+                $component = substr($classname, 0, strpos($classname, '_task'));
+            } else {
+                [$component] = $parts;
+            }
+
+            // Load component information from plugin manager.
+            if ($component !== 'core' && strpos($component, 'core_') !== 0) {
+                $plugininfo = \core_plugin_manager::instance()->get_plugin_info($component);
+                if ($plugininfo && $plugininfo->component) {
+                    $this->set_component($plugininfo->component);
+                } else {
+                    debugging("Component not set and the class namespace does not match a valid component ({$component}).");
+                }
+            }
+        }
+
         return $this->component;
     }
 
@@ -207,5 +232,22 @@ abstract class task_base {
      */
     public function get_pid() {
         return $this->pid;
+    }
+
+    /**
+     * Informs whether the task's component is enabled.
+     * @return bool true when enabled. false otherwise.
+     */
+    public function is_component_enabled(): bool {
+        $component = $this->get_component();
+
+        // An entire core component type cannot be explicitly disabled.
+        [$componenttype] = core_component::normalize_component($component);
+        if ($componenttype === 'core') {
+            return true;
+        } else {
+            $plugininfo = core_plugin_manager::instance()->get_plugin_info($component);
+            return $plugininfo && $plugininfo->is_enabled();
+        }
     }
 }

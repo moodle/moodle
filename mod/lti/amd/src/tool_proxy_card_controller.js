@@ -20,8 +20,6 @@
  * See template: mod_lti/tool_proxy_card
  *
  * @module     mod_lti/tool_proxy_card_controller
- * @class      tool_card_controller
- * @package    mod_lti
  * @copyright  2016 John Okely <john@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1

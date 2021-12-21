@@ -144,7 +144,7 @@ class quiz_statistics_question_stats_testcase extends basic_testcase {
         foreach ($this->qstats->get_all_slots() as $slot) {
             $value = array_shift($values);
             if ($value !== null) {
-                $this->assertEquals($value, $this->qstats->for_slot($slot)->{$fieldname} * $multiplier, '', 1E-6);
+                $this->assertEqualsWithDelta($value, $this->qstats->for_slot($slot)->{$fieldname} * $multiplier, 1E-6);
             } else {
                 $this->assertEquals($value, $this->qstats->for_slot($slot)->{$fieldname} * $multiplier);
             }

@@ -17,7 +17,6 @@
  * Module responsible for handling forum summary report filters.
  *
  * @module     forumreport_summary/filters
- * @package    forumreport_summary
  * @copyright  2019 Michael Hawkins <michaelh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,9 +25,9 @@ import $ from 'jquery';
 import Popper from 'core/popper';
 import CustomEvents from 'core/custom_interaction_events';
 import Selectors from 'forumreport_summary/selectors';
-import Y from 'core/yui';
 import Ajax from 'core/ajax';
 import KeyCodes from 'core/key_codes';
+import * as FormChangeChecker from 'core_form/changechecker';
 
 export const init = (root) => {
     let jqRoot = $(root);
@@ -132,9 +131,7 @@ export const init = (root) => {
     // Submit report via filter
     const submitWithFilter = (containerelement) => {
         // Disable the dates filter mform checker to prevent any changes triggering a warning to the user.
-        Y.use('moodle-core-formchangechecker', function() {
-            M.core_formchangechecker.reset_form_dirty_state();
-        });
+        FormChangeChecker.unWatchForm(document.forms.filtersform);
 
         // Close the container (eg popover).
         $(containerelement).addClass('hidden');
@@ -350,7 +347,7 @@ export const init = (root) => {
                 let fromTimestamp = 0,
                     toTimestamp = 0;
 
-                result['timestamps'].forEach(function(data){
+                result.timestamps.forEach(function(data) {
                     if (data.key === 'from') {
                         fromTimestamp = data.timestamp;
                     } else if (data.key === 'to') {

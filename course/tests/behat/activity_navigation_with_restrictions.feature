@@ -45,9 +45,7 @@ Feature: Activity navigation involving activities with access restrictions
 
   @javascript
   Scenario: Activity navigation involving activities with access restrictions
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Page 1"
+    Given I am on the "Page 1" "page activity" page logged in as student1
     Then I should see "Page 2" in the "#next-activity-link" "css_element"
     # Activity that has access restriction should not show up in the dropdown.
     And the "Jump to..." select box should not contain "Page 3"
@@ -56,7 +54,7 @@ Feature: Activity navigation involving activities with access restrictions
     And I should see "Page 2" in the "#prev-activity-link" "css_element"
     And the "Jump to..." select box should not contain "Page 3"
     # Navigate to Page 2.
-    And I follow "Page 2"
+    And I click on "Page 2" "link" in the "page-content" "region"
     # Since Page 2 has now been viewed and deemed completed, Page 3 can now be accessed.
     And I should see "Page 3" in the "#next-activity-link" "css_element"
     And the "Jump to..." select box should contain "Page 3"

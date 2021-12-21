@@ -10,7 +10,7 @@ Feature: Add badges to the system
 
   @javascript
   Scenario: Accessing the badges
-    And I press "Customise this page"
+    And I turn editing mode on
    # TODO MDL-57120 site "Badges" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -44,7 +44,7 @@ Feature: Add badges to the system
     And I should see "Issuer details"
     And I should see "Test Badge Site"
     And I should see "testuser@example.com"
-    And I follow "Manage badges"
+    And I navigate to "Badges > Manage badges" in site administration
     And I should see "Number of badges available: 1"
     And I should not see "There are no badges available."
 
@@ -61,7 +61,7 @@ Feature: Add badges to the system
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I wait until the page is ready
-    And I follow "Manage badges"
+    And I navigate to "Badges > Manage badges" in site administration
     And I should see "Number of badges available: 1"
     And I press "Add a new badge"
     And I set the following fields to these values:
@@ -133,7 +133,7 @@ Feature: Add badges to the system
 
   @javascript @_file_upload
   Scenario: Add a badge from Site badges section
-    Given I press "Customise this page"
+    Given I turn editing mode on
     # TODO MDL-57120 site "Badges" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     When I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -157,7 +157,7 @@ Feature: Add badges to the system
     And I should see "Related badges (0)"
     And I should see "Alignments (0)"
     And I should not see "Create badge"
-    And I follow "Manage badges"
+    And I navigate to "Badges > Manage badges" in site administration
     And I should see "Number of badges available: 1"
     And I should not see "There are no badges available."
     # See buttons from the "Site badges" page.

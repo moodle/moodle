@@ -43,7 +43,7 @@ use external_api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_contentbank\external
  */
-class rename_content_testcase extends \externallib_advanced_testcase {
+class rename_content_test extends \externallib_advanced_testcase {
 
     /**
      * Data provider for test_rename_content.
@@ -60,6 +60,7 @@ class rename_content_testcase extends \externallib_advanced_testcase {
             'Too long name' => [str_repeat('a', 300), str_repeat('a', 255), true],
             'Empty name' => ['', 'Test content ', false],
             'Blanks only' => ['  ', 'Test content ', false],
+            'Zero name' => ['0', '0', true],
         ];
     }
 

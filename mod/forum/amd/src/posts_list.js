@@ -21,25 +21,26 @@
  * triggered within the calendar UI.
  *
  * @module     mod_forum/posts_list
- * @package    mod_forum
  * @copyright  2019 Peter Dias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([
-        'jquery',
-        'core/templates',
-        'core/notification',
-        'core/pending',
-        'mod_forum/selectors',
-        'mod_forum/inpage_reply',
-    ], function(
-        $,
-        Templates,
-        Notification,
-        Pending,
-        Selectors,
-        InPageReply
-    ) {
+    'jquery',
+    'core/templates',
+    'core/notification',
+    'core/pending',
+    'mod_forum/selectors',
+    'mod_forum/inpage_reply',
+    'core_form/changechecker',
+], function(
+    $,
+    Templates,
+    Notification,
+    Pending,
+    Selectors,
+    InPageReply,
+    FormChangeChecker
+) {
 
     var registerEventListeners = function(root) {
         root.on('click', Selectors.post.inpageReplyLink, function(e) {
@@ -76,7 +77,11 @@ define([
                         return currentRoot.find(Selectors.post.inpageReplyContent)
                             .slideToggle(300, pending.resolve).find('textarea').focus();
                     })
-                    .fail(Notification.exception);
+                    .then(function() {
+                        FormChangeChecker.watchFormById(`inpage-reply-${context.postid}`);
+                        return;
+                    })
+                    .catch(Notification.exception);
             } else {
                 var form = currentRoot.find(Selectors.post.inpageReplyContent);
                 form.slideToggle(300, pending.resolve);

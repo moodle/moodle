@@ -17,8 +17,6 @@
  * Potential user selector module.
  *
  * @module     enrol_manual/form-potential-user-selector
- * @class      form-potential-user-selector
- * @package    enrol_manual
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -77,13 +75,27 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str'], function($, Ajax, 
 
                 if (results.length <= perpage) {
                     // Render the label.
+                    const profileRegex = /^profile_field_(.*)$/;
                     $.each(results, function(index, user) {
                         var ctx = user,
                             identity = [];
                         $.each(userfields, function(i, k) {
-                            if (typeof user[k] !== 'undefined' && user[k] !== '') {
-                                ctx.hasidentity = true;
-                                identity.push(user[k]);
+                            const result = profileRegex.exec(k);
+                            if (result) {
+                                if (user.customfields) {
+                                    user.customfields.forEach(function(customfield) {
+                                        if (customfield.shortname === result[1]) {
+                                            ctx.hasidentity = true;
+                                            identity.push(customfield.value);
+                                        }
+
+                                    });
+                                }
+                            } else {
+                                if (typeof user[k] !== 'undefined' && user[k] !== '') {
+                                    ctx.hasidentity = true;
+                                    identity.push(user[k]);
+                                }
                             }
                         });
                         ctx.identity = identity.join(', ');

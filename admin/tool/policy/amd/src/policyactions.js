@@ -17,7 +17,6 @@
  * Policy actions.
  *
  * @module     tool_policy/policyactions
- * @package    tool_policy
  * @copyright  2018 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,6 +30,8 @@ function($, Ajax, Notification, ModalFactory, ModalEvents) {
 
     /**
      * PolicyActions class.
+     *
+     * @param {jQuery} root
      */
     var PolicyActions = function(root) {
         this.registerEvents(root);
@@ -38,6 +39,8 @@ function($, Ajax, Notification, ModalFactory, ModalEvents) {
 
     /**
      * Register event listeners.
+     *
+     * @param {jQuery} root
      */
     PolicyActions.prototype.registerEvents = function(root) {
         root.on("click", function(e) {
@@ -116,6 +119,7 @@ function($, Ajax, Notification, ModalFactory, ModalEvents) {
          * Initialise the actions helper.
          *
          * @method init
+         * @param {object} root
          * @return {PolicyActions}
          */
         'init': function(root) {

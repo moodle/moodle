@@ -295,19 +295,19 @@ class core_mathslib_testcase extends basic_testcase {
 
     public function test_scientific_notation() {
         $formula = new calc_formula('=10e10');
-        $this->assertEquals(1e11, $formula->evaluate(), '', 1e11*1e-15);
+        $this->assertEqualsWithDelta(1e11, $formula->evaluate(), 1e11 * 1e-15);
 
         $formula = new calc_formula('=10e-10');
-        $this->assertEquals(1e-9, $formula->evaluate(), '', 1e11*1e-15);
+        $this->assertEqualsWithDelta(1e-9, $formula->evaluate(), 1e11 * 1e-15);
 
         $formula = new calc_formula('=10e+10');
-        $this->assertEquals(1e11, $formula->evaluate(), '', 1e11*1e-15);
+        $this->assertEqualsWithDelta(1e11, $formula->evaluate(), 1e11 * 1e-15);
 
         $formula = new calc_formula('=10e10*5');
-        $this->assertEquals(5e11, $formula->evaluate(), '', 1e11*1e-15);
+        $this->assertEqualsWithDelta(5e11, $formula->evaluate(), 1e11 * 1e-15);
 
         $formula = new calc_formula('=10e10^2');
-        $this->assertEquals(1e22, $formula->evaluate(), '', 1e22*1e-15);
+        $this->assertEqualsWithDelta(1e22, $formula->evaluate(), 1e22 * 1e-15);
     }
 
     public function test_rand_float() {

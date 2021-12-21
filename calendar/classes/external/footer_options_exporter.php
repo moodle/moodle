@@ -54,55 +54,38 @@ class footer_options_exporter extends exporter {
     protected $token;
 
     /**
+     * @var bool $showfullcalendarlink Whether the full calendar link should be displayed or not.
+     */
+    protected $showfullcalendarlink;
+
+    /**
      * Constructor for month_exporter.
      *
      * @param \calendar_information $calendar The calendar being represented
      * @param int $userid The user id
      * @param string $token The user sha1 token.
+     * @param array $options Display options for the footer. If an option is not set, a default value will be provided.
+     *                      It consists of:
+     *                      - showfullcalendarlink - bool - Whether to show the full calendar link or not. Defaults to false.
      */
-    public function __construct(\calendar_information $calendar, $userid, $token) {
+    public function __construct(\calendar_information $calendar, $userid, $token, array $options = []) {
         $this->calendar = $calendar;
         $this->userid = $userid;
         $this->token = $token;
+        $this->showfullcalendarlink = $options['showfullcalendarlink'] ?? false;
     }
 
     /**
-     * Get the export calendar button.
+     * Get manage subscription link.
      *
-     * @return \single_button The export calendar button html.
+     * @return string|null The manage subscription hyperlink.
      */
-    protected function get_export_calendar_button() {
-        $exportcalendarurl = new moodle_url('/calendar/export.php', $this->get_link_params());
-        return new \single_button($exportcalendarurl, get_string('exportcalendar', 'calendar'), 'get');
-    }
-
-    /**
-     * Get manage subscription button.
-     *
-     * @return string The manage subscription button html.
-     */
-    protected function get_manage_subscriptions_button() {
+    protected function get_manage_subscriptions_link(): ?string {
         if (calendar_user_can_add_event($this->calendar->course)) {
-            $managesubscriptionurl = new moodle_url('/calendar/managesubscriptions.php', $this->get_link_params());
-            return new \single_button($managesubscriptionurl,
-                    get_string('managesubscriptions', 'calendar'), 'get');
+            $managesubscriptionurl = new moodle_url('/calendar/managesubscriptions.php');
+            return $managesubscriptionurl->out(true);
         }
-    }
-
-    /**
-     * Get the list of URL parameters for calendar links.
-     *
-     * @return array
-     */
-    protected function get_link_params() {
-        $params = [];
-        if (SITEID !== $this->calendar->course->id) {
-            $params['course'] = $this->calendar->course->id;
-        } else if (null !== $this->calendar->categoryid && $this->calendar->categoryid > 0) {
-            $params['category'] = $this->calendar->categoryid;
-        }
-
-        return $params;
+        return null;
     }
 
     /**
@@ -115,14 +98,20 @@ class footer_options_exporter extends exporter {
         global $CFG;
 
         $values = new stdClass();
+        $values->footerlinks = [];
 
-        if (!empty($CFG->enablecalendarexport)) {
-            if ($exportbutton = $this->get_export_calendar_button()) {
-                $values->exportcalendarbutton = $exportbutton->export_for_template($output);
-            }
-            if ($managesubscriptionbutton = $this->get_manage_subscriptions_button()) {
-                $values->managesubscriptionbutton = $managesubscriptionbutton->export_for_template($output);
-            }
+        if ($this->showfullcalendarlink) {
+            $values->footerlinks[] = (object)[
+                'url' => $this->get_calendar_url(),
+                'linkname' => get_string('fullcalendar', 'calendar'),
+            ];
+        }
+
+        if (!empty($CFG->enablecalendarexport) && $managesubscriptionlink = $this->get_manage_subscriptions_link()) {
+            $values->footerlinks[] = (object)[
+                'url' => $managesubscriptionlink,
+                'linkname' => get_string('managesubscriptions', 'calendar'),
+            ];
         }
 
         return (array) $values;
@@ -134,15 +123,33 @@ class footer_options_exporter extends exporter {
      * @return array
      */
     public static function define_other_properties() {
-        return array(
-            'exportcalendarbutton' => [
-                'type' => PARAM_RAW,
-                'default' => null,
+        return [
+            'footerlinks' => [
+                'type' => [
+                    'url' => [
+                        'type' => PARAM_URL,
+                    ],
+                    'linkname' => [
+                        'type' => PARAM_TEXT,
+                    ],
+                ],
+                'multiple' => true,
+                'optional' => true,
             ],
-            'managesubscriptionbutton' => [
-                'type' => PARAM_RAW,
-                'default' => null,
-            ],
-        );
+        ];
+    }
+
+    /**
+     * Build the calendar URL.
+     *
+     * @return string The calendar URL.
+     */
+    public function get_calendar_url() {
+        $url = new moodle_url('/calendar/view.php', [
+            'view' => 'month',
+            'time' => $this->calendar->time,
+        ]);
+
+        return $url->out(false);
     }
 }

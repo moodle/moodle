@@ -63,7 +63,7 @@ class blog_edit_form extends moodleform {
 
         $mform->addElement('select', 'publishstate', get_string('publishto', 'blog'), $publishstates);
         $mform->addHelpButton('publishstate', 'publishto', 'blog');
-        $mform->setDefault('publishstate', 0);
+        $mform->setDefault('publishstate', 'site');
 
         if (core_tag_tag::is_enabled('core', 'post')) {
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));

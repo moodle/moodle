@@ -43,7 +43,7 @@ class mod_forum_builders_exported_posts_testcase extends advanced_testcase {
     /**
      * Set up function for tests.
      */
-    public function setUp() {
+    public function setUp(): void {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
@@ -55,7 +55,7 @@ class mod_forum_builders_exported_posts_testcase extends advanced_testcase {
     /**
      * Tear down function for tests.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
@@ -150,9 +150,10 @@ class mod_forum_builders_exported_posts_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
-        $user1 = $datagenerator->create_user();
-        $user2 = $datagenerator->create_user();
         $course = $datagenerator->create_course();
+        $user1 = $datagenerator->create_and_enrol($course);
+        $user2 = $datagenerator->create_and_enrol($course);
+
         $forum1 = $datagenerator->create_module('forum', ['course' => $course->id]);
         $forum2 = $datagenerator->create_module('forum', ['course' => $course->id]);
         [$discussion1, $post1] = $this->helper_post_to_forum($forum1, $user1);

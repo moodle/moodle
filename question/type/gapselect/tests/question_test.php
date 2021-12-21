@@ -246,4 +246,17 @@ class qtype_gapselect_question_test extends basic_testcase {
                     3 => new question_classified_response(2, 'assiduous', 0),
                 ), $gapselect->classify_response(array('p1' => '0', 'p2' => '1', 'p3' => '2')));
     }
+
+    /**
+     * test_get_question_definition_for_external_rendering
+     */
+    public function test_get_question_definition_for_external_rendering() {
+        $question = test_question_maker::make_question('gapselect', 'maths');
+        $question->start_attempt(new question_attempt_step(), 1);
+        $qa = test_question_maker::get_a_qa($question);
+        $displayoptions = new question_display_options();
+
+        $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
+        $this->assertEquals(1, $options['shufflechoices']);
+    }
 }

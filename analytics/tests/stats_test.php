@@ -39,7 +39,7 @@ class analytics_stats_testcase extends advanced_testcase {
     /**
      * Set up the test environment.
      */
-    public function setUp() {
+    public function setUp(): void {
 
         $this->setAdminUser();
     }

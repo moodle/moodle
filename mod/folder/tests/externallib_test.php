@@ -131,11 +131,13 @@ class mod_folder_external_testcase extends externallib_advanced_testcase {
         // First folder.
         $record = new stdClass();
         $record->course = $course1->id;
+        $record->forcedownload = 1;
         $folder1 = self::getDataGenerator()->create_module('folder', $record);
 
         // Second folder.
         $record = new stdClass();
         $record->course = $course2->id;
+        $record->forcedownload = 0;
         $folder2 = self::getDataGenerator()->create_module('folder', $record);
 
         // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
@@ -154,7 +156,7 @@ class mod_folder_external_testcase extends externallib_advanced_testcase {
         // Create what we expect to be returned when querying the two courses.
         $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'revision',
                                 'timemodified', 'display', 'showexpanded', 'showdownloadfolder', 'section', 'visible',
-                                'groupmode', 'groupingid');
+                                'forcedownload', 'groupmode', 'groupingid');
 
         // Add expected coursemodule and data.
         $folder1->coursemodule = $folder1->cmid;

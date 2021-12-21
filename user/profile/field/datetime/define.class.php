@@ -104,7 +104,7 @@ class profile_define_datetime extends profile_define_base {
         // by setDefault to the correct dates in the used calendar system. We only want
         // to execute the rest of the code when we have the years in the DB saved in
         // Gregorian that need converting to the date for this user.
-        $id = required_param('id', PARAM_INT);
+        $id = optional_param('id', 0, PARAM_INT);
         if ($id === 0) {
             return;
         }

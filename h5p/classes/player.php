@@ -105,8 +105,11 @@ class player {
      * @param stdClass $config Configuration for H5P buttons.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
      * @param string $component optional moodle component to sent xAPI tracking
+     * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
+     *     might be controlled before calling this method.
      */
-    public function __construct(string $url, \stdClass $config, bool $preventredirect = true, string $component = '') {
+    public function __construct(string $url, \stdClass $config, bool $preventredirect = true, string $component = '',
+            bool $skipcapcheck = false) {
         if (empty($url)) {
             throw new \moodle_exception('h5pinvalidurl', 'core_h5p');
         }
@@ -127,7 +130,9 @@ class player {
             $url,
             $config,
             $this->factory,
-            $this->messages
+            $this->messages,
+            $this->preventredirect,
+            $skipcapcheck
         );
         if ($file) {
             $this->context = \context::instance_by_id($file->get_contextid());
@@ -148,12 +153,14 @@ class player {
      * @param stdClass $config Configuration for H5P buttons.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
      * @param string $component optional moodle component to sent xAPI tracking
+     * @param bool $displayedit Whether the edit button should be displayed below the H5P content.
      *
      * @return string The embedable code to display a H5P file.
      */
     public static function display(string $url, \stdClass $config, bool $preventredirect = true,
-            string $component = ''): string {
-        global $OUTPUT;
+            string $component = '', bool $displayedit = false): string {
+        global $OUTPUT, $CFG;
+
         $params = [
                 'url' => $url,
                 'preventredirect' => $preventredirect,
@@ -170,6 +177,16 @@ class player {
 
         $template = new \stdClass();
         $template->embedurl = $fileurl->out(false);
+
+        if ($displayedit) {
+            list($originalfile, $h5p) = api::get_original_content_from_pluginfile_url($url, $preventredirect, true);
+            if ($originalfile) {
+                // Check if the user can edit this content.
+                if (api::can_edit_content($originalfile)) {
+                    $template->editurl = $CFG->wwwroot . '/h5p/edit.php?url=' . $url;
+                }
+            }
+        }
 
         $result = $OUTPUT->render_from_template('core_h5p/h5pembed', $template);
         $result .= self::get_resize_code();
@@ -353,6 +370,9 @@ class player {
         $settings['moodleLibraryPaths'] = $this->core->get_dependency_roots($this->h5pid);
         // Add also the Moodle component where the results will be tracked.
         $settings['moodleComponent'] = $this->component;
+        if (!empty($settings['moodleComponent'])) {
+            $settings['reportingIsEnabled'] = true;
+        }
 
         $cid = $this->get_cid();
         // The filterParameters function should be called before getting the dependencyfiles because it rebuild content

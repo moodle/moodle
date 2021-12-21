@@ -72,14 +72,14 @@ class core_grading_privacy_testcase extends provider_testcase {
         // User1 has created grading definitions for instance1 and instance2.
         $contextlist = provider::get_contexts_for_userid($this->user1->id);
         $this->assertCount(2, $contextlist);
-        $this->assertContains($this->instancecontext1->id, $contextlist->get_contextids());
-        $this->assertContains($this->instancecontext2->id, $contextlist->get_contextids());
-        $this->assertNotContains($this->instancecontext0->id, $contextlist->get_contextids());
+        $this->assertContainsEquals($this->instancecontext1->id, $contextlist->get_contextids());
+        $this->assertContainsEquals($this->instancecontext2->id, $contextlist->get_contextids());
+        $this->assertNotContainsEquals($this->instancecontext0->id, $contextlist->get_contextids());
 
         // User2 has only modified grading definitions for instance2.
         $contextlist = provider::get_contexts_for_userid($this->user2->id);
         $this->assertCount(1, $contextlist);
-        $this->assertContains($this->instancecontext2->id, $contextlist->get_contextids());
+        $this->assertContainsEquals($this->instancecontext2->id, $contextlist->get_contextids());
 
         // User0 hasn't created or modified any grading definition.
         $contextlist = provider::get_contexts_for_userid($this->user0->id);

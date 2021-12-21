@@ -38,7 +38,7 @@ class core_completion_api_testcase extends advanced_testcase {
     /**
      * Test setup.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 
@@ -221,5 +221,79 @@ class core_completion_api_testcase extends advanced_testcase {
 
         // Check that there is now no event in the database.
         $this->assertEquals(0, $DB->count_records('event'));
+    }
+
+    /**
+     * Test for mark_course_completions_activity_criteria().
+     */
+    public function test_mark_course_completions_activity_criteria() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_activity.php');
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $student1 = $this->getDataGenerator()->create_user();
+        $student2 = $this->getDataGenerator()->create_user();
+
+        $teacher = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, $studentrole->id);
+
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id),
+            array('completion' => 1));
+        $cmdata = get_coursemodule_from_id('data', $data->cmid);
+        $cm = get_coursemodule_from_instance('data', $data->id);
+        $c = new completion_info($course);
+
+        // Add activity completion criteria.
+        $criteriadata = new stdClass();
+        $criteriadata->id = $course->id;
+        $criteriadata->criteria_activity = array();
+        // Some activities.
+        $criteriadata->criteria_activity[$cmdata->id] = 1;
+        $criterion = new completion_criteria_activity();
+        $criterion->update_config($criteriadata);
+
+        $this->setUser($teacher);
+
+        // Mark activity complete for both users.
+        $completion = new stdClass();
+        $completion->coursemoduleid = $cm->id;
+        $completion->completionstate = COMPLETION_COMPLETE;
+        $completion->timemodified = time();
+        $completion->viewed = COMPLETION_NOT_VIEWED;
+        $completion->overrideby = null;
+
+        $completion->id = 0;
+        $completion->userid = $student1->id;
+        $c->internal_set_data($cm, $completion, true);
+
+        $completion->id = 0;
+        $completion->userid = $student2->id;
+        $c->internal_set_data($cm, $completion, true);
+
+        // Run instant course completions for student1. Only student1 will be marked as completed a course.
+        $userdata = ['userid' => $student1->id, 'courseid' => $course->id];
+        $actual = $DB->get_records('course_completions');
+        $this->assertEmpty($actual);
+
+        $coursecompletionid = \core_completion\api::mark_course_completions_activity_criteria($userdata);
+
+        $actual = $DB->get_records('course_completions');
+        $this->assertEquals(reset($actual)->id, $coursecompletionid);
+        $this->assertEquals(1, count($actual));
+        $this->assertEquals($student1->id, reset($actual)->userid);
+
+        // Run course completions cron. Both students will be marked as completed a course.
+        $coursecompletionid = \core_completion\api::mark_course_completions_activity_criteria();
+        $this->assertEquals(0, $coursecompletionid);
+        $actual = $DB->get_records('course_completions');
+        $this->assertEquals(2, count($actual));
+        $this->assertEquals($student1->id, reset($actual)->userid);
+        $this->assertEquals($student2->id, end($actual)->userid);
     }
 }

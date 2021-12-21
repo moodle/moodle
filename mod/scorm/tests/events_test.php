@@ -47,7 +47,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
     /** @var stdClass store course module object */
     protected $eventcm;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->setAdminUser();
         $this->eventcourse = $this->getDataGenerator()->create_course();
         $this->eventuser = $this->getDataGenerator()->create_user();
@@ -59,8 +59,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
 
     /**
      * Tests for attempt deleted event
-     *
-     * @expectedException coding_exception
      */
     public function test_attempt_deleted_event() {
 
@@ -87,11 +85,11 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
 
         // Test event validations.
+        $this->expectException(coding_exception::class);
         \mod_scorm\event\attempt_deleted::create(array(
             'contextid' => 5,
             'relateduserid' => 2
         ));
-        $this->fail('event \\mod_scorm\\event\\attempt_deleted is not validating events properly');
     }
 
     /**
@@ -231,8 +229,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
     /** Tests for sco launched event.
      *
      * There is no api involved so the best we can do is test legacy data and validations by triggering event manually.
-     *
-     * @expectedException coding_exception
      */
     public function test_sco_launched_event() {
         $this->resetAfterTest();
@@ -256,12 +252,12 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
 
         // Test validations.
+        $this->expectException(coding_exception::class);
         \mod_scorm\event\sco_launched::create(array(
              'objectid' => $this->eventscorm->id,
              'context' => context_module::instance($this->eventcm->id),
              'courseid' => $this->eventcourse->id,
         ));
-        $this->fail('Event \\mod_scorm\\event\\sco_launched is not validating "loadedcontent" properly');
     }
 
     /**
@@ -275,7 +271,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
             'relateduserid' => 5,
             'context' => context_module::instance($this->eventcm->id),
             'courseid' => $this->eventcourse->id,
-            'other' => array('attemptid' => 2, 'instanceid' => $this->eventscorm->id, 'scoid' => 3)
+            'other' => array('attemptid' => 2, 'instanceid' => $this->eventscorm->id, 'scoid' => 3, 'mode' => 'interactions')
         ));
 
         // Trigger and capture the event.
@@ -286,7 +282,8 @@ class mod_scorm_event_testcase extends advanced_testcase {
 
         // Check that the legacy log data is valid.
         $expected = array($this->eventcourse->id, 'scorm', 'userreporttracks', 'report/userreporttracks.php?id=' .
-                $this->eventcm->id . '&user=5&attempt=' . 2 . '&scoid=3', $this->eventscorm->id, $this->eventcm->id);
+                $this->eventcm->id . '&user=5&attempt=' . 2 . '&scoid=3' . '&mode=interactions',
+                $this->eventscorm->id, $this->eventcm->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }

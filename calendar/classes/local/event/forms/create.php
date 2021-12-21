@@ -128,6 +128,7 @@ class create extends \moodleform {
         $eventtype = isset($data['eventtype']) ? $data['eventtype'] : null;
         $coursekey = ($eventtype == 'group') ? 'groupcourseid' : 'courseid';
         $courseid = (!empty($data[$coursekey])) ? $data[$coursekey] : null;
+        $categoryid = (!empty($data['categoryid'])) ? $data['categoryid'] : null;
 
         $eventtypes = $this->_customdata['eventtypes'];
         if (empty($eventtype) || !isset($eventtypes[$eventtype]) || $eventtypes[$eventtype] == false) {
@@ -146,6 +147,10 @@ class create extends \moodleform {
 
         if ($eventtype == 'course' && empty($courseid)) {
             $errors['courseid'] = get_string('selectacourse');
+        }
+
+        if ($eventtype == 'category' && empty($categoryid)) {
+            $errors['categoryid'] = get_string('selectacategory');
         }
 
         if ($eventtype == 'group' && (!empty($courseid) && empty($data['groupid']))) {

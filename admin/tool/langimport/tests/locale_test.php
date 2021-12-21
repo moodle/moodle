@@ -42,7 +42,7 @@ class locale_testcase extends \advanced_testcase {
         // - second setlocale() call which try to set new 'es' locale
         // - third setlocale() call which restore locale.
         $mock = $this->getMockBuilder(\tool_langimport\locale::class)
-            ->setMethods(['set_locale'])
+            ->onlyMethods(['set_locale'])
             ->getMock();
         $mock->method('set_locale')->will($this->onConsecutiveCalls('en', 'es', 'en'));
 
@@ -55,7 +55,7 @@ class locale_testcase extends \advanced_testcase {
         // - second setlocale() call which fail to set new locale
         // - third setlocale() call which restore locale.
         $mock = $this->getMockBuilder(\tool_langimport\locale::class)
-            ->setMethods(['set_locale'])
+            ->onlyMethods(['set_locale'])
             ->getMock();
         $mock->method('set_locale')->will($this->onConsecutiveCalls('en', false, 'en'));
 

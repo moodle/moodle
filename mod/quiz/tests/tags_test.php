@@ -84,14 +84,13 @@ class mod_quiz_tags_testcase extends advanced_testcase {
         $this->assertNotFalse($tag3);
 
         $slottags = quiz_retrieve_slot_tags($question->slotid);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [
                     ['tagid' => $tag2->id, 'tagname' => $tag2->name]
                 ],
                 array_map(function($tag) {
                     return ['tagid' => $tag->tagid, 'tagname' => $tag->tagname];
-                }, $slottags),
-                '', 0.0, 10, true
+                }, $slottags)
         );
 
         $defaultcategory = question_get_default_category(context_course::instance($newcourseid)->id);

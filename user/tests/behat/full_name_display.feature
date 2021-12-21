@@ -51,8 +51,7 @@ Feature: Users' names are displayed across the site according to the user policy
   Scenario: As an authenticated user, 'fullnamedisplay' should be used in the navigation and when viewing my profile
     Given I log in as "user1"
     When I follow "Profile" in the user menu
-    Then I should see "Gronya,Beecham" in the ".usermenu" "css_element"
-    And I should see "Gronya,Beecham" in the ".page-context-header" "css_element"
+    Then I should see "Gronya,Beecham" in the ".page-context-header" "css_element"
     And I should see "You are logged in as Gronya,Beecham" in the "page-footer" "region"
     And I log out
 
@@ -79,6 +78,6 @@ Feature: Users' names are displayed across the site according to the user policy
     And I am on "Course 1" course homepage
     When I navigate to course participants
     And I press "Enrol users"
-    And I set the field "Select users" to "three@example.com"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
+    And I click on "Select users" "field"
+    And I type "three@example.com"
     Then I should see "Sarah, Sev, Siobhan, Desforges"

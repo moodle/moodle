@@ -22,6 +22,19 @@ if ($hassiteconfig && moodle_needs_upgrading()) {
 \core\hub\registration::registration_reminder('/admin/search.php');
 
 admin_externalpage_setup('search', '', array('query' => $query)); // now hidden page
+$PAGE->set_heading(get_string('administrationsite')); // Has to be after setup since it has its' own heading set_heading.
+
+if ($hassiteconfig) {
+    $data = [
+        'action' => new moodle_url('/admin/search.php'),
+        'btnclass' => 'btn-primary',
+        'inputname' => 'query',
+        'searchstring' => get_string('search'),
+        'query' => $query,
+        'extraclasses' => 'd-flex justify-content-end'
+    ];
+    $PAGE->add_header_action($OUTPUT->render_from_template('core/search_input', $data));
+}
 
 $adminroot = admin_get_root(); // need all settings here
 $adminroot->search = $query; // So we can reference it in search boxes later in this invocation
@@ -46,6 +59,8 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->action) and 
     }
 }
 
+$PAGE->set_primary_active_tab('siteadminnode');
+
 // and finally, if we get here, then there are matching settings and we have to print a form
 // to modify them
 echo $OUTPUT->header($focus);
@@ -56,8 +71,6 @@ if (empty($query)) {
     echo $adminrenderer->warn_if_not_registered();
 }
 
-echo $OUTPUT->heading(get_string('administrationsite'));
-
 if ($errormsg !== '') {
     echo $OUTPUT->notification($errormsg);
 
@@ -67,28 +80,19 @@ if ($errormsg !== '') {
 
 $showsettingslinks = true;
 
-if ($hassiteconfig) {
-    $data = [
-        'action' => new moodle_url('/admin/search.php'),
-        'btnclass' => 'btn-primary',
-        'inputname' => 'query',
-        'searchstring' => get_string('search'),
-        'query' => $query,
-        'extraclasses' => 'd-flex justify-content-center'
-    ];
-    echo $OUTPUT->render_from_template('core/search_input', $data);
-
+if ($query && $hassiteconfig) {
     echo '<hr>';
-    if ($query) {
-        echo admin_search_settings_html($query);
-        $showsettingslinks = false;
-    }
+    echo admin_search_settings_html($query);
+    $showsettingslinks = false;
 }
 
 if ($showsettingslinks) {
     $node = $PAGE->settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN);
     if ($node) {
-        echo $OUTPUT->render_from_template('core/settings_link_page', ['node' => $node]);
+        $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs');
+        $secondarynavigation = $moremenu->export_for_template($OUTPUT);
+        echo $OUTPUT->render_from_template('core/settings_link_page',
+            ['node' => $node, 'secondarynavigation' => $secondarynavigation]);
     }
 }
 

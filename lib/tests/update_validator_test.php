@@ -181,7 +181,7 @@ class core_update_validator_testcase extends advanced_testcase {
         $this->assertEquals('foobar', $validator->get_rootdir());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::INFO, 'rootdir', 'foobar'));
         $versionphpinfo = $validator->get_versionphp_info();
-        $this->assertInternalType('array', $versionphpinfo);
+        $this->assertIsArray($versionphpinfo);
         $this->assertCount(4, $versionphpinfo);
         $this->assertEquals(2013031900, $versionphpinfo['version']);
         $this->assertEquals(2013031200, $versionphpinfo['requires']);
@@ -318,7 +318,7 @@ class core_update_validator_testcase extends advanced_testcase {
         $this->assertEquals('testable_core_update_validator', get_class($validator));
 
         $info = $validator->testable_parse_version_php($fixtures.'/version1.php');
-        $this->assertInternalType('array', $info);
+        $this->assertIsArray($info);
         $this->assertCount(7, $info);
         $this->assertEquals('block_foobar', $info['plugin->component']);  // Later in the file.
         $this->assertEquals('2013010100', $info['plugin->version']);      // Numeric wins over strings.

@@ -207,13 +207,24 @@ abstract class service_base {
     abstract public function get_resources();
 
     /**
-     * Get the scope(s) permitted for this service.
+     * Get the scope(s) permitted for this service in the context of a particular tool type.
      *
      * A null value indicates that no scopes are required to access the service.
      *
      * @return array|null
      */
     public function get_permitted_scopes() {
+        return null;
+    }
+
+    /**
+     * Get the scope(s) permitted for this service.
+     *
+     * A null value indicates that no scopes are required to access the service.
+     *
+     * @return array|null
+     */
+    public function get_scopes() {
         return null;
     }
 

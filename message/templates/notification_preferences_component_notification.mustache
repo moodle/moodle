@@ -22,7 +22,7 @@
     Classes required for JS:
     * disabled
 
-    Data attibutes required for JS:
+    Data attributes required for JS:
     * All data attributes are required
 
     Context variables required for this template:
@@ -39,17 +39,16 @@
                 "displayname": "Popup notification",
                 "name": "popup",
                 "locked": 0,
+                "userconfigured": 1,
                 "loggedin": {
                     "name": "loggedin",
                     "displayname": "When I'm logged in",
-                    "checked": 0,
-                    "iconurl": "some url"
+                    "checked": 0
                 },
                 "loggedoff": {
                     "name": "loggedoff",
                     "displayname": "When I'm offline",
-                    "checked": 0,
-                    "iconurl": "some url"
+                    "checked": 0
                 }
             }
         ]
@@ -63,7 +62,7 @@
                 <div class="dimmed_text">{{lockedmessage}}</div>
             {{/locked}}
             {{^locked}}
-                <div class="disabled-message">{{#str}} disabled, question {{/str}}</div>
+                <div class="disabled-message">{{#str}} disabled, admin {{/str}}</div>
                 <form>
                     <div class="container-fluid">
                         <div class="row">
@@ -71,21 +70,15 @@
                                 {{#loggedin}}
                                     {{< core/hover_tooltip }}
                                         {{$anchor}}
-                                            <label class="preference-state"
+                                            <label class="custom-control custom-switch"
                                                 title="{{displayname}}"
                                                 data-state="{{name}}">
-
                                                 <span class="accesshide">{{displayname}}</span>
                                                 <input type="checkbox"
-                                                    tabindex="-1"
-                                                    class="accesshide"
+                                                    class="custom-control-input"
                                                     {{#checked}}checked{{/checked}}
                                                     {{#disableall}}disabled{{/disableall}} />
-                                                <div class="preference-state-status-container" tabindex="0">
-                                                    <span class="on-text">{{#str}} on, message {{/str}}</span>
-                                                    <span class="off-text">{{#str}} off, message {{/str}}</span>
-                                                    {{> core/loading }}
-                                                </div>
+                                                <span class="custom-control-label d-block"></span>
                                             </label>
                                         {{/anchor}}
                                         {{$tooltip}}{{displayname}}{{/tooltip}}
@@ -96,21 +89,15 @@
                                 {{#loggedoff}}
                                     {{< core/hover_tooltip }}
                                         {{$anchor}}
-                                            <label class="preference-state"
+                                            <label class="custom-control custom-switch"
                                                 title="{{displayname}}"
                                                 data-state="{{name}}">
-
                                                 <span class="accesshide">{{displayname}}</span>
                                                 <input type="checkbox"
-                                                    tabindex="-1"
-                                                    class="accesshide"
+                                                    class="custom-control-input"
                                                     {{#checked}}checked{{/checked}}
                                                     {{#disableall}}disabled{{/disableall}} />
-                                                <div class="preference-state-status-container" tabindex="0">
-                                                    <span class="on-text">{{#str}} on, message {{/str}}</span>
-                                                    <span class="off-text">{{#str}} off, message {{/str}}</span>
-                                                    {{> core/loading }}
-                                                </div>
+                                                <span class="custom-control-label d-block"></span>
                                             </label>
                                         {{/anchor}}
                                         {{$tooltip}}{{displayname}}{{/tooltip}}

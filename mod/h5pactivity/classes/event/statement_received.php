@@ -56,16 +56,6 @@ class statement_received extends \core\event\base {
     }
 
     /**
-     * Replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return [$this->courseid, 'h5pactivity', 'statement received', 'grade.php?user=' . $this->userid,
-            0, $this->contextinstanceid];
-    }
-
-    /**
      * Returns non-localised description of what happened.
      *
      * @return string

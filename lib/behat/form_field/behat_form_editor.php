@@ -51,6 +51,8 @@ class behat_form_editor extends behat_form_textarea {
         $editorid = $this->field->getAttribute('id');
         if ($this->running_javascript()) {
             $value = addslashes($value);
+            // This will be transported in JSON, which doesn't allow newlines in strings, so we must escape them.
+            $value = str_replace("\n", "\\n", $value);
             $js = '
 (function() {
     var editor = Y.one(document.getElementById("'.$editorid.'editable"));

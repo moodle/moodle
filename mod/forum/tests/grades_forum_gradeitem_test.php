@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tests\mod_forum\grades;
+namespace mod_forum\grade;
 
 use core_grades\component_gradeitem;
 use mod_forum\grades\forum_gradeitem as gradeitem;
@@ -39,7 +39,7 @@ require_once(__DIR__ . '/generator_trait.php');
  * @copyright Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class forum_gradeitem_test extends \advanced_testcase {
+class grades_forum_gradeitem_test extends \advanced_testcase {
     use \mod_forum_tests_generator_trait;
 
     /**

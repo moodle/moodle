@@ -4,6 +4,7 @@ namespace PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 use PhpOffice\PhpSpreadsheet\Style\Conditional;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use SimpleXMLElement;
 
 class ConditionalStyles
 {
@@ -13,14 +14,14 @@ class ConditionalStyles
 
     private $dxfs;
 
-    public function __construct(Worksheet $workSheet, \SimpleXMLElement $worksheetXml, array $dxfs = [])
+    public function __construct(Worksheet $workSheet, SimpleXMLElement $worksheetXml, array $dxfs = [])
     {
         $this->worksheet = $workSheet;
         $this->worksheetXml = $worksheetXml;
         $this->dxfs = $dxfs;
     }
 
-    public function load()
+    public function load(): void
     {
         $this->setConditionalStyles(
             $this->worksheet,
@@ -33,11 +34,15 @@ class ConditionalStyles
         $conditionals = [];
         foreach ($xmlSheet->conditionalFormatting as $conditional) {
             foreach ($conditional->cfRule as $cfRule) {
-                if (((string) $cfRule['type'] == Conditional::CONDITION_NONE
+                if (
+                    ((string) $cfRule['type'] == Conditional::CONDITION_NONE
                     || (string) $cfRule['type'] == Conditional::CONDITION_CELLIS
                     || (string) $cfRule['type'] == Conditional::CONDITION_CONTAINSTEXT
+                    || (string) $cfRule['type'] == Conditional::CONDITION_CONTAINSBLANKS
+                    || (string) $cfRule['type'] == Conditional::CONDITION_NOTCONTAINSBLANKS
                     || (string) $cfRule['type'] == Conditional::CONDITION_EXPRESSION)
-                    && isset($this->dxfs[(int) ($cfRule['dxfId'])])) {
+                    && isset($this->dxfs[(int) ($cfRule['dxfId'])])
+                ) {
                     $conditionals[(string) $conditional['sqref']][(int) ($cfRule['priority'])] = $cfRule;
                 }
             }
@@ -46,7 +51,7 @@ class ConditionalStyles
         return $conditionals;
     }
 
-    private function setConditionalStyles(Worksheet $worksheet, array $conditionals)
+    private function setConditionalStyles(Worksheet $worksheet, array $conditionals): void
     {
         foreach ($conditionals as $ref => $cfRules) {
             ksort($cfRules);

@@ -100,11 +100,6 @@ define('BADGRIO_BACKPACKAPIURL', 'https://api.badgr.io/v2');
 define('BADGRIO_BACKPACKWEBURL', 'https://badgr.io');
 
 /*
- * @deprecated since 3.7. Use the urls in the badge_external_backpack table instead.
- */
-define('BADGE_BACKPACKURL', 'https://backpack.openbadges.org');
-
-/*
  * @deprecated since 3.9 (MDL-66357).
  */
 define('BADGE_BACKPACKAPIURL', 'https://backpack.openbadges.org');
@@ -127,6 +122,9 @@ define('OPEN_BADGES_V2_TYPE_ISSUER', 'Issuer');
 define('OPEN_BADGES_V2_TYPE_ENDORSEMENT', 'Endorsement');
 define('OPEN_BADGES_V2_TYPE_AUTHOR', 'Author');
 
+define('BACKPACK_MOVE_UP', -1);
+define('BACKPACK_MOVE_DOWN', 1);
+
 // Global badge class has been moved to the component namespace.
 class_alias('\core_badges\badge', 'badge');
 
@@ -145,7 +143,7 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $userfrom = new stdClass();
     $userfrom->id = $admin->id;
     $userfrom->email = !empty($CFG->badges_defaultissuercontact) ? $CFG->badges_defaultissuercontact : $admin->email;
-    foreach (get_all_user_name_fields() as $addname) {
+    foreach (\core_user\fields::get_name_fields() as $addname) {
         $userfrom->$addname = !empty($CFG->badges_defaultissuername) ? '' : $admin->$addname;
     }
     $userfrom->firstname = !empty($CFG->badges_defaultissuername) ? $CFG->badges_defaultissuername : $admin->firstname;
@@ -637,49 +635,15 @@ function badges_download($userid) {
 /**
  * Checks if badges can be pushed to external backpack.
  *
+ * @deprecated Since Moodle 3.11.
  * @return string Code of backpack accessibility status.
  */
 function badges_check_backpack_accessibility() {
-    if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
-        // For behat sites, do not poll the remote badge site.
-        // Behat sites should not be available, but we should pretend as though they are.
-        return 'available';
-    }
+    // This method was used for OBv1.0. It can be deprecated because OBv1.0 support will be removed.
+    // When this method will be removed, badges/ajax.php can be removed too (if it keeps containing only a call to it).
+    debugging('badges_check_backpack_accessibility() can not be used any more, it was only used for OBv1.0', DEBUG_DEVELOPER);
 
-    if (badges_open_badges_backpack_api() == OPEN_BADGES_V2) {
-        return 'available';
-    }
-
-    global $CFG;
-    include_once $CFG->libdir . '/filelib.php';
-
-    // Using fake assertion url to check whether backpack can access the web site.
-    $fakeassertion = new moodle_url('/badges/assertion.php', array('b' => 'abcd1234567890'));
-
-    // Curl request to backpack baker.
-    $curl = new curl();
-    $options = array(
-        'FRESH_CONNECT' => true,
-        'RETURNTRANSFER' => true,
-        'HEADER' => 0,
-        'CONNECTTIMEOUT' => 2,
-    );
-    // BADGE_BACKPACKURL and the "baker" API is deprecated and should never be used in future.
-    $location = BADGE_BACKPACKURL . '/baker';
-    $out = $curl->get($location, array('assertion' => $fakeassertion->out(false)), $options);
-
-    $data = json_decode($out);
-    if (!empty($curl->error)) {
-        return 'curl-request-timeout';
-    } else {
-        if (isset($data->code) && $data->code == 'http-unreachable') {
-            return 'http-unreachable';
-        } else {
-            return 'available';
-        }
-    }
-
-    return false;
+    return 'curl-request-timeout';
 }
 
 /**
@@ -726,43 +690,29 @@ function badges_handle_course_deletion($courseid) {
 /**
  * Loads JS files required for backpack support.
  *
- * @uses   $CFG, $PAGE
+ * @deprecated Since Moodle 3.11.
  * @return void
  */
 function badges_setup_backpack_js() {
-    global $CFG, $PAGE;
-    if (!empty($CFG->badges_allowexternalbackpack)) {
-        if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
-            $PAGE->requires->string_for_js('error:backpackproblem', 'badges');
-            // The issuer.js API is deprecated and should not be used in future.
-            $PAGE->requires->js(new moodle_url(BADGE_BACKPACKURL . '/issuer.js'), true);
-            // The backpack.js file is deprecated and should not be used in future.
-            $PAGE->requires->js('/badges/backpack.js', true);
-        }
-    }
+    // This method was used for OBv1.0. It can be deprecated because OBv1.0 support will be removed.
+    debugging('badges_setup_backpack_js() can not be used any more, it was only used for OBv1.0.', DEBUG_DEVELOPER);
 }
 
 /**
  * No js files are required for backpack support.
  * This only exists to directly support the custom V1 backpack api.
  *
+ * @deprecated Since Moodle 3.11.
  * @param boolean $checksite Call check site function.
  * @return void
  */
 function badges_local_backpack_js($checksite = false) {
-    global $CFG, $PAGE;
-    if (!empty($CFG->badges_allowexternalbackpack)) {
-        if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
-            $PAGE->requires->js('/badges/backpack.js', true);
-            if ($checksite) {
-                $PAGE->requires->js_init_call('check_site_access', null, false);
-            }
-        }
-    }
+    // This method was used for OBv1.0. It can be deprecated because OBv1.0 support will be removed.
+    debugging('badges_local_backpack_js() can not be used any more, it was only used for OBv1.0.', DEBUG_DEVELOPER);
 }
 
 /**
- * Create the backpack with this data.
+ * Create the site backpack with this data.
  *
  * @param stdClass $data The new backpack data.
  * @return boolean
@@ -772,15 +722,10 @@ function badges_create_site_backpack($data) {
     $context = context_system::instance();
     require_capability('moodle/badges:manageglobalsettings', $context);
 
-    $count = $DB->count_records('badge_external_backpack');
+    $max = $DB->get_field_sql('SELECT MAX(sortorder) FROM {badge_external_backpack}');
+    $data->sortorder = $max + 1;
 
-    $backpack = new stdClass();
-    $backpack->apiversion = $data->apiversion;
-    $backpack->backpackapiurl = $data->backpackapiurl;
-    $backpack->backpackweburl = $data->backpackweburl;
-    $backpack->sortorder = $count;
-    $DB->insert_record('badge_external_backpack', $backpack);
-    return true;
+    return badges_save_external_backpack($data);
 }
 
 /**
@@ -796,15 +741,8 @@ function badges_update_site_backpack($id, $data) {
     require_capability('moodle/badges:manageglobalsettings', $context);
 
     if ($backpack = badges_get_site_backpack($id)) {
-        $backpack = new stdClass();
-        $backpack->id = $id;
-        $backpack->apiversion = $data->apiversion;
-        $backpack->backpackweburl = $data->backpackweburl;
-        $backpack->backpackapiurl = $data->backpackapiurl;
-        $backpack->password = !empty($data->password) ? $data->password : '';
-        $backpack->oauth2_issuerid = !empty($data->oauth2_issuerid) ? $data->oauth2_issuerid : '';
-        $DB->update_record('badge_external_backpack', $backpack);
-        return true;
+        $data->id = $id;
+        return badges_save_external_backpack($data);
     }
     return false;
 }
@@ -817,13 +755,14 @@ function badges_update_site_backpack($id, $data) {
  * @return boolean
  */
 function badges_delete_site_backpack($id) {
-    global $DB, $CFG;
+    global $DB;
 
     $context = context_system::instance();
     require_capability('moodle/badges:manageglobalsettings', $context);
 
     // Only remove site backpack if it's not the default one.
-    if ($CFG->badges_site_backpack != $id && $DB->record_exists('badge_external_backpack', ['id' => $id])) {
+    $defaultbackpack = badges_get_site_primary_backpack();
+    if ($defaultbackpack->id != $id && $DB->record_exists('badge_external_backpack', ['id' => $id])) {
         $transaction = $DB->start_delegated_transaction();
 
         // Remove connections for users to this backpack.
@@ -851,13 +790,86 @@ function badges_delete_site_backpack($id) {
 }
 
 /**
+ * Perform the actual create/update of external bakpacks. Any checks on the validity of the id will need to be
+ * performed before it reaches this function.
+ *
+ * @param stdClass $data The backpack data we are updating/inserting
+ * @return int Returns the id of the new/updated record
+ */
+function badges_save_external_backpack(stdClass $data) {
+    global $DB;
+    $backpack = new stdClass();
+
+    $backpack->apiversion = $data->apiversion;
+    $backpack->backpackweburl = $data->backpackweburl;
+    $backpack->backpackapiurl = $data->backpackapiurl;
+    $backpack->oauth2_issuerid = $data->oauth2_issuerid ?? '';
+    if (isset($data->sortorder)) {
+        $backpack->sortorder = $data->sortorder;
+    }
+
+    if (empty($data->id)) {
+        $backpack->id = $DB->insert_record('badge_external_backpack', $backpack);
+    } else {
+        $backpack->id = $data->id;
+        $DB->update_record('badge_external_backpack', $backpack);
+    }
+    $data->externalbackpackid = $backpack->id;
+
+    unset($data->id);
+    badges_save_backpack_credentials($data);
+    return $data->externalbackpackid;
+}
+
+/**
+ * Create a backpack with the provided details. Stores the auth details of the backpack
+ *
+ * @param stdClass $data Backpack specific data.
+ * @return int The id of the external backpack that the credentials correspond to
+ */
+function badges_save_backpack_credentials(stdClass $data) {
+    global $DB;
+
+    if (isset($data->backpackemail) && isset($data->password)) {
+        $backpack = new stdClass();
+
+        $backpack->email = $data->backpackemail;
+        $backpack->password = !empty($data->password) ? $data->password : '';
+        $backpack->externalbackpackid = $data->externalbackpackid;
+        $backpack->userid = $data->userid ?? 0;
+        $backpack->backpackuid = $data->backpackuid ?? 0;
+        $backpack->autosync = $data->autosync ?? 0;
+
+        if (!empty($data->badgebackpack)) {
+            $backpack->id = $data->badgebackpack;
+        } else if (!empty($data->id)) {
+            $backpack->id = $data->id;
+        }
+
+        if (empty($backpack->id)) {
+            $backpack->id = $DB->insert_record('badge_backpack', $backpack);
+        } else {
+            $DB->update_record('badge_backpack', $backpack);
+        }
+
+        return $backpack->externalbackpackid;
+    }
+
+    return $data->externalbackpackid ?? 0;
+}
+
+/**
  * Is any backpack enabled that supports open badges V1?
+ * @param int|null $backpackid Check the version of the given id OR if null the sitewide backpack
  * @return boolean
  */
-function badges_open_badges_backpack_api() {
-    global $CFG;
+function badges_open_badges_backpack_api(?int $backpackid = null) {
+    if (!$backpackid) {
+        $backpack = badges_get_site_primary_backpack();
+    } else {
+        $backpack = badges_get_site_backpack($backpackid);
+    }
 
-    $backpack = badges_get_site_backpack($CFG->badges_site_backpack);
     if (empty($backpack->apiversion)) {
         return OPEN_BADGES_V2;
     }
@@ -865,15 +877,60 @@ function badges_open_badges_backpack_api() {
 }
 
 /**
- * Get a site backpacks by id or url.
+ * Get a site backpacks by id for a particular user or site (if userid is 0)
  *
  * @param int $id The backpack id.
+ * @param int $userid The owner of the backpack, 0 if it's a sitewide backpack else a user's site backpack
  * @return array(stdClass)
  */
-function badges_get_site_backpack($id) {
+function badges_get_site_backpack($id, int $userid = 0) {
     global $DB;
 
-    return $DB->get_record('badge_external_backpack', ['id' => $id]);
+    $sql = "SELECT beb.*, bb.id AS badgebackpack, bb.password, bb.email AS backpackemail
+              FROM {badge_external_backpack} beb
+         LEFT JOIN {badge_backpack} bb ON bb.externalbackpackid = beb.id AND bb.userid=:userid
+             WHERE beb.id=:id";
+
+    return $DB->get_record_sql($sql, ['id' => $id, 'userid' => $userid]);
+}
+
+/**
+ * Get the user backpack for the currently logged in user OR the provided user
+ *
+ * @param int|null $userid The user whose backpack you're requesting for. If null, get the logged in user's backpack
+ * @return mixed The user's backpack or none.
+ * @throws dml_exception
+ */
+function badges_get_user_backpack(?int $userid = 0) {
+    global $DB;
+
+    if (!$userid) {
+        global $USER;
+        $userid = $USER->id;
+    }
+
+    $sql = "SELECT beb.*, bb.id AS badgebackpack, bb.password, bb.email AS backpackemail
+              FROM {badge_external_backpack} beb
+              JOIN {badge_backpack} bb ON bb.externalbackpackid = beb.id AND bb.userid=:userid";
+
+    return $DB->get_record_sql($sql, ['userid' => $userid]);
+}
+
+/**
+ * Get the primary backpack for the site
+ *
+ * @return array(stdClass)
+ */
+function badges_get_site_primary_backpack() {
+    global $DB;
+
+    $sql = 'SELECT *
+              FROM {badge_external_backpack}
+             WHERE sortorder = (SELECT MIN(sortorder)
+                                  FROM {badge_external_backpack} b2)';
+    $firstbackpack = $DB->get_record_sql($sql, null, MUST_EXIST);
+
+    return badges_get_site_backpack($firstbackpack->id);
 }
 
 /**
@@ -882,18 +939,53 @@ function badges_get_site_backpack($id) {
  * @return array(stdClass)
  */
 function badges_get_site_backpacks() {
-    global $DB, $CFG;
+    global $DB;
 
-    $all = $DB->get_records('badge_external_backpack');
-
+    $defaultbackpack = badges_get_site_primary_backpack();
+    $all = $DB->get_records('badge_external_backpack', null, 'sortorder ASC');
     foreach ($all as $key => $bp) {
-        if ($bp->id == $CFG->badges_site_backpack) {
+        if ($bp->id == $defaultbackpack->id) {
             $all[$key]->sitebackpack = true;
         } else {
             $all[$key]->sitebackpack = false;
         }
     }
+
     return $all;
+}
+
+/**
+ * Moves the backpack in the list one position up or down.
+ *
+ * @param int $backpackid The backpack identifier to be moved.
+ * @param int $direction The direction (BACKPACK_MOVE_UP/BACKPACK_MOVE_DOWN) where to move the backpack.
+ *
+ * @throws \moodle_exception if attempting to use invalid direction value.
+ */
+function badges_change_sortorder_backpacks(int $backpackid, int $direction): void {
+    global $DB;
+
+    if ($direction != BACKPACK_MOVE_UP && $direction != BACKPACK_MOVE_DOWN) {
+        throw new \coding_exception(
+            'Must use a valid backpack API move direction constant (BACKPACK_MOVE_UP or BACKPACK_MOVE_DOWN)');
+    }
+
+    $backpacks = badges_get_site_backpacks();
+    $backpacktoupdate = $backpacks[$backpackid];
+
+    $currentsortorder = $backpacktoupdate->sortorder;
+    $targetsortorder = $currentsortorder + $direction;
+    if ($targetsortorder > 0 && $targetsortorder <= count($backpacks) ) {
+        foreach ($backpacks as $backpack) {
+            if ($backpack->sortorder == $targetsortorder) {
+                $backpack->sortorder = $backpack->sortorder - $direction;
+                $DB->update_record('badge_external_backpack', $backpack);
+                break;
+            }
+        }
+        $backpacktoupdate->sortorder = $targetsortorder;
+        $DB->update_record('badge_external_backpack', $backpacktoupdate);
+    }
 }
 
 /**
@@ -917,6 +1009,7 @@ function badges_get_badge_api_versions() {
 function badges_get_default_issuer() {
     global $CFG, $SITE;
 
+    $sitebackpack = badges_get_site_primary_backpack();
     $issuer = array();
     $issuerurl = new moodle_url('/');
     $issuer['name'] = $CFG->badges_defaultissuername;
@@ -924,7 +1017,7 @@ function badges_get_default_issuer() {
         $issuer['name'] = $SITE->fullname ? $SITE->fullname : $SITE->shortname;
     }
     $issuer['url'] = $issuerurl->out(false);
-    $issuer['email'] = $CFG->badges_defaultissuercontact;
+    $issuer['email'] = $sitebackpack->backpackemail ?: $CFG->badges_defaultissuercontact;
     $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
     $issuerid = new moodle_url('/badges/issuer_json.php');
     $issuer['id'] = $issuerid->out(false);
@@ -962,9 +1055,10 @@ function badges_disconnect_user_backpack($userid) {
  * @param integer $sitebackpackid The site backpack to connect to.
  * @param string $type The type of this remote object.
  * @param string $internalid The id for this object on the Moodle site.
+ * @param string $param The param we need to return. Defaults to the externalid.
  * @return mixed The id or false if it doesn't exist.
  */
-function badges_external_get_mapping($sitebackpackid, $type, $internalid) {
+function badges_external_get_mapping($sitebackpackid, $type, $internalid, $param = 'externalid') {
     global $DB;
     // Return externalid if it exists.
     $params = [
@@ -973,9 +1067,9 @@ function badges_external_get_mapping($sitebackpackid, $type, $internalid) {
         'internalid' => $internalid
     ];
 
-    $record = $DB->get_record('badge_external_identifier', $params, 'externalid', IGNORE_MISSING);
+    $record = $DB->get_record('badge_external_identifier', $params, $param, IGNORE_MISSING);
     if ($record) {
-        return $record->externalid;
+        return $record->$param;
     }
     return false;
 }
@@ -1194,9 +1288,8 @@ function badge_assemble_notification(stdClass $badge) {
  * @return string
  */
 function badges_verify_site_backpack() {
-    global $CFG;
-
-    return badges_verify_backpack($CFG->badges_site_backpack);
+    $defaultbackpack = badges_get_site_primary_backpack();
+    return badges_verify_backpack($defaultbackpack->id);
 }
 
 /**
@@ -1255,4 +1348,27 @@ function badges_get_oauth2_service_options() {
     }
 
     return $options;
+}
+
+/**
+ * Generate a public badgr URL that conforms to OBv2. This is done because badgr responses do not currently conform to
+ * the spec.
+ *
+ * WARNING: This is an extremely hacky way of implementing this and should be removed once the standards are conformed to.
+ *
+ * @param stdClass $backpack The Badgr backpack we are pushing to
+ * @param string $type The type of object we are dealing with either Issuer, Assertion OR Badge.
+ * @param string $externalid The externalid as provided by the backpack
+ * @return string The public URL to access Badgr objects
+ */
+function badges_generate_badgr_open_url($backpack, $type, $externalid) {
+    if (badges_open_badges_backpack_api($backpack->id) == OPEN_BADGES_V2) {
+        $entity = strtolower($type);
+        if ($type == OPEN_BADGES_V2_TYPE_BADGE) {
+            $entity = "badge";
+        }
+        $url = new moodle_url($backpack->backpackapiurl);
+        return "{$url->get_scheme()}://{$url->get_host()}/public/{$entity}s/$externalid";
+
+    }
 }

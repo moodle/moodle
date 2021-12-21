@@ -40,7 +40,7 @@ admin_externalpage_setup('toolcapability');
 
 // Prepare the list of capabilities to choose from.
 $capabilitychoices = array();
-foreach ($context->get_capabilities() as $cap) {
+foreach ($context->get_capabilities('name') as $cap) {
     $capabilitychoices[$cap->name] = $cap->name . ': ' . get_capability_string($cap->name);
 }
 

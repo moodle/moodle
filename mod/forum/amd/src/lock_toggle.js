@@ -17,7 +17,6 @@
  * Handle the manual locking of individual discussions
  *
  * @module     mod_forum/lock_toggle
- * @package    mod_forum
  * @copyright  2019 Peter Dias <peter@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

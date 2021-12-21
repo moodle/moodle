@@ -39,7 +39,7 @@ use \core_message\tests\helper as testhelper;
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_message_api_testcase extends core_message_messagelib_testcase {
+class core_message_api_test extends core_message_messagelib_testcase {
 
     public function test_mark_all_read_for_user_touser() {
         $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
@@ -1327,7 +1327,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $conversations = \core_message\api::get_conversations($user1->id);
 
         usort($conversations, function($first, $second){
-            return $first->id > $second->id;
+            return $first->id <=> $second->id;
         });
 
         // Consider first conversations is self-conversation.
@@ -1545,7 +1545,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $conversations = \core_message\api::get_conversations($user1->id);
         // Consider first conversations is self-conversation.
         $this->assertCount(7, $conversations);
-        $this->assertContains($gc2->id, array_column($conversations, 'id'));
+        $this->assertContainsEquals($gc2->id, array_column($conversations, 'id'));
 
         // Delete all messages from an individual conversation the user is in - it should not be returned.
         $this->assertTrue(\core_message\api::is_user_in_conversation($user1->id, $ic1->id));
@@ -1557,7 +1557,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $conversations = \core_message\api::get_conversations($user1->id);
         // Consider first conversations is self-conversation.
         $this->assertCount(6, $conversations);
-        $this->assertNotContains($ic1->id, array_column($conversations, 'id'));
+        $this->assertNotContainsEquals($ic1->id, array_column($conversations, 'id'));
     }
 
     /**
@@ -2270,16 +2270,16 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $message4 = $messages[3];
 
         $this->assertEquals($user1->id, $message1->useridfrom);
-        $this->assertContains('Yo!', $message1->text);
+        $this->assertStringContainsString('Yo!', $message1->text);
 
         $this->assertEquals($user2->id, $message2->useridfrom);
-        $this->assertContains('Sup mang?', $message2->text);
+        $this->assertStringContainsString('Sup mang?', $message2->text);
 
         $this->assertEquals($user1->id, $message3->useridfrom);
-        $this->assertContains('Writing PHPUnit tests!', $message3->text);
+        $this->assertStringContainsString('Writing PHPUnit tests!', $message3->text);
 
         $this->assertEquals($user1->id, $message4->useridfrom);
-        $this->assertContains('Word.', $message4->text);
+        $this->assertStringContainsString('Word.', $message4->text);
 
         // Confirm the members data is correct.
         $members = $convmessages['members'];
@@ -2330,19 +2330,19 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $message5 = $messages[4];
 
         $this->assertEquals($user1->id, $message1->useridfrom);
-        $this->assertContains('Yo!', $message1->text);
+        $this->assertStringContainsString('Yo!', $message1->text);
 
         $this->assertEquals($user2->id, $message2->useridfrom);
-        $this->assertContains('Sup mang?', $message2->text);
+        $this->assertStringContainsString('Sup mang?', $message2->text);
 
         $this->assertEquals($user3->id, $message3->useridfrom);
-        $this->assertContains('Writing PHPUnit tests!', $message3->text);
+        $this->assertStringContainsString('Writing PHPUnit tests!', $message3->text);
 
         $this->assertEquals($user1->id, $message4->useridfrom);
-        $this->assertContains('Word.', $message4->text);
+        $this->assertStringContainsString('Word.', $message4->text);
 
         $this->assertEquals($user2->id, $message5->useridfrom);
-        $this->assertContains('Yeah!', $message5->text);
+        $this->assertStringContainsString('Yeah!', $message5->text);
 
         // Confirm the members data is correct.
         $members = $convmessages['members'];
@@ -2457,10 +2457,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $message3 = $messages[2];
         $message4 = $messages[3];
 
-        $this->assertContains('Message 1', $message1->text);
-        $this->assertContains('Message 2', $message2->text);
-        $this->assertContains('Message 3', $message3->text);
-        $this->assertContains('Message 4', $message4->text);
+        $this->assertStringContainsString('Message 1', $message1->text);
+        $this->assertStringContainsString('Message 2', $message2->text);
+        $this->assertStringContainsString('Message 3', $message3->text);
+        $this->assertStringContainsString('Message 4', $message4->text);
 
         // Confirm the members data is correct.
         $members = $convmessages['members'];
@@ -2480,8 +2480,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $message1 = $messages[0];
         $message2 = $messages[1];
 
-        $this->assertContains('Message 3', $message1->text);
-        $this->assertContains('Message 4', $message2->text);
+        $this->assertStringContainsString('Message 3', $message1->text);
+        $this->assertStringContainsString('Message 4', $message2->text);
 
         // Confirm the members data is correct.
         $members = $convmessages['members'];
@@ -2530,10 +2530,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $message3 = $messages[2];
         $message4 = $messages[3];
 
-        $this->assertContains('Message 1', $message1->text);
-        $this->assertContains('Message 2', $message2->text);
-        $this->assertContains('Message 3', $message3->text);
-        $this->assertContains('Message 4', $message4->text);
+        $this->assertStringContainsString('Message 1', $message1->text);
+        $this->assertStringContainsString('Message 2', $message2->text);
+        $this->assertStringContainsString('Message 3', $message3->text);
+        $this->assertStringContainsString('Message 4', $message4->text);
 
         // Confirm the members data is correct.
         $members = $convmessages['members'];
@@ -2553,8 +2553,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $message1 = $messages[0];
         $message2 = $messages[1];
 
-        $this->assertContains('Message 1', $message1->text);
-        $this->assertContains('Message 2', $message2->text);
+        $this->assertStringContainsString('Message 1', $message1->text);
+        $this->assertStringContainsString('Message 2', $message2->text);
 
         // Confirm the members data is correct.
         $members = $convmessages['members'];
@@ -2601,8 +2601,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $message1 = $messages[0];
         $message2 = $messages[1];
 
-        $this->assertContains('Message 2', $message1->text);
-        $this->assertContains('Message 3', $message2->text);
+        $this->assertStringContainsString('Message 2', $message1->text);
+        $this->assertStringContainsString('Message 3', $message2->text);
 
         // Confirm the members data is correct.
         $members = $convmessages['members'];
@@ -2649,8 +2649,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $message1 = $messages[0];
         $message2 = $messages[1];
 
-        $this->assertContains('Message 3', $message1->text);
-        $this->assertContains('Message 4', $message2->text);
+        $this->assertStringContainsString('Message 3', $message1->text);
+        $this->assertStringContainsString('Message 4', $message2->text);
 
         // Confirm the members data is correct.
         $members = $convmessages['members'];
@@ -2696,7 +2696,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         $message1 = $messages[0];
 
-        $this->assertContains('Message 3', $message1->text);
+        $this->assertStringContainsString('Message 3', $message1->text);
 
         // Confirm the members data is correct.
         $members = $convmessages['members'];
@@ -2733,7 +2733,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check the results are correct.
         $this->assertEquals($user2->id, $message->useridfrom);
-        $this->assertContains('Word.', $message->text);
+        $this->assertStringContainsString('Word.', $message->text);
     }
 
     /**
@@ -3263,26 +3263,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check that the second user can no longer send the first user a message.
         $this->assertTrue(\core_message\api::can_send_message($student->id, $teacher->id, true));
-    }
-
-    /**
-     * Test that calling to can_post_message() now shows debugging. MDL-65093.
-     *
-     * @deprecated since 3.8
-     * @todo Final deprecation in MDL-66266
-     */
-    public function test_can_post_emits_debugging() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // Set as the first user.
-        $this->setUser($user1);
-
-        // With the default privacy setting, users can't message them.
-        $this->assertFalse(\core_message\api::can_post_message($user2));
-        $this->assertDebuggingCalled('\core_message\api::can_post_message is deprecated, please use ' .
-            '\core_message\api::can_send_message instead.', DEBUG_DEVELOPER);
     }
 
     /**
@@ -5197,154 +5177,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         );
     }
 
-
-    /**
-     * Test an empty array returned when no args given.
-     */
-    public function test_get_individual_conversations_between_users_no_user_sets() {
-        $this->assertEmpty(\core_message\api::get_individual_conversations_between_users([]));
-        $this->assertDebuggingCalled();
-    }
-
-    /**
-     * Test a conversation is not returned if there is none.
-     */
-    public function test_get_individual_conversations_between_users_no_conversation() {
-        $generator = $this->getDataGenerator();
-        $user1 = $generator->create_user();
-        $user2 = $generator->create_user();
-
-        $this->assertEquals(
-            [null],
-            \core_message\api::get_individual_conversations_between_users([[$user1->id, $user2->id]])
-        );
-        $this->assertDebuggingCalled();
-    }
-
-    /**
-     * Test the result set includes null if there is no conversation between users.
-     */
-    public function test_get_individual_conversations_between_users_partial_conversations() {
-        $generator = $this->getDataGenerator();
-        $user1 = $generator->create_user();
-        $user2 = $generator->create_user();
-        $user3 = $generator->create_user();
-        $type = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
-
-        $conversation1 = \core_message\api::create_conversation($type, [$user1->id, $user2->id]);
-        $conversation2 = \core_message\api::create_conversation($type, [$user1->id, $user3->id]);
-
-        $results = \core_message\api::get_individual_conversations_between_users([
-            [$user1->id, $user2->id],
-            [$user2->id, $user3->id],
-            [$user1->id, $user3->id]
-        ]);
-        $this->assertDebuggingCalled();
-
-        $result = array_map(function($result) {
-            if ($result) {
-                return $result->id;
-            } else {
-                return $result;
-            }
-        }, $results);
-
-        $this->assertEquals(
-            [$conversation1->id, null, $conversation2->id],
-            $result
-        );
-    }
-
-    /**
-     * Test all conversations are returned if each set has a conversation.
-     */
-    public function test_get_individual_conversations_between_users_all_conversations() {
-        $generator = $this->getDataGenerator();
-        $user1 = $generator->create_user();
-        $user2 = $generator->create_user();
-        $user3 = $generator->create_user();
-        $type = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
-
-        $conversation1 = \core_message\api::create_conversation($type, [$user1->id, $user2->id]);
-        $conversation2 = \core_message\api::create_conversation($type, [$user2->id, $user3->id]);
-        $conversation3 = \core_message\api::create_conversation($type, [$user1->id, $user3->id]);
-
-        $results = \core_message\api::get_individual_conversations_between_users([
-            [$user1->id, $user2->id],
-            [$user2->id, $user3->id],
-            [$user1->id, $user3->id]
-        ]);
-        $this->assertDebuggingCalled();
-
-        $result = array_map(function($result) {
-            if ($result) {
-                return $result->id;
-            } else {
-                return $result;
-            }
-        }, $results);
-
-        $this->assertEquals(
-            [$conversation1->id, $conversation2->id, $conversation3->id],
-            $result
-        );
-    }
-
-    /**
-     * Test that the results are ordered to match the order of the parameters.
-     */
-    public function test_get_individual_conversations_between_users_ordering() {
-        $generator = $this->getDataGenerator();
-        $user1 = $generator->create_user();
-        $user2 = $generator->create_user();
-        $user3 = $generator->create_user();
-        $type = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
-
-        $conversation1 = \core_message\api::create_conversation($type, [$user1->id, $user2->id]);
-        $conversation2 = \core_message\api::create_conversation($type, [$user2->id, $user3->id]);
-        $conversation3 = \core_message\api::create_conversation($type, [$user1->id, $user3->id]);
-
-        $results = \core_message\api::get_individual_conversations_between_users([
-            [$user1->id, $user2->id],
-            [$user2->id, $user3->id],
-            [$user1->id, $user3->id]
-        ]);
-        $this->assertDebuggingCalled();
-
-        $result = array_map(function($result) {
-            if ($result) {
-                return $result->id;
-            } else {
-                return $result;
-            }
-        }, $results);
-
-        $this->assertEquals(
-            [$conversation1->id, $conversation2->id, $conversation3->id],
-            $result
-        );
-
-        $results = \core_message\api::get_individual_conversations_between_users([
-            [$user2->id, $user3->id],
-            [$user1->id, $user2->id],
-            [$user1->id, $user3->id]
-        ]);
-        $this->assertDebuggingCalled();
-
-        $result = array_map(function($result) {
-            if ($result) {
-                return $result->id;
-            } else {
-                return $result;
-            }
-        }, $results);
-
-        $this->assertEquals(
-            [$conversation2->id, $conversation1->id, $conversation3->id],
-            $result
-        );
-    }
-
     /**
      * Test returning members in a conversation with no contact requests.
      */
@@ -5572,16 +5404,16 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
         $this->assertObjectHasAttribute('id', $message1);
-        $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
-        $this->assertAttributeEquals('this is a message', 'text', $message1);
+        $this->assertEquals($user1->id, $message1->useridfrom);
+        $this->assertEquals('this is a message', $message1->text);
         $this->assertObjectHasAttribute('timecreated', $message1);
 
         // Verify events. Note: the event is a message read event because of an if (PHPUNIT) conditional within message_send(),
         // however, we can still determine the number and ids of any recipients this way.
         $this->assertCount(1, $events);
         $userids = array_column($events, 'userid');
-        $this->assertNotContains($user1->id, $userids);
-        $this->assertContains($user2->id, $userids);
+        $this->assertNotContainsEquals($user1->id, $userids);
+        $this->assertContainsEquals($user2->id, $userids);
     }
 
     /**
@@ -5614,8 +5446,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
         $this->assertObjectHasAttribute('id', $message1);
-        $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
-        $this->assertAttributeEquals('message to the group', 'text', $message1);
+        $this->assertEquals($user1->id, $message1->useridfrom);
+        $this->assertEquals('message to the group', $message1->text);
         $this->assertObjectHasAttribute('timecreated', $message1);
         // Test customdata.
         $customdata = json_decode($messages[0]->customdata);
@@ -5629,9 +5461,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // however, we can still determine the number and ids of any recipients this way.
         $this->assertCount(2, $events);
         $userids = array_column($events, 'userid');
-        $this->assertNotContains($user1->id, $userids);
-        $this->assertContains($user3->id, $userids);
-        $this->assertContains($user4->id, $userids);
+        $this->assertNotContainsEquals($user1->id, $userids);
+        $this->assertContainsEquals($user3->id, $userids);
+        $this->assertContainsEquals($user4->id, $userids);
     }
 
     /**
@@ -5683,8 +5515,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
         $this->assertObjectHasAttribute('id', $message1);
-        $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
-        $this->assertAttributeEquals('message to the group', 'text', $message1);
+        $this->assertEquals($user1->id, $message1->useridfrom);
+        $this->assertEquals('message to the group', $message1->text);
         $this->assertObjectHasAttribute('timecreated', $message1);
         // Test customdata.
         $customdata = json_decode($messages[0]->customdata);
@@ -6587,6 +6419,47 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(1, $convmessages2['messages']);
         // Check the one messages remains not is the first message.
         $this->assertNotEquals($mid1, $convmessages2['messages'][0]->id);
+    }
+
+    /**
+     * Test retrieving conversation messages by providing a timefrom higher than last message timecreated. It should return no
+     * messages but keep the return structure to not break when called from the ws.
+     */
+    public function test_get_conversation_messages_timefrom_higher_than_last_timecreated() {
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Create group conversation.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id, $user4->id]
+        );
+
+        // The person doing the search.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = 1;
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Message 1', $time + 1);
+        testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'Message 2', $time + 2);
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Message 3', $time + 3);
+        testhelper::send_fake_message_to_conversation($user3, $conversation->id, 'Message 4', $time + 4);
+
+        // Retrieve the messages from $time + 5, which should return no messages.
+        $convmessages = \core_message\api::get_conversation_messages($user1->id, $conversation->id, 0, 0, '', $time + 5);
+
+        // Confirm the conversation id is correct.
+        $this->assertEquals($conversation->id, $convmessages['id']);
+
+        // Confirm the message data is correct.
+        $messages = $convmessages['messages'];
+        $this->assertEquals(0, count($messages));
+
+        // Confirm that members key is present.
+        $this->assertArrayHasKey('members', $convmessages);
     }
 
     /**

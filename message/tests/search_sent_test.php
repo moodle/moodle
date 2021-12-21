@@ -45,7 +45,7 @@ class message_sent_search_testcase extends advanced_testcase {
      * Setting up the test environment
      * @return void
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
         set_config('enableglobalsearch', true);
 

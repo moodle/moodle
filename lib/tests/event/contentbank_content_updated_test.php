@@ -34,12 +34,12 @@ namespace core\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\event\contentbank_content_updated
  */
-class contentbank_content_updated_testcase extends \advanced_testcase {
+class contentbank_content_updated_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.
      */
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
         global $CFG;
 
         require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.php');

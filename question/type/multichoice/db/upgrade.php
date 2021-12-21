@@ -32,8 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_qtype_multichoice_upgrade($oldversion) {
     global $CFG, $DB;
 
-    // Automatically generated Moodle v3.5.0 release upgrade line.
-    // Put any upgrade step following this.
+    $dbman = $DB->get_manager();
 
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
@@ -46,7 +45,6 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
 
     // Add a new checkbox for the question author to decide
     // Whether standard instruction ('Select one:' or 'Select one or more:') is displayed.
-    $dbman = $DB->get_manager();
     $newversion = 2020041600;
     if ($oldversion < $newversion) {
 

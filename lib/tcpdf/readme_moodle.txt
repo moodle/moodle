@@ -1,21 +1,31 @@
-Description of TCPDF library import 6.3.2
+Description of TCPDF library import 6.3.5
 ==========================================
 * download library from https://github.com/tecnickcom/TCPDF/releases
 * delete examples/, tools/ VERSION and tcpdf_import.php
 * remove tcpdf_import.php from composer.json
 * remove all fonts that were not already present
-* Re-apply the following commits if they are not included in the upstream version imported:
-  (and remove them from here once they are verified to be part of the upstream library)
-  * 18dabac - https://git.io/JeKfU
-  * 60c9db7 - https://git.io/JeKfT
-  * 1adcd76 - https://git.io/JeKft
-  * 5e4d999 - https://git.io/JvrxB
 * visit http://127.0.0.1/lib/tests/other/pdflibtestpage.php and view the pdf
+* modify getTCPDFProducer lib/tcpdf/include/tcpdf_static.php to remove the version number
 
 Important
 ---------
 A new version of the libray is being developed @ https://github.com/tecnickcom/tc-lib-pdf . Check periodically when it's ready
 and if it's a drop-in replacement for the legacy tcpdf one.
+
+2021/04/20
+----------
+Upgrade to tcpdf TCPDF 6.4.1 (MDL-70902)
+by David Matamoros <davidmc@moodle.com>
+
+2021/02/11
+----------
+Reduce PDF metadata disclosure (MDL-70735)
+by Brendan Heywood <brendan@catalyst-au.net>
+
+2020/12/15
+----------
+Upgrade to tcpdf TCPDF 6.3.5 (MDL-70294)
+by Paul Holden <paulh@moodle.com>
 
 2019/10/20
 ----------

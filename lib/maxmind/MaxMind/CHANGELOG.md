@@ -1,6 +1,61 @@
 CHANGELOG
 =========
 
+1.10.1 (2021-04-14)
+-------------------
+
+* Fix a `TypeError` exception in the pure PHP reader when using large
+  databases on 32-bit PHP builds with the `bcmath` extension. Reported
+  by dodo1708. GitHub #124.
+
+1.10.0 (2021-02-09)
+-------------------
+
+* When using the pure PHP reader, unsigned integers up to PHP_MAX_INT
+  will now be integers in PHP rather than strings. Previously integers
+  greater than 2^24 on 32-bit platforms and 2^56 on 64-bit platforms
+  would be strings due to the use of `gmp` or `bcmath` to decode them.
+  Reported by Alejandro Celaya. GitHub #119.
+
+1.9.0 (2021-01-07)
+------------------
+
+* The `maxminddb` extension is now buildable on Windows. Pull request
+  by Jan Ehrhardt. GitHub #115.
+
+1.8.0 (2020-10-01)
+------------------
+
+* Fixes for PHP 8.0. Pull Request by Remi Collet. GitHub #108.
+
+1.7.0 (2020-08-07)
+------------------
+
+* IMPORTANT: PHP 7.2 or greater is now required.
+* The extension no longer depends on the pure PHP classes in
+  `maxmind-db/reader`. You can use it independently.
+* Type hints have been added to both the pure PHP implementation
+  and the extension.
+* The `metadata` method on the reader now returns a new copy of the
+  metadata object rather than the actual object used by the reader.
+* Work around PHP `is_readable()` bug. Reported by Ben Roberts. GitHub
+  #92.
+* This is the first release of the extension as a PECL package.
+  GitHub #34.
+
+1.6.0 (2019-12-19)
+------------------
+
+* 1.5.0 and 1.5.1 contained a possible memory corruptions when using
+  `getWithPrefixLen`. This has been fixed. Reported by proton-ab.
+  GitHub #96.
+* The `composer.json` file now conflicts with all versions of the
+  `maxminddb` C extension less than the Composer version. This is to
+  reduce the chance of having an older, conflicting version of the
+  extension installed. You will need to upgrade the extension before
+  running `composer update`. Pull request by Benoît Burnichon. GitHub
+  #97.
+
 1.5.1 (2019-12-12)
 ------------------
 

@@ -57,21 +57,19 @@ class restore_create_and_clean_temp_stuff extends restore_execution_step {
 }
 
 /**
- * delete the temp dir used by backup/restore (conditionally),
- * delete old directories and drop temp ids table
+ * Drop temp ids table and delete the temp dir used by backup/restore (conditionally).
  */
 class restore_drop_and_clean_temp_stuff extends restore_execution_step {
 
     protected function define_execution() {
         global $CFG;
         restore_controller_dbops::drop_restore_temp_tables($this->get_restoreid()); // Drop ids temp table
-        $progress = $this->task->get_progress();
-        $progress->start_progress('Deleting backup dir');
-        backup_helper::delete_old_backup_dirs(strtotime('-1 week'), $progress);      // Delete > 1 week old temp dirs.
         if (empty($CFG->keeptempdirectoriesonbackup)) { // Conditionally
+            $progress = $this->task->get_progress();
+            $progress->start_progress('Deleting backup dir');
             backup_helper::delete_backup_dir($this->task->get_tempdir(), $progress); // Empty restore dir
+            $progress->end_progress();
         }
-        $progress->end_progress();
     }
 }
 
@@ -1191,6 +1189,13 @@ class restore_groups_structure_step extends restore_structure_step {
 
         $restorefiles = false; // Only if we end creating the group
 
+        // This is for backwards compatibility with old backups. If the backup data for a group contains a non-empty value of
+        // hidepicture, then we'll exclude this group's picture from being restored.
+        if (!empty($data->hidepicture)) {
+            // Exclude the group picture from being restored if hidepicture is set to 1 in the backup data.
+            unset($data->picture);
+        }
+
         // Search if the group already exists (by name & description) in the target course
         $description_clause = '';
         $params = array('courseid' => $this->get_courseid(), 'grname' => $data->name);
@@ -1212,6 +1217,12 @@ class restore_groups_structure_step extends restore_structure_step {
         }
         // Save the id mapping
         $this->set_mapping('group', $oldid, $newitemid, $restorefiles);
+
+        // Add the related group picture file if it's available at this point.
+        if (!empty($data->picture)) {
+            $this->add_related_files('group', 'icon', 'group', null, $oldid);
+        }
+
         // Invalidate the course group data cache just in case.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
     }
@@ -1271,8 +1282,7 @@ class restore_groups_structure_step extends restore_structure_step {
     }
 
     protected function after_execute() {
-        // Add group related files, matching with "group" mappings
-        $this->add_related_files('group', 'icon', 'group');
+        // Add group related files, matching with "group" mappings.
         $this->add_related_files('group', 'description', 'group');
         // Add grouping related files, matching with "grouping" mappings
         $this->add_related_files('grouping', 'description', 'grouping');
@@ -1681,7 +1691,9 @@ class restore_section_structure_step extends restore_structure_step {
      * @param stdClass $data Record data
      */
     public function process_availability_field($data) {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+
         $data = (object)$data;
         // Mark it is as passed by default
         $passed = true;
@@ -1694,9 +1706,8 @@ class restore_section_structure_step extends restore_structure_step {
             // If one is null but the other isn't something clearly went wrong and we'll skip this condition.
             $passed = false;
         } else if (!is_null($data->customfield)) {
-            $params = array('shortname' => $data->customfield, 'datatype' => $data->customfieldtype);
-            $customfieldid = $DB->get_field('user_info_field', 'id', $params);
-            $passed = ($customfieldid !== false);
+            $field = profile_get_custom_field_data_by_shortname($data->customfield);
+            $passed = $field && $field->datatype == $data->customfieldtype;
         }
 
         if ($passed) {
@@ -1904,11 +1915,23 @@ class restore_course_structure_step extends restore_structure_step {
         if ($data->defaultgroupingid) {
             $data->defaultgroupingid = $this->get_mappingid('grouping', $data->defaultgroupingid);
         }
+
+        $courseconfig = get_config('moodlecourse');
+
         if (empty($CFG->enablecompletion)) {
+            // Completion is disabled globally.
             $data->enablecompletion = 0;
             $data->completionstartonenrol = 0;
             $data->completionnotify = 0;
+            $data->showcompletionconditions = null;
+        } else {
+            $showcompletionconditionsdefault = ($courseconfig->showcompletionconditions ?? null);
+            $data->showcompletionconditions = $data->showcompletionconditions ?? $showcompletionconditionsdefault;
         }
+
+        $showactivitydatesdefault = ($courseconfig->showactivitydates ?? null);
+        $data->showactivitydates = $data->showactivitydates ?? $showactivitydatesdefault;
+
         $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search
         if (isset($data->lang) && !array_key_exists($data->lang, $languages)) {
             $data->lang = '';
@@ -2048,7 +2071,9 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
         if ($this->get_setting_value('role_assignments')) {
             $paths[] = new restore_path_element('assignment', '/roles/role_assignments/assignment');
         }
-        $paths[] = new restore_path_element('override', '/roles/role_overrides/override');
+        if ($this->get_setting_value('permissions')) {
+            $paths[] = new restore_path_element('override', '/roles/role_overrides/override');
+        }
 
         return $paths;
     }
@@ -2119,16 +2144,30 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
 
     public function process_override($data) {
         $data = (object)$data;
-
         // Check roleid is one of the mapped ones
-        $newroleid = $this->get_mappingid('role', $data->roleid);
+        $newrole = $this->get_mapping('role', $data->roleid);
+        $newroleid = $newrole->newitemid ?? false;
+        $userid = $this->task->get_userid();
+
         // If newroleid and context are valid assign it via API (it handles dupes and so on)
         if ($newroleid && $this->task->get_contextid()) {
-            if (!get_capability_info($data->capability)) {
+            if (!$capability = get_capability_info($data->capability)) {
                 $this->log("Capability '{$data->capability}' was not found!", backup::LOG_WARNING);
             } else {
-                // TODO: assign_capability() needs one userid param to be able to specify our restore userid.
-                assign_capability($data->capability, $data->permission, $newroleid, $this->task->get_contextid());
+                $context = context::instance_by_id($this->task->get_contextid());
+                $overrideableroles = get_overridable_roles($context, ROLENAME_SHORT);
+                $safecapability = is_safe_capability($capability);
+
+                // Check if the new role is an overrideable role AND if the user performing the restore has the
+                // capability to assign the capability.
+                if (in_array($newrole->info['shortname'], $overrideableroles) &&
+                    (has_capability('moodle/role:override', $context, $userid) ||
+                            ($safecapability && has_capability('moodle/role:safeoverride', $context, $userid)))
+                ) {
+                    assign_capability($data->capability, $data->permission, $newroleid, $this->task->get_contextid());
+                } else {
+                    $this->log("Insufficient capability to assign capability '{$data->capability}' to role!", backup::LOG_WARNING);
+                }
             }
         }
     }
@@ -2148,11 +2187,22 @@ class restore_default_enrolments_step extends restore_execution_step {
         }
 
         $course = $DB->get_record('course', array('id'=>$this->get_courseid()), '*', MUST_EXIST);
+        // Return any existing course enrolment instances.
+        $enrolinstances = enrol_get_instances($course->id, false);
 
-        if ($DB->record_exists('enrol', array('courseid'=>$this->get_courseid(), 'enrol'=>'manual'))) {
-            // Something already added instances, do not add default instances.
+        if ($enrolinstances) {
+            // Something already added instances.
+            // Get the existing enrolment methods in the course.
+            $enrolmethods = array_map(function($enrolinstance) {
+                return $enrolinstance->enrol;
+            }, $enrolinstances);
+
             $plugins = enrol_get_plugins(true);
-            foreach ($plugins as $plugin) {
+            foreach ($plugins as $pluginname => $plugin) {
+                // Make sure all default enrolment methods exist in the course.
+                if (!in_array($pluginname, $enrolmethods)) {
+                    $plugin->course_updated(true, $course, null);
+                }
                 $plugin->restore_sync_course($course);
             }
 
@@ -3393,6 +3443,81 @@ class restore_course_logstores_structure_step extends restore_structure_step {
 }
 
 /**
+ * Structure step in charge of restoring the loglastaccess.xml file for the course logs.
+ *
+ * This restore step will rebuild the table for user_lastaccess table.
+ */
+class restore_course_loglastaccess_structure_step extends restore_structure_step {
+
+    /**
+     * Conditionally decide if this step should be executed.
+     *
+     * This function checks the following parameter:
+     *
+     *   1. the loglastaccess.xml file exists
+     *
+     * @return bool true is safe to execute, false otherwise
+     */
+    protected function execute_condition() {
+        // Check it is included in the backup.
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            // Not found, can't restore loglastaccess.xml information.
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Return the elements to be processed on restore of loglastaccess.
+     *
+     * @return restore_path_element[] array of elements to be processed on restore.
+     */
+    protected function define_structure() {
+
+        $paths = array();
+        // To know if we are including userinfo.
+        $userinfo = $this->get_setting_value('users');
+
+        if ($userinfo) {
+            $paths[] = new restore_path_element('lastaccess', '/lastaccesses/lastaccess');
+        }
+        // Return the paths wrapped.
+        return $paths;
+    }
+
+    /**
+     * Process the 'lastaccess' elements.
+     *
+     * @param array $data element data
+     */
+    protected function process_lastaccess($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $data->courseid = $this->get_courseid();
+        if (!$data->userid = $this->get_mappingid('user', $data->userid)) {
+            return; // Nothing to do, not able to find the user to set the lastaccess time.
+        }
+
+        // Check if record does exist.
+        $exists = $DB->get_record('user_lastaccess', array('courseid' => $data->courseid, 'userid' => $data->userid));
+        if ($exists) {
+            // If the time of last access of the restore is newer, then replace and update.
+            if ($exists->timeaccess < $data->timeaccess) {
+                $exists->timeaccess = $data->timeaccess;
+                $DB->update_record('user_lastaccess', $exists);
+            }
+        } else {
+            $DB->insert_record('user_lastaccess', $data);
+        }
+    }
+}
+
+/**
  * Structure step in charge of restoring the logstores.xml file for the activity logs.
  *
  * Note: Activity structure is completely equivalent to the course one, so just extend it.
@@ -4029,9 +4154,30 @@ class restore_contentbankcontent_structure_step extends restore_structure_step {
         $exists = $DB->record_exists('contentbank_content', $params);
         if (!$exists) {
             $params['configdata'] = $data->configdata;
-            $params['usercreated'] = $this->get_mappingid('user', $data->usercreated);
-            $params['usermodified'] = $this->get_mappingid('user', $data->usermodified);
             $params['timemodified'] = time();
+
+            // Trying to map users. Users cannot always be mapped, e.g. when copying.
+            $params['usercreated'] = $this->get_mappingid('user', $data->usercreated);
+            if (!$params['usercreated']) {
+                // Leave the content creator unchanged when we are restoring the same site.
+                // Otherwise use current user id.
+                if ($this->task->is_samesite()) {
+                    $params['usercreated'] = $data->usercreated;
+                } else {
+                    $params['usercreated'] = $this->task->get_userid();
+                }
+            }
+            $params['usermodified'] = $this->get_mappingid('user', $data->usermodified);
+            if (!$params['usermodified']) {
+                // Leave the content modifier unchanged when we are restoring the same site.
+                // Otherwise use current user id.
+                if ($this->task->is_samesite()) {
+                    $params['usermodified'] = $data->usermodified;
+                } else {
+                    $params['usermodified'] = $this->task->get_userid();
+                }
+            }
+
             $newitemid = $DB->insert_record('contentbank_content', $params);
             $this->set_mapping('contentbank_content', $oldid, $newitemid, true);
         }
@@ -4159,7 +4305,7 @@ class restore_block_instance_structure_step extends restore_structure_step {
         // Let's look for anything within configdata neededing processing
         // (nulls and uses of legacy file.php)
         if ($attrstotransform = $this->task->get_configdata_encoded_attributes()) {
-            $configdata = (array)unserialize(base64_decode($data->configdata));
+            $configdata = (array) unserialize_object(base64_decode($data->configdata));
             foreach ($configdata as $attribute => $value) {
                 if (in_array($attribute, $attrstotransform)) {
                     $configdata[$attribute] = $this->contentprocessor->process_cdata($value);
@@ -4400,7 +4546,9 @@ class restore_module_structure_step extends restore_structure_step {
      * @param stdClass $data Record data
      */
     protected function process_availability_field($data) {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+
         $data = (object)$data;
         // Mark it is as passed by default
         $passed = true;
@@ -4413,9 +4561,8 @@ class restore_module_structure_step extends restore_structure_step {
             // If one is null but the other isn't something clearly went wrong and we'll skip this condition.
             $passed = false;
         } else if (!empty($data->customfield)) {
-            $params = array('shortname' => $data->customfield, 'datatype' => $data->customfieldtype);
-            $customfieldid = $DB->get_field('user_info_field', 'id', $params);
-            $passed = ($customfieldid !== false);
+            $field = profile_get_custom_field_data_by_shortname($data->customfield);
+            $passed = $field && $field->datatype == $data->customfieldtype;
         }
 
         if ($passed) {
@@ -4603,10 +4750,13 @@ class restore_create_categories_and_questions extends restore_structure_step {
         // Apply for 'qtype' plugins optional paths at question level
         $this->add_plugin_structure('qtype', $question);
 
+        // Apply for 'qbank' plugins optional paths at question level.
+        $this->add_plugin_structure('qbank', $question);
+
         // Apply for 'local' plugins optional paths at question level
         $this->add_plugin_structure('local', $question);
 
-        return array($category, $question, $hint, $tag);
+        return [$category, $question, $hint, $tag];
     }
 
     protected function process_question_category($data) {
@@ -4711,10 +4861,28 @@ class restore_create_categories_and_questions extends restore_structure_step {
         }
 
         $userid = $this->get_mappingid('user', $data->createdby);
-        $data->createdby = $userid ? $userid : $this->task->get_userid();
+        if ($userid) {
+            // The question creator is included in the backup, so we can use their mapping id.
+            $data->createdby = $userid;
+        } else {
+            // Leave the question creator unchanged when we are restoring the same site.
+            // Otherwise use current user id.
+            if (!$this->task->is_samesite()) {
+                $data->createdby = $this->task->get_userid();
+            }
+        }
 
         $userid = $this->get_mappingid('user', $data->modifiedby);
-        $data->modifiedby = $userid ? $userid : $this->task->get_userid();
+        if ($userid) {
+            // The question modifier is included in the backup, so we can use their mapping id.
+            $data->modifiedby = $userid;
+        } else {
+            // Leave the question modifier unchanged when we are restoring the same site.
+            // Otherwise use current user id.
+            if (!$this->task->is_samesite()) {
+                $data->modifiedby = $this->task->get_userid();
+            }
+        }
 
         // With newitemid = 0, let's create the question
         if (!$questionmapping->newitemid) {
@@ -5210,7 +5378,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
                 }
 
             } else {
-                // This is a reference to some external file such as in boxnet or dropbox.
+                // This is a reference to some external file such as dropbox.
                 // If we are restoring to the same site, keep the reference untouched and
                 // restore the alias as is.
                 if ($this->task->is_samesite()) {

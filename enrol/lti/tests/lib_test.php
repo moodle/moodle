@@ -45,7 +45,7 @@ class enrol_lti_testcase extends advanced_testcase {
      *
      * This is executed before running any tests in this file.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
     }

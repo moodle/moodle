@@ -50,9 +50,7 @@ Feature: Feedbacks in courses with groups
       | feedback   | Site feedback   | Acceptance test site | feedback0 | 2         | 1             | 1         | 1       |
       | feedback   | Course feedback | C1                   | feedback1 | 2         | 1             | 1         | 0       |
       | feedback   | Course anon feedback | C1              | feedback2 | 1         | 1             | 1         | 0       |
-    When I log in as "manager"
-    And I am on site homepage
-    And I follow "Site feedback"
+    And I am on the "Site feedback" "feedback activity" page logged in as manager
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like our site?              |
@@ -64,9 +62,7 @@ Feature: Feedbacks in courses with groups
 
   @javascript
   Scenario: Non anonymous feedback with groups in a course
-    When I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I follow "Course feedback"
+    Given I am on the "Course feedback" "feedback activity" page logged in as teacher
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like this course?           |
@@ -90,30 +86,24 @@ Feature: Feedbacks in courses with groups
     And I log in as "user7" and complete feedback "Course feedback" in course "Course 1" with:
       | I don't know | 1 |
     # View analysis, user1 should only see one group - group 1
-    And I log in as "user1"
-    And I am on "Course 1" course homepage
-    And I follow "Course feedback"
-    And I follow "Submitted answers"
+    And I am on the "Course feedback" "feedback activity" page logged in as user1
+    And I follow "Analysis"
     And I should see "Separate groups: Group 1"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
     And I should see "1 (25.00 %)" in the "Not at all" "table_row"
     And I log out
     # View analysis, user3 should only see one group - group 2
-    And I log in as "user3"
-    And I am on "Course 1" course homepage
-    And I follow "Course feedback"
-    And I follow "Submitted answers"
+    And I am on the "Course feedback" "feedback activity" page logged in as user3
+    And I follow "Analysis"
     And I should see "Separate groups: Group 2"
     And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
     And I log out
     # View analysis, user2 should see a group selector and be able to change the group but not view all.
-    And I log in as "user2"
-    And I am on "Course 1" course homepage
-    And I follow "Course feedback"
-    And I follow "Submitted answers"
+    And I am on the "Course feedback" "feedback activity" page logged in as user2
+    And I follow "Analysis"
     And the field "Separate groups" matches value "Group 1"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
@@ -125,10 +115,8 @@ Feature: Feedbacks in courses with groups
     And the "Separate groups" select box should not contain "All participants"
     And I log out
     # User without group can see all participants only
-    And I log in as "user7"
-    And I am on "Course 1" course homepage
-    And I follow "Course feedback"
-    And I follow "Submitted answers"
+    And I am on the "Course feedback" "feedback activity" page logged in as user7
+    And I follow "Analysis"
     And I should see "Separate groups: All participants"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"
@@ -136,9 +124,7 @@ Feature: Feedbacks in courses with groups
     And I should see "2 (28.57 %)" in the "I don't know" "table_row"
     And I log out
     # Teacher can browse everybody
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I follow "Course feedback"
+    And I am on the "Course feedback" "feedback activity" page logged in as teacher
     And I navigate to "Analysis" in current page administration
     And the field "Separate groups" matches value "All participants"
     And I show chart data for the "multichoice1" feedback
@@ -153,7 +139,8 @@ Feature: Feedbacks in courses with groups
     And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
-    And I follow "Show responses"
+    And I am on the "Course feedback" "feedback activity" page
+    And I navigate to "Responses" in current page administration
     And the field "Separate groups" matches value "Group 2"
     And I should not see "Username 1"
     And I should see "Username 3"
@@ -163,13 +150,10 @@ Feature: Feedbacks in courses with groups
     And I select "All participants" from the "Separate groups" singleselect
     And I should see "Username 1"
     And I should see "Username 3"
-    And I log out
 
   @javascript
   Scenario: Anonymous feedback with groups in a course
-    When I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I follow "Course anon feedback"
+    Given I am on the "Course anon feedback" "feedback activity" page logged in as teacher
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like this course?           |
@@ -180,10 +164,8 @@ Feature: Feedbacks in courses with groups
     And I log out
     And I log in as "user1" and complete feedback "Course anon feedback" in course "Course 1" with:
       | Not at all | 1 |
-    And I log in as "user1"
-    And I am on "Course 1" course homepage
-    And I follow "Course anon feedback"
-    And I follow "Submitted answers"
+    And I am on the "Course anon feedback" "feedback activity" page logged in as user1
+    And I follow "Analysis"
     And I should see "There are insufficient responses for this group"
     And I should not see "Yes of course"
     And I log out
@@ -200,30 +182,24 @@ Feature: Feedbacks in courses with groups
     And I log in as "user7" and complete feedback "Course anon feedback" in course "Course 1" with:
       | I don't know | 1 |
     # View analysis, user1 should only see one group - group 1
-    And I log in as "user1"
-    And I am on "Course 1" course homepage
-    And I follow "Course anon feedback"
-    And I follow "Submitted answers"
+    And I am on the "Course anon feedback" "feedback activity" page logged in as user1
+    And I follow "Analysis"
     And I should see "Separate groups: Group 1"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
     And I should see "1 (25.00 %)" in the "Not at all" "table_row"
     And I log out
     # View analysis, user3 should only see one group - group 2
-    And I log in as "user3"
-    And I am on "Course 1" course homepage
-    And I follow "Course anon feedback"
-    And I follow "Submitted answers"
+    And I am on the "Course anon feedback" "feedback activity" page logged in as user3
+    And I follow "Analysis"
     And I should see "Separate groups: Group 2"
     And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
     And I log out
     # View analysis, user2 should see a group selector and be able to change the group but not view all.
-    And I log in as "user2"
-    And I am on "Course 1" course homepage
-    And I follow "Course anon feedback"
-    And I follow "Submitted answers"
+    And I am on the "Course anon feedback" "feedback activity" page logged in as user2
+    And I follow "Analysis"
     And the field "Separate groups" matches value "Group 1"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (50.00 %)" in the "Yes of course" "table_row"
@@ -235,10 +211,8 @@ Feature: Feedbacks in courses with groups
     And the "Separate groups" select box should not contain "All participants"
     And I log out
     # User without group can see all participants only
-    And I log in as "user7"
-    And I am on "Course 1" course homepage
-    And I follow "Course anon feedback"
-    And I follow "Submitted answers"
+    And I am on the "Course anon feedback" "feedback activity" page logged in as user7
+    And I follow "Analysis"
     And I should see "Separate groups: All participants"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"
@@ -246,9 +220,7 @@ Feature: Feedbacks in courses with groups
     And I should see "2 (28.57 %)" in the "I don't know" "table_row"
     And I log out
     # Teacher can browse everybody
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I follow "Course anon feedback"
+    And I am on the "Course anon feedback" "feedback activity" page logged in as teacher
     And I navigate to "Analysis" in current page administration
     And the field "Separate groups" matches value "All participants"
     And I show chart data for the "multichoice1" feedback
@@ -263,7 +235,8 @@ Feature: Feedbacks in courses with groups
     And I show chart data for the "multichoice1" feedback
     And I should see "0" in the "Yes of course" "table_row"
     And I should see "2 (66.67 %)" in the "Not at all" "table_row"
-    And I follow "Show responses"
+    And I am on the "Course anon feedback" "feedback activity" page
+    And I navigate to "Responses" in current page administration
     # The response numbers were randomly allocated, we only can assert the number of visible responses here:
     And the field "Separate groups" matches value "Group 2"
     And "//tr[contains(@id,'_r2') and contains(.,'Response number')]" "xpath_element" should exist
@@ -274,4 +247,3 @@ Feature: Feedbacks in courses with groups
     And I select "All participants" from the "Separate groups" singleselect
     And "//tr[contains(@id,'_r6') and contains(.,'Response number')]" "xpath_element" should exist
     And "//tr[contains(@id,'_r7') and contains(@class,'emptyrow')]" "xpath_element" should exist
-    And I log out

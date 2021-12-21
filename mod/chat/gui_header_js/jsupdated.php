@@ -34,7 +34,7 @@ define('NO_MOODLE_COOKIES', true); // Session not used here.
 define('NO_OUTPUT_BUFFERING', true);
 
 require('../../../config.php');
-require('../lib.php');
+require_once('../lib.php');
 
 // We are going to run for a long time.
 // Avoid being terminated by php.

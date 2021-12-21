@@ -423,7 +423,7 @@ body.vjs-full-window {
   right: 0;
 }
 
-.video-js.vjs-fullscreen {
+.video-js.vjs-fullscreen:not(.vjs-ios-native-fs) {
   width: 100% !important;
   height: 100% !important;
   padding-top: 0 !important;

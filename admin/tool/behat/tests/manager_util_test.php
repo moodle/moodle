@@ -87,7 +87,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     /**
      * Setup test.
      */
-    public function setup() {
+    public function setUp(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -149,7 +149,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_single_run() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
+        $mockbuilder->onlyMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -165,7 +165,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
 
@@ -188,7 +188,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_single_run_no_theme() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
+        $mockbuilder->onlyMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -219,7 +219,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
 
@@ -242,7 +242,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_parallel_run() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
+        $mockbuilder->onlyMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -264,7 +264,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
 
@@ -295,7 +295,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
         // Check contexts.
@@ -324,7 +324,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
         // Check contexts.
@@ -345,7 +345,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_parallel_run_optimize_tags() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
+        $mockbuilder->onlyMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -368,7 +368,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
         // Check contexts.
@@ -399,7 +399,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
         // Check contexts.
@@ -428,7 +428,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
         // Check contexts.
@@ -489,7 +489,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_blacklisted_tags() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_blacklisted_tests_for_theme',
+        $mockbuilder->onlyMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_blacklisted_tests_for_theme',
             'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
@@ -532,7 +532,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
         // Check contexts.
@@ -553,7 +553,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_blacklisted_features_contexts() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_blacklisted_tests_for_theme',
+        $mockbuilder->onlyMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_blacklisted_tests_for_theme',
             'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
@@ -611,7 +611,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
         // Check contexts.
@@ -632,7 +632,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_core_features_to_include_in_specified_theme() {
 
         $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
+        $mockbuilder->onlyMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_default_theme', 'get_theme_config'));
 
         $behatconfigutil = $mockbuilder->getMock();
 
@@ -646,7 +646,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
 
@@ -662,7 +662,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
 
@@ -678,7 +678,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
 
@@ -693,7 +693,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             $this->assertCount(count($paths), $suites[$themename]['paths']);
 
             foreach ($paths as $key => $feature) {
-                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+                $this->assertStringContainsString($feature, $suites[$themename]['paths'][$key]);
             }
         }
     }

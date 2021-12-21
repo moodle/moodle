@@ -52,12 +52,12 @@ class aikenformat_test extends question_testcase {
         ob_end_clean();
 
         // Check that there were some expected errors.
-        $this->assertContains('Error importing question A question with too few answers', $output);
-        $this->assertContains('Question must have at least 2 answers on line 3', $output);
-        $this->assertContains('Question not started on line 5', $output);
-        $this->assertContains('Question not started on line 7', $output);
-        $this->assertContains('Error importing question A question started but not finished', $output);
-        $this->assertContains('Question not completed before next question start on line 18', $output);
+        $this->assertStringContainsString('Error importing question A question with too few answers', $output);
+        $this->assertStringContainsString('Question must have at least 2 answers on line 3', $output);
+        $this->assertStringContainsString('Question not started on line 5', $output);
+        $this->assertStringContainsString('Question not started on line 7', $output);
+        $this->assertStringContainsString('Error importing question A question started but not finished', $output);
+        $this->assertStringContainsString('Question not completed before next question start on line 18', $output);
 
         // There are two expected questions.
         $this->assertCount(2, $questions);

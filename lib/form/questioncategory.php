@@ -26,6 +26,7 @@
  */
 
 global $CFG;
+use qbank_managecategories\helper;
 require_once("$CFG->libdir/form/selectgroups.php");
 require_once("$CFG->libdir/questionlib.php");
 
@@ -59,8 +60,8 @@ class MoodleQuickForm_questioncategory extends MoodleQuickForm_selectgroups {
         if (is_array($options)) {
             $this->_options = $options + $this->_options;
             $this->loadArrayOptGroups(
-                        question_category_options($this->_options['contexts'], $this->_options['top'], $this->_options['currentcat'],
-                                                false, $this->_options['nochildrenof']));
+                        helper::question_category_options($this->_options['contexts'], $this->_options['top'],
+                            $this->_options['currentcat'], false, $this->_options['nochildrenof'], false));
         }
     }
 

@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\report_helper;
+
 require('../../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/report/log/locallib.php');
@@ -163,6 +165,9 @@ if (empty($readers)) {
 
         if (empty($logformat)) {
             echo $output->header();
+            // Print selector dropdown.
+            $pluginname = get_string('pluginname', 'report_log');
+            report_helper::print_report_selector($pluginname);
             $userinfo = get_string('allparticipants');
             $dateinfo = get_string('alldays');
 
@@ -184,6 +189,9 @@ if (empty($readers)) {
         }
     } else {
         echo $output->header();
+        // Print selector dropdown.
+        $pluginname = get_string('pluginname', 'report_log');
+        report_helper::print_report_selector($pluginname);
         echo $output->heading(get_string('chooselogs') .':');
         echo $output->render($reportlog);
     }

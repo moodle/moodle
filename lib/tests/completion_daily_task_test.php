@@ -33,7 +33,7 @@ use advanced_testcase;
  * @copyright 2020 Jun Pataleta
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_completion_cron_task_testcase extends advanced_testcase {
+class completion_daily_task_test extends advanced_testcase {
 
     /**
      * Test calendar cron task with a broken subscription URL.
@@ -114,10 +114,12 @@ class core_completion_cron_task_testcase extends advanced_testcase {
 
         // Get s1's completion record from c1.
         $s1c1 = $DB->get_record('course_completions', ['userid' => $s1->id, 'course' => $c1->id]);
-        $this->assertEquals(userdate($now), userdate($s1c1->timeenrolled));
+        $this->assertGreaterThanOrEqual($now, $s1c1->timeenrolled);
+        $this->assertLessThanOrEqual(time(), $s1c1->timeenrolled);
 
         // Get s2's completion record from c1.
         $s2c1 = $DB->get_record('course_completions', ['userid' => $s2->id, 'course' => $c1->id]);
-        $this->assertEquals(userdate($now), userdate($s2c1->timeenrolled));
+        $this->assertGreaterThanOrEqual($now, $s2c1->timeenrolled);
+        $this->assertLessThanOrEqual(time(), $s2c1->timeenrolled);
     }
 }

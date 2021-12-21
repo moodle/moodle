@@ -1,0 +1,49 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/forum_new_discussion_actionbar
+    Add button to create a new discussion in the forum activity.
+    Classes required for JS:
+    * none
+    Data attributes required for JS:
+    * none
+    Context variables required for this template:
+    * see mod/forum/classes/output/activity_actionbar.php
+    Example context (json):
+    {
+        "forum": {
+            "id": 3,
+            "name": "Forum test",
+            "state": [],
+            "userstate": "",
+            "capabilities": [{
+                "viewdiscussions": true,
+                "create": true,
+                "selfenrol": false
+            }],
+            "urls": [{
+                "create": "http://localhost/mod/forum/post.php?forum=11"
+            }]
+        }
+    }
+}}
+
+{{#forum.capabilities.create}}
+    <a class="btn btn-primary" data-toggle="collapse" href="#collapseAddForm">
+        {{#str}}addanewdiscussion, forum{{/str}}
+    </a>
+{{/forum.capabilities.create}}

@@ -878,11 +878,10 @@ class external extends external_api {
         list($filtercapsql, $filtercapparams) = api::filter_users_with_capability_on_user_context_sql($cap,
             $USER->id, SQL_PARAMS_NAMED);
 
-        $extrasearchfields = array();
-        if (!empty($CFG->showuseridentity) && has_capability('moodle/site:viewuseridentity', $context)) {
-            $extrasearchfields = explode(',', $CFG->showuseridentity);
-        }
-        $fields = \user_picture::fields('u', $extrasearchfields);
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $userfieldsapi = \core_user\fields::for_identity($context, false)->with_userpic();
+        $fields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+        $extrasearchfields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 
         list($wheresql, $whereparams) = users_search_sql($query, 'u', true, $extrasearchfields);
         list($sortsql, $sortparams) = users_order_by_sql('u', $query, $context);

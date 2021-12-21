@@ -16,7 +16,7 @@ Feature: Edit format course to Single Activity format
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Course full name  | My first course |
       | Course short name | myfirstcourse |

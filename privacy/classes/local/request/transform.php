@@ -80,4 +80,18 @@ class transform {
             return get_string('no');
         }
     }
+
+    /**
+     * Translate a float value which should be between 0.0 and 1.0 into percentage.
+     *
+     * @param float $value The value between 0.0 and 1.0.
+     * @return float|string
+     */
+    public static function percentage(float $value) {
+        if (is_float($value)) {
+            return (100 * $value) . '%';
+        } else {
+            return $value;
+        }
+    }
 }

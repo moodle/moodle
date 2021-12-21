@@ -34,14 +34,14 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_text_testcase extends advanced_testcase {
+class text_test extends advanced_testcase {
 
     /**
      * Tests the static parse charset method.
      */
     public function test_parse_charset() {
         $this->assertSame('windows-1250', core_text::parse_charset('Cp1250'));
-        // Does typo3 work? Some encoding moodle does not use.
+        // Some encoding moodle does not use.
         $this->assertSame('windows-1252', core_text::parse_charset('ms-ansi'));
     }
 
@@ -93,9 +93,12 @@ class core_text_testcase extends advanced_testcase {
         $this->assertSame('Zlutoucky konicek', core_text::convert($utf8, 'utf-8', 'ascii'));
         $this->assertSame($utf8, core_text::convert($utf8.chr(130), 'utf-8', 'utf-8'));
         $utf8 = "Der eine stößt den Speer zum Mann";
-        $this->assertSame('Der eine stoesst den Speer zum Mann', core_text::convert($utf8, 'utf-8', 'ascii'));
+        $this->assertSame('Der eine stosst den Speer zum Mann', core_text::convert($utf8, 'utf-8', 'ascii'));
         $iso1 = core_text::convert($utf8, 'utf-8', 'iso-8859-1');
-        $this->assertSame('Der eine stoesst den Speer zum Mann', core_text::convert($iso1, 'iso-8859-1', 'ascii'));
+        $this->assertSame('Der eine stosst den Speer zum Mann', core_text::convert($iso1, 'iso-8859-1', 'ascii'));
+        $utf8 = "A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. アクセシビリティ. ﬁ";
+        $this->assertSame("A ae Ubermensch pa hoyeste niva! I a lublu PHP! est'. akuseshibiriti. fi",
+            core_text::convert($utf8, 'utf-8', 'ascii'));
     }
 
     /**
@@ -261,7 +264,6 @@ class core_text_testcase extends advanced_testcase {
         $str = pack("H*", "bcf2cce5d6d0cec4"); // GB18030
         $this->assertSame($str, core_text::strtolower($str, 'GB18030'));
 
-        // Typo3 has problems with integers.
         $str = 1309528800;
         $this->assertSame((string)$str, core_text::strtolower($str));
     }
@@ -341,6 +343,8 @@ class core_text_testcase extends advanced_testcase {
     public function test_specialtoascii() {
         $str = "Žluťoučký koníček";
         $this->assertSame('Zlutoucky konicek', core_text::specialtoascii($str));
+        $utf8 = "Der eine stößt den Speer zum Mann";
+        $this->assertSame('Der eine stosst den Speer zum Mann', core_text::specialtoascii($utf8));
     }
 
     /**
@@ -480,5 +484,31 @@ class core_text_testcase extends advanced_testcase {
         $this->assertFalse(core_text::strrchr($str, 'A'));
         $this->assertFalse(core_text::strrchr($str, 'ç', true));
     }
-}
 
+    /**
+     * Tests the static checker is_charset_supported
+     *
+     * @dataProvider is_charset_supported_provider()
+     * @param string $charset
+     * @param bool $expected
+     */
+    public function test_is_charset_supported(string $charset, bool $expected) {
+        $charset = core_text::parse_charset($charset);
+        $this->assertEquals($expected, core_text::is_charset_supported($charset));
+    }
+
+    /**
+     * Provider for the test_is_charset_supported()
+     * @return array[]
+     */
+    public function is_charset_supported_provider() {
+        return [
+            "Check unsupported windows charset" => [
+                "cp1250", false
+            ],
+            "Check supported windows charset" => [
+                "cp1252", true
+            ]
+        ];
+    }
+}

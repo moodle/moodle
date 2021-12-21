@@ -8,14 +8,6 @@
     display: table;
 }
 
-.block_site_main_menu li .buttons {
-    float: right;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background-color: inherit;
-}
-
 .block_site_main_menu li .buttons a img {
     vertical-align: text-bottom;
 }
@@ -28,7 +20,6 @@
     display: inline;
 }
 
-.block_site_main_menu .mod-indent,
-.block_site_main_menu .main-menu-content {
-    display: table-cell;
+.block_site_main_menu .instancename {
+    word-break: break-all;
 }

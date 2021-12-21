@@ -80,8 +80,14 @@ M.core_scroll_manager.save_scroll_action = function(e) {
 
 /**
  * If there is a parameter like scrollpos=123 in the URL, scroll to that saved position.
+ * @deprecated since Moodle 4.0
+ * @see question\bank\qbank_previewquestion\amd\src
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 M.core_scroll_manager.scroll_to_saved_pos = function(Y) {
+    Y.log("The scroll_to_saved_pos function has been deprecated. " +
+        "Please use scrollToSavedPos() in qbank_preview/preview.js instead.", 'moodle-core-notification', 'warn');
+
     var matches = window.location.href.match(/^.*[?&]scrollpos=(\d*)(?:&|$|#).*$/, '$1');
     if (matches) {
         // onDOMReady is the effective one here. I am leaving the immediate call to
@@ -126,6 +132,9 @@ M.core_question_engine.questionformalreadysubmitted = false;
  * @param button the id of the button in the HTML.
  */
 M.core_question_engine.init_submit_button = function(Y, button) {
+    require(['core_form/submit'], function(submit) {
+        submit.init(button);
+    });
     var totalQuestionsInPage = document.querySelectorAll('div.que').length;
     var buttonel = document.getElementById(button);
     var outeruniqueid = buttonel.closest('.que').id;
@@ -150,8 +159,14 @@ M.core_question_engine.init_submit_button = function(Y, button) {
  * 5. Prevent the user from repeatedly submitting the form.
  * @param Y the Yahoo object. Needs to have the DOM and Event modules loaded.
  * @param form something that can be passed to Y.one, to find the form element.
+ * @deprecated since Moodle 4.0
+ * @see question\bank\qbank_previewquestion\amd\src
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 M.core_question_engine.init_form = function(Y, form) {
+    Y.log("The core_question_engine.init_form function has been deprecated. " +
+        "Please use setupQuestionForm() in qbank_preview/preview.js instead.", 'moodle-core-notification', 'warn');
+
     Y.one(form).setAttribute('autocomplete', 'off');
 
     Y.on('submit', M.core_question_engine.prevent_repeat_submission, form, form, Y);
@@ -172,8 +187,14 @@ M.core_question_engine.init_form = function(Y, form) {
  * Event handler to stop a question form being submitted more than once.
  * @param e the form submit event.
  * @param form the form element.
+ * @deprecated since Moodle 4.0
+ * @see question\bank\qbank_previewquestion\amd\src
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 M.core_question_engine.prevent_repeat_submission = function(e, Y) {
+    Y.log("The prevent_repeat_submission function has been deprecated. " +
+        "Please use preventRepeatSubmission in qbank_preview/preview.js instead.", 'moodle-core-notification', 'warn');
+
     if (M.core_question_engine.questionformalreadysubmitted) {
         e.halt();
         return;

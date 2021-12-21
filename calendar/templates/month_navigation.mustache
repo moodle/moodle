@@ -31,7 +31,7 @@
     {
     }
 }}
-<div id="month-navigation-{{uniqid}}" class="controls">
+<div id="month-navigation-{{uniqid}}-{{calendarinstanceid}}" class="controls">
     <div class="calendar-controls">
         <a{{!
             }} href="{{previousperiodlink}}"{{!
@@ -46,7 +46,12 @@
             <span class="arrow_text">{{previousperiodname}}</span>
         </a>
         <span class="hide"> | </span>
-        <h2 class="current">{{periodname}}</h2>
+        {{#viewinginblock}}
+            <h4 class="current">{{periodname}}</h4>
+        {{/viewinginblock}}
+        {{^viewinginblock}}
+            <h2 class="current">{{periodname}}</h2>
+        {{/viewinginblock}}
         <span class="hide"> | </span>
         <a{{!
             }} href="{{nextperiodlink}}"{{!
@@ -64,7 +69,7 @@
 </div>
 {{#js}}
 require(['jquery', 'core_calendar/month_navigation_drag_drop'], function($, DragDrop) {
-    var root = $('#month-navigation-{{uniqid}}');
+    var root = $('#month-navigation-{{uniqid}}-{{calendarinstanceid}}');
     DragDrop.init(root);
 });
 {{/js}}

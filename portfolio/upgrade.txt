@@ -1,6 +1,11 @@
 This files describes API changes in /portfolio/ portfolio system,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+* The portfolio_boxnet has been completely removed.
+* The portfolio_picasa has been completely removed (Picasa is discontinued since 2016).
+
 === 3.7 ===
 
 * The portfolio_cron() function has been removed. Please use portfolio_cron_task scheduled task instead.

@@ -1118,7 +1118,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * If the return ID isn't required, then this just reports success as true/false.
      * $data is an object containing needed data
      * @param string $table The database table to be inserted into
-     * @param object $data A data object with values for one or more fields in the record
+     * @param object|array $dataobject A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @return bool|int true or new id
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1408,6 +1408,25 @@ class sqlsrv_native_moodle_database extends moodle_database {
         return "$fieldname COLLATE $collation $LIKE $param ESCAPE '$escapechar'";
     }
 
+    /**
+     * Escape common SQL LIKE special characters like '_' or '%', plus '[' & ']' which are also supported in SQL Server
+     *
+     * Note that '^' and '-' also have meaning within a LIKE, but only when enclosed within square brackets. As this syntax
+     * is not supported on all databases and the brackets are always escaped, we don't need special handling of them
+     *
+     * @param string $text
+     * @param string $escapechar
+     * @return string
+     */
+    public function sql_like_escape($text, $escapechar = '\\') {
+        $text = parent::sql_like_escape($text, $escapechar);
+
+        $text = str_replace('[', $escapechar . '[', $text);
+        $text = str_replace(']', $escapechar . ']', $text);
+
+        return $text;
+    }
+
     public function sql_concat() {
         $arr = func_get_args();
 
@@ -1426,7 +1445,20 @@ class sqlsrv_native_moodle_database extends moodle_database {
         for ($n = count($elements) - 1; $n > 0; $n--) {
             array_splice($elements, $n, 0, $separator);
         }
-        return call_user_func_array(array($this, 'sql_concat'), $elements);
+        return call_user_func_array(array($this, 'sql_concat'), array_values($elements));
+    }
+
+    /**
+     * Return SQL for performing group concatenation on given field/expression
+     *
+     * @param string $field
+     * @param string $separator
+     * @param string $sort
+     * @return string
+     */
+    public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {
+        $fieldsort = $sort ? "WITHIN GROUP (ORDER BY {$sort})" : '';
+        return "STRING_AGG({$field}, '{$separator}') {$fieldsort}";
     }
 
     public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {

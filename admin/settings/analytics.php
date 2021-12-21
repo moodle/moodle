@@ -131,15 +131,10 @@ if ($hassiteconfig && \core_analytics\manager::is_analytics_enabled()) {
             $timesplittingdefaults, $timesplittingoptions)
         );
 
-        // Predictions processor output dir.
-        $defaultmodeloutputdir = rtrim($CFG->dataroot, '/') . DIRECTORY_SEPARATOR . 'models';
-        if (empty(get_config('analytics', 'modeloutputdir')) && !file_exists($defaultmodeloutputdir) &&
-                is_writable($defaultmodeloutputdir)) {
-            // Automatically create the dir for them so users don't see the invalid value red cross.
-            mkdir($defaultmodeloutputdir, $CFG->directorypermissions, true);
-        }
+        // Predictions processor output dir - specify default in setting description (used if left blank).
+        $defaultmodeloutputdir = \core_analytics\model::default_output_dir();
         $settings->add(new admin_setting_configdirectory('analytics/modeloutputdir', new lang_string('modeloutputdir', 'analytics'),
-            new lang_string('modeloutputdirinfo', 'analytics'), $defaultmodeloutputdir));
+            new lang_string('modeloutputdirwithdefaultinfo', 'analytics', $defaultmodeloutputdir), ''));
 
         // Disable web interface evaluation and get predictions.
         $settings->add(new admin_setting_configcheckbox('analytics/onlycli', new lang_string('onlycli', 'analytics'),
@@ -148,6 +143,21 @@ if ($hassiteconfig && \core_analytics\manager::is_analytics_enabled()) {
         // Training and prediction time limit per model.
         $settings->add(new admin_setting_configduration('analytics/modeltimelimit', new lang_string('modeltimelimit', 'analytics'),
             new lang_string('modeltimelimitinfo', 'analytics'), 20 * MINSECS));
+
+        $options = array(
+            0    => new lang_string('neverdelete', 'analytics'),
+            1000 => new lang_string('numdays', '', 1000),
+            365  => new lang_string('numdays', '', 365),
+            180  => new lang_string('numdays', '', 180),
+            150  => new lang_string('numdays', '', 150),
+            120  => new lang_string('numdays', '', 120),
+            90   => new lang_string('numdays', '', 90),
+            60   => new lang_string('numdays', '', 60),
+            35   => new lang_string('numdays', '', 35));
+        $settings->add(new admin_setting_configselect('analytics/calclifetime',
+            new lang_string('calclifetime', 'analytics'),
+            new lang_string('configlcalclifetime', 'analytics'), 35, $options));
+
 
     }
 }

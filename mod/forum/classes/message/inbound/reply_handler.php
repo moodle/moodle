@@ -220,7 +220,7 @@ class reply_handler extends \core\message\inbound\handler {
                      . "Rejecting e-mail.");
                 $data = new \stdClass();
                 $data->forum = $forum;
-                $data->maxbytes = display_size($forum->maxbytes);
+                $data->maxbytes = display_size($forum->maxbytes, 0);
                 $data->filesize = display_size($filesize);
                 throw new \core\message\inbound\processing_failed_exception('messageinboundfilesizeexceeded', 'mod_forum', $data);
             }

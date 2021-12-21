@@ -222,7 +222,7 @@ class core_question_privacy_provider_testcase extends \core_privacy\tests\provid
                 $expectedcontext->id,
                 $otherexpectedcontext->id,
             ];
-        $this->assertEquals($expectedcontexts, $contextlist->get_contextids(), 'Contexts not equal', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedcontexts, $contextlist->get_contextids(), 'Contexts not equal');
 
         // Run the export_user_Data as the test user.
         $this->setUser($user);
@@ -305,17 +305,17 @@ class core_question_privacy_provider_testcase extends \core_privacy\tests\provid
         // Q4 - Created by the other user, Modified by the other user.
         // Q5 - Created by the UUT, Modified by the UUT, but in a different context.
         $this->setUser($user);
-        $q1 = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
-        $q2 = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        $q1 = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $q2 = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
 
         $this->setUser($otheruser);
         $questiongenerator->update_question($q2);
-        $q3 = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
-        $q4 = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        $q3 = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $q4 = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
 
         $this->setUser($user);
         $questiongenerator->update_question($q3);
-        $q5 = $questiongenerator->create_question('shortanswer', null, array('category' => $othercat->id));
+        $q5 = $questiongenerator->create_question('shortanswer', null, ['category' => $othercat->id]);
 
         $approvedcontextlist = new \core_privacy\tests\request\approved_contextlist(
             $user,
@@ -460,10 +460,9 @@ class core_question_privacy_provider_testcase extends \core_privacy\tests\provid
 
         // User1 has created questions and user3 has edited them.
         $this->assertCount(2, $userlist);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$user1->id, $user3->id],
-                $userlist->get_userids(),
-                '', 0.0, 10, true);
+                $userlist->get_userids());
     }
 
     /**

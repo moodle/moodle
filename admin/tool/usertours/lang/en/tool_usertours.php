@@ -31,6 +31,8 @@ $string['block_named'] = 'Block named \'{$a}\'';
 $string['cachedef_stepdata'] = 'List of user tour steps';
 $string['cachedef_tourdata'] = 'List of enabled user tours information which is fetched on every page';
 $string['description'] = 'Description';
+$string['displaystepnumbers'] = 'Display step numbers';
+$string['displaystepnumbers_help'] = 'Whether to display a step number count e.g. 1/4, 2/4 etc. to indicate the length of the user tour.';
 $string['confirmstepremovalquestion'] = 'Are you sure that you wish to remove this step?';
 $string['confirmstepremovaltitle'] = 'Confirm step removal';
 $string['confirmtourremovalquestion'] = 'Are you sure that you wish to remove this tour?';
@@ -49,6 +51,8 @@ $string['duplicatetour_name'] = '{$a} (copy)';
 $string['editstep'] = 'Editing "{$a}"';
 $string['tourisenabled'] = 'Tour is enabled';
 $string['enabled'] = 'Enabled';
+$string['endtourlabel'] = 'End tour button\'s label';
+$string['endtourlabel_help'] = 'You can optionally specify a custom label for the end tour button. The default label is "Got it" for single-step, and "End tour" for multiple-step tours.';
 $string['event_tour_started'] = 'Tour started';
 $string['event_tour_reset'] = 'Tour reset';
 $string['event_tour_ended'] = 'Tour ended';
@@ -63,6 +67,8 @@ $string['filter_course'] = 'Courses';
 $string['filter_course_help'] = 'Show the tour on a page that is associated with the selected course.';
 $string['filter_courseformat'] = 'Course format';
 $string['filter_courseformat_help'] = 'Show the tour on a page that is associated with a course using the selected course format.';
+$string['filter_cssselector'] = 'CSS selector';
+$string['filter_cssselector_help'] = 'Only show the tour when the specified CSS selector is found on the page.';
 $string['filter_header'] = 'Tour filters';
 $string['filter_help'] = 'Select the conditions under which the tour will be shown. All of the filters must match for a tour to be shown to a user.';
 $string['filter_date_account_creation'] = 'User account creation date within';
@@ -84,6 +90,8 @@ $string['newstep'] = 'Create step';
 $string['newstep'] = 'New step';
 $string['newtour'] = 'Create a new tour';
 $string['next'] = 'Next';
+$string['nextstep'] = 'Next';
+$string['nextstep_sequence'] = 'Next ({$a->position}/{$a->total})';
 $string['options_heading'] = 'Options';
 $string['pathmatch'] = 'Apply to URL match';
 $string['pathmatch_help'] = 'Tours will be displayed on any page whose URL matches this value.
@@ -96,8 +104,7 @@ Some example values include:
 * /mod/forum/view.php% - to match the forum discussion list
 * /user/profile.php% - to match the user profile page
 
-If you wish to display a tour on the Site Home page, you can use the value: "FRONTPAGE".
-';
+If you wish to display a tour on the site home, you can use the value: "FRONTPAGE".';
 $string['placement'] = 'Placement';
 $string['pluginname'] = 'User tours';
 $string['resettouronpage'] = 'Reset user tour on this page';
@@ -111,6 +118,7 @@ $string['targettype_help'] = 'Each step is associated with a part of the page - 
 $string['selector_defaulttitle'] = 'Enter a descriptive title';
 $string['selectordisplayname'] = 'A CSS selector matching \'{$a}\'';
 $string['skip'] = 'Skip';
+$string['skip_tour'] = 'Skip tour';
 $string['target'] = 'Target';
 $string['target_heading'] = 'Step target';
 $string['target_block'] = 'Block';
@@ -126,6 +134,7 @@ $string['tourlist_explanation'] = 'You can create as many tours as you like and 
 $string['tours'] = 'Tours';
 $string['pausetour'] = 'Pause';
 $string['resumetour'] = 'Resume';
+$string['endonesteptour'] = 'Got it';
 $string['endtour'] = 'End tour';
 $string['orphan'] = 'Show if target not found';
 $string['orphan_help'] = 'Show the step if the target could not be found on the page.';
@@ -158,7 +167,7 @@ $string['tour1_content_welcome'] = 'Welcome to the Boost theme. If you\'ve upgra
 $string['tour1_title_navigation'] = 'Navigation';
 $string['tour1_content_navigation'] = 'Major navigation is now through this nav drawer. The contents update depending on where you are in the site. Use the button at the top to hide or show it.';
 $string['tour1_title_customisation'] = 'Customisation';
-$string['tour1_content_customisation'] = 'To customise the look of your site and the front page, use the settings menu in the corner of this header. Try turning editing on right now.';
+$string['tour1_content_customisation'] = 'To customise the look of your site and the site home, use the settings menu in the corner of this header. Try turning editing on right now.';
 $string['tour1_title_blockregion'] = 'Block region';
 $string['tour1_content_blockregion'] = 'There is still a block region over here. We recommend removing the Navigation and Administration blocks completely, as all the functionality is elsewhere in the Boost theme.';
 $string['tour1_title_addingblocks'] = 'Adding blocks';
@@ -232,5 +241,20 @@ $string['tour4_content_starred'] = 'You can choose to star particular conversati
 $string['tour4_title_settings'] = 'Messaging settings';
 $string['tour4_content_settings'] = 'You can access your messaging settings via the cog icon. A new privacy setting allows you to restrict who can message you.';
 
+// 3.11 Activity information tour.
+$string['tour_activityinfo_activity_student_title'] = 'New: Activity information';
+$string['tour_activityinfo_activity_student_content'] = 'Activity dates plus what to do to complete the activity are shown on the activity page.';
+$string['tour_activityinfo_activity_teacher_title'] = 'New: Activity information';
+$string['tour_activityinfo_activity_teacher_content'] = 'Activity dates and completion conditions are now displayed for students on each activity page (and optionally on the course page).
+
+For activities requiring students to manually mark an activity as completed, a \'Mark as done\' button is shown on the activity page.';
+$string['tour_activityinfo_course_student_title'] = 'New: Activity information';
+$string['tour_activityinfo_course_student_content'] = 'Activity dates and/or what to do to complete the activity are displayed on the course page.';
+$string['tour_activityinfo_course_teacher_title'] = 'New: Activity information';
+$string['tour_activityinfo_course_teacher_content'] = 'New course settings \'Show completion conditions\' and \'Show activity dates\' enable you to choose whether activity completion conditions (if set) and/or dates are displayed for students on the course page.';
+
 $string['tour_final_step_title'] = 'End of tour';
 $string['tour_final_step_content'] = 'This is the end of your user tour. It won\'t show again unless you reset it using the link in the footer.';
+
+// Deprecated since Moodle 4.0.
+$string['previousstep'] = 'Previous';

@@ -20,17 +20,15 @@
     The message preferences page
 
     Classes required for JS:
-    * None
+    * disabled
 
-    Data attibutes required for JS:
+    Data attributes required for JS:
     * All data attributes are required
 
     Context variables required for this template:
-    * displayname   The display name of the processor
-    * name          The name of the processor
-    * locked        Whether the processor is locked
-    * loggedin      The logged in settings
-    * loggedoff     The logged off settings
+    * displayname   The notification display name
+    * preferencekey The unique key to identify this preference
+    * processors    The list of processors for this notification
 
     Example context (json):
     {
@@ -45,83 +43,16 @@
                 "loggedin": {
                     "name": "loggedin",
                     "displayname": "When I'm logged in",
-                    "checked": 0,
-                    "disableall": 0
+                    "checked": 0
                 },
                 "loggedoff": {
                     "name": "loggedoff",
                     "displayname": "When I'm offline",
-                    "checked": 0,
-                    "disableall": 0
+                    "checked": 0
                 }
             }
         ]
     }
 }}
-<tr class="preference-row" data-region="preference-row" data-preference-key="{{preferencekey}}">
-    <td class="preference-name">{{displayname}}</td>
-    <td {{^userconfigured}}class="disabled"{{/userconfigured}} data-processor-name="{{name}}">
-        {{#locked}}
-            <div class="dimmed_text">{{lockedmessage}}</div>
-        {{/locked}}
-        {{^locked}}
-            <div class="disabled-message">{{#str}} disabled, question {{/str}}</div>
-            <form>
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="span6 col-6">
-                            {{#loggedin}}
-                                {{< core/hover_tooltip }}
-                                    {{$anchor}}
-                                        <label class="preference-state"
-                                            title="{{displayname}}"
-                                            data-state="{{name}}">
 
-                                            <span class="accesshide">{{displayname}}</span>
-                                            <input type="checkbox"
-                                                tabindex="-1"
-                                                class="accesshide"
-                                                {{#checked}}checked{{/checked}}
-                                                {{#disableall}}disabled{{/disableall}} />
-                                            <div class="preference-state-status-container" tabindex="0">
-                                                <span class="on-text">{{#str}} on, message {{/str}}</span>
-                                                <span class="off-text">{{#str}} off, message {{/str}}</span>
-                                                {{> core/loading }}
-                                            </div>
-                                        </label>
-                                    {{/anchor}}
-                                    {{$tooltip}}{{displayname}}{{/tooltip}}
-                                {{/ core/hover_tooltip }}
-                            {{/loggedin}}
-                        </div>
-                        <div class="span6 col-6">
-                            {{#loggedoff}}
-                                {{< core/hover_tooltip }}
-                                    {{$anchor}}
-                                        <label class="preference-state"
-                                            title="{{displayname}}"
-                                            data-state="{{name}}">
-
-                                            <span class="accesshide">{{displayname}}</span>
-                                            <input type="checkbox"
-                                                tabindex="-1"
-                                                class="accesshide"
-                                                {{#checked}}checked{{/checked}}
-                                                {{#disableall}}disabled{{/disableall}} />
-                                            <div class="preference-state-status-container" tabindex="0">
-                                                <span class="on-text">{{#str}} on, message {{/str}}</span>
-                                                <span class="off-text">{{#str}} off, message {{/str}}</span>
-                                                {{> core/loading }}
-                                            </div>
-                                        </label>
-                                    {{/anchor}}
-                                    {{$tooltip}}{{displayname}}{{/tooltip}}
-                                {{/ core/hover_tooltip }}
-                            {{/loggedoff}}
-                        </div>
-                    </div>
-                </div>
-            </form>
-        {{/locked}}
-    </td>
-</tr>
+{{> core_message/notification_preferences_component_notification }}

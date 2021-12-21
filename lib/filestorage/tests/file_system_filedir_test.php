@@ -43,7 +43,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
     /**
      * Shared test setUp.
      */
-    public function setUp() {
+    public function setUp(): void {
         // Reset the file storage so that subsequent fetches to get_file_storage are called after
         // configuration is prepared.
         get_file_storage(true);
@@ -52,7 +52,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
     /**
      * Shared teset tearDown.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         // Reset the file storage so that subsequent tests will use the standard file storage.
         get_file_storage(true);
     }
@@ -99,14 +99,14 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
      *                  If no methods are specified, only abstract functions are mocked.
      * @return stored_file
      */
-    protected function get_stored_file($filecontent, $filename = null, $mockedmethods = null) {
+    protected function get_stored_file($filecontent, $filename = null, $mockedmethods = []) {
         $contenthash = file_storage::hash_from_string($filecontent);
         if (empty($filename)) {
             $filename = $contenthash;
         }
 
         $file = $this->getMockBuilder(stored_file::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->setConstructorArgs([
                 get_file_storage(),
                 (object) [
@@ -129,7 +129,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
      */
     protected function get_testable_mock($mockedmethods = []) {
         $fs = $this->getMockBuilder(file_system_filedir::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->getMock();
 
         return $fs;
@@ -153,8 +153,8 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
 
         // This should generate an exception.
         $this->expectException('file_exception');
-        $this->expectExceptionMessageRegExp(
-            '/Can not create local file pool directories, please verify permissions in dataroot./');
+        $this->expectExceptionMessageMatches(
+            '/Cannot create local file pool directories. Please verify permissions in dataroot./');
 
         new file_system_filedir();
     }
@@ -177,8 +177,8 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
 
         // This should generate an exception.
         $this->expectException('file_exception');
-        $this->expectExceptionMessageRegExp(
-            '/Can not create local file pool directories, please verify permissions in dataroot./');
+        $this->expectExceptionMessageMatches(
+            '/Cannot create local file pool directories. Please verify permissions in dataroot./');
 
         new file_system_filedir();
     }
@@ -321,7 +321,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
 
         $file = $this->getMockBuilder('stored_file')
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'sync_external_file',
                 'get_contenthash',
             ])
@@ -441,7 +441,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
 
         $fs = $this->getMockBuilder(file_system_filedir::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'get_local_path_from_storedfile',
             ])
             ->getMock();
@@ -735,7 +735,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
         $vfileroot = $this->setup_vfile_root();
 
         $this->expectException('file_exception');
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/Cannot read file\. Either the file does not exist or there is a permission problem\./');
 
         $fs = new file_system_filedir();
@@ -834,8 +834,8 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
             ->chown(\org\bovigo\vfs\vfsStream::OWNER_USER_2);
 
         $this->expectException('file_exception');
-        $this->expectExceptionMessageRegExp(
-            "/Can not create local file pool directories, please verify permissions in dataroot./");
+        $this->expectExceptionMessageMatches(
+            "/Cannot create local file pool directories. Please verify permissions in dataroot./");
 
         // Attempt to add the file to the file pool.
         $fs = new file_system_filedir();
@@ -892,8 +892,8 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
             ->chown(\org\bovigo\vfs\vfsStream::OWNER_USER_2);
 
         $this->expectException('file_exception');
-        $this->expectExceptionMessageRegExp(
-            "/Can not create local file pool directories, please verify permissions in dataroot./");
+        $this->expectExceptionMessageMatches(
+            "/Cannot create local file pool directories. Please verify permissions in dataroot./");
 
         // Attempt to add the file to the file pool.
         $fs = new file_system_filedir();
@@ -997,7 +997,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
         global $DB;
 
         $DB = $this->getMockBuilder(\moodle_database::class)
-            ->setMethods(['record_exists'])
+            ->onlyMethods(['record_exists'])
             ->getMockForAbstractClass();
 
         $DB->expects($this->never())
@@ -1031,7 +1031,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
         $vfileroot = $this->setup_vfile_root($filedircontent);
 
         $DB = $this->getMockBuilder(\moodle_database::class)
-            ->setMethods(['record_exists'])
+            ->onlyMethods(['record_exists'])
             ->getMockForAbstractClass();
 
         $DB->method('record_exists')->willReturn(true);
@@ -1064,7 +1064,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
         $vfileroot = $this->setup_vfile_root($filedircontent);
 
         $DB = $this->getMockBuilder(\moodle_database::class)
-            ->setMethods(['record_exists'])
+            ->onlyMethods(['record_exists'])
             ->getMockForAbstractClass();
 
         $DB->method('record_exists')->willReturn(false);

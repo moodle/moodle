@@ -343,10 +343,10 @@ class api {
         global $DB;
 
         $ctxfields = context_helper::get_preload_record_columns_sql('c');
-        $namefields = get_all_user_name_fields(true, 'u');
-        $pixfields = user_picture::fields('u', $extrafields);
+        $userfieldsapi = \core_user\fields::for_name()->with_userpic()->including(...($extrafields ?? []));
+        $userfields = $userfieldsapi->get_sql('u')->selects;
 
-        $sql = "SELECT $ctxfields, $namefields, $pixfields
+        $sql = "SELECT $ctxfields $userfields
                   FROM {role_assignments} ra
                   JOIN {context} c ON c.contextlevel = ".CONTEXT_USER." AND ra.contextid = c.id
                   JOIN {user} u ON c.instanceid = u.id
@@ -682,7 +682,8 @@ class api {
             $vsql = ' AND a.policyversionid ' . $vsql;
         }
 
-        $userfieldsmod = get_all_user_name_fields(true, 'm', null, 'mod');
+        $userfieldsapi = \core_user\fields::for_name();
+        $userfieldsmod = $userfieldsapi->get_sql('m', false, 'mod', '', false)->selects;
         $sql = "SELECT u.id AS mainuserid, a.policyversionid, a.status, a.lang, a.timemodified, a.usermodified, a.note,
                   u.policyagreed, $userfieldsmod
                   FROM {user} u

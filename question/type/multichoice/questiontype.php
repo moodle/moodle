@@ -85,6 +85,14 @@ class qtype_multichoice extends question_type {
         return $options;
     }
 
+    public function save_defaults_for_new_questions(stdClass $fromform): void {
+        parent::save_defaults_for_new_questions($fromform);
+        $this->set_default_value('single', $fromform->single);
+        $this->set_default_value('shuffleanswers', $fromform->shuffleanswers);
+        $this->set_default_value('answernumbering', $fromform->answernumbering);
+        $this->set_default_value('showstandardinstruction', $fromform->showstandardinstruction);
+    }
+
     public function save_question_options($question) {
         global $DB;
         $context = $question->context;

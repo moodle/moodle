@@ -65,7 +65,7 @@ class Cell
     protected $style;
 
     /**
-     * @param $value mixed
+     * @param mixed|null $value
      * @param Style|null $style
      */
     public function __construct($value, Style $style = null)
@@ -89,6 +89,14 @@ class Cell
     public function getValue()
     {
         return !$this->isError() ? $this->value : null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValueEvenIfError()
+    {
+        return $this->value;
     }
 
     /**

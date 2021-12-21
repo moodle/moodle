@@ -25,8 +25,11 @@ Feature: Bulk message
     And I navigate to course participants
     And I click on "Select all" "checkbox"
     And I set the field "With selected users..." to "Send a message"
-    And I should see "Send message to 3 people"
+    And "Send message to 3 people" "dialogue" should exist
+    # Try to send an empty message.
+    When I press "Send message to 3 people"
+    Then I should see "Please enter message text"
     And I set the following fields to these values:
       | bulk-message | "Hello world!" |
-    When I press "Send message to 3 people"
-    Then I should see "Message sent to 3 people"
+    And I press "Send message to 3 people"
+    And I should see "Message sent to 3 people"

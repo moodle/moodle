@@ -17,7 +17,6 @@
  * Action methods related to backpacks.
  *
  * @module     core_badges/backpackactions
- * @package    core_badges
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

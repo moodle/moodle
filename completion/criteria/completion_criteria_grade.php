@@ -156,7 +156,7 @@ class completion_criteria_grade extends completion_criteria {
      * @return string
      */
     public function get_type_title() {
-        return get_string('grade');
+        return get_string('gradenoun');
     }
 
     /**

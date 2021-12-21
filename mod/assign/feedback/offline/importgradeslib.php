@@ -101,7 +101,7 @@ class assignfeedback_offline_grade_importer {
 
         $columns = $this->csvreader->get_columns();
 
-        $strgrade = get_string('grade');
+        $strgrade = get_string('gradenoun');
         $strid = get_string('recordid', 'assign');
         $strmodified = get_string('lastmodifiedgrade', 'assign');
 

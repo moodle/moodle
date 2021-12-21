@@ -299,7 +299,14 @@ class report_log_renderable implements renderable {
      */
     public function get_selected_user_fullname() {
         $user = core_user::get_user($this->userid);
-        return fullname($user);
+        if (empty($this->course)) {
+            // We are in system context.
+            $context = context_system::instance();
+        } else {
+            // We are in course context.
+            $context = context_course::instance($this->course->id);
+        }
+        return fullname($user, has_capability('moodle/site:viewfullnames', $context));
     }
 
     /**
@@ -377,7 +384,9 @@ class report_log_renderable implements renderable {
         $context = context_course::instance($courseid);
         $limitfrom = empty($this->showusers) ? 0 : '';
         $limitnum  = empty($this->showusers) ? COURSE_MAX_USERS_PER_DROPDOWN + 1 : '';
-        $courseusers = get_enrolled_users($context, '', $this->groupid, 'u.id, ' . get_all_user_name_fields(true, 'u'),
+        $userfieldsapi = \core_user\fields::for_name();
+        $courseusers = get_enrolled_users($context, '', $this->groupid, 'u.id, ' .
+                $userfieldsapi->get_sql('u', false, '', '', false)->selects,
                 null, $limitfrom, $limitnum);
 
         if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$this->showusers) {

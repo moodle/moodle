@@ -289,11 +289,15 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
 
     // If looking at a different host, we're interested in all our site users
     if ($hostid == $CFG->mnet_localhost_id && $course->id != SITEID) {
-        $courseusers = get_enrolled_users($context, '', $selectedgroup, 'u.id, ' . get_all_user_name_fields(true, 'u'),
+        $userfieldsapi = \core_user\fields::for_name();
+        $courseusers = get_enrolled_users($context, '', $selectedgroup, 'u.id, ' .
+                $userfieldsapi->get_sql('u', false, '', '', false)->selects,
                 null, $limitfrom, $limitnum);
     } else {
         // this may be a lot of users :-(
-        $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, ' . get_all_user_name_fields(true),
+        $userfieldsapi = \core_user\fields::for_name();
+        $courseusers = $DB->get_records('user', array('deleted' => 0), 'lastaccess DESC', 'id, ' .
+                $userfieldsapi->get_sql('', false, '', '', false)->selects,
                 $limitfrom, $limitnum);
     }
 

@@ -67,7 +67,6 @@ Feature: Mapping courses in a feedback
     And I am on "Course 1" course homepage
     And I follow "Another feedback"
     And I should not see "Mapped courses"
-    And I should not see "Map feedback to courses"
 
   @javascript
   Scenario: Site feedback is not mapped to any course
@@ -111,7 +110,7 @@ Feature: Mapping courses in a feedback
     And I follow "Course feedback"
 
     And I navigate to "Analysis" in current page administration
-    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
+    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "1 (33.33 %)" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
@@ -123,7 +122,7 @@ Feature: Mapping courses in a feedback
     And I click on "Back" "link" in the "region-main" "region"
     And I set the field "Filter by course" to "Course 1"
     And I press "Filter"
-    And I should see "Course 1" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
+    And I should see "Course 1" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (50.00 %)" in the "option b" "table_row"
@@ -135,9 +134,8 @@ Feature: Mapping courses in a feedback
     And I log in as "manager"
     And I am on site homepage
     And I follow "Course feedback"
-    And I follow "Map feedback to courses"
-    And I set the field "Courses" to "Course 2"
-    And I set the field "Courses" to "Course 3"
+    And I follow "Mapped courses"
+    And I set the field "Courses" to "Course 2, Course 3"
     And I press "Save changes"
     And I should see "Course mapping has been changed"
     And I log out
@@ -193,7 +191,7 @@ Feature: Mapping courses in a feedback
     And I am on site homepage
     And I follow "Course feedback"
     And I navigate to "Analysis" in current page administration
-    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
+    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
@@ -224,7 +222,6 @@ Feature: Mapping courses in a feedback
     And I should see "1 (33.33 %)" in the "option d" "table_row"
     And I should see "2 (66.67 %)" in the "option e" "table_row"
     And I should see "0" in the "option f" "table_row"
-    And I log out
 
   Scenario: Site feedback deletion hides feedback block completely
     When I log in as "manager"
@@ -234,9 +231,8 @@ Feature: Mapping courses in a feedback
     And I add the "Main menu" block
     And I click on "Delete" "link" in the "Course feedback" activity
     And I press "Yes"
-    And I follow "Turn editing off"
+    And I turn editing mode off
     And I am on site homepage
     Then "Feedback" "block" should not exist
     And I am on "Course 1" course homepage
     And "Feedback" "block" should not exist
-    And I log out

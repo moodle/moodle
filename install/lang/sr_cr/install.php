@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -37,6 +36,7 @@ $string['chooselanguagesub'] = 'Изаберите језик који ће се
 $string['clialreadyconfigured'] = 'Датотека config.php већ постоји. Молимо, користите admin/cli/install_database.php ако желите да инсталирате Moodle на овом серверу.';
 $string['clialreadyinstalled'] = 'Датотека config.php већ постоји. Молимо користите admin/cli/upgrade.php ако желите да надоградите Moodle на овом серверу.';
 $string['cliinstallheader'] = 'Moodle {$a} програм за инсталацију из командне линије';
+$string['clitablesexist'] = 'База података већ постоји. Није могуће наставити инсталацију из командне линије.';
 $string['databasehost'] = 'Сервер базе података';
 $string['databasename'] = 'Име базе података';
 $string['databasetypehead'] = 'Изаберите драјвер базе података';
@@ -76,11 +76,11 @@ $string['pathssubwwwroot'] = '<p>Пуна адреса путем које ће 
 <p>Није могуће приступати Moodleu коришћењем више адреса. Ако се вашем сајту може приступити са више адреса, онда изаберите најлакшу, а за све остале адресе подесите перманентну редирекцију.</p>
 <p>Ако се вашем сајту може приступити како са интернета, тако и из интерне мреже (која се понекад назив интранет), онда овде употребите јавну адресу.</p>
 <p>Ако је текућа адреса нетачна, молимо вас, промените URL адресу у адресној траци свог веб читача и поново покрените инсталацију.</p>';
-$string['pathsunsecuredataroot'] = 'Dataroot локација није безбедна';
+$string['pathsunsecuredataroot'] = 'Локација директоријума са подацима није безбедна';
 $string['pathswrongadmindir'] = 'Админ директоријум не постоји';
 $string['phpextension'] = '{$a} PHP екстензија';
 $string['phpversion'] = 'PHP верзија';
-$string['phpversionhelp'] = '<p>Moodle захтева најмање PHP верзију 5.6.7 или 7.1 (7.0.x има нека ограничења).</p>
+$string['phpversionhelp'] = '<p>Moodle захтева PHP верзију барем 5.6.5 или 7.1 (7.0.x има нека ограничења).</p>
 <p>Тренутно користите верзију {$a}</p>
 <p>Морате да надоградите PHP или да преместити Moodle на веб сервер са новијом верзијом PHP-a.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';

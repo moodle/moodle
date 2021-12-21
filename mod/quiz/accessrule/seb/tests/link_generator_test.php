@@ -38,7 +38,7 @@ class quizaccess_seb_link_generator_testcase extends advanced_testcase {
     /**
      * Called before every test.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }
@@ -96,7 +96,7 @@ class quizaccess_seb_link_generator_testcase extends advanced_testcase {
      */
     public function test_course_module_does_not_exist() {
         $this->expectException(dml_exception::class);
-        $this->expectExceptionMessageRegExp("/^Can't find data record in database.*/");
+        $this->expectExceptionMessageMatches("/^Can't find data record in database.*/");
         $generator = link_generator::get_link(123456, false);
     }
 }

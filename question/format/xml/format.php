@@ -770,10 +770,20 @@ class qformat_xml extends qformat_default {
                 array('#', 'responsefieldlines', 0, '#'), 15);
         $qo->responserequired = $this->getpath($question,
                 array('#', 'responserequired', 0, '#'), 1);
+        $qo->minwordlimit = $this->getpath($question,
+                array('#', 'minwordlimit', 0, '#'), null);
+        $qo->minwordenabled = !empty($qo->minwordlimit);
+        $qo->maxwordlimit = $this->getpath($question,
+                array('#', 'maxwordlimit', 0, '#'), null);
+        $qo->maxwordenabled = !empty($qo->maxwordlimit);
         $qo->attachments = $this->getpath($question,
                 array('#', 'attachments', 0, '#'), 0);
         $qo->attachmentsrequired = $this->getpath($question,
                 array('#', 'attachmentsrequired', 0, '#'), 0);
+        $qo->filetypeslist = $this->getpath($question,
+                array('#', 'filetypeslist', 0, '#'), null);
+        $qo->maxbytes = $this->getpath($question,
+                array('#', 'maxbytes', 0, '#'), null);
         $qo->graderinfo = $this->import_text_with_files($question,
                 array('#', 'graderinfo', 0), '', $this->get_format($qo->questiontextformat));
         $qo->responsetemplate['text'] = $this->getpath($question,
@@ -1168,7 +1178,6 @@ class qformat_xml extends qformat_default {
      * @return string xml segment
      */
     public function writequestion($question) {
-        global $CFG, $OUTPUT;
 
         $invalidquestion = false;
         $fs = get_file_storage();
@@ -1196,6 +1205,8 @@ class qformat_xml extends qformat_default {
         // Check question type.
         $questiontype = $this->get_qtype($question->qtype);
 
+        $idnumber = htmlspecialchars($question->idnumber);
+
         // Categories are a special case.
         if ($question->qtype == 'category') {
             $categorypath = $this->writetext($question->category);
@@ -1208,7 +1219,7 @@ class qformat_xml extends qformat_default {
             $expout .= "    <info {$infoformat}>\n";
             $expout .= "      {$categoryinfo}";
             $expout .= "    </info>\n";
-            $expout .= "    <idnumber>{$question->idnumber}</idnumber>\n";
+            $expout .= "    <idnumber>{$idnumber}</idnumber>\n";
             $expout .= "  </question>\n";
             return $expout;
         }
@@ -1232,7 +1243,7 @@ class qformat_xml extends qformat_default {
         }
         $expout .= "    <penalty>{$question->penalty}</penalty>\n";
         $expout .= "    <hidden>{$question->hidden}</hidden>\n";
-        $expout .= "    <idnumber>{$question->idnumber}</idnumber>\n";
+        $expout .= "    <idnumber>{$idnumber}</idnumber>\n";
 
         // The rest of the output depends on question type.
         switch($question->qtype) {
@@ -1346,10 +1357,18 @@ class qformat_xml extends qformat_default {
                         "</responserequired>\n";
                 $expout .= "    <responsefieldlines>" . $question->options->responsefieldlines .
                         "</responsefieldlines>\n";
+                $expout .= "    <minwordlimit>" . $question->options->minwordlimit .
+                        "</minwordlimit>\n";
+                $expout .= "    <maxwordlimit>" . $question->options->maxwordlimit .
+                        "</maxwordlimit>\n";
                 $expout .= "    <attachments>" . $question->options->attachments .
                         "</attachments>\n";
                 $expout .= "    <attachmentsrequired>" . $question->options->attachmentsrequired .
                         "</attachmentsrequired>\n";
+                $expout .= "    <maxbytes>" . $question->options->maxbytes .
+                        "</maxbytes>\n";
+                $expout .= "    <filetypeslist>" . $question->options->filetypeslist .
+                        "</filetypeslist>\n";
                 $expout .= "    <graderinfo " .
                         $this->format($question->options->graderinfoformat) . ">\n";
                 $expout .= $this->writetext($question->options->graderinfo, 3);

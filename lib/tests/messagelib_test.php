@@ -220,7 +220,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertEquals($message->smallmessage, $savedmessage->smallmessage);
         $this->assertEquals($message->notification, $savedmessage->notification);
         $this->assertEquals($message->customdata, $savedmessage->customdata);
-        $this->assertContains('datakey', $savedmessage->customdata);
+        $this->assertStringContainsString('datakey', $savedmessage->customdata);
         // Check it was a unserialisable json.
         $customdata = json_decode($savedmessage->customdata);
         $this->assertEquals('data', $customdata->datakey);
@@ -808,7 +808,7 @@ class core_messagelib_testcase extends advanced_testcase {
         // so verify the expected beginning and ends.
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/test message body.*test/s', $email->body);
+        $this->assertMatchesRegularExpression('/test.*message body.*test/s', $email->body);
         $sink->clear();
 
         // Now, send the message again, and verify that the event fired includes the courseid and conversationid.

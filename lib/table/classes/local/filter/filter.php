@@ -41,7 +41,7 @@ use Iterator;
  */
 class filter implements Countable, Iterator, JsonSerializable {
 
-    /** @var in The default filter type (ANY) */
+    /** @var int The default filter type (ANY) */
     const JOINTYPE_DEFAULT = 1;
 
     /** @var int None of the following match */

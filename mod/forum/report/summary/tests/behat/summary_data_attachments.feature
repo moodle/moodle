@@ -21,10 +21,10 @@ Feature: Attachments count column data available
       | student2 | C1     | student        |
       | teacher1 | C2     | editingteacher |
     And the following "activities" exist:
-      | activity | name   | description     | course | idnumber |
-      | forum    | forum1 | C1 first forum  | C1     | forum1   |
-      | forum    | forum2 | C1 second forum | C1     | forum2   |
-      | forum    | forum1 | C2 first forum  | C2     | forum1   |
+      | activity | name   | description     | course | idnumber   |
+      | forum    | forum1 | C1 first forum  | C1     | forum1C1   |
+      | forum    | forum2 | C1 second forum | C1     | forum2C1   |
+      | forum    | forum1 | C2 first forum  | C2     | forum1C2   |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message  | attachments        | inlineattachments |
       | teacher1 | forum1 | discussion1 | message1 | att1.jpg, att2.txt |                   |
@@ -41,10 +41,8 @@ Feature: Attachments count column data available
     And the following forum discussions exist in course "Course 2":
       | user     | forum  | name        | message  | attachments        | inlineattachments |
       | teacher1 | forum1 | discussion1 | message1 | att1.jpg, att2.txt |                   |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "forum1"
-    And I navigate to "Forum summary report" in current page administration
+    When I am on the forum1C1 "forum activity" page logged in as teacher1
+    And I navigate to "Reports" in current page administration
     Then "Teacher 1" row "Number of attachments" column of "forumreport_summary_table" table should contain "6"
     And "Student 1" row "Number of attachments" column of "forumreport_summary_table" table should contain "5"
     And "Student 2" row "Number of attachments" column of "forumreport_summary_table" table should contain "0"

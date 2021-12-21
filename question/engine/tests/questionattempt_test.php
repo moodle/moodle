@@ -50,14 +50,14 @@ class question_attempt_testcase extends advanced_testcase {
     /** @var question_attempt a question attempt that can be used in the tests. */
     private $qa;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->question = test_question_maker::make_question('description');
         $this->question->defaultmark = 3;
         $this->usageid = 13;
         $this->qa = new question_attempt($this->question, $this->usageid);
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->question = null;
         $this->useageid = null;
         $this->qa = null;
@@ -90,21 +90,21 @@ class question_attempt_testcase extends advanced_testcase {
 
     public function test_get_qt_field_name() {
         $name = $this->qa->get_qt_field_name('test');
-        $this->assertRegExp('/^' . preg_quote($this->qa->get_field_prefix(), '/') . '/', $name);
-        $this->assertRegExp('/_test$/', $name);
+        $this->assertMatchesRegularExpression('/^' . preg_quote($this->qa->get_field_prefix(), '/') . '/', $name);
+        $this->assertMatchesRegularExpression('/_test$/', $name);
     }
 
     public function test_get_behaviour_field_name() {
         $name = $this->qa->get_behaviour_field_name('test');
-        $this->assertRegExp('/^' . preg_quote($this->qa->get_field_prefix(), '/') . '/', $name);
-        $this->assertRegExp('/_-test$/', $name);
+        $this->assertMatchesRegularExpression('/^' . preg_quote($this->qa->get_field_prefix(), '/') . '/', $name);
+        $this->assertMatchesRegularExpression('/_-test$/', $name);
     }
 
     public function test_get_field_prefix() {
         $this->qa->set_slot(7);
         $name = $this->qa->get_field_prefix();
-        $this->assertRegExp('/' . preg_quote($this->usageid, '/') . '/', $name);
-        $this->assertRegExp('/' . preg_quote($this->qa->get_slot(), '/') . '/', $name);
+        $this->assertMatchesRegularExpression('/' . preg_quote($this->usageid, '/') . '/', $name);
+        $this->assertMatchesRegularExpression('/' . preg_quote($this->qa->get_slot(), '/') . '/', $name);
     }
 
     public function test_get_submitted_var_not_present_var_returns_null() {

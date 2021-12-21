@@ -137,7 +137,7 @@ class qbehaviour_immediatefeedback_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_partcorrect_expectation());
 
         $autogradedstep = $this->get_step($this->get_step_count() - 2);
-        $this->assertEquals($autogradedstep->get_fraction(), -0.3333333, '', 0.0000001);
+        $this->assertEqualsWithDelta($autogradedstep->get_fraction(), -0.3333333, 0.0000001);
     }
 
     public function test_immediatefeedback_feedback_multichoice_try_to_submit_blank() {
@@ -240,7 +240,7 @@ class qbehaviour_immediatefeedback_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, false, false),
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, false, false),
                 $this->get_contains_incorrect_expectation());
-        $this->assertRegExp('/B|C/',
+        $this->assertMatchesRegularExpression('/B|C/',
                 $this->quba->get_response_summary($this->slot));
     }
 }

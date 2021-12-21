@@ -66,8 +66,15 @@ get_string_manager()->reset_caches();
 $controller = new tool_langimport\controller();
 
 if (($mode == INSTALLATION_OF_SELECTED_LANG) and confirm_sesskey() and !empty($pack)) {
-    core_php_time_limit::raise();
-    $controller->install_languagepacks($pack);
+    if (is_array($pack) && count($pack) > 1) {
+        // Installing multiple languages can take a while - perform it asynchronously in the background.
+        $controller->schedule_languagepacks_installation($pack);
+
+    } else {
+        // Single language pack to be installed synchronously. It should be reasonably quick and can be used for debugging, too.
+        core_php_time_limit::raise();
+        $controller->install_languagepacks($pack);
+    }
 }
 
 if ($mode == DELETION_OF_SELECTED_LANG and (!empty($uninstalllang) or !empty($confirmtounistall))) {
@@ -111,12 +118,36 @@ echo $OUTPUT->heading(get_string('langimport', 'tool_langimport'));
 $installedlangs = get_string_manager()->get_list_of_translations(true);
 $locale = new \tool_langimport\locale();
 
+
+if ($availablelangs = $controller->availablelangs) {
+    $remote = true;
+} else {
+    $remote = false;
+    $availablelangs = array();
+    $a = [
+        'src' => $controller->lang_pack_url(),
+        'dest' => $CFG->dataroot.'/lang/',
+    ];
+    $errormessage = get_string('downloadnotavailable', 'tool_langimport', $a);
+    \core\notification::error($errormessage);
+}
+
 $missinglocales = '';
 $missingparents = array();
 foreach ($installedlangs as $installedlang => $langpackname) {
     // Check locale availability.
     if (!$locale->check_locale_availability($installedlang)) {
         $missinglocales .= '<li>'.$langpackname.'</li>';
+    }
+
+    // This aligns the name of the language to match the available languages using
+    // both the name for the language and the localized name for the language.
+    $alang = array_filter($availablelangs, function($k) use ($installedlang) {
+        return $k[0] == $installedlang;
+    });
+    $alang = array_pop($alang);
+    if (!empty($alang[0]) and trim($alang[0]) !== 'en') {
+        $installedlangs[$installedlang] = $alang[2] . ' &lrm;(' . $alang[0] . ')&lrm;';
     }
 
     $parent = get_parent_language($installedlang);
@@ -136,19 +167,6 @@ if (!empty($missinglocales)) {
     $controller->errors[] = get_string('langunsupported', 'tool_langimport', $a);
 }
 
-if ($availablelangs = $controller->availablelangs) {
-    $remote = true;
-} else {
-    $remote = false;
-    $availablelangs = array();
-    $a = [
-        'src' => $controller->lang_pack_url(),
-        'dest' => $CFG->dataroot.'/lang/',
-    ];
-    $errormessage = get_string('downloadnotavailable', 'tool_langimport', $a);
-    \core\notification::error($errormessage);
-}
-
 if ($controller->info) {
     $info = implode('<br />', $controller->info);
     \core\notification::success($info);
@@ -157,6 +175,15 @@ if ($controller->info) {
 if ($controller->errors) {
     $info = implode('<br />', $controller->errors);
     \core\notification::error($info);
+}
+
+// Inform about pending language packs installations.
+foreach (\core\task\manager::get_adhoc_tasks('\tool_langimport\task\install_langpacks') as $installtask) {
+    $installtaskdata = $installtask->get_custom_data();
+
+    if (!empty($installtaskdata->langs)) {
+        \core\notification::info(get_string('installpending', 'tool_langimport', implode(', ', $installtaskdata->langs)));
+    }
 }
 
 if ($missingparents) {

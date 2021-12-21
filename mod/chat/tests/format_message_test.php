@@ -159,7 +159,7 @@ class mod_chat_format_message_testcase extends advanced_testcase {
             if (!empty($expecttext)) {
                 $expecttext = str_replace('__CURRENTUSER__', fullname($currentuser), $expecttext);
                 $expecttext = str_replace('__CURRENTUSER_FIRST__', $currentuser->firstname, $expecttext);
-                $this->assertRegexp($expecttext, $result->text);
+                $this->assertMatchesRegularExpression($expecttext, $result->text);
             }
 
             $this->assertEquals($refreshusers, $result->refreshusers);

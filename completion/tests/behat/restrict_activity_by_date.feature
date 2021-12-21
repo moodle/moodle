@@ -7,19 +7,25 @@ Feature: Restrict activity availability through date conditions
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | Course 1 | C1        | 0        |
     And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | Frist | teacher1@example.com |
-      | student1 | Student | First | student1@example.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | Frist    | teacher1@example.com |
+      | student1 | Student   | First    | student1@example.com |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    # Adding the page like this because id_available*_enabled needs to be clicked to trigger the action.
-    And I add a "Assignment" to section "1"
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+    And the following "activity" exists:
+      | activity                            | assign                                |
+      | course                              | C1                                    |
+      | section                             | 1                                     |
+      | name                                | Test assignment 1                     |
+      | intro                               | This assignment is restricted by date |
+      | assignsubmission_onlinetext_enabled | 1                                     |
+      | assignsubmission_file_enabled       | 0                                     |
+    And I am on the "Test assignment 1" "assign activity" page logged in as "teacher1"
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
 
   @javascript
@@ -27,31 +33,20 @@ Feature: Restrict activity availability through date conditions
     Given I click on "Add restriction..." "button"
     And I click on "Date" "button" in the "Add restriction..." "dialogue"
     And I set the following fields to these values:
-      | Assignment name | Test assignment 1 |
-      | Description | This assignment is restricted by date |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | assignsubmission_file_enabled | 0 |
       | x[day] | 31 |
       | x[month] | 12 |
       | x[year] | 2037 |
     And I press "Save and return to course"
     And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     Then I should see "Available from 31 December 2037"
-    And "Test assignment 1" activity should be dimmed
-    And "Test assignment 1" "link" should not exist
-    And I log out
+    And "Test assignment 1" "link" should not exist in the "page" "region"
 
   @javascript
   Scenario: Show activity hidden to students when available until date is in past
     Given I click on "Add restriction..." "button"
     And I click on "Date" "button" in the "Add restriction..." "dialogue"
     And I set the following fields to these values:
-      | Assignment name | Test assignment 2 |
-      | Description | This assignment is restricted by date |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | assignsubmission_file_enabled | 0 |
       | x[day] | 1 |
       | x[month] | 2 |
       | x[year] | 2013 |
@@ -60,6 +55,5 @@ Feature: Restrict activity availability through date conditions
     And I click on ".availability-item .availability-eye img" "css_element"
     And I press "Save and return to course"
     And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    Then I should not see "Test assignment 2"
+    When I am on the "Course 1" course page logged in as student1
+    Then I should not see "Test assignment 1" in the "page" "region"

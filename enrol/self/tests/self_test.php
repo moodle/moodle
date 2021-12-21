@@ -394,49 +394,49 @@ class enrol_self_testcase extends advanced_testcase {
         // First individual notifications from course1.
         $this->assertEquals($user3->id, $messages[0]->useridto);
         $this->assertEquals($user8->id, $messages[0]->useridfrom);
-        $this->assertContains('xcourse1', $messages[0]->fullmessagehtml);
+        $this->assertStringContainsString('xcourse1', $messages[0]->fullmessagehtml);
 
         $this->assertEquals($user4->id, $messages[1]->useridto);
         $this->assertEquals($user8->id, $messages[1]->useridfrom);
-        $this->assertContains('xcourse1', $messages[1]->fullmessagehtml);
+        $this->assertStringContainsString('xcourse1', $messages[1]->fullmessagehtml);
 
         // Then summary for course1.
         $this->assertEquals($user8->id, $messages[2]->useridto);
         $this->assertEquals($admin->id, $messages[2]->useridfrom);
-        $this->assertContains('xcourse1', $messages[2]->fullmessagehtml);
-        $this->assertNotContains('xuser1', $messages[2]->fullmessagehtml);
-        $this->assertNotContains('xuser2', $messages[2]->fullmessagehtml);
-        $this->assertContains('xuser3', $messages[2]->fullmessagehtml);
-        $this->assertContains('xuser4', $messages[2]->fullmessagehtml);
-        $this->assertContains('xuser5', $messages[2]->fullmessagehtml);
-        $this->assertNotContains('xuser6', $messages[2]->fullmessagehtml);
+        $this->assertStringContainsString('xcourse1', $messages[2]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser1', $messages[2]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser2', $messages[2]->fullmessagehtml);
+        $this->assertStringContainsString('xuser3', $messages[2]->fullmessagehtml);
+        $this->assertStringContainsString('xuser4', $messages[2]->fullmessagehtml);
+        $this->assertStringContainsString('xuser5', $messages[2]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser6', $messages[2]->fullmessagehtml);
 
         // First individual notifications from course2.
         $this->assertEquals($user3->id, $messages[3]->useridto);
         $this->assertEquals($admin->id, $messages[3]->useridfrom);
-        $this->assertContains('xcourse2', $messages[3]->fullmessagehtml);
+        $this->assertStringContainsString('xcourse2', $messages[3]->fullmessagehtml);
 
         // Then summary for course2.
         $this->assertEquals($admin->id, $messages[4]->useridto);
         $this->assertEquals($admin->id, $messages[4]->useridfrom);
-        $this->assertContains('xcourse2', $messages[4]->fullmessagehtml);
-        $this->assertNotContains('xuser1', $messages[4]->fullmessagehtml);
-        $this->assertNotContains('xuser2', $messages[4]->fullmessagehtml);
-        $this->assertContains('xuser3', $messages[4]->fullmessagehtml);
-        $this->assertNotContains('xuser4', $messages[4]->fullmessagehtml);
-        $this->assertNotContains('xuser5', $messages[4]->fullmessagehtml);
-        $this->assertNotContains('xuser6', $messages[4]->fullmessagehtml);
+        $this->assertStringContainsString('xcourse2', $messages[4]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser1', $messages[4]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser2', $messages[4]->fullmessagehtml);
+        $this->assertStringContainsString('xuser3', $messages[4]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser4', $messages[4]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser5', $messages[4]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser6', $messages[4]->fullmessagehtml);
 
         // Only summary in course3.
         $this->assertEquals($user1->id, $messages[5]->useridto);
         $this->assertEquals($admin->id, $messages[5]->useridfrom);
-        $this->assertContains('xcourse3', $messages[5]->fullmessagehtml);
-        $this->assertNotContains('xuser1', $messages[5]->fullmessagehtml);
-        $this->assertNotContains('xuser2', $messages[5]->fullmessagehtml);
-        $this->assertContains('xuser3', $messages[5]->fullmessagehtml);
-        $this->assertNotContains('xuser4', $messages[5]->fullmessagehtml);
-        $this->assertNotContains('xuser5', $messages[5]->fullmessagehtml);
-        $this->assertNotContains('xuser6', $messages[5]->fullmessagehtml);
+        $this->assertStringContainsString('xcourse3', $messages[5]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser1', $messages[5]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser2', $messages[5]->fullmessagehtml);
+        $this->assertStringContainsString('xuser3', $messages[5]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser4', $messages[5]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser5', $messages[5]->fullmessagehtml);
+        $this->assertStringNotContainsString('xuser6', $messages[5]->fullmessagehtml);
 
 
         // Make sure that notifications are not repeated.
@@ -616,7 +616,7 @@ class enrol_self_testcase extends advanced_testcase {
         $selfplugin->enrol_user($instance1, $user2->id, $editingteacherrole->id);
 
         $this->setUser($guest);
-        $this->assertContains(get_string('noguestaccess', 'enrol'),
+        $this->assertStringContainsString(get_string('noguestaccess', 'enrol'),
                 $selfplugin->can_self_enrol($instance1, true));
 
         $this->setUser($user1);

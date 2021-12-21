@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_bigbluebuttonbn/recording_row_actionbar.mustache
+
+    This template renders the mobile page.
+
+    Example context (json):
+    {
+       "id":"1",
+       "recordingid":"1",
+       "tools":[
+          {
+             "disabled":false,
+             "url":"#",
+             "id":"test-id",
+             "classes":"btn btn-link",
+             "attributes":[
+                {
+                   "name":"title",
+                   "value":"Action link's title",
+                   "class":"'btn btn-sm btn-default",
+                   "data-action":"play"
+                }
+             ],
+             "text":"This is an action link"
+          }
+       ]
+    }
+}}
+<div id="{{id}}" data-recordingid="{{recordingid}}">
+    <div class="d-flex flex-row">
+        {{#tools}}
+            <div>
+                {{>core/action_link}}
+            </div>
+        {{/tools}}
+    </div>
+</div>

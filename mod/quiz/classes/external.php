@@ -131,9 +131,12 @@ class mod_quiz_external extends external_api {
                                                     'reviewspecificfeedback', 'reviewgeneralfeedback', 'reviewrightanswer',
                                                     'reviewoverallfeedback', 'questionsperpage', 'navmethod',
                                                     'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
-                                                    'completionattemptsexhausted', 'completionpass', 'overduehandling',
+                                                    'completionattemptsexhausted', 'overduehandling',
                                                     'graceperiod', 'canredoquestions', 'allowofflineattempts');
                         $viewablefields = array_merge($viewablefields, $additionalfields);
+
+                        // Any course module fields that previously existed in quiz.
+                        $quizdetails['completionpass'] = $quizobj->get_cm()->completionpassgrade;
                     }
 
                     // Fields only for managers.
@@ -413,10 +416,21 @@ class mod_quiz_external extends external_api {
             require_capability('mod/quiz:viewreports', $context);
         }
 
+        // Update quiz with override information.
+        $quiz = quiz_update_effective_access($quiz, $params['userid']);
         $attempts = quiz_get_user_attempts($quiz->id, $user->id, $params['status'], $params['includepreviews']);
-
+        $attemptresponse = [];
+        foreach ($attempts as $attempt) {
+            $reviewoptions = quiz_get_review_options($quiz, $attempt, $context);
+            if (!has_capability('mod/quiz:viewreports', $context) &&
+                    ($reviewoptions->marks < question_display_options::MARK_AND_MAX || $attempt->state != quiz_attempt::FINISHED)) {
+                // Blank the mark if the teacher does not allow it.
+                $attempt->sumgrades = null;
+            }
+            $attemptresponse[] = $attempt;
+        }
         $result = array();
-        $result['attempts'] = $attempts;
+        $result['attempts'] = $attemptresponse;
         $result['warnings'] = $warnings;
         return $result;
     }
@@ -452,6 +466,8 @@ class mod_quiz_external extends external_api {
                 'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
                                                         state changes.  NULL means never check.', VALUE_OPTIONAL),
                 'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
+                'gradednotificationsenttime' => new external_value(PARAM_INT,
+                    'Time when the student was notified that manual grading of their attempt was complete.', VALUE_OPTIONAL),
             )
         );
     }
@@ -495,7 +511,8 @@ class mod_quiz_external extends external_api {
      * @since Moodle 3.1
      */
     public static function get_user_best_grade($quizid, $userid = 0) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
+        require_once($CFG->libdir . '/gradelib.php');
 
         $warnings = array();
 
@@ -521,7 +538,23 @@ class mod_quiz_external extends external_api {
         }
 
         $result = array();
-        $grade = quiz_get_best_grade($quiz, $user->id);
+
+        // This code was mostly copied from mod/quiz/view.php. We need to make the web service logic consistent.
+        // Get this user's attempts.
+        $attempts = quiz_get_user_attempts($quiz->id, $user->id, 'all');
+        $canviewgrade = false;
+        if ($attempts) {
+            if ($USER->id != $user->id) {
+                // No need to check the permission here. We did it at by require_capability('mod/quiz:viewreports', $context).
+                $canviewgrade = true;
+            } else {
+                // Work out which columns we need, taking account what data is available in each attempt.
+                [$notused, $alloptions] = quiz_get_combined_reviewoptions($quiz, $attempts);
+                $canviewgrade = $alloptions->marks >= question_display_options::MARK_AND_MAX;
+            }
+        }
+
+        $grade = $canviewgrade ? quiz_get_best_grade($quiz, $user->id) : null;
 
         if ($grade === null) {
             $result['hasgrade'] = false;
@@ -529,6 +562,17 @@ class mod_quiz_external extends external_api {
             $result['hasgrade'] = true;
             $result['grade'] = $grade;
         }
+
+        // Inform user of the grade to pass if non-zero.
+        $gradinginfo = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user->id);
+        if (!empty($gradinginfo->items)) {
+            $item = $gradinginfo->items[0];
+
+            if ($item && grade_floats_different($item->gradepass, 0)) {
+                $result['gradetopass'] = $item->gradepass;
+            }
+        }
+
         $result['warnings'] = $warnings;
         return $result;
     }
@@ -544,6 +588,7 @@ class mod_quiz_external extends external_api {
             array(
                 'hasgrade' => new external_value(PARAM_BOOL, 'Whether the user has a grade on the given quiz.'),
                 'grade' => new external_value(PARAM_FLOAT, 'The grade (only if the user has a grade).', VALUE_OPTIONAL),
+                'gradetopass' => new external_value(PARAM_FLOAT, 'The grade to pass the quiz (only if set).', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             )
         );
@@ -902,6 +947,7 @@ class mod_quiz_external extends external_api {
                     It will be returned only if the user is allowed to see it.', VALUE_OPTIONAL),
                 'maxmark' => new external_value(PARAM_FLOAT, 'the maximum mark possible for this question attempt.
                     It will be returned only if the user is allowed to see it.', VALUE_OPTIONAL),
+                'settings' => new external_value(PARAM_RAW, 'Question settings (JSON encoded).', VALUE_OPTIONAL),
             ),
             'The question data. Some fields may not be returned depending on the quiz display settings.'
         );
@@ -927,6 +973,7 @@ class mod_quiz_external extends external_api {
         foreach ($attemptobj->get_slots($page) as $slot) {
             $qtype = $attemptobj->get_question_type_name($slot);
             $qattempt = $attemptobj->get_question_attempt($slot);
+            $questiondef = $qattempt->get_question(true);
 
             // Get response files (for questions like essay that allows attachments).
             $responsefileareas = [];
@@ -948,6 +995,9 @@ class mod_quiz_external extends external_api {
                 }
             }
 
+            // Check display settings for question.
+            $settings = $questiondef->get_question_definition_for_external_rendering($qattempt, $displayoptions);
+
             $question = array(
                 'slot' => $slot,
                 'type' => $qtype,
@@ -957,7 +1007,8 @@ class mod_quiz_external extends external_api {
                 'responsefileareas' => $responsefileareas,
                 'sequencecheck' => $qattempt->get_sequence_check_count(),
                 'lastactiontime' => $qattempt->get_last_step()->get_timecreated(),
-                'hasautosavedstep' => $qattempt->has_autosaved_step()
+                'hasautosavedstep' => $qattempt->has_autosaved_step(),
+                'settings' => !empty($settings) ? json_encode($settings) : null,
             );
 
             if ($attemptobj->is_real_question($slot)) {

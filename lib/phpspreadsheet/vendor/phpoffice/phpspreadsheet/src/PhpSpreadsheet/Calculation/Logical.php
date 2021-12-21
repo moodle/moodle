@@ -12,8 +12,6 @@ class Logical
      * Excel Function:
      *        =TRUE()
      *
-     * @category Logical Functions
-     *
      * @return bool True
      */
     public static function true()
@@ -28,8 +26,6 @@ class Logical
      *
      * Excel Function:
      *        =FALSE()
-     *
-     * @category Logical Functions
      *
      * @return bool False
      */
@@ -80,8 +76,6 @@ class Logical
      *        If any argument value is a string, or a Null, the function returns a #VALUE! error, unless the string holds
      *            the value TRUE or FALSE, in which case it is evaluated as the corresponding boolean value
      *
-     * @category Logical Functions
-     *
      * @param mixed ...$args Data values
      *
      * @return bool|string the logical AND of the arguments
@@ -122,8 +116,6 @@ class Logical
      *        Integer or floating point arguments are treated as True, except for 0 or 0.0 which are False
      *        If any argument value is a string, or a Null, the function returns a #VALUE! error, unless the string holds
      *            the value TRUE or FALSE, in which case it is evaluated as the corresponding boolean value
-     *
-     * @category Logical Functions
      *
      * @param mixed $args Data values
      *
@@ -166,8 +158,6 @@ class Logical
      *        If any argument value is a string, or a Null, the function returns a #VALUE! error, unless the string holds
      *            the value TRUE or FALSE, in which case it is evaluated as the corresponding boolean value
      *
-     * @category Logical Functions
-     *
      * @param mixed $args Data values
      *
      * @return bool|string the logical XOR of the arguments
@@ -206,8 +196,6 @@ class Logical
      *        Integer or floating point arguments are treated as True, except for 0 or 0.0 which are False
      *        If any argument value is a string, or a Null, the function returns a #VALUE! error, unless the string holds
      *            the value TRUE or FALSE, in which case it is evaluated as the corresponding boolean value
-     *
-     * @category Logical Functions
      *
      * @param mixed $logical A value or expression that can be evaluated to TRUE or FALSE
      *
@@ -256,8 +244,6 @@ class Logical
      *            If condition is FALSE and ReturnIfFalse is blank, then the value 0 (zero) is returned.
      *            ReturnIfFalse can be another formula.
      *
-     * @category Logical Functions
-     *
      * @param mixed $condition Condition to evaluate
      * @param mixed $returnIfTrue Value to return when condition is true
      * @param mixed $returnIfFalse Optional value to return when condition is false
@@ -293,8 +279,6 @@ class Logical
      *              A list of results. The SWITCH function returns the corresponding result when a value matches expression.
      *         default
      *              Optional. It is the default to return if expression does not match any of the values (value1, value2, ... value_n).
-     *
-     * @category Logical Functions
      *
      * @param mixed $arguments Statement arguments
      *
@@ -337,8 +321,6 @@ class Logical
      * Excel Function:
      *        =IFERROR(testValue,errorpart)
      *
-     * @category Logical Functions
-     *
      * @param mixed $testValue Value to check, is also the value returned when no error
      * @param mixed $errorpart Value to return when testValue is an error condition
      *
@@ -358,8 +340,6 @@ class Logical
      * Excel Function:
      *        =IFNA(testValue,napart)
      *
-     * @category Logical Functions
-     *
      * @param mixed $testValue Value to check, is also the value returned when not an NA
      * @param mixed $napart Value to return when testValue is an NA condition
      *
@@ -371,5 +351,40 @@ class Logical
         $napart = ($napart === null) ? '' : Functions::flattenSingleValue($napart);
 
         return self::statementIf(Functions::isNa($testValue), $napart, $testValue);
+    }
+
+    /**
+     * IFS.
+     *
+     * Excel Function:
+     *         =IFS(testValue1;returnIfTrue1;testValue2;returnIfTrue2;...;testValue_n;returnIfTrue_n)
+     *
+     *         testValue1 ... testValue_n
+     *             Conditions to Evaluate
+     *         returnIfTrue1 ... returnIfTrue_n
+     *             Value returned if corresponding testValue (nth) was true
+     *
+     * @param mixed ...$arguments Statement arguments
+     *
+     * @return mixed|string The value of returnIfTrue_n, if testValue_n was true. #N/A if none of testValues was true
+     */
+    public static function IFS(...$arguments)
+    {
+        if (count($arguments) % 2 != 0) {
+            return Functions::NA();
+        }
+        // We use instance of Exception as a falseValue in order to prevent string collision with value in cell
+        $falseValueException = new Exception();
+        for ($i = 0; $i < count($arguments); $i += 2) {
+            $testValue = ($arguments[$i] === null) ? '' : Functions::flattenSingleValue($arguments[$i]);
+            $returnIfTrue = ($arguments[$i + 1] === null) ? '' : Functions::flattenSingleValue($arguments[$i + 1]);
+            $result = self::statementIf($testValue, $returnIfTrue, $falseValueException);
+
+            if ($result !== $falseValueException) {
+                return $result;
+            }
+        }
+
+        return Functions::NA();
     }
 }

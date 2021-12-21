@@ -36,7 +36,8 @@ Feature: Enable Block Completion in a course using manual completion by others
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Course completion" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Course completion" from the "Report type" singleselect
     And I follow "Click to mark user complete"
     # Running completion task just after clicking sometimes fail, as record
     # should be created before the task runs.
@@ -71,7 +72,8 @@ Feature: Enable Block Completion in a course using manual completion by others
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Course completion" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Course completion" from the "Report type" singleselect
     And I follow "Click to mark user complete"
     And I log out
     And I log in as "student1"
@@ -85,7 +87,8 @@ Feature: Enable Block Completion in a course using manual completion by others
     And I log out
     And I log in as "teacher2"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Course completion" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Course completion" from the "Report type" singleselect
     And I follow "Click to mark user complete"
     # Running completion task just after clicking sometimes fail, as record
     # should be created before the task runs.

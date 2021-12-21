@@ -24,7 +24,7 @@
 
 namespace core_h5p;
 
-use H5PEditorAjaxInterface;
+use Moodle\H5PEditorAjaxInterface;
 use core\dml\table as dml_table;
 
 /**
@@ -51,7 +51,8 @@ class editor_ajax implements H5PEditorAjaxInterface {
         global $DB;
 
         $sql = "SELECT hl2.id, hl2.machinename as machine_name, hl2.title, hl2.majorversion as major_version,
-                       hl2.minorversion AS minor_version, hl2.patchversion as patch_version, '' as has_icon, 0 as restricted
+                       hl2.minorversion AS minor_version, hl2.patchversion as patch_version, '' as has_icon, 0 as restricted,
+                       hl2.enabled
                   FROM {h5p_libraries} hl2
              LEFT JOIN {h5p_libraries} hl1
                         ON hl1.machinename = hl2.machinename
@@ -76,8 +77,23 @@ class editor_ajax implements H5PEditorAjaxInterface {
      * @return mixed|null Returns results from querying the database
      */
     public function getContentTypeCache($machinename = null) {
-        // This is to be implemented when the Hub client is used.
-        return [];
+        global $DB;
+
+        // Added some extra fields to the result because they are expected by functions calling this. They have been
+        // taken from method getCachedLibsMap() in h5peditor.class.php.
+        $sql = "SELECT l.id, l.machinename AS machine_name, l.majorversion AS major_version,
+                       l.minorversion AS minor_version, l.patchversion AS patch_version, l.coremajor AS h5p_major_version,
+                       l.coreminor AS h5p_minor_version, l.title, l.tutorial, l.example,
+                       '' AS summary, '' AS description, '' AS icon, 0 AS created_at, 0 AS updated_at, 0 AS is_recommended,
+                       0 AS popularity, '' AS screenshots, '' AS license, '' AS owner
+                  FROM {h5p_libraries} l";
+        $params = [];
+        if (!empty($machinename)) {
+            $sql .= ' WHERE l.machinename = :machine_name';
+            $params = ['machine_name' => $machinename];
+        }
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**

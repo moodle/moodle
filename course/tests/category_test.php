@@ -32,7 +32,7 @@ class core_course_category_testcase extends advanced_testcase {
 
     protected $roles;
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
@@ -330,7 +330,7 @@ class core_course_category_testcase extends advanced_testcase {
         //   $course4
         // structure.
 
-        // Note that we also have default 'Miscellaneous' category and default 'site' course.
+        // Note that we also have default course category and default 'site' course.
         $this->assertEquals(1, $DB->get_field_sql('SELECT count(*) FROM {course_categories} WHERE id > ?', array($initialcatid)));
         $this->assertEquals($category1->id, $DB->get_field_sql('SELECT max(id) FROM {course_categories}'));
         $this->assertEquals(1, $DB->get_field_sql('SELECT count(*) FROM {course} WHERE id <> ?', array(SITEID)));
@@ -906,7 +906,7 @@ class core_course_category_testcase extends advanced_testcase {
 
         // Reset default settings.
         $CFG->courseoverviewfileslimit = 1;
-        $CFG->courseoverviewfilesext = '.jpg,.gif,.png';
+        $CFG->courseoverviewfilesext = 'web_image';
 
         $courses = $cat1->get_courses();
         $this->assertTrue($courses[$c1->id]->has_course_overviewfiles());

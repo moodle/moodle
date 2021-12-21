@@ -80,6 +80,7 @@ $string['profilelabel'] = '{$a->label}: {$a->profile} {$a->operator} {$a->value}
 $string['profilelabelnovalue'] = '{$a->label}: {$a->profile} {$a->operator}';
 $string['removeall'] = 'Remove all filters';
 $string['removeselected'] = 'Remove selected';
+$string['replacefilters'] = 'Replace filters';
 $string['selectlabel'] = '{$a->label} {$a->operator} {$a->value}';
 $string['startswith'] = 'starts with';
 $string['tablenosave'] = 'Changes in table above are saved automatically.';

@@ -394,15 +394,18 @@ abstract class grade_report {
     public function setup_users() {
         global $SESSION, $DB;
 
+        $filterfirstnamekey = "filterfirstname-{$this->context->id}";
+        $filtersurnamekey = "filtersurname-{$this->context->id}";
+
         $this->userwheresql = "";
         $this->userwheresql_params = array();
-        if (isset($SESSION->gradereport['filterfirstname']) && !empty($SESSION->gradereport['filterfirstname'])) {
+        if (!empty($SESSION->gradereport[$filterfirstnamekey])) {
             $this->userwheresql .= ' AND '.$DB->sql_like('u.firstname', ':firstname', false, false);
-            $this->userwheresql_params['firstname'] = $SESSION->gradereport['filterfirstname'].'%';
+            $this->userwheresql_params['firstname'] = $SESSION->gradereport[$filterfirstnamekey] . '%';
         }
-        if (isset($SESSION->gradereport['filtersurname']) && !empty($SESSION->gradereport['filtersurname'])) {
+        if (!empty($SESSION->gradereport[$filtersurnamekey])) {
             $this->userwheresql .= ' AND '.$DB->sql_like('u.lastname', ':lastname', false, false);
-            $this->userwheresql_params['lastname'] = $SESSION->gradereport['filtersurname'].'%';
+            $this->userwheresql_params['lastname'] = $SESSION->gradereport[$filtersurnamekey] . '%';
         }
     }
 
@@ -414,7 +417,7 @@ abstract class grade_report {
     protected function get_sort_arrow($direction='move', $sortlink=null) {
         global $OUTPUT;
         $pix = array('up' => 't/sort_desc', 'down' => 't/sort_asc', 'move' => 't/sort');
-        $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'desc');
+        $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'asc');
         $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
 
         $arrow = $OUTPUT->pix_icon($pix[$direction], '', '', ['class' => 'sorticon']);

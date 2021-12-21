@@ -1,5 +1,8 @@
 This files describes API changes in the enrol_database code.
 
+=== 3.11 ===
+* Final deprecation enrol/database/cli/sync.php. Refer below for substitute.
+
 === 3.9 ===
 * Class enrol_database_admin_setting_category has been removed. This class was only used by the database
   enrolment plugin settings and it was replaced by admin_settings_coursecat_select.

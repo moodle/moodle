@@ -218,7 +218,8 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  *     built. May be ''.
  * @param bool $searchanywhere If true (default), searches in the middle of
  *     names, otherwise only searches at start
- * @param array $extrafields Array of extra user fields to include in search
+ * @param array $extrafields Array of extra user fields to include in search, must be prefixed with table alias if they are not in
+ *     the user table.
  * @param array $exclude Array of user ids to exclude (empty = don't exclude)
  * @param array $includeonly If specified, only returns users that have ids
  *     incldued in this array (empty = don't restrict)
@@ -226,8 +227,8 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  *     where clause the query, and an associative array containing any required
  *     parameters (using named placeholders).
  */
-function users_search_sql($search, $u = 'u', $searchanywhere = true, array $extrafields = array(),
-        array $exclude = null, array $includeonly = null) {
+function users_search_sql(string $search, string $u = 'u', bool $searchanywhere = true, array $extrafields = [],
+        array $exclude = null, array $includeonly = null): array {
     global $DB, $CFG;
     $params = array();
     $tests = array();
@@ -243,7 +244,8 @@ function users_search_sql($search, $u = 'u', $searchanywhere = true, array $extr
             $conditions[] = $u . 'lastname'
         );
         foreach ($extrafields as $field) {
-            $conditions[] = $u . $field;
+            // Add the table alias for the user table if the field doesn't already have an alias.
+            $conditions[] = strpos($field, '.') !== false ? $field : $u . $field;
         }
         if ($searchanywhere) {
             $searchparam = '%' . $search . '%';
@@ -305,7 +307,7 @@ function users_search_sql($search, $u = 'u', $searchanywhere = true, array $extr
  *  - firstname
  *  - lastname
  *  - $DB->sql_fullname
- *  - those returned by get_extra_user_fields
+ *  - those returned by \core_user\fields::get_identity_fields or those included in $customfieldmappings
  *
  * If named parameters are used (which is the default, and highly recommended),
  * then the parameter names are like :usersortexactN, where N is an int.
@@ -334,13 +336,15 @@ function users_search_sql($search, $u = 'u', $searchanywhere = true, array $extr
  * @param string $usertablealias (optional) any table prefix for the {users} table. E.g. 'u'.
  * @param string $search (optional) a current search string. If given,
  *      any exact matches to this string will be sorted first.
- * @param context $context the context we are in. Use by get_extra_user_fields.
+ * @param context|null $context the context we are in. Used by \core_user\fields::get_identity_fields.
  *      Defaults to $PAGE->context.
+ * @param array $customfieldmappings associative array of mappings for custom fields returned by \core_user\fields::get_sql.
  * @return array with two elements:
  *      string SQL fragment to use in the ORDER BY clause. For example, "firstname, lastname".
- *      array of parameters used in the SQL fragment.
+ *      array of parameters used in the SQL fragment. If $search is not given, this is guaranteed to be an empty array.
  */
-function users_order_by_sql($usertablealias = '', $search = null, context $context = null) {
+function users_order_by_sql(string $usertablealias = '', string $search = null, context $context = null,
+        array $customfieldmappings = []) {
     global $DB, $PAGE;
 
     if ($usertablealias) {
@@ -368,9 +372,17 @@ function users_order_by_sql($usertablealias = '', $search = null, context $conte
     $params[$paramkey] = $search;
     $paramkey++;
 
-    $fieldstocheck = array_merge(array('firstname', 'lastname'), get_extra_user_fields($context));
+    if ($customfieldmappings) {
+        $fieldstocheck = array_merge([$tableprefix . 'firstname', $tableprefix . 'lastname'], array_values($customfieldmappings));
+    } else {
+        $fieldstocheck = array_merge(['firstname', 'lastname'], \core_user\fields::get_identity_fields($context, false));
+        $fieldstocheck = array_map(function($field) use ($tableprefix) {
+            return $tableprefix . $field;
+        }, $fieldstocheck);
+    }
+
     foreach ($fieldstocheck as $key => $field) {
-        $exactconditions[] = 'LOWER(' . $tableprefix . $field . ') = LOWER(:' . $paramkey . ')';
+        $exactconditions[] = 'LOWER(' . $field . ') = LOWER(:' . $paramkey . ')';
         $params[$paramkey] = $search;
         $paramkey++;
     }
@@ -479,7 +491,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
     $fullname  = $DB->sql_fullname();
 
-    $select = "deleted <> 1 AND id <> :guestid";
+    $select = "deleted <> 1 AND u.id <> :guestid";
     $params = array('guestid' => $CFG->siteguest);
 
     if (!empty($search)) {
@@ -502,6 +514,10 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
     }
 
     if ($extraselect) {
+        // The extra WHERE clause may refer to the 'id' column which can now be ambiguous because we
+        // changed the query to include joins, so replace any 'id' that is on its own (no alias)
+        // with 'u.id'.
+        $extraselect = preg_replace('~([ =]|^)id([ =]|$)~', '$1u.id$2', $extraselect);
         $select .= " AND $extraselect";
         $params = $params + (array)$extraparams;
     }
@@ -511,21 +527,21 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
     }
 
     // If a context is specified, get extra user fields that the current user
-    // is supposed to see.
-    $extrafields = '';
+    // is supposed to see, otherwise just get the name fields.
+    $userfields = \core_user\fields::for_name();
     if ($extracontext) {
-        $extrafields = get_extra_user_fields_sql($extracontext, '', '',
-                array('id', 'username', 'email', 'firstname', 'lastname', 'city', 'country',
-                'lastaccess', 'confirmed', 'mnethostid'));
+        $userfields->with_identity($extracontext, true);
     }
-    $namefields = get_all_user_name_fields(true);
-    $extrafields = "$extrafields, $namefields";
+    $userfields->excluding('id', 'username', 'email', 'city', 'country', 'lastaccess', 'confirmed', 'mnethostid');
+    ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams] =
+            (array)$userfields->get_sql('u', true);
 
     // warning: will return UNCONFIRMED USERS
-    return $DB->get_records_sql("SELECT id, username, email, city, country, lastaccess, confirmed, mnethostid, suspended $extrafields
-                                   FROM {user}
+    return $DB->get_records_sql("SELECT u.id, username, email, city, country, lastaccess, confirmed, mnethostid, suspended $selects
+                                   FROM {user} u
+                                        $joins
                                   WHERE $select
-                                  $sort", $params, $page, $recordsperpage);
+                                  $sort", array_merge($params, $joinparams), $page, $recordsperpage);
 
 }
 
@@ -609,7 +625,7 @@ function get_course($courseid, $clone = true) {
  * @uses CONTEXT_COURSE
  * @param string|int $categoryid Either a category id or 'all' for everything
  * @param string $sort A field and direction to sort by
- * @param string $fields The additional fields to return
+ * @param string $fields The additional fields to return (note that "id, category, visible" are always present)
  * @return array Array of courses
  */
 function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") {
@@ -636,6 +652,19 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
     $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
     $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
     $params['contextlevel'] = CONTEXT_COURSE;
+
+    // The fields "id, category, visible" are required in the subsequent loop and must always be present.
+    if ($fields !== 'c.*') {
+        $fieldarray = array_merge(
+            // Split fields on comma + zero or more whitespace, merge with required fields.
+            preg_split('/,\s*/', $fields), [
+                'c.id',
+                'c.category',
+                'c.visible',
+            ]
+        );
+        $fields = implode(',', array_unique($fieldarray));
+    }
 
     $sql = "SELECT $fields $ccselect
               FROM {course} c
@@ -1822,4 +1851,98 @@ function get_max_courses_in_category() {
     } else {
         return $CFG->maxcoursesincategory;
     }
+}
+
+/**
+ * Prepare a safe ORDER BY statement from user interactable requests.
+ *
+ * This allows safe user specified sorting (ORDER BY), by abstracting the SQL from the value being requested by the user.
+ * A standard string (and optional direction) can be specified, which will be mapped to a predefined allow list of SQL ordering.
+ * The mapping can optionally include a 'default', which will be used if the key provided is invalid.
+ *
+ * Example usage:
+ *      -If $orderbymap = [
+ *              'courseid' => 'c.id',
+ *              'somecustomvalue'=> 'c.startdate, c.shortname',
+ *              'default' => 'c.fullname',
+ *       ]
+ *      -A value from the map array's keys can be passed in by a user interaction (eg web service) along with an optional direction.
+ *      -get_safe_orderby($orderbymap, 'courseid', 'DESC') would return: ORDER BY c.id DESC
+ *      -get_safe_orderby($orderbymap, 'somecustomvalue') would return: ORDER BY c.startdate, c.shortname
+ *      -get_safe_orderby($orderbymap, 'invalidblah', 'DESC') would return: ORDER BY c.fullname DESC
+ *      -If no default key was specified in $orderbymap, the invalidblah example above would return empty string.
+ *
+ * @param array $orderbymap An array in the format [keystring => sqlstring]. A default fallback can be set with the key 'default'.
+ * @param string $orderbykey A string to be mapped to a key in $orderbymap.
+ * @param string $direction Optional ORDER BY direction (ASC/DESC, case insensitive).
+ * @param bool $useprefix Whether ORDER BY is prefixed to the output (true by default). This should not be modified in most cases.
+ *                        It is included to enable get_safe_orderby_multiple() to use this function multiple times.
+ * @return string The ORDER BY statement, or empty string if $orderbykey is invalid and no default is mapped.
+ */
+function get_safe_orderby(array $orderbymap, string $orderbykey, string $direction = '', bool $useprefix = true): string {
+    $orderby = $useprefix ? ' ORDER BY ' : '';
+    $output = '';
+
+    // Only include an order direction if ASC/DESC is explicitly specified (case insensitive).
+    $direction = strtoupper($direction);
+    if (!in_array($direction, ['ASC', 'DESC'], true)) {
+        $direction = '';
+    } else {
+        $direction = " {$direction}";
+    }
+
+    // Prepare the statement if the key maps to a defined sort parameter.
+    if (isset($orderbymap[$orderbykey])) {
+        $output = "{$orderby}{$orderbymap[$orderbykey]}{$direction}";
+    } else if (array_key_exists('default', $orderbymap)) {
+        // Fall back to use the default if one is specified.
+        $output = "{$orderby}{$orderbymap['default']}{$direction}";
+    }
+
+    return $output;
+}
+
+/**
+ * Prepare a safe ORDER BY statement from user interactable requests using multiple values.
+ *
+ * This allows safe user specified sorting (ORDER BY) similar to get_safe_orderby(), but supports multiple keys and directions.
+ * This is useful in cases where combinations of columns are needed and/or each item requires a specified direction (ASC/DESC).
+ * The mapping can optionally include a 'default', which will be used if the key provided is invalid.
+ *
+ * Example usage:
+ *      -If $orderbymap = [
+ *              'courseid' => 'c.id',
+ *              'fullname'=> 'c.fullname',
+ *              'default' => 'c.startdate',
+ *          ]
+ *      -An array of values from the map's keys can be passed in by a user interaction (eg web service), with optional directions.
+ *      -get_safe_orderby($orderbymap, ['courseid', 'fullname'], ['DESC', 'ASC']) would return: ORDER BY c.id DESC, c.fullname ASC
+ *      -get_safe_orderby($orderbymap, ['courseid', 'invalidblah'], ['aaa', 'DESC']) would return: ORDER BY c.id, c.startdate DESC
+ *      -If no default key was specified in $orderbymap, the invalidblah example above would return: ORDER BY c.id
+ *
+ * @param array $orderbymap An array in the format [keystring => sqlstring]. A default fallback can be set with the key 'default'.
+ * @param array $orderbykeys An array of strings to be mapped to keys in $orderbymap.
+ * @param array $directions Optional array of ORDER BY direction (ASC/DESC, case insensitive).
+ *                          The array keys should match array keys in $orderbykeys.
+ * @return string The ORDER BY statement, or empty string if $orderbykeys contains no valid items and no default is mapped.
+ */
+function get_safe_orderby_multiple(array $orderbymap, array $orderbykeys, array $directions = []): string {
+    $output = '';
+
+    // Check each key for a valid mapping and add to the ORDER BY statement (invalid entries will be empty strings).
+    foreach ($orderbykeys as $index => $orderbykey) {
+        $direction = $directions[$index] ?? '';
+        $safeorderby = get_safe_orderby($orderbymap, $orderbykey, $direction, false);
+
+        if (!empty($safeorderby)) {
+            $output .= ", {$safeorderby}";
+        }
+    }
+
+    // Prefix with ORDER BY if any valid ordering is specified (and remove comma from the start).
+    if (!empty($output)) {
+        $output = ' ORDER BY' . ltrim($output, ',');
+    }
+
+    return $output;
 }

@@ -43,6 +43,8 @@
 .fp-navbar {
     border-color: $input-border-color;
     border-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .file-picker .fp-content {
@@ -607,6 +609,7 @@ a.ygtvspacer:hover {
 .filemanager-container {
     min-height: 140px;
     border: 1px solid $input-border-color;
+    @include border-radius();
 }
 
 .filemanager .fp-content {
@@ -618,9 +621,14 @@ a.ygtvspacer:hover {
 .filemanager-container,
 .filepicker-filelist {
     overflow: hidden;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .file-picker .yui3-datatable-header {
+    /*rtl:raw:
+    text-align: right;
+    */
     background: initial;
 }
 
@@ -692,6 +700,9 @@ a.ygtvspacer:hover {
 .filemanager {
 
     .yui3-datatable-header {
+        /*rtl:raw:
+        text-align: right;
+        */
         background: #fff !important;
         border-bottom: 1px solid #ccc !important;
         border-left: 0 solid #fff !important;

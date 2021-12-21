@@ -32,13 +32,9 @@ $mode  = optional_param('mode', 'singletemplate', PARAM_ALPHA);
 $useeditor = optional_param('useeditor', null, PARAM_BOOL);
 
 $url = new moodle_url('/mod/data/templates.php');
-if ($mode !== 'singletemplate') {
-    $url->param('mode', $mode);
-}
 
 if ($id) {
     $url->param('id', $id);
-    $PAGE->set_url($url);
     if (! $cm = get_coursemodule_from_id('data', $id)) {
         print_error('invalidcoursemodule');
     }
@@ -51,7 +47,6 @@ if ($id) {
 
 } else {
     $url->param('d', $d);
-    $PAGE->set_url($url);
     if (! $data = $DB->get_record('data', array('id'=>$d))) {
         print_error('invalidid', 'data');
     }
@@ -62,6 +57,9 @@ if ($id) {
         print_error('invalidcoursemodule');
     }
 }
+
+$url->param('mode', $mode);
+$PAGE->set_url($url);
 
 require_login($course, false, $cm);
 
@@ -104,17 +102,11 @@ $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 $PAGE->force_settings_menu(true);
+
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($data->name), 2);
-echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
 
-/// Groups needed for Add entry tab
-$currentgroup = groups_get_activity_group($cm);
-$groupmode = groups_get_activity_groupmode($cm);
-
-/// Print the tabs.
-$currenttab = 'templates';
-include('tabs.php');
+$actionbar = new \mod_data\output\action_bar($data->id, $url);
+echo $actionbar->get_templates_action_bar();
 
 /// Processing submitted data, i.e updating form.
 $resettemplate = false;
@@ -226,7 +218,8 @@ if ($mode == 'listtemplate'){
     $field = 'listtemplateheader';
     $editor->set_text($data->listtemplateheader);
     $editor->use_editor($field, $options);
-    echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->listtemplateheader).'</textarea></div>';
+    echo '<div><textarea id="'.$field.'" name="'.$field.'" class="form-control" rows="15" cols="80">' .
+        s($data->listtemplateheader) . '</textarea></div>';
 
     echo '</td>';
     echo '</tr>';
@@ -311,24 +304,6 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
 
     echo '</select>';
     echo '</div>';
-    echo '<br /><br /><br /><br />';
-    echo '<input type="submit" class="btn btn-secondary" name="defaultform" value="'.get_string('resettemplate', 'data').'" />';
-    echo '<br /><br />';
-    if ($usehtmleditor) {
-        $switchlink = new moodle_url($PAGE->url, ['useeditor' => false]);
-        echo html_writer::link($switchlink, get_string('editordisable', 'data'));
-    } else {
-        $switchlink = new moodle_url($PAGE->url, ['useeditor' => true]);
-        echo html_writer::link($switchlink, get_string('editorenable', 'data'), [
-                'id' => 'enabletemplateeditor',
-            ]);
-        $PAGE->requires->event_handler('#enabletemplateeditor', 'click', 'M.util.show_confirm_dialog', [
-                'message' => get_string('enabletemplateeditorcheck', 'data'),
-            ]);
-    }
-} else {
-    echo '<br /><br /><br /><br />';
-    echo '<input type="submit" class="btn btn-primary" name="defaultform" value="' . get_string('resettemplate', 'data') . '" />';
 }
 echo '</td>';
 
@@ -383,11 +358,26 @@ if ($mode == 'listtemplate'){
     echo '</tr>';
 }
 
-echo '<tr><td class="save_template" colspan="2">';
-echo '<input type="submit" class="btn btn-primary" value="'.get_string('savetemplate','data').'" />&nbsp;';
+echo '</table>';
+echo html_writer::start_div('container-fluid mt-4');
+echo html_writer::start_div('row');
 
-echo '</td></tr></table>';
+$resettemplatebutton = html_writer::empty_tag('input', ['type' => 'submit', 'name' => 'defaultform',
+    'class' => 'btn btn-secondary', 'value' => get_string('resettemplate', 'data')]);
+$savetemplatebutton = html_writer::empty_tag('input', ['type' => 'submit', 'class' => 'btn btn-primary ml-2',
+    'value' => get_string('savetemplate', 'data')]);
 
+echo html_writer::div($resettemplatebutton . $savetemplatebutton);
+
+if ($mode != 'csstemplate' and $mode != 'jstemplate') {
+    // Output the toggle template editor element.
+    $toggletemplateeditor = html_writer::checkbox('useeditor', 1, $usehtmleditor,
+        get_string('editorenable', 'data'), null, ['class' => 'pl-2']);
+    echo html_writer::div($toggletemplateeditor, 'ml-auto');
+    $PAGE->requires->js_call_amd('mod_data/templateseditor', 'init', ['d' => $d, 'mode' => $mode]);
+}
+echo html_writer::end_div();
+echo html_writer::end_div();
 
 echo $OUTPUT->box_end();
 echo '</div>';

@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -37,6 +36,7 @@ $string['chooselanguagesub'] = 'Сейчас необходимо выбрать
 $string['clialreadyconfigured'] = 'Файл config.php уже существует. Если Вы хотите установить Moodle на этот сайт, используйте admin/cli/install_database.php.';
 $string['clialreadyinstalled'] = 'Файл config.php уже существует. Если Вы хотите обновить сайт Moodle, то используйте скрипт admin/cli/upgrade.php.';
 $string['cliinstallheader'] = 'Программа установки Moodle {$a} в режиме командной строки';
+$string['clitablesexist'] = 'Таблицы базы данных уже существуют, невозможно продолжить установку в режиме командной строки.';
 $string['databasehost'] = 'Сервер баз данных';
 $string['databasename'] = 'Название базы данных';
 $string['databasetypehead'] = 'Выберите драйвер базы данных';

@@ -101,7 +101,7 @@ class mod_data_search_test extends advanced_testcase {
      * Set up function. In this instance we are setting up database
      * records to be used in the unit tests.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB, $CFG;
         parent::setUp();
 
@@ -164,7 +164,7 @@ class mod_data_search_test extends advanced_testcase {
                 'data_records' => __DIR__.'/fixtures/test_data_records.csv',
                 'data_content' => __DIR__.'/fixtures/test_data_content.csv',
         );
-        $this->loadDataSet($this->createCsvDataSet($files));
+        $this->dataset_from_files($files)->to_database();
         // Set dataid to the correct value now the data has been inserted by csv file.
         $DB->execute('UPDATE {data_fields} SET dataid = ?', array($data->id));
         $DB->execute('UPDATE {data_records} SET dataid = ?', array($data->id));
@@ -286,9 +286,9 @@ class mod_data_search_test extends advanced_testcase {
         $recordids = data_get_all_recordids($data1->id);
         $newrecordids = data_get_advance_search_ids($recordids, $searcharray, $data1->id);
 
-        $this->assertContains($record11, $newrecordids);
-        $this->assertContains($record12, $newrecordids);
-        $this->assertNotContains($record13, $newrecordids);
+        $this->assertContainsEquals($record11, $newrecordids);
+        $this->assertContainsEquals($record12, $newrecordids);
+        $this->assertNotContainsEquals($record13, $newrecordids);
     }
 
     /**
@@ -1016,7 +1016,7 @@ class mod_data_search_test extends advanced_testcase {
      * @param mod_data $data
      * @return void
      */
-    protected function create_default_data_fields($fieldtypes = array(), $data) {
+    protected function create_default_data_fields($fieldtypes, $data) {
         $count = 1;
 
         // Creating test Fields with default parameter values.

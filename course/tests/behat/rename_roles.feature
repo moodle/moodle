@@ -21,7 +21,7 @@ Feature: Rename roles within a course
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | Tutor |
       | Your word for 'Student' | Learner |
@@ -31,9 +31,11 @@ Feature: Rename roles within a course
     And "Learner" "button" should exist
     And I navigate to course participants
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I should see "Tutor (Non-editing teacher)" in the ".form-autocomplete-suggestions" "css_element"
+    And I open the autocomplete suggestions list in the "Filter 1" "fieldset"
     And I should see "Learner (Student)" in the ".form-autocomplete-suggestions" "css_element"
+    And I press the escape key
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Tutor (Non-editing teacher)"
+
     And I click on "Student 1's role assignments" "link"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Student 1" "table_row"
     And "Tutor (Non-editing teacher)" "autocomplete_suggestions" should exist
@@ -42,7 +44,7 @@ Feature: Rename roles within a course
     And the "Assign role" select box should contain "Learner (Student)"
     And I click on "Cancel" "button" in the "Enrol users" "dialogue"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | |
       | Your word for 'Student' | |
@@ -53,6 +55,6 @@ Feature: Rename roles within a course
     And "Learner" "button" should not exist
     And I navigate to course participants
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I open the autocomplete suggestions list in the "Filter 1" "fieldset"
     And I should see "Non-editing teacher" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "Student" in the ".form-autocomplete-suggestions" "css_element"

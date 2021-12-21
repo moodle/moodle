@@ -21,15 +21,22 @@
 
     Example context (json):
     {
-        "exportcalendarbutton": "<button class='btn btn-secondary'>Export calendar</button>",
-        "managesubscriptionbutton": "<button class='btn btn-secondary'>Manage subscriptions</button>"
+        "footerlinks": [
+            {
+                "url": "calendar/view.php?view=month",
+                "linkname": "Full calendar"
+            },
+            {
+                "url": "calendar/managesubscriptions.php",
+                "linkname": "Manage subcriptions"
+            }
+        ]
     }
 }}
 <div class="bottom">
-    {{#exportcalendarbutton}}
-        {{> core/single_button }}
-    {{/exportcalendarbutton}}
-    {{#managesubscriptionbutton}}
-        {{> core/single_button }}
-    {{/managesubscriptionbutton}}
+    {{#footerlinks}}
+        <span class="footer-link">
+            <a href="{{url}}">{{linkname}}</a>
+        </span>
+    {{/footerlinks}}
 </div>

@@ -24,11 +24,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $temp = new admin_settingpage('messages', new lang_string('messagingssettings', 'admin'));
-    $temp->add(new admin_setting_configcheckbox('messaging',
-        new lang_string('messaging', 'admin'),
-        new lang_string('configmessaging', 'admin'),
-        1));
+    $temp = new admin_settingpage('messages',
+        new lang_string('messagingssettings', 'admin'),
+        'moodle/site:config',
+        empty($CFG->messaging)
+    );
+
     $temp->add(new admin_setting_configcheckbox('messagingallusers',
             new lang_string('messagingallusers', 'admin'),
             new lang_string('configmessagingallusers', 'admin'),

@@ -28,8 +28,9 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/filelib.php");
 
-use H5PCore;
-use H5PFrameworkInterface;
+use Moodle\H5PCore;
+use Moodle\H5PFrameworkInterface;
+use Moodle\H5PHubEndpoints;
 use stdClass;
 use moodle_url;
 use core_h5p\local\library\autoloader;
@@ -41,7 +42,7 @@ use core_h5p\local\library\autoloader;
  * @copyright  2019 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core extends \H5PCore {
+class core extends H5PCore {
 
     /** @var array The array containing all the present libraries */
     protected $libraries;
@@ -50,7 +51,7 @@ class core extends \H5PCore {
      * Constructor for core_h5p/core.
      *
      * @param H5PFrameworkInterface $framework The frameworks implementation of the H5PFrameworkInterface
-     * @param string|\H5PFileStorage $path The H5P file storage directory or class
+     * @param string|H5PFileStorage $path The H5P file storage directory or class
      * @param string $url The URL to the file storage directory
      * @param string $language The language code. Defaults to english
      * @param boolean $export Whether export is enabled
@@ -179,6 +180,11 @@ class core extends \H5PCore {
         $framework = $factory->get_framework();
 
         foreach ($contenttypes->contentTypes as $type) {
+            // Don't fetch content types if any of the versions is disabled.
+            $librarydata = (object) ['machinename' => $type->id];
+            if (!api::is_library_enabled($librarydata)) {
+                continue;
+            }
             // Don't fetch content types that require a higher H5P core API version.
             if (!$this->is_required_core_api($type->coreApiVersionNeeded)) {
                 continue;
@@ -190,6 +196,13 @@ class core extends \H5PCore {
                 'minorVersion' => $type->version->minor,
                 'patchVersion' => $type->version->patch,
             ];
+            // Add example and tutorial to the library, to store this information too.
+            if (isset($type->example)) {
+                $library['example'] = $type->example;
+            }
+            if (isset($type->tutorial)) {
+                $library['tutorial'] = $type->tutorial;
+            }
 
             $shoulddownload = true;
             if ($framework->getLibraryId($type->id, $type->version->major, $type->version->minor)) {
@@ -201,7 +214,7 @@ class core extends \H5PCore {
             if ($shoulddownload) {
                 $installed['id'] = $this->fetch_content_type($library);
                 if ($installed['id']) {
-                    $installed['name'] = \H5PCore::libraryToString($library);
+                    $installed['name'] = H5PCore::libraryToString($library);
                     $typesinstalled[] = $installed;
                 }
             }
@@ -221,6 +234,8 @@ class core extends \H5PCore {
      * @return int|null Returns the id of the content type library installed, null otherwise.
      */
     public function fetch_content_type(array $library): ?int {
+        global $DB;
+
         $factory = new factory();
 
         // Download the latest content type from the H5P official repository.
@@ -250,6 +265,18 @@ class core extends \H5PCore {
         $librarykey = static::libraryToString($library);
         $libraryid = $factory->get_storage()->h5pC->librariesJsonData[$librarykey]["libraryId"];
 
+        // Update example and tutorial (if any of them are defined in $library).
+        $params = ['id' => $libraryid];
+        if (array_key_exists('example', $library)) {
+            $params['example'] = $library['example'];
+        }
+        if (array_key_exists('tutorial', $library)) {
+            $params['tutorial'] = $library['tutorial'];
+        }
+        if (count($params) > 1) {
+            $DB->update_record('h5p_libraries', $params);
+        }
+
         return $libraryid;
     }
 
@@ -266,9 +293,9 @@ class core extends \H5PCore {
      */
     public function get_api_endpoint(?string $library = null, string $endpoint = 'content'): moodle_url {
         if ($endpoint == 'site') {
-            $h5purl = \H5PHubEndpoints::createURL(\H5PHubEndpoints::SITES );
+            $h5purl = H5PHubEndpoints::createURL(H5PHubEndpoints::SITES );
         } else if ($endpoint == 'content') {
-            $h5purl = \H5PHubEndpoints::createURL(\H5PHubEndpoints::CONTENT_TYPES ) . $library;
+            $h5purl = H5PHubEndpoints::createURL(H5PHubEndpoints::CONTENT_TYPES ) . $library;
         }
 
         return new moodle_url($h5purl);

@@ -1,7 +1,7 @@
 <?php
 
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -9,7 +9,7 @@
   the BSD license will take precedence. See License.txt.
   Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   Library for basic performance monitoring and tuning
 
@@ -113,10 +113,8 @@ class perf_postgres extends adodb_perf{
 	        case ADODB_OPT_LOW : $sql = $this->optimizeTableLow;  break;
 	        case ADODB_OPT_HIGH: $sql = $this->optimizeTableHigh; break;
 	        default            :
-	        {
 	            ADOConnection::outp(sprintf("<p>%s: '%s' using of undefined mode '%s'</p>", __CLASS__, 'optimizeTable', $mode));
 	            return false;
-	        }
 	    }
 	    $sql = sprintf($sql, $table);
 

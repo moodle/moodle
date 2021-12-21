@@ -17,7 +17,6 @@
  * Our validator that splits the user's input then fires off to a webservice
  *
  * @module     tool_moodlenet/validator
- * @package    tool_moodlenet
  * @copyright  2020 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

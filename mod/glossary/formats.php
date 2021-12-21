@@ -78,8 +78,8 @@ echo '<table width="90%" align="center" class="generalbox">';
     <td align="right" width="20%"><?php echo html_writer::label(get_string('popupformat','glossary'), 'menupopupformatname'); ?></td>
     <td>
  <?php
-    //get and update available formats
-    $recformats = glossary_get_available_formats();
+    // Get available formats.
+    $recformats = $DB->get_records("glossary_formats");
 
     $formats = array();
 

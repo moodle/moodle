@@ -159,11 +159,6 @@ class Matrix
      *
      *    Get a submatrix
      *
-     * @param int $i0 Initial row index
-     * @param int $iF Final row index
-     * @param int $j0 Initial column index
-     * @param int $jF Final column index
-     *
      * @return Matrix Submatrix
      */
     public function getMatrix(...$args)
@@ -477,8 +472,6 @@ class Matrix
      *
      *    A + B
      *
-     * @param mixed $B Matrix/Array
-     *
      * @return Matrix Sum
      */
     public function plus(...$args)
@@ -522,9 +515,7 @@ class Matrix
      *
      *    A = A + B
      *
-     * @param mixed $B Matrix/Array
-     *
-     * @return Matrix Sum
+     * @return $this
      */
     public function plusEquals(...$args)
     {
@@ -581,8 +572,6 @@ class Matrix
      *
      *    A - B
      *
-     * @param mixed $B Matrix/Array
-     *
      * @return Matrix Sum
      */
     public function minus(...$args)
@@ -626,9 +615,7 @@ class Matrix
      *
      *    A = A - B
      *
-     * @param mixed $B Matrix/Array
-     *
-     * @return Matrix Sum
+     * @return $this
      */
     public function minusEquals(...$args)
     {
@@ -686,8 +673,6 @@ class Matrix
      *    Element-by-element multiplication
      *    Cij = Aij * Bij
      *
-     * @param mixed $B Matrix/Array
-     *
      * @return Matrix Matrix Cij
      */
     public function arrayTimes(...$args)
@@ -732,9 +717,7 @@ class Matrix
      *    Element-by-element multiplication
      *    Aij = Aij * Bij
      *
-     * @param mixed $B Matrix/Array
-     *
-     * @return Matrix Matrix Aij
+     * @return $this
      */
     public function arrayTimesEquals(...$args)
     {
@@ -791,8 +774,6 @@ class Matrix
      *
      *    Element-by-element right division
      *    A / B
-     *
-     * @param Matrix $B Matrix B
      *
      * @return Matrix Division result
      */
@@ -857,8 +838,6 @@ class Matrix
      *    Element-by-element right division
      *    Aij = Aij / Bij
      *
-     * @param mixed $B Matrix/Array
-     *
      * @return Matrix Matrix Aij
      */
     public function arrayRightDivideEquals(...$args)
@@ -902,8 +881,6 @@ class Matrix
      *
      *    Element-by-element Left division
      *    A / B
-     *
-     * @param Matrix $B Matrix B
      *
      * @return Matrix Division result
      */
@@ -949,8 +926,6 @@ class Matrix
      *    Element-by-element Left division
      *    Aij = Aij / Bij
      *
-     * @param mixed $B Matrix/Array
-     *
      * @return Matrix Matrix Aij
      */
     public function arrayLeftDivideEquals(...$args)
@@ -993,8 +968,6 @@ class Matrix
      * times.
      *
      *    Matrix multiplication
-     *
-     * @param mixed $n Matrix/Array/Scalar
      *
      * @return Matrix Product
      */
@@ -1089,9 +1062,7 @@ class Matrix
      *
      *    A = A ^ B
      *
-     * @param mixed $B Matrix/Array
-     *
-     * @return Matrix Sum
+     * @return $this
      */
     public function power(...$args)
     {
@@ -1130,7 +1101,7 @@ class Matrix
                         $validValues &= StringHelper::convertToNumberIfFraction($value);
                     }
                     if ($validValues) {
-                        $this->A[$i][$j] = pow($this->A[$i][$j], $value);
+                        $this->A[$i][$j] = $this->A[$i][$j] ** $value;
                     } else {
                         $this->A[$i][$j] = Functions::NAN();
                     }
@@ -1148,9 +1119,7 @@ class Matrix
      *
      *    A = A & B
      *
-     * @param mixed $B Matrix/Array
-     *
-     * @return Matrix Sum
+     * @return $this
      */
     public function concat(...$args)
     {

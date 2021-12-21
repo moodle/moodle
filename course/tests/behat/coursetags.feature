@@ -25,7 +25,7 @@ Feature: Tagging courses
       | teacher2 | c2     | teacher        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Tags | Mathematics |
     And I press "Save and display"
@@ -34,20 +34,20 @@ Feature: Tagging courses
   Scenario: Set course tags using the course edit form
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then "Mathematics" "autocomplete_suggestions" should exist
     And I set the following fields to these values:
-      | Tags | Algebra |
+      | Tags | Mathematics, Algebra |
     And I press "Save and display"
     And I am on "Course 2" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Tags | Mathematics, Geometry |
     And I press "Save and display"
     And I log out
     And I log in as "user1"
-    And I press "Customise this page"
+    And I turn editing mode on
     # TODO MDL-57120 "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -75,7 +75,7 @@ Feature: Tagging courses
     And I navigate to "Course tags" in current page administration
     Then I should see "Mathematics" in the ".form-autocomplete-selection" "css_element"
     And I set the following fields to these values:
-      | Tags | Algebra |
+      | Tags | Mathematics, Algebra |
     And I press "Save changes"
     And I am on "Course 2" course homepage
     And I navigate to "Course tags" in current page administration
@@ -84,7 +84,7 @@ Feature: Tagging courses
     And I press "Save changes"
     And I log out
     And I log in as "user1"
-    And I press "Customise this page"
+    And I turn editing mode on
     # TODO MDL-57120 "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"

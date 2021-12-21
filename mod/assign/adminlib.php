@@ -274,8 +274,8 @@ class assign_plugin_manager {
      * @return string The next page to display
      */
     public function hide_plugin($plugin) {
-        set_config('disabled', 1, $this->subtype . '_' . $plugin);
-        core_plugin_manager::reset_caches();
+        $class = \core_plugin_manager::resolve_plugininfo_class($this->subtype);
+        $class::enable_plugin($plugin, false);
         return 'view';
     }
 
@@ -333,8 +333,8 @@ class assign_plugin_manager {
      * @return string The next page to display
      */
     public function show_plugin($plugin) {
-        set_config('disabled', 0, $this->subtype . '_' . $plugin);
-        core_plugin_manager::reset_caches();
+        $class = \core_plugin_manager::resolve_plugininfo_class($this->subtype);
+        $class::enable_plugin($plugin, true);
         return 'view';
     }
 

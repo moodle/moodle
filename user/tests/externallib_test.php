@@ -53,17 +53,11 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
-            'icq' => 'testuser1',
-            'skype' => 'testuser1',
-            'yahoo' => 'testuser1',
-            'aim' => 'testuser1',
-            'msn' => 'testuser1',
             'department' => 'Department of user 1',
             'institution' => 'Institution of user 1',
             'description' => 'This is a description for user 1',
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
-            'url' => 'http://moodle.org',
             'country' => 'AU'
             );
 
@@ -128,21 +122,6 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             if (!empty($generateduser->phone2)) {
                 $this->assertEquals($generateduser->phone2, $returneduser['phone2']);
             }
-            if (!empty($generateduser->icq)) {
-                $this->assertEquals($generateduser->icq, $returneduser['icq']);
-            }
-            if (!empty($generateduser->skype)) {
-                $this->assertEquals($generateduser->skype, $returneduser['skype']);
-            }
-            if (!empty($generateduser->yahoo)) {
-                $this->assertEquals($generateduser->yahoo, $returneduser['yahoo']);
-            }
-            if (!empty($generateduser->aim)) {
-                $this->assertEquals($generateduser->aim, $returneduser['aim']);
-            }
-            if (!empty($generateduser->msn)) {
-                $this->assertEquals($generateduser->msn, $returneduser['msn']);
-            }
             if (!empty($generateduser->department)) {
                 $this->assertEquals($generateduser->department, $returneduser['department']);
             }
@@ -160,9 +139,6 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             }
             if (!empty($generateduser->country)) {
                 $this->assertEquals($generateduser->country, $returneduser['country']);
-            }
-            if (!empty($generateduser->url)) {
-                $this->assertEquals($generateduser->url, $returneduser['url']);
             }
             if (!empty($CFG->usetags) and !empty($generateduser->interests)) {
                 $this->assertEquals(implode(', ', $generateduser->interests), $returneduser['interests']);
@@ -211,17 +187,11 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
-            'icq' => 'testuser1',
-            'skype' => 'testuser1',
-            'yahoo' => 'testuser1',
-            'aim' => 'testuser1',
-            'msn' => 'testuser1',
             'department' => 'Department of user 1',
             'institution' => 'Institution of user 1',
             'description' => 'This is a description for user 1',
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
-            'url' => 'http://moodle.org',
             'country' => 'AU',
         );
         $user1 = self::getDataGenerator()->create_user($user1);
@@ -289,21 +259,6 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
                 if (!empty($generateduser->phone2)) {
                     $this->assertEquals($generateduser->phone2, $returneduser['phone2']);
                 }
-                if (!empty($generateduser->icq)) {
-                    $this->assertEquals($generateduser->icq, $returneduser['icq']);
-                }
-                if (!empty($generateduser->skype)) {
-                    $this->assertEquals($generateduser->skype, $returneduser['skype']);
-                }
-                if (!empty($generateduser->yahoo)) {
-                    $this->assertEquals($generateduser->yahoo, $returneduser['yahoo']);
-                }
-                if (!empty($generateduser->aim)) {
-                    $this->assertEquals($generateduser->aim, $returneduser['aim']);
-                }
-                if (!empty($generateduser->msn)) {
-                    $this->assertEquals($generateduser->msn, $returneduser['msn']);
-                }
                 if (!empty($generateduser->department)) {
                     $this->assertEquals($generateduser->department, $returneduser['department']);
                 }
@@ -321,9 +276,6 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
                 }
                 if (!empty($generateduser->country)) {
                     $this->assertEquals($generateduser->country, $returneduser['country']);
-                }
-                if (!empty($generateduser->url)) {
-                    $this->assertEquals($generateduser->url, $returneduser['url']);
                 }
                 if (!empty($CFG->usetags) and !empty($generateduser->interests)) {
                     $this->assertEquals(implode(', ', $generateduser->interests), $returneduser['interests']);
@@ -375,17 +327,11 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
-            'icq' => 'testuser1',
-            'skype' => 'testuser1',
-            'yahoo' => 'testuser1',
-            'aim' => 'testuser1',
-            'msn' => 'testuser1',
             'department' => 'Department of user 1',
             'institution' => 'Institution of user 1',
             'description' => 'This is a description for user 1',
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
-            'url' => 'http://moodle.org',
             'country' => 'AU'
         );
         $return->user1 = self::getDataGenerator()->create_user($return->user1);
@@ -457,18 +403,12 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($data->user1->address, $enrolleduser['address']);
                 $this->assertEquals($data->user1->phone1, $enrolleduser['phone1']);
                 $this->assertEquals($data->user1->phone2, $enrolleduser['phone2']);
-                $this->assertEquals($data->user1->icq, $enrolleduser['icq']);
-                $this->assertEquals($data->user1->skype, $enrolleduser['skype']);
-                $this->assertEquals($data->user1->yahoo, $enrolleduser['yahoo']);
-                $this->assertEquals($data->user1->aim, $enrolleduser['aim']);
-                $this->assertEquals($data->user1->msn, $enrolleduser['msn']);
                 $this->assertEquals($data->user1->department, $enrolleduser['department']);
                 $this->assertEquals($data->user1->institution, $enrolleduser['institution']);
                 $this->assertEquals($data->user1->description, $enrolleduser['description']);
                 $this->assertEquals(FORMAT_HTML, $enrolleduser['descriptionformat']);
                 $this->assertEquals($data->user1->city, $enrolleduser['city']);
                 $this->assertEquals($data->user1->country, $enrolleduser['country']);
-                $this->assertEquals($data->user1->url, $enrolleduser['url']);
                 if (!empty($CFG->usetags)) {
                     $this->assertEquals(implode(', ', $data->user1->interests), $enrolleduser['interests']);
                 }
@@ -679,7 +619,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Data provider for {@link self::test_create_users_invalid_parameter()}.
+     * Data provider for {@see self::test_create_users_invalid_parameter()}.
      *
      * @return array
      */
@@ -775,6 +715,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
+        $this->preventResetByRollback();
 
         $wsuser = self::getDataGenerator()->create_user();
         self::setUser($wsuser);
@@ -840,8 +781,20 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $user4['id'] = $userdeleted->id;
         user_delete_user($userdeleted);
 
+        $user5 = self::getDataGenerator()->create_user();
+        $user5 = array('id' => $user5->id, 'email' => $user5->email);
+
         // Call the external function.
-        core_user_external::update_users(array($user1, $user2, $user3, $user4));
+        $returnvalue = core_user_external::update_users(array($user1, $user2, $user3, $user4));
+        $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
+
+        // Check warnings.
+        $this->assertEquals($user2['id'], $returnvalue['warnings'][0]['itemid']); // Guest user.
+        $this->assertEquals('usernotupdatedguest', $returnvalue['warnings'][0]['warningcode']);
+        $this->assertEquals($user3['id'], $returnvalue['warnings'][1]['itemid']); // Admin user.
+        $this->assertEquals('usernotupdatedadmin', $returnvalue['warnings'][1]['warningcode']);
+        $this->assertEquals($user4['id'], $returnvalue['warnings'][2]['itemid']); // Deleted user.
+        $this->assertEquals('usernotupdateddeleted', $returnvalue['warnings'][2]['warningcode']);
 
         $dbuser2 = $DB->get_record('user', array('id' => $user2['id']));
         $this->assertNotEquals($dbuser2->username, $user2['username']);
@@ -884,6 +837,39 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $dbuserdelpic = $DB->get_record('user', array('id' => $user1['id']));
         $this->assertEquals(0, $dbuserdelpic->picture, 'Picture must be deleted when sent as 0.');
 
+        // Updating user with an invalid email.
+        $user5['email'] = 'bogus';
+        $returnvalue = core_user_external::update_users(array($user5));
+        $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
+        $this->assertEquals('useremailinvalid', $returnvalue['warnings'][0]['warningcode']);
+        $this->assertStringContainsString('Invalid email address',
+            $returnvalue['warnings'][0]['message']);
+
+        // Updating user with a duplicate email.
+        $user5['email'] = $user1['email'];
+        $returnvalue = core_user_external::update_users(array($user1, $user5));
+        $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
+        $this->assertEquals('useremailduplicate', $returnvalue['warnings'][0]['warningcode']);
+        $this->assertStringContainsString('Duplicate email address',
+                $returnvalue['warnings'][0]['message']);
+
+        // Updating a user that does not exist.
+        $user5['id'] = -1;
+        $returnvalue = core_user_external::update_users(array($user5));
+        $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
+        $this->assertEquals('invaliduserid', $returnvalue['warnings'][0]['warningcode']);
+        $this->assertStringContainsString('Invalid user ID',
+                $returnvalue['warnings'][0]['message']);
+
+        // Updating a remote user.
+        $user1['mnethostid'] = 5;
+        user_update_user($user1); // Update user not using webservice.
+        unset($user1['mnethostid']); // The mnet host ID field is not in the allowed field list for the webservice.
+        $returnvalue = core_user_external::update_users(array($user1));
+        $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);
+        $this->assertEquals('usernotupdatedremote', $returnvalue['warnings'][0]['warningcode']);
+        $this->assertStringContainsString('User is a remote user',
+                $returnvalue['warnings'][0]['message']);
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/user:update', $context->id, $roleid);
@@ -1218,9 +1204,9 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
         $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
         // The new revision is in the url for the user.
-        $this->assertContains($picture, $result['profileimageurl']);
+        $this->assertStringContainsString($picture, $result['profileimageurl']);
         // Check expected URL for serving the image.
-        $this->assertContains("/$contextid/user/icon", $result['profileimageurl']);
+        $this->assertStringContainsString("/$contextid/user/icon", $result['profileimageurl']);
 
         // Delete image.
         $result = core_user_external::update_picture(0, true);
@@ -1241,8 +1227,8 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
         // The new revision is in the url for the user.
         $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
-        $this->assertContains($picture, $result['profileimageurl']);
-        $this->assertContains("/$contextid/user/icon", $result['profileimageurl']);
+        $this->assertStringContainsString($picture, $result['profileimageurl']);
+        $this->assertStringContainsString("/$contextid/user/icon", $result['profileimageurl']);
     }
 
     /**
@@ -1537,5 +1523,150 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $this->expectException('required_capability_exception');
         // Try to retrieve other user private files info.
         core_user_external::get_private_files_info($user2->id);
+    }
+
+    /**
+     * Test the functionality of the {@see \core_user\external\search_identity} class.
+     */
+    public function test_external_search_identity() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $user1 = self::getDataGenerator()->create_user([
+            'firstname' => 'Firstone',
+            'lastname' => 'Lastone',
+            'username' => 'usernameone',
+            'idnumber' => 'idnumberone',
+            'email' => 'userone@example.com',
+            'phone1' => 'tel1',
+            'phone2' => 'tel2',
+            'department' => 'Department Foo',
+            'institution' => 'Institution Foo',
+            'city' => 'City One',
+            'country' => 'AU',
+        ]);
+
+        $user2 = self::getDataGenerator()->create_user([
+            'firstname' => 'Firsttwo',
+            'lastname' => 'Lasttwo',
+            'username' => 'usernametwo',
+            'idnumber' => 'idnumbertwo',
+            'email' => 'usertwo@example.com',
+            'phone1' => 'tel1',
+            'phone2' => 'tel2',
+            'department' => 'Department Foo',
+            'institution' => 'Institution Foo',
+            'city' => 'City One',
+            'country' => 'AU',
+        ]);
+
+        $user3 = self::getDataGenerator()->create_user([
+            'firstname' => 'Firstthree',
+            'lastname' => 'Lastthree',
+            'username' => 'usernamethree',
+            'idnumber' => 'idnumberthree',
+            'email' => 'userthree@example.com',
+            'phone1' => 'tel1',
+            'phone2' => 'tel2',
+            'department' => 'Department Foo',
+            'institution' => 'Institution Foo',
+            'city' => 'City One',
+            'country' => 'AU',
+        ]);
+
+        $CFG->showuseridentity = 'email,idnumber,city';
+        $CFG->maxusersperpage = 3;
+
+        $result = \core_user\external\search_identity::execute('Lastt');
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+
+        $this->assertEquals(2, count($result['list']));
+        $this->assertEquals(3, $result['maxusersperpage']);
+        $this->assertEquals(false, $result['overflow']);
+
+        foreach ($result['list'] as $user) {
+            $this->assertEquals(3, count($user['extrafields']));
+            $this->assertEquals('email', $user['extrafields'][0]['name']);
+            $this->assertEquals('idnumber', $user['extrafields'][1]['name']);
+            $this->assertEquals('city', $user['extrafields'][2]['name']);
+        }
+
+        $CFG->showuseridentity = 'username';
+        $CFG->maxusersperpage = 2;
+
+        $result = \core_user\external\search_identity::execute('Firstt');
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+
+        $this->assertEquals(2, count($result['list']));
+        $this->assertEquals(2, $result['maxusersperpage']);
+        $this->assertEquals(false, $result['overflow']);
+
+        foreach ($result['list'] as $user) {
+            $this->assertEquals(1, count($user['extrafields']));
+            $this->assertEquals('username', $user['extrafields'][0]['name']);
+        }
+
+        $CFG->showuseridentity = 'email';
+        $CFG->maxusersperpage = 2;
+
+        $result = \core_user\external\search_identity::execute('City One');
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+
+        $this->assertEquals(0, count($result['list']));
+        $this->assertEquals(2, $result['maxusersperpage']);
+        $this->assertEquals(false, $result['overflow']);
+
+        $CFG->showuseridentity = 'city';
+        $CFG->maxusersperpage = 2;
+
+        foreach ($result['list'] as $user) {
+            $this->assertEquals(1, count($user['extrafields']));
+            $this->assertEquals('username', $user['extrafields'][0]['name']);
+        }
+
+        $result = \core_user\external\search_identity::execute('City One');
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+
+        $this->assertEquals(2, count($result['list']));
+        $this->assertEquals(2, $result['maxusersperpage']);
+        $this->assertEquals(true, $result['overflow']);
+    }
+
+    /**
+     * Test functionality of the {@see \core_user\external\search_identity} class with alternativefullnameformat defined.
+     */
+    public function test_external_search_identity_with_alternativefullnameformat() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $user1 = self::getDataGenerator()->create_user([
+            'lastname' => '小柳',
+            'lastnamephonetic' => 'Koyanagi',
+            'firstname' => '秋',
+            'firstnamephonetic' => 'Aki',
+            'email' => 'koyanagiaki@example.com',
+            'country' => 'JP',
+        ]);
+
+        $CFG->showuseridentity = 'email';
+        $CFG->maxusersperpage = 3;
+        $CFG->alternativefullnameformat =
+            '<ruby>lastname firstname <rp>(</rp><rt>lastnamephonetic firstnamephonetic</rt><rp>)</rp></ruby>';
+
+        $result = \core_user\external\search_identity::execute('Ak');
+        $result = external_api::clean_returnvalue(\core_user\external\search_identity::execute_returns(), $result);
+
+        $this->assertEquals(1, count($result['list']));
+        $this->assertEquals(3, $result['maxusersperpage']);
+        $this->assertEquals(false, $result['overflow']);
+
+        foreach ($result['list'] as $user) {
+            $this->assertEquals(1, count($user['extrafields']));
+            $this->assertEquals('email', $user['extrafields'][0]['name']);
+        }
     }
 }

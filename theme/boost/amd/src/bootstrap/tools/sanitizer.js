@@ -1,7 +1,7 @@
 /**
  * --------------------------------------------------------------------------
- * Bootstrap (v4.5.0): tools/sanitizer.js
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * Bootstrap (v4.6.0): tools/sanitizer.js
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  * --------------------------------------------------------------------------
  */
 
@@ -77,7 +77,7 @@ function allowedAttribute(attr, allowedAttributeList) {
     return true
   }
 
-  const regExp = allowedAttributeList.filter((attrRegex) => attrRegex instanceof RegExp)
+  const regExp = allowedAttributeList.filter(attrRegex => attrRegex instanceof RegExp)
 
   // Check if a regular expression validates the attribute.
   for (let i = 0, len = regExp.length; i < len; i++) {
@@ -116,7 +116,7 @@ export function sanitizeHtml(unsafeHtml, whiteList, sanitizeFn) {
     const attributeList = [].slice.call(el.attributes)
     const whitelistedAttributes = [].concat(whiteList['*'] || [], whiteList[elName] || [])
 
-    attributeList.forEach((attr) => {
+    attributeList.forEach(attr => {
       if (!allowedAttribute(attr, whitelistedAttributes)) {
         el.removeAttribute(attr.nodeName)
       }

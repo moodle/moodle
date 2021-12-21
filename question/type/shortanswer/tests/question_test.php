@@ -226,4 +226,19 @@ class qtype_shortanswer_question_test extends advanced_testcase {
                 question_classified_response::no_response()),
                 $sa->classify_response(array('answer' => '')));
     }
+
+    /**
+     * test_get_question_definition_for_external_rendering
+     */
+    public function test_get_question_definition_for_external_rendering() {
+        $this->resetAfterTest();
+
+        $question = test_question_maker::make_question('shortanswer');
+        $question->start_attempt(new question_attempt_step(), 1);
+        $qa = test_question_maker::get_a_qa($question);
+        $displayoptions = new question_display_options();
+
+        $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
+        $this->assertNull($options);
+    }
 }

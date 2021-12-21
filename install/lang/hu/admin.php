@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -39,5 +38,5 @@ $string['clitypevaluedefault'] = 'érték beírása, Enter esetén alapérték (
 $string['cliunknowoption'] = 'Ismeretlen paraméter: {$a}. Használja a --help paramétert.';
 $string['cliyesnoprompt'] = 'írjon be i-t (igen) vagy n-t (nem)';
 $string['environmentrequireinstall'] = 'telepíteni kell és be kell kapcsolni';
-$string['environmentrequireversion'] = 'a {$a->needed} változatot kell a mostani {$a->current} helyett használni';
+$string['environmentrequireversion'] = 'minimum a {$a->needed} változat szükséges,  jelenleg a {$a->current} verziót használja';
 $string['upgradekeyset'] = 'Frissítési kulcs (beállítás kihagyásához hagyja üresen)';

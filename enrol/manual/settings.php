@@ -63,7 +63,7 @@ if ($ADMIN->fulltree) {
         $student = get_archetype_roles('student');
         $student = reset($student);
         $settings->add(new admin_setting_configselect('enrol_manual/roleid',
-            get_string('defaultrole', 'role'), '', $student->id, $options));
+            get_string('defaultrole', 'role'), '', $student->id ?? null, $options));
     }
 
     $options = array(2 => get_string('coursestart'), 3 => get_string('today'), 4 => get_string('now', 'enrol_manual'));

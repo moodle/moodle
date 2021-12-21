@@ -25,6 +25,8 @@
 use core_h5p\factory;
 use core_h5p\framework;
 use core_h5p\local\library\autoloader;
+use Moodle\H5PCore;
+use Moodle\H5PEditorEndpoints;
 
 define('AJAX_SCRIPT', true);
 
@@ -55,7 +57,9 @@ switch ($action) {
         $major = optional_param('majorVersion', 0, PARAM_INT);
         $minor = optional_param('minorVersion', 0, PARAM_INT);
 
-        $language = optional_param('default-language', null, PARAM_ALPHA);
+        // Normalise Moodle language using underscore, as opposed to H5P which uses dash.
+        $language = optional_param('default-language', null, PARAM_RAW);
+        $language = clean_param(str_replace('-', '_', $language), PARAM_LANG);
 
         if (!empty($name)) {
             $editor->ajax->action(H5PEditorEndpoints::SINGLE_LIBRARY, $name,
@@ -77,6 +81,17 @@ switch ($action) {
     case 'files':
         $token = required_param('token', PARAM_RAW);
         $contentid = required_param('contentId', PARAM_INT);
+
+        $maxsize = get_max_upload_file_size($CFG->maxbytes);
+        // Check size of each uploaded file and scan for viruses.
+        foreach ($_FILES as $uploadedfile) {
+            $filename = clean_param($uploadedfile['name'], PARAM_FILE);
+            if ($uploadedfile['size'] > $maxsize) {
+                H5PCore::ajaxError(get_string('maxbytesfile', 'error', ['file' => $filename, 'size' => display_size($maxsize, 0)]));
+                return;
+            }
+            \core\antivirus\manager::scan_file($uploadedfile['tmp_name'], $filename, true);
+        }
 
         $editor->ajax->action(H5PEditorEndpoints::FILES, $token, $contentid);
         break;

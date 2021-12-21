@@ -366,7 +366,7 @@ class assignfeedback_editpdf_testcase extends advanced_testcase {
         $output = ob_get_clean();
 
         // Verify it acted on both submissions in the queue.
-        $this->assertContains("Convert 1 submission attempt(s) for assignment {$assign->get_instance()->id}", $output);
+        $this->assertStringContainsString("Convert 1 submission attempt(s) for assignment {$assign->get_instance()->id}", $output);
         $this->assertEquals(0, $DB->count_records('assignfeedback_editpdf_queue'));
 
         // Set a known limit.
@@ -390,7 +390,7 @@ class assignfeedback_editpdf_testcase extends advanced_testcase {
         $output = ob_get_clean();
 
         // Verify that the cron task skipped the submission.
-        $this->assertNotContains("Convert 1 submission attempt(s) for assignment {$assign->get_instance()->id}", $output);
+        $this->assertStringNotContainsString("Convert 1 submission attempt(s) for assignment {$assign->get_instance()->id}", $output);
         // And it removed it from the queue.
         $this->assertEquals(0, $DB->count_records('assignfeedback_editpdf_queue'));
 

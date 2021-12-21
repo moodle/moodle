@@ -92,6 +92,10 @@ abstract class question_edit_form extends question_wizard_form {
     public $fileoptions;
     /** @var object instance of question type */
     public $instance;
+    /** @var object instance of custom field */
+    protected $customfieldhandler;
+    /** @var bool custom field plugin enabled or disabled*/
+    protected $customfieldpluginenabled = true;
 
     public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
         global $DB;
@@ -110,7 +114,26 @@ abstract class question_edit_form extends question_wizard_form {
         $this->category = $category;
         $this->categorycontext = context::instance_by_id($category->contextid);
 
-        parent::__construct($submiturl, null, 'post', '', null, $formeditable);
+        if (!\core\plugininfo\qbank::is_plugin_enabled('qbank_customfields')) {
+            $this->customfieldpluginenabled = false;
+        }
+
+        parent::__construct($submiturl, null, 'post', '', ['data-qtype' => $this->qtype()], $formeditable);
+    }
+
+    /**
+     * Return default value for a given form element either from user_preferences table or $default.
+     *
+     * To make use of user_preferences in your qtype default settings, you need to replace
+     * $mform->setDefault({elementname}, {defaultvalue}); in edit_{qtypename}_form.php with
+     * $mform->setDefault({elementname}, $this->get_default_value({elementname}, {defaultvalue}));
+     *
+     * @param string $name the name of the form field.
+     * @param mixed $default default value.
+     * @return string|null default value for a given form element.
+     */
+    protected function get_default_value(string $name, $default): ?string {
+        return question_bank::get_qtype($this->qtype())->get_default_value($name, $default);
     }
 
     /**
@@ -121,10 +144,7 @@ abstract class question_edit_form extends question_wizard_form {
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
     protected function definition() {
-        global $COURSE, $CFG, $DB, $PAGE;
-
-        $qtype = $this->qtype();
-        $langfile = "qtype_{$qtype}";
+        global $DB, $PAGE;
 
         $mform = $this->_form;
 
@@ -189,7 +209,7 @@ abstract class question_edit_form extends question_wizard_form {
 
         $mform->addElement('float', 'defaultmark', get_string('defaultmark', 'question'),
                 array('size' => 7));
-        $mform->setDefault('defaultmark', 1);
+        $mform->setDefault('defaultmark', $this->get_default_value('defaultmark', 1));
         $mform->addRule('defaultmark', null, 'required', null, 'client');
 
         $mform->addElement('editor', 'generalfeedback', get_string('generalfeedback', 'question'),
@@ -204,8 +224,17 @@ abstract class question_edit_form extends question_wizard_form {
         // Any questiontype specific fields.
         $this->definition_inner($mform);
 
-        if (core_tag_tag::is_enabled('core_question', 'question')) {
+        if (core_tag_tag::is_enabled('core_question', 'question')
+            && class_exists('qbank_tagquestion\\tags_action_column')
+            && \core\plugininfo\qbank::is_plugin_enabled('qbank_tagquestion')) {
             $this->add_tag_fields($mform);
+        }
+
+        if ($this->customfieldpluginenabled) {
+            // Add custom fields to the form.
+            $this->customfieldhandler = qbank_customfields\customfield\question_handler::create();
+            $this->customfieldhandler->set_parent_context($this->categorycontext); // For question handler only.
+            $this->customfieldhandler->instance_form_definition($mform, empty($this->question->id) ? 0 : $this->question->id);
         }
 
         if (!empty($this->question->id)) {
@@ -221,7 +250,7 @@ abstract class question_edit_form extends question_wizard_form {
                 $a->user = get_string('unknown', 'question');
             }
             $mform->addElement('static', 'created', get_string('created', 'question'),
-                     get_string('byandon', 'question', $a));
+                    get_string('byandon', 'question', $a));
             if (!empty($this->question->modifiedby)) {
                 $a = new stdClass();
                 $a->time = userdate($this->question->timemodified);
@@ -242,11 +271,13 @@ abstract class question_edit_form extends question_wizard_form {
 
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'updatebutton',
-                             get_string('savechangesandcontinueediting', 'question'));
+                get_string('savechangesandcontinueediting', 'question'));
         if ($this->can_preview()) {
-            $previewlink = $PAGE->get_renderer('core_question')->question_preview_link(
-                    $this->question->id, $this->context, true);
-            $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
+            if (\core\plugininfo\qbank::is_plugin_enabled('qbank_previewquestion')) {
+                $previewlink = $PAGE->get_renderer('qbank_previewquestion')->question_preview_link(
+                        $this->question->id, $this->context, true);
+                $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
+            }
         }
 
         $mform->addGroup($buttonarray, 'updatebuttonar', '', array(' '), false);
@@ -255,7 +286,7 @@ abstract class question_edit_form extends question_wizard_form {
         $this->add_action_buttons(true, get_string('savechanges'));
 
         if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit ||
-                $this->question->formoptions->cansaveasnew))) {
+                        $this->question->formoptions->cansaveasnew))) {
             $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar', 'currentgrp'));
         }
     }
@@ -267,6 +298,17 @@ abstract class question_edit_form extends question_wizard_form {
      */
     protected function definition_inner($mform) {
         // By default, do nothing.
+    }
+
+    /**
+     * Tweak the form with values provided by custom fields in use.
+     */
+    public function definition_after_data() {
+        $mform = $this->_form;
+        if ($this->customfieldpluginenabled) {
+            $this->customfieldhandler->instance_form_definition_after_data($mform,
+                empty($this->question->id) ? 0 : $this->question->id);
+        }
     }
 
     /**
@@ -295,9 +337,9 @@ abstract class question_edit_form extends question_wizard_form {
         $answeroptions[] = $mform->createElement('text', 'answer',
                 $label, array('size' => 40));
         $answeroptions[] = $mform->createElement('select', 'fraction',
-                get_string('grade'), $gradeoptions);
+                get_string('gradenoun'), $gradeoptions);
         $repeated[] = $mform->createElement('group', 'answeroptions',
-                 $label, $answeroptions, null, false);
+                $label, $answeroptions, null, false);
         $repeated[] = $mform->createElement('editor', 'feedback',
                 get_string('feedback', 'question'), array('rows' => 5), $this->editoroptions);
         $repeatedoptions['answer']['type'] = PARAM_RAW;
@@ -365,7 +407,7 @@ abstract class question_edit_form extends question_wizard_form {
             // and the question isn't a course or activity level question then
             // allow course tags to be added to the course.
             $coursetagheader = get_string('questionformtagheader', 'core_question',
-                $editingcoursecontext->get_context_name(true));
+                    $editingcoursecontext->get_context_name(true));
             $mform->addElement('header', 'coursetagsheader', $coursetagheader);
             $mform->addElement('autocomplete', 'coursetags',  get_string('tags'), $tagstrings, $options);
 
@@ -388,7 +430,7 @@ abstract class question_edit_form extends question_wizard_form {
     protected function add_per_answer_fields(&$mform, $label, $gradeoptions,
             $minoptions = QUESTION_NUMANS_START, $addoptions = QUESTION_NUMANS_ADD) {
         $mform->addElement('header', 'answerhdr',
-                    get_string('answers', 'question'), '');
+                get_string('answers', 'question'), '');
         $mform->setExpanded('answerhdr', 1);
         $answersoption = '';
         $repeatedoptions = array();
@@ -422,8 +464,8 @@ abstract class question_edit_form extends question_wizard_form {
         $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
         foreach ($fields as $feedbackname) {
             $element = $mform->addElement('editor', $feedbackname,
-                                get_string($feedbackname, 'question'),
-                                array('rows' => 5), $this->editoroptions);
+                    get_string($feedbackname, 'question'),
+                    array('rows' => 5), $this->editoroptions);
             $mform->setType($feedbackname, PARAM_RAW);
             // Using setValue() as setDefault() does not work for the editor class.
             $element->setValue(array('text' => get_string($feedbackname.'default', 'question')));
@@ -464,7 +506,7 @@ abstract class question_edit_form extends question_wizard_form {
 
         if (count($optionelements)) {
             $repeated[] = $mform->createElement('group', 'hintoptions',
-                 get_string('hintnoptions', 'question'), $optionelements, null, false);
+                    get_string('hintnoptions', 'question'), $optionelements, null, false);
         }
 
         return array($repeated, $repeatedoptions);
@@ -497,7 +539,7 @@ abstract class question_edit_form extends question_wizard_form {
         $mform->addElement('select', 'penalty',
                 get_string('penaltyforeachincorrecttry', 'question'), $penaltyoptions);
         $mform->addHelpButton('penalty', 'penaltyforeachincorrecttry', 'question');
-        $mform->setDefault('penalty', 0.3333333);
+        $mform->setDefault('penalty', $this->get_default_value('penalty',  0.3333333));
 
         if (isset($this->question->hints)) {
             $counthints = count($this->question->hints);
@@ -608,13 +650,13 @@ abstract class question_edit_form extends question_wizard_form {
                 // Prepare the feedback editor to display files in draft area.
                 $draftitemid = file_get_submitted_draft_itemid('answer['.$key.']');
                 $question->answer[$key]['text'] = file_prepare_draft_area(
-                    $draftitemid,          // Draftid
-                    $this->context->id,    // context
-                    'question',            // component
-                    'answer',              // filarea
-                    !empty($answer->id) ? (int) $answer->id : null, // itemid
-                    $this->fileoptions,    // options
-                    $answer->answer        // text.
+                    $draftitemid,                                          // Draftid.
+                    $this->context->id,                                      // Context.
+                    'question',                                   // Component.
+                    'answer',                                       // Filarea.
+                    !empty($answer->id) ? (int) $answer->id : null, // Itemid.
+                    $this->fileoptions,                                   // Options.
+                    $answer->answer                                      // Text.
                 );
                 $question->answer[$key]['itemid'] = $draftitemid;
                 $question->answer[$key]['format'] = $answer->answerformat;
@@ -639,13 +681,13 @@ abstract class question_edit_form extends question_wizard_form {
             // Prepare the feedback editor to display files in draft area.
             $draftitemid = file_get_submitted_draft_itemid('feedback['.$key.']');
             $question->feedback[$key]['text'] = file_prepare_draft_area(
-                $draftitemid,          // Draftid
-                $this->context->id,    // context
-                'question',            // component
-                'answerfeedback',      // filarea
-                !empty($answer->id) ? (int) $answer->id : null, // itemid
-                $this->fileoptions,    // options
-                $answer->feedback      // text.
+                $draftitemid,                                           // Draftid.
+                $this->context->id,                                       // Context.
+                'question',                                    // Component.
+                'answerfeedback',                                // Filarea.
+                !empty($answer->id) ? (int) $answer->id : null,  // Itemid.
+                $this->fileoptions,                                    // Options.
+                $answer->feedback                                     // Text.
             );
             $question->feedback[$key]['itemid'] = $draftitemid;
             $question->feedback[$key]['format'] = $answer->feedbackformat;
@@ -730,13 +772,13 @@ abstract class question_edit_form extends question_wizard_form {
             $draftid = file_get_submitted_draft_itemid($feedbackname);
             $feedback = array();
             $feedback['text'] = file_prepare_draft_area(
-                $draftid,              // Draftid
-                $this->context->id,    // context
-                'question',            // component
-                $feedbackname,         // filarea
-                !empty($question->id) ? (int) $question->id : null, // itemid
-                $this->fileoptions,    // options
-                $question->options->$feedbackname // text.
+                $draftid,                                          // Draftid.
+                $this->context->id,                                           // Context.
+                'question',                                        // Component.
+                $feedbackname,                                              // Filarea.
+                !empty($question->id) ? (int) $question->id : null,  // Itemid.
+                $this->fileoptions,                                        // Options.
+                $question->options->$feedbackname                         // Text.
             );
             $feedbackformat = $feedbackname . 'format';
             $feedback['format'] = $question->options->$feedbackformat;
@@ -770,13 +812,13 @@ abstract class question_edit_form extends question_wizard_form {
             // Prepare feedback editor to display files in draft area.
             $draftitemid = file_get_submitted_draft_itemid('hint['.$key.']');
             $question->hint[$key]['text'] = file_prepare_draft_area(
-                $draftitemid,          // Draftid
-                $this->context->id,    // context
-                'question',            // component
-                'hint',                // filarea
-                !empty($hint->id) ? (int) $hint->id : null, // itemid
-                $this->fileoptions,    // options
-                $hint->hint            // text.
+                $draftitemid,                                      // Draftid.
+                $this->context->id,                                  // Context.
+                'question',                               // Component.
+                'hint',                                     // Filarea.
+                !empty($hint->id) ? (int) $hint->id : null, // Itemid.
+                $this->fileoptions,                               // Options.
+                $hint->hint                                      // Text.
             );
             $question->hint[$key]['itemid'] = $draftitemid;
             $question->hint[$key]['format'] = $hint->hintformat;
@@ -839,6 +881,10 @@ abstract class question_edit_form extends question_wizard_form {
             }
         }
 
+        if ($this->customfieldpluginenabled) {
+            // Add the custom field validation.
+            $errors  = array_merge($errors, $this->customfieldhandler->instance_form_validation($fromform, $files));
+        }
         return $errors;
     }
 

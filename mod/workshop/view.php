@@ -97,12 +97,67 @@ if ($eval) {
     redirect($PAGE->url);
 }
 
+$heading = $OUTPUT->heading_with_help(format_string($workshop->name), 'userplan', 'workshop');
+$heading = preg_replace('/<h2[^>]*>([.\s\S]*)<\/h2>/', '$1', $heading);
+$PAGE->activityheader->set_attrs([
+    'title' => $PAGE->activityheader->is_title_allowed() ? $heading : "",
+    'description' => ''
+]);
+
 $output = $PAGE->get_renderer('mod_workshop');
 
 /// Output starts here
 
 echo $output->header();
-echo $output->heading_with_help(format_string($workshop->name), 'userplan', 'workshop');
+
+// Output action buttons here.
+switch ($workshop->phase) {
+    case workshop::PHASE_SUBMISSION:
+        // Does the user have to assess examples before submitting their own work?
+        $examplesmust = ($workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION);
+
+        // Is the assessment of example submissions considered finished?
+        $examplesdone = has_capability('mod/workshop:manageexamples', $workshop->context);
+
+        if ($workshop->assessing_examples_allowed() && has_capability('mod/workshop:submit', $workshop->context) &&
+                !has_capability('mod/workshop:manageexamples', $workshop->context)) {
+            $examples = $userplan->get_examples();
+            $left = 0;
+            // Make sure the current user has all examples allocated.
+            foreach ($examples as $exampleid => $example) {
+                if (is_null($example->grade)) {
+                    $left++;
+                    break;
+                }
+            }
+            if ($left > 0 and $workshop->examplesmode != workshop::EXAMPLES_VOLUNTARY) {
+                $examplesdone = false;
+            } else {
+                $examplesdone = true;
+            }
+        }
+
+        if (has_capability('mod/workshop:submit', $PAGE->context) and (!$examplesmust or $examplesdone)) {
+            if (!$workshop->get_submission_by_author($USER->id)) {
+                $btnurl = new moodle_url($workshop->submission_url(), ['edit' => 'on']);
+                $btntxt = get_string('createsubmission', 'workshop');
+                echo $output->single_button($btnurl, $btntxt, 'get', ['primary' => true]);
+            }
+        }
+        break;
+
+    case workshop::PHASE_ASSESSMENT:
+        if (has_capability('mod/workshop:submit', $PAGE->context)) {
+            if (!$workshop->get_submission_by_author($USER->id)) {
+                if ($workshop->creating_submission_allowed($USER->id)) {
+                    $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
+                    $btntxt = get_string('createsubmission', 'workshop');
+                    echo $output->single_button($btnurl, $btntxt, 'get', ['primary' => true]);
+                }
+            }
+        }
+}
+
 echo $output->heading(format_string($currentphasetitle), 3, null, 'mod_workshop-userplanheading');
 echo $output->render($userplan);
 
@@ -146,31 +201,11 @@ case workshop::PHASE_SUBMISSION:
         print_collapsible_region_end();
     }
 
-    // does the user have to assess examples before submitting their own work?
-    $examplesmust = ($workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION);
-
-    // is the assessment of example submissions considered finished?
-    $examplesdone = has_capability('mod/workshop:manageexamples', $workshop->context);
     if ($workshop->assessing_examples_allowed()
             and has_capability('mod/workshop:submit', $workshop->context)
                     and ! has_capability('mod/workshop:manageexamples', $workshop->context)) {
         $examples = $userplan->get_examples();
         $total = count($examples);
-        $left = 0;
-        // make sure the current user has all examples allocated
-        foreach ($examples as $exampleid => $example) {
-            if (is_null($example->assessmentid)) {
-                $examples[$exampleid]->assessmentid = $workshop->add_allocation($example, $USER->id, 0);
-            }
-            if (is_null($example->grade)) {
-                $left++;
-            }
-        }
-        if ($left > 0 and $workshop->examplesmode != workshop::EXAMPLES_VOLUNTARY) {
-            $examplesdone = false;
-        } else {
-            $examplesdone = true;
-        }
         print_collapsible_region_start('', 'workshop-viewlet-examples', get_string('exampleassessments', 'workshop'),
                 'workshop-viewlet-examples-collapsed', $examplesdone);
         echo $output->box_start('generalbox exampleassessments');
@@ -192,20 +227,10 @@ case workshop::PHASE_SUBMISSION:
         echo $output->box_start('generalbox ownsubmission');
         if ($submission = $workshop->get_submission_by_author($USER->id)) {
             echo $output->render($workshop->prepare_submission_summary($submission, true));
-            if ($workshop->modifying_submission_allowed($USER->id)) {
-                $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
-                $btntxt = get_string('editsubmission', 'workshop');
-            }
         } else {
             echo $output->container(get_string('noyoursubmission', 'workshop'));
-            if ($workshop->creating_submission_allowed($USER->id)) {
-                $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
-                $btntxt = get_string('createsubmission', 'workshop');
-            }
         }
-        if (!empty($btnurl)) {
-            echo $output->single_button($btnurl, $btntxt, 'get');
-        }
+
         echo $output->box_end();
         print_collapsible_region_end();
     }
@@ -283,14 +308,8 @@ case workshop::PHASE_ASSESSMENT:
             echo $output->box_start('generalbox ownsubmission');
             echo $output->container(get_string('noyoursubmission', 'workshop'));
             $ownsubmissionexists = false;
-            if ($workshop->creating_submission_allowed($USER->id)) {
-                $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
-                $btntxt = get_string('createsubmission', 'workshop');
-            }
         }
-        if (!empty($btnurl)) {
-            echo $output->single_button($btnurl, $btntxt, 'get');
-        }
+
         echo $output->box_end();
         print_collapsible_region_end();
     }
@@ -405,7 +424,7 @@ case workshop::PHASE_ASSESSMENT:
                 $submission->title              = $assessment->submissiontitle;
                 $submission->timecreated        = $assessment->submissioncreated;
                 $submission->timemodified       = $assessment->submissionmodified;
-                $userpicturefields = explode(',', user_picture::fields());
+                $userpicturefields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
                 foreach ($userpicturefields as $userpicturefield) {
                     $prefixedusernamefield = 'author' . $userpicturefield;
                     $submission->$prefixedusernamefield = $assessment->$prefixedusernamefield;
@@ -533,7 +552,7 @@ case workshop::PHASE_EVALUATION:
             $submission->title              = $assessment->submissiontitle;
             $submission->timecreated        = $assessment->submissioncreated;
             $submission->timemodified       = $assessment->submissionmodified;
-            $userpicturefields = explode(',', user_picture::fields());
+            $userpicturefields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
             foreach ($userpicturefields as $userpicturefield) {
                 $prefixedusernamefield = 'author' . $userpicturefield;
                 $submission->$prefixedusernamefield = $assessment->$prefixedusernamefield;
@@ -608,8 +627,8 @@ case workshop::PHASE_CLOSED:
         }
     }
     if (has_capability('mod/workshop:submit', $PAGE->context)) {
-        print_collapsible_region_start('', 'workshop-viewlet-ownsubmission', get_string('yoursubmission', 'workshop'),
-                'workshop-viewlet-ownsubmission-collapsed');
+        print_collapsible_region_start('', 'workshop-viewlet-ownsubmission',
+            get_string('yoursubmissionwithassessments', 'workshop'), 'workshop-viewlet-ownsubmission-collapsed');
         echo $output->box_start('generalbox ownsubmission');
         if ($submission = $workshop->get_submission_by_author($USER->id)) {
             echo $output->render($workshop->prepare_submission_summary($submission, true));
@@ -647,7 +666,7 @@ case workshop::PHASE_CLOSED:
             $submission->title              = $assessment->submissiontitle;
             $submission->timecreated        = $assessment->submissioncreated;
             $submission->timemodified       = $assessment->submissionmodified;
-            $userpicturefields = explode(',', user_picture::fields());
+            $userpicturefields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
             foreach ($userpicturefields as $userpicturefield) {
                 $prefixedusernamefield = 'author' . $userpicturefield;
                 $submission->$prefixedusernamefield = $assessment->$prefixedusernamefield;

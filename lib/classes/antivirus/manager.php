@@ -34,6 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
+
     /**
      * Returns list of enabled antiviruses.
      *
@@ -69,15 +70,31 @@ class manager {
     public static function scan_file($file, $filename, $deleteinfected) {
         global $USER;
         $antiviruses = self::get_enabled();
+        $notifylevel = (int)get_config('antivirus', 'notifylevel');
         foreach ($antiviruses as $antivirus) {
             // Attempt to scan, catching internal exceptions.
             try {
                 $result = $antivirus->scan_file($file, $filename);
             } catch (\core\antivirus\scanner_exception $e) {
-                // If there was a scanner exception (such as ClamAV denying upload), send messages and rethrow.
                 $notice = $antivirus->get_scanning_notice();
                 $incidentdetails = $antivirus->get_incident_details($file, $filename, $notice, false);
-                self::send_antivirus_messages($antivirus, $incidentdetails);
+
+                // Log scan error event.
+                $params = [
+                    'context' => \context_system::instance(),
+                    'relateduserid' => $USER->id,
+                    'other' => ['filename' => $filename, 'incidentdetails' => $incidentdetails],
+                ];
+                $event = \core\event\antivirus_scan_file_error::create($params);
+                $event->trigger();
+
+                // If there was a scanner exception (such as ClamAV denying
+                // upload), send messages (on error and above), and rethrow.
+                if ($notifylevel === $antivirus::SCAN_RESULT_ERROR) {
+                    $notice = $antivirus->get_scanning_notice();
+                    self::send_antivirus_messages($antivirus, $incidentdetails);
+                }
+
                 throw $e;
             }
 
@@ -106,11 +123,35 @@ class manager {
                 if ($deleteinfected) {
                     unlink($file);
                 }
-                throw new \core\antivirus\scanner_exception('virusfound', '', array('item' => $filename));
+
+                // Get custom message to display to user from antivirus engine.
+                $displaymessage = $antivirus->get_virus_found_message();
+                $placeholders = array_merge(['item' => $filename], $displaymessage['placeholders']);
+
+                throw new \core\antivirus\scanner_exception(
+                    $displaymessage['string'],
+                    '',
+                    $placeholders,
+                    null,
+                    $displaymessage['component']
+                );
             } else if ($result === $antivirus::SCAN_RESULT_ERROR) {
                 // Here we need to generate a different incident based on an error.
                 $incidentdetails = $antivirus->get_incident_details($file, $filename, $notice, false);
-                self::send_antivirus_messages($antivirus, $incidentdetails);
+
+                // Log scan error event.
+                $params = [
+                    'context' => \context_system::instance(),
+                    'relateduserid' => $USER->id,
+                    'other' => ['filename' => $filename, 'incidentdetails' => $incidentdetails],
+                ];
+                $event = \core\event\antivirus_scan_file_error::create($params);
+                $event->trigger();
+
+                // Send a notification if required (error or above).
+                if ($notifylevel === $antivirus::SCAN_RESULT_ERROR) {
+                    self::send_antivirus_messages($antivirus, $incidentdetails);
+                }
             }
         }
     }
@@ -125,16 +166,30 @@ class manager {
     public static function scan_data($data) {
         global $USER;
         $antiviruses = self::get_enabled();
+        $notifylevel = (int)get_config('antivirus', 'notifylevel');
         foreach ($antiviruses as $antivirus) {
             // Attempt to scan, catching internal exceptions.
             try {
                 $result = $antivirus->scan_data($data);
             } catch (\core\antivirus\scanner_exception $e) {
-                // If there was a scanner exception (such as ClamAV denying upload), send messages and rethrow.
                 $notice = $antivirus->get_scanning_notice();
-                $filename = get_string('datastream', 'antivirus');
                 $incidentdetails = $antivirus->get_incident_details('', $filename, $notice, false);
-                self::send_antivirus_messages($antivirus, $incidentdetails);
+
+                // Log scan error event.
+                $params = [
+                    'context' => \context_system::instance(),
+                    'relateduserid' => $USER->id,
+                    'other' => ['filename' => $filename, 'incidentdetails' => $incidentdetails],
+                ];
+                $event = \core\event\antivirus_scan_file_error::create($params);
+                $event->trigger();
+
+                // If there was a scanner exception (such as ClamAV denying upload), send messages and rethrow.
+                if ($notifylevel === $antivirus::SCAN_RESULT_ERROR) {
+                    $notice = $antivirus->get_scanning_notice();
+                    $filename = get_string('datastream', 'antivirus');
+                    self::send_antivirus_messages($antivirus, $incidentdetails);
+                }
 
                 throw $e;
             }
@@ -163,11 +218,34 @@ class manager {
                 $event = \core\event\virus_infected_data_detected::create($params);
                 $event->trigger();
 
-                throw new \core\antivirus\scanner_exception('virusfound', '', array('item' => get_string('datastream', 'antivirus')));
+                // Get custom message to display to user from antivirus engine.
+                $displaymessage = $antivirus->get_virus_found_message();
+                $placeholders = array_merge(['item' => get_string('datastream', 'antivirus')], $displaymessage['placeholders']);
+
+                throw new \core\antivirus\scanner_exception(
+                    $displaymessage['string'],
+                    '',
+                    $placeholders,
+                    null,
+                    $displaymessage['component']
+                );
             } else if ($result === $antivirus::SCAN_RESULT_ERROR) {
                 // Here we need to generate a different incident based on an error.
                 $incidentdetails = $antivirus->get_incident_details('', $filename, $notice, false);
-                self::send_antivirus_messages($antivirus, $incidentdetails);
+
+                // Log scan error event.
+                $params = [
+                    'context' => \context_system::instance(),
+                    'relateduserid' => $USER->id,
+                    'other' => ['filename' => $filename, 'incidentdetails' => $incidentdetails],
+                ];
+                $event = \core\event\antivirus_scan_data_error::create($params);
+                $event->trigger();
+
+                // Send a notification if required (error or above).
+                if ($notifylevel === $antivirus::SCAN_RESULT_ERROR) {
+                    self::send_antivirus_messages($antivirus, $incidentdetails);
+                }
             }
         }
     }

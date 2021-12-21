@@ -17,14 +17,28 @@
  * Add policy consent modal to the page
  *
  * @module     tool_policy/acceptmodal
- * @class      AcceptOnBehalf
- * @package    tool_policy
  * @copyright  2018 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/notification', 'core/fragment',
-        'core/ajax', 'core/yui'],
-    function($, Str, ModalFactory, ModalEvents, Notification, Fragment, Ajax, Y) {
+define([
+    'jquery',
+    'core/str',
+    'core/modal_factory',
+    'core/modal_events',
+    'core/notification',
+    'core/fragment',
+    'core/ajax',
+    'core_form/changechecker',
+], function(
+    $,
+    Str,
+    ModalFactory,
+    ModalEvents,
+    Notification,
+    Fragment,
+    Ajax,
+    FormChangeChecker
+) {
 
         "use strict";
 
@@ -246,9 +260,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/n
          * Destroy the modal
          */
         AcceptOnBehalf.prototype.destroy = function() {
-            Y.use('moodle-core-formchangechecker', function() {
-                M.core_formchangechecker.reset_form_dirty_state();
-            });
+            FormChangeChecker.resetAllFormDirtyStates();
             this.modal.destroy();
             this.currentTrigger.focus();
         };

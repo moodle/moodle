@@ -17,7 +17,7 @@ namespace Matrix;
  * @return Matrix The new matrix
  * @throws Exception If argument isn't a valid matrix or array.
  */
-function diagonal($matrix)
+function diagonal($matrix): Matrix
 {
     if (is_array($matrix)) {
         $matrix = new Matrix($matrix);

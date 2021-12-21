@@ -57,9 +57,8 @@ Feature: Group overview
 
   Scenario: Filter the overview in various different ways
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
-    And I follow "Overview"
+    And I am on the "Course 1" "groups" page
+    And I select "Overview" from the "jump" singleselect
 
     # Grouping All and Group All filter
     When I select "All" from the "Grouping" singleselect
@@ -67,8 +66,8 @@ Feature: Group overview
     # Following groups should exist in groupings.
     Then the group overview should include groups "Group 1, Group 2" in grouping "Grouping 1"
     And the group overview should include groups "Group 2,Group 3" in grouping "Grouping 2"
-    And the group overview should include groups "Group 4" in grouping "[Not in a grouping]"
-    And the group overview should include groups "No group" in grouping "[Not in a group]"
+    And the group overview should include groups "Group 4" in grouping "Not in a grouping"
+    And the group overview should include groups "No group" in grouping "Not in a group"
     # Following members should exit in group.
     And "Student 0" "text" should exist in the "Group 1" "table_row"
     And "Student 1" "text" should exist in the "Group 1" "table_row"
@@ -121,8 +120,8 @@ Feature: Group overview
     And I select "No grouping" from the "Grouping" singleselect
     And I select "All" from the "group" singleselect
     # Following groups should exist in groupings.
-    And the group overview should include groups "Group 4" in grouping "[Not in a grouping]"
-    And the group overview should include groups "No group" in grouping "[Not in a group]"
+    And the group overview should include groups "Group 4" in grouping "Not in a grouping"
+    And the group overview should include groups "No group" in grouping "Not in a group"
     # Following groups should not exits
     And "Group 1" "table_row" should not exist
     And "Group 2" "table_row" should not exist
@@ -185,7 +184,7 @@ Feature: Group overview
     And I select "All" from the "Grouping" singleselect
     And I select "No group" from the "group" singleselect
     # Following groups should exist in groupings.
-    And the group overview should include groups "No group" in grouping "[Not in a group]"
+    And the group overview should include groups "No group" in grouping "Not in a group"
     # Following groups should not exits
     And "Group 1" "table_row" should not exist
     And "Group 2" "table_row" should not exist

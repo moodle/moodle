@@ -16,9 +16,6 @@ use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyInterface;
  */
 class SharedStringsManager
 {
-    /** Main namespace for the sharedStrings.xml file */
-    const MAIN_NAMESPACE_FOR_SHARED_STRINGS_XML = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
-
     /** Definition of XML nodes names used to parse data */
     const XML_NODE_SST = 'sst';
     const XML_NODE_SI = 'si';
@@ -43,7 +40,7 @@ class SharedStringsManager
     /** @var InternalEntityFactory Factory to create entities */
     protected $entityFactory;
 
-    /** @var HelperFactory $helperFactory Factory to create helpers */
+    /** @var HelperFactory Factory to create helpers */
     protected $helperFactory;
 
     /** @var CachingStrategyFactory Factory to create shared strings caching strategies */
@@ -190,7 +187,7 @@ class SharedStringsManager
                 $textNodeValue = $textNode->nodeValue;
                 $shouldPreserveWhitespace = $this->shouldPreserveWhitespace($textNode);
 
-                $sharedStringValue .= ($shouldPreserveWhitespace) ? $textNodeValue : trim($textNodeValue);
+                $sharedStringValue .= ($shouldPreserveWhitespace) ? $textNodeValue : \trim($textNodeValue);
             }
         }
 

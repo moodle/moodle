@@ -22,7 +22,7 @@
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tests\core_course;
+namespace core_course;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +35,7 @@ use core_course\local\repository\content_item_readonly_repository;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class content_item_readonly_repository_testcase extends \advanced_testcase {
+class content_item_readonly_repository_test extends \advanced_testcase {
     /**
      * Test the repository method, find_all_for_course().
      */

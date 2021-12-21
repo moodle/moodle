@@ -66,7 +66,7 @@ if ($ADMIN->fulltree) {
     );
     $settings->add(new admin_setting_configselect('antivirus_clamav/clamfailureonupload',
             new lang_string('clamfailureonupload', 'antivirus_clamav'),
-            new lang_string('configclamfailureonupload', 'antivirus_clamav'), 'donothing', $options));
+            new lang_string('configclamfailureonupload', 'antivirus_clamav'), 'tryagain', $options));
 
     // Number of attempts clamav will try when there is error during a scanning process.
     $options = array(1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5);

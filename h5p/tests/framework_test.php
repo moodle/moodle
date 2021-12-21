@@ -25,7 +25,9 @@
 
 namespace core_h5p;
 
-defined('MOODLE_INTERNAL') || die();
+use core_collator;
+use Moodle\H5PCore;
+use Moodle\H5PDisplayOptionBehaviour;
 
 /**
  *
@@ -36,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @runTestsInSeparateProcesses
  */
-class framework_testcase extends \advanced_testcase {
+class framework_test extends \advanced_testcase {
 
     /** @var \core_h5p\framework */
     private $framework;
@@ -44,7 +46,7 @@ class framework_testcase extends \advanced_testcase {
     /**
      * Set up function for tests.
      */
-    public function setUp() {
+    public function setUp(): void {
         $factory = new \core_h5p\factory();
         $this->framework = $factory->get_framework();
     }
@@ -172,6 +174,55 @@ class framework_testcase extends \advanced_testcase {
 
         // The response should be empty.
         $this->assertEmpty($data);
+    }
+
+    /**
+     * Test the behaviour of setLibraryTutorialUrl().
+     */
+    public function test_setLibraryTutorialUrl() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+
+        // Create several libraries records.
+        $lib1 = $generator->create_library_record('Library1', 'Lib1', 1, 0, 1, '', null, 'http://tutorial1.org',
+            'http://example.org');
+        $lib2 = $generator->create_library_record('Library2', 'Lib2', 2, 0, 1, '', null, 'http://tutorial2.org');
+        $lib3 = $generator->create_library_record('Library3', 'Lib3', 3, 0);
+
+        // Check only lib1 tutorial URL is updated.
+        $url = 'https://newtutorial.cat';
+        $this->framework->setLibraryTutorialUrl($lib1->machinename, $url);
+
+        $libraries = $DB->get_records('h5p_libraries');
+        $this->assertEquals($libraries[$lib1->id]->tutorial, $url);
+        $this->assertNotEquals($libraries[$lib2->id]->tutorial, $url);
+
+        // Check lib1 tutorial URL is set to null.
+        $this->framework->setLibraryTutorialUrl($lib1->machinename, null);
+
+        $libraries = $DB->get_records('h5p_libraries');
+        $this->assertCount(3, $libraries);
+        $this->assertNull($libraries[$lib1->id]->tutorial);
+
+        // Check no tutorial URL is set if library name doesn't exist.
+        $this->framework->setLibraryTutorialUrl('Unexisting library', $url);
+
+        $libraries = $DB->get_records('h5p_libraries');
+        $this->assertCount(3, $libraries);
+        $this->assertNull($libraries[$lib1->id]->tutorial);
+        $this->assertEquals($libraries[$lib2->id]->tutorial, 'http://tutorial2.org');
+        $this->assertNull($libraries[$lib3->id]->tutorial);
+
+        // Check tutorial is set as expected when it was null.
+        $this->framework->setLibraryTutorialUrl($lib3->machinename, $url);
+
+        $libraries = $DB->get_records('h5p_libraries');
+        $this->assertEquals($libraries[$lib3->id]->tutorial, $url);
+        $this->assertNull($libraries[$lib1->id]->tutorial);
+        $this->assertEquals($libraries[$lib2->id]->tutorial, 'http://tutorial2.org');
     }
 
     /**
@@ -472,15 +523,19 @@ class framework_testcase extends \advanced_testcase {
         // The addons array should return 2 results (Library and Library1 addon).
         $this->assertCount(2, $addons);
 
+        // Ensure the addons array is consistently ordered before asserting their contents.
+        core_collator::asort_array_of_arrays_by_key($addons, 'machineName');
+        [$addonone, $addontwo] = array_values($addons);
+
         // Make sure the version 1.3 is the latest 'Library' addon version.
-        $this->assertEquals('Library', $addons[0]['machineName']);
-        $this->assertEquals(1, $addons[0]['majorVersion']);
-        $this->assertEquals(3, $addons[0]['minorVersion']);
+        $this->assertEquals('Library', $addonone['machineName']);
+        $this->assertEquals(1, $addonone['majorVersion']);
+        $this->assertEquals(3, $addonone['minorVersion']);
 
         // Make sure the version 1.2 is the latest 'Library1' addon version.
-        $this->assertEquals('Library1', $addons[1]['machineName']);
-        $this->assertEquals(1, $addons[1]['majorVersion']);
-        $this->assertEquals(2, $addons[1]['minorVersion']);
+        $this->assertEquals('Library1', $addontwo['machineName']);
+        $this->assertEquals(1, $addontwo['majorVersion']);
+        $this->assertEquals(2, $addontwo['minorVersion']);
     }
 
     /**
@@ -504,7 +559,6 @@ class framework_testcase extends \advanced_testcase {
         $this->assertEquals('1', $libraries['MainLibrary'][0]->major_version);
         $this->assertEquals('0', $libraries['MainLibrary'][0]->minor_version);
         $this->assertEquals('1', $libraries['MainLibrary'][0]->patch_version);
-        $this->assertEquals('MainLibrary', $libraries['MainLibrary'][0]->machine_name);
     }
 
     /**
@@ -1601,7 +1655,7 @@ class framework_testcase extends \advanced_testcase {
             'embedType' => 'iframe',
             'disable' => $h5p->displayoptions,
             'title' => $mainlibrary->title,
-            'slug' => \H5PCore::slugify($mainlibrary->title) . '-' . $h5p->id,
+            'slug' => H5PCore::slugify($mainlibrary->title) . '-' . $h5p->id,
             'filtered' => $h5p->filtered,
             'libraryId' => $mainlibrary->id,
             'libraryName' => $mainlibrary->machinename,
@@ -1754,13 +1808,13 @@ class framework_testcase extends \advanced_testcase {
         $this->resetAfterTest();
 
         // Get value for display_option_download.
-        $value = $this->framework->getOption(\H5PCore::DISPLAY_OPTION_DOWNLOAD);
-        $expected = \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
+        $value = $this->framework->getOption(H5PCore::DISPLAY_OPTION_DOWNLOAD);
+        $expected = H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
         $this->assertEquals($expected, $value);
 
         // Get value for display_option_embed using default value (it should be ignored).
-        $value = $this->framework->getOption(\H5PCore::DISPLAY_OPTION_EMBED, \H5PDisplayOptionBehaviour::NEVER_SHOW);
-        $expected = \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
+        $value = $this->framework->getOption(H5PCore::DISPLAY_OPTION_EMBED, H5PDisplayOptionBehaviour::NEVER_SHOW);
+        $expected = H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
         $this->assertEquals($expected, $value);
 
         // Get value for unexisting setting without default.
@@ -1790,11 +1844,11 @@ class framework_testcase extends \advanced_testcase {
         $this->assertEquals($newvalue, $value);
 
         // Set value for display_option_download and then get it again. Check it hasn't changed.
-        $name = \H5PCore::DISPLAY_OPTION_DOWNLOAD;
-        $newvalue = \H5PDisplayOptionBehaviour::NEVER_SHOW;
+        $name = H5PCore::DISPLAY_OPTION_DOWNLOAD;
+        $newvalue = H5PDisplayOptionBehaviour::NEVER_SHOW;
         $this->framework->setOption($name, $newvalue);
         $value = $this->framework->getOption($name);
-        $expected = \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
+        $expected = H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
         $this->assertEquals($expected, $value);
     }
 

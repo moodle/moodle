@@ -22,7 +22,7 @@ namespace Complex;
  *
  * @see    theta
  */
-function argument($complex)
+function argument($complex): float
 {
     return theta($complex);
 }

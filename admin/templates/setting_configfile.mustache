@@ -26,6 +26,7 @@
     * readonly - Make the field readonly
     * value - value
     * showvalidity - Show a green check if the path is readable
+    * readonly - bool
     * valid - True if the path is readable
 
     Example context (json):
@@ -33,8 +34,9 @@
         "name": "test",
         "value": "/my-super-secret-path/file",
         "id": "test0",
-        "readonly": true,
+        "readonly": false,
         "showvalidity": true,
+        "readonly": false,
         "valid": false
     }
 }}

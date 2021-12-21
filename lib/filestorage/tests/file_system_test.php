@@ -39,11 +39,11 @@ require_once($CFG->libdir . '/filestorage/file_system.php');
  */
 class core_files_file_system_testcase extends advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         get_file_storage(true);
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         get_file_storage(true);
     }
 
@@ -70,14 +70,14 @@ class core_files_file_system_testcase extends advanced_testcase {
      *                  If no methods are specified, only abstract functions are mocked.
      * @return stored_file
      */
-    protected function get_stored_file($filecontent, $filename = null, $mockedmethods = null) {
+    protected function get_stored_file($filecontent, $filename = null, $mockedmethods = []) {
         $contenthash = file_storage::hash_from_string($filecontent);
         if (empty($filename)) {
             $filename = $contenthash;
         }
 
         $file = $this->getMockBuilder(stored_file::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->setConstructorArgs([
                 get_file_storage(),
                 (object) [
@@ -100,7 +100,7 @@ class core_files_file_system_testcase extends advanced_testcase {
      */
     protected function get_testable_mock($mockedmethods = []) {
         $fs = $this->getMockBuilder(file_system::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->getMockForAbstractClass();
 
         return $fs;
@@ -514,7 +514,7 @@ class core_files_file_system_testcase extends advanced_testcase {
         $contenthash = file_storage::hash_from_string($filecontent);
 
         $DB = $this->getMockBuilder(\moodle_database::class)
-            ->setMethods(['record_exists'])
+            ->onlyMethods(['record_exists'])
             ->getMockForAbstractClass();
         $DB->method('record_exists')->willReturn(true);
 
@@ -538,7 +538,7 @@ class core_files_file_system_testcase extends advanced_testcase {
         $contenthash = file_storage::hash_from_string($filecontent);
 
         $DB = $this->getMockBuilder(\moodle_database::class)
-            ->setMethods(['record_exists'])
+            ->onlyMethods(['record_exists'])
             ->getMockForAbstractClass();
         $DB->method('record_exists')->willReturn(false);
 
@@ -615,7 +615,7 @@ class core_files_file_system_testcase extends advanced_testcase {
             ->willReturn(__FILE__);
 
         $packer = $this->getMockBuilder(file_packer::class)
-            ->setMethods(['list_files'])
+            ->onlyMethods(['list_files'])
             ->getMockForAbstractClass();
 
         $packer->expects($this->once())
@@ -648,7 +648,7 @@ class core_files_file_system_testcase extends advanced_testcase {
             ->willReturn(__FILE__);
 
         $packer = $this->getMockBuilder(file_packer::class)
-            ->setMethods(['extract_to_pathname'])
+            ->onlyMethods(['extract_to_pathname'])
             ->getMockForAbstractClass();
 
         $packer->expects($this->once())
@@ -681,7 +681,7 @@ class core_files_file_system_testcase extends advanced_testcase {
             ->willReturn(__FILE__);
 
         $packer = $this->getMockBuilder(file_packer::class)
-            ->setMethods(['extract_to_storage'])
+            ->onlyMethods(['extract_to_storage'])
             ->getMockForAbstractClass();
 
         $packer->expects($this->once())
@@ -720,7 +720,7 @@ class core_files_file_system_testcase extends advanced_testcase {
             ->willReturn(__FILE__);
 
         $archive = $this->getMockBuilder(file_archive::class)
-            ->setMethods([
+            ->onlyMethods([
                 'add_directory',
                 'add_file_from_pathname',
             ])
@@ -757,7 +757,7 @@ class core_files_file_system_testcase extends advanced_testcase {
             ->willReturn($filepath);
 
         $archive = $this->getMockBuilder(file_archive::class)
-            ->setMethods([
+            ->onlyMethods([
                 'add_directory',
                 'add_file_from_pathname',
             ])
@@ -929,6 +929,89 @@ class core_files_file_system_testcase extends advanced_testcase {
      */
     public function test_get_imageinfo_from_path_no_image() {
         $filepath = __FILE__;
+
+        // Get the filesystem mock.
+        $fs = $this->get_testable_mock();
+
+        $method = new ReflectionMethod(file_system::class, 'get_imageinfo_from_path');
+        $method->setAccessible(true);
+        $result = $method->invokeArgs($fs, [$filepath]);
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Test that get_imageinfo_from_path returns an appropriate response
+     * for an svg image with viewbox attribute.
+     */
+    public function test_get_imageinfo_from_path_svg_viewbox() {
+        $filepath = __DIR__ . '/fixtures/testimage_viewbox.svg';
+
+        // Get the filesystem mock.
+        $fs = $this->get_testable_mock();
+
+        $method = new ReflectionMethod(file_system::class, 'get_imageinfo_from_path');
+        $method->setAccessible(true);
+        $result = $method->invokeArgs($fs, [$filepath]);
+
+        $this->assertArrayHasKey('width', $result);
+        $this->assertArrayHasKey('height', $result);
+        $this->assertArrayHasKey('mimetype', $result);
+        $this->assertEquals(100, $result['width']);
+        $this->assertEquals(100, $result['height']);
+        $this->assertStringContainsString('image/svg', $result['mimetype']);
+    }
+
+    /**
+     * Test that get_imageinfo_from_path returns an appropriate response
+     * for an svg image with width and height attributes.
+     */
+    public function test_get_imageinfo_from_path_svg_with_width_height() {
+        $filepath = __DIR__ . '/fixtures/testimage_width_height.svg';
+
+        // Get the filesystem mock.
+        $fs = $this->get_testable_mock();
+
+        $method = new ReflectionMethod(file_system::class, 'get_imageinfo_from_path');
+        $method->setAccessible(true);
+        $result = $method->invokeArgs($fs, [$filepath]);
+
+        $this->assertArrayHasKey('width', $result);
+        $this->assertArrayHasKey('height', $result);
+        $this->assertArrayHasKey('mimetype', $result);
+        $this->assertEquals(100, $result['width']);
+        $this->assertEquals(100, $result['height']);
+        $this->assertStringContainsString('image/svg', $result['mimetype']);
+    }
+
+    /**
+     * Test that get_imageinfo_from_path returns an appropriate response
+     * for an svg image without attributes.
+     */
+    public function test_get_imageinfo_from_path_svg_without_attribute() {
+        $filepath = __DIR__ . '/fixtures/testimage.svg';
+
+        // Get the filesystem mock.
+        $fs = $this->get_testable_mock();
+
+        $method = new ReflectionMethod(file_system::class, 'get_imageinfo_from_path');
+        $method->setAccessible(true);
+        $result = $method->invokeArgs($fs, [$filepath]);
+
+        $this->assertArrayHasKey('width', $result);
+        $this->assertArrayHasKey('height', $result);
+        $this->assertArrayHasKey('mimetype', $result);
+        $this->assertEquals(800, $result['width']);
+        $this->assertEquals(600, $result['height']);
+        $this->assertStringContainsString('image/svg', $result['mimetype']);
+    }
+
+    /**
+     * Test that get_imageinfo_from_path returns an appropriate response
+     * for a file which is not an correct svg.
+     */
+    public function test_get_imageinfo_from_path_svg_invalid() {
+        $filepath = __DIR__ . '/fixtures/testimage_error.svg';
 
         // Get the filesystem mock.
         $fs = $this->get_testable_mock();

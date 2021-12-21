@@ -310,11 +310,10 @@ class profile_manager {
             'CURLOPT_HEADER' => 0,
         ];
         $content = $curl->get($url, null, $options);
-        $errno   = $curl->get_errno();
         $info = $curl->get_info();
 
         // The base cURL seems fine, let's press on.
-        if (!$errno) {
+        if (!$curl->get_errno() && !$curl->error) {
             // WebFinger gave us a 404 back so the user has no droids here.
             if ($info['http_code'] >= 400) {
                 if ($info['http_code'] === 404) {

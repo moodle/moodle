@@ -150,13 +150,6 @@ class file_picker implements renderable {
  */
 class user_picture implements renderable {
     /**
-     * @var array List of mandatory fields in user record here. (do not include
-     * TEXT columns because it would break SELECT DISTINCT in MSSQL and ORACLE)
-     */
-    protected static $fields = array('id', 'picture', 'firstname', 'lastname', 'firstnamephonetic', 'lastnamephonetic',
-            'middlename', 'alternatename', 'imagealt', 'email');
-
-    /**
      * @var stdClass A user object with at least fields all columns specified
      * in $fields array constant set.
      */
@@ -227,17 +220,18 @@ class user_picture implements renderable {
 
         // only touch the DB if we are missing data and complain loudly...
         $needrec = false;
-        foreach (self::$fields as $field) {
+        foreach (\core_user\fields::get_picture_fields() as $field) {
             if (!property_exists($user, $field)) {
                 $needrec = true;
                 debugging('Missing '.$field.' property in $user object, this is a performance problem that needs to be fixed by a developer. '
-                          .'Please use user_picture::fields() to get the full list of required fields.', DEBUG_DEVELOPER);
+                          .'Please use the \core_user\fields API to get the full list of required fields.', DEBUG_DEVELOPER);
                 break;
             }
         }
 
         if ($needrec) {
-            $this->user = $DB->get_record('user', array('id'=>$user->id), self::fields(), MUST_EXIST);
+            $this->user = $DB->get_record('user', array('id' => $user->id),
+                    implode(',', \core_user\fields::get_picture_fields()), MUST_EXIST);
         } else {
             $this->user = clone($user);
         }
@@ -255,39 +249,23 @@ class user_picture implements renderable {
      * @param string $idalias alias of id field
      * @param string $fieldprefix prefix to add to all columns in their aliases, does not apply to 'id'
      * @return string
+     * @deprecated since Moodle 3.11 MDL-45242
+     * @see \core_user\fields
      */
     public static function fields($tableprefix = '', array $extrafields = NULL, $idalias = 'id', $fieldprefix = '') {
-        if (!$tableprefix and !$extrafields and !$idalias) {
-            return implode(',', self::$fields);
-        }
-        if ($tableprefix) {
-            $tableprefix .= '.';
-        }
-        foreach (self::$fields as $field) {
-            if ($field === 'id' and $idalias and $idalias !== 'id') {
-                $fields[$field] = "$tableprefix$field AS $idalias";
-            } else {
-                if ($fieldprefix and $field !== 'id') {
-                    $fields[$field] = "$tableprefix$field AS $fieldprefix$field";
-                } else {
-                    $fields[$field] = "$tableprefix$field";
-                }
-            }
-        }
-        // add extra fields if not already there
+        debugging('user_picture::fields() is deprecated. Please use the \core_user\fields API instead.', DEBUG_DEVELOPER);
+        $userfields = \core_user\fields::for_userpic();
         if ($extrafields) {
-            foreach ($extrafields as $e) {
-                if ($e === 'id' or isset($fields[$e])) {
-                    continue;
-                }
-                if ($fieldprefix) {
-                    $fields[$e] = "$tableprefix$e AS $fieldprefix$e";
-                } else {
-                    $fields[$e] = "$tableprefix$e";
-                }
-            }
+            $userfields->including(...$extrafields);
         }
-        return implode(',', $fields);
+        $selects = $userfields->get_sql($tableprefix, false, $fieldprefix, $idalias, false)->selects;
+        if ($tableprefix === '') {
+            // If no table alias is specified, don't add {user}. in front of fields.
+            $selects = str_replace('{user}.', '', $selects);
+        }
+        // Maintain legacy behaviour where the field list was done with 'implode' and no spaces.
+        $selects = str_replace(', ', ',', $selects);
+        return $selects;
     }
 
     /**
@@ -310,7 +288,7 @@ class user_picture implements renderable {
 
         $return = new stdClass();
 
-        foreach (self::$fields as $field) {
+        foreach (\core_user\fields::get_picture_fields() as $field) {
             if ($field === 'id') {
                 if (property_exists($record, $idalias)) {
                     $return->id = $record->{$idalias};
@@ -758,7 +736,7 @@ class pix_icon implements renderable, templatable {
         return [
             'key' => $this->pix,
             'component' => $this->component,
-            'title' => $title
+            'title' => (string) $title,
         ];
     }
 }
@@ -877,6 +855,7 @@ class single_button implements renderable {
      * @param moodle_url $url
      * @param string $label button text
      * @param string $method get or post submit method
+     * @param bool $primary whether this is a primary button, used for styling
      * @param array $attributes Attributes for the HTML button tag
      */
     public function __construct(moodle_url $url, $label, $method='post', $primary=false, $attributes = []) {
@@ -1853,6 +1832,8 @@ class html_writer {
     /**
      * Generates a simple select form field
      *
+     * Note this function does HTML escaping on the optgroup labels, but not on the choice labels.
+     *
      * @param array $options associative array value=>label ex.:
      *                array(1=>'One, 2=>Two)
      *              it is also possible to specify optgroup as complex label array ex.:
@@ -2340,6 +2321,10 @@ class html_writer {
         }
         $output .= html_writer::end_tag('table') . "\n";
 
+        if ($table->responsive) {
+            return self::div($output, 'table-responsive');
+        }
+
         return $output;
     }
 
@@ -2790,6 +2775,9 @@ class html_table {
      * $t->captionhide = true;
      */
     public $captionhide = false;
+
+    /** @var bool Whether to make the table to be scrolled horizontally with ease. Make table responsive across all viewports. */
+    public $responsive = true;
 
     /**
      * Constructor
@@ -3407,6 +3395,15 @@ class block_contents {
     public function add_class($class) {
         $this->attributes['class'] .= ' '.$class;
     }
+
+    /**
+     * Check if the block is a fake block.
+     *
+     * @return boolean
+     */
+    public function is_fake() {
+        return isset($this->attributes['data-block']) && $this->attributes['data-block'] == '_fake';
+    }
 }
 
 
@@ -3992,6 +3989,10 @@ class context_header implements renderable {
      *                       page => page object. Don't include if the image is an external image.
      */
     public $additionalbuttons;
+    /**
+     * @var string $prefix A string that is before the title.
+     */
+    public $prefix;
 
     /**
      * Constructor.
@@ -4000,8 +4001,9 @@ class context_header implements renderable {
      * @param int $headinglevel Main heading 'h' tag level.
      * @param string|null $imagedata HTML code for the picture in the page header.
      * @param string $additionalbuttons Buttons for the header e.g. Messaging button for the user header.
+     * @param string $prefix Text that precedes the heading.
      */
-    public function __construct($heading = null, $headinglevel = 1, $imagedata = null, $additionalbuttons = null) {
+    public function __construct($heading = null, $headinglevel = 1, $imagedata = null, $additionalbuttons = null, $prefix = null) {
 
         $this->heading = $heading;
         $this->headinglevel = $headinglevel;
@@ -4011,6 +4013,7 @@ class context_header implements renderable {
         if (isset($this->additionalbuttons)) {
             $this->format_button_images();
         }
+        $this->prefix = $prefix;
     }
 
     /**
@@ -4908,6 +4911,14 @@ class progress_bar implements renderable, templatable {
     }
 
     /**
+     * Getter for ID
+     * @return string id
+     */
+    public function get_id() : string {
+        return $this->html_id;
+    }
+
+    /**
      * Create a new progress bar, this function will output html.
      *
      * @return void Echo's output
@@ -4916,9 +4927,6 @@ class progress_bar implements renderable, templatable {
         global $OUTPUT;
 
         $this->time_start = microtime(true);
-        if (CLI_SCRIPT) {
-            return; // Temporary solution for cli scripts.
-        }
 
         flush();
         echo $OUTPUT->render($this);
@@ -4934,13 +4942,11 @@ class progress_bar implements renderable, templatable {
      * @throws coding_exception
      */
     private function _update($percent, $msg) {
+        global $OUTPUT;
+
         if (empty($this->time_start)) {
             throw new coding_exception('You must call create() (or use the $autostart ' .
                     'argument to the constructor) before you try updating the progress bar.');
-        }
-
-        if (CLI_SCRIPT) {
-            return; // Temporary solution for cli scripts.
         }
 
         $estimate = $this->estimate($percent);
@@ -4956,16 +4962,15 @@ class progress_bar implements renderable, templatable {
             return;
         }
 
-        $estimatemsg = null;
-        if (is_numeric($estimate)) {
-            $estimatemsg = get_string('secondsleft', 'moodle', round($estimate, 2));
+        $estimatemsg = '';
+        if ($estimate != 0 && is_numeric($estimate)) {
+            $estimatemsg = format_time(round($estimate));
         }
 
-        $this->percent = round($percent, 2);
+        $this->percent = $percent;
         $this->lastupdate = microtime(true);
 
-        echo html_writer::script(js_writer::function_call('updateProgressBar',
-            array($this->html_id, $this->percent, $msg, $estimatemsg)));
+        echo $OUTPUT->render_progress_bar_update($this->html_id, sprintf("%.1f", $this->percent), $msg, $estimatemsg);
         flush();
     }
 

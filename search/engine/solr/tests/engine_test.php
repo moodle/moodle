@@ -50,6 +50,8 @@ require_once($CFG->dirroot . '/search/engine/solr/tests/fixtures/testable_engine
  * @category    phpunit
  * @copyright   2015 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @runTestsInSeparateProcesses
  */
 class search_solr_engine_testcase extends advanced_testcase {
 
@@ -68,7 +70,7 @@ class search_solr_engine_testcase extends advanced_testcase {
      */
     protected $engine = null;
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
         set_config('enableglobalsearch', true);
         set_config('searchengine', 'solr');
@@ -136,7 +138,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         $schema->setup(false);
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         // For unit tests before PHP 7, teardown is called even on skip. So only do our teardown if we did setup.
         if ($this->generator) {
             // Moodle DML freaks out if we don't teardown the temp table after each run.
@@ -424,13 +426,13 @@ class search_solr_engine_testcase extends advanced_testcase {
         $result = reset($results);
 
         $regex = '|'.\search_solr\engine::HIGHLIGHT_START.'message'.\search_solr\engine::HIGHLIGHT_END.'|';
-        $this->assertRegExp($regex, $result->get('content'));
+        $this->assertMatchesRegularExpression($regex, $result->get('content'));
 
         $searchrenderer = $PAGE->get_renderer('core_search');
         $exported = $result->export_for_template($searchrenderer);
 
         $regex = '|<span class="highlight">message</span>|';
-        $this->assertRegExp($regex, $exported['content']);
+        $this->assertMatchesRegularExpression($regex, $exported['content']);
     }
 
     public function test_export_file_for_engine() {
@@ -1161,7 +1163,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertCount(2, $orders);
         $this->assertArrayHasKey('relevance', $orders);
         $this->assertArrayHasKey('location', $orders);
-        $this->assertContains('Course: Frogs', $orders['location']);
+        $this->assertStringContainsString('Course: Frogs', $orders['location']);
 
         // Test with activity context.
         $page = $generator->create_module('page', ['course' => $course->id, 'name' => 'Toads']);
@@ -1170,7 +1172,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertCount(2, $orders);
         $this->assertArrayHasKey('relevance', $orders);
         $this->assertArrayHasKey('location', $orders);
-        $this->assertContains('Page: Toads', $orders['location']);
+        $this->assertStringContainsString('Page: Toads', $orders['location']);
 
         // Test with block context.
         $instance = (object)['blockname' => 'html', 'parentcontextid' => $coursecontext->id,
@@ -1184,7 +1186,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertCount(2, $orders);
         $this->assertArrayHasKey('relevance', $orders);
         $this->assertArrayHasKey('location', $orders);
-        $this->assertContains('Block: HTML', $orders['location']);
+        $this->assertStringContainsString('Block: Text', $orders['location']);
     }
 
     /**

@@ -26,14 +26,18 @@
                 "minor_version:": 0,
                 "patch_version:": 0,
                 "runnable": 1,
-                "icon": "icon.svg"
+                "icon": "icon.svg",
+                "enabled": true,
+                "toggleenabledurl": "http://myserver.cat/h5p/libraries.php?id=26&action=disable"
             },
             {
                 "title": "Collage",
                 "major_version": 0,
                 "minor_version:": 3,
                 "patch_version:": 1,
-                "runnable": 1
+                "runnable": 1,
+                "enabled": true,
+                "toggleenabledurl": "http://myserver.cat/h5p/libraries.php?id=37&action=disable"
             },
             {
                 "title": "FontAwesome",
@@ -41,7 +45,9 @@
                 "minor_version:": 5,
                 "patch_version:": 0,
                 "runnable": 1,
-                "icon": "icon.svg"
+                "icon": "icon.svg",
+                "enabled": false,
+                "toggleenabledurl": "http://myserver.cat/h5p/libraries.php?id=54&action=enable"
             }
         ]
     }
@@ -67,6 +73,7 @@
             <table class="admintable generaltable" id="h5pcontenttypes">
                 <thead>
                     <tr>
+                        <th style="width: 5%">{{#str}}enable, core{{/str}}</th>
                         <th>{{#str}}description, core{{/str}}</th>
                         <th>{{#str}}version, core{{/str}}</th>
                         <th aria-label="{{#str}}actions, core_h5p{{/str}}"></th>
@@ -76,6 +83,14 @@
                     {{#contenttypes}}
                         {{#runnable}}
                         <tr class="">
+                            <td class="text-center">
+                            {{#enabled}}
+                                <a href="{{{toggleenabledurl}}}" aria-label="{{#str}}disable, core{{/str}}">{{#pix}}t/hide, core,{{#str}}disable{{/str}}{{/pix}}</a>
+                            {{/enabled}}
+                            {{^enabled}}
+                                <a href="{{{toggleenabledurl}}}" aria-label="{{#str}}enable, core{{/str}}">{{#pix}}t/show, core,{{#str}}enable{{/str}}{{/pix}}</a>
+                            {{/enabled}}
+                            </td>
                             <td>
                                 {{#icon}}
                                     <img alt=""

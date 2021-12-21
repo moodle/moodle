@@ -73,11 +73,12 @@ class user_filter_profilefield extends user_filter_type {
      * @return array of profile fields
      */
     public function get_profile_fields() {
-        global $DB;
-        $order = $DB->sql_order_by_text('name');
-        if (!$fields = $DB->get_records_menu('user_info_field', null, $order, 'id, name')) {
-            return null;
-        }
+        global $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
+        $fieldrecords = profile_get_custom_fields();
+        $fields = array_combine(array_keys($fieldrecords), array_column($fieldrecords, 'name'));
+        core_collator::asort($fields);
         $res = array(0 => get_string('anyfield', 'filters'));
 
         return $res + $fields;

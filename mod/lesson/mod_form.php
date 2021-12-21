@@ -278,7 +278,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('review', $lessonconfig->displayreview);
         $mform->setAdvanced('review', $lessonconfig->displayreview_adv);
 
-        $numbers = array();
+        $numbers = array('0' => get_string('unlimited'));
         for ($i = 10; $i > 0; $i--) {
             $numbers[$i] = $i;
         }

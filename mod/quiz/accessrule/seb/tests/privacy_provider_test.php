@@ -27,6 +27,7 @@ use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\tests\request\approved_contextlist;
+use core_privacy\tests\provider_testcase;
 use quizaccess_seb\privacy\provider;
 use quizaccess_seb\quiz_settings;
 
@@ -40,7 +41,7 @@ require_once(__DIR__ . '/test_helper_trait.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_provider_testcase extends advanced_testcase {
+class quizaccess_seb_provider_testcase extends provider_testcase {
     use quizaccess_seb_test_helper_trait;
 
     /**

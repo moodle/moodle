@@ -70,12 +70,6 @@ define('CALENDAR_TF_24', '%H:%M');
 define('CALENDAR_TF_12', '%I:%M %p');
 
 /**
- * CALENDAR_EVENT_GLOBAL - Site calendar event types
- * @deprecated since 3.8
- */
-define('CALENDAR_EVENT_GLOBAL', 1);
-
-/**
  * CALENDAR_EVENT_SITE - Site calendar event types
  */
 define('CALENDAR_EVENT_SITE', 1);
@@ -1057,6 +1051,9 @@ class calendar_information {
     /** @var context The anticipated context that the calendar is viewed in */
     public $context = null;
 
+    /** @var string The calendar's view mode. */
+    protected $viewmode;
+
     /**
      * Creates a new instance
      *
@@ -1310,11 +1307,24 @@ class calendar_information {
             $filters->title = get_string('eventskey', 'calendar');
             $renderer->add_pretend_calendar_block($filters, BLOCK_POS_RIGHT);
         }
-        $block = new block_contents;
-        $block->content = $renderer->fake_block_threemonths($this);
-        $block->footer = '';
-        $block->title = get_string('monthlyview', 'calendar');
-        $renderer->add_pretend_calendar_block($block, BLOCK_POS_RIGHT);
+    }
+
+    /**
+     * Getter method for the calendar's view mode.
+     *
+     * @return string
+     */
+    public function get_viewmode(): string {
+        return $this->viewmode;
+    }
+
+    /**
+     * Setter method for the calendar's view mode.
+     *
+     * @param string $viewmode
+     */
+    public function set_viewmode(string $viewmode): void {
+        $this->viewmode = $viewmode;
     }
 }
 
@@ -2397,9 +2407,7 @@ function calendar_get_default_courses($courseid = null, $fields = '*', $canmanag
         $prefixedfields = array_map(function($value) {
             return 'c.' . trim(strtolower($value));
         }, $fieldlist);
-        if (!in_array('c.visible', $prefixedfields) && !in_array('c.*', $prefixedfields)) {
-            $prefixedfields[] = 'c.visible';
-        }
+
         $courses = get_courses('all', 'c.shortname', implode(',', $prefixedfields));
     } else {
         $courses = enrol_get_users_courses($userid, true, $fields);
@@ -2702,12 +2710,12 @@ function calendar_add_event_allowed($event) {
  */
 function calendar_get_pollinterval_choices() {
     return array(
-        '0' => new \lang_string('never', 'calendar'),
-        HOURSECS => new \lang_string('hourly', 'calendar'),
-        DAYSECS => new \lang_string('daily', 'calendar'),
-        WEEKSECS => new \lang_string('weekly', 'calendar'),
-        '2628000' => new \lang_string('monthly', 'calendar'),
-        YEARSECS => new \lang_string('annually', 'calendar')
+        '0' => get_string('never', 'calendar'),
+        HOURSECS => get_string('hourly', 'calendar'),
+        DAYSECS => get_string('daily', 'calendar'),
+        WEEKSECS => get_string('weekly', 'calendar'),
+        '2628000' => get_string('monthly', 'calendar'),
+        YEARSECS => get_string('annually', 'calendar')
     );
 }
 
@@ -2833,7 +2841,7 @@ function calendar_add_subscription($sub) {
  * @throws dml_exception A DML specific exception is thrown for invalid subscriptionids.
  * @return int Code: CALENDAR_IMPORT_EVENT_UPDATED = updated,  CALENDAR_IMPORT_EVENT_INSERTED = inserted, 0 = error
  */
-function calendar_add_icalendar_event($event, $unused = null, $subscriptionid, $timezone='UTC') {
+function calendar_add_icalendar_event($event, $unused, $subscriptionid, $timezone='UTC') {
     global $DB;
 
     // Probably an unsupported X-MICROSOFT-CDO-BUSYSTATUS event.
@@ -2946,42 +2954,6 @@ function calendar_add_icalendar_event($event, $unused = null, $subscriptionid, $
 }
 
 /**
- * Update a subscription from the form data in one of the rows in the existing subscriptions table.
- *
- * @param int $subscriptionid The ID of the subscription we are acting upon.
- * @param int $pollinterval The poll interval to use.
- * @param int $action The action to be performed. One of update or remove.
- * @throws dml_exception if invalid subscriptionid is provided
- * @return string A log of the import progress, including errors
- */
-function calendar_process_subscription_row($subscriptionid, $pollinterval, $action) {
-    // Fetch the subscription from the database making sure it exists.
-    $sub = calendar_get_subscription($subscriptionid);
-
-    // Update or remove the subscription, based on action.
-    switch ($action) {
-        case CALENDAR_SUBSCRIPTION_UPDATE:
-            // Skip updating file subscriptions.
-            if (empty($sub->url)) {
-                break;
-            }
-            $sub->pollinterval = $pollinterval;
-            calendar_update_subscription($sub);
-
-            // Update the events.
-            return "<p>" . get_string('subscriptionupdated', 'calendar', $sub->name) . "</p>" .
-                calendar_update_subscription_events($subscriptionid);
-        case CALENDAR_SUBSCRIPTION_REMOVE:
-            calendar_delete_subscription($subscriptionid);
-            return get_string('subscriptionremoved', 'calendar', $sub->name);
-            break;
-        default:
-            break;
-    }
-    return '';
-}
-
-/**
  * Delete subscription and all related events.
  *
  * @param int|stdClass $subscription subscription or it's id, which needs to be deleted.
@@ -3033,6 +3005,7 @@ function calendar_get_icalendar($url) {
     global $CFG;
 
     require_once($CFG->libdir . '/filelib.php');
+    require_once($CFG->libdir . '/bennu/bennu.inc.php');
 
     $curl = new \curl();
     $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => 1, 'CURLOPT_MAXREDIRS' => 5));
@@ -3053,17 +3026,17 @@ function calendar_get_icalendar($url) {
  * Import events from an iCalendar object into a course calendar.
  *
  * @param iCalendar $ical The iCalendar object.
- * @param int $unused Deprecated
- * @param int $subscriptionid The subscription ID.
- * @return string A log of the import progress, including errors.
+ * @param int|null $subscriptionid The subscription ID.
+ * @return array A log of the import progress, including errors.
  */
-function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid = null) {
+function calendar_import_events_from_ical(iCalendar $ical, int $subscriptionid = null): array {
     global $DB;
 
-    $return = '';
+    $errors = [];
     $eventcount = 0;
     $updatecount = 0;
     $skippedcount = 0;
+    $deletedcount = 0;
 
     // Large calendars take a while...
     if (!CLI_SCRIPT) {
@@ -3092,13 +3065,11 @@ function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid
                 $skippedcount++;
                 break;
             case 0:
-                $return .= '<p>' . get_string('erroraddingevent', 'calendar') . ': ';
                 if (empty($event->properties['SUMMARY'])) {
-                    $return .= '(' . get_string('notitle', 'calendar') . ')';
+                    $errors[] = '(' . get_string('notitle', 'calendar') . ')';
                 } else {
-                    $return .= $event->properties['SUMMARY'][0]->value;
+                    $errors[] = $event->properties['SUMMARY'][0]->value;
                 }
-                $return .= "</p>\n";
                 break;
         }
     }
@@ -3117,15 +3088,21 @@ function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid
             }
             if (!empty($tobedeleted)) {
                 $DB->delete_records_list('event', 'id', $tobedeleted);
-                $return .= "<p> " . get_string('eventsdeleted', 'calendar') . ": " . count($tobedeleted) . "</p> ";
+                $deletedcount = count($tobedeleted);
             }
         }
     }
 
-    $return .= "<p>" . get_string('eventsimported', 'calendar', $eventcount) . "</p> ";
-    $return .= "<p>" . get_string('eventsskipped', 'calendar', $skippedcount) . "</p> ";
-    $return .= "<p>" . get_string('eventsupdated', 'calendar', $updatecount) . "</p>";
-    return $return;
+    $result = [
+        'eventsimported' => $eventcount,
+        'eventsskipped' => $skippedcount,
+        'eventsupdated' => $updatecount,
+        'eventsdeleted' => $deletedcount,
+        'haserror' => !empty($errors),
+        'errors' => $errors,
+    ];
+
+    return $result;
 }
 
 /**
@@ -3143,7 +3120,7 @@ function calendar_update_subscription_events($subscriptionid) {
     }
 
     $ical = calendar_get_icalendar($sub->url);
-    $return = calendar_import_icalendar_events($ical, null, $subscriptionid);
+    $return = calendar_import_events_from_ical($ical, $subscriptionid);
     $sub->lastupdated = time();
 
     calendar_update_subscription($sub);
@@ -3207,6 +3184,7 @@ function calendar_update_subscription($subscription) {
  * @return bool true if current user can edit the subscription else false
  */
 function calendar_can_edit_subscription($subscriptionorid) {
+    global $USER;
     if (is_array($subscriptionorid)) {
         $subscription = (object)$subscriptionorid;
     } else if (is_object($subscriptionorid)) {
@@ -3227,7 +3205,7 @@ function calendar_can_edit_subscription($subscriptionorid) {
     calendar_get_allowed_types($allowed, $courseid, null, $category);
     switch ($subscription->eventtype) {
         case 'user':
-            return $allowed->user;
+            return ($USER->id == $subscription->userid && $allowed->user);
         case 'course':
             if (isset($allowed->courses[$courseid])) {
                 return $allowed->courses[$courseid];
@@ -3492,17 +3470,18 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
     ];
 
     $data = [];
-    if ($view == "month" || $view == "mini" || $view == "minithree") {
+    $calendar->set_viewmode($view);
+    if ($view == "month" || $view == "monthblock" || $view == "mini" || $view == "minithree" ) {
         $month = new \core_calendar\external\month_exporter($calendar, $type, $related);
         $month->set_includenavigation($includenavigation);
         $month->set_initialeventsloaded(!$skipevents);
-        $month->set_showcoursefilter($view == "month");
+        $month->set_showcoursefilter(($view == "month" || $view == "monthblock"));
         $data = $month->export($renderer);
-        $data->viewingmonth = true;
     } else if ($view == "day") {
         $day = new \core_calendar\external\calendar_day_exporter($calendar, $related);
         $data = $day->export($renderer);
         $data->viewingday = true;
+        $data->showviewselector = true;
         $template = 'core_calendar/calendar_day';
     } else if ($view == "upcoming" || $view == "upcoming_mini") {
         $upcoming = new \core_calendar\external\calendar_upcoming_exporter($calendar, $related);
@@ -3511,6 +3490,7 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         if ($view == "upcoming") {
             $template = 'core_calendar/calendar_upcoming';
             $data->viewingupcoming = true;
+            $data->showviewselector = true;
         } else if ($view == "upcoming_mini") {
             $template = 'core_calendar/calendar_upcoming_mini';
         }
@@ -3680,16 +3660,20 @@ function calendar_get_timestamp($d, $m, $y, $time = 0) {
  * Get the calendar footer options.
  *
  * @param calendar_information $calendar The calendar information object.
+ * @param array $options Display options for the footer. If an option is not set, a default value will be provided.
+ *                      It consists of:
+ *                      - showfullcalendarlink - bool - Whether to show the full calendar link or not. Defaults to false.
+ *
  * @return array The data for template and template name.
  */
-function calendar_get_footer_options($calendar) {
+function calendar_get_footer_options($calendar, array $options = []) {
     global $CFG, $USER, $PAGE;
 
     // Generate hash for iCal link.
     $authtoken = calendar_get_export_token($USER);
 
     $renderer = $PAGE->get_renderer('core_calendar');
-    $footer = new \core_calendar\external\footer_options_exporter($calendar, $USER->id, $authtoken);
+    $footer = new \core_calendar\external\footer_options_exporter($calendar, $USER->id, $authtoken, $options);
     $data = $footer->export($renderer);
     $template = 'core_calendar/footer_options';
 
@@ -3931,4 +3915,56 @@ function calendar_get_export_token(stdClass $user): string {
     global $CFG, $DB;
 
     return sha1($user->id . $DB->get_field('user', 'password', ['id' => $user->id]) . $CFG->calendar_exportsalt);
+}
+
+/**
+ * Get the list of URL parameters for calendar expport and import links.
+ *
+ * @return array
+ */
+function calendar_get_export_import_link_params(): array {
+    global $PAGE;
+
+    $params = [];
+    if ($courseid = $PAGE->url->get_param('course')) {
+        $params['course'] = $courseid;
+    }
+    if ($categoryid = $PAGE->url->get_param('category')) {
+        $params['category'] = $categoryid;
+    }
+
+    return $params;
+}
+
+/**
+ * Implements the inplace editable feature.
+ *
+ * @param string $itemtype Type of the inplace editable element
+ * @param int $itemid Id of the item to edit
+ * @param int $newvalue New value of the item
+ * @return \core\output\inplace_editable
+ */
+function calendar_inplace_editable(string $itemtype, int $itemid, int $newvalue): \core\output\inplace_editable {
+    global $OUTPUT;
+
+    if ($itemtype === 'refreshinterval') {
+
+        $subscription = calendar_get_subscription($itemid);
+        $context = calendar_get_calendar_context($subscription);
+        \external_api::validate_context($context);
+
+        $updateresult = \core_calendar\output\refreshintervalcollection::update($itemid, $newvalue);
+
+        $refreshresults = calendar_update_subscription_events($itemid);
+        \core\notification::add($OUTPUT->render_from_template(
+            'core_calendar/subscription_update_result',
+            array_merge($refreshresults, [
+                'subscriptionname' => s($subscription->name),
+            ])
+        ), \core\notification::INFO);
+
+        return $updateresult;
+    }
+
+    \external_api::validate_context(context_system::instance());
 }
