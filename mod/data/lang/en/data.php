@@ -244,6 +244,7 @@ $string['listview'] = 'List view';
 $string['listtemplate'] = 'List template';
 $string['longitude'] = 'Longitude';
 $string['manageapproved'] = 'Allow editing of approved entries';
+$string['managefields'] = 'Manage fields';
 $string['manageapproved_help'] = 'If disabled, approved entries are no longer editable or deletable by the user who added them. This setting has no effect unless \'Approval required\' is enabled.';
 $string['mapexistingfield'] = 'Map to {$a}';
 $string['mapnewfield'] = 'Create a new field';

@@ -61,7 +61,7 @@ class action_bar {
         $presetslink = new moodle_url('/mod/data/field.php', ['d' => $this->id, 'mode' => 'usepreset']);
 
         $menu = [
-            $createfieldlink->out(false) => get_string('newfield', 'mod_data'),
+            $createfieldlink->out(false) => get_string('managefields', 'mod_data'),
             $importlink->out(false) => get_string('importpreset', 'mod_data'),
             $presetslink->out(false) => get_string('usestandard', 'mod_data'),
         ];
@@ -89,7 +89,7 @@ class action_bar {
             asort($menufield);
 
             $fieldselecturl = new moodle_url('/mod/data/field.php', ['d' => $this->id, 'mode' => 'new']);
-            $fieldselect = new \single_select($fieldselecturl, 'newtype', $menufield, null, ['' => 'choosedots'],
+            $fieldselect = new \single_select($fieldselecturl, 'newtype', $menufield, null, get_string('newfield', 'data'),
                 'fieldform');
         }
 
