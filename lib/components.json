@@ -45,6 +45,7 @@
     "subsystems": {
         "access": null,
         "admin": "admin",
+        "adminpresets": "adminpresets",
         "analytics": "analytics",
         "antivirus": "lib\/antivirus",
         "auth": "auth",
