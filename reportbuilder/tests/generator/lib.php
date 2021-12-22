@@ -17,9 +17,11 @@
 declare(strict_types=1);
 
 use core_reportbuilder\local\helpers\report as helper;
+use core_reportbuilder\local\helpers\schedule as schedule_helper;
 use core_reportbuilder\local\models\column;
 use core_reportbuilder\local\models\filter;
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\models\schedule;
 use core_reportbuilder\local\audiences\base as audience_base;
 
 /**
@@ -138,5 +140,40 @@ class core_reportbuilder_generator extends component_generator_base {
             \core_reportbuilder\reportbuilder\audience\allusers::class;
 
         return ($classname)::create($record['reportid'], $record['configdata']);
+    }
+
+    /**
+     * Create report schedule
+     *
+     * @param array|stdClass $record
+     * @return schedule
+     * @throws coding_exception
+     */
+    public function create_schedule($record): schedule {
+        $record = (array) $record;
+
+        // Required properties.
+        if (!array_key_exists('reportid', $record)) {
+            throw new coding_exception('Record must contain \'reportid\' property');
+        }
+        if (!array_key_exists('name', $record)) {
+            throw new coding_exception('Record must contain \'name\' property');
+        }
+
+        // Optional properties.
+        if (!array_key_exists('format', $record)) {
+            $record['format'] = 'csv';
+        }
+        if (!array_key_exists('subject', $record)) {
+            $record['subject'] = $record['name'] . ' subject';
+        }
+        if (!array_key_exists('message', $record)) {
+            $record['message'] = $record['name'] . ' message';
+        }
+        if (!array_key_exists('timescheduled', $record)) {
+            $record['timescheduled'] = usergetmidnight(time() + DAYSECS);
+        }
+
+        return schedule_helper::create_schedule((object) $record);
     }
 }

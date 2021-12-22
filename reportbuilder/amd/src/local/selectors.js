@@ -73,6 +73,11 @@ const SELECTORS = {
         audienceEdit: '[data-action="edit-audience"]',
         audienceDelete: '[data-action="delete-audience"]',
         toggleCardView: '[data-action="toggle-card"]',
+        scheduleCreate: '[data-action="schedule-create"]',
+        scheduleToggle: '[data-action="schedule-toggle"]',
+        scheduleEdit: '[data-action="schedule-edit"]',
+        scheduleSend: '[data-action="schedule-send"]',
+        scheduleDelete: '[data-action="schedule-delete"]',
     },
 };
 

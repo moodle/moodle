@@ -2881,6 +2881,24 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_reportbuilder_schedules_delete' => [
+        'classname'   => 'core_reportbuilder\external\schedules\delete',
+        'description' => 'Delete schedule from report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_schedules_send' => [
+        'classname'   => 'core_reportbuilder\external\schedules\send',
+        'description' => 'Send report schedule',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_schedules_toggle' => [
+        'classname'   => 'core_reportbuilder\external\schedules\toggle',
+        'description' => 'Toggle state of report schedule',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
 );
 
 $services = array(

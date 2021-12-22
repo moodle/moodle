@@ -27,7 +27,7 @@ Feature: Configure access to reports based on intended audience
     And I click on the "Access" dynamic tab
     And I should see "Nothing to display"
     And I click on the "Audience" dynamic tab
-    And I should see "Add an audience to this report"
+    And I should see "There are no audiences for this report"
     Then I click on "Add audience 'Manually added users'" "link"
     And I should see "Added audience 'Manually added users'"
     And I set the field "Add users manually" to "User 1,User 3"
@@ -36,7 +36,7 @@ Feature: Configure access to reports based on intended audience
     And I should see "User 1"
     And I should not see "User 2"
     And I should see "User 3"
-    And I should not see "Add an audience to this report"
+    And I should not see "There are no audiences for this report"
     And I click on the "Access" dynamic tab
     And I should see "User 1" in the "reportbuilder-table" "table"
     And I should not see "User 2" in the "reportbuilder-table" "table"
@@ -57,7 +57,7 @@ Feature: Configure access to reports based on intended audience
     And I press "Save changes"
     Then I should see "Audience saved"
     And I should see "Test role"
-    And I should not see "Add an audience to this report"
+    And I should not see "There are no audiences for this report"
     And I click on the "Access" dynamic tab
     And I should not see "User 1" in the "reportbuilder-table" "table"
     And I should see "User 2" in the "reportbuilder-table" "table"
@@ -78,7 +78,7 @@ Feature: Configure access to reports based on intended audience
     And I press "Save changes"
     Then I should see "Audience saved"
     And I should see "Cohort1"
-    And I should not see "Add an audience to this report"
+    And I should not see "There are no audiences for this report"
     And I click on the "Access" dynamic tab
     And I should not see "User 1" in the "reportbuilder-table" "table"
     And I should not see "User 2" in the "reportbuilder-table" "table"
@@ -99,14 +99,14 @@ Feature: Configure access to reports based on intended audience
     When I click on "Delete audience 'All users'" "button"
     And I click on "Delete" "button" in the "Delete audience 'All users'" "dialogue"
     Then I should see "Deleted audience 'All users'"
-    And I should see "Add an audience to this report"
+    And I should see "There are no audiences for this report"
 
   Scenario: Edit report audience with manually added users audience type
     Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Access" dynamic tab
     And I should see "Nothing to display"
     And I click on the "Audience" dynamic tab
-    And I should see "Add an audience to this report"
+    And I should see "There are no audiences for this report"
     And I click on "Add audience 'Manually added users'" "link"
     And I set the field "Add users manually" to "User 1,User 3"
     And I press "Save changes"
@@ -148,7 +148,7 @@ Feature: Configure access to reports based on intended audience
     And I navigate to "Reports > Report builder > Custom reports" in site administration
     And I click on "My report" "link" in the "My report" "table_row"
     And I click on the "Audience" dynamic tab
-    And I should see "Add an audience to this report"
+    And I should see "There are no audiences for this report"
     Then I click on "Add audience 'Manually added users'" "link"
     And I set the field "Add users manually" to "User 1"
     And I press "Save changes"
@@ -192,7 +192,7 @@ Feature: Configure access to reports based on intended audience
     And I navigate to "Reports > Report builder > Custom reports" in site administration
     And I click on "My report" "link" in the "My report" "table_row"
     And I click on the "Audience" dynamic tab
-    And I should see "Add an audience to this report"
+    And I should see "There are no audiences for this report"
     Then I click on "Add audience 'Manually added users'" "link"
     And I set the field "Add users manually" to "User 1"
     And I press "Save changes"

@@ -24,6 +24,7 @@
 
 declare(strict_types=1);
 
+use core\output\inplace_editable;
 use core_reportbuilder\form\audience;
 use core_reportbuilder\form\filter;
 
@@ -61,7 +62,8 @@ function core_reportbuilder_output_fragment_audience_form(array $params): string
 
     $context = [
         'instanceid' => 0,
-        'title' => $params['title'],
+        'heading' => $params['title'],
+        'headingeditable' => $params['title'],
         'form' => $audienceform->render(),
         'canedit' => true,
         'candelete' => true,
@@ -78,11 +80,9 @@ function core_reportbuilder_output_fragment_audience_form(array $params): string
  * @param string $itemtype
  * @param int $itemid
  * @param string $newvalue
- * @return \core\output\inplace_editable|bool
+ * @return inplace_editable|null
  */
-function core_reportbuilder_inplace_editable($itemtype, $itemid, $newvalue) {
-    $itemid = (int) $itemid;
-
+function core_reportbuilder_inplace_editable(string $itemtype, int $itemid, string $newvalue): ?inplace_editable {
     switch ($itemtype) {
         case 'reportname':
             return \core_reportbuilder\output\report_name_editable::update($itemid, $newvalue);
@@ -96,7 +96,12 @@ function core_reportbuilder_inplace_editable($itemtype, $itemid, $newvalue) {
         case 'filterheading':
             return \core_reportbuilder\output\filter_heading_editable::update($itemid, $newvalue);
 
-        default:
-            return false;
+        case 'audienceheading':
+            return \core_reportbuilder\output\audience_heading_editable::update($itemid, $newvalue);
+
+        case 'schedulename':
+            return \core_reportbuilder\output\schedule_name_editable::update($itemid, $newvalue);
     }
+
+    return null;
 }

@@ -30,6 +30,7 @@ use core_reportbuilder\permission;
 use core_reportbuilder\output\dynamictabs\access;
 use core_reportbuilder\output\dynamictabs\audience;
 use core_reportbuilder\output\dynamictabs\editor;
+use core_reportbuilder\output\dynamictabs\schedules;
 
 require_once(__DIR__ . '/../config.php');
 require_once("{$CFG->libdir}/adminlib.php");
@@ -61,6 +62,7 @@ $tabdata = ['reportid' => $reportid];
 $tabs = [
     new editor($tabdata),
     new audience($tabdata),
+    new schedules($tabdata),
     new access($tabdata),
 ];
 
