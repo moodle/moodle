@@ -767,18 +767,18 @@ const registerEventListeners = (root, page) => {
     // Searching functionality event handlers.
     const input = page.querySelector(SELECTORS.region.searchInput);
     const clearIcon = page.querySelector(SELECTORS.region.clearIcon);
-    const searchIcon = page.querySelector(SELECTORS.region.searchIcon);
 
     clearIcon.addEventListener('click', () => {
         input.value = '';
-        clearSearch(searchIcon, clearIcon, root);
+        input.focus();
+        clearSearch(clearIcon, root);
     });
 
     input.addEventListener('input', debounce(() => {
         if (input.value === '') {
-            clearSearch(searchIcon, clearIcon, root);
+            clearSearch(clearIcon, root);
         } else {
-            activeSearch(searchIcon, clearIcon);
+            activeSearch(clearIcon);
             initializePagedContent(root, searchFunctionalityCurry(), input.value.trim());
         }
     }, 300));
@@ -787,25 +787,21 @@ const registerEventListeners = (root, page) => {
 /**
  * Reset the search icon and trigger the init for the block.
  *
- * @param {HTMLElement} searchIcon Our search icon to manipulate.
  * @param {HTMLElement} clearIcon Our closing icon to manipulate.
  * @param {Object} root The myoverview block container element.
  */
-export const clearSearch = (searchIcon, clearIcon, root) => {
-    searchIcon.classList.remove('d-none');
-    clearIcon.parentElement.classList.add('d-none');
+export const clearSearch = (clearIcon, root) => {
+    clearIcon.classList.add('d-none');
     init(root);
 };
 
 /**
  * Change the searching icon to its' active state.
  *
- * @param {HTMLElement} searchIcon Our search icon to manipulate.
  * @param {HTMLElement} clearIcon Our closing icon to manipulate.
  */
-const activeSearch = (searchIcon, clearIcon) => {
-    searchIcon.classList.add('d-none');
-    clearIcon.parentElement.classList.remove('d-none');
+const activeSearch = (clearIcon) => {
+    clearIcon.classList.remove('d-none');
 };
 
 /**

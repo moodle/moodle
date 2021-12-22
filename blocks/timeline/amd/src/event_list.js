@@ -51,7 +51,7 @@ function(
         EVENT_LIST_WRAPPER: '[data-region="event-list-wrapper"]',
         EVENT_LIST_LOADING_PLACEHOLDER: '[data-region="event-list-loading-placeholder"]',
         TIMELINE_BLOCK: '[data-region="timeline"]',
-        TIMELINE_SEARCH: '[data-region="search-input"]',
+        TIMELINE_SEARCH: '[data-action="search"]',
         MORE_ACTIVITIES_BUTTON: '[data-action="more-events"]',
         MORE_ACTIVITIES_BUTTON_CONTAINER: '[data-region="more-events-button-container"]'
     };
