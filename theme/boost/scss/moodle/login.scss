@@ -66,5 +66,6 @@ $login-identity-provider-btn-border: $border-color !default;
 @include media-breakpoint-up(md) {
     .login-container {
         max-width: 600px;
+        @include border-radius();
     }
 }
