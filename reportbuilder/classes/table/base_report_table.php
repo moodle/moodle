@@ -21,6 +21,7 @@ namespace core_reportbuilder\table;
 use context;
 use moodle_url;
 use renderable;
+use table_default_export_format_parent;
 use table_sql;
 use html_writer;
 use core_table\dynamic;
@@ -29,6 +30,7 @@ use core_reportbuilder\local\filters\base;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\base as base_report;
 use core_reportbuilder\local\report\filter;
+use core_reportbuilder\output\dataformat_export_format;
 use core\output\notification;
 
 defined('MOODLE_INTERNAL') || die;
@@ -171,6 +173,23 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         } else {
             $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params);
         }
+    }
+
+    /**
+     * Set the export class to use when downloading reports (TODO: consider applying to all tables, MDL-72058)
+     *
+     * @param table_default_export_format_parent|null $exportclass
+     * @return table_default_export_format_parent|null
+     */
+    public function export_class_instance($exportclass = null) {
+        if (is_null($this->exportclass) && $this->is_downloading()) {
+            $this->exportclass = new dataformat_export_format($this, $this->download);
+            if (!$this->exportclass->document_started()) {
+                $this->exportclass->start_document($this->filename, $this->sheettitle);
+            }
+        }
+
+        return $this->exportclass;
     }
 
     /**
