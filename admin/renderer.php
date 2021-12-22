@@ -895,7 +895,14 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
 
-        return $this->render_from_template('core/campaign_content', ['lang' => current_language()]);
+        $lang = current_language();
+        $url = "https://campaign.moodle.org/current/lms/{$lang}/install/";
+        $params = [
+            'url' => $url,
+            'iframeid' => 'campaign-content'
+        ];
+
+        return $this->render_from_template('core/external_content_banner', $params);
     }
 
     /**
