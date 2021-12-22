@@ -97,12 +97,12 @@ Feature: Test tertiary navigation as various users
     When I navigate to "Badges > Manage badges" in site administration
     Then "Manage badges" "button" should not exist
     And "Add a new badge" "button" should exist
-    And I should see "Site administration" is active in secondary navigation
+    And I should see "General" is active in secondary navigation
     And I click on "Testing site badge" "link"
     And "Manage badges" "button" should not exist
     And "Add a new badge" "button" should not exist
     And "Back" "button" should exist
-    And I should see "Site administration" is active in secondary navigation
+    And I should see "General" is active in secondary navigation
     And I click on "Back" "button"
     And "Back" "button" should not exist
     And "Manage badges" "button" should not exist
@@ -113,7 +113,7 @@ Feature: Test tertiary navigation as various users
     And I navigate to "Badges > Manage badges" in site administration
     And I click on "Testing site badge" "link"
     When I select "<option>" from the "jump" singleselect
-    Then I should see "Site administration" is active in secondary navigation
+    Then I should see "General" is active in secondary navigation
 
     Examples:
       | option             |
