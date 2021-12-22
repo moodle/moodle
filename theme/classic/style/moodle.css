@@ -19542,6 +19542,9 @@ p.arrow_button {
 .path-grade-report-grader .gradeparent td.noborder {
   border-right: transparent; }
 
+.path-grade-report-grader .show-drawer-left .gradeparent th.header {
+  left: -1rem; }
+
 /**
  * User report.
  */
