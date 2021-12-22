@@ -204,7 +204,10 @@ class helper {
      * @return array
      */
     public static function format_discrimination_index(?float $value): array {
-        if (is_null($value) || $value < self::NEED_FOR_REVISION_LOWER_THRESHOLD) {
+        if (is_null($value)) {
+            $content = get_string('emptyvalue', 'qbank_statistics');
+            $classes = '';
+        } else if ($value < self::NEED_FOR_REVISION_LOWER_THRESHOLD) {
             $content = get_string('verylikely', 'qbank_statistics');
             $classes = 'alert-danger';
         } else if ($value < self::NEED_FOR_REVISION_UPPER_THRESHOLD) {

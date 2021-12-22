@@ -38,3 +38,4 @@ $string['verylikely'] = 'Very likely';
 $string['likely'] = 'Likely';
 $string['unlikely'] = 'Unlikely';
 $string['na'] = 'N/A';
+$string['emptyvalue'] = '-';
