@@ -103,8 +103,6 @@ if ($currentgroup) {
 // Print the page header.
 echo $OUTPUT->header();
 
-groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/view.php?id=$cm->id");
-
 if (has_capability('mod/chat:chat', $context)) {
     // Print the main part of the page.
     echo $OUTPUT->box_start('generalbox', 'enterlink');
@@ -119,7 +117,7 @@ if (has_capability('mod/chat:chat', $context)) {
 
     $params['id'] = $chat->id;
     $chattarget = new moodle_url("/mod/chat/gui_$CFG->chat_method/index.php", $params);
-    echo html_writer::start_div('container-fluid');
+    echo html_writer::start_div('container-fluid mb-2');
     echo html_writer::start_div('row');
     echo html_writer::start_div('col-xs-6 mr-3');
     echo $OUTPUT->action_link($chattarget,
@@ -147,10 +145,12 @@ if (has_capability('mod/chat:chat', $context)) {
             echo '</p>';
         }
     }
+    groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/view.php?id=$cm->id");
 
     echo $OUTPUT->box_end();
 
 } else {
+    groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/view.php?id=$cm->id");
     echo $OUTPUT->box_start('generalbox', 'notallowenter');
     echo '<p>'.get_string('notallowenter', 'chat').'</p>';
     echo $OUTPUT->box_end();
