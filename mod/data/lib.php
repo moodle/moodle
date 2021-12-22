@@ -3633,14 +3633,8 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
 
         $datanode->add(get_string('fields', 'data'),
             new moodle_url('/mod/data/field.php', array('d' => $data->id)));
-        $templates = $datanode->add(get_string('templates', 'data'),
+        $datanode->add(get_string('templates', 'data'),
             new moodle_url('/mod/data/templates.php', array('d' => $data->id)));
-
-        $templatelist = array ('listtemplate', 'singletemplate', 'asearchtemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
-        foreach ($templatelist as $template) {
-            $templates->add(get_string($template, 'data'), new moodle_url('/mod/data/templates.php', array('d'=>$data->id,'mode'=>$template)));
-        }
-
         $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d' => $data->id)));
     }
 

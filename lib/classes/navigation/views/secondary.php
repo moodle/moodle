@@ -433,6 +433,11 @@ class secondary extends view {
      * @return url_select|null The overflow menu data.
      */
     public function get_overflow_menu_data(): ?url_select {
+
+        if (!$this->page->get_navigation_overflow_state()) {
+            return null;
+        }
+
         $activenode = $this->find_active_node();
         $incourseadmin = false;
 
