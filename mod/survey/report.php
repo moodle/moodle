@@ -111,9 +111,11 @@
     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
         $menuaction = $action == "student" ? "students" : $action;
         $currentgroup = groups_get_activity_group($cm, true);
-        groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/survey/report.php?id=$cm->id&amp;action=$menuaction&amp;qid=$qid");
+        $groupsactivitymenu = groups_print_activity_menu($cm, new moodle_url('/mod/survey/report.php',
+            ['id' => $cm->id, 'action' => $menuaction, 'qid' => $qid]), true);
     } else {
         $currentgroup = 0;
+        $groupsactivitymenu = null;
     }
 
     $params = array(
@@ -139,9 +141,6 @@
 
     $groupingid = $cm->groupingid;
 
-    echo $OUTPUT->spacer(array('height'=>30, 'width'=>30, 'br'=>true)); // should be done with CSS instead
-
-
 /// Print the menu across the top
 
     $virtualscales = false;
@@ -151,20 +150,28 @@
       case "summary":
         echo $OUTPUT->heading($strsummary, 3);
 
+        if ($groupsactivitymenu) {
+            echo html_writer::div($groupsactivitymenu, 'mb-2');
+        }
+
         if (survey_count_responses($survey->id, $currentgroup, $groupingid)) {
             echo "<div class='reportsummary'><a href=\"report.php?action=scales&amp;id=$id\">";
             survey_print_graph("id=$id&amp;group=$currentgroup&amp;type=overall.png");
             echo "</a></div>";
         } else {
-            echo $OUTPUT->notification(get_string("nobodyyet","survey"));
+            echo $OUTPUT->notification(get_string("nobodyyet", "survey"), 'info', false);
         }
         break;
 
       case "scales":
         echo $OUTPUT->heading($strscales, 3);
 
+        if ($groupsactivitymenu) {
+            echo html_writer::div($groupsactivitymenu, 'mb-2');
+        }
+
         if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
-            echo $OUTPUT->notification(get_string("nobodyyet","survey"));
+            echo $OUTPUT->notification(get_string("nobodyyet", "survey"), 'info', false);
 
         } else {
 
@@ -214,8 +221,12 @@
             echo $OUTPUT->heading($strallquestions, 3);
         }
 
+        if ($groupsactivitymenu) {
+            echo html_writer::div($groupsactivitymenu, 'mb-2');
+        }
+
         if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
-            echo $OUTPUT->notification(get_string("nobodyyet","survey"));
+            echo $OUTPUT->notification(get_string("nobodyyet", "survey"), 'info', false);
 
         } else {
 
@@ -291,6 +302,9 @@
 
         echo $OUTPUT->heading("$strquestion: $question->text", 3);
 
+        if ($groupsactivitymenu) {
+            echo html_writer::div($groupsactivitymenu, 'mb-2');
+        }
 
         $strname = get_string("name", "survey");
         $strtime = get_string("time", "survey");
@@ -332,8 +346,12 @@
 
          echo $OUTPUT->heading(get_string("analysisof", "survey", get_string('participants')), 3);
 
+        if ($groupsactivitymenu) {
+            echo html_writer::div($groupsactivitymenu, 'mb-2');
+        }
+
          if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
-             echo $OUTPUT->notification(get_string("nobodyyet","survey"));
+             echo $OUTPUT->notification(get_string("nobodyyet", "survey"), 'info', false);
          } else {
              survey_print_all_responses($cm->id, $results, $course->id);
          }
@@ -346,6 +364,10 @@
          }
 
          echo $OUTPUT->heading(get_string("analysisof", "survey", fullname($user)), 3);
+
+        if ($groupsactivitymenu) {
+            echo html_writer::div($groupsactivitymenu, 'mb-2');
+        }
 
          if ($notes != '' and confirm_sesskey()) {
              if (survey_get_analysis($survey->id, $user->id)) {
@@ -453,6 +475,10 @@
       case "download":
         echo $OUTPUT->heading($strdownload, 3);
 
+        if ($groupsactivitymenu) {
+            echo html_writer::div($groupsactivitymenu, 'mb-2');
+        }
+
         require_capability('mod/survey:download', $context);
 
         $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
@@ -475,7 +501,7 @@
             echo $OUTPUT->container_end();
 
         } else {
-             echo html_writer::tag('p', get_string("nobodyyet", "survey"), array('class' => 'centerpara'));
+            echo $OUTPUT->notification(get_string("nobodyyet", "survey"), 'info', false);
         }
 
         break;
