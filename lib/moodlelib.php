@@ -3291,7 +3291,7 @@ function require_user_key_login($script, $instance = null, $keyvalue = null) {
     core_user::require_active_user($user, true, true);
 
     // Emulate normal session.
-    enrol_check_plugins($user);
+    enrol_check_plugins($user, false);
     \core\session\manager::set_user($user);
 
     // Note we are not using normal login.

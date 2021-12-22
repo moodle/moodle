@@ -1488,4 +1488,97 @@ class enrollib_test extends advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test last_time_enrolments_synced not recorded with "force" option for enrol_check_plugins.
+     * @covers ::enrol_check_plugins
+     */
+    public function test_enrol_check_plugins_with_forced_option() {
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->assertNull(get_user_preferences('last_time_enrolments_synced', null, $user));
+        enrol_check_plugins($user);
+        $this->assertNull(get_user_preferences('last_time_enrolments_synced', null, $user));
+    }
+
+    /**
+     * Data provided for test_enrol_check_plugins_with_empty_config_value test.
+     * @return array
+     */
+    public function empty_config_data_provider(): array {
+        return [
+            [0],
+            ["0"],
+            [false],
+            [''],
+            ['string'],
+        ];
+    }
+
+    /**
+     * Test that empty 'enrolments_sync_interval' is treated as forced option for enrol_check_plugins.
+     *
+     * @dataProvider empty_config_data_provider
+     * @covers ::enrol_check_plugins
+     *
+     * @param mixed $config Config value.
+     */
+    public function test_enrol_check_plugins_with_empty_config_value($config) {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->enrolments_sync_interval = $config;
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->assertNull(get_user_preferences('last_time_enrolments_synced', null, $user));
+        enrol_check_plugins($user, false);
+        $this->assertNull(get_user_preferences('last_time_enrolments_synced', null, $user));
+    }
+
+    /**
+     * Test last_time_enrolments_synced is recorded without "force" option for enrol_check_plugins.
+     * @covers ::enrol_check_plugins
+     */
+    public function test_last_time_enrolments_synced_is_set_if_not_forced() {
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->assertNull(get_user_preferences('last_time_enrolments_synced', null, $user));
+
+        enrol_check_plugins($user, false);
+        $firstrun = get_user_preferences('last_time_enrolments_synced', null, $user);
+        $this->assertNotNull($firstrun);
+        sleep(1);
+
+        enrol_check_plugins($user, false);
+        $secondrun = get_user_preferences('last_time_enrolments_synced', null, $user);
+        $this->assertNotNull($secondrun);
+        $this->assertTrue((int)$secondrun == (int)$firstrun);
+    }
+
+    /**
+     * Test last_time_enrolments_synced is recorded correctly without "force" option for enrol_check_plugins.
+     * @covers ::enrol_check_plugins
+     */
+    public function test_last_time_enrolments_synced_is_set_if_not_forced_if_have_not_passed_interval() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->enrolments_sync_interval = 1;
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->assertNull(get_user_preferences('last_time_enrolments_synced', null, $user));
+
+        enrol_check_plugins($user, false);
+        $firstrun = get_user_preferences('last_time_enrolments_synced', null, $user);
+        $this->assertNotNull($firstrun);
+        sleep(2);
+
+        enrol_check_plugins($user, false);
+        $secondrun = get_user_preferences('last_time_enrolments_synced', null, $user);
+        $this->assertNotNull($secondrun);
+        $this->assertTrue((int)$secondrun > (int)$firstrun);
+    }
+
 }

@@ -744,6 +744,17 @@ $CFG->admin = 'admin';
 // Settings this to anonymous will enable CORS requests for media elements to have the credentials
 // flag set to 'same-origin'. This may be needed when using tool_objectfs as an alternative file
 // system with CloudFront configured.
+//
+// Enrolments sync interval
+//
+// The minimum time in seconds between re-synchronization of enrollment via enrol_check_plugins which is
+// a potentially expensive operation and otherwise happens every time a user is authenticated. This only
+// applies to web requests without a session such as webservice calls, tokenpluginfile.php and rss links
+// where the user is re-authenticated on every request. Set it to 0 to force enrollment checking constantly
+// and increase this number to improve performance at the cost of adding a latency for enrollment updates.
+// Defaults to 60 minutes.
+//
+//      $CFG->enrolments_sync_interval = 3600
 
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!

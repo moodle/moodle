@@ -214,13 +214,14 @@ function enrol_is_enabled($enrol) {
 /**
  * Check all the login enrolment information for the given user object
  * by querying the enrolment plugins
- *
  * This function may be very slow, use only once after log-in or login-as.
  *
- * @param stdClass $user
+ * @param stdClass $user User object.
+ * @param bool $ignoreintervalcheck Force to ignore checking configured sync intervals.
+ *
  * @return void
  */
-function enrol_check_plugins($user) {
+function enrol_check_plugins($user, bool $ignoreintervalcheck = true) {
     global $CFG;
 
     if (empty($user->id) or isguestuser($user)) {
@@ -237,12 +238,26 @@ function enrol_check_plugins($user) {
         return;
     }
 
+    $syncinterval = isset($CFG->enrolments_sync_interval) ? (int)$CFG->enrolments_sync_interval : HOURSECS;
+    $needintervalchecking = !$ignoreintervalcheck && !empty($syncinterval);
+
+    if ($needintervalchecking) {
+        $lastsync = get_user_preferences('last_time_enrolments_synced', 0, $user);
+        if (time() - $lastsync < $syncinterval) {
+            return;
+        }
+    }
+
     $inprogress[$user->id] = true;  // Set the flag
 
     $enabled = enrol_get_plugins(true);
 
     foreach($enabled as $enrol) {
         $enrol->sync_user_enrolments($user);
+    }
+
+    if ($needintervalchecking) {
+        set_user_preference('last_time_enrolments_synced', time(), $user);
     }
 
     unset($inprogress[$user->id]);  // Unset the flag

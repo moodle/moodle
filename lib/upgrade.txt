@@ -1,6 +1,12 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+
+* New setting $CFG->enrolments_sync_interval controls the minimum time in seconds between re-synchronization of enrollment via enrol_check_plugins.
+  This only applies to web requests without a session such as webservice calls, tokenpluginfile.php and rss links Function
+  enrol_check_plugins now has $force flag to bypass checking for that setting.
+
 === 4.0 ===
 
 * To better detect wrong floats (like, for example, unformatted, using local-dependent separators ones) a number of
