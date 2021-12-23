@@ -29,13 +29,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clianswerno'] = 'nono';
-$string['cliansweryes'] = 'eja';
-$string['cliincorrectvalueerror'] = 'Errore, valore "{$a->value}" non curretu pro "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Valore non curretu, torra a proare';
-$string['clitypevalue'] = 'iscrie su valore';
-$string['clitypevaluedefault'] = 'iscrie su valore, incarca Imbiu pro impreare su valore predefinidu ({$a})';
-$string['cliunknowoption'] = 'Optziones non reconnotas:
- {$a}
-Imprea --optzione agiudu.';
-$string['cliyesnoprompt'] = 'Iscrie e (pro eja) o n (pro no)';
+$string['language'] = 'Lìngua';
+$string['moodlelogo'] = 'Logo de Moodle';
+$string['next'] = 'Imbeniente';
+$string['previous'] = 'Pretzedente';
+$string['reload'] = 'Torra a carrigare';
