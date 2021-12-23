@@ -231,7 +231,7 @@ Make a note of any responses entered on this page in the last few minutes, then 
 
 Once connection has been re-established, your responses should be saved and this message will disappear.';
 $string['containercategorycreated'] = 'This category has been created to store all the original categories moved to site level due to the causes specified below.';
-$string['continueattemptquiz'] = 'Continue the last attempt';
+$string['continueattemptquiz'] = 'Continue your attempt';
 $string['continuepreview'] = 'Continue the last preview';
 $string['copyingfrom'] = 'Creating a copy of the question \'{$a}\'';
 $string['copyingquestion'] = 'Copying a question';
