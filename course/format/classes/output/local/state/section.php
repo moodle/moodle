@@ -62,16 +62,16 @@ class section implements renderable {
         $section = $this->section;
         $modinfo = $format->get_modinfo();
 
-        $isactive = true;
-        $contentexpanded = true;
+        $indexcollapsed = false;
+        $contentcollapsed = false;
         $preferences = $format->get_sections_preferences();
         if (isset($preferences[$section->id])) {
             $sectionpreferences = $preferences[$section->id];
             if (!empty($sectionpreferences->contentcollapsed)) {
-                $contentexpanded = false;
+                $contentcollapsed = true;
             }
             if (!empty($sectionpreferences->indexcollapsed)) {
-                $isactive = false;
+                $indexcollapsed = true;
             }
         }
 
@@ -86,8 +86,8 @@ class section implements renderable {
             'visible' => !empty($section->visible),
             'sectionurl' => course_get_url($course, $section->section)->out(),
             'current' => $format->is_section_current($section),
-            'isactive' => $isactive,
-            'contentexpanded' => $contentexpanded
+            'indexcollapsed' => $indexcollapsed,
+            'contentcollapsed' => $contentcollapsed
         ];
 
         // If the section availability restrictions must be displayed.
