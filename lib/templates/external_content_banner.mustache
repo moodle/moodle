@@ -15,11 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/campaign_content
+    @template core/external_content_banner
 
-    Moodle campaign content template.
+    Moodle external content banner template.
 
-    The purpose of this template is to render an iframe that contains campaign content.
+    The purpose of this template is to render an iframe that contains external content banner.
 
     Classes required for JS:
     * none
@@ -31,17 +31,20 @@
     * lang User's language.
 
     Example context (json):
-    { "lang": "en"}
+    {
+        "iframeid": "external-content",
+        "url": "http://example.com/link",
+    }
 }}
 <div class="alert alert-secondary alert-block fade in">
-    <iframe id="campaign-content" class="w-100 border-0"></iframe>
+    <iframe id="{{iframeid}}" class="w-100 border-0"></iframe>
 </div>
 {{#js}}
 (function() {
-    var iframe = document.getElementById('campaign-content');
-    iframe.src = 'https://campaign.moodle.org/current/lms/{{lang}}/';
+    var iframe = document.getElementById('{{iframeid}}');
+    iframe.src = '{{url}}';
     window.addEventListener('message', function (event) {
-        if (event.origin === 'https://campaign.moodle.org') {
+        if (event.source === iframe.contentWindow) {
             iframe.style.height = event.data + 'px';
         }
     });

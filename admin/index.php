@@ -913,6 +913,9 @@ $showcampaigncontent = !isset($CFG->showcampaigncontent) || $CFG->showcampaignco
 // Encourage admins to enable the user feedback feature if it is not enabled already.
 $showfeedbackencouragement = empty($CFG->enableuserfeedback);
 
+// Check if the service and support content setting is enabled or not.
+$servicesandsupportcontent = !isset($CFG->showservicesandsupportcontent) || $CFG->showservicesandsupportcontent;
+
 admin_externalpage_setup('adminnotifications');
 
 $output = $PAGE->get_renderer('core', 'admin');
@@ -921,4 +924,4 @@ echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisp
                                        $maintenancemode, $availableupdates, $availableupdatesfetch, $buggyiconvnomb,
                                        $registered, $cachewarnings, $eventshandlers, $themedesignermode, $devlibdir,
                                        $mobileconfigured, $overridetossl, $invalidforgottenpasswordurl, $croninfrequent,
-                                       $showcampaigncontent, $showfeedbackencouragement);
+                                       $showcampaigncontent, $showfeedbackencouragement, $servicesandsupportcontent);

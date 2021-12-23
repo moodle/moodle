@@ -4147,6 +4147,36 @@ EOD;
     }
 
     /**
+     * Returns the services and support link for the help pop-up.
+     *
+     * @return string
+     */
+    public function services_support_link(): string {
+        global $CFG;
+
+        if ((isset($CFG->showservicesandsupportcontent) && $CFG->showservicesandsupportcontent == false) || !is_siteadmin()) {
+            return '';
+        }
+
+        $liferingicon = $this->pix_icon('t/life-ring', '', 'moodle', ['class' => 'fa fa-life-ring']);
+        $newwindowicon = $this->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle',
+            ['class' => 'fa fa-externallink fa-fw']);
+        $link = 'https://moodle.com/help/?utm_source=CTA-banner&utm_medium=platform&utm_campaign=name~Moodle4+cat~lms+mp~no';
+        $content = $liferingicon . get_string('moodleservicesandsupport') . $newwindowicon;
+
+        return html_writer::tag('a', $content, ['target' => '_blank', 'href' => $link]);
+    }
+
+    /**
+     * Helper function to decide whether to show the help popover header or not.
+     *
+     * @return bool
+     */
+    public function has_popover_links(): bool {
+        return !empty($this->services_support_link()) || !empty($this->page_doc_link()) || !empty($this->supportemail());
+    }
+
+    /**
      * Returns the page heading menu.
      *
      * @since Moodle 2.5.1 2.6

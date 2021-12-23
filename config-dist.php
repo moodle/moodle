@@ -1168,6 +1168,15 @@ $CFG->admin = 'admin';
 // This setting is only used during the installation process. So once the Moodle site is installed, it is ignored.
 //
 //=========================================================================
+// 19. SERVICES AND SUPPORT CONTENT
+//=========================================================================
+//
+// We have added services and support content to the notifications page, in case you want to hide that from your site
+// you just need to set showservicesandsupportcontent setting to false.
+//
+//      $CFG->showservicesandsupportcontent = false;
+//
+//=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
 
