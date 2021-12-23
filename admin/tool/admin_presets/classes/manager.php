@@ -399,6 +399,11 @@ class manager {
         $applied = array_merge($settingsapplied, $pluginsapplied);
         $skipped = array_merge($settingsskipped, $pluginsskipped);
 
+        if (!$simulate) {
+            // Store it in a config setting as the last preset applied.
+            set_config('lastpresetapplied', $presetid, 'tool_admin_presets');
+        }
+
         return [$applied, $skipped];
     }
 

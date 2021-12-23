@@ -236,6 +236,14 @@ class manager_test extends \advanced_testcase {
         $this->assertArrayHasKey('assign', $enabledplugins);
         $enabledplugins = \core\plugininfo\qtype::get_enabled_plugins();
         $this->assertArrayHasKey('truefalse', $enabledplugins);
+
+        // Check the presetid has been also stored in the lastpresetapplied config setting.
+        $this->assertEquals($presetid, get_config('tool_admin_presets', 'lastpresetapplied'));
+
+        // Call apply_preset as a simulation, so it shouldn't be applied and lastpresetapplied should still be $presetid.
+        $presetid2 = $generator->create_preset();
+        $manager->apply_preset($presetid2, true);
+        $this->assertEquals($presetid, get_config('tool_admin_presets', 'lastpresetapplied'));
     }
 
 
