@@ -33,6 +33,7 @@ body.behat-site {
         position: static;
         z-index: 0;
         opacity: 1;
+        width: auto;
     }
     .custom-control-label {
         &::before,

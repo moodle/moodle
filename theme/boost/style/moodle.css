@@ -19656,7 +19656,8 @@ body.behat-site .custom-switch {
 body.behat-site .custom-control-input {
   position: static;
   z-index: 0;
-  opacity: 1; }
+  opacity: 1;
+  width: auto; }
 
 body.behat-site .custom-control-label::before, body.behat-site .custom-control-label::after {
   content: none; }
@@ -21325,6 +21326,10 @@ div.editor_atto_toolbar button .icon {
   .editmode-switch-form .custom-control-label {
     font-size: 0;
     color: transparent; } }
+
+.editmode-switch-form .custom-control-input {
+  width: 100%;
+  z-index: 1; }
 
 .drawer-primary .drawercontent {
   padding: 0; }
