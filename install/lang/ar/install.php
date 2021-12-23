@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'مجلد الإدارة';
 $string['availablelangs'] = 'حزم اللغات المتاحة';
 $string['chooselanguagehead'] = 'إختر اللغة';
-$string['chooselanguagesub'] = 'الرجاء حدد لغة للتثبيت. هذه اللغة ستستخدم أيضاً كاللغة الافتراضية للموقع، لكن يمكنك تغييرها لاحقا.';
+$string['chooselanguagesub'] = 'يرجى تحديد لغة لاستعمالها عند التنصيب. هذه اللغة ستستعمل أيضاً بمثابة اللغة الافتراضية للموقع، لكن يمكنك تغييرها لاحقا.';
 $string['clialreadyconfigured'] = 'ملف التهيئة config.php موجود سلفاً. لطفاً، استعمل الرابط ذي المسار admin/cli/install_database.php لتنصيب مودل في هذا الموقع.';
 $string['clialreadyinstalled'] = 'ملف التهيئة config.php موجود سلفاً. لطفاً، استعمل الرابط ذي المسار admin/cli/install_database.php لترقية مودل في هذا الموقع.';
 $string['cliinstallheader'] = 'برنامج تنصيب مودل {$a} عبر سطر الأوامر النصية';
@@ -48,7 +48,7 @@ $string['environmenthead'] = 'يتم فحص البيئة';
 $string['environmentsub2'] = 'كل إصدار من مودل يتطلب وجود إصدار معين من PHP على الأقل مع عدد من امتداداته الإجبارية.
 يجري فحص شامل لبيئة العمل قبل كل تنصيب وترقية. لطفاً، تواصل مع المشرف على المخدم إن لم تكن على دراية بكيفية تنصيب الإصدار الأحدث من PHP أو امتداداته.';
 $string['errorsinenvironment'] = 'فشلت مهمة التحقق من بيئة التشغيل!';
-$string['installation'] = 'التثبيت';
+$string['installation'] = 'التنصيب';
 $string['langdownloaderror'] = 'مع الأسف، اللغة "{$a}" تعذر تنزيلها. عملية التنصيب ستستمر باللغة الإنجليزية.';
 $string['memorylimithelp'] = '<p>إن حد استعمال الذاكرة لـ PHP في مخدمك حالياً هو {$a}.</p>
 
