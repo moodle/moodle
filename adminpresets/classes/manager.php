@@ -434,7 +434,7 @@ class manager {
         $sitesettings = $this->get_site_settings();
 
         // Sensible settings.
-        $sensiblesettings = explode(',', str_replace(' ', '', get_config('tool_admin_presets', 'sensiblesettings')));
+        $sensiblesettings = explode(',', str_replace(' ', '', get_config('adminpresets', 'sensiblesettings')));
         $sensiblesettings = array_combine($sensiblesettings, $sensiblesettings);
         foreach ($sitesettings as $plugin => $pluginsettings) {
             foreach ($pluginsettings as $settingname => $sitesetting) {
