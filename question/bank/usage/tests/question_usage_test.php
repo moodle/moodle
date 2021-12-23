@@ -24,7 +24,7 @@ namespace qbank_usage;
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \qbank_usage\tables\question_usage_table
- * @covers qbank_usage_output_fragment_question_usage
+ * @covers \qbank_usage_output_fragment_question_usage
  */
 class question_usage_test extends \advanced_testcase {
 

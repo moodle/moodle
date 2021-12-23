@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/filestorage/file_system.php');
  * @category  phpunit
  * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass file_system
+ * @coversDefaultClass \file_system
  */
 class core_files_file_system_testcase extends advanced_testcase {
 

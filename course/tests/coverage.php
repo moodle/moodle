@@ -15,29 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Coverage information for core_reportbuilder
+ * Coverage information for the core_course subsystem.
  *
- * @package     core_reportbuilder
- * @copyright   2020 Paul Holden <paulh@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2021 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-declare(strict_types=1);
-
-defined('MOODLE_INTERNAL') || die();
-
 return new class extends phpunit_coverage_info {
-    /** @var array The list of folders relative to the plugin root to include in coverage generation. */
-    protected $includelistfolders = [
-        'classes',
-    ];
-
     /** @var array The list of files relative to the plugin root to include in coverage generation. */
-    protected $includelistfiles = [];
-
-    /** @var array The list of folders relative to the plugin root to exclude in coverage generation. */
-    protected $excludelistfolders = [];
-
-    /** @var array The list of files relative to the plugin root to exclude in coverage generation. */
-    protected $excludelistfiles = [];
+    protected $includelistfiles = [
+        'dnduploadlib.php',
+        'externallib.php',
+        'lib.php',
+        'modlib.php',
+    ];
 };

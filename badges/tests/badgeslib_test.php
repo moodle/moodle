@@ -626,7 +626,7 @@ class badgeslib_test extends advanced_testcase {
     /**
      * Test badges observer when cohort_member_added event is fired and user required to belong to any cohort.
      *
-     * @covers award_criteria_cohort
+     * @covers \award_criteria_cohort
      */
     public function test_badges_observer_any_cohort_criteria_review() {
         global $CFG;
@@ -669,7 +669,7 @@ class badgeslib_test extends advanced_testcase {
     /**
      * Test badges observer when cohort_member_added event is fired and user required to belong to multiple (all) cohorts.
      *
-     * @covers award_criteria_cohort
+     * @covers \award_criteria_cohort
      */
     public function test_badges_observer_all_cohort_criteria_review() {
         global $CFG;

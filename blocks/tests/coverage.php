@@ -15,34 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Coverage information for the core_xapi component.
+ * Coverage information for the core_block subsystem.
  *
- * @package    core_xapi
- * @category   test
- * @copyright  2020 Ferran Recio <ferran@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Coverage information for the core xAPI component.
- *
- * @copyright  2020 Ferran Recio <ferran@moodle.com>
+ * @copyright  2021 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 return new class extends phpunit_coverage_info {
-    /** @var array The list of folders relative to the plugin root to include in coverage generation. */
-    protected $includelistfolders = [
-        'classes',
-    ];
-
     /** @var array The list of files relative to the plugin root to include in coverage generation. */
-    protected $includelistfiles = [];
-
-    /** @var array The list of folders relative to the plugin root to exclude from coverage generation. */
-    protected $excludelistfolders = [];
-
-    /** @var array The list of files relative to the plugin root to exclude from coverage generation. */
-    protected $excludelistfiles = [];
+    protected $includelistfiles = [
+        'moodleblock.class.php',
+    ];
 };

@@ -301,7 +301,7 @@ class restore_dbops_testcase extends advanced_testcase {
      * Test restore precheck_user method
      *
      * @dataProvider precheck_user_provider
-     * @covers restore_dbops::precheck_user()
+     * @covers \restore_dbops::precheck_user()
      *
      * @param array $dbuser
      * @param array $backupuser

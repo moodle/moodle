@@ -25,6 +25,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @covers ::ajax_capture_output
+ * @covers ::ajax_check_captured_output
+ */
 class core_ajaxlib_testcase extends advanced_testcase {
     /** @var string Original error log */
     protected $oldlog;

@@ -34,6 +34,7 @@ require_once(__DIR__ . '/fixtures/task_fixtures.php');
  * @category task
  * @copyright 2013 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core\task\manager
  */
 class core_adhoc_task_testcase extends advanced_testcase {
 
@@ -59,6 +60,8 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test adhoc task failure retry backoff.
+     *
+     * @covers ::get_next_adhoc_task
      */
     public function test_get_next_adhoc_task_fail_retry() {
         $this->resetAfterTest(true);
@@ -90,6 +93,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test future adhoc task execution.
+     * @covers ::get_next_adhoc_task
      */
     public function test_get_next_adhoc_task_future() {
         $this->resetAfterTest(true);
@@ -112,6 +116,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test queueing an adhoc task belonging to a component, where we set the task component accordingly
+     * @covers ::queue_adhoc_task
      */
     public function test_queue_adhoc_task_for_component(): void {
         $this->resetAfterTest();
@@ -125,6 +130,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test queueing an adhoc task belonging to a component, where we do not set the task component
+     * @covers ::queue_adhoc_task
      */
     public function test_queue_task_for_component_without_set_component(): void {
         $this->resetAfterTest();
@@ -140,6 +146,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test queueing an adhoc task belonging to an invalid component, where we do not set the task component
+     * @covers ::queue_adhoc_task
      */
     public function test_queue_task_for_invalid_component_without_set_component(): void {
         $this->resetAfterTest();
@@ -152,6 +159,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test empty set of adhoc tasks
+     * @covers ::get_adhoc_tasks
      */
     public function test_get_adhoc_tasks_empty_set() {
         $this->resetAfterTest(true);
@@ -161,6 +169,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test correct set of adhoc tasks is returned for class.
+     * @covers ::get_adhoc_tasks
      */
     public function test_get_adhoc_tasks_result_set() {
         $this->resetAfterTest(true);
@@ -192,6 +201,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Ensure that the reschedule_or_queue_adhoc_task function will schedule a new task if no tasks exist.
+     * @covers ::reschedule_or_queue_adhoc_task
      */
     public function test_reschedule_or_queue_adhoc_task_no_existing() {
         $this->resetAfterTest(true);
@@ -206,6 +216,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
     /**
      * Ensure that the reschedule_or_queue_adhoc_task function will schedule a new task if a task for the same user does
      * not exist.
+     * @covers ::reschedule_or_queue_adhoc_task
      */
     public function test_reschedule_or_queue_adhoc_task_different_user() {
         $this->resetAfterTest(true);
@@ -228,6 +239,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
     /**
      * Ensure that the reschedule_or_queue_adhoc_task function will schedule a new task if a task with different custom
      * data exists.
+     * @covers ::reschedule_or_queue_adhoc_task
      */
     public function test_reschedule_or_queue_adhoc_task_different_data() {
         $this->resetAfterTest(true);
@@ -248,6 +260,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
     /**
      * Ensure that the reschedule_or_queue_adhoc_task function will not make any change for matching data if no time was
      * specified.
+     * @covers ::reschedule_or_queue_adhoc_task
      */
     public function test_reschedule_or_queue_adhoc_task_match_no_change() {
         $this->resetAfterTest(true);
@@ -271,6 +284,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Ensure that the reschedule_or_queue_adhoc_task function will update the run time if there are planned changes.
+     * @covers ::reschedule_or_queue_adhoc_task
      */
     public function test_reschedule_or_queue_adhoc_task_match_update_runtime() {
         $this->resetAfterTest(true);
@@ -300,6 +314,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test queue_adhoc_task "if not scheduled".
+     * @covers ::queue_adhoc_task
      */
     public function test_queue_adhoc_task_if_not_scheduled() {
         $this->resetAfterTest(true);
@@ -366,6 +381,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
     /**
      * Test that when no userid is specified, it returns empty from the DB
      * too.
+     * @covers \core\task\adhoc_task::get_userid
      */
     public function test_adhoc_task_user_empty() {
         $this->resetAfterTest(true);
@@ -385,6 +401,9 @@ class core_adhoc_task_testcase extends advanced_testcase {
     /**
      * Test that when a userid is specified, that userid is subsequently
      * returned.
+     *
+     * @covers \core\task\adhoc_task::set_userid
+     * @covers \core\task\adhoc_task::get_userid
      */
     public function test_adhoc_task_user_set() {
         $this->resetAfterTest(true);
@@ -405,6 +424,8 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test get_concurrency_limit() method to return 0 by default.
+     *
+     * @covers \core\task\adhoc_task::get_concurrency_limit
      */
     public function test_get_concurrency_limit() {
         $this->resetAfterTest(true);
@@ -415,6 +436,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test get_concurrency_limit() method to return a default value set in config.
+     * @covers \core\task\adhoc_task::get_concurrency_limit
      */
     public function test_get_concurrency_limit_default() {
         $this->resetAfterTest(true);
@@ -426,6 +448,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test get_concurrency_limit() method to return a value for specific task class.
+     * @covers \core\task\adhoc_task::get_concurrency_limit
      */
     public function test_get_concurrency_limit_for_task() {
         global $CFG;
@@ -439,6 +462,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
      * Test adhoc task sorting.
+     * @covers ::get_next_adhoc_task
      */
     public function test_get_next_adhoc_task_sorting() {
         $this->resetAfterTest(true);
