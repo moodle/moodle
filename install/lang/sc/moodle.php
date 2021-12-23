@@ -33,3 +33,4 @@ $string['language'] = 'Lìngua';
 $string['moodlelogo'] = 'Logo de Moodle';
 $string['next'] = 'Imbeniente';
 $string['previous'] = 'Pretzedente';
+$string['reload'] = 'Torra a carrigare';
