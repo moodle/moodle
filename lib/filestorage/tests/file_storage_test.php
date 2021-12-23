@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/filestorage/stored_file.php');
  *
  * @copyright 2012 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass file_storage
+ * @coversDefaultClass \file_storage
  */
 class core_files_file_storage_testcase extends advanced_testcase {
 
@@ -287,7 +287,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      * Make sure renaming is working
      *
      * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
-     * @covers stored_file::rename
+     * @covers \stored_file::rename
      */
     public function test_file_renaming() {
         global $CFG;
@@ -1844,7 +1844,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
     /**
      * Calling stored_file::delete_reference() on a non-reference file throws coding_exception
      *
-     * @covers stored_file::delete_reference
+     * @covers \stored_file::delete_reference
      */
     public function test_delete_reference_on_nonreference() {
 
@@ -1872,7 +1872,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      * Calling stored_file::delete_reference() on a reference file does not affect other
      * symlinks to the same original
      *
-     * @covers stored_file::delete_reference
+     * @covers \stored_file::delete_reference
      */
     public function test_delete_reference_one_symlink_does_not_rule_them_all() {
 
