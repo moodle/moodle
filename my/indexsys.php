@@ -70,10 +70,6 @@ $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $PAGE->blocks->add_region('content');
 
-if ($block = my_page_add_block_center()) {
-    $PAGE->blocks->add_fake_block($block, 'content');
-}
-
 // Get the My Moodle page info.  Should always return something unless the database is broken.
 if (!$currentpage = my_get_page(null, MY_PAGE_PRIVATE)) {
     print_error('mymoodlesetup');
@@ -87,6 +83,8 @@ $button = $OUTPUT->single_button($url, get_string('reseteveryonesdashboard', 'my
 $PAGE->set_button($button . $PAGE->button);
 
 echo $OUTPUT->header();
+
+echo $OUTPUT->addblockbutton('content');
 
 echo $OUTPUT->custom_block_region('content');
 

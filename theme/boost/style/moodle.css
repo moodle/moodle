@@ -14596,6 +14596,9 @@ span.editinstructions {
   .block-add:hover {
     cursor: pointer;
     background-color: #cfe2f2; }
+    .activity-add:hover .activity-add-text,
+    .block-add:hover .activity-add-text {
+      text-decoration: underline; }
 
 #changenumsections {
   border-top: 1px solid #3584c9; }

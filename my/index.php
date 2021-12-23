@@ -92,10 +92,6 @@ $PAGE->set_title($pagetitle);
 $PAGE->set_heading($header);
 $PAGE->has_secondary_navigation_setter(false);
 
-if ($block = my_page_add_block_center()) {
-    $PAGE->blocks->add_fake_block($block, 'content');
-}
-
 if (!isguestuser()) {   // Skip default home page for guests
     if (get_home_page() != HOMEPAGE_MY) {
         if (optional_param('setdefaulthome', false, PARAM_BOOL)) {
@@ -176,6 +172,8 @@ echo $OUTPUT->header();
 if (core_userfeedback::should_display_reminder()) {
     core_userfeedback::print_reminder_block();
 }
+
+echo $OUTPUT->addblockbutton('content');
 
 echo $OUTPUT->custom_block_region('content');
 

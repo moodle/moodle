@@ -295,38 +295,6 @@ function my_reset_page_for_all_users(
     }
 }
 
-/**
- * Within /my we need to be able to add a block to the center content region directly as well as show
- * the standard add a block information.
- *
- * @return block_contents|null
- */
-function my_page_add_block_center(): ?block_contents {
-    global $PAGE, $OUTPUT;
-    // Add-a-block in editing mode.
-    if (isset($PAGE->theme->addblockposition) &&
-            $PAGE->user_is_editing() &&
-            $PAGE->user_can_edit_blocks() &&
-            !defined('BEHAT_SITE_RUNNING')
-    ) {
-        $url = new moodle_url($PAGE->url, ['bui_addblock' => '', 'bui_blockregion' => 'content', 'sesskey' => sesskey()]);
-
-        $block = new block_contents;
-        $block->content = $OUTPUT->render_from_template('core/add_block_button',
-            [
-                'link' => $url->out(false),
-                'escapedlink' => "?{$url->get_query_string(false)}",
-                'pageType' => $PAGE->pagetype,
-                'pageLayout' => $PAGE->pagelayout,
-            ]
-        );
-
-        return $block;
-    }
-
-    return null;
-}
-
 class my_syspage_block_manager extends block_manager {
     // HACK WARNING!
     // TODO: figure out a better way to do this

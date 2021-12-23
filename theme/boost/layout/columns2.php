@@ -27,31 +27,13 @@ defined('MOODLE_INTERNAL') || die();
 user_preference_allow_ajax_update('drawer-open-nav', PARAM_ALPHA);
 require_once($CFG->libdir . '/behat/lib.php');
 
-// Add-a-block in editing mode.
-if (isset($PAGE->theme->addblockposition) &&
-        $PAGE->user_is_editing() &&
-        $PAGE->user_can_edit_blocks() &&
-        $PAGE->pagelayout !== 'mycourses'
-) {
-    $url = new moodle_url($PAGE->url, ['bui_addblock' => '', 'sesskey' => sesskey()]);
-
-    $block = new block_contents;
-    $block->content = $OUTPUT->render_from_template('core/add_block_button',
-        [
-            'link' => $url->out(false),
-            'escapedlink' => "?{$url->get_query_string(false)}",
-            'pageType' => $PAGE->pagetype,
-            'pageLayout' => $PAGE->pagelayout,
-        ]
-    );
-
-    $PAGE->blocks->add_fake_block($block, BLOCK_POS_RIGHT);
-}
+// Add block button in editing mode.
+$addblockbutton = $OUTPUT->addblockbutton();
 
 $extraclasses = [];
 $bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $blockshtml = $OUTPUT->blocks('side-pre');
-$hasblocks = strpos($blockshtml, 'data-block=') !== false;
+$hasblocks = (strpos($blockshtml, 'data-block=') !== false || !empty($addblockbutton));
 
 $secondarynavigation = false;
 $overflow = '';
@@ -89,6 +71,7 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'headercontent' => $headercontent,
     'overflow' => $overflow,
+    'addblockbutton' => $addblockbutton,
 ];
 $nav = $PAGE->flatnav;
 $templatecontext['firstcollectionlabel'] = $nav->get_collectionlabel();
