@@ -293,7 +293,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0,
             $themedesignermode = false, $devlibdir = false, $mobileconfigured = false,
             $overridetossl = false, $invalidforgottenpasswordurl = false, $croninfrequent = false,
-            $showcampaigncontent = false, bool $showfeedbackencouragement = false, bool $showservicesandsupport) {
+            $showcampaigncontent = false, bool $showfeedbackencouragement = false, bool $showservicesandsupport = false) {
 
         global $CFG;
         $output = '';
