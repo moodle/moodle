@@ -25,7 +25,7 @@ namespace core\output;
  * @category  test
  * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass mustache_clean_string_helper
+ * @coversDefaultClass \core\output\mustache_clean_string_helper
  */
 class mustache_clean_string_helper_test extends \basic_testcase {
 

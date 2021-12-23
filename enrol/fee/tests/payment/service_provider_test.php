@@ -28,7 +28,7 @@ namespace enrol_fee\payment;
 /**
  * Unit tests for the enrol_fee's payment subsystem callback implementation.
  *
- * @coversDefaultClass service_provider
+ * @coversDefaultClass \enrol_fee\payment\service_provider
  */
 class service_provider_test extends \advanced_testcase {
 
