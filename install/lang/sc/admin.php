@@ -39,3 +39,4 @@ $string['cliunknowoption'] = 'Optziones non reconnotas:
  {$a}
 Imprea --optzione agiudu.';
 $string['cliyesnoprompt'] = 'Iscrie e (pro eja) o n (pro no)';
+$string['upgradekeyset'] = 'Crae de agiornamentu (lassa bòidu pro no ddu impostare)';
