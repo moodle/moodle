@@ -25,16 +25,25 @@ import $ from 'jquery';
 import Popover from './popover';
 
 export const init = () => {
-    const content = document.querySelector('[data-region="footer-content-popover"]');
     const container = document.querySelector('[data-region="footer-container-popover"]');
 
     $('[data-action="footer-popover"]').popover({
-        content: content.innerHTML,
+        content: getFooterContent,
         container: container,
         html: true,
         placement: 'top',
         customClass: 'footer'
     });
+};
+
+/**
+ * Get the footer content for popover.
+ *
+ * @returns {String} HTML string
+ * @private
+ */
+const getFooterContent = () => {
+    return document.querySelector('[data-region="footer-content-popover"]').innerHTML;
 };
 
 export {

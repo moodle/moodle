@@ -69,7 +69,7 @@ export const init = async(tourDetails, filters) => {
 
     // Watch for the reset link.
     document.querySelector('body').addEventListener('click', e => {
-        const resetLink = e.target.closest('[data-action="tool_usertours/resetpagetour"]');
+        const resetLink = e.target.closest('#resetpagetour');
         if (resetLink) {
             e.preventDefault();
             resetTourState(tourId);
