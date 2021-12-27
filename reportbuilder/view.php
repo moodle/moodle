@@ -24,6 +24,7 @@
 
 declare(strict_types=1);
 
+use core_reportbuilder\event\report_viewed;
 use core_reportbuilder\manager;
 use core_reportbuilder\output\custom_report;
 use core_reportbuilder\permission;
@@ -55,3 +56,6 @@ $export = (new custom_report($report->get_report_persistent(), false))->export_f
 echo $renderer->render_from_template('core_reportbuilder/report', $export);
 
 echo $OUTPUT->footer();
+
+// Trigger report viewed event.
+report_viewed::create_from_object($report->get_report_persistent())->trigger();

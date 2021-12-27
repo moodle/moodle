@@ -24,7 +24,7 @@ use core_reportbuilder\local\models\report;
 use moodle_url;
 
 /**
- * Report builder custom report updated event class.
+ * Report builder custom report viewed event class.
  *
  * @package     core_reportbuilder
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
@@ -37,14 +37,14 @@ use moodle_url;
  *      - string    source:    The report source class
  * }
  */
-class report_updated extends base {
+class report_viewed extends base {
 
     /**
      * Initialise the event data.
      */
     protected function init() {
         $this->data['objecttable'] = report::TABLE;
-        $this->data['crud'] = 'u';
+        $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
@@ -74,7 +74,7 @@ class report_updated extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('reportupdated', 'core_reportbuilder');
+        return get_string('reportviewed', 'core_reportbuilder');
     }
 
     /**
@@ -83,7 +83,7 @@ class report_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' updated the custom report with id '$this->objectid'.";
+        return "The user with id '$this->userid' viewed the custom report with id '$this->objectid'.";
     }
 
     /**
@@ -104,6 +104,6 @@ class report_updated extends base {
      * @return moodle_url
      */
     public function get_url(): moodle_url {
-        return new moodle_url('/reportbuilder/edit.php', ['id' => $this->objectid]);
+        return new moodle_url('/reportbuilder/view.php', ['id' => $this->objectid]);
     }
 }
