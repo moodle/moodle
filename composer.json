@@ -11,5 +11,35 @@
         "mikey179/vfsstream": "^1.6"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.2.0 <8.0",
+        "ext-iconv": "*",
+        "ext-mbstring": "*",
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "ext-ctype": "*",
+        "ext-zip": "*",
+        "ext-zlib": "*",
+        "ext-gd": "*",
+        "ext-simplexml": "*",
+        "ext-spl": "*",
+        "ext-pcre": "*",
+        "ext-dom": "*",
+        "ext-xml": "*",
+        "ext-xmlreader": "*",
+        "ext-intl": "*",
+        "ext-json": "*",
+        "ext-hash": "*",
+        "ext-fileinfo": "*"
+    },
+    "suggest": {
+        "ext-mysqli": "Needed when Moodle uses MySQL or MariaDB database.",
+        "ext-pgsql": "Needed when Moodle uses PostgreSQL database.",
+        "ext-sqlsrv": "Needed when Moodle uses MS SQL Server database.",
+        "ext-oci8": "Needed when Moodle uses Oracle database.",
+        "ext-tokenizer": "Enabling Tokenizer PHP extension is recommended, it improves Moodle Networking functionality.",
+        "ext-xmlrpc": "Enabling XMLRPC PHP extension is useful for web services and Moodle networking.",
+        "ext-soap": "Enabling SOAP PHP extension is useful for web services and some plugins."
+    }
 }
