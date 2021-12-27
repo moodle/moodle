@@ -63,7 +63,7 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 1"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     # Award course badge 1 to student 1.
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
@@ -71,7 +71,7 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 1"
-    And I follow "Recipients (1)"
+    And I select "Recipients (1)" from the "jump" singleselect
     Then I should see "Recipients (1)"
     And I log out
     # Student 1 should have both badges.
@@ -152,7 +152,7 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
     And I press "Award badge"
@@ -181,7 +181,7 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
     And I press "Award badge"
@@ -284,7 +284,7 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     # Award course badge 1 to student 1.
     And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
@@ -292,7 +292,7 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 1"
-    And I follow "Recipients (1)"
+    And I select "Recipients (1)" from the "jump" singleselect
     Then I should see "Recipients (1)"
     # Add course badge 2.
     And I am on "Course 1" course homepage
@@ -310,7 +310,7 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     # Award course badge 2 to student 2.
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
@@ -318,7 +318,7 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge 2"
-    And I follow "Recipients (1)"
+    And I select "Recipients (1)" from the "jump" singleselect
     Then I should see "Recipients (1)"
     And I log out
     And I trigger cron
@@ -351,7 +351,7 @@ Feature: Award badges
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
-    And I follow "Recipients (0)"
+    And I select "Recipients (0)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
     And I press "Award badge"
@@ -361,7 +361,7 @@ Feature: Award badges
     And I navigate to "Badges > Manage badges" in current page administration
     And I follow "Course Badge"
     Then I should see "Recipients (2)"
-    And I follow "Recipients (2)"
+    And I select "Recipients (2)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "existingrecipients[]" to "Student 2 (student2@example.com)"
     And I press "Revoke badge"
