@@ -24,6 +24,8 @@ Feature: Course index depending on role
       | user     | course | role           |
       | student1 | C1     | student        |
       | teacher1 | C1     | editingteacher |
+    # The course index is hidden by default in small devices.
+    And I change window size to "large"
 
   @javascript
   Scenario: Course index is present on course and activities.
@@ -31,19 +33,15 @@ Feature: Course index depending on role
     Given the "multilang" filter is "on"
     And the "multilang" filter applies to "content and headings"
     When I am on the "C1" "Course" page logged in as "teacher1"
-    Then I should see "Open course index"
-    And I am on the "Activity sample 1" "assign activity editing" page
+    Then I am on the "Activity sample 1" "assign activity editing" page
     And I set the field "Assignment name" in the "General" "fieldset" to "<span lang=\"en\" class=\"multilang\">Activity</span><span lang=\"de\" class=\"multilang\">Aktivität</span> sample 1"
     And I press "Save and display"
-    And I should see "Open course index"
-    And I click on "Open course index" "button"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
 
   @javascript
   Scenario: Course index as a teacher
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I click on "Open course index" "button"
+    When I am on "Course 1" course homepage
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Topic 2" in the "courseindex-content" "region"
     And I should see "Topic 3" in the "courseindex-content" "region"
@@ -60,8 +58,7 @@ Feature: Course index depending on role
     And I click on "Hide" "link" in the "Activity sample 3" activity
     And I log out
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I click on "Open course index" "button"
+    When I am on "Course 1" course homepage
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Topic 2" in the "courseindex-content" "region"
     And I should see "Topic 3" in the "courseindex-content" "region"
@@ -78,8 +75,7 @@ Feature: Course index depending on role
     And I click on "Hide" "link" in the "Activity sample 3" activity
     And I log out
     And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I click on "Open course index" "button"
+    When I am on "Course 1" course homepage
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should not see "Topic 2" in the "courseindex-content" "region"
     And I should see "Topic 3" in the "courseindex-content" "region"
@@ -92,7 +88,6 @@ Feature: Course index depending on role
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I delete "Activity sample 2" activity
-    And I click on "Open course index" "button"
     Then I should not see "Activity sample 2" in the "courseindex-content" "region"
 
   @javascript
@@ -100,7 +95,6 @@ Feature: Course index depending on role
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I turn section "2" highlighting on
-    And I click on "Open course index" "button"
     # Current section is only marked visually in the course index.
     And the "class" attribute of "#courseindex-content [data-for='section'][data-number='2']" "css_element" should contain "current"
     And I should not see "Highlighted" in the "#courseindex-content [data-for='section'][data-number='1']" "css_element"
@@ -117,8 +111,7 @@ Feature: Course index depending on role
       | activity | name                         | intro                       | course | idnumber | section |
       | book     | Second activity in section 1 | Test book description       | C1     | sample4  | 1       |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I click on "Open course index" "button"
+    When I am on "Course 1" course homepage
     # Sections should be opened by default.
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
@@ -166,8 +159,7 @@ Feature: Course index depending on role
 
   @javascript
   Scenario: Course index section preferences
-    Given I am on the "C1" "Course" page logged in as "teacher1"
-    When I click on "Open course index" "button"
+    When I am on the "C1" "Course" page logged in as "teacher1"
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
     And I should see "Topic 2" in the "courseindex-content" "region"
@@ -197,7 +189,6 @@ Feature: Course index depending on role
     And I delete section "1"
     And I click on "Delete" "button" in the ".modal" "css_element"
     And I reload the page
-    And I click on "Open course index" "button"
     And I should not see "Activity sample 1" in the "courseindex-content" "region"
     And I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Activity sample 2" in the "courseindex-content" "region"
@@ -208,7 +199,6 @@ Feature: Course index depending on role
   Scenario: Adding section should alter the course index
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I click on "Open course index" "button"
     When I click on "Add topic" "link" in the "Topic 4" "section"
     Then I should see "Topic 5" in the "courseindex-content" "region"
 
@@ -216,7 +206,6 @@ Feature: Course index depending on role
   Scenario: Remove a section should alter the course index
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I click on "Open course index" "button"
     When I delete section "4"
     Then I should not see "Topic 4" in the "courseindex-content" "region"
 
@@ -224,7 +213,6 @@ Feature: Course index depending on role
   Scenario: Delete a previous section should alter the course index unnamed sections
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I click on "Open course index" "button"
     When I delete section "1"
     And I click on "Delete" "button" in the ".modal" "css_element"
     Then I should not see "Topic 4" in the "courseindex-content" "region"
@@ -255,7 +243,6 @@ Feature: Course index depending on role
     # Check course index link goes to the specific section.
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And I click on "Open course index" "button"
     And I click on "Topic 1" "link" in the "region-main" "region"
     And I should not see "Activity sample 3" in the "region-main" "region"
     And I click on "Activity sample 3" "link" in the "courseindex-content" "region"

@@ -17,11 +17,13 @@ Feature: Verify that courseindex is usable with the keyboard
       | book     | Activity sample 2 | Test book description       | C1     | sample2  | 2       |
       | choice   | Activity sample 3 | Test choice description     | C1     | sample3  | 3       |
     Given I am on the "C1" "Course" page logged in as "admin"
+    And I change window size to "large"
+    And I click on "Close course index" "button"
     And I click on "Open course index" "button"
     And I should see "Topic 1" in the "courseindex-content" "region"
     And the focused element is "[data-preference='drawer-open-index'] .drawertoggle" "css_element"
     And I press the tab key
-    Then the focused element is ".courseindex-section" "css_element"
+    And the focused element is ".courseindex-section" "css_element"
 
   @javascript
   Scenario: General focus on open course index.

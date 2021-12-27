@@ -14928,6 +14928,8 @@ body.drawer-ease {
   @media (prefers-reduced-motion: reduce) {
     .drawer {
       transition: none; } }
+  .drawer.not-initialized {
+    display: none; }
   .drawer.drawer-right {
     width: 315px;
     max-width: 315px;
@@ -14953,7 +14955,9 @@ body.drawer-ease {
 
 @media (min-width: 992px) {
   .drawer {
-    z-index: inherit; } }
+    z-index: inherit; }
+    .drawer.not-initialized {
+      display: block; } }
 
 .drawer-md,
 .drawer-sm {
@@ -14982,6 +14986,8 @@ body.drawer-ease {
       transition: none; } }
 
 @media (max-width: 991.98px) {
+    .drawer-md.not-initialized {
+      display: none; }
     .drawer-md.drawer-right {
       width: 315px;
       max-width: 315px;
@@ -15019,6 +15025,8 @@ body.drawer-ease {
       transition: none; } }
 
 @media (max-width: 767.98px) {
+    .drawer-sm.not-initialized {
+      display: none; }
     .drawer-sm.drawer-right {
       width: 315px;
       max-width: 315px;
