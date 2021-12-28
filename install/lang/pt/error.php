@@ -29,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatedboninstall'] = '<p> Não é possível criar a base de dados. </p><p> A base de dados especificada não existe e o utilizador em questão não tem permissão para criar a base de dados. </p><p> O administrador do site deve verificar a configuração da base de dados. </p>';
+$string['cannotcreatedboninstall'] = '<p>Não é possível criar a base de dados.</p><p>A base de dados especificada não existe e o utilizador indicado não tem permissão para criar a base de dados.</p><p>O administrador do site deve verificar a configuração da base de dados.</p>';
 $string['cannotcreatelangdir'] = 'Não é possível criar a pasta de pacotes linguísticos';
 $string['cannotcreatetempdir'] = 'Não é possível criar a pasta de ficheiros temporários';
 $string['cannotdownloadcomponents'] = 'Não é possível descarregar os componentes.';
