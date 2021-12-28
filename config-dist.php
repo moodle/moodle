@@ -1131,7 +1131,7 @@ $CFG->admin = 'admin';
 //          ],
 //      ];
 //
-// The format for the schedule definition is: '{minute} {hour} {day} {dayofweek} {month}'.
+// The format for the schedule definition is: '{minute} {hour} {day} {month} {dayofweek}'.
 //
 // The classname of the task also supports wildcards:
 //
