@@ -222,7 +222,7 @@ define([
                     const url = '?view=day&time=' + dateContainer.data('day-timestamp');
                     window.location.assign(Config.wwwroot + '/calendar/view.php' + url);
                 } else {
-                    const hasViewDayLink = target.closest(SELECTORS.VIEW_DAY_LINK);
+                    const hasViewDayLink = target.closest(SELECTORS.VIEW_DAY_LINK).length;
                     const shouldShowNewEventModal = !hasViewDayLink;
                     if (shouldShowNewEventModal) {
                         var startTime = $(this).attr('data-new-event-timestamp');
