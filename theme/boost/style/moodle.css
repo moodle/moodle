@@ -10047,7 +10047,6 @@ button.close:focus:hover,
 .inline-list li,
 .block .list,
 .block .list li,
-.section li.activity,
 .section li.movehere,
 .tabtree li {
   list-style: none;
@@ -12172,13 +12171,17 @@ input[disabled] {
     border-right: 1px solid #fff; }
 
 body.dragging .drop-zone {
-  border: 2px dashed #1d2125; }
+  border: 1px dashed #1d2125; }
 
 body.dragging .drop-up {
-  border-top: 2px solid #1d2125; }
+  border-top: 1px solid #1d2125;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0; }
 
 body.dragging .drop-down {
-  border-bottom: 2px solid #1d2125; }
+  border-bottom: 1px solid #1d2125;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0; }
 
 body.dragging .dragging {
   opacity: .6; }
@@ -13704,7 +13707,8 @@ table.calendartable caption {
   clear: both; }
 
 .section-modchooser {
-  clear: both; }
+  clear: both;
+  margin-top: 0.25rem; }
 
 .block_tree .tree_item.branch {
   margin-left: 8px; }
@@ -13751,6 +13755,8 @@ body:not(.editing) .sitetopic ul.section {
   width: 16px; }
 
 .section .activity {
+  list-style: none;
+  padding: 0.25rem 0;
   /* The command block for each activity */ }
   .section .activity .spinner {
     left: 100%;
@@ -13900,10 +13906,18 @@ body:not(.editing) .sitetopic ul.section {
       padding-bottom: 0; }
 
 .course-content .section.dropready.main.drop-down {
-  border-bottom: 2px solid #1d2125; }
+  border-bottom: 1px solid #1d2125; }
+
+.course-content .section.dropready .course-section-header.dropready.drop-zone {
+  margin-top: -2px; }
 
 .course-content .section.dropready li.activity.dropready.drop-down {
-  border-bottom: 2px solid #1d2125; }
+  border-bottom: 1px solid #1d2125;
+  margin-bottom: -1px; }
+
+.course-content .section.dropready li.activity.dropready.drop-up {
+  border-top: 1px solid #1d2125;
+  margin-top: -1px; }
 
 .section .activity .activityinstance .groupinglabel {
   padding-left: 30px; }
@@ -14700,7 +14714,6 @@ span.editinstructions {
 
 .activity-item {
   position: relative;
-  margin: 0.5rem 0;
   border-radius: 0.5rem; }
   .activity-item:not(.activityinline) {
     border: 1px solid #dee2e6;
@@ -21248,7 +21261,7 @@ div.editor_atto_toolbar button .icon {
     .courseindex .courseindex-item:hover.draggable, .courseindex .courseindex-item:focus.draggable {
       cursor: pointer; }
   .courseindex .courseindex-item.dragging {
-    border: 1px #b8dce2;
+    border: 1px solid #b8dce2;
     background-color: #e0f0f2; }
   .courseindex .courseindex-item.active {
     background-color: #f8f9fa;
@@ -21276,7 +21289,7 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-section {
   border-left: solid 3px transparent; }
   .courseindex .courseindex-section.dragging {
-    border: 1px #b8dce2;
+    border: 1px solid #b8dce2;
     background-color: #e0f0f2; }
   .courseindex .courseindex-section .current-badge {
     line-height: 1.5;
