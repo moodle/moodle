@@ -104,7 +104,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | Student 2          | -     | 33.00 | -         | 33.00     |
       | Student 3          | 80.00 | 50.00 | Very good | 133.00    |
 
-  @javascript @skip_interim
+  @javascript
   Scenario: Use the grader report without editing, with AJAX and quick feedback on
     When the following config values are set as admin:
       | grade_overridecat | 1 |
