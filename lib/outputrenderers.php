@@ -4973,6 +4973,7 @@ EOD;
                     'escapedlink' => "?{$url->get_query_string(false)}",
                     'pageType' => $this->page->pagetype,
                     'pageLayout' => $this->page->pagelayout,
+                    'subPage' => $this->page->subpage,
                 ]
             );
         }

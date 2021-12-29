@@ -24,7 +24,8 @@
         "link" : "/my/index.php?bui_addblock&bui_blockregion=content&sesskey=M3mes",
         "escapedlink" : "?bui_addblock&bui_blockregion=content&sesskey=M3mes",
         "pageType" : "my-index",
-        "pageLayout" : "mydashboard"
+        "pageLayout" : "mydashboard",
+        "subPage": "15"
     }
 
 }}
@@ -37,6 +38,6 @@
 {{#js}}
     // Initialise the JS for the modal window which displays the blocks available to add.
     require(['core/addblockmodal'], function(addBlockModal) {
-        addBlockModal.init('{{pageType}}', '{{pageLayout}}');
+        addBlockModal.init('{{pageType}}', '{{pageLayout}}', null, '{{subPage}}');
     });
 {{/js}}
