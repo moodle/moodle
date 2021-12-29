@@ -1,5 +1,10 @@
 This files describes API changes for code that uses the user API.
 
+=== 3.11.5 ===
+
+* The `profile_get_custom_field_data_by_shortname` method now accepts an optional parameter to determine whether
+  to use case-sensitive matching of the profile field shortname or not (default true)
+
 === 3.11 ===
 
 * Added new core_user/form_user_selector JS module that can be used as the 'ajax' handler for the autocomplete form

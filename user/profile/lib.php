@@ -854,9 +854,11 @@ function profile_save_custom_fields($userid, $profilefields) {
  * current request for all fields so that it can be used quickly.
  *
  * @param string $shortname Shortname of custom profile field
+ * @param bool $casesensitive Whether to perform case-sensitive matching of shortname. Note current limitations of custom profile
+ *  fields allow the same shortname to exist differing only by it's case
  * @return stdClass|null Object with properties id, shortname, name, visible, datatype, categoryid, etc
  */
-function profile_get_custom_field_data_by_shortname(string $shortname): ?stdClass {
+function profile_get_custom_field_data_by_shortname(string $shortname, bool $casesensitive = true): ?stdClass {
     $cache = \cache::make_from_params(cache_store::MODE_REQUEST, 'core_profile', 'customfields',
             [], ['simplekeys' => true, 'simpledata' => true]);
     $data = $cache->get($shortname);
@@ -866,7 +868,13 @@ function profile_get_custom_field_data_by_shortname(string $shortname): ?stdClas
         $data = null;
         foreach ($fields as $field) {
             $cache->set($field->shortname, $field);
-            if ($field->shortname === $shortname) {
+
+            // Perform comparison according to case sensitivity parameter.
+            $shortnamematch = $casesensitive
+                ? strcmp($field->shortname, $shortname) === 0
+                : strcasecmp($field->shortname, $shortname) === 0;
+
+            if ($shortnamematch) {
                 $data = $field;
             }
         }
