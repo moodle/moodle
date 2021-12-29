@@ -30,6 +30,14 @@ Feature: Verify that courseindex is usable with the keyboard
     And I press enter
     Then I should not see "Topic 1" in the "courseindex-content" "region"
 
+  @javascript @accessibility
+  Scenario: Course index should be accessible.
+    When I press the shift tab key
+    And I press enter
+    Then the page should meet accessibility standards with "wcag143" extra tests
+    And I press enter
+    And the page should meet accessibility standards with "wcag143" extra tests
+
   @javascript
   Scenario: Opening and closing sections.
     When I press the down key
