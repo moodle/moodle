@@ -10021,6 +10021,9 @@ button.close:focus:hover,
 [role="treeitem"]:not([aria-expanded="true"]):focus:hover {
   text-decoration: none; }
 
+.modal-dialog[tabindex="0"].focus, .modal-dialog[tabindex="0"]:focus {
+  border-radius: 0.3rem; }
+
 [role="treeitem"][aria-expanded="true"] {
   outline: 0; }
   [role="treeitem"][aria-expanded="true"].focus > *:first-child, [role="treeitem"][aria-expanded="true"]:focus > *:first-child {

@@ -154,6 +154,14 @@ button.close,
     }
 }
 
+// Modal dialogs border should be rounded too.
+.modal-dialog[tabindex="0"] {
+    &.focus,
+    &:focus {
+        @include border-radius($modal-content-border-radius);
+    }
+}
+
 // We don't want to highlight the whole li when it's expanded. Only the first child is highlighted.
 [role="treeitem"][aria-expanded="true"] {
     outline: 0;
