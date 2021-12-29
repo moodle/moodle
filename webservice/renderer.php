@@ -263,15 +263,10 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string html
      */
     public function user_reset_token_confirmation($token) {
-        global $CFG;
-        $managetokenurl = $CFG->wwwroot . "/user/managetoken.php?sesskey=" . sesskey();
-        $optionsyes = array('tokenid' => $token->id, 'action' => 'resetwstoken', 'confirm' => 1,
-            'sesskey' => sesskey());
-        $optionsno = array('section' => 'webservicetokens', 'sesskey' => sesskey());
-        $formcontinue = new single_button(new moodle_url($managetokenurl, $optionsyes),
-                        get_string('reset'));
-        $formcancel = new single_button(new moodle_url($managetokenurl, $optionsno),
-                        get_string('cancel'), 'get');
+        $managetokenurl = '/user/managetoken.php';
+        $optionsyes = ['tokenid' => $token->id, 'action' => 'resetwstoken', 'confirm' => 1];
+        $formcontinue = new single_button(new moodle_url($managetokenurl, $optionsyes), get_string('reset'));
+        $formcancel = new single_button(new moodle_url($managetokenurl), get_string('cancel'), 'get');
         $html = $this->output->confirm(get_string('resettokenconfirm', 'webservice',
                                 (object) array('user' => $token->firstname . " " .
                                     $token->lastname, 'service' => $token->name)),
@@ -318,9 +313,10 @@ class core_webservice_renderer extends plugin_renderer_base {
             foreach ($tokens as $token) {
 
                 if ($token->creatorid == $userid) {
-                    $reset = "<a href=\"" . $CFG->wwwroot . "/user/managetoken.php?sesskey="
-                            . sesskey() . "&amp;action=resetwstoken&amp;tokenid=" . $token->id . "\">";
-                    $reset .= get_string('reset') . "</a>";
+                    $reset = html_writer::link(new moodle_url('/user/managetoken.php', [
+                        'action' => 'resetwstoken',
+                        'tokenid' => $token->id,
+                    ]), get_string('reset'));
                     $creator = $token->firstname . " " . $token->lastname;
                 } else {
                     //retrieve administrator name
@@ -347,7 +343,7 @@ class core_webservice_renderer extends plugin_renderer_base {
 
                 if ($documentation) {
                     $doclink = new moodle_url('/webservice/wsdoc.php',
-                            array('id' => $token->id, 'sesskey' => sesskey()));
+                            array('id' => $token->id));
                     $row[] = html_writer::tag('a', get_string('doc', 'webservice'),
                             array('href' => $doclink));
                 }

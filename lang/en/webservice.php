@@ -164,6 +164,7 @@ $string['required'] = 'Required';
 $string['requiredcapability'] = 'Required capability';
 $string['requiredcapability_help'] = 'If set, only users with the required capability can access the service.';
 $string['requiredcaps'] = 'Required capabilities';
+$string['resettokencomplete'] = 'The selected token was reset';
 $string['resettokenconfirm'] = 'Do you really want to reset this web service key for <strong>{$a->user}</strong> on the service <strong>{$a->service}</strong>?';
 $string['resettokenconfirmsimple'] = 'Do you really want to reset this key? Any saved links containing the old key will not work anymore.';
 $string['response'] = 'Response';
