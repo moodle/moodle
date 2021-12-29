@@ -405,6 +405,8 @@ class manager {
         global $DB;
 
         $courseid = $data->id;
+        // MDL-72375 Unset the id here, it should not be stored in customrules.
+        unset($data->id);
         $coursecontext = context_course::instance($courseid);
         if (!$modids = $data->modids) {
             return;
@@ -472,6 +474,9 @@ class manager {
         if ($data = $DB->get_record('course_completion_defaults', ['course' => $course->id, 'module' => $module->id],
             'completion, completionview, completionexpected, completionusegrade, customrules')) {
             if ($data->customrules && ($customrules = @json_decode($data->customrules, true))) {
+                // MDL-72375 This will override activity id for new mods. Skip this field, it is already exposed as courseid.
+                unset($customrules['id']);
+
                 if ($flatten) {
                     foreach ($customrules as $key => $value) {
                         $data->$key = $value;
