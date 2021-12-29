@@ -84,6 +84,18 @@ Feature: Course level forum summary report
       | First name / Surname |
       | Student 3            |
 
+  Scenario: Course forum summary report correctly formats forum activity names
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "activity" exists:
+      | activity | forum |
+      | course   | C1    |
+      | name     | <span class="multilang" lang="en">F-Eng</span><span class="multilang" lang="de">F-Ger</span> |
+    When I am on the "C1" "Course" page logged in as "teacher1"
+    And I follow "F-Eng"
+    And I navigate to "Reports" in current page administration
+    Then the "Forum selected" select box should contain "F-Eng"
+
   Scenario: Students given the view capability can view their own course report data
     Given the following "permission overrides" exist:
       | capability               | permission | role    | contextlevel | reference |
