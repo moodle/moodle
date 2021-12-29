@@ -1,6 +1,11 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.11.5 ===
+
+* The `core_block_fetch_addable_blocks` external method accepts an optional `subpage` parameter, in order to correctly
+  calculate available blocks for pages that use this property (e.g. the user dashboard)
+
 === 3.8 ===
 * Block block_community is no longer a part of core.
 * Block block_participants is no longer a part of core.

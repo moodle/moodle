@@ -4078,7 +4078,7 @@ class flat_navigation extends navigation_node_collection {
             $addblockurl = "?{$url->get_query_string(false)}";
 
             $PAGE->requires->js_call_amd('core/addblockmodal', 'init',
-                [$PAGE->pagetype, $PAGE->pagelayout, $addblockurl]);
+                [$PAGE->pagetype, $PAGE->pagelayout, $addblockurl, $PAGE->subpage]);
         }
     }
 

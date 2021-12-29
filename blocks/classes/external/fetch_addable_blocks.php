@@ -54,7 +54,8 @@ class fetch_addable_blocks extends external_api {
             [
                 'pagecontextid' => new external_value(PARAM_INT, 'The context ID of the page.'),
                 'pagetype' => new external_value(PARAM_ALPHANUMEXT, 'The type of the page.'),
-                'pagelayout' => new external_value(PARAM_ALPHA, 'The layout of the page.')
+                'pagelayout' => new external_value(PARAM_ALPHA, 'The layout of the page.'),
+                'subpage' => new external_value(PARAM_TEXT, 'The subpage identifier', VALUE_DEFAULT, ''),
             ]
         );
     }
@@ -65,16 +66,18 @@ class fetch_addable_blocks extends external_api {
      * @param int $pagecontextid The context ID of the page
      * @param string $pagetype The type of the page
      * @param string $pagelayout The layout of the page
+     * @param string $subpage The subpage identifier
      * @return array The blocks list
      */
-    public static function execute(int $pagecontextid, string $pagetype, string $pagelayout): array {
+    public static function execute(int $pagecontextid, string $pagetype, string $pagelayout, string $subpage = ''): array {
         global $PAGE;
 
         $params = self::validate_parameters(self::execute_parameters(),
             [
                 'pagecontextid' => $pagecontextid,
                 'pagetype' => $pagetype,
-                'pagelayout' => $pagelayout
+                'pagelayout' => $pagelayout,
+                'subpage' => $subpage,
             ]
         );
 
@@ -85,6 +88,8 @@ class fetch_addable_blocks extends external_api {
         // We need to manually set the page layout and page type.
         $PAGE->set_pagelayout($params['pagelayout']);
         $PAGE->set_pagetype($params['pagetype']);
+        $PAGE->set_subpage($params['subpage']);
+
         // Firstly, we need to load all currently existing page blocks to later determine which blocks are addable.
         $PAGE->blocks->load_blocks(false);
         $PAGE->blocks->create_all_block_instances();
