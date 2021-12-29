@@ -55,8 +55,8 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     /** @var string $groupbysql */
     protected $groupbysql = '';
 
-    /** @var bool $applyfilters */
-    protected $applyfilters = true;
+    /** @var bool $editing */
+    protected $editing = false;
 
     /**
      * Initialises table SQL properties
@@ -88,7 +88,7 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         }
 
         // For each filter, we also need to apply their values (will differ according to user viewing the report).
-        if ($this->applyfilters) {
+        if (!$this->editing) {
             $filtervalues = $this->report->get_filter_values();
             foreach ($this->report->get_active_filters() as $filter) {
                 [$filtersql, $filterparams] = $this->get_filter_sql($filter, $filtervalues);
@@ -127,13 +127,13 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     }
 
     /**
-     * Whether active filters should be applied to the report, defaults to true except in the case where we are editing a report
-     * and we do not want filters to be applied to it
+     * Whether the current report table is being edited, in which case certain actions are not applied to it, e.g. user filtering
+     * and sorting. Default class value is false
      *
-     * @param bool $applyfilters
+     * @param bool $editing
      */
-    public function set_filters_applied(bool $applyfilters): void {
-        $this->applyfilters = $applyfilters;
+    public function set_report_editing(bool $editing): void {
+        $this->editing = $editing;
     }
 
     /**

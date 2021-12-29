@@ -29,8 +29,8 @@ use moodle_url;
  */
 class custom_report_table_view extends custom_report_table {
 
-    /** @var bool We do want to apply filters when viewing or previewing report */
-    protected const REPORT_APPLY_FILTERS = true;
+    /** @var bool We're pre/viewing the report, not editing it */
+    protected const REPORT_EDITING = false;
 
     /**
      * Override printed headers, to use those of grandparent class

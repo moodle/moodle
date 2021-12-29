@@ -42,8 +42,8 @@ class custom_report_table extends base_report_table {
     /** @var string Unique ID prefix for the table */
     private const UNIQUEID_PREFIX = 'custom-report-table-';
 
-    /** @var bool Whether filters should be applied in report (we don't want them when editing) */
-    protected const REPORT_APPLY_FILTERS = false;
+    /** @var bool Whether report is being edited (we don't want user filters/sorting to be applied when editing) */
+    protected const REPORT_EDITING = true;
 
     /**
      * Table constructor. Note that the passed unique ID value must match the pattern "custom-report-table-(\d+)" so that
@@ -144,7 +144,7 @@ class custom_report_table extends base_report_table {
         $this->pageable(true);
 
         // Initialise table SQL properties.
-        $this->set_filters_applied(static::REPORT_APPLY_FILTERS);
+        $this->set_report_editing(static::REPORT_EDITING);
 
         $fieldsql = implode(', ', $fields);
         $this->init_sql($fieldsql, "{{$maintable}} {$maintablealias}", $joins, $where, $params, $groupby);
@@ -166,9 +166,11 @@ class custom_report_table extends base_report_table {
      *
      * @return array
      */
-    public function get_sort_columns() {
+    public function get_sort_columns(): array {
         $sortcolumns = parent::get_sort_columns();
-        if (empty($sortcolumns)) {
+
+        if ($this->editing || empty($sortcolumns)) {
+            $sortcolumns = [];
             $columns = $this->get_active_columns();
 
             $instances = column_model::get_records([

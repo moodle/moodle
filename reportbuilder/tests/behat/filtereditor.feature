@@ -114,6 +114,11 @@ Feature: Manage custom report filters
     And the following should not exist in the "reportbuilder-table" table:
       | Full name | Email address     |
       | User 2    | user2@example.com |
+    # Switching back to edit mode should not apply filters.
+    And I click on "Switch to edit mode" "button"
+    And I should see "user1@example.com" in the ".reportbuilder-table" "css_element"
+    And I should see "user2@example.com" in the ".reportbuilder-table" "css_element"
+    And I should see "user3@example.com" in the ".reportbuilder-table" "css_element"
 
   Scenario: Use report filters when previewing report that contains same condition
     Given the following "users" exist:
