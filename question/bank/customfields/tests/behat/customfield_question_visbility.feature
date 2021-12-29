@@ -1,4 +1,4 @@
-@core @core_quiz @core_customfield @qbank_customfields @javascript @xxpriority
+@core @core_quiz @core_customfield @qbank_customfields @javascript
 Feature: The visibility of question custom fields control where they are displayed
   In order to display custom fields in a quiz
 
