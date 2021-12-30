@@ -400,7 +400,7 @@ class manager {
 
         if (!$simulate) {
             // Store it in a config setting as the last preset applied.
-            set_config('lastpresetapplied', $presetid, 'tool_admin_presets');
+            set_config('lastpresetapplied', $presetid, 'adminpresets');
         }
 
         return [$applied, $skipped];

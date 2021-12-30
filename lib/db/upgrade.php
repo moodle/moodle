@@ -3527,5 +3527,16 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2021123000.02);
     }
 
+    if ($oldversion < 2021123000.03) {
+        // If exists, migrate lastpresetapplied setting from tool_admin_preset to adminpresets.
+        if (get_config('tool_admin_presets', 'lastpresetapplied') !== false) {
+            set_config('lastpresetapplied', get_config('tool_admin_presets', 'lastpresetapplied'), 'adminpresets');
+            unset_config('lastpresetapplied', 'tool_admin_presets');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021123000.03);
+    }
+
     return true;
 }
