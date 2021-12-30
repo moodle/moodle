@@ -34,16 +34,28 @@ require_once("{$CFG->libdir}/tablelib.php");
 class dataformat_export_format extends table_dataformat_export_format {
 
     /**
-     * Add a row of data. If the export format doesn't support HTML, then format cell contents to remove tags
+     * Add a row of data
      *
      * @param array $row
      * @return bool
      */
     public function add_data($row): bool {
+        $row = $this->format_data($row);
+
+        return parent::add_data($row);
+    }
+
+    /**
+     * Format a row of data. If the export format doesn't support HTML, then format cell contents to remove tags
+     *
+     * @param array $row
+     * @return array
+     */
+    public function format_data(array $row): array {
         if (!$this->dataformat->supports_html()) {
             $row = array_map([$this, 'format_text'], $row);
         }
 
-        return parent::add_data($row);
+        return $row;
     }
 }

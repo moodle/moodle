@@ -28,6 +28,7 @@ use core\message\message;
 use core\plugininfo\dataformat;
 use core_reportbuilder\local\models\audience as audience_model;
 use core_reportbuilder\local\models\schedule as model;
+use core_reportbuilder\output\dataformat_export_format;
 use core_reportbuilder\table\custom_report_table_view;
 
 /**
@@ -153,6 +154,13 @@ class schedule {
         $table->setup();
         $table->query_db(0, false);
 
+        // Set up table as if it were being downloaded, retrieve appropriate export class (ensure output buffer is
+        // cleaned in order to instantiate export class without exception).
+        ob_start();
+        $table->download = $schedule->get('format');
+        $exportclass = new dataformat_export_format($table, $table->download);
+        ob_end_clean();
+
         // Create our schedule report stored file.
         $context = context_user::instance($schedule->get('usercreated'));
         $filerecord = [
@@ -166,11 +174,12 @@ class schedule {
 
         $storedfile = \core\dataformat::write_data_to_filearea(
             $filerecord,
-            $schedule->get('format'),
+            $table->download,
             $table->headers,
             $table->rawdata,
-            static function(stdClass $record) use ($table): array {
-                return $table->format_row($record);
+            static function(stdClass $record) use ($table, $exportclass): array {
+                $record = $table->format_row($record);
+                return $exportclass->format_data($record);
             }
         );
 
