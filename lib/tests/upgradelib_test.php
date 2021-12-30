@@ -1504,4 +1504,108 @@ calendar,core_calendar|/calendar/view.php?view=month',
         $this->assertTrue($updatedold->timecreated >= $origtime);
         $this->assertTrue($updatedold->timemodified >= $origtime);
     }
+
+    /**
+     * Test the upgrade status check alongside the outageless flags.
+     *
+     * @covers ::moodle_needs_upgrading
+     */
+    public function test_moodle_upgrade_check_outageless() {
+        global $CFG;
+        $this->resetAfterTest();
+        // Get a baseline.
+        $this->assertFalse(moodle_needs_upgrading());
+
+        // First lets check a plain upgrade ready.
+        $CFG->version = '';
+        $this->assertTrue(moodle_needs_upgrading());
+
+        // Now set the locking config and confirm we shouldn't upgrade.
+        set_config('outagelessupgrade', true);
+        $this->assertFalse(moodle_needs_upgrading());
+
+        // Test the ignorelock flag is functioning.
+        $this->assertTrue(moodle_needs_upgrading(false));
+    }
+
+    /**
+     * Test the upgrade status check alongside the outageless flags.
+     *
+     * @covers ::upgrade_started
+     */
+    public function test_moodle_start_upgrade_outageless() {
+        global $CFG;
+        $this->resetAfterTest();
+        $this->assertObjectNotHasAttribute('upgraderunning', $CFG);
+
+        // Confirm that starting normally sets the upgraderunning flag.
+        upgrade_started();
+        $upgrade = get_config('core', 'upgraderunning');
+        $this->assertTrue($upgrade > (time() - 5));
+
+        // Confirm that the config flag doesnt affect the internal upgrade processes.
+        unset($CFG->upgraderunning);
+        set_config('upgraderunning', null);
+        set_config('outagelessupgrade', true);
+        upgrade_started();
+        $upgrade = get_config('core', 'upgraderunning');
+        $this->assertTrue($upgrade > (time() - 5));
+    }
+
+    /**
+     * Test the upgrade timeout setter alongside the outageless flags.
+     *
+     * @covers ::upgrade_set_timeout
+     */
+    public function test_moodle_set_upgrade_timeout_outageless() {
+        global $CFG;
+        $this->resetAfterTest();
+        $this->assertObjectNotHasAttribute('upgraderunning', $CFG);
+
+        // Confirm running normally sets the timeout.
+        upgrade_set_timeout(120);
+        $upgrade = get_config('core', 'upgraderunning');
+        $this->assertTrue($upgrade > (time() - 5));
+
+        // Confirm that the config flag doesnt affect the internal upgrade processes.
+        unset($CFG->upgraderunning);
+        set_config('upgraderunning', null);
+        set_config('outagelessupgrade', true);
+        upgrade_set_timeout(120);
+        $upgrade = get_config('core', 'upgraderunning');
+        $this->assertTrue($upgrade > (time() - 5));
+    }
+
+    /**
+     * Test the components of the upgrade process being run outageless.
+     *
+     * @covers ::moodle_needs_upgrading
+     * @covers ::upgrade_started
+     * @covers ::upgrade_set_timeout
+     */
+    public function test_upgrade_components_with_outageless() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // We can now define the outageless constant for use in upgrade, and test the effects.
+        define('CLI_UPGRADE_RUNNING', true);
+
+        // First test the upgrade check. Even when locked via config this should return true.
+        // This can happen when attempting to fix a broken upgrade, so needs to work.
+        set_config('outagelessupgrade', true);
+        $CFG->version = '';
+        $this->assertTrue(moodle_needs_upgrading());
+
+        // Now confirm that starting upgrade with the constant will not set the upgraderunning flag.
+        set_config('upgraderunning', null);
+        upgrade_started();
+        $upgrade = get_config('core', 'upgraderunning');
+        $this->assertFalse($upgrade);
+
+        // The same for timeouts, it should not be set if the constant is set.
+        set_config('upgraderunning', null);
+        upgrade_set_timeout(120);
+        $upgrade = get_config('core', 'upgraderunning');
+        $this->assertFalse($upgrade);
+    }
 }

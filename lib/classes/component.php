@@ -1196,6 +1196,80 @@ $cache = '.var_export($cache, true).';
     }
 
     /**
+     * Returns hash of all core + plugin /db/ directories.
+     *
+     * This is relatively slow and not fully cached, use with care!
+     *
+     * @param array|null $components optional component directory => hash array to use. Only used in PHPUnit.
+     * @return string sha1 hash.
+     */
+    public static function get_all_component_hash(?array $components = null) : string {
+        $tohash = $components ?? self::get_all_directory_hashes();
+        return sha1(serialize($tohash));
+    }
+
+    /**
+     * Get the hashes of all core + plugin /db/ directories.
+     *
+     * @param array|null $directories optional component directory array to hash. Only used in PHPUnit.
+     * @return array of directory => hash.
+     */
+    public static function get_all_directory_hashes(?array $directories = null) : array {
+        global $CFG;
+
+        self::init();
+
+        // The problem here is that the component cache might be stale,
+        // we want this to work also on frontpage without resetting the component cache.
+        $usecache = false;
+        if (CACHE_DISABLE_ALL || (defined('IGNORE_COMPONENT_CACHE') && IGNORE_COMPONENT_CACHE)) {
+            $usecache = true;
+        }
+
+        if (empty($directories)) {
+            $directories = [
+                $CFG->libdir . '/db'
+            ];
+            // For all components, get the directory of the /db directory.
+            $plugintypes = self::get_plugin_types();
+            foreach ($plugintypes as $type => $typedir) {
+                if ($usecache) {
+                    $plugs = self::get_plugin_list($type);
+                } else {
+                    $plugs = self::fetch_plugins($type, $typedir);
+                }
+                foreach ($plugs as $plug) {
+                    $directories[] = $plug . '/db';
+                }
+            }
+        }
+
+        // Create a mapping of directories to their hash.
+        $hashes = [];
+        foreach ($directories as $directory) {
+            if (!is_dir($directory)) {
+                // Just hash an empty string as the non-existing representation.
+                $hashes[$directory] = sha1('');
+                continue;
+            }
+
+            $scan = scandir($directory);
+            $scanhashes = [];
+            foreach ($scan as $file) {
+                $file = $directory . '/' . $file;
+                // Moodle ignores directories.
+                if (!is_dir($file)) {
+                    $scanhashes[] = hash_file('sha1', $file);
+                }
+            }
+            // Finally we can serialize and hash the whole dir.
+            $hashes[$directory] = sha1(serialize($scanhashes));
+        }
+
+        return $hashes;
+    }
+
+    /**
      * Invalidate opcode cache for given file, this is intended for
      * php files that are stored in dataroot.
      *

@@ -278,6 +278,11 @@ class core_upgrade_time {
 function upgrade_set_timeout($max_execution_time=300) {
     global $CFG;
 
+    // Support outageless upgrades.
+    if (defined('CLI_UPGRADE_RUNNING') && CLI_UPGRADE_RUNNING) {
+        return;
+    }
+
     if (!isset($CFG->upgraderunning) or $CFG->upgraderunning < time()) {
         $upgraderunning = get_config(null, 'upgraderunning');
     } else {
@@ -1589,7 +1594,10 @@ function upgrade_started($preinstall=false) {
         ignore_user_abort(true);
         core_shutdown_manager::register_function('upgrade_finished_handler');
         upgrade_setup_debug(true);
-        set_config('upgraderunning', time()+300);
+        // Support no-maintenance upgrades.
+        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
+            set_config('upgraderunning', time() + 300);
+        }
         $started = true;
     }
 }
@@ -1873,9 +1881,11 @@ function upgrade_core($version, $verbose) {
     require_once($CFG->libdir.'/db/upgrade.php');    // Defines upgrades
 
     try {
-        // Reset caches before any output.
-        cache_helper::purge_all(true);
-        purge_all_caches();
+        // If we are in maintenance, we can purge all our caches here.
+        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
+            cache_helper::purge_all(true);
+            purge_all_caches();
+        }
 
         // Upgrade current language pack if we can
         upgrade_language_pack();
@@ -1910,10 +1920,12 @@ function upgrade_core($version, $verbose) {
         core_upgrade_time::record_detail('cache_helper::update_definitions');
 
         // Purge caches again, just to be sure we arn't holding onto old stuff now.
-        cache_helper::purge_all(true);
-        core_upgrade_time::record_detail('cache_helper::purge_all');
-        purge_all_caches();
-        core_upgrade_time::record_detail('purge_all_caches');
+        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
+            cache_helper::purge_all(true);
+            core_upgrade_time::record_detail('cache_helper::purge_all');
+            purge_all_caches();
+            core_upgrade_time::record_detail('purge_all_caches');
+        }
 
         // Clean up contexts - more and more stuff depends on existence of paths and contexts
         context_helper::cleanup_instances();
@@ -1950,9 +1962,11 @@ function upgrade_noncore($verbose) {
 
     // upgrade all plugins types
     try {
-        // Reset caches before any output.
-        cache_helper::purge_all(true);
-        purge_all_caches();
+        // Reset caches before any output, unless we are not in maintenance.
+        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
+            cache_helper::purge_all(true);
+            purge_all_caches();
+        }
 
         $plugintypes = core_component::get_plugin_types();
         upgrade_started();
@@ -1976,12 +1990,16 @@ function upgrade_noncore($verbose) {
         // Mark the site as upgraded.
         set_config('allversionshash', core_component::get_all_versions_hash());
         core_upgrade_time::record_detail('core_component::get_all_versions_hash');
+        set_config('allcomponenthash', core_component::get_all_component_hash());
+        core_upgrade_time::record_detail('core_component::get_all_component_hash');
 
         // Purge caches again, just to be sure we arn't holding onto old stuff now.
-        cache_helper::purge_all(true);
-        core_upgrade_time::record_detail('cache_helper::purge_all');
-        purge_all_caches();
-        core_upgrade_time::record_detail('purge_all_caches');
+        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
+            cache_helper::purge_all(true);
+            core_upgrade_time::record_detail('cache_helper::purge_all');
+            purge_all_caches();
+            core_upgrade_time::record_detail('purge_all_caches');
+        }
 
         // Only display the final 'Success' if we also showed the heading.
         core_upgrade_time::record_end($CFG->debugdeveloper);

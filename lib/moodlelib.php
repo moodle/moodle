@@ -8231,10 +8231,23 @@ function check_php_version($version='5.2.4') {
  * Checks version numbers of main code and all plugins to see
  * if there are any mismatches.
  *
+ * @param bool $checkupgradeflag check the outagelessupgrade flag to see if an upgrade is running.
  * @return bool
  */
-function moodle_needs_upgrading() {
-    global $CFG;
+function moodle_needs_upgrading($checkupgradeflag = true) {
+    global $CFG, $DB;
+
+    // Say no if there is already an upgrade running.
+    if ($checkupgradeflag) {
+        $lock = $DB->get_field('config', 'value', ['name' => 'outagelessupgrade']);
+        $currentprocessrunningupgrade = (defined('CLI_UPGRADE_RUNNING') && CLI_UPGRADE_RUNNING);
+        // If we ARE locked, but this PHP process is NOT the process running the upgrade,
+        // We should always return false.
+        // This means the upgrade is running from CLI somewhere, or about to.
+        if (!empty($lock) && !$currentprocessrunningupgrade) {
+            return false;
+        }
+    }
 
     if (empty($CFG->version)) {
         return true;
