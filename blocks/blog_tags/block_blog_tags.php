@@ -222,6 +222,18 @@ class block_blog_tags extends block_base {
             'plugin' => new stdClass(),
         ];
     }
+
+    /**
+     * This block shouldn't be added to a page if the blogs and the tags advanced features are disabled.
+     *
+     * @param moodle_page $page
+     * @return bool
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        global $CFG;
+
+        return $CFG->enableblogs && $CFG->usetags;
+    }
 }
 
 function block_blog_tags_sort($a, $b) {
@@ -241,5 +253,3 @@ function block_blog_tags_sort($a, $b) {
         return 0;
     }
 }
-
-

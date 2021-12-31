@@ -142,4 +142,16 @@ class block_blog_recent extends block_base {
             'plugin' => new stdClass(),
         ];
     }
+
+    /**
+     * This block shouldn't be added to a page if the blogs advanced feature is disabled.
+     *
+     * @param moodle_page $page
+     * @return bool
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        global $CFG;
+
+        return $CFG->enableblogs;
+    }
 }

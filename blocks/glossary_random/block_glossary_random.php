@@ -270,5 +270,15 @@ class block_glossary_random extends block_base {
             'plugin' => new stdClass(),
         ];
     }
-}
 
+    /**
+     * This block shouldn't be added to a page if the glossary module is disabled.
+     *
+     * @param moodle_page $page
+     * @return bool
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        $pluginclass = \core_plugin_manager::resolve_plugininfo_class('mod');
+        return $pluginclass::get_enabled_plugin('glossary');
+    }
+}

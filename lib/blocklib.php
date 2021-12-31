@@ -223,6 +223,7 @@ class block_manager {
             }
             if ($block->visible && !in_array($block->name, $unaddableblocks) &&
                     !in_array($block->name, $requiredbythemeblocks) &&
+                    $bi->can_block_be_added($this->page) &&
                     ($bi->instance_allow_multiple() || !$this->is_block_present($block->name)) &&
                     blocks_name_allowed_in_format($block->name, $pageformat) &&
                     $bi->user_can_addto($this->page)) {

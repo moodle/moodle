@@ -747,6 +747,18 @@ EOD;
     public function get_aria_role() {
         return 'complementary';
     }
+
+    /**
+     * This method can be overriden to add some extra checks to decide whether the block can be added or not to a page.
+     * It doesn't need to do the standard capability checks as they will be performed by has_add_block_capability().
+     * This method is user agnostic. If you want to check if a user can add a block or not, you should use user_can_addto().
+     *
+     * @param moodle_page $page The page where this block will be added.
+     * @return bool Whether the block can be added or not to the given page.
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        return true;
+    }
 }
 
 /**

@@ -123,4 +123,16 @@ class block_blog_menu extends block_base {
     public function get_aria_role() {
         return 'navigation';
     }
+
+    /**
+     * This block shouldn't be added to a page if the blogs advanced feature is disabled.
+     *
+     * @param moodle_page $page
+     * @return bool
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        global $CFG;
+
+        return $CFG->enableblogs;
+    }
 }
