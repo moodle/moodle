@@ -23,6 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace filter_algebra;
+
+use filter_algebra;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -40,13 +44,13 @@ require_once($CFG->dirroot . '/filter/algebra/filter.php');
  * @copyright  2012 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_algebra_testcase extends basic_testcase {
+class filter_test extends \basic_testcase {
 
     protected $filter;
 
     protected function setUp(): void {
         parent::setUp();
-        $this->filter = new filter_algebra(context_system::instance(), array());
+        $this->filter = new filter_algebra(\context_system::instance(), array());
     }
 
     function test_algebra_filter_no_algebra() {

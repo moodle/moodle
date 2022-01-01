@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * mod_scorm generator tests
- *
- * @package    mod_scorm
- * @category   test
- * @copyright  2013 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_scorm;
 
 /**
  * Genarator tests class for mod_scorm.
@@ -31,7 +24,7 @@
  * @copyright  2013 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_scorm_generator_testcase extends advanced_testcase {
+class generator_test extends \advanced_testcase {
 
     public function test_create_instance() {
         global $DB, $CFG, $USER;
@@ -66,7 +59,7 @@ class mod_scorm_generator_testcase extends advanced_testcase {
             'course' => $course->id,
             'packagefile' => file_get_unused_draft_itemid()
         );
-        $usercontext = context_user::instance($USER->id);
+        $usercontext = \context_user::instance($USER->id);
         $filerecord = array('component' => 'user', 'filearea' => 'draft',
                 'contextid' => $usercontext->id, 'itemid' => $params['packagefile'],
                 'filename' => 'singlescobasic.zip', 'filepath' => '/');
