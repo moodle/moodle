@@ -23,10 +23,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/filter/activitynames/filter.php'); // Include the code to test.
+namespace filter_activitynames;
 
 /**
  * Test case for the activity names auto-linking filter.
@@ -34,14 +31,14 @@ require_once($CFG->dirroot . '/filter/activitynames/filter.php'); // Include the
  * @copyright 2018 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter_activitynames_filter_testcase extends advanced_testcase {
+class filter_test extends \advanced_testcase {
 
     public function test_links() {
         $this->resetAfterTest(true);
 
         // Create a test course.
         $course = $this->getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
 
         // Create two pages that will be linked to.
         $page1 = $this->getDataGenerator()->create_module('page',
@@ -79,7 +76,7 @@ class filter_activitynames_filter_testcase extends advanced_testcase {
 
         // Create a test course.
         $course = $this->getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
 
         // Work around an issue with the activity names filter which maintains a static cache
         // of activities for current course ID. We can re-build the cache by switching user.
@@ -109,8 +106,8 @@ class filter_activitynames_filter_testcase extends advanced_testcase {
         // Create a test courses.
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
-        $context1 = context_course::instance($course1->id);
-        $context2 = context_course::instance($course2->id);
+        $context1 = \context_course::instance($course1->id);
+        $context2 = \context_course::instance($course2->id);
 
         // Create page 1.
         $page1 = $this->getDataGenerator()->create_module('page',

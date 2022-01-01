@@ -17,14 +17,13 @@
 /**
  * Data generators tests
  *
- * @package    moodlecore
+ * @package    core_question
  * @subpackage questionengine
  * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
+namespace core_question;
 
 /**
  * Test data generator
@@ -32,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_question_generator_testcase extends advanced_testcase {
+class generator_test extends \advanced_testcase {
     public function test_create() {
         global $DB;
 
@@ -71,11 +70,11 @@ class core_question_generator_testcase extends advanced_testcase {
         $this->assertSame('myquest_3', $quest3->idnumber);
         // Check idnumbers of questions moved. Note have to use load_question_data or we only get to see old cached data.
         question_move_questions_to_category([$quest1->id], $qcat1->id);
-        $this->assertSame('myquest', question_bank::load_question_data($quest1->id)->idnumber);
+        $this->assertSame('myquest', \question_bank::load_question_data($quest1->id)->idnumber);
         // Can only change idnumber of quest2 once quest1 has been moved to another category.
         $quest2 = $generator->update_question($questions[1], null, ['idnumber' => 'myquest']);
         question_move_questions_to_category([$quest2->id], $qcat1->id);
-        $this->assertSame('myquest_4', question_bank::load_question_data($quest2->id)->idnumber);
+        $this->assertSame('myquest_4', \question_bank::load_question_data($quest2->id)->idnumber);
         // Check can add an idnumber of 0.
         $quest4 = $generator->create_question('shortanswer', null, ['name' => 'sa1', 'category' => $qcat1->id, 'idnumber' => '0']);
         $this->assertSame('0', $quest4->idnumber);
