@@ -279,9 +279,6 @@ class manager {
                             }
                         }
 
-                        // Setting the text.
-                        $setting->set_text();
-
                         // Adding to general settings array.
                         $settings[$values->plugin][$settingname] = $setting;
                     }
@@ -831,7 +828,6 @@ class manager {
                 if (!empty($sitesettings[$change->plugin][$change->name])) {
                     $actualsetting = $sitesettings[$change->plugin][$change->name];
                     $oldsetting = $this->get_setting($actualsetting->get_settingdata(), $change->oldvalue);
-                    $oldsetting->set_text();
 
                     $visiblepluginname = $oldsetting->get_settingdata()->plugin;
                     if ($visiblepluginname == 'none') {
@@ -884,7 +880,6 @@ class manager {
 
                     $oldsetting = $this->get_setting($actualsetting->get_settingdata(), $actualsetting->get_value());
                     $oldsetting->set_attribute_value($change->name, $change->oldvalue);
-                    $oldsetting->set_text();
 
                     $varname = $change->plugin . '_' . $change->name;
 

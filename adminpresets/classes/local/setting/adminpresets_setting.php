@@ -55,13 +55,6 @@ class adminpresets_setting {
     protected $visiblevalue;
 
     /**
-     * Text to display on the TreeView
-     *
-     * @var string
-     */
-    protected $text;
-
-    /**
      * For multiple value settings, used to look for the other values
      *
      * @var string
@@ -171,24 +164,6 @@ class adminpresets_setting {
     protected function encode_string($string) {
         $encoded = rawurlencode($string);
         return $encoded;
-    }
-
-    public function get_text() {
-        return $this->encode_string($this->text);
-    }
-
-    /**
-     * Sets the text to display on the settings tree
-     *
-     * Default format: I'm a setting visible name (setting value: "VALUE")
-     */
-    public function set_text() {
-        $this->set_visiblevalue();
-
-        $namediv = '<div class="admin_presets_tree_name">' . $this->settingdata->visiblename . '</div>';
-        $valuediv = '<div class="admin_presets_tree_value">' . $this->visiblevalue . '</div>';
-
-        $this->text = $namediv . $valuediv . '<br/>';
     }
 
     public function get_attributes() {

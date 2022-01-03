@@ -30,21 +30,6 @@ use core_adminpresets\local\setting\adminpresets_setting;
 class adminpresets_mod_quiz_admin_review_setting extends adminpresets_setting {
 
     /**
-     * Overwrite to add the reviewoptions text
-     */
-    public function set_text() {
-
-        $this->set_visiblevalue();
-
-        $name = get_string('reviewoptionsheading', 'quiz') .
-            ': ' . $this->settingdata->visiblename;
-        $namediv = '<div class="admin_presets_tree_name">' . $name . '</div>';
-        $valuediv = '<div class="admin_presets_tree_value">' . $this->visiblevalue . '</div>';
-
-        $this->text = $namediv . $valuediv . '<br/>';
-    }
-
-    /**
      * The setting value is a sum of 'mod_quiz_admin_review_setting::times'
      */
     protected function set_visiblevalue() {
