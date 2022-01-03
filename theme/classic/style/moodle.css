@@ -17581,11 +17581,54 @@ textarea[data-auto-rows] {
 select {
   width: auto; }
 
-.path-mod div.activity-information {
-  border-bottom: 1px solid #dee2e6;
-  padding-top: 0.5rem;
+.path-mod .activity-header {
+  background-color: #f8f9fa;
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.25rem; }
+  .path-mod .activity-header > div:last-child > div:last-child {
+    border-bottom: 0; }
+
+.path-mod .activity-information .activity-dates {
+  padding-top: 1rem;
   padding-bottom: 1rem;
-  margin-bottom: 0.5rem; }
+  border-bottom: 1px solid #dee2e6; }
+
+.path-mod .activity-information .completion-info {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #dee2e6; }
+
+.path-mod .activity-description {
+  padding-top: 1rem;
+  padding-bottom: 1rem; }
+  .path-mod .activity-description > .box.py-3 {
+    padding-top: 0 !important;
+    /* stylelint-disable-line declaration-no-important */
+    padding-bottom: 0 !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .path-mod .activity-description > .box.py-3:empty {
+    display: none; }
+
+.path-mod .automatic-completion-conditions .badge {
+  font-size: 80%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  mix-blend-mode: multiply; }
+  .path-mod .automatic-completion-conditions .badge.badge-light {
+    background-color: #e9ecef !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .path-mod .automatic-completion-conditions .badge .icon {
+    width: 0.7rem;
+    height: 0.7rem;
+    font-size: 0.7rem; }
+  .path-mod .automatic-completion-conditions .badge:first-child {
+    margin-top: 0; }
+
+.path-mod .activity-description .no-overflow p:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0; }
 
 .path-mod-choice .horizontal .choices .option {
   display: inline-block; }
@@ -20158,6 +20201,9 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   #page.drawers div[role="main"] {
     padding-left: 15px;
     padding-right: 15px; }
+  #page.drawers .activity-header {
+    margin-left: 15px;
+    margin-right: 15px; }
 
 @media (min-width: 768px) {
   .pagelayout-standard #page.drawers .main-inner,

@@ -52,6 +52,10 @@
         padding-left: 15px;
         padding-right: 15px;
     }
+    .activity-header {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
 }
 
 @include media-breakpoint-up(md) {
