@@ -18,7 +18,7 @@ namespace tool_admin_presets\local\action;
 
 use context_system;
 use moodle_url;
-use tool_admin_presets\manager;
+use core_adminpresets\manager;
 use tool_admin_presets\output\presets_list;
 use tool_admin_presets\output\export_import;
 
@@ -84,7 +84,7 @@ class base {
         $options = new export_import();
         $this->outputs = $OUTPUT->render($options);
 
-        $presets = $DB->get_records('tool_admin_presets');
+        $presets = $DB->get_records('adminpresets');
         $list = new presets_list($presets, true);
         $this->outputs .= $OUTPUT->render($list);
     }

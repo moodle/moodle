@@ -538,6 +538,6 @@ function install_cli_database(array $options, $interactive) {
 
     // Apply default preset, if it is defined in $CFG and has a valid value.
     if (!empty($CFG->setsitepresetduringinstall)) {
-        \tool_admin_presets\helper::change_default_preset($CFG->setsitepresetduringinstall);
+        \core_adminpresets\helper::change_default_preset($CFG->setsitepresetduringinstall);
     }
 }

@@ -39,23 +39,23 @@ class delete_test extends \advanced_testcase {
         $this->setAdminUser();
 
         // Create some presets.
-        $generator = $this->getDataGenerator()->get_plugin_generator('tool_admin_presets');
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $presetid1 = $generator->create_preset(['name' => 'Preset 1', 'applypreset' => true]);
         $presetid2 = $generator->create_preset(['name' => 'Preset 2']);
 
-        $currentpresets = $DB->count_records('tool_admin_presets');
-        $currentitems = $DB->count_records('tool_admin_presets_it');
-        $currentadvitems = $DB->count_records('tool_admin_presets_it_a');
-        $currentplugins = $DB->count_records('tool_admin_presets_plug');
+        $currentpresets = $DB->count_records('adminpresets');
+        $currentitems = $DB->count_records('adminpresets_it');
+        $currentadvitems = $DB->count_records('adminpresets_it_a');
+        $currentplugins = $DB->count_records('adminpresets_plug');
 
         // Only preset1 has been applied.
-        $this->assertCount(1, $DB->get_records('tool_admin_presets_app'));
+        $this->assertCount(1, $DB->get_records('adminpresets_app'));
         // Only the preset1 settings that have changed: enablebadges, mediawidth and maxanswers.
-        $this->assertCount(3, $DB->get_records('tool_admin_presets_app_it'));
+        $this->assertCount(3, $DB->get_records('adminpresets_app_it'));
         // Only the preset1 advanced settings that have changed: maxanswers_adv.
-        $this->assertCount(1, $DB->get_records('tool_admin_presets_app_it_a'));
+        $this->assertCount(1, $DB->get_records('adminpresets_app_it_a'));
         // Only the preset1 plugins that have changed: enrol_guest and mod_glossary.
-        $this->assertCount(2, $DB->get_records('tool_admin_presets_app_plug'));
+        $this->assertCount(2, $DB->get_records('adminpresets_app_plug'));
 
         // Initialise the parameters and create the delete class.
         $_POST['action'] = 'delete';
@@ -73,23 +73,23 @@ class delete_test extends \advanced_testcase {
             $this->assertInstanceOf(\moodle_exception::class, $e);
         } finally {
             // Check the preset data has been removed.
-            $presets = $DB->get_records('tool_admin_presets');
+            $presets = $DB->get_records('adminpresets');
             $this->assertCount($currentpresets - 1, $presets);
             $preset = reset($presets);
             $this->assertArrayHasKey($presetid2, $presets);
             // Check preset items.
-            $this->assertCount($currentitems - 4, $DB->get_records('tool_admin_presets_it'));
-            $this->assertCount(0, $DB->get_records('tool_admin_presets_it', ['adminpresetid' => $presetid1]));
+            $this->assertCount($currentitems - 4, $DB->get_records('adminpresets_it'));
+            $this->assertCount(0, $DB->get_records('adminpresets_it', ['adminpresetid' => $presetid1]));
             // Check preset advanced items.
-            $this->assertCount($currentadvitems - 1, $DB->get_records('tool_admin_presets_it_a'));
+            $this->assertCount($currentadvitems - 1, $DB->get_records('adminpresets_it_a'));
             // Check preset plugins.
-            $this->assertCount($currentplugins - 3, $DB->get_records('tool_admin_presets_plug'));
-            $this->assertCount(0, $DB->get_records('tool_admin_presets_plug', ['adminpresetid' => $presetid1]));
+            $this->assertCount($currentplugins - 3, $DB->get_records('adminpresets_plug'));
+            $this->assertCount(0, $DB->get_records('adminpresets_plug', ['adminpresetid' => $presetid1]));
             // Check preset applied tables are empty now.
-            $this->assertCount(0, $DB->get_records('tool_admin_presets_app'));
-            $this->assertCount(0, $DB->get_records('tool_admin_presets_app_it'));
-            $this->assertCount(0, $DB->get_records('tool_admin_presets_app_it_a'));
-            $this->assertCount(0, $DB->get_records('tool_admin_presets_app_plug'));
+            $this->assertCount(0, $DB->get_records('adminpresets_app'));
+            $this->assertCount(0, $DB->get_records('adminpresets_app_it'));
+            $this->assertCount(0, $DB->get_records('adminpresets_app_it_a'));
+            $this->assertCount(0, $DB->get_records('adminpresets_app_plug'));
 
             // Check the delete event has been raised.
             $events = $sink->get_events();
@@ -110,7 +110,7 @@ class delete_test extends \advanced_testcase {
         $this->setAdminUser();
 
         // Create some presets.
-        $generator = $this->getDataGenerator()->get_plugin_generator('tool_admin_presets');
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $presetid = $generator->create_preset(['name' => 'Preset 1']);
 
         // Initialise the parameters and create the delete class.
@@ -135,7 +135,7 @@ class delete_test extends \advanced_testcase {
         $this->setAdminUser();
 
         // Create some presets.
-        $generator = $this->getDataGenerator()->get_plugin_generator('tool_admin_presets');
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $presetid = $generator->create_preset(['name' => 'Preset 1']);
 
         // Initialise the parameters and create the delete class.

@@ -1163,7 +1163,7 @@ $CFG->admin = 'admin';
 // This setting accepts the following values:
 // - One of the core preset names (i.e "starter" or "full").
 // - The path of a valid XML preset file, that will be imported and applied. Absolute paths are recommended, to
-//   guarantee the file is found: i.e."MOODLEPATH/admin/tool/admin_presets/tests/fixtures/import_settings_plugins.xml".
+//   guarantee the file is found: i.e."MOODLEPATH/adminpresets/tests/fixtures/import_settings_plugins.xml".
 //
 // This setting is only used during the installation process. So once the Moodle site is installed, it is ignored.
 //

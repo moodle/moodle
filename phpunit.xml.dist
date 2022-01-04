@@ -208,6 +208,9 @@
     <testsuite name="core_reportbuilder_testsuite">
       <directory suffix="_test.php">reportbuilder/tests</directory>
     </testsuite>
+    <testsuite name="core_adminpresets_testsuite">
+      <directory suffix="_test.php">adminpresets/tests</directory>
+    </testsuite>
 
     <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from
         phpunit.xml.dist with up-to-date list of plugins in current install-->

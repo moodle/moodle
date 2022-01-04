@@ -3322,5 +3322,221 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2021122100.02);
     }
 
+    if ($oldversion < 2021123000.01) {
+        // The tool_admin_presets tables have been moved to core, because core_adminpresets component has been created, so
+        // it can interact with the rest of core.
+        // So the tool_admin_presetsXXX tables will be renamed to adminipresetsXXX if they exists; otherwise, they will be created.
+
+        $tooltable = new xmldb_table('tool_admin_presets');
+        $table = new xmldb_table('adminpresets');
+        if ($dbman->table_exists($tooltable)) {
+            $dbman->rename_table($tooltable, 'adminpresets');
+        } else if (!$dbman->table_exists($table)) {
+            // Adding fields to table adminpresets.
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('comments', XMLDB_TYPE_TEXT, null, null, null, null, null);
+            $table->add_field('site', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('author', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+            $table->add_field('moodleversion', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('moodlerelease', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('iscore', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+            $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+            $table->add_field('timeimported', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+            // Adding keys to table adminpresets.
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+            // Launch create table for adminpresets.
+            $dbman->create_table($table);
+        }
+
+        $tooltable = new xmldb_table('tool_admin_presets_it');
+        $table = new xmldb_table('adminpresets_it');
+        if ($dbman->table_exists($tooltable)) {
+            $dbman->rename_table($tooltable, 'adminpresets_it');
+        } else if (!$dbman->table_exists($table)) {
+            // Adding fields to table adminpresets_it.
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('adminpresetid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+            $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('value', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+            // Adding keys to table adminpresets_it.
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+            // Adding indexes to table adminpresets_it.
+            $table->add_index('adminpresetid', XMLDB_INDEX_NOTUNIQUE, ['adminpresetid']);
+
+            // Launch create table for adminpresets_it.
+            $dbman->create_table($table);
+        }
+
+        $tooltable = new xmldb_table('tool_admin_presets_it_a');
+        $table = new xmldb_table('adminpresets_it_a');
+        if ($dbman->table_exists($tooltable)) {
+            $dbman->rename_table($tooltable, 'adminpresets_it_a');
+        } else if (!$dbman->table_exists($table)) {
+            // Adding fields to table adminpresets_it_a.
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('value', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+            // Adding keys to table adminpresets_it_a.
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+            // Adding indexes to table adminpresets_it_a.
+            $table->add_index('itemid', XMLDB_INDEX_NOTUNIQUE, ['itemid']);
+
+            // Launch create table for adminpresets_it_a.
+            $dbman->create_table($table);
+        }
+
+        $tooltable = new xmldb_table('tool_admin_presets_app');
+        $table = new xmldb_table('adminpresets_app');
+        if ($dbman->table_exists($tooltable)) {
+            $dbman->rename_table($tooltable, 'adminpresets_app');
+        } else if (!$dbman->table_exists($table)) {
+            // Adding fields to table adminpresets_app.
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('adminpresetid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('time', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+            // Adding keys to table adminpresets_app.
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+            // Adding indexes to table adminpresets_app.
+            $table->add_index('adminpresetid', XMLDB_INDEX_NOTUNIQUE, ['adminpresetid']);
+
+            // Launch create table for adminpresets_app.
+            $dbman->create_table($table);
+        }
+
+        $tooltable = new xmldb_table('tool_admin_presets_app_it');
+        $table = new xmldb_table('adminpresets_app_it');
+        if ($dbman->table_exists($tooltable)) {
+            $dbman->rename_table($tooltable, 'adminpresets_app_it');
+        } else if (!$dbman->table_exists($table)) {
+            // Adding fields to table adminpresets_app_it.
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('adminpresetapplyid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('configlogid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+            // Adding keys to table adminpresets_app_it.
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+            // Adding indexes to table adminpresets_app_it.
+            $table->add_index('configlogid', XMLDB_INDEX_NOTUNIQUE, ['configlogid']);
+            $table->add_index('adminpresetapplyid', XMLDB_INDEX_NOTUNIQUE, ['adminpresetapplyid']);
+
+            // Launch create table for adminpresets_app_it.
+            $dbman->create_table($table);
+        }
+
+        $tooltable = new xmldb_table('tool_admin_presets_app_it_a');
+        $table = new xmldb_table('adminpresets_app_it_a');
+        if ($dbman->table_exists($tooltable)) {
+            $dbman->rename_table($tooltable, 'adminpresets_app_it_a');
+        } else if (!$dbman->table_exists($table)) {
+            // Adding fields to table adminpresets_app_it_a.
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('adminpresetapplyid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('configlogid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('itemname', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+
+            // Adding keys to table adminpresets_app_it_a.
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+            // Adding indexes to table adminpresets_app_it_a.
+            $table->add_index('configlogid', XMLDB_INDEX_NOTUNIQUE, ['configlogid']);
+            $table->add_index('adminpresetapplyid', XMLDB_INDEX_NOTUNIQUE, ['adminpresetapplyid']);
+
+            // Launch create table for adminpresets_app_it_a.
+            $dbman->create_table($table);
+        }
+
+        $tooltable = new xmldb_table('tool_admin_presets_plug');
+        $table = new xmldb_table('adminpresets_plug');
+        if ($dbman->table_exists($tooltable)) {
+            $dbman->rename_table($tooltable, 'adminpresets_plug');
+        } else if (!$dbman->table_exists($table)) {
+            // Adding fields to table adminpresets_plug.
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('adminpresetid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+            $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('enabled', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
+
+            // Adding keys to table adminpresets_plug.
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+            // Adding indexes to table adminpresets_plug.
+            $table->add_index('adminpresetid', XMLDB_INDEX_NOTUNIQUE, ['adminpresetid']);
+
+            // Launch create table for adminpresets_plug.
+            $dbman->create_table($table);
+        }
+
+        $tooltable = new xmldb_table('tool_admin_presets_app_plug');
+        $table = new xmldb_table('adminpresets_app_plug');
+        if ($dbman->table_exists($tooltable)) {
+            $dbman->rename_table($tooltable, 'adminpresets_app_plug');
+        } else if (!$dbman->table_exists($table)) {
+            // Adding fields to table adminpresets_app_plug.
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('adminpresetapplyid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+            $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('value', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
+            $table->add_field('oldvalue', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
+
+            // Adding keys to table adminpresets_app_plug.
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+            // Adding indexes to table adminpresets_app_plug.
+            $table->add_index('adminpresetapplyid', XMLDB_INDEX_NOTUNIQUE, ['adminpresetapplyid']);
+
+            // Launch create table for adminpresets_app_plug.
+            if (!$dbman->table_exists($table)) {
+                $dbman->create_table($table);
+            }
+        }
+
+        if ($DB->count_records('adminpresets', ['iscore' => 1]) == 0) {
+            // Create default core site admin presets.
+            require_once($CFG->dirroot . '/adminpresets/classes/helper.php');
+            \core_adminpresets\helper::create_default_presets();
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021123000.01);
+    }
+
+    if ($oldversion < 2021123000.02) {
+        // If exists, migrate sensiblesettings admin settings from tool_admin_preset to adminpresets.
+        if (get_config('tool_admin_presets', 'sensiblesettings') !== false) {
+            set_config('sensiblesettings', get_config('tool_admin_presets', 'sensiblesettings'), 'adminpresets');
+            unset_config('sensiblesettings', 'tool_admin_presets');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021123000.02);
+    }
+
+    if ($oldversion < 2021123000.03) {
+        // If exists, migrate lastpresetapplied setting from tool_admin_preset to adminpresets.
+        if (get_config('tool_admin_presets', 'lastpresetapplied') !== false) {
+            set_config('lastpresetapplied', get_config('tool_admin_presets', 'lastpresetapplied'), 'adminpresets');
+            unset_config('lastpresetapplied', 'tool_admin_presets');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021123000.03);
+    }
+
     return true;
 }

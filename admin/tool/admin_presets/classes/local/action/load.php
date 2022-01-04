@@ -100,8 +100,8 @@ class load extends base {
         $data->id = $this->id;
 
         // Preset data.
-        if (!$preset = $DB->get_record('tool_admin_presets', ['id' => $data->id])) {
-            throw new moodle_exception('errornopreset', 'tool_admin_presets');
+        if (!$preset = $DB->get_record('adminpresets', ['id' => $data->id])) {
+            throw new moodle_exception('errornopreset', 'core_adminpresets');
         }
 
         // Print preset basic data.
