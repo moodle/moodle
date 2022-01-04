@@ -434,9 +434,11 @@ class secondary extends view {
         $thissettings = $this->get_children_key_list();
         $diff = array_diff($coursesettings, $thissettings);
 
-        // Remove our specific created elements (user - participants, badges - coursebadges, grades - gradebooksetup).
+        // Remove our specific created elements (user - participants, badges - coursebadges, grades - gradebooksetup,
+        // grades - outcomes).
         $shortdiff = array_filter($diff, function($value) {
-            return !($value == 'users' || $value == 'coursebadges' || $value == 'gradebooksetup');
+            return !($value == 'users' || $value == 'coursebadges' || $value == 'gradebooksetup' ||
+                $value == 'outcomes');
         });
 
         // Permissions may be in play here that ultimately will show no overflow.
