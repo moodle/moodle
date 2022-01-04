@@ -99,7 +99,7 @@ class adminpresets_setting {
     /**
      * Applies the children class specific behaviors
      *
-     * See admin_presets_delegation() for the available extra behaviors
+     * See delegation class for the available extra behaviors
      */
     protected function apply_behaviors() {
         if (!empty($this->behaviors)) {
