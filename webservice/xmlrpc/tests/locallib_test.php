@@ -22,6 +22,7 @@
  * @copyright  2016 Cameron Ball
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace webservice_xmlrpc;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +37,7 @@ require_once($CFG->dirroot . '/webservice/xmlrpc/locallib.php');
  * @copyright  2016 Cameron Ball
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_xmlrpc_locallib_testcase extends advanced_testcase {
+class locallib_test extends \advanced_testcase {
 
     /**
      * Setup.
@@ -70,7 +71,7 @@ class webservice_xmlrpc_locallib_testcase extends advanced_testcase {
 
         $func = $rc->getProperty('function');
         $func->setAccessible(true);
-        $func->setValue($server, (object) ['returns_desc' => new external_value(PARAM_RAW, $returnsdesc, VALUE_OPTIONAL)]);
+        $func->setValue($server, (object) ['returns_desc' => new \external_value(PARAM_RAW, $returnsdesc, VALUE_OPTIONAL)]);
 
         $ret = $rc->getProperty('returns');
         $ret->setAccessible(true);

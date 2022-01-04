@@ -21,6 +21,7 @@
  * @copyright 2021 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
+namespace tool_capability;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -30,7 +31,7 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/capability/locallib.php'
 /**
  * Tests for the capability overview helper functions.
  */
-class tool_capability_locallib_testcase extends advanced_testcase {
+class locallib_test extends \advanced_testcase {
 
     /**
      * Test the function that gets the data - simple case.
@@ -40,7 +41,7 @@ class tool_capability_locallib_testcase extends advanced_testcase {
 
         $data = tool_capability_calculate_role_data('mod/quiz:attempt', get_all_roles());
 
-        $systcontext = context_system::instance();
+        $systcontext = \context_system::instance();
         $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
 
         $this->assertArrayHasKey($systcontext->id, $data);
@@ -63,10 +64,10 @@ class tool_capability_locallib_testcase extends advanced_testcase {
 
         // This simulates a situation that seems to happen sometimes, where
         // we end up with contexts with path = NULL in the database.
-        $systcontext = context_system::instance();
+        $systcontext = \context_system::instance();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
         role_change_permission($studentroleid, $coursecontext, 'mod/quiz:attempt', CAP_PREVENT);
         // This is where we simulate the breakage.

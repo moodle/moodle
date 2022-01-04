@@ -18,10 +18,14 @@
  * Unit tests for Rubric grading strategy logic
  *
  * @package    workshopform_rubric
- * @category   phpunit
+ * @category   test
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace workshopform_rubric;
+
+use workshop;
+use workshop_rubric_strategy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,8 +34,10 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 require_once($CFG->dirroot . '/mod/workshop/form/rubric/lib.php');
 
-
-class workshopform_rubric_strategy_test extends advanced_testcase {
+/**
+ * Unit tests for Rubric grading strategy lib.php
+ */
+class lib_test extends \advanced_testcase {
 
     /** workshop instance emulation */
     protected $workshop;
@@ -53,7 +59,7 @@ class workshopform_rubric_strategy_test extends advanced_testcase {
         $this->strategy = new testable_workshop_rubric_strategy($this->workshop);
 
         // prepare dimensions definition
-        $dim = new stdclass();
+        $dim = new \stdClass();
         $dim->id = 6;
         $dim->levels[10] = (object)array('id' => 10, 'grade' => 0);
         $dim->levels[13] = (object)array('id' => 13, 'grade' => 2);
@@ -61,7 +67,7 @@ class workshopform_rubric_strategy_test extends advanced_testcase {
         $dim->levels[16] = (object)array('id' => 16, 'grade' => 8);
         $this->strategy->dimensions[$dim->id] = $dim;
 
-        $dim = new stdclass();
+        $dim = new \stdClass();
         $dim->id = 8;
         $dim->levels[17] = (object)array('id' => 17, 'grade' => 0);
         $dim->levels[18] = (object)array('id' => 18, 'grade' => 1);
@@ -69,7 +75,7 @@ class workshopform_rubric_strategy_test extends advanced_testcase {
         $dim->levels[20] = (object)array('id' => 20, 'grade' => 3);
         $this->strategy->dimensions[$dim->id] = $dim;
 
-        $dim = new stdclass();
+        $dim = new \stdClass();
         $dim->id = 10;
         $dim->levels[27] = (object)array('id' => 27, 'grade' => 10);
         $dim->levels[28] = (object)array('id' => 28, 'grade' => 20);
