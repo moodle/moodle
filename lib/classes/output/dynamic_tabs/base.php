@@ -83,4 +83,22 @@ abstract class base implements templatable {
      * @return string
      */
     abstract public function get_template(): string;
+
+    /**
+     * Return tab data attributes
+     *
+     * @return array
+     */
+    public function get_data(): array {
+        return $this->data;
+    }
+
+    /**
+     * Add custom data to the tab data attributes
+     *
+     * @param array $data
+     */
+    public function add_data(array $data): void {
+        $this->data = array_merge($this->data, $data);
+    }
 }
