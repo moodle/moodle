@@ -65,10 +65,39 @@ class qbank_actionbar implements templatable, renderable {
         }
         $menu[$importlink->out(false)] = get_string('import', 'question');
         $menu[$exportlink->out(false)] = get_string('export', 'question');
+        $additional = $this->get_additional_menu_elements();
+        $menu += $additional ?: [];
 
         $urlselect = new url_select($menu, $this->currenturl, null, 'questionbankaction');
         $urlselect->set_label('questionbankactionselect', ['class' => 'accesshide']);
 
         return ['questionbankselect' => $urlselect->export_for_template($output)];
+    }
+
+    /**
+     * Gets the additional third party navigation nodes.
+     *
+     * @return array|null The additional menu elements.
+     */
+    protected function get_additional_menu_elements(): ?array {
+        global $PAGE;
+        $qbnode = $PAGE->settingsnav->find('questionbank', \navigation_node::TYPE_CONTAINER);
+        $othernodes = [];
+        foreach ($qbnode->children as $key => $value) {
+            if (array_search($value->key, $this->expected_nodes()) === false) {
+                $othernodes[] = $value;
+            }
+        }
+        $result = \core\navigation\views\secondary::create_menu_element($othernodes, true);
+        return $result;
+    }
+
+    /**
+     * Returns a list of expected child navigation nodes for 'questionbank'.
+     *
+     * @return array The expected nodes
+     */
+    protected function expected_nodes(): array {
+        return ['questions', 'categories', 'import', 'export'];
     }
 }

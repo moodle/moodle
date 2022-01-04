@@ -409,6 +409,11 @@ class moodle_page {
     protected $_activityheader;
 
     /**
+     * @var bool The value of displaying the navigation overflow.
+     */
+    protected $_navigationoverflow = true;
+
+    /**
      * Force the settings menu to be displayed on this page. This will only force the
      * settings menu on an activity / resource page that is being displayed on a theme that
      * uses a settings menu.
@@ -2257,5 +2262,24 @@ class moodle_page {
      */
     public function get_primary_activate_tab(): ?string {
         return $this->_activenodeprimary;
+    }
+
+    /**
+     * Sets the navigation overflow state. This allows developers to turn off the overflow menu if they perhaps are using
+     * some other navigation to show settings.
+     *
+     * @param bool  $state  The state of whether to show the navigation overflow.
+     */
+    public function set_navigation_overflow_state(bool $state): void {
+        $this->_navigationoverflow = $state;
+    }
+
+    /**
+     * Gets the navigation overflow state.
+     *
+     * @return bool The navigation overflow state.
+     */
+    public function get_navigation_overflow_state(): bool {
+        return $this->_navigationoverflow;
     }
 }

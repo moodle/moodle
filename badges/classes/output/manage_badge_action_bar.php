@@ -71,6 +71,8 @@ class manage_badge_action_bar extends base_action_bar {
         foreach ($elements as $key => $element) {
             $elements[$key] = $element->export_for_template($output);
         }
+        $additional = $this->get_third_party_nav_action($output);
+        $elements += $additional ?: [];
 
         return $elements;
     }

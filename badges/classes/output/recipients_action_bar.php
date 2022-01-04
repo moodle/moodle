@@ -53,6 +53,8 @@ class recipients_action_bar extends manage_badge_action_bar {
             $button = new single_button($url, get_string('award', 'badges'), 'post', true);
             $elements['awardbutton'] = $button->export_for_template($output);
         }
+        $thirdpartynav = $this->get_third_party_nav_action($output);
+        $elements += $thirdpartynav ?: [];
 
         return $elements;
     }
