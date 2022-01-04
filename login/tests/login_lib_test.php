@@ -21,6 +21,7 @@
  * @copyright  2017 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +35,7 @@ require_once($CFG->dirroot . '/login/lib.php');
  * @copyright  2017 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_login_lib_testcase extends advanced_testcase {
+class login_lib_test extends \advanced_testcase {
 
     public function test_core_login_process_password_reset_one_time_without_username_protection() {
         global $CFG;
@@ -395,8 +396,8 @@ class core_login_lib_testcase extends advanced_testcase {
         // So we inject our own validation method here and revert it back once we are done. This custom validator method
         // is identical to the default 'php' validator with the only difference: it has the FILTER_FLAG_EMAIL_UNICODE
         // set so that it allows to use non-ASCII characters in email addresses.
-        $defaultvalidator = moodle_phpmailer::$validator;
-        moodle_phpmailer::$validator = function($address) {
+        $defaultvalidator = \moodle_phpmailer::$validator;
+        \moodle_phpmailer::$validator = function($address) {
             return (bool) filter_var($address, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE);
         };
 
@@ -421,7 +422,7 @@ class core_login_lib_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(1, $emails);
         $email = reset($emails);
-        $this->assertSame(core_text::strtolower($u2->email), core_text::strtolower($email->to));
+        $this->assertSame(\core_text::strtolower($u2->email), \core_text::strtolower($email->to));
         $sink->clear();
 
         // However, emails are accent sensitive - note this is the u1's email with a single character a -> á changed.
@@ -444,7 +445,7 @@ class core_login_lib_testcase extends advanced_testcase {
         $sink->clear();
 
         // Restore the original email address validator.
-        moodle_phpmailer::$validator = $defaultvalidator;
+        \moodle_phpmailer::$validator = $defaultvalidator;
     }
 
 }

@@ -21,6 +21,7 @@
  * @copyright  2014 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
+namespace report_participation;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class report_participation_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /**
      * Test report_log_supports_logstore.

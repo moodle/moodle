@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,10 +18,14 @@
  * Unit tests for Number of errors grading logic
  *
  * @package    workshopform_numerrors
- * @category   phpunit
+ * @category   test
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace workshopform_numerrors;
+
+use workshop;
+use workshop_numerrors_strategy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,8 +34,10 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 require_once($CFG->dirroot . '/mod/workshop/form/numerrors/lib.php');
 
-
-class workshopform_numerrors_strategy_testcase extends advanced_testcase {
+/**
+ * Unit tests for Number of errors grading lib.php
+ */
+class lib_test extends \advanced_testcase {
 
     /** workshop instance emulation */
     protected $workshop;
