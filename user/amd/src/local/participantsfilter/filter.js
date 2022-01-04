@@ -86,7 +86,11 @@ export default class {
         const filterValueNode = this.getFilterValueNode();
 
         // Copy the data in place.
-        filterValueNode.innerHTML = this.getSourceDataForFilter().outerHTML;
+        const sourceDataNode = this.getSourceDataForFilter();
+        if (!sourceDataNode) {
+            return;
+        }
+        filterValueNode.innerHTML = sourceDataNode.outerHTML;
 
         const dataSource = filterValueNode.querySelector('select');
 
