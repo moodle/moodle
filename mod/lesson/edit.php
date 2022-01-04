@@ -57,10 +57,8 @@ $lessonoutput = $PAGE->get_renderer('mod_lesson');
 $PAGE->navbar->add(get_string('edit'));
 
 echo $lessonoutput->header($lesson, $cm, $mode, false, null, get_string('edit', 'lesson'));
-if ($PAGE->has_secondary_navigation()) {
-    $actionarea = new \mod_lesson\output\edit_action_area($id, $url);
-    echo $lessonoutput->render($actionarea);
-}
+$actionarea = new \mod_lesson\output\edit_action_area($id, $url);
+echo $lessonoutput->render($actionarea);
 
 if (!$lesson->has_pages()) {
     // There are no pages; give teacher some options
