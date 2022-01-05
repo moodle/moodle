@@ -51,9 +51,6 @@ class mod_page_generator extends testing_module_generator {
         if (!isset($record->display)) {
             $record->display = RESOURCELIB_DISPLAY_AUTO;
         }
-        if (!isset($record->printheading)) {
-            $record->printheading = 1;
-        }
         if (!isset($record->printintro)) {
             $record->printintro = 0;
         }
