@@ -68,7 +68,7 @@ class qbank_actionbar implements templatable, renderable {
         $additional = $this->get_additional_menu_elements();
         $menu += $additional ?: [];
 
-        $urlselect = new url_select($menu, $this->currenturl, null, 'questionbankaction');
+        $urlselect = new url_select($menu, $this->currenturl->out(false), null, 'questionbankaction');
         $urlselect->set_label('questionbankactionselect', ['class' => 'accesshide']);
 
         return ['questionbankselect' => $urlselect->export_for_template($output)];
