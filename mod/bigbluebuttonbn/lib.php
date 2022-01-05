@@ -582,11 +582,11 @@ function bigbluebuttonbn_get_recent_mod_activity(&$activities, &$index, $timesta
     $instance->set_group_id($groupid);
     $cm = $instance->get_cm();
     $logs =
-
         logger::get_user_completion_logs_with_userfields($instance,
             $userid ?? null,
             [logger::EVENT_JOIN, logger::EVENT_PLAYED],
             $timestart);
+
     foreach ($logs as $log) {
         $activity = new stdClass();
 
@@ -607,22 +607,17 @@ function bigbluebuttonbn_get_recent_mod_activity(&$activities, &$index, $timesta
         }
         $activity->user->fullname = fullname($log);
         $activity->content = '';
-        switch ($log->log) {
-            case logger::EVENT_JOIN:
-                $activity->eventname = get_string('event_meeting_joined', 'mod_bigbluebuttonbn');
-                break;
-            case logger::EVENT_PLAYED:
-                $activity->eventname = get_string('event_recording_viewed', 'mod_bigbluebuttonbn');
-                if (!empty($log->meta)) {
-                    $meta = json_decode($log->meta);
-                    if (!empty($meta->recordingid)) {
-                        $recording = recording::get_record(['id' => $meta->recordingid]);
-                        if ($recording) {
-                            $activity->content = $recording->get('name');
-                        }
+        $activity->eventname = logger::get_printable_event_name($log);
+        if ($log->log == logger::EVENT_PLAYED) {
+            if (!empty($log->meta)) {
+                $meta = json_decode($log->meta);
+                if (!empty($meta->recordingid)) {
+                    $recording = recording::get_record(['id' => $meta->recordingid]);
+                    if ($recording) {
+                        $activity->content = $recording->get('name');
                     }
                 }
-                break;
+            }
         }
         $activities[$index++] = $activity;
     }
@@ -653,4 +648,46 @@ function bigbluebuttonbn_print_recent_mod_activity(stdClass $activity, int $cour
         $template['eventname'] = $activity->eventname;
     }
     echo $OUTPUT->render_from_template('mod_bigbluebuttonbn/recentactivity', $template);
+}
+
+/**
+ * Given a course and a date, prints a summary of all the activity for this module
+ *
+ * @param object $course
+ * @param bool $viewfullnames capability
+ * @param int $timestart
+ * @return bool success
+ */
+function bigbluebuttonbn_print_recent_activity(object $course, bool $viewfullnames, int $timestart): bool {
+    global $OUTPUT;
+    $modinfo = get_fast_modinfo($course);
+    if (empty($modinfo->instances['bigbluebuttonbn'])) {
+        return true;
+    }
+    $out = '';
+    foreach ($modinfo->instances['bigbluebuttonbn'] as $cm) {
+        if (!$cm->uservisible) {
+            continue;
+        }
+        $instance = instance::get_from_cmid($cm->id);
+        $logs = logger::get_user_completion_logs_with_userfields($instance,
+            null,
+            [logger::EVENT_JOIN, logger::EVENT_PLAYED],
+            $timestart);
+        if ($logs) {
+            echo $OUTPUT->heading(get_string('new_bigblubuttonbn_activities', 'bigbluebuttonbn') . ':', 6);
+            foreach ($logs as $log) {
+                $activityurl = new moodle_url('/mod/bigbluebuttonbn/index.php', ['id' => $instance->get_instance_id()]);
+                print_recent_activity_note($log->timecreated,
+                    $log,
+                    logger::get_printable_event_name($log) . ' - ' . $instance->get_meeting_name(),
+                    $activityurl->out(),
+                    false,
+                    $viewfullnames);
+            }
+        }
+
+        echo $out;
+    }
+    return true;
 }
