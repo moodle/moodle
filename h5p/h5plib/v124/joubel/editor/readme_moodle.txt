@@ -32,5 +32,6 @@ Added:
 
 Changed:
  * Updated H5peditor::getLibraryData parameters to fix PHP8.0 warnings. See MDL-70903 for details.
+ * Make get_magic_quotes_gpc() use conditional, it has been removed in php80. See MDL-73502 for details.
 
 Downloaded version: moodle-1.20.2 release
