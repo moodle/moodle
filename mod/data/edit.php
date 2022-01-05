@@ -152,6 +152,7 @@ $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
 $PAGE->set_secondary_active_tab('modulepage');
+$PAGE->activityheader->disable();
 
 // Process incoming data for adding/updating records.
 
@@ -243,7 +244,9 @@ echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
 if (!$rid){
-    echo $OUTPUT->heading(get_string('newentry','data'), 3);
+    echo $OUTPUT->heading(get_string('newentry','data'));
+} else {
+    echo $OUTPUT->heading(get_string('editentry','data'));
 }
 
 /******************************************

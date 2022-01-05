@@ -116,7 +116,9 @@ $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
 $PAGE->set_secondary_active_tab('modulepage');
+$PAGE->activityheader->disable();
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('exportentries', 'data'));
 
 groups_print_activity_menu($cm, $url);
 

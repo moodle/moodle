@@ -104,6 +104,7 @@ $actionbar = new \mod_data\output\action_bar($data->id, $PAGE->url);
 
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
+$PAGE->activityheader->disable();
 
 // Fill in missing properties needed for updating of instance.
 $data->course     = $cm->course;
@@ -120,6 +121,7 @@ if ($formimportzip->is_cancelled()) {
 } else if ($formdata = $formimportzip->get_data()) {
     $fieldactionbar = $actionbar->get_fields_action_bar();
     data_print_header($course, $cm, $data, false, $fieldactionbar);
+    echo $OUTPUT->heading(get_string('importpreset', 'data'), 2, 'mb-4');
     $file = new stdClass;
     $file->name = $formimportzip->get_new_filename('importfile');
     $file->path = $formimportzip->save_temp_file('importfile');
@@ -261,6 +263,7 @@ switch ($mode) {
             } else {
 
                 data_print_header($course,$cm,$data, false);
+                echo $OUTPUT->heading(get_string('deletefield', 'data'), 2, 'mb-4');
 
                 // Print confirmation message.
                 $field = data_get_field_from_id($fid, $data);
@@ -290,23 +293,28 @@ switch ($mode) {
         break;
 
     case 'import':
+        $PAGE->navbar->add(get_string('importpreset', 'data'));
         $fieldactionbar = $actionbar->get_fields_action_bar();
         data_print_header($course, $cm, $data, false, $fieldactionbar);
 
+        echo $OUTPUT->heading(get_string('importpreset', 'data'), 2, 'mb-4');
         echo $formimportzip->display();
         echo $OUTPUT->footer();
         exit;
 
     case 'usepreset':
+        $PAGE->navbar->add(get_string('usestandard', 'data'));
         $fieldactionbar = $actionbar->get_fields_action_bar();
         data_print_header($course, $cm, $data, false, $fieldactionbar);
 
         if ($action === 'select') {
             if (!empty($fullname)) {
+                echo $OUTPUT->heading(get_string('usestandard', 'data'), 2, 'mb-4');
                 $importer = new data_preset_existing_importer($course, $cm, $data, $fullname);
                 echo $renderer->import_setting_mappings($data, $importer);
             }
         } else {
+            echo $OUTPUT->heading(get_string('presets', 'data'), 2, 'mb-4');
             $presets = data_get_available_presets($context);
             $presetstable = new \mod_data\output\presets($data->id, $presets,
                 new \moodle_url('/mod/data/field.php'));
@@ -336,12 +344,14 @@ $PAGE->force_settings_menu(true);
 $PAGE->set_pagetype('mod-data-field-' . $newtype);
 if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
     data_print_header($course, $cm, $data,'fields');
+    echo $OUTPUT->heading(get_string('newfield', 'data'));
 
     $field = data_get_field_new($newtype, $data);
     $field->display_edit_field();
 
 } else if ($mode == 'display' && confirm_sesskey()) { /// Display/edit existing field
     data_print_header($course, $cm, $data,'fields');
+    echo $OUTPUT->heading(get_string('editfield', 'data'));
 
     $field = data_get_field_from_id($fid, $data);
     $field->display_edit_field();
@@ -349,7 +359,7 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
 } else {                                              /// Display the main listing of all fields
     $fieldactionbar = $actionbar->get_fields_action_bar(true, true, true);
     data_print_header($course, $cm, $data, 'fields', $fieldactionbar);
-    echo $OUTPUT->heading(get_string('managefields', 'data'), 2);
+    echo $OUTPUT->heading(get_string('managefields', 'data'), 2, 'mb-4');
 
     if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {
         echo $OUTPUT->notification(get_string('nofieldindatabase','data'));  // nothing in database
