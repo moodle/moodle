@@ -189,7 +189,7 @@ if ($totalcount) {
 
     echo $output->render($badges);
 } else {
-    echo $output->notification(get_string('nobadges', 'badges'));
+    echo $output->notification(get_string('nobadges', 'badges'), 'info');
 }
 
 echo $OUTPUT->footer();

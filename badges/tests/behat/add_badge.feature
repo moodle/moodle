@@ -136,8 +136,7 @@ Feature: Add badges to the system
     And I add the "Navigation" block if not present
     When I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Site badges" "link" in the "Navigation" "block"
-    Then I should see "Manage badges"
-    And I should see "Add a new badge"
+    Then I should see "Add a new badge"
     # Add a badge.
     When I press "Add a new badge"
     And I set the following fields to these values:

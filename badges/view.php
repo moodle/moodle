@@ -97,6 +97,11 @@ $canmanage = has_any_capability(array('moodle/badges:viewawarded',
     'moodle/badges:configuredetails',
     'moodle/badges:deletebadge'), $context);
 
+if ($canmanage) {
+    // Check there are non archived badges on the course.
+    $allbadgescount = count(badges_get_badges($type, $courseid));
+    $canmanage = ($allbadgescount > 0);
+}
 $actionbar = new \core_badges\output\standard_action_bar($PAGE, $type, $canmanage);
 echo $output->header();
 echo $output->render_tertiary_navigation($actionbar);
@@ -119,7 +124,7 @@ if ($totalcount) {
 
     echo $output->render($badges);
 } else {
-    echo $output->notification(get_string('nobadges', 'badges'));
+    echo $output->notification(get_string('nobadges', 'badges'), 'info');
 }
 // Trigger event, badge listing viewed.
 $eventparams = array('context' => $PAGE->context, 'other' => $eventotherparams);
