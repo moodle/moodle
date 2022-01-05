@@ -17,7 +17,10 @@
 namespace mod_workshop\output;
 
 use moodle_url;
+use renderer_base;
 use url_select;
+use renderable;
+use templatable;
 
 /**
  * Output the rendered elements for the tertiary nav for page action.
@@ -26,7 +29,7 @@ use url_select;
  * @copyright 2021 Sujith Haridasan <sujith@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class actionbar {
+class actionbar implements renderable, templatable {
     /**
      * The current url.
      *
@@ -52,11 +55,12 @@ class actionbar {
     }
 
     /**
-     * Creates the select menu for allocation page.
+     * Export the data so it can be used as the context for a mustache template.
      *
-     * @return url_select url_select object.
+     * @param renderer_base $output
+     * @return array The urlselect menu and the heading to be used
      */
-    private function create_select_menu(): url_select {
+    public function export_for_template(renderer_base $output): array {
         $allocators = \workshop::installed_allocators();
         $menu = [];
 
@@ -65,18 +69,11 @@ class actionbar {
             $menu[$this->workshop->allocation_url($methodid)->out(false)] = $selectorname;
         }
 
-        return new url_select($menu, $this->currenturl->out(false), null, 'allocationsetting');
-    }
+        $urlselect = new url_select($menu, $this->currenturl->out(false), null, 'allocationsetting');
 
-    /**
-     * Rendered HTML for the allocation action.
-     *
-     * @return string rendered HTML string
-     */
-    public function get_allocation_menu(): string {
-        global $OUTPUT;
-
-        $urlselect = $this->create_select_menu();
-        return $OUTPUT->render($urlselect);
+        return [
+            'urlselect' => $urlselect->export_for_template($output),
+            'heading' => $menu[$this->currenturl->out(false)] ?? null
+        ];
     }
 }
