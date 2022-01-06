@@ -65,7 +65,7 @@ class Cell
     protected $style;
 
     /**
-     * @param $value mixed
+     * @param mixed|null $value
      * @param Style|null $style
      */
     public function __construct($value, Style $style = null)
