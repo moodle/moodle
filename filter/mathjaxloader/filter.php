@@ -126,6 +126,8 @@ class filter_mathjaxloader extends moodle_text_filter {
             // E.g. "\[ blah \]".
             $text = str_replace('\\[', '\\(', $text);
             $text = str_replace('\\]', '\\)', $text);
+            $text = str_replace('\\\\(', '\\(', $text);
+            $text = str_replace('\\\\)', '\\)', $text);
         }
 
         $hasextra = false;
