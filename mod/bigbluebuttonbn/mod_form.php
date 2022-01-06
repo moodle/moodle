@@ -667,12 +667,12 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
      * @param string|null $descriptionkey
      * @param mixed|null $defaultvalue
      * @param array|null $options
-     * @param string|null $rule
+     * @param array|null $rule
      * @return void
      * @throws coding_exception
      */
     private function bigbluebuttonbn_mform_add_element(MoodleQuickForm &$mform, string $type, string $name, ?string $datatype,
-        ?string $descriptionkey = "", $defaultvalue = null, ?array $options = null, ?string $rule = null): void {
+        ?string $descriptionkey = "", $defaultvalue = null, ?array $options = null, ?array $rule = null): void {
         $datatype = $datatype ?? 'hidden';
         if ($type === 'hidden' || $type === 'static') {
             $mform->addElement($type, $name, $defaultvalue);
