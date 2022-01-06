@@ -159,7 +159,7 @@ class user_profile_fields {
             switch ($profilefield->field->datatype) {
                 case 'checkbox':
                     $classname = boolean_select::class;
-                    $field = $DB->sql_cast_char2int($field);
+                    $field = $DB->sql_cast_char2int("COALESCE({$field}, 0)");
                     break;
                 case 'datetime':
                     $classname = date::class;
@@ -167,11 +167,12 @@ class user_profile_fields {
                     break;
                 case 'menu':
                     $classname = select::class;
+                    $field = "COALESCE({$field}, '')";
                     break;
                 case 'text':
                 case 'textarea':
                 default:
-                    $field = $DB->sql_compare_text($field, 255);
+                    $field = $DB->sql_compare_text("COALESCE({$field}, '')", 255);
                     $classname = text::class;
                     break;
             }
