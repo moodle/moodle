@@ -1,0 +1,53 @@
+/** 
+schoollege variables.  Use these variables to change the colors of the theme.  Simply find the variable you want to change and copy/paste the new color into the Raw initial SCSS box and be sure to remove the !default.
+**/
+
+// Top Navbar area
+$navbar-bg: #e3eaf5 !default;
+$navbartextcolor: #333 !default;
+
+// Top Header area
+$header-bg: #eef5f9 !default;
+$headerlinks-bg: #e3eaf5 !default;
+$headerlinks-link: $black !default;
+
+// Breadcrumbs in schoollege
+$breadcrumbblock: #607d8b;
+$breadcrumbblock-darken: #213561;
+$breadcrumbblock-highlight: #213561;
+$breadcrumbblock-highlight-darken: #607d8b;
+$breadcrumblinkcolor: $white;
+$breadcrumblinkcolor-hover: $white;
+
+//Sidebar icons menu
+$sidebar-bg: $body-bg !default;
+$sidebar-iconcolor: $white !default;
+$sidebar-ahover-bg: #1f77b2 !default;
+$sidebar-aattention: #4caf50 !default;
+$sidebar-borderright-color: $white !default;
+
+// Bottom Footer area
+$footer-bg: #e5ebef !default;
+$footerlinkcolor: #333 !default;
+$footertextcolor: #333 !default;
+
+//Used to style Easy Enrollment plugin
+$easyenrolltextcolor: $white !default;
+$easyenroll-bg: #4caf50 !default;
+
+//Other Important Colors
+$card-bg: rgba(255, 255, 255, 0.98)!default;
+$body-bg: #213561 !default;
+$primary:       #1968BE !default;
+$success:       $green !default;
+$info:          #4caf50 !default;
+$warning:       $orange !default;
+$danger:        $red !default;
+$secondary:     $gray-400 !default;
+
+// Tabs
+$nav-tabs-border-color:             $gray-300 !default;
+$nav-tabs-link-hover-border-color:  $gray-200 $gray-200 $nav-tabs-border-color !default;
+$nav-tabs-link-active-color:        $gray-700 !default;
+$nav-tabs-link-active-bg:           $gray-200 !default;
+$nav-tabs-link-active-border-color: $gray-300 $gray-300 $nav-tabs-link-active-bg !default;

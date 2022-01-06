@@ -1,0 +1,132 @@
+// Bootstrap variables
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black:    #000 !default;
+
+$blue:    #1177d1 !default;
+$indigo:  #6610f2 !default;
+$purple:  #6f42c1 !default;
+$pink:    #e83e8c !default;
+$red:     #dc3545 !default;
+$orange:  #fd7e14 !default;
+$yellow:  #f3e66b !default;
+$green:   #28a745 !default;
+$teal:    #20c997 !default;
+$cyan:    #17a2b8 !default;
+
+$primary:       #1968BE !default;
+$success:       $green !default;
+$info:          #4caf50 !default;
+$warning:       $orange !default;
+$danger:        $red !default;
+$secondary:     $gray-400 !default;
+
+$info-outline:    #1f7e9a !default;
+$warning-outline: #a6670e !default;
+
+// Options
+$enable-rounded: false !default;
+$enable-responsive-font-sizes: true !default;
+
+// Body
+$body-color:    $gray-800 !default;
+$card-bg: rgba(255, 255, 255, 0.98)!default;
+$body-bg: #e3eaf5 !default;
+$drawer-bg:	$white !default;
+
+// Fonts
+$font-size-base: 0.9375rem !default;
+$rfs-base-font-size: 0.9rem !default;
+$headings-font-weight:   300 !default;
+
+// Breadcrumbs
+$breadcrumb-padding-y:              .25rem !default;
+$breadcrumb-padding-x:              0 !default;
+$breadcrumb-item-padding:           .5rem !default;
+$breadcrumb-margin-bottom:          0 !default;
+$breadcrumb-bg:                     transparent !default;
+
+// Floating elements positions
+$gototop-bottom-position: 50px !default;
+
+// Alerts
+$alert-border-width: 0 !default;
+
+
+// schoollege variables
+$navbar-bg: $white !default;
+$navbartextcolor: $black !default;
+$header-bg: #0b64ab !default;
+$headerlinks-bg: rgba(227,234,245,.60) !default;
+$headerlinks-link: $black !default;
+$footer-bg: #313131 !default;
+$footerlinkcolor: $white !default;
+$footertextcolor: $white !default;
+
+$sidebar-bg: $body-bg !default;
+$sidebar-iconcolor: $navbartextcolor !default;
+$sidebar-iconcolor-hover: $navbartextcolor !default;
+$sidebar-ahover-bg: darken($body-bg, 10%) !default;
+$sidebar-aattention: #4caf50 !default;
+$sidebar-borderright-color: $cyan !default;
+
+$easyenrolltextcolor: $white !default;
+$easyenroll-bg: #4caf50 !default;
+$fpicon-width: 100px !default;
+
+// Tabs
+$nav-tabs-border-color:             $gray-300 !default;
+$nav-tabs-link-hover-border-color:  $gray-200 $gray-200 $nav-tabs-border-color !default;
+$nav-tabs-link-active-color:        $gray-700 !default;
+$nav-tabs-link-active-bg:           $gray-200 !default;
+$nav-tabs-link-active-border-color: $gray-300 $gray-300 $nav-tabs-link-active-bg !default;
+
+// Breadcrumbs in schoollege
+$breadcrumbblock: darken($body-bg, 10%) !default;
+$breadcrumbblock-darken: #5bc0de !default;
+$breadcrumbblock-highlight: #5bc0de !default;
+$breadcrumbblock-highlight-darken: darken($body-bg, 10%) !default;
+$breadcrumblinkcolor: $black !default;
+$breadcrumblinkcolor-hover: $black !default;
+$breadcrumb-dimmed-bg: #757575 !default;
+$breadcrumb-dimmed-linkcolor: #fff !default;
+
+// Drop Down colors
+$dropdown-link-hover-color: initial !default;
+$dropdown-link-hover-bg: $gray-200 !default;
+
+// stylelint-disable
+$theme-colors: () !default;
+$theme-colors: map-merge((
+    primary: $primary,
+    secondary: $secondary,
+    success: $success,
+    info: $info,
+    warning: $warning,
+    danger: $danger,
+), $theme-colors);
+// stylelint-enable
+
+
+// Import FontAwesome.
+@import "../../boost/scss/fontawesome";
+
+// Import All of Bootstrap
+@import "../../boost/scss/bootstrap";
+
+// Import Core moodle CSS
+@import "../../boost/scss/moodle";
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+

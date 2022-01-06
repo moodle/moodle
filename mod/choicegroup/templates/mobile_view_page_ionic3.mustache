@@ -1,0 +1,215 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_choicegroup/mobile_view_page
+
+    Template for the mobile view page.
+
+    Classes required for JS:
+    -
+
+    Data attributes required for JS:
+    -
+
+    Context variables required for this template:
+    * cmid
+    * courseid
+    * choicegroup
+    * options
+
+    Example context (json):
+    {
+      "cmid": "62",
+      "courseid": "3",
+      "choicegroup": {
+        "id": "4",
+        "course": "3",
+        "name": "Group choice activity",
+        "intro": "<p>Select your group</p>",
+        "introformat": "1",
+        "publish": "1",
+        "multipleenrollmentspossible": "1",
+        "showresults": "3",
+        "display": "0",
+        "allowupdate": "0",
+        "showunanswered": "0",
+        "limitanswers": "1",
+        "timeopen": "0",
+        "timeclose": "0",
+        "timemodified": "1528114222",
+        "completionsubmit": "0",
+        "sortgroupsby": "0",
+        "option": {
+          "10": "3",
+          "11": "4",
+          "12": "5"
+        },
+        "grpmemberid": {
+          "6": [
+            "3",
+            "2"
+          ],
+        },
+        "maxanswers": {
+          "12": "1",
+          "11": "2",
+          "10": "2"
+        },
+        "open": true,
+        "expired": false,
+        "alloptionsdisabled": false
+      },
+      "options": [
+        {
+          "id": 10,
+          "groupid": "3",
+          "name": "Group 1",
+          "maxanswers": "1",
+          "displaylayout": "0",
+          "countanswers": 2,
+          "checked": false,
+          "disabled": true
+        },
+        {
+          "id": 11,
+          "groupid": "4",
+          "name": "Group 2",
+          "maxanswers": "2",
+          "displaylayout": "0",
+          "countanswers": 1,
+          "checked": true,
+          "disabled": false
+        },
+        {
+          "id": 12,
+          "groupid": "5",
+          "name": "Group 3",
+          "maxanswers": "2",
+          "displaylayout": "0",
+          "countanswers": 0,
+          "checked": false,
+          "disabled": false
+        }
+      ]
+    }
+}}
+{{=<% %>=}}
+<!-- Add options to the context menu. -->
+<core-navbar-buttons end>
+    <core-context-menu>
+        <core-context-menu-item *ngIf="loaded && !hasOffline && isOnline" [priority]="700" [content]="'core.refresh' | translate" (action)="doRefresh($event)" [iconAction]="refreshIcon" [closeOnClick]="false"></core-context-menu-item>
+
+        <core-context-menu-item *ngIf="loaded && hasOffline && isOnline"  [priority]="650" [content]="'core.settings.synchronizenow' | translate" (action)="synchronize(true, $event)" [iconAction]="syncIcon" [closeOnClick]="false"></core-context-menu-item>
+    </core-context-menu>
+</core-navbar-buttons>
+
+<core-loading [hideUntil]="loaded">
+    <core-course-module-description description="<% choicegroup.intro %>" component="mod_choicegroup" componentId="<% cmid %>"></core-course-module-description>
+
+    <!-- Choice done in offline but not synchronized -->
+    <ion-card class="core-warning-card" icon-start *ngIf="hasOffline">
+        <ion-icon name="warning"></ion-icon> {{ 'core.hasdatatosync' | translate:{$a: moduleName} }}
+    </ion-card>
+
+    <%# choicegroup.message %>
+    <ion-list>
+        <ion-item>
+                <% choicegroup.message %>
+        </ion-item>
+    </ion-list>
+    <%/ choicegroup.message %>
+
+    <%# choicegroup.open %>
+        <form id="savemychoice">
+
+        <ion-grid>
+            <ion-row>
+                <ion-col class="bold">
+                    {{ 'plugin.mod_choicegroup.group' | translate }}
+                </ion-col>
+                <ion-col col-3 class="bold" justify-content-center align-items-center text-center>
+                    <%^ choicegroup.limitanswers %>
+                        {{ 'plugin.mod_choicegroup.members/' | translate }}
+                    <%/ choicegroup.limitanswers %>
+                    <%# choicegroup.limitanswers %>
+                        {{ 'plugin.mod_choicegroup.members/max' | translate }}
+                    <%/ choicegroup.limitanswers %>
+                </ion-col>
+            </ion-row>
+
+            <%^ choicegroup.multipleenrollmentspossible %>
+                <ion-list radio-group [(ngModel)]="CONTENT_OTHERDATA.data.responses" name="responses">
+            <%/ choicegroup.multipleenrollmentspossible %>
+            <%# choicegroup.multipleenrollmentspossible %>
+                <ion-list>
+            <%/ choicegroup.multipleenrollmentspossible %>
+                <%# options %>
+                    <ion-row>
+                        <ion-col>
+                            <ion-item>
+                                <ion-label><% name %></ion-label>
+                                <%^ choicegroup.multipleenrollmentspossible %>
+                                    <ion-radio <%# checked %>checked="true"<%/ checked %> <%# disabled %>disabled="true"<%/ disabled %> value="<% id %>"></ion-radio>
+                                <%/ choicegroup.multipleenrollmentspossible %>
+                                <%# choicegroup.multipleenrollmentspossible %>
+                                    <ion-checkbox item-right
+                                    [(ngModel)]="CONTENT_OTHERDATA.data.responses_<% id %>" name="responses_<% id %>"
+                                    <%# checked %>checked="true"<%/ checked %>
+                                    <%# disabled %>disabled="true"<%/ disabled %>
+                                    value="<% id %>">
+                                </ion-checkbox>
+                                <%/ choicegroup.multipleenrollmentspossible %>
+                            </ion-item>
+                        </ion-col>
+
+                        <ion-col col-3 justify-content-center align-items-center text-center>
+                            <% countanswers %>
+                            <%# choicegroup.limitanswers %> / <% maxanswers %> <%/ choicegroup.limitanswers %>
+                        </ion-col>
+                    </ion-row>
+                <%/ options %>
+            </ion-list>
+        </ion-grid>
+
+        <%^ choicegroup.expired %>
+            <%^ choicegroup.alloptionsdisabled %>
+                <ion-list>
+                    <ion-item>
+                        <button ion-button block type="submit" (click)="submitResponses()">
+                            {{ 'plugin.mod_choicegroup.savemychoicegroup' | translate }}
+                        </button>
+                    </ion-item>
+
+                    <%^ choicegroup.multipleenrollmentspossible %>
+                    <%# choicegroup.allowupdate %>
+                    <ion-item *ngIf="showDelete">
+                        <button ion-button block outline color="danger" type="button" (click)="deleteResponses()">
+                            <ion-icon name="trash"></ion-icon>&nbsp;
+                            {{ 'plugin.mod_choicegroup.removemychoicegroup' | translate }}
+                        </button>
+                    </ion-item>
+                    <%/ choicegroup.allowupdate %>
+                    <%/ choicegroup.multipleenrollmentspossible %>
+                </ion-list>
+            <%/ choicegroup.alloptionsdisabled %>
+        <%/ choicegroup.expired %>
+        </form>
+
+        <!-- Call log WS when the template is loaded. -->
+        <span core-site-plugins-call-ws-on-load name="mod_choicegroup_view_choicegroup" [params]="{choicegroupid: <% choicegroup.id %>}" [preSets]="{getFromCache: 0, saveToCache: 0}"></span>
+    <%/ choicegroup.open %>
+</core-loading>

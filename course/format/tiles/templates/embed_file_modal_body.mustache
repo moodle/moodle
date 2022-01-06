@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_tiles/embed_file_modal_body
+
+    Icon picker single icon template.
+
+    The purpose of this template is to render a modal window which can be used
+    to display an embedded file (i.e. a PDF)
+
+    The modal is rendered without the <object> (PDF) in its body, as this will be added
+    by JS when the user clicks to view the item (whn the embed_file_object template is used)
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+        * id - id of the course module
+        * objectType - the object type for the <object> tag's type field e.g. 'text/html'
+        * pluginfileUrl - the url to get the resource directly e.g. "http://mydomain.com/moodle/pluginfile.php/12345/mod_resource/content/1/lecture1.PDF"
+        * width - width of the item
+        * height - height of the item
+
+    Example context (json):
+    {
+        "id": 123,
+        "objectType": "application/pdf",
+        "pluginfileUrl": "http://mydomain.com/moodle/pluginfile.php/12345/mod_resource/content/1/lecture1.PDF",
+        "width": 800,
+        "height": 600
+    }
+}}
+<object id="resourceobject_{{id}}" class="resourceobject" data="{{{pluginfileUrl}}}" type="{{objectType}}"
+        width="{{#width}}{{width}}{{/width}}{{^width}}800{{/width}}"
+        height="{{#height}}{{height}}{{/height}}{{^height}}600{{/height}}">
+    {{! the size is hardcoded in the object obove intentionally because it is adjusted by JS - see $("#page-content").on("click", ".launch-tiles-cm-modal"}}
+    {{! data field and value field are left blank as they is populated with the URL also by JS (lazy loaded to avoid unnecessary downloads) }}
+    {{! note that if it's not a PDF, Moodle will generally use an iframe not an object - see resourcelib.php  - but does not apply here}}
+    <param name="src" value="{{{pluginfileUrl}}}" />
+    {{#str}}filenoshowtext, format_tiles{{/str}}
+</object>

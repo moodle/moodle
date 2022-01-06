@@ -1,0 +1,55 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_tiles/icon_picker_photo
+
+    Icon picker single photo template.
+
+    The purpose of this template is to render a single tile background photo for the icon picker
+    window, which itself is rendered from the icon_picker_modal template.
+    We do not populate the src element of the img immediately as we don't want to load all images at once.
+    The src element will be populated from JavaScript.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+        * filename - file name of the image
+        * contextid - the course context id
+        * sectionid - 123
+        * filepath - the pluginfile path fragment
+        * id - the id in the file table
+
+    Example context (json):
+    {
+        "wwwroot": "https://moodle.org",
+        "filename": "grapes.png",
+        "contextid": "223",
+        "itemid": "123",
+        "filepath": "/tilephoto/",
+        "filearea": "tilephoto",
+        "id": "987"
+    }
+}}
+<img class="photo" id="tilephoto-{{contextid}}-{{id}}" title="{{filename}}" alt="{{filename}}" data-filename="{{filename}}" data-contextid="{{contextid}}" data-itemid="{{itemid}}"
+     data-fileid="{{id}}" {{#filename}}data-toggle="tooltip" data-placement="right" data-original-title="{{filename}}"{{/filename}} data-filesize="{{filesize}}" src=""
+     data-imagetype="{{#isdraftfile}}draftfile{{/isdraftfile}}{{^isdraftfile}}tilephoto{{/isdraftfile}}"
+    data-url="{{{wwwroot}}}/{{#isdraftfile}}draftfile.php{{/isdraftfile}}{{^isdraftfile}}pluginfile.php{{/isdraftfile}}/{{contextid}}/{{component}}/{{filearea}}/{{itemid}}{{filepath}}{{filename}}">

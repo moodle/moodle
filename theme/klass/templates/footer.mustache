@@ -1,0 +1,108 @@
+{{#footerall}}
+<footer id="footer" class="py-1 bg-inverse">
+   <div class="footer-main">
+        <div class="container">
+            <div class="row">
+            {{#block1}}
+                <div class="{{colclass}}">
+                    <div class="infoarea">
+                        <div class="footer-logo">
+                            <a href="{{config.wwwroot}}/?redirect=0">
+                            {{# logourl_footer}}
+                                <img src="{{logourl_footer}}" alt="klass">
+                            {{/ logourl_footer}}
+                            </a>
+                        </div>
+                        {{{footnote}}}
+                     </div>
+                </div>
+                {{/block1}}
+                {{# infolink}}
+                <div class="{{colclass}}">
+                    <div class="foot-links">
+                        <h5>{{s_info}}</h5>
+                        <ul>
+                           {{{infolink}}}
+                         </ul>
+                   </div>
+                </div>
+                {{/ infolink}}
+                 {{# contact}}
+                <div class="{{colclass}}">
+                    <div class="contact-info">
+                        <h5 class="nopadding">{{s_contact_us}}</h5>
+                        <p>{{# address}}{{address}}{{/address}}</p>
+                        {{# phoneno}}
+                        <p><i class="fa fa-phone-square"></i>{{s_phone}} : {{phoneno}}</p>
+                        {{/ phoneno}}
+                        {{# emailid}}
+                        <p><i class="fa fa-envelope"></i>{{s_email}} : <a class="mail-link" href="mailto:{{emailid}}"> {{emailid}}</a></p>
+                        {{/ emailid}}
+                    </div>
+                </div>
+                {{/ contact}}
+            {{# url }}
+                <div class="{{colclass}}">
+                    <div class="social-media">
+                    <h5>{{s_get_social}}</h5>
+                    <ul>
+                        {{# fburl}}
+                            <li class="smedia-01">
+                                <a href="{{fburl}}" target="_blank">
+                                    <i class="fa fa-facebook-square"></i>
+                                </a>
+                            </li>
+                        {{/ fburl}}
+
+                        {{# pinurl}}
+                            <li class="smedia-02">
+                                <a href="{{pinurl}}" target="_blank">
+                                    <i class="fa fa-pinterest-square"></i>
+                                </a>
+                            </li>
+
+                        {{/ pinurl}}
+                        {{# twurl}}
+                            <li class="smedia-03">
+                                <a href="{{twurl}}" target="_blank">
+                                    <i class="fa fa-twitter-square"></i>
+                                </a>
+                            </li>
+                        {{/ twurl}}
+
+                        {{# gpurl}}
+                            <li class="smedia-04">
+                                <a href="{{gpurl}}" target="_blank">
+                                   <i class="fa fa-google-plus-square"></i>
+                                </a>
+                            </li>
+                        {{/ gpurl}}
+                        </ul>
+                    </div>
+                </div>
+            {{/ url }}
+            </div>
+        </div>
+    </div>
+    <div class="footer-foot">
+        <div class="container">
+            {{# copyright_footer}}
+                <p>{{{copyright_footer}}}</p>
+            {{/ copyright_footer}}
+        </div>
+    </div>
+
+</footer>
+{{/footerall}}
+
+<!--E.O.Footer-->
+
+{{{ output.standard_footer_html }}}
+{{{output.standard_end_of_body_html}}}
+
+{{#js}}
+require(['theme_boost/loader']);
+require(['theme_boost/drawer'], function(mod) {
+    mod.init();
+});
+{{/js}}

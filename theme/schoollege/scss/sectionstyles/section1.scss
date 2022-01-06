@@ -1,0 +1,14 @@
+// Styles
+
+li#section-0 {
+    margin: 0;
+    border-bottom: 3px solid;
+    padding-bottom: 0;
+}
+
+.course-content ul.topics li.section, .course-content ul.weeks li.section {
+    margin: 2rem 0;
+    padding-bottom: 1rem;
+    border: 0;
+    border-bottom: 1px solid $gray-300;
+}

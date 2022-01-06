@@ -1,0 +1,13 @@
+// Post SCSS for the theme.
+
+body.pagelayout-embedded,
+body.pagelayout-popup,
+body.pagelayout-secure,
+body.pagelayout-print {
+    background-image: none;
+}
+
+//fixing stuff
+#page-my-index {
+    background-color: $body-bg;
+}

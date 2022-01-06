@@ -1,0 +1,91 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_tiles/single_section_page
+
+    Single section page template.
+
+    The purpose of this template is to render a single section page
+    of the course i.e. what a user would expect if they visited
+    wwwroot/course/view.php?id=2&section=3
+
+    Either this or multi_section_page will be the first template called
+    when the user launches a page from PHP (usually it will be multi_ that is called)
+
+    If the user has javascript enabled, and is not editing, it is likey that this template
+    will not be used at all, as the user will never access a URL like wwwroot/course/view.php?id=2&section=3
+    Instead they will access multi_section_page from PHP and then each section will be added to that by AJAX using
+    the single_section template directly, so bypassing the below
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+        * from_ajax
+        * section_zero
+        * isediting
+
+    Example context (json):
+       {
+           "from_ajax": 0,
+           "section_zero": [],
+           "isediting": 0,
+           "above_tiles": "",
+           "single_section": {
+                "tileid": 1,
+                "title": "Section 1",
+                "hidden_section": 0,
+                "from_ajax": 0,
+                "isediting": 0,
+                "secid": 101,
+                "canedit": 1,
+                "tileicon": "user",
+                "defaulttileicon": "pie-chart",
+                "sesskey": "12345678",
+                "courseid": 99,
+                "useSubtiles": 0,
+                "coursemodules": [],
+                "single_sec_add_cm_control_html": "",
+                "single_sec_content_is_long": 0,
+                "alt": "",
+                "completion_help": ""
+            }
+        }
+}}
+
+<div class="single-section">
+    {{^from_ajax}}
+        {{> format_tiles/above_tiles}}
+    {{/from_ajax}}
+    <ul id="single_section_tiles">
+        {{^from_ajax}}
+            {{> format_tiles/section_zero}}
+        {{/from_ajax}}
+        {{! single_section is a separate template as it is also called directly from JS without this other stuff}}
+        {{>format_tiles/single_section}}
+
+    </ul>
+</div>
+
+{{^from_ajax}}
+    {{#isediting}}
+        {{{course_activity_clipboard}}}
+    {{/isediting}}
+{{/from_ajax}}

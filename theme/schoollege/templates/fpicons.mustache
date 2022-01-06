@@ -1,0 +1,45 @@
+{{#hasfpiconnav}}
+
+    <div class="fpstartwrap">
+    <div class="fpstart">
+
+        <div class="iconset">
+            {{#fpiconnav}}
+                {{#hasicon}}
+                <div class="btn btn-secondary">
+                    <a role="button" href = {{{link}}} title = "{{{linktext}}}" alt="{{{linktext}}}" target="{{linktarget}}">
+                        <div class="navicon" align="center">
+                            <i class="fa fa-3x fa-{{{linkicon}}}"></i>
+                        </div>
+                        {{{linktext}}}
+                    </a>
+                </div>
+                {{/hasicon}}
+            {{/fpiconnav}}
+
+            {{#fpslideicon}}
+                {{#hasicon}}
+                    <div class="btn btn-secondary">
+                        <a role="button" data-toggle="collapse" href="#fpslider" aria-expanded="false" aria-controls="fpslider" title = "{{{linktext}}}" alt="{{{linktext}}}"> 
+                            <div class="navicon" align="center">
+                                <i class="fa fa-3x fa-{{{linkicon}}}"></i>
+                            </div>
+                            {{{linktext}}}
+                        </a>
+                    </div>
+                {{/hasicon}}
+            {{/fpslideicon}}
+        </div>
+
+    </div>
+    </div>
+
+    {{#hasslidetextbox}}
+        <div class="collapse" id="fpslider">
+            {{{slidetextbox}}}
+        </div>
+    {{/hasslidetextbox}}
+
+    <div style="clear:both;"></div>
+
+{{/hasfpiconnav}}

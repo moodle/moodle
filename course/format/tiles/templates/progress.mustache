@@ -1,0 +1,157 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_tiles/progress
+
+    Progress indicator template.
+
+    The purpose of this template is to render a progress indicator
+    as a radial % indicator or fraction (e.g. 2/3 complete) to be
+    displayed on a tile.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+        * complete - is the section 100% complete (if yes will show check mark instead of indicator)
+        * tileid - which section / tile are we in
+        * numComplete - how many has user completed
+        * numOutOf - how many activities in this section to complete
+        * showAsPercent - how as percent or numeric
+        * isSingleDigit - is the perentage complete a single digit (if yes, x coordinate is offset to keep in centre of circle)
+        * percent - percentage complte
+        * percentCircumf - how big are the circles
+        * percentOffset - the offset of the second circle which actually shows the progress - see PHP round(((100 - $percentcomplete) / 100) * $CIRCUMFERENCE, 0)
+        * isOverall - if this is an overall progress indicator or not
+
+    Example context (json):
+        {
+        "complete": false,
+        "tileid": 3,
+        "numComplete": 6,
+        "numOutOf": 10,
+        "showAsPercent": 1,
+        "isSingleDigit": false,
+        "percent": 60,
+        "percentCircumf": 106.8,
+        "percentOffset": 42
+        }
+}}
+
+{{^hastilephoto}}
+    {{#isComplete}}
+        <div class="progress-indic{{#showAsPercent}} percent{{/showAsPercent}}{{#isOverall}} overall-progress allcomplete{{/isOverall}}"
+             id="tileprogress-{{tileid}}" data-numcomplete="{{numComplete}}" data-numoutof="{{numOutOf}}"
+             title="{{#str}}allcomplete, format_tiles{{/str}}"{{#usetooltips}} data-toggle="tooltip"{{/usetooltips}}>
+            {{#isOverall}}{{#pix}}star-o, format_tiles, {{#str}}allcomplete, format_tiles{{/str}}{{/pix}}{{#str}}allcomplete, format_tiles{{/str}}{{/isOverall}}
+            {{^isOverall}}{{#pix}}check, format_tiles, {{#str}}allcomplete, format_tiles{{/str}}{{/pix}}{{/isOverall}}
+        </div>
+    {{/isComplete}}
+
+    {{^isComplete}}
+        {{#numOutOf}}
+            {{! if the progress is out of zero then do not show the indicator at all}}
+            {{#showAsPercent}}
+                <div class="progress-indic percent{{#isOverall}} overall-progress{{/isOverall}}" id="tileprogress-{{tileid}}"
+                     data-numcomplete="{{numComplete}}" data-numoutof="{{numOutOf}}"
+                    {{#usetooltips}}
+                     title="{{#str}}progress, format_tiles{{/str}}:<br>{{numComplete}} / {{numOutOf}} {{#str}}items, format_tiles{{/str}}<br>{{percent}}%<br>{{#str}}complete, format_tiles{{/str}}"
+                        data-toggle="tooltip" data-html="true"
+                    {{/usetooltips}}
+                    {{^usetooltips}}
+                     title="{{#str}}progress, format_tiles{{/str}}: {{numComplete}} / {{numOutOf}} {{#str}}items, format_tiles{{/str}} ({{percent}}%) {{#str}}complete, format_tiles{{/str}}"
+                    {{/usetooltips}}
+                >
+
+                    <div class="progress-indic-label">
+                      {{#isOverall}}{{#str}}overallprogressshort, format_tiles{{/str}}{{/isOverall}}{{^isOverall}}{{#str}}progress, format_tiles{{/str}}{{/isOverall}} %
+                    </div>
+                    <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                        {{! two circles, one showing complete and one showing the user's progress }}
+                        <circle class="whole" cx="20" cy="20" r="17" fill="none" stroke="#e6e6e6" stroke-width="5"></circle>
+                        <circle id="percent-circle-{{tileid}}" class="partial" transform="rotate(-90,20,20)" cx="20"
+                                cy="20" r="17" fill="none" stroke="none" stroke-width="5" stroke-dasharray="{{percentCircumf}}"
+                                stroke-dashoffset="{{percentOffset}}"></circle>
+                        {{! the numeric percentage in centre of circle }}
+                        <text x="{{#isSingleDigit}}15{{/isSingleDigit}}{{^isSingleDigit}}10{{/isSingleDigit}}" y="27" font-family="inherit" font-size="20" id="percent-text-{{tileid}}">
+                            {{percent}}
+                        </text>
+                    </svg>
+                </div>
+            {{/showAsPercent}}
+
+            {{^showAsPercent}}
+                <div class="progress-indic{{#isOverall}} overall-progress{{/isOverall}}" id="tileprogress-{{tileid}}"
+                     data-numcomplete="{{numComplete}}" data-numoutof="{{numOutOf}}"
+                    {{#usetooltips}}
+                     title="{{#str}}progress, format_tiles{{/str}}:<br> {{numComplete}} / {{numOutOf}} {{#str}}items, format_tiles{{/str}} ({{percent}}%) <br>{{#str}}complete, format_tiles{{/str}}"
+                        data-toggle="tooltip" data-html="true"
+                    {{/usetooltips}}
+                    {{^usetooltips}}
+                     title="{{#str}}progress, format_tiles{{/str}}: {{numComplete}} / {{numOutOf}} {{#str}}items, format_tiles{{/str}} ({{percent}}%) {{#str}}complete, format_tiles{{/str}}"
+                    {{/usetooltips}}
+                >
+                    {{#str}}progress, format_tiles{{/str}}:
+                    <span id="num-complete-{{tileid}}">{{numComplete}} / {{numOutOf}}</span>
+                </div>
+            {{/showAsPercent}}
+        {{/numOutOf}}
+    {{/isComplete}}
+{{/hastilephoto}}
+
+{{#hastilephoto}}
+    {{#numOutOf}}
+        {{#isComplete}}
+            <div class="progress-complete-alt pull-right" id="tileprogress-{{tileid}}" data-numcomplete="{{numComplete}}" data-numoutof="{{numOutOf}}" title="{{#str}}allcomplete, format_tiles{{/str}}"{{#usetooltips}} data-toggle="tooltip"{{/usetooltips}}>
+                {{#pix}}completion-y, format_tiles, {{#str}}allcomplete, format_tiles{{/str}}{{/pix}}
+            </div>
+        {{/isComplete}}
+        {{^isComplete}}
+            {{#showAsPercent}}
+                <div class="progress-indic percent" id="tileprogress-{{tileid}}"
+                    data-numcomplete="{{numComplete}}" data-numoutof="{{numOutOf}}">
+                    {{#str}}progress, format_tiles{{/str}}: {{percent}}%
+                </div>
+            {{/showAsPercent}}
+            {{^showAsPercent}}
+                <div class="progress-indic{{#isOverall}} overall-progress{{/isOverall}}" id="tileprogress-{{tileid}}"
+                    data-numcomplete="{{numComplete}}" data-numoutof="{{numOutOf}}"
+                    {{#usetooltips}}
+                         title="{{#str}}progress, format_tiles{{/str}}:<br> {{numComplete}} / {{numOutOf}} {{#str}}items, format_tiles{{/str}} ({{percent}}%) <br>{{#str}}complete, format_tiles{{/str}}"
+                         data-toggle="tooltip" data-html="true"
+                    {{/usetooltips}}
+                    {{^usetooltips}}
+                     title="{{#str}}progress, format_tiles{{/str}}: {{numComplete}} / {{numOutOf}} {{#str}}items, format_tiles{{/str}} ({{percent}}%) {{#str}}complete, format_tiles{{/str}}"
+                    {{/usetooltips}}
+                >
+                    {{#str}}progress, format_tiles{{/str}}:
+                    <span id="num-complete-{{tileid}}">{{numComplete}} / {{numOutOf}}</span>
+                </div>
+            {{/showAsPercent}}
+        {{/isComplete}}
+    {{/numOutOf}}
+    {{^numOutOf}}
+        <div class="progress-indic{{#showAsPercent}} percent{{/showAsPercent}} placeholder"
+             id="tileprogress-{{tileid}}" data-numcomplete="-1" data-numoutof="0" style="display: none;">
+            {{! placeholder progress indicator for possible JS replacement}}
+        </div>
+    {{/numOutOf}}
+{{/hastilephoto}}

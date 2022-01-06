@@ -1,0 +1,28 @@
+<div class="content-hub-options">
+  {{^isshared}}
+    <div class="content-hub-share">
+      <a href="share.php?id={{ id }}"><span>{{# str }} contenthubshare, mod_hvp {{/str}}</span></a>
+    </div>
+  {{/isshared}}
+  {{#isshared}}
+    <div><i class="content-hub-icon" aria-hidden="false"></i>{{# str }} contenthuboptions, mod_hvp {{/str}}</div>
+    <div class="content-hub-edit"><a href="share.php?id={{ id }}"><span>{{# str }} contenthubeditsharing, mod_hvp {{/str}}</span></a></div>
+    {{#canbesynced}}
+      <div class="content-hub-sync">
+        <form action="share.php?action=sync&id={{ id }}" method="post">
+          <input type="hidden" name="_token" value="{{ token }}">
+          <a href="#" onclick="this.parentElement.submit()"><span>{{# str }} contenthubsyncchanges, mod_hvp {{/str}}</span></a>
+        </form>
+      </div>
+    {{/canbesynced}}
+    <div class="content-hub-sharing{{ waitingclass }}">
+      {{# str }} contenthubsharinginprogress, mod_hvp {{/str}}
+    </div>
+    <div class="content-hub-unshare">
+      <form action="share.php?action=unpublish&id={{ id }}" method="post">
+        <input type="hidden" name="_token" value="{{ token }}">
+        <a href="#" onclick="this.parentElement.submit()"><span>{{# str }} contenthubunshare, mod_hvp {{/str}}</span></a>
+      </form>
+    </div>
+  {{/isshared}}
+</div>

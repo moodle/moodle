@@ -1,0 +1,30 @@
+.attendance_mobile_teacher_form .item-radio {
+    display: inline-block;
+    margin-top: 10px;
+    margin-left: 5px;
+    padding: 0;
+    width: 70px;
+}
+.attendance_mobile_teacher_form .item-inner {
+    padding: 0;
+}
+.attendance_mobile_teacher_form .radiolabel .item-inner {
+    text-align: center;
+}
+.attendance_mobile_teacher_form .item-inner .input-wrapper label,
+.attendance_mobile_teacher_form .radio {
+    margin: 0;
+}
+.attendance_mobile_teacher_form .radio .radio-icon {
+    display: none;
+}
+
+.attendance_mobile_teacher_form .messages .label,
+.attendance_mobile_user_form .messages .label,
+.attendance_mobile_view_page .messages .label {
+    white-space: normal;
+}
+
+.attendance_mobile_teacher_form .attendance_user_row {
+    padding-bottom: 5px;
+}

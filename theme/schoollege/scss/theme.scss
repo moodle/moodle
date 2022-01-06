@@ -1,0 +1,800 @@
+// schoollege SCSS for the theme.
+
+// Navbar
+.navbar {
+    background-color: $navbar-bg;
+    color: $navbartextcolor;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+}
+.navbar a {
+  color: $navbartextcolor; 
+}
+.navbar a:hover {
+  color: darken($navbartextcolor, 10%); 
+}
+
+// Footer
+#page-wrapper #page-footer {
+    background-color: $footer-bg;
+    color: $footertextcolor;
+    border-top: 1px solid $gray-400;
+}
+#page-wrapper #page-footer a {
+    color: $footerlinkcolor;
+}
+#page-footer a .icon {
+    color: $footertextcolor;
+}
+
+// schoollege theme styling.
+div#learningcontent {
+    background-color: $white;
+}
+
+
+
+// Remove borders
+section#region-main, section#region-main .card, header#page-header .card {
+    border: 0;
+    background-color: transparent;
+}
+
+// Main learning content styling
+
+.region_main_settings_menu_proxy {
+    background-color: transparent;
+}
+
+a#message-user-button {
+    display: none;
+}
+
+header#page-header {
+  background-color: $header-bg;
+  border-bottom: 1px solid $gray-400;
+}
+
+.page-context-header {
+    padding: 1rem .25rem;
+}
+
+// Sidebar Icon Navigation Sidebar
+.sidebar {
+    margin: 0;
+    padding: 4px;
+    width: auto;
+    overflow: visible;
+    float: left;
+    border-radius: 5px;
+    background-color: $sidebar-bg;
+}
+
+
+.sidebar-items {
+    display: inline-flex;
+}
+
+.sidebar a.sideicon {
+  display: block;
+  text-align: center;
+  transition: all 0.3s ease;
+  margin: 0 2px;
+  border-radius: 4px;
+}
+
+.sidebar a.sideicon i {
+  color: $sidebar-iconcolor;
+  font-size: 24px;
+  padding: 4px;
+  width: 38px;
+}
+
+.sidebar a.sideicon:hover i {
+  color: $sidebar-iconcolor-hover;
+}
+
+.sidebar a.sideicon.attention {
+  background-color: $sidebar-aattention;
+  border-radius: 4px;
+}
+
+
+.sidebar a.sideicon:hover:not(.active) {
+  background-color: $sidebar-ahover-bg;
+}
+
+.sidebar .sideicon.mydashboardmobile {
+  display: none;
+}
+
+/*
+@media screen and (max-width: 768px) {
+    .sidebar {
+      margin-left: -15px;
+      padding: 3px;
+      width: 45px;
+      background-color: $sidebar-bg;
+      position: sticky;
+      top: 0;
+      left: 0;
+      overflow: visible;
+      z-index: 4;
+      border-radius: 3px;
+    }
+    .sidebar a.sideicon {
+      display: block;
+      text-align: center;
+      padding: 4px;
+      transition: all 0.3s ease;
+      border-radius: 5px;
+    }
+    .sidebar a.sideicon i {
+      color: $sidebar-iconcolor;
+      font-size: 16px;
+    }
+    .sidebar a.sideicon.attention {
+      background-color: $sidebar-aattention;
+    }
+    .sidebar a.sideicon:hover:not(.active) {
+      background-color: $sidebar-ahover-bg;
+      border-right: 7px solid $sidebar-borderright-color;
+    }
+}
+*/
+.dropdown-menu.iconsidebar.show {
+    height: 325px;
+    overflow-y: scroll;
+    padding: 1rem .5rem;
+    width: 275px;
+    border-radius: 7px;
+    margin-top: 7px;
+    margin-left: -7px;
+}
+
+@media screen and (max-width: 400px) {
+  a.sideicon.siteadmin {
+      display: none;
+  }
+  #page-my-index a.sideicon.siteadmin {
+      display: block;
+  }
+}
+
+// Sidebar Course Settings Scrollbars.
+.dropdown-menu.iconsidebar.show::-webkit-scrollbar {
+    width: 9px;
+}
+
+.dropdown-menu.iconsidebar.show::-webkit-scrollbar-track {
+    background-color: #555;
+}
+
+.dropdown-menu.iconsidebar.show::-webkit-scrollbar-thumb {
+    background-color: #CCCCCC;
+}
+
+// NavDrawer
+[data-region="drawer"] {
+    padding: 0;
+}
+// Sidebar Course Settings Scrollbars.
+[data-region="drawer"]::-webkit-scrollbar {
+    width: 9px;
+}
+
+[data-region="drawer"]::-webkit-scrollbar-track {
+    background-color: #555;
+}
+
+[data-region="drawer"]::-webkit-scrollbar-thumb {
+    background-color: #CCCCCC;
+}
+
+// Sidebar Blocks
+[data-region="blocks-column"] {
+    margin-top: 2rem;
+}
+
+// Login Image and card background restore.
+body.pagelayout-login section#region-main .card {
+    background-color: $white;
+}
+
+body.pagelayout-login #page {
+    background-color: transparent;
+}
+
+// Accessibility links
+.aalink.focus, .aalink:focus,
+#page-footer a:not([class]).focus,
+#page-footer a:not([class]):focus,
+.arrow_link.focus,
+.arrow_link:focus,
+a:not([class]).focus,
+a:not([class]):focus,
+.activityinstance > a.focus,
+.activityinstance > a:focus {
+  outline: none;
+  color: initial;
+  background-color: transparent;
+  box-shadow: none; }
+
+.aalink:focus:hover,
+#page-footer a:not([class]):focus:hover,
+.arrow_link:focus:hover,
+a:not([class]):focus:hover,
+.activityinstance > a:focus:hover {
+  text-decoration: none; }
+
+// Accessible focus styling for links, add .aalink to links with custom css classes to get
+// accessible focus styles.
+.aalink,
+#page-footer a:not([class]),
+.arrow_link,
+a:not([class]),
+.activityinstance > a {
+    &.focus,
+    &:focus {
+        outline: none;
+        color: initial;
+        background-color: transparent;
+        box-shadow: 0;
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+// breadcrumb styling
+
+#page-navbar {
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .breadcrumb:not(:empty) {
+      width: 100%;
+      border: 0; 
+      padding: 0; 
+      margin-bottom: 0; 
+  }
+}
+
+.breadcrumb{
+  list-style:none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  .icon{
+    font-size: 14px;
+  }
+  
+  li{
+    float:left;
+    a{
+      color:$breadcrumblinkcolor;
+      display:block;
+      background: $breadcrumbblock;
+      text-decoration: none;
+      position:relative;
+      height: 40px;
+      line-height:40px;
+      padding: 0 10px 0 5px;
+      text-align: center;
+      margin-right: 23px;
+    }
+    &:first-child{
+      a{
+        padding-left:15px;
+        border-radius: 5px 0 0 5px;
+        @include border-radius(4px 0 0 4px);
+        &:before{
+          border:none;
+         }
+      }
+    }
+    &:last-child{
+      a{
+        background-color: $breadcrumbblock-darken;
+        padding-right:15px;
+        border-radius: 0 5px 5px 0;
+        @include border-radius(0 4px 4px 0);
+        &:after{
+          border:none;
+         }
+        &:before{
+          border-color:$breadcrumbblock-darken;
+          border-left-color:transparent;
+         }
+        &:after{
+          border-left-color:$breadcrumbblock-darken;
+        }
+      }
+    }
+    
+    a{   
+      &:before,
+      &:after{
+        content: "";
+        position:absolute;
+        top: 0;
+        border:0 solid $breadcrumbblock;
+        border-width:20px 10px;
+        width: 0;
+        height: 0;
+      }
+      &:before{
+        left:-20px;
+        border-left-color:transparent;
+      }
+      &:after{
+        left:100%;
+        border-color:transparent;
+        border-left-color:$breadcrumbblock;
+        background-color: $white;
+      }
+      &:hover{
+        color: $breadcrumblinkcolor-hover;
+        background-color: $breadcrumbblock-highlight;
+        
+        &:before{
+          border-color:$breadcrumbblock-highlight;
+          border-left-color:transparent;
+         }
+        &:after{
+          border-left-color:$breadcrumbblock-highlight;
+        }
+      }
+      &:focus{
+        background-color: $breadcrumbblock-highlight;
+        
+        &:before{
+          border-color:$breadcrumbblock-highlight;
+          border-left-color:transparent;
+         }
+        &:after{
+          border-left-color:$breadcrumbblock-highlight;
+        }
+      }
+      &:active{
+        background-color: $breadcrumbblock-highlight-darken;
+        
+        &:before{
+          border-color:$breadcrumbblock-highlight-darken;
+          border-left-color:transparent;
+         }
+        &:after{
+          border-left-color:$breadcrumbblock-highlight-darken;
+        }
+      }
+    }
+  }
+  li.dimmed_text{
+    a {
+       background-color: $breadcrumb-dimmed-bg;
+       color: $breadcrumb-dimmed-linkcolor;
+      &:before{
+        border-color: $breadcrumb-dimmed-bg;
+        border-left-color: transparent;
+      }
+      &:after{
+        border-left-color: $breadcrumb-dimmed-bg;
+      }
+    }
+    
+    &:last-child{
+      a{
+        background-color: $breadcrumb-dimmed-bg;
+        padding-right:15px;
+        @include border-radius(0 4px 4px 0);
+        &:after{
+          border:none;
+         }
+        &:before{
+          border-color: $breadcrumb-dimmed-bg;
+          border-left-color: transparent;
+         }
+        &:after{
+          border-left-color: $breadcrumb-dimmed-bg;
+        }
+      }
+    }
+  }
+}
+@media only screen and ( max-width: 900px ) {
+  .breadcrumb{
+    li{
+     display: none;
+      &:first-child{
+       display: block;
+      }
+      &:last-child{
+       display: block;
+      }
+    }
+  }
+}
+
+/*li.breadcrumb-block.dimmed_text a {
+    background-color: #757575;
+    color: #fff;
+}*/
+
+/*.breadcrumb li.breadcrumb-block.dimmed_text:last-child a:before {
+    border-color: #757575;
+    border-left-color: transparent;
+}*/
+
+// Assignment Grading
+.path-mod-assign [data-region="grading-navigation-panel"] {
+    background-color: $white;
+}
+
+.path-mod-assign [data-region="grade-actions-panel"] {
+    background-color: $white;
+}
+
+.activity-navigation {
+    text-align: center;
+}
+
+// Custom Login Page
+#page-login-index section#region-main .card.feature {
+    border: 1px solid $gray-400;
+    border-top: 7px solid $gray-600;
+    background-color: $gray-100;
+}
+
+#page-login-index section#region-main .card.loginbottomtext {
+    border-top: 7px solid $gray-600;
+}
+
+// Calendar Upcoming Events colors
+.calendar_event_course {
+    border-color: $gray-500;
+}
+
+.calendar_event_course {
+    background-color: $navbar-bg;
+}
+
+.path-calendar .maincalendar .calendar_event_course {
+    border-color: $gray-500;
+}
+
+
+//MyCourses Styling
+ul.headermycourses {
+    list-style: none;
+    margin: 0;
+}
+
+ul.headermycourses .nav-link {
+  padding: 0;
+}
+
+ul.headermycourses a {
+  color: $headerlinks-link;
+}
+
+.custommenu {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+ul.custommenu {
+    list-style: none;
+    margin-bottom: 0;
+}
+
+// Collapsible Topics format
+.course-content .collapsible-actions {
+    margin-top: 1rem;
+    clear: both;
+    text-align: left;
+}
+
+body.editing ul.collapsibletopics .content .summarytext {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+// Course Dashboard Styling.
+#coursemanagement .modal-dialog {
+    max-width: 100%;
+    margin: 0;
+    z-index: 9999;
+    padding-right: 0!important;
+}
+.modal {
+    z-index: 9999;
+}
+#coursemanagement {
+    padding-right: 0!important;
+    background-color: #fff;
+}
+
+#coursemanagement .modal-content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: max-content;
+    border: 0;
+}
+#coursemanagement button.close {
+    padding: 1rem;
+    margin-left: 1rem;
+    background-color: #ccc;
+    border: 0;
+    font-size: 2rem;
+}
+
+.coursemanagementdashboard {
+    padding: 1rem;
+}
+.dashtitle {
+    margin-top: 1rem;
+}
+
+.studentprogress {
+    margin: 2rem 0;
+}
+
+.studentprogress .progress {
+    height: 2rem;
+}
+
+.headerlinksrow {
+  margin-bottom: 1.25rem;
+}
+
+.page-context-header .page-header-headings, .page-context-header .header-button-group, .roleswitch {
+    color: $white;
+}
+
+.page-context-header .page-header-headings h1, .page-context-header .header-button-group h1 {
+  font-weight: bold;
+}
+
+.headerbkg {
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.brandlogo {
+    position: absolute;
+    max-width: 300px;
+    right: 0;
+    top: 0;
+}
+
+ul.footercontact {
+    list-style: none;
+}
+
+.headeroverlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.btn-outline-secondary {
+  color: initial;
+}
+
+.dropdown-item:active a, .dropdown-item:hover a, .dropdown-item:focus a, .dropdown-item:focus-within a {
+    color: initial;
+}
+
+aside#block-region-side-pre section.block {
+    background-color: $gray-100;
+    border-top: 7px solid $body-bg;
+}
+
+.discussion-nav.clearfix {
+    background-color: $navbar-bg;
+    border: 1px solid darken($navbar-bg, 10%);
+    border-radius: 4px;
+}
+
+.discussion-nav.clearfix a{
+    color: $navbartextcolor;
+}
+
+.topactivity {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.activity-navigation {
+    display: inline-flex;
+    border: 1px solid #bdcee8;
+    border-top: 0;
+    background-color: $body-bg;
+    border-radius: 0 0 4px 4px;
+}
+
+.activity-navigation a.btn-link {
+    color: $black;
+}
+
+.activity-navigation a.btn-link:hover {
+    color: $black;
+    text-decoration: underline;
+}
+
+.editcogbutton {
+    float: right;
+    width: 100%;
+}
+
+.section-summary-activities.pr-2.mdl-right, .course-content ul.collapsibletopics .sectiontoggle.collapsed~.section-summary-activities {
+    border: 1px solid darken($body-bg, 10%);
+    background-color: $body-bg;
+    display: inline-flex;
+    margin-left: 1rem;
+    color: $black;
+    padding: 0 .75rem!important;
+}
+
+.course-content .section-summary .section-summary-activities .activity-count, .course-content ul.collapsibletopics .content .section-summary-activities .activity-count {
+    color: $black;
+}
+
+li.activity {
+    padding: .25rem!important;
+    border: 1px solid transparent;
+    min-width: 100%;
+}
+
+li.activity:hover {
+    background-color: rgba($body-bg, 0.5);
+    border: 1px solid $gray-300;
+    border-radius: 4px;
+    padding: .25rem!important;
+}
+
+.section .activity.modtype_label.label {
+    padding: .25rem!important;
+    border: 1px solid transparent;
+}
+
+li.activity.label:hover {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: .25rem!important;
+}
+
+//remove white box for Timeline block in sidebar
+aside#block-region-side-pre section.block_timeline .list-group-item {
+    background-color: transparent;
+}
+
+header#page-header {
+    position: relative;
+}
+
+.privatereplyinfo {
+    background-color: $yellow;
+    padding: .25rem;
+}
+
+//Dropdown overrides for schoollege Preset
+.dropdown-menu.iconsidebar.show {
+    padding: 1.25rem!important;
+    color: $dark;
+    background-color: $body-bg;
+}
+
+.dropdown-menu.iconsidebar.show::-webkit-scrollbar-track {
+    background-color: $body-bg!important;
+}
+
+.dropdown-menu.iconsidebar.show::-webkit-scrollbar-thumb {
+    background-color: $white!important;
+}
+
+// Collapsible Topics Format Styling
+.format-collapsibletopics li#section-0 {
+    background-color: #e3eaf5;
+    padding: 1rem;
+    border-top: 7px solid darken($body-bg, 30%);
+    border-radius: 4px;
+}
+
+.format-collapsibletopics div#collapse-0 {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.format-collapsibletopics li.activity.label:hover {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: .25rem;
+}
+
+.format-collapsibletopics .course-content ul li.section.main {
+    padding: 1rem 0;
+}
+
+.format-collapsibletopics .course-content .collapsible-actions {
+    display: inline-block;
+    background-color: $body-bg;
+    padding: .5rem 1rem;
+}
+
+// Quiz Presentation.
+.que .formulation, .que .comment {
+    background-color: $gray-100;
+    border-color: $body-bg;
+    border-top: 7px solid $body-bg;
+    margin-bottom: 4rem;
+}
+
+.que .outcome, .que .comment {
+    color: $black;
+}
+
+// FP Icon Navigation.
+.fpstartwrap {
+    padding:1rem;
+}
+
+.fpstart {
+    display: flex;
+    justify-content: center;
+}
+
+
+.iconset .btn.btn-secondary {
+    min-width: $fpicon-width;
+    margin-bottom: .5rem;
+    color: $sidebar-iconcolor;
+    background-color: $sidebar-bg;
+}
+
+.iconset .btn.btn-secondary:hover {
+    background-color: $sidebar-ahover-bg;
+}
+
+.iconset .btn.btn-secondary a {
+    color: $sidebar-iconcolor;
+}
+
+div#easyenrollform {
+    display: flex;
+    justify-content: center;
+}
+
+.easyenrollform {
+    margin: 1rem 1.25rem;
+}
+
+//Mobile needs room at top.  This hides messages and search on mobile.
+@media only screen and ( max-width: 540px ) {
+  ul.usernav li.nav-item .popover-region {
+      display: none;
+  }
+  .navbar .search-input-wrapper {
+    display: none;
+  }
+}

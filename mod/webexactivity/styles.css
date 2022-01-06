@@ -1,0 +1,53 @@
+.path-mod-webexactivity #recordings {
+  clear: both;
+  width: 100%;
+  text-align: center;
+}
+.path-mod-webexactivity #recordings .hiddenrecording .details {
+  color: gray;
+}
+.path-mod-webexactivity #recordings #recordingsheader {
+  font-weight: bold;
+  font-size: 110%;
+  margin-bottom: 10px;
+}
+.path-mod-webexactivity #recordings .recording {
+  margin-bottom: 20px;
+}
+.path-mod-webexactivity #recordings .recording .recordingblock {
+  vertical-align: top;
+  display: inline-block;
+}
+.path-mod-webexactivity #recordings .recording .actions .moodle-actionmenu {
+  white-space: nowrap;
+}
+.path-mod-webexactivity #recordings .recording .buttons {
+  text-align: right;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+.path-mod-webexactivity #recordings .recording .buttons .play {
+  display: inline-block;
+}
+.path-mod-webexactivity #recordings .recording .buttons .download {
+  display: inline-block;
+}
+.path-mod-webexactivity #recordings .recording .details {
+  max-width: 400px;
+  text-align: left;
+}
+.path-mod-webexactivity #recordings .recording .details .name {
+  font-weight: bold;
+}
+.path-mod-webexactivity .webexerror {
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 110%;
+}
+.path-mod-webexactivity #editrecording #id_name {
+  width: 300px;
+}
+.path-mod-webexactivity .webexrecordingdeleted {
+  color: gray;
+}

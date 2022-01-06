@@ -1,0 +1,32 @@
+// Styles
+
+h3.sectionname, h3.section-title {
+    padding: 1rem;
+    font-weight: bold;
+    border-bottom: 3px solid $gray-600;
+}
+
+li#section-0 h3.sectionname {
+    padding: 1rem;
+    font-weight: bold;
+    border-bottom: 0;
+    background-color: $gray-300;
+}
+
+#page-course-view-topics li#section-0 {
+    margin: 0;
+    padding-bottom: 0;
+    background-color: $gray-100;
+    Border: 1px solid $gray-200;
+}
+
+.course-content ul.topics li.section, .course-content ul.weeks li.section {
+    margin-top: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 0;
+}
+
+.course-content .section-summary {
+    border: 0;
+    margin-bottom: 2rem;
+}

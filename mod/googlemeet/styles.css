@@ -1,0 +1,246 @@
+#page-mod-googlemeet-mod #generateurlroomLoading {
+    background: url([[pix:mod_googlemeet|i/processing64]]) no-repeat;
+    background-size: 32px;
+    margin-left: 4px;
+    height: 32px;
+    width: 32px;
+    display: none;
+}
+
+#googlemeetcontentlog {
+    color: #990006;
+    display: none;
+    margin: 10px;
+    word-break: break-word;
+    white-space: break-spaces;
+}
+
+#page-mod-googlemeet-mod #fgroup_id_generateurlgroup .form-group.fitem[data-groupname="timeopen"],
+#page-mod-googlemeet-mod #fgroup_id_generateurlgroup .form-group.fitem[data-groupname="timeclose"] {
+    width: 100%;
+}
+
+#page-admin-setting-modsettinggooglemeet .form-item:last-child .form-description {
+    margin-left: -200px;
+}
+
+#googlemeet_upcoming_events span + span {
+    white-space: nowrap;
+    border-left: 1px solid #999;
+    padding-left: 4px;
+}
+
+#googlemeet_upcoming_events,
+#googlemeet_recordings {
+    margin: 20px 0;
+}
+
+#googlemeet_recordings_table {
+    position: relative;
+    max-width: 900px;
+}
+
+#googlemeet_recordings_table table,
+#googlemeet_recordings #syncbutton {
+    min-width: 500px;
+}
+
+#googlemeet_recordings_table table td {
+    vertical-align: middle;
+}
+
+#googlemeet_recordings_table table tr.warning {
+    color: #aaa;
+    font-weight: normal;
+}
+
+#googlemeet_recordings_table .icon {
+    padding: 0;
+}
+
+#googlemeet_syncimg {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    place-content: center;
+    background-color: #fff;
+    opacity: .6;
+    display: none;
+}
+
+#googlemeet_syncimg .icon {
+    height: 64px;
+    width: 64px;
+}
+
+#googlemeet_recordings #syncbutton {
+    max-width: 600px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    border: 1px solid #e3e3e3;
+}
+
+.path-mod-googlemeet .items-center,
+#id_eventenddate_calendar,
+#id_eventdate_calendar {
+    display: flex;
+    margin-right: .25em;
+    align-items: center;
+}
+
+#googlemeet_recordings_table .dt-container {
+    overflow-x: auto;
+    margin: 10px 0;
+}
+
+#googlemeet_recordings_table .dt-container .dt-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    margin-left: -50%;
+    margin-top: -20px;
+    height: 40px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:
+        linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0) 0,
+            rgba(255, 255, 255, 0.9) 25%,
+            rgba(255, 255, 255, 0.9) 75%,
+            rgba(255, 255, 255, 0) 100%
+        );
+}
+
+#googlemeet_recordings_table .dt-bottom {
+    margin-bottom: 10px;
+}
+
+#googlemeet_recordings_table .dt-top,
+#googlemeet_recordings_table .dt-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#googlemeet_recordings_table .dt-search {
+    flex: 1;
+    justify-content: flex-end;
+    display: flex;
+}
+
+#googlemeet_recordings_table .dt-top .dt-selector,
+#googlemeet_recordings_table .dt-bottom .dt-selector,
+#googlemeet_recordings_table .dt-top .dt-input,
+#googlemeet_recordings_table .dt-bottom .dt-input,
+#googlemeet_recordings_table .dt-top label,
+#googlemeet_recordings_table .dt-bottom label {
+    margin-bottom: 0;
+}
+
+@media only screen and (max-width: 539px) {
+    #googlemeet_recordings_table .dt-bottom .dt-info {
+        display: none;
+    }
+}
+
+#googlemeet_recordings_table .dt-pagination ul {
+    margin: 0;
+    padding-left: 0;
+}
+
+#googlemeet_recordings_table .dt-pagination ul li {
+    list-style: none;
+    float: left;
+}
+
+#googlemeet_recordings_table .dt-pagination a,
+#googlemeet_recordings_table .dt-pagination span {
+    border: 1px solid transparent;
+    float: left;
+    margin-left: 2px;
+    padding: 6px 12px;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+}
+
+#googlemeet_recordings_table .dt-pagination a:hover {
+    background-color: #d9d9d9;
+}
+
+#googlemeet_recordings_table .dt-pagination .active a,
+#googlemeet_recordings_table .dt-pagination .active a:focus,
+#googlemeet_recordings_table .dt-pagination .active a:hover {
+    background-color: #d9d9d9;
+    cursor: default;
+}
+
+#googlemeet_recordings_table .dt-pagination .dt-ellipsis span {
+    cursor: not-allowed;
+}
+
+#googlemeet_recordings_table .dt-pagination .disabled a,
+#googlemeet_recordings_table .dt-pagination .disabled a:focus,
+#googlemeet_recordings_table .dt-pagination .disabled a:hover {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+#googlemeet_recordings_table .dt-pagination .pager {
+    margin: 0;
+}
+
+#googlemeet_recordings_table .dt-pagination .pager a {
+    font-weight: bold;
+}
+
+#googlemeet_recordings_table .dt-table {
+    margin: 0;
+    min-width: 700px;
+}
+
+#googlemeet_recordings_table .dt-table th.dt-sorter {
+    position: relative;
+    cursor: pointer;
+    padding-right: 20px;
+}
+
+#googlemeet_recordings_table .dt-table th.dt-sorter::before,
+#googlemeet_recordings_table .dt-table th.dt-sorter::after {
+    content: "";
+    height: 0;
+    width: 0;
+    position: absolute;
+    right: 7px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    opacity: 0.2;
+}
+
+#googlemeet_recordings_table .dt-table th.dt-sorter::before {
+    border-top: 4px solid #000;
+    top: 18px;
+}
+
+#googlemeet_recordings_table .dt-table th.dt-sorter::after {
+    border-bottom: 4px solid #000;
+    border-top: 4px solid transparent;
+    bottom: 22px;
+}
+
+#googlemeet_recordings_table .dt-table th.dt-sorter.asc::after,
+#googlemeet_recordings_table .dt-table th.dt-sorter.desc::before {
+    opacity: 0.6;
+}
+
+#googlemeet_recordings_table .hidden {
+    display: none;
+    opacity: 0;
+}

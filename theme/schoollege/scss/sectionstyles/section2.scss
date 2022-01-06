@@ -1,0 +1,23 @@
+//Styling
+
+h3.sectionname, h3.section-title {
+    padding: 1rem;
+    background-color: $gray-300;
+    font-weight: bold;
+}
+
+#page-course-view-topics .course-content ul.topics li.section, #page-course-view-weeks .course-content ul.weeks li.section {
+    margin-bottom: 1rem;
+    padding-top: 0;
+}
+
+.course-content .current::before {
+    border-left: #ccc 8px solid;
+}
+
+.course-content .section-summary {
+    border: 0;
+}
+.course-content ul.topics li.section, .course-content ul.weeks li.section {
+    border-bottom: 0;
+}

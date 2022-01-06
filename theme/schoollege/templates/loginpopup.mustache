@@ -1,0 +1,109 @@
+<div class="modal fade" id="loginformpopup" tabindex="-1" role="dialog" aria-labelledby="loginformpopup" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+
+    <div class="modal-content">
+    <div class="modal-body">
+
+        <div class="col-md-12 signinform">
+			<div class="fpsignup">
+			    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              		<span aria-hidden="true">&times;</span>
+        		</button>
+
+        		{{#maintenance}}
+                    <div class="row justify-content-center mt-3">
+                        <div class="col-xl-6 col-sm-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title">
+                                        <h2>{{#str}}sitemaintenance, core_admin{{/str}}</h2>
+                                    </div>
+                                    <div>
+                                        {{{maintenance}}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {{/maintenance}}
+
+	            {{#output.has_identity_providers}}
+			        <h5 class="mt-2">{{#str}} potentialidps, auth {{/str}}</h5>
+			        <div class="potentialidplist" class="m-t-1">
+			            {{#output.get_identity_providers}}
+			                <div class="potentialidp">
+			                    <a href="{{{url}}}" title={{#quote}}{{name}}{{/quote}} class="btn btn-secondary btn-block">
+			                    {{#iconurl}}
+			                        <img src="{{iconurl}}" alt="" width="24" height="24"/>
+			                    {{/iconurl}}
+			                    {{name}}
+			                    </a>
+			                </div>
+			            {{/output.get_identity_providers}}
+			        </div>
+			    {{/output.has_identity_providers}}
+
+			      <form class="m-t-1" action="{{{ config.wwwroot }}}/login/index.php" method="POST" role="form">
+			        <input type="hidden" name="logintoken" value="{{logintoken}}">
+			            <label for="username">
+			              {{^canloginbyemail}}
+			                  {{#str}}username{{/str}}
+			              {{/canloginbyemail}}
+			              {{#canloginbyemail}}
+			                  {{#str}}usernameemail{{/str}}
+			              {{/canloginbyemail}}
+			            </label>
+			            <div class="input-group">
+			              <div class="input-group-addon"></div>
+			              <input type="text" class="form-control" id="username" name="username" placeholder="{{#str}}username{{/str}}" required />
+			            </div>
+
+			            <label for="password">{{#str}}password{{/str}}</label>
+			            <div class="input-group">
+			              <div class="input-group-addon"></div>
+			              <input type="password" class="form-control" id="password" name="password" placeholder="{{#str}}password{{/str}}" required />
+			            </div>
+
+			            <div class="sign-up-btn">
+			                <button type="submit" class="btn btn-primary">{{#str}}login{{/str}}</button>
+			            </div>
+			        </form>
+		        <p><a href="{{{ config.wwwroot }}}/login/forgot_password.php">{{#str}}forgotten{{/str}}</a></p>
+		        {{#cansignup}}
+		            <a class="btn btn-register btn-primary" href="{{{ config.wwwroot }}}/login/signup.php?">{{#str}}newaccount{{/str}}</a>
+		        {{/cansignup}}
+
+		        {{#hasidentityproviders}}
+			        <h5 class="mt-2">{{#str}} potentialidps, auth {{/str}}</h5>
+			        <div class="potentialidplist" class="m-t-1">
+			            {{#identityproviders}}
+			                <div class="potentialidp">
+			                    <a href="{{{url}}}" title={{#quote}}{{name}}{{/quote}} class="btn btn-secondary btn-block">
+			                    {{#iconurl}}
+			                        <img src="{{iconurl}}" alt="" width="24" height="24"/>
+			                    {{/iconurl}}
+			                    {{name}}
+			                    </a>
+	                		</div>
+	            		{{/identityproviders}}
+			        </div>
+			    {{/hasidentityproviders}}
+
+			    {{#canloginasguest}}
+			        <form action="{{{ config.wwwroot }}}/login/index.php" method="post" id="guestlogin">
+			            <input type="hidden" name="username" value="guest" />
+			            <input type="hidden" name="password" value="guest" />
+			            <input type="hidden" name="logintoken" value="{{logintoken}}">
+			            <button class="btn btn-default btn-block mt-2" type="submit">{{#str}}loginguest{{/str}}</button>
+			        </form>
+			    {{/canloginasguest}}
+
+			</div>
+		</div>
+
+    </div>
+    </div>
+</div>
+</div>
+
+

@@ -1,0 +1,24 @@
+//Styling
+
+#page-course-view-topics li#section-0 {
+    margin: 0;
+    border-bottom: 3px solid;
+    padding-bottom: 0;
+    background-color: transparent;
+    border-radius: 0;
+    border-top: 0;
+}
+
+.course-content ul.topics li.section, .course-content ul.weeks li.section {
+    margin: 2rem 0;
+    padding: 1rem;
+    border: 0;
+    background-color: $gray-100;
+    border-top: 7px solid $gray-400;
+    border-bottom: 7px solid $gray-400;
+    border-radius: 5px;
+}
+
+.course-content ul li.section.main:last-child {
+    border-bottom: 7px solid $gray-400;
+}

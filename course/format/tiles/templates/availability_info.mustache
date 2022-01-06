@@ -1,0 +1,48 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_tiles/availability_info
+
+    Tiles availability info template.
+
+    The purpose of this template is to render a small div
+    containing the word "restricted" or "hidden" which in the former case
+    when the user hovers over it, by JS tooltip displays more detail
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+        * visible - is the availability info visible or not
+        * availabilitymessage: the information to display
+
+    Example context (json):
+    {
+        "visible": 0,
+        "availabilitymessage": "Hidden"
+    }
+}}
+
+<div class="availabilityinfo isrestricted isfullinfo">
+    <span class="badge badge-info"{{#visible}}
+        {{#availabilitymessage}}title="{{availabilitymessage}}" data-html="true" data-toggle="tooltip"{{/availabilitymessage}}
+    {{/visible}}>{{^visible}}{{#str}}hiddenfromstudents{{/str}}{{/visible}}{{#visible}}{{#str}}restricted{{/str}}{{/visible}}</span>
+</div>

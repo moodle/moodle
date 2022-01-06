@@ -1,0 +1,64 @@
+{{!
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/navbar-secure
+
+    This template renders the icon navbar.
+
+}}
+
+{{#showloggedinonly}}
+<div class="sidebar">
+    <div class="sidebar-items">
+
+        <div class="dropdown">
+              <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-tooltip="tooltip" data-placement= "bottom" title="{{{mycourses}}}" class="sideicon mydashboard"><i class="fa fa-user"></i></a>
+
+                <div class="dropdown-menu iconsidebar">
+                  <h5>{{{mycourses}}}</h5>
+                    {{{mycoursesmenu}}}
+                </div>
+        </div>
+        
+        {{{ editpage }}}
+
+        {{#userisediting}}
+            <a href="{{{addblockurl}}}" data-key="addblock" data-tooltip="tooltip" data-placement= "bottom" class="btn-danger sideicon editingblocks" title="{{{addblock}}}" class="sideicon"><i class="fa fa-th-large" aria-hidden="true"></i></a>
+        {{/userisediting}}
+
+      {{#showincourseonly}}
+          <a href="#coursemanagement" data-tooltip="tooltip" data-placement="bottom" data-toggle="modal" title="{{{courseadmin}}}"class="sideicon coursemanagement"><i class="fa fa-tachometer" aria-hidden="true"></i><span class="sr-only">{{{courseadmin}}}</span></a>
+      {{/showincourseonly}}
+
+      {{#showloggedinonly}}
+
+        {{#showondashboardonly}}
+            <a href="{{{viewcoursesurl}}}" data-tooltip="tooltip" data-placement= "bottom" title="{{{viewcourses}}}" class="sideicon viewcourses"><i class="fa fa-book"></i></a>
+        {{/showondashboardonly}}
+
+        {{#hascreatecourse}}
+            <a href="{{{createcourseurl}}}" data-tooltip="tooltip" data-placement= "bottom" title="{{{createcourse}}}" class="sideicon attention createacourse"><i class="fa fa-pencil"></i></a>
+          {{/hascreatecourse}}
+
+        {{#hasadminlink}}
+          <a href="{{{siteadminurl}}}" data-tooltip="tooltip" data-placement= "bottom" title="{{{siteadmintitle}}}" class="sideicon siteadmin"><i class="fa fa-sitemap" aria-hidden="true"></i></a>
+        {{/hasadminlink}}
+
+      {{/showloggedinonly}}
+
+    </div>
+</div>
+{{/showloggedinonly}}

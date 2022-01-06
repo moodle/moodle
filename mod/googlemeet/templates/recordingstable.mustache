@@ -1,0 +1,249 @@
+{{!
+  This file is part of Moodle - http://moodle.org/
+
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+  @template mod_googlemeet/recordingstable
+
+  Example context (json):
+  {
+    "recordings": [
+      {
+        "id": 1,
+        "googlemeetid": 2,
+        "name": "yzi-djyq-uun (2020-11-11 at 16:11 GMT-8)",
+        "createdtime": 1605140304,
+        "duration": "1:00",
+        "webviewlink": "https://drive.google.com/file/d/19jNAy_US0zzxxc8OPRWPp74i1mi2yjWY/view?usp=drivesdk",
+        "visible": 1
+      }
+    ],
+    "coursemoduleid": 1919,
+    "hascapability": 1
+  }
+}}
+<div id="googlemeet_recordings_table">
+<h4>{{# str }} recordings, mod_googlemeet {{/ str }}</h4>
+  <table class="table table-striped table-hover table-bordered">
+    <thead>
+      <tr>
+        <th>{{# str }} recording, mod_googlemeet {{/ str }}</th>
+        <th>{{# str }} name, mod_googlemeet {{/ str }}</th>
+        <th>{{# str }} date, mod_googlemeet {{/ str }}</th>
+        <th>{{# str }} duration, mod_googlemeet {{/ str }}</th>
+        {{#hascapability}}
+          <th style="text-align: center">{{# str }} visible, mod_googlemeet {{/ str }}</th>
+        {{/hascapability}}
+      </tr>
+    </thead>
+    <tbody>
+      {{#recordings}}
+        <tr {{^visible}} class="warning" {{/visible}}>
+          <td>
+            <div>
+              <a 
+                href="{{webviewlink}}"
+                id="id_recordingplay"
+                class="btn btn-secondary btn-small ml-0"
+                onclick="this.target='_blank';"
+              >
+                {{# str }} play, mod_googlemeet {{/ str }}
+              </a>
+            </div>
+          </td>
+          <td>
+            <span>{{name}}</span>
+            {{#hascapability}}
+              <a href="javascript:void(0);" class="recordingeditname" data-id="{{id}}">
+                {{# pix }} i/edit, core {{/ pix }}
+              </a>
+            {{/hascapability}}
+          </td>
+          <td>{{createdtimeformatted}}</td>
+          <td>{{duration}}</td>
+          {{#hascapability}}
+            <td style="text-align: center">
+              <a href="javascript:void(0);" class="recordinghowhide" data-id="{{id}}">
+                {{#visible}} {{# pix }} i/hide, core, {{# str }} hide, mod_googlemeet {{/ str }} {{/ pix }} {{/visible}}
+                {{^visible}} {{# pix }} i/show, core, {{# str }} show, mod_googlemeet {{/ str }} {{/ pix }} {{/visible}}
+              </a>
+            </td>
+          {{/hascapability}}
+        </tr>
+      {{/recordings}}
+      {{^recordings}}
+        {{#hascapability}}
+          <tr>
+            {{#hascapability}}<td colspan="5">{{/hascapability}}
+            {{^hascapability}}<td colspan="4">{{/hascapability}}
+              <div>
+                {{# str }} thereisnorecordingtoshow, mod_googlemeet {{/ str }}
+              </div>
+            </td>
+          </tr>
+        {{/hascapability}}
+      {{/recordings}}
+    </tbody>
+  </table>
+  <div id="googlemeet_syncimg">
+    {{# pix }} i/processing64, googlemeet, {{# str }} loading, mod_googlemeet {{/ str }} {{/ pix }}
+  </div>
+</div>
+{{#js}}
+  require([
+    'jquery',
+    'core/ajax',
+    'core/notification'
+    ], function($, Ajax, Notification) {
+
+    {{^hascapability}}
+      new JSTable("#googlemeet_recordings_table table", {
+        sortable: false,
+        searchable: true,
+        perPage: 5,
+        perPageSelect: false,
+        labels: {
+          placeholder: "{{# str }} jstablesearch, mod_googlemeet {{/ str }}",
+          perPage: "{{# str }} jstableperpage, mod_googlemeet {{/ str }}",
+          noRows: "{{# str }} jstablenorows, mod_googlemeet {{/ str }}",
+          info: "{{# str }} jstableinfo, mod_googlemeet {{/ str }}",
+          loading: "{{# str }} jstableloading, mod_googlemeet {{/ str }}",
+          infoFiltered: "{{# str }} jstableinfofiltered, mod_googlemeet {{/ str }}"
+        },
+      });
+    {{/hascapability}}
+
+    {{#hascapability}}
+      $( document ).ready(function() {
+        $('.recordingeditname').on('click', function() {
+          var node = $(this).parent();
+          var text = $(this).siblings('span');
+          var recordingid = $(this).attr('data-id');
+          
+          text.hide();
+          $(this).hide();
+
+          var inputtext = document.createElement('input');
+          inputtext.type = 'text';
+          inputtext.className = 'form-control';
+          inputtext.id = recordingid;
+          inputtext.value = text.html();
+          inputtext.setAttribute('data-value', text.html());
+          inputtext.addEventListener('keydown', recordingeditkeydown);
+          inputtext.addEventListener('focusout', recordingeditonfocusout);
+
+          node.append(inputtext);
+          inputtext.focus();
+          inputtext.select();
+        });
+
+        function recordingeditkeydown(event) {
+          var keyCode = event.which || event.keyCode;
+          if (keyCode === 13) {
+            event.currentTarget.removeEventListener('focusout', recordingeditonfocusout);
+            recordingeditperform(event.currentTarget);
+            return;
+          }
+          if (keyCode === 27) {
+            event.currentTarget.removeEventListener('focusout', recordingeditonfocusout);
+            recordingeditonfocusout(event.currentTarget);
+          }
+        }
+
+        function recordingeditperform(element){
+          element = $(element);
+          var node = element.parent();
+          var text = element.siblings('span');
+          var editbutton = element.siblings('a');
+
+          var loading = document.createElement('span');
+          loading.innerHTML = '{{# pix }} i/processing16, googlemeet, {{# str }} loading, mod_googlemeet {{/ str }} {{/ pix }}';
+
+          text.html(element.val()).show();
+          element.hide();
+          node.append(loading);
+
+          // Perform the update.
+          Ajax.call([{
+            methodname: 'mod_googlemeet_recording_edit_name',
+            args: {
+              recordingid: element.attr('id'),
+              name: element.val(),
+              coursemoduleid: {{ coursemoduleid }}
+            }
+          }])[0].then(function (response) {
+            text.html(response.name).show();
+            element.remove();
+            loading.remove();
+            editbutton.show();
+          }).fail(Notification.exception).fail(function(){
+            text.html(element.attr('data-value')).show();
+            element.remove();
+            loading.remove();
+            editbutton.show();
+          });
+        }
+
+        function recordingeditonfocusout(element) {
+          if(element instanceof FocusEvent){
+            element = $(this);
+          } else {
+            element = $(element);
+          }
+          
+          var node = element.parent();
+          var text = element.siblings('span');
+          var editbutton = element.siblings('a');
+          element.remove();
+          text.show();
+          editbutton.show();
+        }
+
+        $('.recordinghowhide').on('click', function() {
+          var recordinghowhide = $(this);
+          var recordingid = recordinghowhide.attr('data-id');
+          var recordinghowhideoldchild = recordinghowhide.html();
+
+          recordinghowhide.html('{{# pix }} i/processing16, googlemeet, {{# str }} loading, mod_googlemeet {{/ str }} {{/ pix }}');
+
+          Ajax.call([{
+            methodname: 'mod_googlemeet_showhide_recording',
+            args: {
+              recordingid: recordingid,
+              coursemoduleid: {{ coursemoduleid }}
+            }
+          }])[0].then(function (response) {
+            if (response.visible){
+              recordinghowhide.html('{{# pix }} i/hide, core, {{# str }} hide, mod_googlemeet {{/ str }} {{/ pix }}');
+              recordinghowhide.parent().parent().removeClass('warning');
+
+              return;
+            } else {
+              recordinghowhide.html('{{# pix }} i/show, core, {{# str }} show, mod_googlemeet {{/ str }} {{/ pix }}');
+              recordinghowhide.parent().parent().addClass('warning');
+
+              return;
+            }
+
+            recordinghowhide.html(recordinghowhideoldchild);
+          }).fail(Notification.exception).fail(function(){
+            recordinghowhide.html(recordinghowhideoldchild);
+          });
+        });
+      });
+    {{/hascapability}}
+  });
+{{/js}}
+

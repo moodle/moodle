@@ -1,0 +1,104 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_attendance/mobile_user_form
+
+    The page to take attendance
+
+    Classes required for JS:
+    * None
+
+    Data attibutes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * attendance
+    * summary
+    * cmid
+
+    Example context (json):
+    {
+        "attendance": {
+            "id": "1",
+            "course": "2",
+            "name": "Class Attendance",
+            "intro": "Intro"
+        },
+        "cmid": "25",
+        "courseid": "4",
+        "sessid": "43",
+        "btnargs" : ""
+    }
+}}
+{{=<% %>=}}
+<div class="attendance_mobile_teacher_form">
+    <span class="description">
+    <core-course-module-description description="<% attendance.intro %>" component="mod_attendance" componentId="<% cmid %>"></core-course-module-description>
+    </span>
+    <%#showmessage%>
+        <%#messages%>
+            <span class="messages">
+                <ion-item>
+                    {{ 'plugin.mod_attendance.<% string %>' | translate }}
+                </ion-item>
+            </span>
+        <%/messages%>
+    <%/showmessage%>
+    <span class="attendance_selectall">
+                <ion-item>
+                    {{ 'plugin.mod_attendance.setallstatuses' | translate }}
+                </ion-item>
+    <ion-list radio-group [(ngModel)]="CONTENT_OTHERDATA.statusall" (ionChange)="<% selectall %>">
+        <%#statuses%>
+
+        <span class="radiolabel">
+                <ion-item>
+                    <ion-label><% acronym %></ion-label>
+                    <ion-radio value="<% stid %>"></ion-radio>
+                </ion-item>
+            </span>
+        <%/statuses%>
+    </ion-list>
+    </span>
+    <%#users%>
+    <span class="attendance_user_row">
+    <!-- User and status of the submission. -->
+    <span ion-item text-wrap title="<% fullname %>">
+        <ion-avatar item-start>
+            <img src="<% profileimageurl %>" core-external-content role="presentation" onError="this.src='assets/img/user-avatar.png'">
+        </ion-avatar>
+        <h2><% fullname %></h2>
+    </span>
+    <ion-list radio-group [(ngModel)]="CONTENT_OTHERDATA.status<% userid %>">
+        <%#statuses%>
+        <span class="radiolabel">
+                <ion-item>
+                    <ion-label><% acronym %></ion-label>
+                    <ion-radio value="<% stid %>"></ion-radio>
+                </ion-item>
+            </span>
+        <%/statuses%>
+    </ion-list>
+    </span>
+    <%/users%>
+    <ion-item>
+        <button ion-button core-site-plugins-new-content component="mod_attendance" method="mobile_view_activity" [args]="{cmid: <% cmid %>, courseid: <% courseid %>, sessid: <% sessid %><% btnargs %>}">
+            {{ 'plugin.mod_attendance.submitattendance' | translate }}
+        </button>
+    </ion-item>
+
+</div>
