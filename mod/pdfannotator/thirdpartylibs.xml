@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>shared/index.js</location>
+        <name>index.js</name>
+        <version></version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+
+    <library>
+        <location>shared/pdf.js</location>
+        <name>pdf.js</name>
+        <version></version>
+        <license>Apache</license>
+        <licenseversion>2.0</licenseversion>
+    </library>
+    <library>
+        <location>shared/pdf.worker.js</location>
+        <name>pdf.worker.js</name>
+        <version></version>
+        <license>Apache</license>
+        <licenseversion>2.0</licenseversion>
+    </library>
+    <library>
+        <location>shared/pdf_viewer.js</location>
+        <name>pdf_viewer.js</name>
+        <version></version>
+        <license>Apache</license>
+        <licenseversion>2.0</licenseversion>
+    </library>
+    <library>
+        <location>shared/textclipper.js</location>
+        <name>textclipper.js</name>
+        <version></version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>amd/src/jspdf.js</location>
+        <name>jsPDF</name>
+        <version>1.4.1</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+
+</libraries>

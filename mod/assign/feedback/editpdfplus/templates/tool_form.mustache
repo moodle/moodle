@@ -1,0 +1,280 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template assignfeedback_editpdfplus/tool_form
+
+    Admin template to manage a tool.
+
+    Context variables required for this template:
+    * contextid - Context id
+    * tool - current tool object to edit
+    * formid - id of moodleform
+    * actionurl - moodle service url to send form
+    * sesskey - session key to validate form
+    * map01 - picture for previsualisation for type 1
+    * map02 - picture for previsualisation for type 2
+    * map03 - picture for previsualisation for type 3
+}}
+
+<div id="toolworkspace">
+    {{^tool.id}}<h4>{{# str }} adminaddtool, assignfeedback_editpdfplus {{/ str }}</h4>{{/tool.id}}
+    <table>
+        <tr>
+            <td>
+                {{#tool.id}}<div id="editpdlplus_tool_label" class="btn alert-info">{{tool.label}}</div>{{/tool.id}}
+            </td>
+            <td style="text-align: right;padding-left: 20px;">
+                {{# str }} admintoolboxaction, assignfeedback_editpdfplus {{/ str }} 
+                <div class="btn-group">
+                    <button type="button" class="btn" id="toolFormSubmit"><i class="fa fa-{{#tool.id}}save{{/tool.id}}{{^tool.id}}save{{/tool.id}}" aria-hidden="true"></i></button>
+                    {{#tool.id}}
+                    <button type="button" class="btn" id="toolClone"><i class="fa fa-clone" aria-hidden="true"></i></button>
+                    <button type="button" class="btn" id="toolEnabled"><i class="fa fa-eye{{^tool.enabled}}-slash{{/tool.enabled}}" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-danger" {{^tool.removable}}disabled{{/tool.removable}} id="toolRemove"><i class="fa fa-remove" aria-hidden="true"></i></button>
+                    {{/tool.id}}
+                </div>
+            </td>
+            <td class='assignfeedback_editpdfplus_widget_admin_tool_col2'>
+                {{#tool.id}}
+                <button type="button" class="btn" id="toolRefesh"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                {{/tool.id}}
+            </td>
+        </tr>
+        <tr>
+            <td class='assignfeedback_editpdfplus_widget_admin_tool_col1 assignfeedback_editpdfplus_widget_admin_tool_row' colspan="2">
+                <form id="{{formid}}" method="post" action="{{actionurl}}">
+                    <div id="accordion">
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <a class="card-link" data-toggle="collapse" href="#collapse1">
+                                    <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp;&nbsp;{{# str }} admintoolboxtypetool, assignfeedback_editpdfplus {{/ str }}
+                                </a>
+                            </div>
+                            <div id="collapse1" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 form-control-label" for="typetool">
+                                            {{# str }} admintoolboxtypetool_type, assignfeedback_editpdfplus {{/ str }}
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" id="typetool" name="typetool">
+                                                {{# tools }}
+                                                <option value='{{id}}'>{{libelle}}</option>
+                                                {{/ tools }}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" id="headingTwo">
+                                <a class="card-link" data-toggle="collapse" href="#collapse2">
+                                    <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;&nbsp;{{# str }} admintoolboxtoolbardisplay, assignfeedback_editpdfplus {{/ str }}
+                                </a>
+                            </div>
+                            <div id="collapse2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 form-control-label" for="toolaxis">{{# str }} admintoolboxtoolbardisplay_axis, assignfeedback_editpdfplus {{/ str }}</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" id="toolaxis" name="toolaxis">
+                                                {{# axis }}
+                                                <option value='{{id}}'>{{label}}</option>
+                                                {{/ axis }}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 form-control-label" for="button">
+                                            {{# str }} admintoolboxtoolbardisplay_button, assignfeedback_editpdfplus {{/ str }}
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="button" value="{{tool.label}}" name="button" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 form-control-label" for="order">{{# str }} admintoolboxtoolbardisplay_order, assignfeedback_editpdfplus {{/ str }}</label>
+                                        <div class="col-sm-9">
+                                            <input type="number" class="form-control" id="order" value="{{tool.order_tool}}" name="order" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" id="headingThree">
+                                <a class="card-link" data-toggle="collapse" href="#collapse3">
+                                    <i class="fa fa-address-card-o" aria-hidden="true"></i>&nbsp;&nbsp;{{# str }} admintoolboxcartridge, assignfeedback_editpdfplus {{/ str }}
+                                </a>
+                            </div>
+                            <div id="collapse3" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 form-control-label" for="libelle">{{# str }} admintoolboxcartridge_label, assignfeedback_editpdfplus {{/ str }}</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="libelle" value="{{tool.cartridge}}" name="libelle" maxlength="10" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 form-control-label" for="cartridgecolor">{{# str }} admintoolboxcartridge_color, assignfeedback_editpdfplus {{/ str }}</label>
+                                        <div class="col-sm-9">
+                                            <input type="color" class="form-control" id="cartridgecolor" placeholder="{{^tool.cartridge_color}}-{{/tool.cartridge_color}}"
+                                                   value="{{#tool.cartridge_color}}{{tool.cartridge_color}}{{/tool.cartridge_color}}" name="catridgecolor" />
+                                            <input type="hidden" id="realcartridgecolor" value="{{#tool.cartridge_color}}{{tool.cartridge_color}}{{/tool.cartridge_color}}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" id="headingFour">
+                                <a class="card-link" data-toggle="collapse" href="#collapse4">
+                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;{{# str }} admintoolboxannotation, assignfeedback_editpdfplus {{/ str }}
+                                </a>
+                            </div>
+                            <div id="collapse4" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                                <div class="card-body" style="overflow: auto;">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 form-control-label" for="color">{{# str }} admintoolboxannotation_color, assignfeedback_editpdfplus {{/ str }}</label>
+                                        <div class="col-sm-9">
+                                            <input type="color" class="form-control" id="color"
+                                                   value="{{#tool.colors}}{{tool.colors}}{{/tool.colors}}" name="color" />
+                                            <input type="hidden" id="realcolor" value="{{#tool.colors}}{{tool.colors}}{{/tool.colors}}" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 form-control-label" for="texts">{{# str }} admintoolboxannotation_texts, assignfeedback_editpdfplus {{/ str }}</label>
+                                        <div class="col-sm-9">
+                                            <input type="hidden" class="form-control" id="texts" value="{{tool.texts}}" name="texts" />
+                                            <ul class="textform"
+                                                data-prototype="<input  type='text' class='form-control' value='' name='text[__name__]' style='width:90%;display:inline-block;' />" 
+                                                style="list-style-type:none;padding:0px;margin-left: 0px;">
+                                                {{#tool.textsarray}}
+                                                <li><input type='text' class='form-control' value='{{text}}' name='text[{{index}}]' style='width:90%;display:inline-block;' /></li>
+                                                {{/tool.textsarray}}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 form-control-label" for="reply">{{# str }} admintoolboxannotation_reply, assignfeedback_editpdfplus {{/ str }}</label>
+                                        <div class="col-sm-9">
+                                            <input type="checkbox" id="reply" {{#tool.reply}}checked {{/tool.reply}}name="reply" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style='display:none;'>
+                        <input type="hidden" name="toolid" value="{{tool.id}}" />
+                        <input type="hidden" name="axisid" id="axisid" value="{{tool.axis}}" />
+                        <input type="hidden" name="contextid" value="{{contextid}}" />
+                        <input type="hidden" name="sesskey" value="{{sesskey}}" />
+                        <input type="hidden" name="enabled" id="toolenabled" value="{{tool.enabled}}" />
+                    </div>
+
+                </form>
+            </td>
+            <td class='assignfeedback_editpdfplus_widget_admin_tool_col2 assignfeedback_editpdfplus_widget_admin_tool_row'>
+                <input id='map01' type='hidden' value='{{map01}}' />
+                <input id='map02' type='hidden' value='{{map02}}' />
+                <input id='map03' type='hidden' value='{{map03}}' />
+                <!--{{# pix }} cross, assignfeedback_editpdfplus, previsu {{/ pix }}-->
+                <div id="canevas" style="background-image: url('{{map01}}');" class="drawingcanvas"></div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+{{# js }}
+require(['jquery','core/ajax','core/notification'], function($,ajax,notification) {
+
+{{#tool.id}}$("#typetool").val({{tool.type}});{{/tool.id}}
+{{#tool.id}}$("#toolaxis").val({{tool.axis}});{{/tool.id}}
+
+var $collectionHolder;
+
+// setup an "add a tag" link
+var $addTagLink = $('<a href="#" class="add_text_link"><i class="fa fa-plus"></i></a>');
+var $newLinkLi = $('<li></li>').append($addTagLink);
+
+$(document).ready(function() {
+// Get the ul that holds the collection of tags
+$collectionHolder = $('ul.textform');
+
+// add a delete link to all of the existing tag form li elements
+$collectionHolder.find('li').each(function() {
+addTagFormDeleteLink($(this));
+});
+
+// add the "add a tag" anchor and li to the tags ul
+$collectionHolder.append($newLinkLi);
+
+// count the current form inputs we have (e.g. 2), use that as the new
+// index when inserting a new item (e.g. 2)
+$collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+$addTagLink.on('click', function(e) {
+// prevent the link from creating a "#" on the URL
+e.preventDefault();
+
+// add a new tag form (see next code block)
+addTagForm($collectionHolder, $newLinkLi);
+});
+});
+function addTagForm($collectionHolder, $newLinkLi) {
+// Get the data-prototype explained earlier
+var prototype = $collectionHolder.data('prototype');
+
+// get the new index
+var index = $collectionHolder.data('index');
+
+// Replace '__name__' in the prototype's HTML to
+// instead be a number based on how many items we have
+var newForm = prototype.replace(/__name__/g, index);
+
+// increase the index with one for the next item
+$collectionHolder.data('index', index + 1);
+
+// Display the form in the page in an li, before the "Add a tag" link li
+var $newFormLi = $('<li></li>').append(newForm);
+$newLinkLi.before($newFormLi);
+
+// add a delete link to the new form
+addTagFormDeleteLink($newFormLi);
+}
+
+function addTagFormDeleteLink($tagFormLi) {
+var $removeFormA = $('<a href="#"><i class="fa fa-remove"></i></a>');
+$tagFormLi.append($removeFormA);
+
+$removeFormA.on('click', function(e) {
+// prevent the link from creating a "#" on the URL
+e.preventDefault();
+
+// remove the li for the tag form
+$tagFormLi.remove();
+});
+}
+
+});
+{{/ js }}

@@ -1,0 +1,883 @@
+.path-mod-pdfannotator .pdf-annotator-hidden {
+    display: none;
+    visibility: hidden;
+}
+
+.path-mod-pdfannotator .pdfannotator_index .toolbar {
+    background-color: #eaeaea;
+    border-bottom: 1px solid #d0d0d0;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0px 0px 3px 5px;
+    text-shadow: 1px 1px 0 #fff;
+    z-index: 50;
+    -webkit-box-shadow: inset 0px 1px 1px 0px rgba(255,255,255,1);
+    -moz-box-shadow: inset 0px 1px 1px 0px rgba(255,255,255,1);
+    box-shadow: inset 0px 1px 1px 0px rgba(255,255,255,1);
+}
+
+.path-mod-pdfannotator .pdfannotator_index .toolbar .spacer {
+    display: inline-block;
+    border-left: 1px solid #c1c1c1;
+    height: 34px;
+    margin: 0 5px -11px;
+}
+
+.path-mod-pdfannotator .toolbar .toolbaritem {
+    display: inline-block;
+}
+
+.path-mod-pdfannotator .toolbar button {
+    background-color: transparent;
+    border: 0px solid transparent;
+    border-radius: 0px;
+    font-size: 15px;
+    padding: 3px;
+    margin: 0 0 0px 0px;
+    text-align: center;
+    text-shadow: 0px 0px 0 #fff;
+    position: relative;
+    min-width: 27px;
+    min-height: 27px;
+    background-image: none;
+}
+
+.path-mod-pdfannotator .toolbar.fullscreen {
+    margin-left: 15px;
+}
+
+.path-mod-pdfannotator .toolbar button.active { /*RWTH-color*/
+    background-image: radial-gradient(ellipse at center,#e6f2ff 40%,#8ebae5 100%);
+    background-color: #8ebae5;
+    border-color: #bababa;
+    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0.25);
+    -moz-box-shadow: inset 0 0 1px rgba(0,0,0,0.25);
+    box-shadow: inset 0 0 1px rgba(0,0,0,0.25);
+}
+
+.path-mod-pdfannotator .toolbar select {
+    margin-bottom: 0px;
+}
+
+.path-mod-pdfannotator .toolbar button .icon {
+    color: #999999;
+    margin-right: 0px;
+}
+
+.path-mod-pdfannotator .color {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #000;
+    vertical-align: middle;
+    margin: 0 0 0px 0px;
+}
+.path-mod-pdfannotator .color-selected {
+    border: 3px solid #666;
+    width: 30px;
+    height: 30px;
+    margin-top: -1px;
+    margin-left: -2px;
+    margin-right: -2px;
+}
+
+.path-mod-pdfannotator .text-color, .path-mod-pdfannotator .pen-color {
+    z-index: 100;
+    display: inline-block;
+}
+
+
+/* Copyright 2014 Mozilla Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.path-mod-pdfannotator .textLayer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    opacity: 0.2;
+    line-height: 1.0;
+
+    z-index: 20;
+}
+
+.path-mod-pdfannotator .textLayer > div:not(.helperLayer) {
+    color: transparent;
+    position: absolute;
+    white-space: pre;
+    cursor: text;
+    -webkit-transform-origin: 0% 0%;
+    -moz-transform-origin: 0% 0%;
+    -o-transform-origin: 0% 0%;
+    -ms-transform-origin: 0% 0%;
+    transform-origin: 0% 0%;
+}
+
+.path-mod-pdfannotator .textLayer .highlight {
+    margin: -1px;
+    padding: 1px;
+
+    background-color: rgb(180, 0, 170);
+    border-radius: 4px;
+}
+
+.path-mod-pdfannotator .textLayer .highlight.begin {
+    border-radius: 4px 0px 0px 4px;
+}
+
+.path-mod-pdfannotator .textLayer .highlight.end {
+    border-radius: 0px 4px 4px 0px;
+}
+
+.path-mod-pdfannotator .textLayer .highlight.middle {
+    border-radius: 0px;
+}
+
+.path-mod-pdfannotator .textLayer .highlight.selected {
+    background-color: rgb(0, 100, 0);
+}
+
+.path-mod-pdfannotator .textLayer ::selection { background: rgb(0,0,255); }
+.path-mod-pdfannotator .textLayer ::-moz-selection { background: rgb(0,0,255); }
+
+.path-mod-pdfannotator .textLayer .endOfContent {
+    display: block;
+    position: absolute;
+    left: 0px;
+    top: 100%;
+    right: 0px;
+    bottom: 0px;
+    z-index: -1;
+    cursor: default;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+}
+
+.path-mod-pdfannotator .textLayer .endOfContent.active {
+    top: 0px;
+}
+
+
+.path-mod-pdfannotator .annotationLayer section {
+    position: absolute;
+}
+
+.path-mod-pdfannotator .annotationLayer .linkAnnotation > a {
+    position: absolute;
+    font-size: 1em;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.path-mod-pdfannotator .annotationLayer .linkAnnotation > a /* -ms-a */  {
+    background: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7") 0 0 repeat;
+}
+
+.path-mod-pdfannotator .annotationLayer .linkAnnotation > a:hover {
+    opacity: 0.2;
+    background: #ff0;
+    box-shadow: 0px 2px 10px #ff0;
+}
+
+.path-mod-pdfannotator .annotationLayer .textAnnotation img {
+    position: absolute;
+    cursor: pointer;
+}
+
+.path-mod-pdfannotator .annotationLayer .popupWrapper {
+    position: absolute;
+    width: 20em;
+}
+
+.path-mod-pdfannotator .annotationLayer .popup {
+    position: absolute;
+    z-index: 200;
+    max-width: 20em;
+    background-color: #FFFF99;
+    box-shadow: 0px 2px 5px #333;
+    border-radius: 2px;
+    padding: 0.6em;
+    margin-left: 5px;
+    cursor: pointer;
+    word-wrap: break-word;
+}
+
+.path-mod-pdfannotator .annotationLayer .popup h1 {
+    font-size: 1em;
+    border-bottom: 1px solid #000000;
+    padding-bottom: 0.2em;
+}
+
+.path-mod-pdfannotator .annotationLayer .popup p {
+    padding-top: 0.2em;
+}
+
+.path-mod-pdfannotator .annotationLayer .highlightAnnotation,
+.path-mod-pdfannotator .annotationLayer .underlineAnnotation,
+.path-mod-pdfannotator .annotationLayer .squigglyAnnotation,
+.path-mod-pdfannotator .annotationLayer .strikeoutAnnotation,
+.path-mod-pdfannotator .annotationLayer .fileAttachmentAnnotation {
+    cursor: pointer;
+}
+
+.path-mod-pdfannotator .pdfViewer .canvasWrapper {
+    overflow: hidden;
+}
+
+.path-mod-pdfannotator .pdfViewer .page {
+    direction: ltr;
+    width: 816px;
+    height: 1056px;
+    margin: 1px auto -8px auto;
+    position: relative;
+    overflow: visible;
+    border: 9px solid transparent;
+    background-clip: content-box;
+    border-image: url(images/shadow.png) 9 9 repeat;
+    background-color: white;
+}
+
+.path-mod-pdfannotator .pdfViewer.removePageBorders .page {
+    margin: 0px auto 10px auto;
+    border: none;
+}
+
+.path-mod-pdfannotator .pdfViewer .page canvas {
+    margin: 0;
+    display: block;
+}
+
+.path-mod-pdfannotator .pdfViewer .page .loadingIcon {
+    position: absolute;
+    display: block;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: url('images/loading-icon.gif') center no-repeat;
+}
+
+.path-mod-pdfannotator .pdfPresentationMode:-webkit-full-screen .pdfViewer .page {
+    margin-bottom: 100%;
+    border: 0;
+}
+
+.path-mod-pdfannotator .pdfPresentationMode:-moz-full-screen .pdfViewer .page {
+    margin-bottom: 100%;
+    border: 0;
+}
+
+.path-mod-pdfannotator .pdfPresentationMode:-ms-fullscreen .pdfViewer .page {
+    margin-bottom: 100% !important;
+    border: 0;
+}
+
+.path-mod-pdfannotator .pdfPresentationMode:fullscreen .pdfViewer .page {
+    margin-bottom: 100%;
+    border: 0;
+}
+
+body {
+    background-color: #eee;
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.path-mod-pdfannotator .pdfViewer .canvasWrapper {
+    box-shadow: 0 0 3px #bbb;
+    position: absolute;
+}
+.path-mod-pdfannotator .pdfViewer .page {
+    margin-bottom: 10px;
+}
+
+.path-mod-pdfannotator .annotationLayer {
+    position: absolute;
+    z-index: 2;
+}
+
+.path-mod-pdfannotator #content-wrapper {
+    display: inline-block;
+    overflow: auto;
+    bottom: 0;
+    height: 100%;
+}
+
+.path-mod-pdfannotator #comment-wrapper {
+    display: inline-block;
+    overflow: auto;
+    background: #eaeaea;
+    border-left: 1px solid #d0d0d0;
+    bottom: 0;
+    height: 100%;
+    margin: 0;
+}
+
+@media only screen and (max-width: 991px) {
+    .path-mod-pdfannotator #content-wrapper, .path-mod-pdfannotator #comment-wrapper {
+        height: 50%;
+    }
+}
+
+.path-mod-pdfannotator #comment-wrapper h4,
+.path-mod-pdfannotator #comment-nav {
+    margin: 10px;
+}
+
+.path-mod-pdfannotator #comment-nav button {
+    border: none;
+    background-color: transparent;
+}
+
+.path-mod-pdfannotator #comment-nav .icon {
+    color: #999999 !important;
+}
+
+.path-mod-pdfannotator #searchForm {
+    display: flex;
+    margin-top: 10px;
+}
+
+.path-mod-pdfannotator #searchPattern {
+    padding-right: 25px;
+    height: 30px;
+}
+
+.path-mod-pdfannotator #searchClear {
+    margin-left: -25px;
+    padding: 0px;
+}
+
+.path-mod-pdfannotator #comment-wrapper .comment-list {
+    font-size: 12px;
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: visible;
+}
+.path-mod-pdfannotator #comment-wrapper .comment-list-item {
+    padding: 10px;
+}
+.path-mod-pdfannotator #comment-wrapper .comment-list-item.questions {
+    overflow: auto;
+}
+.path-mod-pdfannotator #comment-wrapper .comment-list-container {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 47px;
+    overflow: visible;
+}
+.path-mod-pdfannotator #comment-wrapper .comment-list-form {
+    position: relative;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 10px;
+}
+.path-mod-pdfannotator div.row {
+    margin-left: 0;
+}
+.path-mod-pdfannotator #comment-wrapper .comment-list-form input {
+    padding: 5px;
+    width: 100%;
+}
+.path-mod-pdfannotator .pdfViewer .page {
+    border-image: none;
+}
+
+.path-mod-pdfannotator .chat-message {
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin: 0 0px 10px 0;
+    background-color: #fefefe;
+}
+
+.path-mod-pdfannotator .chat-message-container {
+    flex-grow: 1;
+    word-break: break-word;
+}
+
+.path-mod-pdfannotator .chat-message.owner:not(.questioncomment) {
+    margin: 0 10px 10px 10px;
+    border: 3px solid #c7ddf2;
+}
+
+.path-mod-pdfannotator .chat-message.mark {
+    border: 3px solid red !important;
+}
+
+.path-mod-pdfannotator .chat-message.correct {
+    border: 3px solid green !important;
+}
+
+.path-mod-pdfannotator .chat-message:not(.questioncomment) {
+    margin: 0 10px 10px 10px;
+}
+
+.path-mod-pdfannotator .chat-message.comment-list-item:not(.questions) {
+    display: flex;
+    padding-left: 0px !important;
+}
+
+.path-mod-pdfannotator .chat-message .wrappervotessolved {
+    text-align: center;
+}
+
+.path-mod-pdfannotator .chat-message .wrappervotessolved .solved .icon {
+    color: green !important;
+}
+
+.path-mod-pdfannotator .chat-message .wrappervotessolved .icon {
+    margin-right: 0px !important;
+}
+
+.path-mod-pdfannotator .chat-message:not(.questions) .icon {
+    color: #999999 !important;
+}
+
+.path-mod-pdfannotator .chat-message button:disabled .icon {
+    color: rgba(0,0,0,.15) !important;
+}
+
+.path-mod-pdfannotator .chat-message .time,
+.path-mod-pdfannotator .chat-message .edited { 
+    float: right;
+    font-size: 11px;
+    color: #777;
+}
+.path-mod-pdfannotator .chat-message .user {
+    font-weight: 700;
+}
+
+.path-mod-pdfannotator .chat-message button:not(.dropdown-item), .path-mod-pdfannotator #comment-nav button {
+    border-color: transparent;
+    background-color: transparent;
+}
+
+.path-mod-pdfannotator .chat-message.questioncomment {
+    margin: 0 0 10px 0;
+    background-color: #C7DDF2;
+}
+
+.path-mod-pdfannotator .chat-message.questions:not(.page) {
+    background-color: #c7ddf2;
+    color: rgb(0,84,159);
+}
+
+.path-mod-pdfannotator .chat-message.questions.page {
+    background-color: #dff0d8 !important;
+    border-color: #d0e9c6;
+    color: #3c763d;
+}
+
+.path-mod-pdfannotator .chat-message-text {
+    display: inline-block;
+    width: 100%;
+}
+
+.path-mod-pdfannotator :not(.questioncomment) > .chat-message-text p {
+    margin-bottom: 0;
+}
+
+.path-mod-pdfannotator .chat-message .dropdown {
+    float: right;
+}
+
+.path-mod-pdfannotator .chat-message #dropdownMenuButton {
+    padding-left: 5px;
+}
+
+.path-mod-pdfannotator .questionanswercount {
+    padding: 0px 2px 0px 2px;
+    margin: 0px;
+    border-radius: 8px;
+}
+
+.path-mod-pdfannotator .solvedicon {
+    padding-right: 3px;
+}
+
+.path-mod-pdfannotator .icon-wrapper {
+    float: right;
+}
+
+.path-mod-pdfannotator #anonymousLabel, .path-mod-pdfannotator #privateLabel, .path-mod-pdfannotator #protectedLabel {
+    margin-left: 5px;
+    margin-bottom: 0;
+}
+
+.path-mod-pdfannotator #comment-list-form > div {
+    margin: 5px 0px;
+    display: block;
+}
+
+.path-mod-pdfannotator #comment-list-form > div > * {
+    vertical-align: middle;
+}
+
+.path-mod-pdfannotator .helperLayer {
+    width: 100%;
+    height: 100%;
+
+}
+
+/*AnkerToolbar*/
+.path-mod-pdfannotator .fixtool {
+    position: fixed !important;
+    overflow-x: auto;
+    overflow-y: visible;
+    left: unset !important;
+    right: unset !important;
+}
+
+.path-mod-pdfannotator.fullscreenWrapper #region-main {
+    position: fixed ;
+    top: 0px;
+    left: 0px;
+    max-width: 100%;
+    width: 100%;
+    max-height: 100%;
+}
+
+.path-mod-pdfannotator.fullscreenWrapper #nav-drawer {
+    display: none;
+    visibility: hidden;
+}
+
+.path-mod-pdfannotator.fullscreenWrapper header {
+    display: none;
+    visibility: hidden;
+}
+
+.path-mod-pdfannotator.fullscreenWrapper nav {
+    display: none;
+    visibility: hidden;
+}
+
+.path-mod-pdfannotator.fullscreenWrapper #block-region-side-pre {
+    display: none;
+    visibility: hidden;
+}
+
+.path-mod-pdfannotator.fullscreenWrapper #page-footer {
+    display: none;
+    visibility: hidden;
+}
+
+.path-mod-pdfannotator.fullscreenWrapper .m-t-2.m-b-1,
+.path-mod-pdfannotator.fullscreenWrapper .m-t-1.m-b-1 {
+    display: none;
+    visibility: hidden;
+}
+
+.path-mod-pdfannotator #myarea, .path-mod-pdfannotator .chat-message textarea {
+    width: 100%;
+    height: 10em;
+}
+
+.path-mod-pdfannotator .cursor-area * {
+    cursor: crosshair;
+}
+
+.path-mod-pdfannotator .cursor-highlight {
+    cursor: url([[pix:pdfannotator|text_highlight_picker]]) 8 8, auto;
+}
+.path-mod-pdfannotator .cursor-strikeout {
+    cursor: url([[pix:pdfannotator|strikethrough]]) 8 8, auto;
+}
+.path-mod-pdfannotator .cursor-pen * {
+    cursor: url([[pix:pdfannotator|editstring]]) 0 12, auto !important;
+}
+.path-mod-pdfannotator .cursor-text * {
+    cursor: url([[pix:pdfannotator|text_color_picker]]) 0 0, auto !important;
+}
+.path-mod-pdfannotator .cursor-point * {
+    cursor: url([[pix:pdfannotator|pinbild]]) 8 16, auto !important;
+}
+.path-mod-pdfannotator .cursor-edit * {
+    cursor: pointer !important;
+}
+
+/******************************************** START: mainly for overview page *******************************************/
+
+/******************************** OPTION 4
+
+/*
+* Foundation v2.1.4 http://foundation.zurb.com */
+/* Artfully masterminded by ZURB  */
+
+/* --------------------------------------------------
+   Table of Contents
+-----------------------------------------------------
+:: Shared Styles
+:: Page Name 1
+:: Page Name 2
+*/
+
+
+/* -----------------------------------------
+   Shared Styles
+----------------------------------------- */
+
+/*table th { font-weight: bold; }
+table td, table th { padding: 9px 10px; text-align: left; }
+
+ Mobile
+@media only screen and (max-width: 767px) {
+
+        table.flexible { margin-bottom: 0; }
+
+        .pinned { position: absolute; left: 0; top: 0; background: #fff; width: 35%; overflow: hidden; overflow-x: scroll; border-right: 1px solid #ccc; border-left: 1px solid #ccc; }
+        .pinned table { border-right: none; border-left: none; width: 100%; }
+        .pinned table th, .pinned table td { white-space: nowrap; }
+        .pinned td:last-child { border-bottom: 0; }
+
+        div.table-wrapper { position: relative; margin-bottom: 20px; overflow: hidden; border-right: 1px solid #ccc; }
+        div.table-wrapper div.scrollable { margin-left: 35%; }
+        div.table-wrapper div.scrollable { overflow: scroll; overflow-y: hidden; }
+
+        table.flexible td, table.flexible th { position: relative; white-space: nowrap; overflow: hidden; }
+        table.flexible th:first-child, table.flexible td:first-child, table.flexible td:first-child, table.flexible.pinned td { display: none; }
+
+}*/
+
+/******************************** OPTION 3 */
+
+/*@media only screen and (min-width: 421px) and (max-width: 768px) {
+
+}*/
+
+@media only screen and (min-width: 421px) {
+    .path-mod-pdfannotator h2, .path-mod-pdfannotator .resettable.mdl-right {
+        display: inline !important;
+    }
+}
+
+@media only screen and (min-width: 670px) {
+    .path-mod-pdfannotator .resettable.mdl-right {
+        float: right;
+    }
+}
+
+/*@media only screen and (min-width: 1025px) {
+    #itemsPerPageWrapper {
+            margin-top: 1rem !important;
+    }
+}*/
+
+/*@media only screen and (min-width: 415px) and (max-width: 1024px) {
+}*/
+
+@media only screen and (max-width: 414px) {
+    #mod-pdfannotator-questions th:nth-child(2), #mod-pdfannotator-questions td:nth-child(2),
+    #mod-pdfannotator-questions th:nth-child(3), #mod-pdfannotator-questions td:nth-child(3),
+    #mod-pdfannotator-questions th:nth-child(4), #mod-pdfannotator-questions td:nth-child(4),
+    #mod-pdfannotator-questions th:nth-child(5), #mod-pdfannotator-questions td:nth-child(5),
+    #mod-pdfannotator-questions th:nth-child(6), #mod-pdfannotator-questions td:nth-child(6),
+    #mod-pdfannotator-answers th:nth-child(2), #mod-pdfannotator-answers td:nth-child(2),
+    #mod-pdfannotator-answers th:nth-child(3), #mod-pdfannotator-answers td:nth-child(3),
+    #mod-pdfannotator-answers th:nth-child(5), #mod-pdfannotator-answers td:nth-child(5),
+    #mod-pdfannotator-answers th:nth-child(6), #mod-pdfannotator-answers td:nth-child(6),
+    #mod-pdfannotator-ownposts th:nth-child(2), #mod-pdfannotator-ownposts td:nth-child(2),
+    #mod-pdfannotator-ownposts th:nth-child(3), #mod-pdfannotator-ownposts td:nth-child(3),
+    #mod-pdfannotator-ownposts th:nth-child(4), #mod-pdfannotator-ownposts td:nth-child(4),
+    #mod-pdfannotator-reports th:nth-child(2), #mod-pdfannotator-reports td:nth-child(2),
+    #mod-pdfannotator-reports th:nth-child(3), #mod-pdfannotator-reports td:nth-child(3),
+    #mod-pdfannotator-reports th:nth-child(4), #mod-pdfannotator-reports td:nth-child(4),
+    #mod-pdfannotator-reports th:nth-child(5), #mod-pdfannotator-reports td:nth-child(5),
+    .path-mod-pdfannotator .text {
+        display: none;
+        visibility: hidden;
+    }
+    .path-mod-pdfannotator #region-main-box {
+        padding-right: 0px;
+        padding-left: 0px;
+        /*overflow: visible;*/
+    }
+    .path-mod-pdfannotator .text_to_html {
+        word-break: break-all;
+    }
+    .path-mod-pdfannotator #itemsperpagewrapper {
+        display: block;
+    }
+}
+
+.path-mod-pdfannotator nav.pagination:nth-of-type(1) {
+    display: none;
+}
+
+/*Information for older browsers
+header, section, footer, aside, nav, main, article, figure {
+    display: block;
+}
+
+.path-mod-pdfannotator #itemsPerPage {
+    padding: 5px;
+}*/
+
+.path-mod-pdfannotator .dropdown-toggle.icon-no-margin {
+    text-decoration: none;
+}
+
+/* Dropdown Button */
+.path-mod-pdfannotator .dropbtn {
+    background-color: #3498DB;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* For mobile phones: */  /* Only overview tables. Not table in reportform */
+.path-mod-pdfannotator .flexible .header, .path-mod-pdfannotator .flexible .cell {
+    width: 100%;
+}
+
+/* Dropdown button on hover & focus */
+.path-mod-pdfannotator .dropbtn:hover, .path-mod-pdfannotator .dropbtn:focus {
+    background-color: #2980B9;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.path-mod-pdfannotator .dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.path-mod-pdfannotator .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 55;
+}
+
+/* Links inside the dropdown */
+.path-mod-pdfannotator .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.path-mod-pdfannotator .dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.path-mod-pdfannotator .dropdown [type="button"] {
+    -webkit-appearance: none;
+}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.path-mod-pdfannotator .show {
+    display: block;
+}
+
+.path-mod-pdfannotator a.morelink {
+    text-decoration: none !important;
+    outline: none;
+}
+
+.path-mod-pdfannotator .morecontent > span {
+    display: none;
+}
+
+.path-mod-pdfannotator .annotator {
+    text-decoration: none !important;
+}
+
+/******************************************** END: mainly for overview.mustache *******************************************/
+
+
+.path-mod-pdfannotator :disabled img {
+    opacity: 0.4;
+}
+
+.path-mod-pdfannotator #currentPage {
+    width: 50px;
+    text-align: right;
+}
+
+.path-mod-pdfannotator .pdfannotatornavbar.nav.nav-tabs.m-b-1 {
+    border-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.path-mod-pdfannotator #loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 99;
+    margin: -75px 0 0 -75px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Add animation to "page content" */
+.path-mod-pdfannotator .animate-bottom {
+    position: relative;
+    -webkit-animation-name: animatebottom;
+    -webkit-animation-duration: 1s;
+    animation-name: animatebottom;
+    animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+    from { bottom:-100px; opacity:0 }
+    to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom {
+    from { bottom:-100px; opacity:0 }
+    to { bottom:0; opacity:1 }
+}
+
+.path-mod-pdfannotator .pdfannotator-statistic #chart-container {
+    min-height: 500px;
+}
+
+.toolbaritem .pdfannotator_text {
+    display: inline-block;
+    visibility: visible;
+}

@@ -1,0 +1,40 @@
+<div class="pdfannotator-statistic">
+    
+    <div class="row">
+        <div class="col-md-6">
+            <table class = "generaltable table-bordered">
+                <thead>
+                    <tr>
+                        <th></th><th>{{#str}}in_document, pdfannotator{{/str}}</th><th>{{#str}}in_course, pdfannotator{{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#tabledata}}
+                        <tr>
+                            {{#row}} <td> {{{.}}} {{#xx}} miau? {{/xx}}</td> {{/row}}
+                        </tr>
+                    {{/tabledata}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-12">
+         <div id="chart_questions_answers" ></div> 
+      </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div id="chart-container">
+                <canvas id="myChart"></canvas> 
+            </div>
+
+        </div>
+    </div>
+    
+</div>
+

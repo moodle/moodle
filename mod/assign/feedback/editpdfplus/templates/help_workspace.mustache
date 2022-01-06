@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template assignfeedback_editpdfplus/help_workspace
+
+    Help template to teacher in its correction view. Descibe tools
+}}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>{{# str }} help_table_titlevisu, assignfeedback_editpdfplus {{/ str }}</th>
+            <th>{{# str }} help_table_titletype, assignfeedback_editpdfplus {{/ str }}</th>
+            <th>{{# str }} help_table_titleuse, assignfeedback_editpdfplus {{/ str }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align: center;"><button type="button" class="btn"><span style="text-decoration: underline;">TOOL</span></button></td>
+            <td>{{# str }} typetool_highlightplus, assignfeedback_editpdfplus {{/ str }}</td>
+            <td>{{# str }} help_highlight, assignfeedback_editpdfplus {{/ str }}</td>
+        </tr>
+        <tr>
+            <td style="text-align: center;"><button type="button" class="btn"><span style="text-decoration: underline;">|TOOL|</span></button></td>
+            <td>{{# str }} typetool_frame, assignfeedback_editpdfplus {{/ str }}</td>
+            <td>{{# str }} help_highlight, assignfeedback_editpdfplus {{/ str }}</td>
+        </tr>
+        <tr>
+            <td style="text-align: center;"><button type="button" class="btn">|TOOL</button></td>
+            <td>{{# str }} typetool_verticalline, assignfeedback_editpdfplus {{/ str }}</td>
+            <td>{{# str }} help_verticalline, assignfeedback_editpdfplus {{/ str }}</td>
+        </tr>
+        <tr>
+            <td style="text-align: center;"><button type="button" class="btn">TOOL</button></td>
+            <td>
+                {{# str }} typetool_stampplus, assignfeedback_editpdfplus {{/ str }}<br/>
+                {{# str }} typetool_stampcomment, assignfeedback_editpdfplus {{/ str }}<br/>
+                {{# str }} typetool_commentplus, assignfeedback_editpdfplus {{/ str }}
+            </td>
+            <td>{{# str }} help_stamp, assignfeedback_editpdfplus {{/ str }}</td>
+        </tr>
+    </tbody>
+</table>

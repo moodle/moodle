@@ -1,0 +1,20 @@
+diff --git a/mod/assign/feedback/editpdf/locallib.php b/mod/assign/feedback/editpdf/locallib.php
+index a9a74e5..b87f347 100644
+--- a/mod/assign/feedback/editpdf/locallib.php
++++ b/mod/assign/feedback/editpdf/locallib.php
+@@ -344,6 +344,15 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
+      * @return bool
+      */
+     public function is_enabled() {
++        // HACK : account for existence of mod_assignfeedback_editpdfplus BEGIN
++        global $CFG;
++        if (file_exists($CFG->dirroot . '/mod/assign/feedback/editpdfplus/version.php')) {
++            if ($this->assignment->get_context()) {
++                return !has_capability('assignfeedback/editpdfplus:use', $this->assignment->get_context(), null, false);
++            }
++            return false;
++        }
++        // HACK : account for existence of mod_assignfeedback_editpdfplus END
+         if ($this->enabledcache === null) {
+             $testpath = assignfeedback_editpdf\pdf::test_gs_path(false);
+             $this->enabledcache = ($testpath->status == assignfeedback_editpdf\pdf::GSPATH_OK);

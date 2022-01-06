@@ -1,0 +1,588 @@
+.assignfeedback_editpdfplus_widget .toolbar ul {
+    display: none;
+}
+
+.assignfeedback_editpdfplus_widget .toolbar li {
+    list-style-type: none;
+}
+.assignfeedback_editpdfplus_widget .drawingcanvas {
+    position: relative;
+    min-width: 817px;
+    min-height: 400px;
+    cursor: move;
+    background-repeat: no-repeat;
+    background-color: #ccc;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 1px 20px rgba(0, 0, 0, .2);
+}
+
+.assignfeedback_editpdfplus_widget .moodle-dialogue-bd .drawingregion {
+    position: inherit;
+}
+
+.assignfeedback_editpdfpdf_widget .drawingregion[data-currenttool=drag] .drawingcanvas {
+    cursor: move;
+}
+
+.assignfeedback_editpdfplus_widget .drawingregion[data-currenttool=select] .drawingcanvas {
+    cursor: default;
+}
+
+.assignfeedback_editpdfplus_infoicon {
+    display: none;
+}
+
+.assignfeedback_editpdf_widget .warningmessages {
+    position: absolute;
+    margin-left: 20px;
+    margin-right: 20px;
+    bottom: 20px;
+}
+
+.assignfeedback_editpdfplus_widget .drawingregion {
+    border: 1px solid #ccc;
+    overflow: scroll;
+    background-color: #ccc;
+    touch-action: none;
+    max-height: 600px;
+}
+
+.assignfeedback_editpdfplus_widget {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.assignfeedback_editpdfplus_widget .pageheader {
+    background-color: #ebebeb;
+    border-bottom: 1px solid #ccc;
+    padding: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+    min-height: 50px;
+    height: 52px;
+    overflow: auto;
+}
+
+.moodle-dialogue-base .moodle-dialogue.assignfeedback_editpdfplus_widget .moodle-dialogue-bd {
+    padding: 0;
+}
+
+.assignfeedback_editpdfplus_widget .assignfeedback_editpdfplus_unsavedchanges_edit.haschanges {
+    display: inline-block;
+}
+.assignfeedback_editpdfplus_widget .assignfeedback_editpdfplus_unsavedchanges_edit {
+    display: none;
+    position: absolute;
+    left: 20px;
+    top: 60px;
+}
+
+.yui3-colourpicker-hidden {
+    display: none;
+}
+
+.lineplusbutton,
+.lineplusbutton:hover {
+    text-decoration: line-through;
+}
+
+.assignfeedback_editpdfplus_widget .pageheader button img {
+    padding-top: 3px;
+    vertical-align: top;
+}
+.assignfeedback_editpdfplus_widget .pageheader button:active {
+    background-color: #ccc;
+}
+.assignfeedback_editpdfplus_widget .pageheader select,
+.assignfeedback_editpdfplus_widget .pageheader button {
+    background: none;
+    padding: 0 7px;
+    border: 0;
+    border-radius: 0;
+    margin: 0;
+    height: 30px;
+    vertical-align: top;
+    cursor: pointer;
+}
+.assignfeedback_editpdfplus_widget .pageheader select {
+    vertical-align: top;
+    -webkit-appearance: none;
+    -moz-appearance: menulist-text;
+    background-color: #fff;
+    padding: 0 2px;
+}
+.assignfeedback_editpdfplus_widget .pageheader select::-ms-expand {
+    display: none;
+}
+
+.assignfeedback_editpdfplus_widget .pageheader .navigation button + button,
+.assignfeedback_editpdfplus_widget .pageheader .toolbar button + button,
+.assignfeedback_editpdfplus_widget .pageheader .navigation select + button,
+.assignfeedback_editpdfplus_widget .pageheader .toolbar select + button {
+    border-left: 1px solid #ccc;
+    border-right: 0;
+}
+
+.assignfeedback_editpdfplus_widget .pageheader .navigation button {
+    border-right: 1px solid #ccc;
+}
+
+.assignfeedback_editpdfplus_widget .pageheader .toolbar,
+.assignfeedback_editpdfplus_widget .pageheader .navigation-search,
+.assignfeedback_editpdfplus_widget .pageheader .navigation {
+    border: 1px solid #ccc;
+    border-bottom-color: #b3b3b3;
+    border-radius: 4px;
+    margin: 10px 4px;
+    background-color: white;
+    height: 30px;
+    line-height: 30px;
+    padding: 0;
+}
+
+.assignfeedback_editpdfplus_commentsearch ul {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 1em;
+}
+.assignfeedback_editpdfplus_commentsearch ul li pre {
+    background-color: #efefef;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.assignfeedback_editpdfplus_commentsearch ul li pre:hover {
+    background-color: #ddd;
+}
+.assignfeedback_editpdfplus_commentsearch ul li {
+    margin: 2px;
+}
+.assignfeedback_editpdfplus_commentsearch a pre {
+    font-family: helvetica;
+    margin: 0;
+    padding: 4px;
+}
+
+.assignfeedback_editpdfplus_widget .navigation-search,
+.assignfeedback_editpdfplus_widget .navigation {
+    float: left;
+}
+.assignfeedback_editpdfplus_widget .toolbar button {
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+}
+.assignfeedback_editpdfplus_widget .toolbar {
+    float: right;
+}
+.assignfeedback_editpdfplus_widget .navigation,
+.assignfeedback_editpdfplus_widget .navigation-search,
+.assignfeedback_editpdfplus_widget .toolbar {
+    display: inline-block;
+}
+
+.assignfeedback_editpdfplus_widget .bar {
+    width: 0%;
+}
+
+.assignfeedback_editpdfplus_widget div.helpmessage {
+    display: none;
+}
+
+.assignfeedback_editpdfplus_widget .btn-toolbar {
+    min-height: 50px;
+}
+
+.assignfeedback_editpdfplus_colourpicker ul {
+    margin: 0;
+}
+
+.assignfeedback_editpdfplus_dropdown button {
+    border: 0;
+    background: none;
+    padding: 6px 7px;
+    border-radius: 0;
+    border-top: 1px solid #ccc;
+}
+.assignfeedback_editpdfplus_dropdown li:first-child button {
+    border-top: 0;
+}
+.moodle-dialogue-base .moodle-dialogue.assignfeedback_editpdfplus_dropdown .moodle-dialogue-wrap {
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    border-radius: 4px;
+}
+.moodle-dialogue-base .moodle-dialogue.assignfeedback_editpdfplus_dropdown .moodle-dialogue-bd {
+    padding: 0;
+}
+.moodle-dialogue-base .assignfeedback_editpdfplus_dropdown .moodle-dialogue-wrap .moodle-dialogue-hd,
+.moodle-dialogue-base .assignfeedback_editpdfplus_dropdown .moodle-dialogue-wrap .moodle-dialogue-ft {
+    display: none;
+}
+.assignfeedback_editpdfplus_menu li hr {
+    margin: 0;
+}
+.assignfeedback_editpdfplus_menu li a {
+    text-decoration: none;
+    color: #555;
+    margin: 10px;
+}
+.assignfeedback_editpdfplus_menu li:hover {
+    background-color: #ebebeb;
+}
+ul.assignfeedback_editpdfplus_menu {
+    margin: 0;
+    max-height: 40vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-left: 0;
+}
+.assignfeedback_editpdfplus_menu li {
+    list-style-type: none;
+    margin: 0;
+    border-radius: 4px;
+}
+.assignfeedback_editpdfplus_menu li img {
+    height: auto;
+}
+.assignfeedback_editpdfplus_menu li button {
+    margin: 0;
+    background: none;
+}
+
+.assignfeedback_editpdfplus_widget .pageheader button:hover {
+    background-color: #ebebeb;
+    background-image: radial-gradient(ellipse at center, #fff 60%, #dfdfdf 100%);
+}
+
+.assignfeedback_editpdfplus_widget .commentdrawable img {
+    padding: 1px;
+}
+
+.assignfeedback_editpdfplus_widget .commentdrawable a {
+    float: right;
+    position: relative;
+    left: -17px;
+    top: 2px;
+    height: 14px;
+    background-color: white;
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    line-height: 14px;
+}
+
+.assignfeedback_editpdfplus_widget .commentdrawable textarea {
+    padding: 4px;
+    padding-right: 20px;
+    resize: none;
+    overflow: hidden;
+    color: black;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: helvetica;
+    min-height: 1.2em;
+}
+
+.assignfeedback_editpdfplus_widget .commentdrawable {
+    display: inline-block;
+}
+
+.assignfeedback_editpdfplus_widget .drawingcanvas .loading .progressbarlabel {
+    text-align: center;
+}
+
+.hideoverflow {
+    overflow: hidden;
+    position: relative;
+}
+
+@media (max-width: 960px) {
+    .assignfeedback_editpdfplus_widget .pageheader {
+        height: 104px;
+    }
+
+    .assignfeedback_editpdfplus_widget .drawingregion {
+        top: 104px;
+    }
+}
+
+@media (max-width: 767px) {
+    .assignfeedback_editpdfplus_widget .drawingregion {
+        position: relative;
+        margin-bottom: 1em;
+        top: 0;
+        max-height: 312px;
+    }
+
+    .assignfeedback_editpdfplus_widget .pageheader {
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .assignfeedback_editpdfplus_widget .pageheader {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
+/*** add editpdfplus ***/
+.highlightplusbutton,
+.highlightplusbutton:hover {
+    text-decoration: underline;
+}
+.framebutton,
+.framebutton:hover {
+    text-decoration: underline;
+}
+
+.assignfeedback_editpdfplus_hightlightplus,
+.assignfeedback_editpdfplus_frame,
+.assignfeedback_editpdfplus_verticalline,
+.assignfeedback_editpdfplus_stampcomment,
+.assignfeedback_editpdfplus_commentplus {
+    position: absolute;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 10px;
+    background-color: #fffeeb;
+    padding: 0;
+    line-height: normal;
+    display: inline-block;
+}
+.assignfeedback_editpdfplus_highlightplus_cartridge,
+.assignfeedback_editpdfplus_frame_cartridge,
+.assignfeedback_editpdfplus_verticalline_cartridge,
+.assignfeedback_editpdfplus_stampcomment_cartridge,
+.assignfeedback_editpdfplus_commentplus_cartridge {
+    display: inline;
+    border-right-width: 2px;
+    border-right-style: solid;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+    font-size: 10px;
+}
+.assignfeedback_editpdfplus_highlightplus_conteneur,
+.assignfeedback_editpdfplus_frame_conteneur,
+.assignfeedback_editpdfplus_verticalline_conteneur,
+.assignfeedback_editpdfplus_stampcomment_conteneur,
+.assignfeedback_editpdfplus_commentplus_conteneur {
+    display: inline;
+    margin: 0;
+    margin-right: 4px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.assignfeedback_editpdfplus_highlightplus_conteneur > button,
+.assignfeedback_editpdfplus_frame_conteneur > button,
+.assignfeedback_editpdfplus_verticalline_conteneur > button,
+.assignfeedback_editpdfplus_stampcomment_conteneur > button,
+.assignfeedback_editpdfplus_commentplus_conteneur > button {
+    margin-left: 2px;
+    padding: 0;
+    height: 20px;
+}
+.assignfeedback_editpdfplus_widget .aepp-toolbar,
+.assignfeedback_editpdfplus_widget_admin .aepp-toolbar {
+    height: 20px;
+}
+.assignfeedback_editpdfplus_widget .aepp-toolbar .btn-sm,
+.assignfeedback_editpdfplus_widget_admin .aepp-toolbar .btn-sm {
+    padding: 0 2px;
+}
+.assignfeedback_editpdfplus_widget .aepp-toolbar-vertical,
+.assignfeedback_editpdfplus_widget_admin .aepp-toolbar-vertical {
+    width: 100%;
+}
+.assignfeedback_editpdfplus_widget .aepp-toolbar-vertical .btn,
+.assignfeedback_editpdfplus_widget_admin .aepp-toolbar-vertical .btn {
+    font-size: small;
+}
+
+.assignfeedback_editpdfplus_widget_admin_div_axis {
+    min-width: 350px;
+}
+
+.assignfeedback_editpdfplus_highlightplus_input,
+.assignfeedback_editpdfplus_frame_input,
+.assignfeedback_editpdfplus_verticalline_input,
+.assignfeedback_editpdfplus_stampcomment_input,
+.assignfeedback_editpdfplus_commentplus_input {
+    display: inline;
+    padding-left: 2px;
+    padding-right: 2px;
+    font-size: 10px;
+}
+.assignfeedback_editpdfplus_commentplus_input > table {
+    width: 200px;
+    z-index: 51;
+}
+.assignfeedback_editpdfplus_highlightplus_edition,
+.assignfeedback_editpdfplus_frame_edition,
+.assignfeedback_editpdfplus_verticalline_edition,
+.assignfeedback_editpdfplus_stampcomment_edition,
+.assignfeedback_editpdfplus_commentplus_edition {
+    padding-left: 2px;
+    padding-right: 2px;
+    font-size: 12px;
+}
+.assignfeedback_editpdfplus_highlightplus_edition > div,
+.assignfeedback_editpdfplus_frame_edition > div,
+.assignfeedback_editpdfplus_verticalline_edition > div,
+.assignfeedback_editpdfplus_stampcomment_edition > div,
+.assignfeedback_editpdfplus_commentplus_edition > div {
+    width: 220px;
+}
+.assignfeedback_editpdfplus_highlightplus_edition > div > p,
+.assignfeedback_editpdfplus_frame_edition > div > p,
+.assignfeedback_editpdfplus_verticalline_edition > div > p,
+.assignfeedback_editpdfplus_stampcomment_edition > div > p,
+.assignfeedback_editpdfplus_commentplus_edition > div > p {
+    margin: 0;
+    width: 195px;
+}
+.assignfeedback_editpdfplus_highlightplus_visu,
+.assignfeedback_editpdfplus_frame_visu,
+.assignfeedback_editpdfplus_verticalline_visu,
+.assignfeedback_editpdfplus_stampcomment_visu,
+.assignfeedback_editpdfplus_commentplus_visu {
+    padding-left: 2px;
+    padding-right: 2px;
+    font-size: 12px;
+    color: inherit;
+    cursor: default;
+}
+
+.radio-inline {
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 400;
+    margin-bottom: 0;
+    position: relative;
+    vertical-align: middle;
+    font-size: 12px;
+}
+
+.assignfeedback_editpdfplus_widget_admin .card {
+    margin-bottom: 4px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+}
+.assignfeedback_editpdfplus_widget_admin .card {
+    border-color: #ddd;
+}
+.assignfeedback_editpdfplus_widget_admin .card > .card-header {
+    color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+}
+.assignfeedback_editpdfplus_widget_admin .card-header {
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.assignfeedback_editpdfplus_widget_admin .card-body {
+    padding: 15px;
+}
+.assignfeedback_editpdfplus_widget_admin .card-header button,
+.assignfeedback_editpdfplus_widget_admin .card-header > a {
+    color: black;
+}
+.assignfeedback_editpdfplus_widget_admin table {
+    width: 100%;
+}
+.assignfeedback_editpdfplus_widget_admin_col1 {
+    width: 17%;
+    vertical-align: top;
+}
+.assignfeedback_editpdfplus_widget_admin_col2 {
+    padding-left: 20px;
+    vertical-align: top;
+}
+#message_edit_tool {
+    margin-top: 10px;
+    margin-bottom: 0;
+    display: none;
+    width: 50%;
+}
+#editpdlplus_tool_item {
+    margin-top: 15px;
+}
+#editpdlplus_tool_label {
+    cursor: default;
+}
+.assignfeedback_editpdfplus_widget_admin_tool_col2 {
+    padding-left: 15px;
+    width: 50%;
+    vertical-align: top;
+}
+.assignfeedback_editpdfplus_widget_admin_tool_col1 {
+    width: 50%;
+    vertical-align: top;
+}
+.assignfeedback_editpdfplus_widget_admin_tool_row {
+    padding-top: 20px;
+}
+#toolworkspace label {
+    width: 100%;
+}
+#toolworkspace .drawingcanvas {
+    background-repeat: no-repeat;
+    border-width: 1px;
+    border-style: solid;
+    height: 330px;
+    box-sizing: border-box;
+}
+.assignfeedback_editpdfplus_resize{
+    position: absolute;
+}
+.assignfeedback_editpdfplus_resize_active {
+    background-color:#e3e3ff;
+    border: solid #ccccff;
+}
+.assignfeedback_editpdfplus_resize_horizontal.assignfeedback_editpdfplus_resize_active:hover {
+    cursor:col-resize;
+}
+.assignfeedback_editpdfplus_resize_vertical.assignfeedback_editpdfplus_resize_active:hover {
+    cursor:row-resize;
+}
+
+/* Tooltip text */
+.costumtoolbarbutton .assignfeedback_editpdfplus_tooltiptext {
+    visibility: hidden;
+    min-width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+    margin-top: 5px;
+
+    /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+    opacity: 0;
+    transition: opacity 1s;
+}
+/* Show the tooltip text when you mouse over the tooltip container */
+.costumtoolbarbutton:hover .assignfeedback_editpdfplus_tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

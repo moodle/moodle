@@ -1,0 +1,179 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template assignfeedback_editpdfplus/admin
+
+    Admin template for manage axis.
+
+    Context variables required for this template:
+    * context - Context id
+    * axisimportform - Moodle form to import an axis
+    * modeldeleteform
+    * axisdeleteform
+    * toolbars - All toolbars for the current course
+    * axis - All axis for the current coure
+    * toollibs - All avaibled type's tool
+    * toolbarsDispo - All toolbars which can be import by the current user
+}}
+
+<div class="assignfeedback_editpdfplus_widget_admin">                                                                                                             
+    <h5>{{# str }} adminsubtitle, assignfeedback_editpdfplus {{/ str }}</h5> 
+
+    <ul class="nav nav-tabs m-b-2">
+        <li class="nav-item">
+            <a class="nav-link {{#model}}active{{/model}}" data-toggle="tab" href="#import">{{# str }} adminaxisimporttitle, assignfeedback_editpdfplus {{/ str }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{^model}}active{{/model}}" data-toggle="tab" href="#currenttoolbar">{{# str }} admincurrenttoolbar, assignfeedback_editpdfplus {{/ str }}</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane container {{#model}}active{{/model}}{{^model}}fade{{/model}}" id="import">
+            {{# str }} adminaxisimport, assignfeedback_editpdfplus {{/ str }}
+            {{{ axisimportform.render }}}
+            {{{ modeldeleteform.render }}}
+            <div id="message_del_modal" class="alert" style="display:none;"></div>
+            <table class='table table-bordered table-striped'>
+                <thead>
+                    <tr>
+                        <th>{{# str }} adminaxisimport_name, assignfeedback_editpdfplus {{/ str }}</th>
+                        <th>{{# str }} adminaxisimport_tool, assignfeedback_editpdfplus {{/ str }}</th>
+                        <th>{{# str }} adminaxisimport_action, assignfeedback_editpdfplus {{/ str }}</th>
+                        <th>{{# str }} adminaxisimport_delete, assignfeedback_editpdfplus {{/ str }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{# toolbarsDispo }}
+                    <tr>
+                        <td>{{model.label}}</td>
+                        <td>
+                            <div class="btn-group">
+                                {{# tools }}
+                                <button class="btn" style="{{style}}">
+                                    {{label}}
+                                </button>
+                                {{/ tools }}
+                            </div>
+                        </td>
+                        <td>
+                            <button class='btn btn-primary btn-sm btnimport' data-axis='{{axis.id}}'><i class='fa fa-download'></i></button>
+                        </td>
+                        <td>
+                            <button class='btn btn-danger btn-sm btnimportdel' data-model='{{model.id}}'><i class='fa fa-remove'></i></button>
+                        </td>
+                    </tr>
+                    {{/ toolbarsDispo }}
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="tab-pane container {{#model}}fade{{/model}}{{^model}}active{{/model}}" id="currenttoolbar">
+            {{{ axisdeleteform.render }}}
+            <div id="message_import_axis" class="alert" style="display:none;"></div>
+            <div id="message_export_axis" class="alert" style="display:none;"></div>
+            <div id="message_order_tool" class="alert" style="display:none;"></div>
+            <table>
+                <tr>
+                    <td class='assignfeedback_editpdfplus_widget_admin_col1'>
+                        <h6>
+                            {{# str }} adminaxis, assignfeedback_editpdfplus {{/ str }}
+                            <button type="button" class="btn" id="assignfeedback_editpdfplus_widget_admin_button_addaxis">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </h6>
+                    </td>
+                    <td id='assignfeedback_editpdfplus_widget_admin_toolheader' class='assignfeedback_editpdfplus_widget_admin_col2'>
+                        <h6>
+                            {{# str }} admintools, assignfeedback_editpdfplus {{/ str }}
+                            <button type="button" class="btn" id="assignfeedback_editpdfplus_widget_admin_button_addtool">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </h6>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr id='assignfeedback_editpdfplus_widget_admin_workspace'>
+                    <td  id='editpdlplus_axes_worspace' class='assignfeedback_editpdfplus_widget_admin_col1'>
+                        <select id='editpdlplus_axes' class='form-control'>
+                            {{# axis }}
+                            <option value="{{id}}" data-delete="{{containannotations}}" data-nbtool="{{children}}">{{label}}</option>
+                            {{/ axis }}
+                        </select>
+                        <div class="card" id="axistool">
+                            <div class="card-body" style="text-align: center;">
+                                <button type="button" class="btn" id="assignfeedback_editpdfplus_widget_admin_button_editaxis">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" class="btn" id="assignfeedback_editpdfplus_widget_admin_button_exportaxis">
+                                    <i class="fa fa-upload" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger" id="assignfeedback_editpdfplus_widget_admin_button_delaxis">
+                                    <i class="fa fa-remove" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex">
+                            <div id='assignfeedback_editpdfplus_widget_admin_toolworkspace' class='assignfeedback_editpdfplus_widget_admin_col2 w-100'>
+                                <div id='editpdlplus_toolbars'>
+                                    {{# toolbars }}
+                                    <div id="editpdlplus_toolbar_{{axis.id}}" class="btn-group toolbar sortable" style="display: none;width: 100%;">
+                                        <ul class="sortable" style="list-style-type: none;margin: 0;padding: 0;width: 100%;">
+                                            {{# tools }}
+                                            <li style="float: left;display: block;">
+                                                <button class="btn {{button}} editpdlplus_tool" id="editpdlplus_tool_{{id}}" value="{{id}}" style="{{style}}" data-enable="{{enabled}}">
+                                                    {{label}}
+                                                </button>
+                                            </li>
+                                            {{/ tools }}
+                                        </ul>
+                                    </div>
+                                    {{/ toolbars }}
+                                </div>
+                                {{{ toolorderform.render }}}
+
+                                <div class="alert" id="message_edit_tool"></div>
+
+                                <div id="editpdlplus_tool_item"></div>
+                            </div>
+                            <div id="assignfeedback_editpdfplus_widget_admin_div_axis" style="display:none;" class="assignfeedback_editpdfplus_widget_admin_div_axis">
+                                <div id="assignfeedback_editpdfplus_widget_admin_div_addaxis" style="display:none;" class="card w-100 ml-2 border-primary">
+                                </div>
+                                <div id="assignfeedback_editpdfplus_widget_admin_div_editaxis" style="display:none;" class="card w-100 ml-2 border-primary">
+                                </div>
+                                <div id="assignfeedback_editpdfplus_widget_admin_div_delaxis" style="display:none;" class="card w-100 ml-2 border-primary">
+                                </div>
+                                <div id="assignfeedback_editpdfplus_widget_admin_div_exportaxis" style="display:none;" class="card w-100 ml-2 border-primary">
+                                </div>
+                            </div>   
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{{# js }}
+require(['assignfeedback_editpdfplus/admin_panel'], function(AdminPanel) {
+var adminpanel = new AdminPanel({{context.id}},'{{{toollibs}}}');
+});
+{{/ js }}

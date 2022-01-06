@@ -1,0 +1,161 @@
+<!--working:-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>-->
+
+<div id='pdfannotator_index' class='pdfannotator_index'>
+
+    <div class="row">
+        <div id="pdftoolbar" class="toolbar col-md-12">
+            <div id="toolbarContent"> 
+                <button id="pdfannotator_cursor" class="cursor" type="button" title="Cursor" data-tooltype="cursor"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i></button>
+                <div class="spacer"></div>
+                <button class="comment" type="button" title="{{# str }} point, pdfannotator {{/ str }}" data-tooltype="point">{{# pix }}pinbild,pdfannotator, {{# str }} point, pdfannotator {{/ str }} {{/ pix}}</button>           
+                <button class="pdfannotator_rectangle" type="button" title="{{# str }} rectangle, pdfannotator {{/ str }}" data-tooltype="area">{{# pix }}i/completion-manual-n,core, {{# str }} rectangle, pdfannotator {{/ str }} {{/ pix}}</button>
+                <button class="pdfannotator_highlight" type="button" title="{{# str }} highlight, pdfannotator {{/ str }}" data-tooltype="highlight">{{# pix }}text_highlight_picker,pdfannotator, {{# str }} highlight, pdfannotator {{/ str }} {{/ pix}}</button>
+                <button class="pdfannotator_strikeout" type="button" title="{{# str }} strikeout, pdfannotator {{/ str }}" data-tooltype="strikeout">{{# pix }}strikethrough,pdfannotator, {{# str }} strikeout, pdfannotator {{/ str }} {{/ pix}}</button>
+                <div class="spacer"></div>
+
+                {{#usestudenttextbox}}
+                    <span class="toolbaritem">
+                        <button class="text" type="button" title="{{# str }} text, pdfannotator {{/ str }}" data-tooltype="text">{{# pix }}text_color_picker,pdfannotator, {{# str }} text, pdfannotator {{/ str }} {{/ pix}}</button>
+                        <select class="text-size"></select>
+                        <div class="text-color"></div>
+                    </span>
+                    <div class="spacer"></div>
+                {{/usestudenttextbox}}
+
+                {{#usestudentdrawing}}
+                    <span class="toolbaritem">
+                        <button class="pen" type="button" title="{{# str }} drawing, pdfannotator {{/ str }}" data-tooltype="draw">{{# pix }}editstring,pdfannotator, {{# str }} drawing, pdfannotator {{/ str }} {{/ pix}}</button>
+                        <select class="pen-size"></select>
+                        <div class="pen-color"></div>
+                    </span>
+                    <div class="spacer"></div>
+                {{/usestudentdrawing}}
+
+                <span class="toolbaritem">
+                    <button id="scaleMinus" class="" title="{{# str }} zoomout, pdfannotator {{/ str }}" alt="{{# str }} zoomout, pdfannotator {{/ str }}">
+                        <i class="icon fa fa-minus-circle fa-lg" title="{{# str }} zoomout, pdfannotator {{/ str }}" alt="{{# str }} zoomout, pdfannotator {{/ str }}"></i>
+                    </button><!--
+                 --><button id="scalePlus" class="" title="{{# str }} zoomin, pdfannotator {{/ str }}" alt="{{# str }} zoomin, pdfannotator {{/ str }}">
+                        <i class="icon fa fa-plus-circle fa-lg" title="{{# str }} zoomin, pdfannotator {{/ str }}" alt="{{# str }} zoomin, pdfannotator {{/ str }}"></i>
+                    </button>
+                </span>
+                <select class="scale" title="{{# str }} zoom, pdfannotator {{/ str }}">
+                    <option value="0.5">50%</option>
+                    <option value="0.75">75%</option>
+                    <option value="1">100%</option>
+                    <option value="1.33">133%</option>
+                    <option value="1.5">150%</option>
+                    <option value="2">200%</option>
+                </select>
+
+                <!--<a href="javascript://" class="rotate-ccw" title="Rotate Counter Clockwise">⟲</a>-->
+                <!--<a href="javascript://" class="rotate-cw" title="Rotate Clockwise">⟳</a>-->
+
+                <div class="spacer"></div>
+
+                <a href="javascript://" class="hideComments" title="{{# str }} hideAnnotations, pdfannotator {{/ str }}"><img class="icon " alt="{{# str }} hideAnnotations, pdfannotator {{/ str }}" title="{{# str }} hideAnnotations, pdfannotator {{/ str }}" src={{{pixhide}}}></a><!--"/moodle/theme/image.php/clean/core/1504678549/e/accessibility_checker"-->
+                <a href="javascript://" title="{{# str}}fullscreen,pdfannotator{{/str}}" onclick="makeFullScreen()">{{# pix}}fullscreen,pdfannotator,{{# str}}fullscreen,pdfannotator{{/str}}{{/ pix}}</a>
+                <div class="spacer"></div>
+
+                <span class="toolbaritem">
+                    <button id="prevPage" class="" title="{{# str }} prevPage, pdfannotator {{/ str }}" alt="{{# str }} prevPage, pdfannotator {{/ str }}">
+                        <i class="icon fa fa-arrow-circle-up fa-lg" title="{{# str }} prevPage, pdfannotator {{/ str }}" alt="{{# str }} prevPage, pdfannotator {{/ str }}"></i>
+                    </button><!--
+                  --><button id="nextPage" class="" title="{{# str }} nextPage, pdfannotator {{/ str }}" alt="{{# str }} nextPage, pdfannotator {{/ str }}">
+                        <i class="icon fa fa-arrow-circle-down fa-lg" title="{{# str }} nextPage, pdfannotator {{/ str }}" alt="{{# str }} nextPage, pdfannotator {{/ str }}"></i>
+                     </button>
+                    <input id="currentPage" title="{{# str }} currentPage, pdfannotator {{/ str }}" type="number" min="1" value="1"> / 
+                    <span id="sumPages" title="{{# str }} sumPages, pdfannotator {{/ str }}">1</span>
+                </span>
+
+                <div class="spacer"></div>
+
+                {{#useprint}}
+                    <span class="toolbaritem">
+                        <button id="pdfannotator_print_button" class="pdfannotator_print" type="button" title="{{# str }} print, pdfannotator {{/ str }}">
+                            <img src='{{{pixprintdoc}}}' alt='{{# str }} print, pdfannotator {{/ str }}'>
+                        </button>
+                        <div id="myprinturl" hidden>{{printlink}}</div>
+                    </span>
+                {{/useprint}}
+                {{#useprintcomments}}
+                    <button id="pdfannotator_printannotations_button" class="pdfannotator_print" type="button" title="{{# str }} printwithannotations, pdfannotator {{/ str }}">
+                        <img src='{{{pixprintcomments}}}' alt='{{# str }} printwithannotations, pdfannotator {{/ str }}'>
+                    </button>
+                {{/useprintcomments}}
+
+                <button id="toolbar-dropdown-button" class="pdf-annotator-hidden" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="icon fa fa-bars fa-lg"></i>
+                </button>
+            </div>    
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <div id="toolbar-dropdown-content" class="row">
+                     </div>     
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+  
+    <div class="row-fluid row" id="body-wrapper">
+        <div class="span8 col-lg-8" id="content-wrapper">
+            <div id="viewer" class="pdfViewer"></div>
+        </div>
+        <div class="span4 col-lg-4" id="comment-wrapper">
+                <h4>{{# str }} questionstitle, pdfannotator {{/ str }}</h4>
+                <div id="comment-nav">
+                    <button id="allQuestions" class="btn-link" title="{{#str}}allquestionsimgtitle, pdfannotator{{/str}}">
+                        <i title="{{#str}}allquestionsimgtitle, pdfannotator{{/str}}" class="icon fa fa-book fa-fw"></i>
+                    </button>
+                    <button id="questionsOnThisPage" class="btn-link" title="{{#str}}questionsimgtitle, pdfannotator{{/str}}">
+                        <i title="{{#str}}questionsimgtitle, pdfannotator{{/str}}" class="icon fa fa-comments fa-fw"></i>
+                    </button>
+                    <button id="searchButton" class="btn-link" title="{{# str }} search, pdfannotator {{/ str }}" alt="{{# str }} search, pdfannotator {{/ str }}">
+                        <i class="icon fa fa-search fa-fw" title="{{# str }} search, pdfannotator {{/ str }}" alt="{{# str }} search, pdfannotator {{/ str }}"></i>
+                    </button>
+                    <form id="searchForm">
+                        <input type="search" id="searchPattern" class="form-control" name="pattern" placeholder="{{#str}}search, pdfannotator{{/str}}">      
+                        <button type="submit" id="searchClear">
+                            <i class="icon fa fa-times fa-fw"></i>
+                        </button>
+                    </form>                    
+                </div>
+            <div class="comment-list">
+                <div class="comment-list-container">
+
+                </div>
+                <form id="comment-list-form" class="comment-list-form" style="display:none;">
+
+                    <textarea id="myarea" placeholder="{{# str }} addAComment, pdfannotator {{/ str }}" cols="40" rows="3"></textarea>                 
+
+                    <div id="anonymousDiv" class="row-fluid row">
+                        <input type="checkbox" name="visibility" value="anonymous" id="anonymousCheckbox" class="pdfannotator-radio" style="width:auto;"><label id="anonymousLabel" for="anonymousCheckbox">{{# str }} sendAnonymous, pdfannotator {{/ str }}</label>
+                    </div>
+                    {{# useprivatecomments }}
+                    <div id="privateDiv" class="row-fluid row">
+                        <input type="checkbox" name="visibility" value="private" id="privateCheckbox" class="pdfannotator-radio" style="width:auto;">
+                        <label id="privateLabel" for="privateCheckbox">{{# str }} sendPrivate, pdfannotator {{/ str }}</label> {{{privatehelpicon}}}
+                    </div>
+                    {{/ useprivatecomments }}
+                    {{# useprotectedcomments }}
+                    <div id="protectedDiv" class="row-fluid row">
+                        <input type="checkbox" name="visibility" value="protected" id="protectedCheckbox" class="pdfannotator-radio" style="width:auto;">
+                        <label id="protectedLabel" for="protectedCheckbox">{{# str }} sendProtected, pdfannotator {{/ str }} </label> {{{protectedhelpicon}}}
+                    </div>
+                    {{/ useprotectedcomments }}
+                                       
+                    <input id="commentSubmit" class="owner btn btn-primary mb-1" type="submit" value="{{# str }} answerButton, pdfannotator {{/ str }}">
+                    <input id="commentCancel" class="owner btn btn-secondary" type="reset" value="{{# str }} cancelButton, pdfannotator {{/ str }}" >
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+

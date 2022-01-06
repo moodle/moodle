@@ -1,0 +1,78 @@
+{{# comments }}
+    <div class="{{ wrapperClass }} {{dimmed}}" id="comment_{{ uuid }}">
+
+        <div class="wrappervotessolved">
+            <div class="solved">{{#solvedicon}} <i class="{{classes}}" title="{{title}}"></i> {{/solvedicon}}</div>
+            <button class="comment-like-a btn-link" title="{{ voteBtn }}" alt="{{ voteBtn }}">
+                <i class="icon fa fa-chevron-up fa-lg" title="{{ voteBtn }}" alt="{{ voteBtn }}"></i>
+            </button>
+            {{^ isdeleted }} {{# usevotes }}
+                <div class="countVotes" title="{{ voteTitle }}"> {{{ votes }}} </div>
+            {{/ usevotes }} {{/ isdeleted }}
+        </div>
+ 
+        <div class="chat-message-container">
+
+            <div class="chat-message-meta">
+                {{# dropdown }}
+                    <div class="dropdown">          
+                        <a class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i title="{{# str }} actiondropdown, pdfannotator {{/ str }}" class="icon fa fa-cog fa-fw"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            {{# report }}
+                                <span class="comment-report-button">
+                                    <form action="view.php" method="POST">
+                                        <input type="hidden" name="coursemodule" value="{{ cm }}">
+                                        <input type="hidden" name="commentid" value="{{ uuid }}">
+                                        <input type="hidden" name="action" value="report">
+                                        <input type="hidden" name="id" value="{{ cmid }}">
+                                            <button class="dropdown-item comment-report-a" title="{{# str }} toreport, pdfannotator {{/ str }}">
+                                                {{# pix }}flagged,pdfannotator, {{# str }} toreport, pdfannotator {{/ str }} {{/ pix}} {{# str }} toreport, pdfannotator {{/ str }}                                     
+                                            </button>
+                                    </form>
+                                </span>
+                            {{/ report }}
+                            {{#buttons}}
+                                    <button class="dropdown-item {{classes}}" type=button {{#attributes}} {{name}}="{{&value}}"{{/attributes}}>
+                                        {{#moodleicon}} {{#pix}} {{key}},{{component}},{{title}} {{/pix}} {{/moodleicon}}
+                                        {{#faicon}} <i class=" icon fa {{class}} fa-fw"></i> {{/faicon}}
+                                        <span class="menu-action-text">
+                                            {{text}}
+                                        </span>
+                                    </button>
+                            {{/buttons}}
+                        </div>
+                    </div>
+                {{/ dropdown }}
+                {{^ isdeleted }}  
+                    <span class="time"> {{ timecreated }} </span>
+                    <span class="user"> {{ username }} </span>
+                {{/ isdeleted }}
+            </div>
+           
+            <div class="chat-message-text">
+                <div id="chatmessage{{ uuid }}">{{{ content }}}</div>
+                
+                {{#displayhidden}}<span id="taghidden{{uuid}}" class="tag tag-info">{{# str }} hiddenforparticipants, pdfannotator {{/ str }}</span>{{/displayhidden}}
+            
+                <form id="edit{{ uuid }}" class="edit-comment-form" style="display:none;">
+                    <textarea id="editarea{{ uuid }}" placeholder="" cols="40" rows="3"></textarea>                  
+                    <input id="commentSubmit" class="owner btn btn-primary mb-1" type="submit" value="{{# str }} editButton, pdfannotator {{/ str }}">
+                    <input id="commentCancel" class="owner btn btn-secondary mb-1" type="reset" value="{{# str }} cancelButton, pdfannotator {{/ str }}" >
+                </form>
+            
+            </div>            
+                {{^ isdeleted }}
+                    <em class="edited">
+                        {{# edited }}
+                            <div>
+                                <span id="timemodified_{{ uuid }}">{{# str }} editedComment, pdfannotator {{/ str }} {{timemodified}}</span>
+                                <span id="modifiedby_{{ uuid }}">{{modifiedby}}</span>
+                            </div>
+                        {{/ edited }}
+                    </em>
+                {{/ isdeleted }}
+        </div>
+    </div>
+{{/ comments }}

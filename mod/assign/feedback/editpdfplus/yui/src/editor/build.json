@@ -1,0 +1,29 @@
+{
+  "name": "moodle-assignfeedback_editpdfplus-editor",
+  "builds": {
+    "moodle-assignfeedback_editpdfplus-editor": {
+      "jsfiles": [
+        "globals.js",
+        "point.js",
+        "rect.js",
+        "edit.js",
+        "drawable.js",
+        "annotation.js",
+        "annotationline.js",
+        "annotationrectangle.js",
+        "annotationoval.js",
+        "annotationpen.js",
+        "annotationhighlight.js",
+        "annotationhighlightplus.js",
+        "annotationstampplus.js",
+        "annotationstampcomment.js",
+        "annotationframe.js",
+        "annotationverticalline.js",
+        "annotationcommentplus.js",
+        "dropdown.js",
+        "colourpicker.js",
+        "editor.js"
+      ]
+    }
+  }
+}

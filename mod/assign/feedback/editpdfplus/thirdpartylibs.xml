@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>fpdi</location>
+    <name>FPDI</name>
+    <license>MIT</license>
+    <version>2.2.0</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

@@ -1,0 +1,95 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template assignfeedback_editpdfplus/axis_form
+
+    Admin template for add or edit one axis.
+
+    Context variables required for this template:
+    * contextid - Context id
+    * title - Title of the page (add or edit)
+    * render - form render for adding or editing axis
+    * id - form id
+    * action - label of action 'edit' or 'add'
+}}
+
+<div class="card-header">{{title}}</div>
+<div class="card-body text-primary">
+    {{{render}}}
+    <button type="button" class="btn btn-primary" id="axisFormSubmit">{{# str }} adminaxis_save, assignfeedback_editpdfplus {{/ str }}</button>
+    <button type="button" class="btn" id="axisFormCancel">{{# str }} adminaxis_cancel, assignfeedback_editpdfplus {{/ str }}</button>
+</div>
+
+{{# js }}
+require(['jquery','core/ajax','core/notification'], function($,ajax,notification) {
+    var formid='{{id}}';
+    $("#axisFormSubmit").on("click", function () {
+        var form = $('#'+formid);
+        var data = form.serialize()+"&contextid="+{{contextid}};
+        ajax.call([
+            {
+                methodname: 'assignfeedback_editpdfplus_submit_axis_form',
+                args: {jsonformdata: JSON.stringify(data)}
+            }
+        ])[0].done(function(axe) {
+            if ('{{action}}' === 'add'){
+                var divAxis = "<div id='editpdlplus_toolbar_"+axe[0].axeid+"' class='btn-group toolbar' style='display: none;'><ul></ul></div>";
+                $('#editpdlplus_toolbars').append(divAxis);
+                $('#assignfeedback_editpdfplus_widget_admin_div_axis').hide();
+                $('#assignfeedback_editpdfplus_widget_admin_div_addaxis').html("");
+                $('#assignfeedback_editpdfplus_widget_admin_div_addaxis').hide();
+                var option=new Option(axe[0].axelabel, axe[0].axeid, true, true);
+                $("#editpdlplus_axes").append(option);
+                $("#editpdlplus_axes").change();
+                $('#editpdlplus_tool_item').html("");
+            } else {
+                $('#assignfeedback_editpdfplus_widget_admin_div_axis').hide();
+                $('#assignfeedback_editpdfplus_widget_admin_div_editaxis').html("");
+                $('#assignfeedback_editpdfplus_widget_admin_div_editaxis').hide();
+                $("#editpdlplus_axes option:selected").html(axe[0].axelabel);
+            }
+            $("#axistool").show();
+            $("#editpdlplus_axes_worspace").show();
+            $('#assignfeedback_editpdfplus_widget_admin_toolheader').show();
+            $('#assignfeedback_editpdfplus_widget_admin_toolworkspace').show();
+            $("#editpdlplus_axes").removeAttr('disabled');
+        }).fail(notification.exception);
+    });
+    $("#axisFormCancel").on("click", function () {
+        if ('{{action}}' === 'add'){
+                $('#assignfeedback_editpdfplus_widget_admin_div_axis').hide();
+            $('#assignfeedback_editpdfplus_widget_admin_div_addaxis').html("");
+            $('#assignfeedback_editpdfplus_widget_admin_div_addaxis').hide();
+        } else {
+            $('#assignfeedback_editpdfplus_widget_admin_div_axis').hide();
+            $('#assignfeedback_editpdfplus_widget_admin_div_editaxis').html("");
+            $('#assignfeedback_editpdfplus_widget_admin_div_editaxis').hide();
+        }
+        var selectAxis = $("#editpdlplus_axes").val();
+        if (selectAxis && selectAxis !== "") {
+            $("#axistool").show();
+            $('#assignfeedback_editpdfplus_widget_admin_toolheader').show();
+            $('#assignfeedback_editpdfplus_widget_admin_toolworkspace').show();
+        } else {
+            $("#assignfeedback_editpdfplus_widget_admin_workspace").hide();
+            $('#assignfeedback_editpdfplus_widget_admin_toolheader').hide();
+            $("#editpdlplus_axes_worspace").show();
+        }
+        $("#editpdlplus_axes").removeAttr('disabled');
+    });
+});
+{{/ js }}
