@@ -299,7 +299,7 @@ class lib_test extends \advanced_testcase {
         $user = $generator->create_and_enrol($this->get_course());
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
         // Now create a couple of logs.
-        $timestart = time() - 3600;
+        $timestart = time() - HOURSECS;
         $instance = instance::get_from_instanceid($bbactivity->id);
         $recordings = $this->create_recordings_for_instance($instance, [['name' => "Pre-Recording 1"]]);
 
@@ -328,7 +328,7 @@ class lib_test extends \advanced_testcase {
         $this->assertStringNotContainsString($expectedname, $output);
         // Test that nothing is displayed as per timestart.
         ob_start();
-        bigbluebuttonbn_print_recent_activity($this->get_course(), true, $timestart + 3600);
+        bigbluebuttonbn_print_recent_activity($this->get_course(), true, time());
         $output = ob_get_contents();
         ob_end_clean();
         $this->assertEmpty($output);
