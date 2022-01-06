@@ -382,9 +382,9 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
             $field['description_key'], $cfg['recording_hide_button_default']);
 
-        $mform->disabledIf('recordallfromstart', 'record', $condition = 'notchecked', $value = '0');
-        $mform->disabledIf('recordhidebutton', 'record', $condition = 'notchecked', $value = '0');
-        $mform->disabledIf('recordhidebutton', 'recordallfromstart', $condition = 'notchecked', $value = '0');
+        $mform->disabledIf('recordallfromstart', 'record');
+        $mform->disabledIf('recordhidebutton', 'record');
+        $mform->hideIf('recordhidebutton', 'recordallfromstart', 'checked');
         // End Record all from start and hide button.
 
         $field = ['type' => 'hidden', 'name' => 'muteonstart', 'data_type' => PARAM_INT, 'description_key' => null];
