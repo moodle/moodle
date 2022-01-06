@@ -64,8 +64,8 @@ class behat_navigation extends behat_base {
         $nodetextliteral = behat_context_helper::escape($text);
         $hasblocktree = "[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]";
         $hasbranch = "[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]";
-        $hascollapsed = "p[@aria-expanded='false']";
-        $notcollapsed = "p[@aria-expanded='true']";
+        $hascollapsed = "li[@aria-expanded='false']/p";
+        $notcollapsed = "li[@aria-expanded='true']/p";
         $match = "[normalize-space(.)={$nodetextliteral}]";
 
         // Avoid problems with quotes.
@@ -75,18 +75,18 @@ class behat_navigation extends behat_base {
         } else if ($collapsed === false) {
             $iscollapsed = $notcollapsed;
         } else {
-            $iscollapsed = 'p';
+            $iscollapsed = 'li/p';
         }
 
         // First check root nodes, it can be a span or link.
-        $xpath  = "//ul{$hasblocktree}/li/{$hascollapsed}{$isbranch}/span{$match}|";
-        $xpath  .= "//ul{$hasblocktree}/li/{$hascollapsed}{$isbranch}/a{$match}|";
+        $xpath  = "//ul{$hasblocktree}/{$hascollapsed}{$isbranch}/span{$match}|";
+        $xpath  .= "//ul{$hasblocktree}/{$hascollapsed}{$isbranch}/a{$match}|";
 
         // Next search for the node containing the text within a link.
-        $xpath .= "//ul{$hasblocktree}//ul/li/{$iscollapsed}{$isbranch}/a{$match}|";
+        $xpath .= "//ul{$hasblocktree}//ul/{$iscollapsed}{$isbranch}/a{$match}|";
 
         // Finally search for the node containing the text within a span.
-        $xpath .= "//ul{$hasblocktree}//ul/li/{$iscollapsed}{$isbranch}/span{$match}";
+        $xpath .= "//ul{$hasblocktree}//ul/{$iscollapsed}{$isbranch}/span{$match}";
 
         $node = $this->find('xpath', $xpath, $exception);
         $this->ensure_node_is_visible($node);
@@ -263,16 +263,16 @@ class behat_navigation extends behat_base {
             // The p node contains the aria jazz.
             $pnodexpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]";
             $pnode = $node->find('xpath', $pnodexpath);
+            $linode = $pnode->getParent();
 
             // Keep expanding all sub-parents if js enabled.
-            if ($pnode && $this->running_javascript() && $pnode->hasAttribute('aria-expanded') &&
-                ($pnode->getAttribute('aria-expanded') == "false")) {
-
+            if ($pnode && $this->running_javascript() && $linode->hasAttribute('aria-expanded') &&
+                ($linode->getAttribute('aria-expanded') == "false")) {
                 $this->js_trigger_click($pnode);
 
                 // Wait for node to load, if not loaded before.
-                if ($pnode->hasAttribute('data-loaded') && $pnode->getAttribute('data-loaded') == "false") {
-                    $jscondition = '(document.evaluate("' . $pnode->getXpath() . '", document, null, '.
+                if ($linode->hasAttribute('data-loaded') && $linode->getAttribute('data-loaded') == "false") {
+                    $jscondition = '(document.evaluate("' . $linode->getXpath() . '", document, null, '.
                         'XPathResult.ANY_TYPE, null).iterateNext().getAttribute(\'data-loaded\') == "true")';
 
                     $this->getSession()->wait(behat_base::get_extended_timeout() * 1000, $jscondition);
@@ -543,7 +543,9 @@ class behat_navigation extends behat_base {
      *
      * For pages belonging to core, the 'core > ' bit is omitted.
      *
-     * @When I am on the :page page
+     * @When /^I am on the (?<page>[^ "]*) page$/
+     * @When /^I am on the "(?<page>[^"]*)" page$/
+     *
      * @param string $page the component and page name.
      *      E.g. 'Admin notifications' or 'core_user > Preferences'.
      * @throws Exception if the specified page cannot be determined.
@@ -561,7 +563,11 @@ class behat_navigation extends behat_base {
      * but with the advantage that you go straight to the desired page, without
      * having to wait for the Dashboard to load.
      *
-     * @When I am on the :page page logged in as :username
+     * @When /^I am on the (?<page>[^ "]*) page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the "(?<page>[^"]*)" page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the (?<page>[^ "]*) page logged in as "(?<username>[^ "]*)"$/
+     * @When /^I am on the "(?<page>[^"]*)" page logged in as "(?<username>[^ "]*)"$/
+     *
      * @param string $page the type of page. E.g. 'Admin notifications' or 'core_user > Preferences'.
      * @param string $username the name of the user to log in as. E.g. 'admin'.
      * @throws Exception if the specified page cannot be determined.
@@ -622,7 +628,11 @@ class behat_navigation extends behat_base {
      *
      * For pages belonging to core, the 'core > ' bit is omitted.
      *
-     * @When I am on the :identifier :type page
+     * @When /^I am on the (?<identifier>[^ "]*) (?<type>[^ "]*) page$/
+     * @When /^I am on the "(?<identifier>[^"]*)" "(?<type>[^"]*)" page$/
+     * @When /^I am on the (?<identifier>[^ "]*) "(?<type>[^"]*)" page$/
+     * @When /^I am on the "(?<identifier>[^"]*)" (?<type>[^ "]*) page$/
+     *
      * @param string $identifier identifies the particular page. E.g. 'Test quiz'.
      * @param string $type the component and page type. E.g. 'mod_quiz > View'.
      * @throws Exception if the specified page cannot be determined.
@@ -640,7 +650,15 @@ class behat_navigation extends behat_base {
      * but with the advantage that you go straight to the desired page, without
      * having to wait for the Dashboard to load.
      *
-     * @When I am on the :identifier :type page logged in as :username
+     * @When /^I am on the (?<identifier>[^ "]*) (?<type>[^ "]*) page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the "(?<identifier>[^"]*)" "(?<type>[^"]*)" page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the (?<identifier>[^ "]*) "(?<type>[^"]*)" page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the "(?<identifier>[^"]*)" (?<type>[^ "]*) page logged in as (?<username>[^ "]*)$/
+     * @When /^I am on the (?<identifier>[^ "]*) (?<type>[^ "]*) page logged in as "(?<username>[^"]*)"$/
+     * @When /^I am on the "(?<identifier>[^"]*)" "(?<type>[^"]*)" page logged in as "(?<username>[^"]*)"$/
+     * @When /^I am on the (?<identifier>[^ "]*) "(?<type>[^"]*)" page logged in as "(?<username>[^"]*)"$/
+     * @When /^I am on the "(?<identifier>[^"]*)" (?<type>[^ "]*) page logged in as "(?<username>[^"]*)"$/
+     *
      * @param string $identifier identifies the particular page. E.g. 'Test quiz'.
      * @param string $type the component and page type. E.g. 'mod_quiz > View'.
      * @param string $username the name of the user to log in as. E.g. 'student'.
@@ -697,10 +715,17 @@ class behat_navigation extends behat_base {
      * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
      *
      * Recognised page names are:
-     * | Page type     | Identifier meaning | description                          |
-     * | Category page | category idnumber  | List of courses in that category.    |
-     * | Course        | course shortname   | Main course home pag                 |
-     * | Activity      | activity idnumber  | Start page for that activity         |
+     * | Page type                  | Identifier meaning        | description                          |
+     * | Category                   | category idnumber         | List of courses in that category.    |
+     * | Course                     | course shortname          | Main course home pag                 |
+     * | Activity                   | activity idnumber         | Start page for that activity         |
+     * | Activity editing           | activity idnumber         | Edit settings page for that activity |
+     * | [modname] Activity         | activity name or idnumber | Start page for that activity         |
+     * | [modname] Activity editing | activity name or idnumber | Edit settings page for that activity |
+     *
+     * Examples:
+     *
+     * When I am on the "Welcome to ECON101" "forum activity" page logged in as student1
      *
      * @param string $type identifies which type of page this is, e.g. 'Category page'.
      * @param string $identifier identifies the particular page, e.g. 'test-cat'.
@@ -710,33 +735,70 @@ class behat_navigation extends behat_base {
     protected function resolve_core_page_instance_url(string $type, string $identifier): moodle_url {
         global $DB;
 
+        $type = strtolower($type);
+
         switch ($type) {
-            case 'Category page':
-                $categoryid = $DB->get_field('course_categories', 'id', ['idnumber' => $identifier]);
+            case 'category':
+                $categoryid = $this->get_category_id($identifier);
                 if (!$categoryid) {
                     throw new Exception('The specified category with idnumber "' . $identifier . '" does not exist');
                 }
-                return new moodle_url('/course/category.php', ['id' => $categoryid]);
+                return new moodle_url('/course/index.php', ['categoryid' => $categoryid]);
 
-            case 'Course':
-                $courseid = $DB->get_field_select('course', 'id', 'shortname = ?', [$identifier], IGNORE_MISSING);
+            case 'course':
+                $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
                     throw new Exception('The specified course with shortname, fullname, or idnumber "' .
                             $identifier . '" does not exist');
                 }
                 return new moodle_url('/course/view.php', ['id' => $courseid]);
 
-            case 'Activity':
-                $cm = $DB->get_record('course_modules', ['idnumber' => $identifier], 'id, course', IGNORE_MISSING);
+            case 'activity':
+                $cm = $this->get_course_module_for_identifier($identifier);
                 if (!$cm) {
                     throw new Exception('The specified activity with idnumber "' . $identifier . '" does not exist');
                 }
-                $modinfo = get_fast_modinfo($cm->course);
-                return $modinfo->cms[$cm->id]->url;
+                return $cm->url;
 
-            default:
-                throw new Exception('Unrecognised core page type "' . $type . '."');
+            case 'activity editing':
+                $cm = $this->get_course_module_for_identifier($identifier);
+                if (!$cm) {
+                    throw new Exception('The specified activity with idnumber "' . $identifier . '" does not exist');
+                }
+                return new moodle_url('/course/modedit.php', [
+                    'update' => $cm->id,
+                ]);
         }
+
+        $parts = explode(' ', $type);
+        if (count($parts) > 1) {
+            if ($parts[1] === 'activity') {
+                $modname = $parts[0];
+                $cm = $this->get_cm_by_activity_name($modname, $identifier);
+
+                if (count($parts) == 2) {
+                    // View page.
+                    return new moodle_url($cm->url);
+                }
+
+                if ($parts[2] === 'editing') {
+                    // Edit settings page.
+                    return new moodle_url('/course/modedit.php', ['update' => $cm->id]);
+                }
+
+                if ($parts[2] === 'roles') {
+                    // Locally assigned roles page.
+                    return new moodle_url('/admin/roles/assign.php', ['contextid' => $cm->context->id]);
+                }
+
+                if ($parts[2] === 'permissions') {
+                    // Permissions page.
+                    return new moodle_url('/admin/roles/permissions.php', ['contextid' => $cm->context->id]);
+                }
+            }
+        }
+
+        throw new Exception('Unrecognised core page type "' . $type . '."');
     }
 
     /**

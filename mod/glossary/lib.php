@@ -1180,18 +1180,9 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',
     global $DB;
 
     $return = '';
-    if ( $aliases = $DB->get_records('glossary_alias', array('entryid'=>$entry->id))) {
-        foreach ($aliases as $alias) {
-            if (trim($alias->alias)) {
-                if ($return == '') {
-                    $return = '<select id="keyword" class="custom-select">';
-                }
-                $return .= "<option>$alias->alias</option>";
-            }
-        }
-        if ($return != '') {
-            $return .= '</select>';
-        }
+    if ($aliases = $DB->get_fieldset_select('glossary_alias', 'alias', 'entryid = :entryid', ['entryid' => $entry->id])) {
+        $id = "keyword-{$entry->id}";
+        $return = html_writer::select($aliases, $id, '', false, ['id' => $id]);
     }
     if ($type == 'print') {
         echo $return;
@@ -1361,9 +1352,10 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
     if ($aliases || $icons || !empty($entry->rating)) {
         echo '<table>';
         if ( $aliases ) {
+            $id = "keyword-{$entry->id}";
             echo '<tr valign="top"><td class="aliases">' .
-                 '<label for="keyword">' . get_string('aliases','glossary').': </label>' .
-                 $aliases . '</td></tr>';
+                '<label for="' . $id . '">' . get_string('aliases', 'glossary') . ': </label>' .
+                $aliases . '</td></tr>';
         }
         if ($icons) {
             echo '<tr valign="top"><td class="icons">'.$icons.'</td></tr>';

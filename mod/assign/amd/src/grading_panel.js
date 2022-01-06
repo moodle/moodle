@@ -133,8 +133,8 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
      * @method _handleFormSubmissionResponse
      * @param {Array} formdata - submitted values
      * @param {Integer} nextUserId - optional. The id of the user to load after the form is saved.
-     * @param {Array} response List of errors.
      * @param {Boolean} nextUser - optional. If true, switch to next user in the grading list.
+     * @param {Array} response List of errors.
      */
     GradingPanel.prototype._handleFormSubmissionResponse = function(formdata, nextUserId, nextUser, response) {
         if (typeof nextUserId === "undefined") {

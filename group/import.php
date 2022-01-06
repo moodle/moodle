@@ -61,8 +61,6 @@ if ($importform->is_cancelled()) {
     $text = $importform->get_file_content('userfile');
     $text = preg_replace('!\r\n?!', "\n", $text);
 
-    $rawlines = explode("\n", $text);
-
     require_once($CFG->libdir . '/csvlib.class.php');
     $importid = csv_import_reader::get_new_iid('groupimport');
     $csvimport = new csv_import_reader($importid, 'groupimport');
@@ -95,7 +93,9 @@ if ($importform->is_cancelled()) {
         );
 
     // --- get header (field names) ---
-    $header = explode($csvimport::get_delimiter($delimiter), array_shift($rawlines));
+    // Using get_columns() ensures the Byte Order Mark is removed.
+    $header = $csvimport->get_columns();
+
     // check for valid field names
     foreach ($header as $i => $h) {
         $h = trim($h); $header[$i] = $h; // remove whitespace

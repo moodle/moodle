@@ -32,6 +32,7 @@ import Notification from 'core/notification';
 import Pending from 'core/pending';
 import jQuery from 'jquery';
 import {showAddNote, showSendMessage} from 'core_user/local/participants/bulkactions';
+import 'core/inplace_editable';
 
 const Selectors = {
     bulkActionSelect: "#formactionid",

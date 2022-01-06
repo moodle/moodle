@@ -82,7 +82,7 @@ class restore_html_block_decode_content extends restore_decode_content {
     }
 
     protected function preprocess_field($field) {
-        $this->configdata = unserialize(base64_decode($field));
+        $this->configdata = unserialize_object(base64_decode($field));
         return isset($this->configdata->text) ? $this->configdata->text : '';
     }
 

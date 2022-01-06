@@ -92,8 +92,8 @@ define(['jquery', 'core/yui'], function($, Y) {
 
         /**
          * Event handler for the quiz start attempt button.
-          * @param {Event} e the event being responded to
-          * @param {Object} popupoptions
+         * @param {Event} e the event being responded to
+         * @param {Object} popupoptions
          */
         launchQuizPopup: function(e, popupoptions) {
             e.halt();

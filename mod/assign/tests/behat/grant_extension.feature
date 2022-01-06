@@ -30,11 +30,9 @@ Feature: Grant an extension to an offline student
   @javascript
   Scenario: Granting an extension to an offline assignment
     Given the following "activities" exist:
-      | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | duedate    |
-      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+      | activity | course | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | duedate    |
+      | assign   | C1     | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400 |
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "View all submissions" in current page administration
     And I open the action menu in "Student 1" "table_row"
     And I follow "Grant extension"
@@ -43,19 +41,16 @@ Feature: Grant an extension to an offline student
     And I press "Save changes"
     Then I should see "Extension granted until:" in the "Student 1" "table_row"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as student1
     And I should see "Extension due date"
 
   @javascript @_alert
   Scenario: Granting extensions to an offline assignment (batch action)
     Given the following "activities" exist:
-      | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | duedate    |
-      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+      | activity | course | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | duedate    |
+      | assign   | C1     | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400 |
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "View all submissions" in current page administration
     And I set the field "selectall" to "1"
     And I set the field "operation" to "Grant extension"
@@ -75,19 +70,16 @@ Feature: Grant an extension to an offline student
     And I should see "Extension granted until:" in the "Student 5" "table_row"
     And I should see "Extension granted until:" in the "Student 6" "table_row"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+
+    And I am on the "Test assignment name" Activity page logged in as student1
     And I should see "Extension due date"
 
   @javascript
   Scenario: Validating that extension date is after due date
     Given the following "activities" exist:
-      | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | allowsubmissionsfromdate    | duedate    |
-      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400                  | 1388620800 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+      | activity | course | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | allowsubmissionsfromdate    | duedate    |
+      | assign   | C1     | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400                  | 1388620800 |
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "View all submissions" in current page administration
     And I open the action menu in "Student 1" "table_row"
     And I follow "Grant extension"
@@ -105,11 +97,9 @@ Feature: Grant an extension to an offline student
   @javascript @_alert
   Scenario: Granting extensions to an offline assignment (batch action)
     Given the following "activities" exist:
-      | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | allowsubmissionsfromdate    | duedate    |
-      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400                  | 1388620800 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+      | activity | course | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | allowsubmissionsfromdate    | duedate    |
+      | assign   | C1     | Test assignment name | Test assignment description | 0                                   | 0                             | 1388534400                  | 1388620800 |
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "View all submissions" in current page administration
     And I set the field "selectall" to "1"
     And I set the field "operation" to "Grant extension"

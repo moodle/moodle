@@ -148,6 +148,32 @@ M.mod_quiz.timer = {
     }
 };
 
+M.mod_quiz.filesUpload = {
+    /**
+     * YUI object.
+     */
+    Y: null,
+
+    /**
+     * Number of files uploading.
+     */
+    numberFilesUploading: 0,
+
+    /**
+     * Disable navigation block when uploading and enable navigation block when all files are uploaded.
+     */
+    disableNavPanel: function() {
+        var quizNavigationBlock = document.getElementById('mod_quiz_navblock');
+        if (quizNavigationBlock) {
+            if (M.mod_quiz.filesUpload.numberFilesUploading) {
+                quizNavigationBlock.classList.add('nav-disabled');
+            } else {
+                quizNavigationBlock.classList.remove('nav-disabled');
+            }
+        }
+    }
+};
+
 M.mod_quiz.nav = M.mod_quiz.nav || {};
 
 M.mod_quiz.nav.update_flag_state = function(attemptid, questionid, newstate) {
@@ -175,12 +201,6 @@ M.mod_quiz.nav.init = function(Y) {
             // Automatically submit the form. We do it this strange way because just
             // calling form.submit() does not run the form's submit event handlers.
             var submit = form.one('input[name="next"]');
-
-            // Navigation when button enable.
-            if (submit.get('disabled')) {
-                return;
-            }
-
             submit.set('name', '');
             submit.getDOMNode().click();
         };
@@ -215,6 +235,19 @@ M.mod_quiz.nav.init = function(Y) {
             nav_to_page(-1);
         }, 'a.endtestlink');
     }
+
+    // Navigation buttons should be disabled when the files are uploading.
+    require(['core_form/events'], function(formEvent) {
+        document.addEventListener(formEvent.types.uploadStarted, function() {
+            M.mod_quiz.filesUpload.numberFilesUploading++;
+            M.mod_quiz.filesUpload.disableNavPanel();
+        });
+
+        document.addEventListener(formEvent.types.uploadCompleted, function() {
+            M.mod_quiz.filesUpload.numberFilesUploading--;
+            M.mod_quiz.filesUpload.disableNavPanel();
+        });
+    });
 
     if (M.core_question_flags) {
         M.core_question_flags.add_listener(M.mod_quiz.nav.update_flag_state);
@@ -286,7 +319,7 @@ M.mod_quiz.secure_window = {
         }, '#secureclosebutton');
     },
 
-    close: function(Y, url, delay) {
+    close: function(url, delay) {
         setTimeout(function() {
             if (window.opener) {
                 window.opener.document.location.reload();

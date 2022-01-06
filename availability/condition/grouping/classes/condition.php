@@ -141,9 +141,8 @@ class condition extends \core_availability\condition {
         if (!array_key_exists($groupingid, self::$groupingnames)) {
             $name = get_string('missing', 'availability_grouping');
         } else {
-            $context = \context_course::instance($course->id);
-            $name = format_string(self::$groupingnames[$groupingid], true,
-                    array('context' => $context));
+            // Not safe to call format_string here; use the special function to call it later.
+            $name = self::description_format_string(self::$groupingnames[$groupingid]);
         }
 
         return get_string($not ? 'requires_notgrouping' : 'requires_grouping',

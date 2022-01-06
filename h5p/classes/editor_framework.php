@@ -24,7 +24,7 @@
 
 namespace core_h5p;
 
-use H5peditorStorage;
+use Moodle\H5peditorStorage;
 use stdClass;
 
 /**
@@ -40,6 +40,59 @@ use stdClass;
 class editor_framework implements H5peditorStorage {
 
     /**
+     * Retrieve library language file from file storage. Note that parent languages will also be checked until a matching
+     * record is found (e.g. "de_kids" -> "de_du" -> "de")
+     *
+     * @param string $name
+     * @param int $major
+     * @param int $minor
+     * @param string $lang
+     * @return stdClass|bool Translation record if available, false otherwise
+     */
+    private function get_language_record(string $name, int $major, int $minor, string $lang) {
+        global $DB;
+
+        $params = [
+            file_storage::COMPONENT,
+            file_storage::LIBRARY_FILEAREA,
+        ];
+        $sqllike = $DB->sql_like('f.filepath', '?');
+        $params[] = '%language%';
+
+        $sql = "SELECT hl.id, f.pathnamehash
+                  FROM {h5p_libraries} hl
+             LEFT JOIN {files} f
+                    ON hl.id = f.itemid AND f.component = ? AND f.filearea = ? AND $sqllike
+                 WHERE ((hl.machinename = ? AND hl.majorversion = ? AND hl.minorversion = ?)
+                   AND f.filename = ?)
+              ORDER BY hl.patchversion DESC";
+
+        $params[] = $name;
+        $params[] = $major;
+        $params[] = $minor;
+        $params[] = $lang.'.json';
+
+        // Add translations, based initially on the given H5P language code. If missing then recurse language dependencies
+        // until we find a matching H5P language file.
+        $result = $DB->get_record_sql($sql, $params);
+        if ($result === false) {
+
+            // Normalise Moodle language using underscore, as opposed to H5P which uses dash.
+            $moodlelanguage = str_replace('-', '_', $lang);
+
+            $dependencies = get_string_manager()->get_language_dependencies($moodlelanguage);
+
+            // If current language has a dependency, then request it.
+            if (count($dependencies) > 1) {
+                $parentlanguage = str_replace('_', '-', $dependencies[count($dependencies) - 2]);
+                $result = $this->get_language_record($name, $major, $minor, $parentlanguage);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Load language file(JSON).
      * Used to translate the editor fields(title, description etc.)
      *
@@ -51,7 +104,6 @@ class editor_framework implements H5peditorStorage {
      * @return string|boolean Translation in JSON format if available, false otherwise
      */
     public function getLanguage($name, $major, $minor, $lang) {
-        global $DB;
 
         // Check if this information has been saved previously into the cache.
         $langcache = \cache::make('core', 'h5p_content_type_translations');
@@ -74,27 +126,7 @@ class editor_framework implements H5peditorStorage {
         }
 
         // Get the language file for this library.
-        $params = [
-            file_storage::COMPONENT,
-            file_storage::LIBRARY_FILEAREA,
-        ];
-        $sqllike = $DB->sql_like('f.filepath', '?');
-        $params[] = '%language%';
-
-        $sql = "SELECT hl.id, f.pathnamehash
-                  FROM {h5p_libraries} hl
-             LEFT JOIN {files} f
-                    ON hl.id = f.itemid AND f.component = ? AND f.filearea = ? AND $sqllike
-                 WHERE ((hl.machinename = ? AND hl.majorversion = ? AND hl.minorversion = ?)
-                   AND f.filename = ?)
-              ORDER BY hl.patchversion DESC";
-        $params[] = $name;
-        $params[] = $major;
-        $params[] = $minor;
-        $params[] = $lang.'.json';
-
-        $result = $DB->get_record_sql($sql, $params);
-
+        $result = $this->get_language_record($name, $major, $minor, $lang);
         if (empty($result)) {
             // Save the fact that there is no translation into the cache.
             // The cache API cannot handle setting a literal `false` value so conver to `null` instead.

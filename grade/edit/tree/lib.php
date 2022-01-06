@@ -683,11 +683,15 @@ class grade_edit_tree {
                 $gradeitem->grademin, $gradeitem->grademax, 'gradebook');
         }
 
-        // Update hiding flag.
-        if ($hiddenuntil) {
-            $gradeitem->set_hidden($hiddenuntil, false);
-        } else {
-            $gradeitem->set_hidden($hidden, false);
+        // Only update the category's 'hidden' status if it has changed. Leaving a category as 'unhidden' (checkbox left
+        // unmarked) and submitting the form without this conditional check will result in displaying any grade items that
+        // are in the category, including those that were previously 'hidden'.
+        if (($gradecategory->get_hidden() != $hiddenuntil) || ($gradecategory->get_hidden() != $hidden)) {
+            if ($hiddenuntil) {
+                $gradecategory->set_hidden($hiddenuntil, true);
+            } else {
+                $gradecategory->set_hidden($hidden, true);
+            }
         }
 
         $gradeitem->set_locktime($locktime); // Locktime first - it might be removed when unlocking.
@@ -1017,7 +1021,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         $masterlabel = get_string('all');
         // Use category name if available.
         if ($category->fullname !== '?') {
-            $masterlabel = format_string($category->fullname);
+            $masterlabel = format_string($category->fullname, true, ['escape' => false]);
             // Limit the displayed category name to prevent the Select column from getting too wide.
             if (core_text::strlen($masterlabel) > 20) {
                 $masterlabel = get_string('textellipsis', 'core', core_text::substr($masterlabel, 0, 12));

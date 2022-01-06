@@ -123,13 +123,17 @@
                         {{# str }} parent, forum {{/ str }}
                     </a>
                     {{# canreply }}
+                        {{^ isprivatereply }}
                         |
+                        {{/ isprivatereply }}
                     {{/ canreply }}
                 {{/ firstpost }}
                 {{# canreply }}
+                    {{^ isprivatereply }}
                     <a target="_blank" href="{{{ replylink }}}">
                         {{# str }} reply, forum {{/ str }}
                     </a>
+                    {{/ isprivatereply }}
                 {{/ canreply }}
             </div>
 

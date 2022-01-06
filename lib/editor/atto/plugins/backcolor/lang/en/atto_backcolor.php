@@ -22,5 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['color_white'] = 'White';
+$string['color_red'] = 'Red';
+$string['color_yellow'] = 'Yellow';
+$string['color_green'] = 'Green';
+$string['color_blue'] = 'Blue';
+$string['color_black'] = 'Black';
 $string['pluginname'] = 'Background colour';
 $string['privacy:metadata'] = 'The atto_backcolor plugin does not store any personal data.';

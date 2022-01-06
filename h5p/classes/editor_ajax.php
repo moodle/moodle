@@ -24,7 +24,7 @@
 
 namespace core_h5p;
 
-use H5PEditorAjaxInterface;
+use Moodle\H5PEditorAjaxInterface;
 use core\dml\table as dml_table;
 
 /**

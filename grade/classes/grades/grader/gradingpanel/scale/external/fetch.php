@@ -155,7 +155,7 @@ class fetch extends external_api {
         global $USER;
 
         $hasgrade = $gradeitem->user_has_grade($gradeduser);
-        $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
+        $grade = $gradeitem->get_formatted_grade_for_user($gradeduser, $USER);
         $currentgrade = (int) unformat_float($grade->grade);
 
         $menu = $gradeitem->get_grade_menu();
@@ -172,7 +172,7 @@ class fetch extends external_api {
             'hasgrade' => $hasgrade,
             'grade' => [
                 'options' => $values,
-                'usergrade' => $grade->grade,
+                'usergrade' => $grade->usergrade,
                 'maxgrade' => $maxgrade,
                 'gradedby' => $gradername,
                 'timecreated' => $grade->timecreated,

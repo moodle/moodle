@@ -329,6 +329,11 @@ class api {
             $settings->supportpage = $CFG->supportpage;
         }
 
+        if (empty($section) || $section === 'graceperiodsettings') {
+            $settings->coursegraceperiodafter = $CFG->coursegraceperiodafter;
+            $settings->coursegraceperiodbefore = $CFG->coursegraceperiodbefore;
+        }
+
         return $settings;
     }
 

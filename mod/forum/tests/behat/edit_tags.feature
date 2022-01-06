@@ -16,11 +16,11 @@ Feature: Edited forum posts handle tags correctly
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
+    And the following "activity" exists:
+      | course   | C1              |
+      | activity | forum           |
+      | name     | Test forum name |
+    And I am on the "Course 1" Course page logged in as teacher1
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Teacher post subject |
       | Message | Teacher post message |
@@ -28,8 +28,7 @@ Feature: Edited forum posts handle tags correctly
 
   @javascript
   Scenario: Forum post edition of custom tags works as expected
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" Course page logged in as student1
     And I reply "Teacher post subject" post from "Test forum name" forum with:
       | Subject | Student post subject |
       | Message | Student post message |
@@ -47,9 +46,7 @@ Feature: Edited forum posts handle tags correctly
     And I set the field "Enter comma-separated list of new tags" to "OT1, OT2, OT3"
     And I press "Continue"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test forum"
+    And I am on the "Test forum name" "forum activity" page logged in as teacher1
     And I click on "Add a new discussion topic" "link"
     And I click on "Advanced" "button"
     And I expand all fieldsets

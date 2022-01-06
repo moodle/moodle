@@ -389,7 +389,13 @@ const displayGradingError = async(root, user, err) => {
  * @param {Function} getContentForUser A function to get the content for a specific user
  * @param {Function} getGradeForUser A function get the grade details for a specific user
  * @param {Function} setGradeForUser A function to set the grade for a specific user
- * @param {Object} Preferences for the launch function
+ * @param {Object} preferences Preferences for the launch function
+ * @param {Number} preferences.initialUserId
+ * @param {string} preferences.moduleName
+ * @param {string} preferences.courseName
+ * @param {string} preferences.courseUrl
+ * @param {boolean} preferences.sendStudentNotifications
+ * @param {null|HTMLElement} preferences.focusOnClose
  */
 export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, setGradeForUser, {
     initialUserId = null,
@@ -475,6 +481,8 @@ export const launch = async(getListOfUsers, getContentForUser, getGradeForUser, 
  * @param {Function} getGradeForUser A function get the grade details for a specific user
  * @param {Number} userid The ID of a specific user
  * @param {String} moduleName the name of the module
+ * @param {object} param
+ * @param {null|HTMLElement} param.focusOnClose
  */
 export const view = async(getGradeForUser, userid, moduleName, {
     focusOnClose = null,

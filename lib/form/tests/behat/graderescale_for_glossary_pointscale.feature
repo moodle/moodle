@@ -25,27 +25,20 @@ Feature: Using the glossary activities which support point scale
 
   @javascript
   Scenario: Glossary rescale grade should not be possible when users are graded
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    Given I am on the "Test glossary name" "glossary activity" page logged in as student1
     And I press "Add a new entry"
     And I set the following fields to these values:
       | Concept    | Testing score                   |
       | Definition | Scoring high on tests           |
     And I press "Save changes"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test glossary name" "glossary activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "Ratings > Aggregate type" to "Count of ratings"
     And I set the field "Ratings > Type" to "Point"
     And I press "Save and return to course"
-    And I follow "Test glossary name"
+    And I am on the "Test glossary name" "glossary activity" page
     And I set the field "rating" to "50"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
-    When I navigate to "Edit settings" in current page administration
+    When I am on the "Test glossary name" "glossary activity editing" page
     And I expand all fieldsets
     Then the "Maximum grade" "field" should be disabled

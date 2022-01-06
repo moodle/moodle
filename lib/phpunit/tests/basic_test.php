@@ -146,6 +146,16 @@ STRING;
         $this->testassertexecuted = false;
     }
 
+    /**
+     * Test assert Tag
+     */
+    public function test_assert_tag() {
+        // This should succeed.
+        self::assertTag(['id' => 'testid'], "<div><span id='testid'></span></div>");
+        $this->expectException(\PHPUnit\Framework\ExpectationFailedException::class);
+        self::assertTag(['id' => 'testid'], "<div><div>");
+    }
+
     // Uncomment following tests to see logging of unexpected changes in global state and database.
     /*
         public function test_db_modification() {

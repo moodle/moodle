@@ -46,7 +46,7 @@
     background-image: url('[[pix:t/collapsed_empty]]');
 }
 
-.block_settings .block_tree [aria-expanded="false"].loading {
+.block_settings .block_tree [aria-expanded="false"] p.loading {
     background-image: url('[[pix:i/loading_small]]');
 }
 /*rtl:raw:

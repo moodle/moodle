@@ -140,7 +140,7 @@ if ($action === 'delete') {
     }
 
     // The attempts table.
-    $attemptstable = html_writer::table($table);
+    $attemptstable = html_writer::div(html_writer::table($table), 'table-responsive');
 
     // The HTML that we will be displaying which includes the attempts table and bulk actions menu, if necessary.
     $attemptshtml = $attemptstable;
@@ -227,7 +227,6 @@ if ($action === 'delete') {
                                 get_string('highscore', 'lesson'), get_string('lowscore', 'lesson'),
                                 get_string('hightime', 'lesson'), get_string('lowtime', 'lesson'));
         $stattable->align = array('center', 'center', 'center', 'center', 'center', 'center');
-        $stattable->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap');
         $stattable->attributes['class'] = 'standardtable generaltable';
         $stattable->data[] = array($data->avescore, $data->avetime, $data->highscore, $data->lowscore, $data->hightime, $data->lowtime);
 
@@ -238,7 +237,6 @@ if ($action === 'delete') {
         $stattable->head = array(get_string('averagetime', 'lesson'), get_string('hightime', 'lesson'),
                                 get_string('lowtime', 'lesson'));
         $stattable->align = array('center', 'center', 'center');
-        $stattable->wrap = array('nowrap', 'nowrap', 'nowrap');
         $stattable->attributes['class'] = 'standardtable generaltable';
         $stattable->data[] = array($data->avetime, $data->hightime, $data->lowtime);
     }
@@ -293,7 +291,7 @@ if ($action === 'delete') {
 
         $table->head = array();
         $table->align = array('right', 'left');
-        $table->attributes['class'] = 'generaltable';
+        $table->attributes['class'] = 'table table-striped';
 
         if (empty($userstats->gradeinfo)) {
             $table->align = array("center");
@@ -319,7 +317,7 @@ if ($action === 'delete') {
     foreach ($answerpages as $page) {
         $table->align = array('left', 'left');
         $table->size = array('70%', null);
-        $table->attributes['class'] = 'generaltable';
+        $table->attributes['class'] = 'table table-striped';
         unset($table->data);
         if ($page->grayout) { // set the color of text
             $fontstart = html_writer::start_tag('span', array('class' => 'dimmed_text'));
@@ -354,7 +352,7 @@ if ($action === 'delete') {
         } else {
             $table->data[] = array(get_string('didnotanswerquestion', 'lesson'), " ");
         }
-        echo html_writer::start_tag('div', array('class' => 'no-overflow'));
+        echo html_writer::start_tag('div', ['class' => 'no-overflow table-responsive']);
         echo html_writer::table($table);
         echo html_writer::end_tag('div');
     }

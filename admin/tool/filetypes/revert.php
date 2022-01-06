@@ -27,7 +27,7 @@ require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('tool_filetypes');
 
-$extension = required_param('extension', PARAM_RAW);
+$extension = required_param('extension', PARAM_ALPHANUMEXT);
 $redirecturl = new \moodle_url('/admin/tool/filetypes/index.php');
 
 if (optional_param('revert', 0, PARAM_INT)) {

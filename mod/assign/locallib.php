@@ -5931,7 +5931,7 @@ class assign {
         $allsubmitted = true;
         $anysubmitted = false;
         $result = true;
-        if ($submission->status != ASSIGN_SUBMISSION_STATUS_REOPENED) {
+        if (!in_array($submission->status, [ASSIGN_SUBMISSION_STATUS_NEW, ASSIGN_SUBMISSION_STATUS_REOPENED])) {
             foreach ($team as $member) {
                 $membersubmission = $this->get_user_submission($member->id, false, $submission->attemptnumber);
 
@@ -5965,7 +5965,7 @@ class assign {
             // Set the group submission to reopened.
             foreach ($team as $member) {
                 $membersubmission = $this->get_user_submission($member->id, true, $submission->attemptnumber);
-                $membersubmission->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+                $membersubmission->status = $submission->status;
                 $result = $DB->update_record('assign_submission', $membersubmission) && $result;
             }
             $result = $DB->update_record('assign_submission', $submission) && $result;
@@ -7755,16 +7755,15 @@ class assign {
         }
 
         $capabilitylist = array('gradereport/grader:view', 'moodle/grade:viewall');
+        $usergrade = get_string('notgraded', 'assign');
         if (has_all_capabilities($capabilitylist, $this->get_course_context())) {
             $urlparams = array('id'=>$this->get_course()->id);
             $url = new moodle_url('/grade/report/grader/index.php', $urlparams);
-            $usergrade = '-';
-            if (isset($gradinginfo->items[0]->grades[$userid]->str_grade)) {
+            if (isset($gradinginfo->items[0]->grades[$userid]->grade)) {
                 $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
             }
             $gradestring = $this->get_renderer()->action_link($url, $usergrade);
         } else {
-            $usergrade = '-';
             if (isset($gradinginfo->items[0]->grades[$userid]) &&
                     !$gradinginfo->items[0]->grades[$userid]->hidden) {
                 $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
@@ -8067,6 +8066,8 @@ class assign {
         if (!$submission) {
             return false;
         }
+        $submission->status = $submission->attemptnumber ? ASSIGN_SUBMISSION_STATUS_REOPENED : ASSIGN_SUBMISSION_STATUS_NEW;
+        $this->update_submission($submission, $userid, false, $this->get_instance()->teamsubmission);
 
         // Tell each submission plugin we were saved with no data.
         $plugins = $this->get_submission_plugins();
@@ -8074,6 +8075,12 @@ class assign {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 $plugin->remove($submission);
             }
+        }
+
+        $completion = new completion_info($this->get_course());
+        if ($completion->is_enabled($this->get_course_module()) &&
+                $this->get_instance()->completionsubmit) {
+            $completion->update_state($this->get_course_module(), COMPLETION_INCOMPLETE, $userid);
         }
 
         if ($submission->userid != 0) {
@@ -8239,12 +8246,20 @@ class assign {
                 if (!$gradingdisabled && $this->update_user_flags($flags)) {
                     // Update Gradebook.
                     $grade = $this->get_user_grade($userid, true);
+                    // Fetch any feedback for this student.
+                    $gradebookplugin = $this->get_admin_config()->feedback_plugin_for_gradebook;
+                    $gradebookplugin = str_replace('assignfeedback_', '', $gradebookplugin);
+                    $plugin = $this->get_feedback_plugin_by_type($gradebookplugin);
+                    if ($plugin && $plugin->is_enabled() && $plugin->is_visible()) {
+                        $grade->feedbacktext = $plugin->text_for_gradebook($grade);
+                        $grade->feedbackformat = $plugin->format_for_gradebook($grade);
+                        $grade->feedbackfiles = $plugin->files_for_gradebook($grade);
+                    }
                     $this->update_grade($grade);
                     $assign = clone $this->get_instance();
                     $assign->cmidnumber = $this->get_course_module()->idnumber;
                     // Set assign gradebook feedback plugin status.
                     $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
-                    assign_update_grades($assign, $userid);
 
                     $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
                     \mod_assign\event\workflow_state_updated::create_from_user($this, $user, $state)->trigger();

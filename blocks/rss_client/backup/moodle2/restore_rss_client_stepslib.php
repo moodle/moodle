@@ -76,10 +76,7 @@ class restore_rss_client_block_structure_step extends restore_structure_step {
         // Get the configdata
         $configdata = $DB->get_field('block_instances', 'configdata', array('id' => $this->task->get_blockid()));
         // Extract configdata
-        $config = unserialize(base64_decode($configdata));
-        if (empty($config)) {
-            $config = new stdClass();
-        }
+        $config = unserialize_object(base64_decode($configdata));
         // Set array of used rss feeds
         $config->rssid = $feedsarr;
         // Serialize back the configdata

@@ -291,7 +291,7 @@ $string['forum:cantogglefavourite'] = 'Star discussions';
 $string['forum:grade'] = 'Grade forum';
 $string['forumauthorhidden'] = 'Author (hidden)';
 $string['forumblockingalmosttoomanyposts'] = 'You are approaching the posting threshold. You have posted {$a->numposts} times in the last {$a->blockperiod} and the limit is {$a->blockafter} posts.';
-$string['forumbodyhidden'] = 'This post cannot be viewed by you, probably because you have not posted in the discussion, the maximum editing time hasn\'t passed yet, the discussion has not started or the discussion has expired.';
+$string['forumbodyhidden'] = 'This post is currently hidden, most likely because you need to post in the discussion first and forum post notifications must be sent. Another possibility is that the current time is not within the display period set for the post.';
 $string['forum:canposttomygroups'] = 'Post to all groups you have access to';
 $string['forum:createattachment'] = 'Create attachments';
 $string['forum:deleteanypost'] = 'Delete any posts (anytime)';
@@ -495,7 +495,7 @@ $string['parentofthispost'] = 'Parent of this post';
 $string['permalink'] = 'Permalink';
 $string['permanentlinktopost'] = 'Permanent link to this post';
 $string['permanentlinktoparentpost'] = 'Permanent link to the parent of this post';
-$string['postisprivatereply'] = 'This is a private reply. It is not visible to other participants.';
+$string['postisprivatereply'] = 'This is a private reply. It is only visible to you and anyone with the capability to view private replies, such as teachers or managers.';
 $string['pindiscussion'] = 'Pin this discussion';
 $string['pinupdated'] = 'The pin option has been updated.';
 $string['posttomygroups'] = 'Post a copy to all groups';
@@ -510,10 +510,12 @@ $string['postbymailsuccess'] = 'Your reply "{$a->subject}" was successfully post
 $string['postbymailsuccess_html'] = 'Your reply <a href="{$a->discussionurl}">{$a->subject}</a> was successfully posted.';
 $string['postbyuser'] = '{$a->post} by {$a->user}';
 $string['postincontext'] = 'See this post in context';
+$string['postmailinfo'] = 'This is a copy of a message posted in {$a}.';
 $string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
 
 To reply click on this link: {$a->replylink}';
 $string['postmailnow'] = '<p>This post will be mailed out immediately to all forum subscribers.</p>';
+$string['postmailreply'] = 'To reply click on this link: {$a}';
 $string['postmailsubject'] = '{$a->courseshortname}: {$a->subject}';
 $string['postrating1'] = 'Mostly separate knowing';
 $string['postrating2'] = 'Separate and connected';

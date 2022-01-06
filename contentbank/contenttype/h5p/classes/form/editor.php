@@ -129,7 +129,7 @@ class editor extends edit_content {
         global $DB;
 
         // The H5P libraries expect data->id as the H5P content id.
-        // The method \H5PCore::saveContent throws an error if id is set but empty.
+        // The method H5PCore::saveContent throws an error if id is set but empty.
         if (empty($data->id)) {
             unset($data->id);
         } else {

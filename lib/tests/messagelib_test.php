@@ -808,7 +808,7 @@ class core_messagelib_testcase extends advanced_testcase {
         // so verify the expected beginning and ends.
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp('/test message body.*test/s', $email->body);
+        $this->assertRegExp('/test.*message body.*test/s', $email->body);
         $sink->clear();
 
         // Now, send the message again, and verify that the event fired includes the courseid and conversationid.

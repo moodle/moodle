@@ -30,7 +30,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatedboninstall'] = '<p>データベースを作成できません。</p>
-<p>指定されたデータベースは存在しません。また、ユーザにはデータベースを作成するパーミッションがありません。</p>
+<p>指定されたデータベースは存在しません。また、ユーザにはデータベースを作成するためのパーミッションがありません。</p>
 <p>サイト管理者はデータベース設定を確認してください。</p>';
 $string['cannotcreatelangdir'] = 'langディレクトリを作成できません。';
 $string['cannotcreatetempdir'] = 'tempディレクトリを作成できません。';

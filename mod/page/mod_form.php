@@ -130,7 +130,7 @@ class mod_page_mod_form extends moodleform_mod {
             $defaultvalues['page']['itemid'] = $draftitemid;
         }
         if (!empty($defaultvalues['displayoptions'])) {
-            $displayoptions = unserialize($defaultvalues['displayoptions']);
+            $displayoptions = (array) unserialize_array($defaultvalues['displayoptions']);
             if (isset($displayoptions['printintro'])) {
                 $defaultvalues['printintro'] = $displayoptions['printintro'];
             }

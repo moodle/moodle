@@ -158,7 +158,7 @@ class mod_resource_mod_form extends moodleform_mod {
             $default_values['files'] = $draftitemid;
         }
         if (!empty($default_values['displayoptions'])) {
-            $displayoptions = unserialize($default_values['displayoptions']);
+            $displayoptions = (array) unserialize_array($default_values['displayoptions']);
             if (isset($displayoptions['printintro'])) {
                 $default_values['printintro'] = $displayoptions['printintro'];
             }

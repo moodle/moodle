@@ -112,6 +112,8 @@ const discussionPostMapper = (discussion) => {
  * Launch the Grader.
  *
  * @param {HTMLElement} rootNode the root HTML element describing what is to be graded
+ * @param {object} param
+ * @param {bool} [param.focusOnClose=null]
  */
 const launchWholeForumGrading = async(rootNode, {
     focusOnClose = null,
@@ -148,6 +150,8 @@ const launchWholeForumGrading = async(rootNode, {
  * Launch the Grader.
  *
  * @param {HTMLElement} rootNode the root HTML element describing what is to be graded
+ * @param {object} param
+ * @param {bool} [param.focusOnClose=null]
  */
 const launchViewGrading = async(rootNode, {
     focusOnClose = null,

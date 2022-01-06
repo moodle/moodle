@@ -4717,20 +4717,38 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
     $basefields = array('id', 'idnumber', 'summary', 'summaryformat', 'startdate', 'enddate', 'category',
             'shortname', 'fullname', 'timeaccess', 'component', 'visible');
 
-    $sort = trim($sort);
     if (empty($sort)) {
         $sort = 'timeaccess DESC';
     } else {
+        // The SQL string for sorting can define sorting by multiple columns.
         $rawsorts = explode(',', $sort);
         $sorts = array();
+        // Validate and trim the sort parameters in the SQL string for sorting.
         foreach ($rawsorts as $rawsort) {
-            $rawsort = trim($rawsort);
-            $sorts[] = trim($rawsort);
+            $sort = trim($rawsort);
+            $sortparams = explode(' ', $sort);
+            // A valid sort statement can not have more than 2 params (ex. 'summary desc' or 'timeaccess').
+            if (count($sortparams) > 2) {
+                throw new invalid_parameter_exception(
+                    'Invalid structure of the sort parameter, allowed structure: fieldname [ASC|DESC].');
+            }
+            $sortfield = trim($sortparams[0]);
+            // Validate the value which defines the field to sort by.
+            if (!in_array($sortfield, $basefields)) {
+                throw new invalid_parameter_exception('Invalid field in the sort parameter, allowed fields: ' .
+                    implode(', ', $basefields) . '.');
+            }
+            $sortdirection = isset($sortparams[1]) ? trim($sortparams[1]) : '';
+            // Validate the value which defines the sort direction (if present).
+            $allowedsortdirections = ['asc', 'desc'];
+            if (!empty($sortdirection) && !in_array(strtolower($sortdirection), $allowedsortdirections)) {
+                throw new invalid_parameter_exception('Invalid sort direction in the sort parameter, allowed values: ' .
+                    implode(', ', $allowedsortdirections) . '.');
+            }
+            $sorts[] = $sort;
         }
         $sort = implode(',', $sorts);
     }
-
-    $orderby = "ORDER BY $sort";
 
     $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
 
@@ -4764,7 +4782,7 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
                               AND ue.timestart < :now1
                               AND (ue.timeend = 0 OR ue.timeend > :now2)
                           ))
-            $orderby";
+          ORDER BY $sort";
 
     $now = round(time(), -2); // Improves db caching.
     $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE, 'visible' => 1, 'status' => ENROL_USER_ACTIVE,

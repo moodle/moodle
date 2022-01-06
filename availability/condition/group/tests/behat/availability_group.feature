@@ -6,8 +6,8 @@ Feature: availability_group
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | format | enablecompletion |
-      | Course 1 | C1        | topics | 1                |
+      | fullname | shortname | format | enablecompletion | numsections |
+      | Course 1 | C1        | topics | 1                | 3           |
     And the following "users" exist:
       | username |
       | teacher1 |
@@ -101,3 +101,33 @@ Feature: availability_group
     Then I should see "P1" in the "region-main" "region"
     And I should see "P2" in the "region-main" "region"
     And I should not see "P3" in the "region-main" "region"
+
+  @javascript
+  Scenario: Condition display with filters
+    # Teacher sets up a restriction on group G1, using multilang filter.
+    Given the following "groups" exist:
+      | name                                                                                        | course | idnumber |
+      | <span lang="en" class="multilang">G-One</span><span lang="fr" class="multilang">G-Un</span> | C1     | GI1      |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    # The activity names filter is enabled because it triggered a bug in older versions.
+    And the "activitynames" filter is "on"
+    And the "activitynames" filter applies to "content and headings"
+    And I am on the "C1" "Course" page logged in as "teacher1"
+    And I turn editing mode on
+    And I add a "Page" to section "1"
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Name         | P1 |
+      | Description  | x  |
+      | Page content | x  |
+    And I click on "Add restriction..." "button"
+    And I click on "Group" "button" in the "Add restriction..." "dialogue"
+    And I set the field "Group" to "G-One"
+    And I click on "Save and return to course" "button"
+    And I log out
+
+    # Student sees information about no access to group, with group name in correct language.
+    When I am on the "C1" "Course" page logged in as "student1"
+    Then I should see "Not available unless: You belong to G-One"
+    And I should not see "G-Un"

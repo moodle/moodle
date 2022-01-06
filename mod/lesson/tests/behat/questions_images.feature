@@ -16,15 +16,15 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | course   | C1               |
+      | activity | lesson           |
+      | name     | Test lesson name |
     And I log in as "teacher1"
     And I follow "Manage private files"
     And I upload "mod/lesson/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
     And I click on "Save changes" "button"
-    When I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-    And I follow "Test lesson name"
+    When I am on the "Test lesson name" "lesson activity" page
     And I follow "Add a question page"
     And I set the field "Select a question type" to "Multichoice"
     And I press "Add a question page"
@@ -76,9 +76,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I click on "Save image" "button"
     And I press "Save page"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test lesson name"
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "What animal is an amphibian?"
     And "//*[contains(@class, 'answeroption')]//img[contains(@src, 'pluginfile.php')]" "xpath_element" should exist
     And "//*[contains(@class, 'answeroption')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist

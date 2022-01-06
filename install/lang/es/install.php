@@ -36,7 +36,7 @@ $string['chooselanguagesub'] = 'Por favor, seleccione un idioma para el proceso 
 $string['clialreadyconfigured'] = 'El archivo de configuración config.php ya existe. Por favor, utilice admin/cli/install_database.php para instalar Moodle en este sitio.';
 $string['clialreadyinstalled'] = 'El archivo de configuración config.php ya existe. Por favor, utilice admin/cli/install_database.php para actualizar Moodle en este sitio.';
 $string['cliinstallheader'] = 'Programa de instalación Moodle de línea de comando {$a}';
-$string['clitablesexist'] = 'Tablas de base de datos ya existentes, la instalación CLI no puede continuar.';
+$string['clitablesexist'] = 'Tablas de base de datos ya existentes; la instalación CLI no puede continuar.';
 $string['databasehost'] = 'Servidor de la base de datos';
 $string['databasename'] = 'Nombre de la base de datos';
 $string['databasetypehead'] = 'Seleccione el controlador de la base de datos';
@@ -86,20 +86,16 @@ $string['pathsunsecuredataroot'] = 'La ubicación de dataroot no es segura';
 $string['pathswrongadmindir'] = 'El directorio admin no existe';
 $string['phpextension'] = 'Extensión PHP {$a}';
 $string['phpversion'] = 'Versión PHP';
-$string['phpversionhelp'] = '<p>Moodle requiere al menos una versión de PHP 4.3.0 o 5.1.0 ((5.0.x tiene una serie de problemas conocidos).</p>
-<p>En este momento está ejecutando la versión {$a}</p>
-<p>¡Debe actualizar PHP o trasladarse a otro servidor con una versión más reciente de PHP!<br />
-(En caso de 5.0.x podría también revertir a la versión 4.4.x)</p>';
+$string['phpversionhelp'] = '<p>Moodle requiere una versión de PHP que sea al menos la 5.6.5 o 7.1 (7.0.x tiene algunas limitaciones del motor).</p>
+<p>En este momento está ejecutando la versión {$a}.</p>
+<p>Debe actualizar PHP o trasladarse a otro servidor con una versión más reciente de PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete <strong>{$a->packname} {$a->packversion}</strong> satisfactoriamente en su ordenador. ¡Enhorabuena!';
 $string['welcomep30'] = 'Esta versión de <strong>{$a->installername}</strong> incluye las
     aplicaciones necesarias para que <strong>Moodle</strong> funcione en su ordenador,
     principalmente:';
 $string['welcomep40'] = 'El paquete también incluye <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'El uso de todas las aplicaciones del paquete está gobernado por sus respectivas
-    licencias. El programa <strong>{$a->installername}</strong> es
-    <a href="http://www.opensource.org/docs/definition_plain.html">código abierto</a> y se distribuye
-    bajo licencia <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
+$string['welcomep50'] = 'El uso de todas las aplicaciones del paquete está supeditado a sus respectivas licencias. El programa <strong>{$a->installername}</strong> es <a href="http://www.opensource.org/docs/definition_plain.html">de código abierto</a> y se distribuye bajo licencia <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'Las siguientes páginas le guiarán a través de algunos sencillos pasos para configurar y ajustar <strong>Moodle</strong> en su ordenador. Puede utilizar los valores por defecto sugeridos o, de forma opcional, modificarlos para que se ajusten a sus necesidades.';
 $string['welcomep70'] = 'Pulse en el botón "Siguiente" para continuar con la configuración de <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Dirección Web';

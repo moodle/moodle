@@ -1,4 +1,7 @@
 <?php
+
+namespace Moodle;
+
 /**
  * Utility class for handling metadata
  */

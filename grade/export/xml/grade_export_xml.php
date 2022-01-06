@@ -34,6 +34,20 @@ class grade_export_xml extends grade_export {
     }
 
     /**
+     * Handle form processing for export. Note we need to handle the case where there are no 'itemids[]' being included in the
+     * form, because each is disabled for selection due to having empty idnumber
+     *
+     * @param stdClass $formdata
+     */
+    public function process_form($formdata) {
+        if (!isset($formdata->itemids)) {
+            $formdata->itemids = self::EXPORT_SELECT_NONE;
+        }
+
+        parent::process_form($formdata);
+    }
+
+    /**
      * To be implemented by child classes
      * @param boolean $feedback
      * @param boolean $publish Whether to output directly, or send as a file

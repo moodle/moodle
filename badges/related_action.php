@@ -36,6 +36,7 @@ $context = $badge->get_context();
 require_capability('moodle/badges:configuredetails', $context);
 
 if ($action == 'remove') {
+    require_sesskey();
     $badge->delete_related_badge($relatedid);
 }
 

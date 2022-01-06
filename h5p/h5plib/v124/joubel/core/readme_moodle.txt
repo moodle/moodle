@@ -19,13 +19,13 @@ Downloaded version: 1.24.2 release
 Changes:
 1. In order to allow the dependency path to be overridden by child H5PCore classes, a couple of minor changes have been added to the
 h5p.classes.php file:
-    - Into the getDependenciesFiles method, the line 2435:
+    - Into the getDependenciesFiles method, the line 2440:
         $dependency['path'] = 'libraries/' . H5PCore::libraryToString($dependency, TRUE);
 
       has been changed to:
         $dependency['path'] = $this->getDependencyPath($dependency);
 
-     - The method getDependencyPath has been added (line 2455). It might be rewritten by child classes.
+     - The method getDependencyPath has been added (line 2466). It might be rewritten by child classes.
 A PR has been sent to the H5P library with these changes:
 https://github.com/h5p/h5p-php-library/compare/master...andrewnicols:libraryPathSubclass
 Hopefully, when upgrading, these patch won't be needed because it will be included in the H5P library by default.
@@ -74,3 +74,11 @@ with the previous patched and minified JQuery version.
  *
  * @member
  */
+
+
+4. Add namespace to this library to avoid collision. It means:
+
+- Add the "namespace Moodle;" line at the top of all the h5p*.php files in the root folder.
+- Replace \H5Pxxx uses to H5Pxxx (for instance, in h5p-default-storage.class.php there are several references to \H5PCore that
+must be replaced with H5PCore).
+- Add "use ZipArchive;" in h5p.classes.h5p (check that it's still used before replacing it when upgrading the library).

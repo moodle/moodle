@@ -234,7 +234,7 @@ function resource_get_coursemodule_info($coursemodule) {
 
     if ($display == RESOURCELIB_DISPLAY_POPUP) {
         $fullurl = "$CFG->wwwroot/mod/resource/view.php?id=$coursemodule->id&amp;redirect=1";
-        $options = empty($resource->displayoptions) ? array() : unserialize($resource->displayoptions);
+        $options = empty($resource->displayoptions) ? [] : (array) unserialize_array($resource->displayoptions);
         $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
@@ -250,7 +250,7 @@ function resource_get_coursemodule_info($coursemodule) {
     // add some file details as well to be used later by resource_get_optional_details() without retriving.
     // Do not store filedetails if this is a reference - they will still need to be retrieved every time.
     if (($filedetails = resource_get_file_details($resource, $coursemodule)) && empty($filedetails['isref'])) {
-        $displayoptions = @unserialize($resource->displayoptions);
+        $displayoptions = (array) unserialize_array($resource->displayoptions);
         $displayoptions['filedetails'] = $filedetails;
         $info->customdata = serialize($displayoptions);
     } else {

@@ -16,19 +16,16 @@ Feature: A teacher can choose whether to provide a printer-friendly glossary ent
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
   @javascript
   Scenario: Printer-friendly glossary view enabled
-    Given I add a "Glossary" to section "1" and I fill the form with:
-      | Name | Test glossary name |
-      | Description | Test glossary description |
-      | Allow print view | Yes |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    Given the following "activity" exists:
+      | course         | C1                        |
+      | activity       | glossary                  |
+      | name           | Test glossary name        |
+      | intro          | Test glossary description |
+      | allowprintview | 1                         |
+    And I am on the "Test glossary name" "glossary activity" page logged in as student1
     When I add a glossary entry with the following data:
       | Concept | Just a test concept |
       | Definition | Concept definition |
@@ -39,14 +36,13 @@ Feature: A teacher can choose whether to provide a printer-friendly glossary ent
 
   @javascript
   Scenario: Printer-friendly glossary view disabled
-    Given I add a "Glossary" to section "1" and I fill the form with:
-      | Name | Test glossary name |
-      | Description | Test glossary description |
-      | Allow print view | No |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test glossary name"
+    Given the following "activity" exists:
+      | course         | C1                        |
+      | activity       | glossary                  |
+      | name           | Test glossary name        |
+      | intro          | Test glossary description |
+      | allowprintview | 0                         |
+    And I am on the "Test glossary name" "glossary activity" page logged in as student1
     When I add a glossary entry with the following data:
       | Concept | Just a test concept |
       | Definition | Concept definition |

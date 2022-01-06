@@ -170,11 +170,27 @@ a.dropdown-toggle,
 .modal-dialog[tabindex="0"],
 .moodle-dialogue-base .closebutton,
 button.close,
-.form-autocomplete-selection {
+.form-autocomplete-selection,
+[role="treeitem"]:not([aria-expanded="true"]) {
     &.focus,
     &:focus {
         outline: 0;
         box-shadow: $input-btn-focus-box-shadow;
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+// We don't want to highlight the whole li when it's expanded. Only the first child is highlighted.
+[role="treeitem"][aria-expanded="true"] {
+    outline: 0;
+    &.focus,
+    &:focus {
+        > *:first-child {
+            outline: 0;
+            box-shadow: $input-btn-focus-box-shadow;
+        }
     }
     &:focus:hover {
         text-decoration: none;
@@ -430,12 +446,10 @@ form.popupform div {
     overflow: auto;
 }
 
-// Minimum height required for a menu in a table inside a scrollable div.
 // Position required for table sizing inside a flex container.
 .no-overflow > .generaltable {
     position: relative;
     margin-bottom: 0;
-    min-height: 10em;
 }
 // Accessibility features
 
@@ -1284,8 +1298,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     line-height: 1.5;
 }
 
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h5 {
     font-size: 1.5rem;
+    font-weight: $font-weight-base;
+    margin-bottom: 0;
+    line-height: 1.5;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
@@ -2344,7 +2361,8 @@ $footer-link-color: $bg-inverse-link-color !default;
     &:focus,
     &:focus-within {
         outline: 0;
-        background-color: $dropdown-link-hover-bg;
+        background-color: $dropdown-link-active-bg;
+        color: $dropdown-link-active-color;
         a {
             color: $dropdown-link-active-color;
         }
@@ -2730,12 +2748,14 @@ $picker-emojis-per-row: 7 !default;
 }
 
 .alert.cta {
-    .icon {
-        padding: 0.3rem;
-        &.fa {
-            border-radius: 50%;
-            border-style: solid;
-            border-width: 0.125rem;
+    .cta-icon {
+        .icon {
+            padding: 0.3rem;
+            &.fa {
+                border-radius: 50%;
+                border-style: solid;
+                border-width: 0.125rem;
+            }
         }
     }
 }

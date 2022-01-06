@@ -1,6 +1,26 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.10.9 ===
+* Two new helper functions have been added to lib/datalib.php, for safely preparing SQL ORDER BY statements where user
+  interactions define sort parameters (see the respective docblocks for full details and examples):
+  -get_safe_orderby() - where a single sort parameter is required.
+  -get_safe_orderby_multiple() - where multiple sort parameters are required.
+
+=== 3.10.8 ===
+* A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
+  Note: This option overrides the forced download of directly accessed SVGs, so should only be used where the calling method is
+  rendering SVGs directly for content created using XSS risk flagged capabilities (such as creating a SCORM activity).
+  This is also not necessary where SVGs are already being safely loaded into <img> tags by Moodle (eg within forum posts).
+
+=== 3.10.7 ===
+* The signature of the get_name() function for grade_category and grade_item has been extended. The new parameter allows
+  callers to get the name without escaped characters.
+
+=== 3.10.6 ===
+* For security reasons, filelib has been updated so all requests now use emulated redirects.
+  For this reason, manually disabling emulateredirects will no longer have any effect (and will generate a debugging message).
+
 === 3.10.4 ===
 * The signature of the get_context_name() function in the abstract class context and all extending classes (such as context_course)
   has been extended. The new parameter allows the to get the name without escaped characters.

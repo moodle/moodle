@@ -1347,44 +1347,6 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Returns the id of the category with the given idnumber.
-     *
-     * Please note that this function requires the category to exist. If it does not exist an ExpectationException is thrown.
-     *
-     * @param string $idnumber
-     * @return string
-     * @throws ExpectationException
-     */
-    protected function get_category_id($idnumber) {
-        global $DB;
-        try {
-            return $DB->get_field('course_categories', 'id', array('idnumber' => $idnumber), MUST_EXIST);
-        } catch (dml_missing_record_exception $ex) {
-            throw new ExpectationException(sprintf("There is no category in the database with the idnumber '%s'", $idnumber),
-                $this->getSession());
-        }
-    }
-
-    /**
-     * Returns the id of the course with the given idnumber.
-     *
-     * Please note that this function requires the category to exist. If it does not exist an ExpectationException is thrown.
-     *
-     * @param string $idnumber
-     * @return string
-     * @throws ExpectationException
-     */
-    protected function get_course_id($idnumber) {
-        global $DB;
-        try {
-            return $DB->get_field('course', 'id', array('idnumber' => $idnumber), MUST_EXIST);
-        } catch (dml_missing_record_exception $ex) {
-            throw new ExpectationException(sprintf("There is no course in the database with the idnumber '%s'", $idnumber),
-                $this->getSession());
-        }
-    }
-
-    /**
      * Returns the category node from within the listing on the management page.
      *
      * @param string $idnumber

@@ -17,28 +17,22 @@ Feature: Submissions are unlocked when a new attempt is given
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: A locked submission should unlock when a new attempt is automatically given.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | Additional attempts | Automatically until pass |
-      | Grade to pass | 50 |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm the student1 submission |
-    And I press "Save changes"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    Given the following "activity" exists:
+      | activity                             | assign                |
+      | course                               | C1                    |
+      | name                                 | Test assignment name  |
+      | submissiondrafts                     | 0                     |
+      | assignsubmission_onlinetext_enabled  | 1                     |
+      | attemptreopenmethod                  | untilpass             |
+      | gradepass                            | 50                    |
+      | submissiondrafts                     | 0                     |
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                   |
+      | Test assignment name  | student1  | I'm the student1 submission  |
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
     And I open the action menu in "Student 1" "table_row"
     And I follow "Prevent submission changes"
@@ -51,32 +45,25 @@ Feature: Submissions are unlocked when a new attempt is given
     Then I should see "Reopened"
     And I should not see "Submission changes not allowed"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: A locked submission should unlock when a new attempt is manually given.
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | Additional attempts | Manually |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm the student1 submission |
-    And I press "Save changes"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    Given the following "activity" exists:
+      | activity                            | assign                  |
+      | course                              | C1                      |
+      | name                                | Test assignment name    |
+      | submissiondrafts                    | 0                       |
+      | assignsubmission_onlinetext_enabled | 1                       |
+      | attemptreopenmethod                 | manual                  |
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext                   |
+      | Test assignment name  | student1  | I'm the student1 submission  |
+
+    And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "View all submissions" in current page administration
-    And I open the action menu in "Student 1" "table_row"
+    When I open the action menu in "Student 1" "table_row"
     And I follow "Prevent submission changes"
-    And I should see "Submission changes not allowed"
+    Then I should see "Submission changes not allowed"
     And I open the action menu in "Student 1" "table_row"
     And I follow "Allow another attempt"
-    Then I should see "Reopened"
+    And I should see "Reopened"
     And I should not see "Submission changes not allowed"

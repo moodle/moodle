@@ -14,10 +14,10 @@ Feature: View fill the blanks attempt report
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | C1     | student        |
-    And I log in as "admin"
-    # No HTML should appear even with formatstringstriptags disabled.
-    And I set the following administration settings values:
+    And the following config values are set as admin:
+      # No HTML should appear even with formatstringstriptags disabled.
       | formatstringstriptags | 0 |
+    And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "H5P" to section "1"
     And I set the following fields to these values:
@@ -29,10 +29,8 @@ Feature: View fill the blanks attempt report
     And I log out
 
   Scenario: View attempt in a fill the blanks content
+    Given I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     # Do an attempt.
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Awesome H5P package"
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Brigadoon"

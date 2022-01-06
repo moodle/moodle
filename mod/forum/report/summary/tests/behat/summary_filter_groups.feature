@@ -35,9 +35,9 @@ Feature: Groups report filter is available if groups exist
       | student1 | G3    |
     And the following "activities" exist:
       | activity | name   | description     | course | idnumber | groupmode |
-      | forum    | forum1 | C1 first forum  | C1     | forum1   | 1         |
-      | forum    | forum2 | C1 second forum | C1     | forum2   | 2         |
-      | forum    | forum1 | C2 first forum  | C2     | forum1   | 0         |
+      | forum    | forum1 | C1 first forum  | C1     | c1forum1 | 1         |
+      | forum    | forum2 | C1 second forum | C1     | c1forum2 | 2         |
+      | forum    | forum1 | C2 first forum  | C2     | c2forum1 | 0         |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message    | group            | created           |
       | teacher1 | forum1 | discussion1 | D1 message | G1               | ## 1 month ago ## |
@@ -62,9 +62,7 @@ Feature: Groups report filter is available if groups exist
 
   @javascript
   Scenario: All groups can be selected or cleared together in the groups filter, and are unchecked by default
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "forum1"
+    When I am on the "c1forum1" "forum activity" page logged in as teacher1
     And I navigate to "Forum summary report" in current page administration
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
@@ -112,9 +110,7 @@ Feature: Groups report filter is available if groups exist
 
   @javascript
   Scenario: The summary report can be filtered by a subset of groups, and re-ordering the results retains the filter
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "forum1"
+    When I am on the "c1forum1" "forum activity" page logged in as teacher1
     And I navigate to "Forum summary report" in current page administration
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
@@ -148,9 +144,7 @@ Feature: Groups report filter is available if groups exist
 
   @javascript
   Scenario: The summary report can be filtered as a mixture of groups and no groups
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "forum2"
+    When I am on the "c1forum2" "forum activity" page logged in as teacher1
     And I navigate to "Forum summary report" in current page administration
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
@@ -174,9 +168,7 @@ Feature: Groups report filter is available if groups exist
 
   @javascript
   Scenario: The summary report can be filtered by no groups only
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "forum2"
+    When I am on the "c1forum2" "forum activity" page logged in as teacher1
     And I navigate to "Forum summary report" in current page administration
     Then the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
@@ -199,9 +191,7 @@ Feature: Groups report filter is available if groups exist
   @javascript
   Scenario: Filtering by a group containing no users still allows the page to render
     # Log in as admin so Teacher 1 not existing on page can be confirmed.
-    When I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I follow "forum1"
+    When I am on the "c1forum1" "forum activity" page logged in as admin
     And I navigate to "Forum summary report" in current page administration
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
@@ -224,9 +214,7 @@ Feature: Groups report filter is available if groups exist
 
   @javascript
   Scenario: Course forum summary report can be filtered by group
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "forum2"
+    When I am on the "c1forum2" "forum activity" page logged in as teacher1
     And I navigate to "Forum summary report" in current page administration
     And I select "All forums in course" from the "Forum selected" singleselect
     And I click on "Groups" "button"

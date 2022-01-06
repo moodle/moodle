@@ -7,28 +7,27 @@ Feature: Use the particiaption report to message groups of students
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
-      | Course 1 | C1 | 0 | 1 |
+      | Course 1 | C1        | 0        | 1         |
     And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
-      | student1 | Student | 1 | student1@example.com |
-      | student2 | Student | 2 | student2@example.com |
-      | student3 | Student | 3 | student3@example.com |
+      | username | firstname | lastname |
+      | teacher1 | Teacher   | 1        |
+      | student1 | Student   | 1        |
+      | student2 | Student   | 2        |
+      | student3 | Student   | 3        |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
-      | student2 | C1 | student |
-      | student3 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+      | student3 | C1     | student        |
     And the following "activity" exists:
       | course      | C1             |
       | activity    | book           |
       | name        | Test book name |
+      | idnumber    | Test book name |
       | description | Test book      |
       | idnumber    | book1          |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test book name"
+    And I am on the "Test book name" "book activity" page logged in as student1
     And I log out
 
   Scenario: Message all students from the participation report

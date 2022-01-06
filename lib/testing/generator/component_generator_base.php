@@ -57,4 +57,33 @@ abstract class component_generator_base {
      */
     public function reset() {
     }
+
+    /**
+     * Set the current user during data generation.
+     *
+     * This should be avoided wherever possible, but in some situations underlying code will insert data as the current
+     * user.
+     *
+     * @param stdClass $user
+     */
+    protected function set_user(?stdClass $user = null): void {
+        global $CFG, $DB;
+
+        if ($user === null) {
+            $user = (object) [
+                'id' => 0,
+                'mnethostid' => $CFG->mnet_localhost_id,
+            ];
+        } else {
+            $user = clone($user);
+            unset($user->description);
+            unset($user->access);
+            unset($user->preference);
+        }
+
+        // Ensure session is empty, as it may contain caches and user-specific info.
+        \core\session\manager::init_empty_session();
+
+        \core\session\manager::set_user($user);
+    }
 }

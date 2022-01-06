@@ -369,6 +369,25 @@ abstract class behat_generator_base {
     }
 
     /**
+     * Gets the course cmid for the specified activity based on the activity's idnumber.
+     *
+     * Note: this does not check the module type, only the idnumber.
+     *
+     * @throws Exception
+     * @param string $idnumber
+     * @return int
+     */
+    protected function get_activity_id(string $idnumber) {
+        global $DB;
+
+        if (!$id = $DB->get_field('course_modules', 'id', ['idnumber' => $idnumber])) {
+            throw new Exception('The specified activity with idnumber "' . $idnumber . '" could not be found.');
+        }
+
+        return $id;
+    }
+
+    /**
      * Gets the group id from it's idnumber.
      * @throws Exception
      * @param string $idnumber
@@ -511,5 +530,47 @@ abstract class behat_generator_base {
             throw new Exception('The specified external backpack with backpackweburl "' . $username . '" does not exist');
         }
         return $id;
+    }
+
+    /**
+     * Get a coursemodule from an activity name or idnumber.
+     *
+     * @param string $activity
+     * @param string $identifier
+     * @return cm_info
+     */
+    protected function get_cm_by_activity_name(string $activity, string $identifier): cm_info {
+        global $DB;
+
+        $coursetable = new \core\dml\table('course', 'c', 'c');
+        $courseselect = $coursetable->get_field_select();
+        $coursefrom = $coursetable->get_from_sql();
+
+        $cmtable = new \core\dml\table('course_modules', 'cm', 'cm');
+        $cmfrom = $cmtable->get_from_sql();
+
+        $acttable = new \core\dml\table($activity, 'a', 'a');
+        $actselect = $acttable->get_field_select();
+        $actfrom = $acttable->get_from_sql();
+
+        $sql = <<<EOF
+    SELECT cm.id as cmid, {$courseselect}, {$actselect}
+      FROM {$cmfrom}
+INNER JOIN {$coursefrom} ON c.id = cm.course
+INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+INNER JOIN {$actfrom} ON cm.instance = a.id
+     WHERE cm.idnumber = :idnumber OR a.name = :name
+EOF;
+
+        $result = $DB->get_record_sql($sql, [
+            'modname' => $activity,
+            'idnumber' => $identifier,
+            'name' => $identifier,
+        ], MUST_EXIST);
+
+        $course = $coursetable->extract_from_result($result);
+        $instancedata = $acttable->extract_from_result($result);
+
+        return get_fast_modinfo($course)->get_cm($result->cmid);
     }
 }

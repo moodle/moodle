@@ -25,9 +25,7 @@ Feature: Using the lesson activities which support point scale
 
   @javascript
   Scenario: Lesson rescale grade should not be possible when users are graded
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "Numerical"
     And I press "Add a question page"
@@ -40,15 +38,10 @@ Feature: Using the lesson activities which support point scale
       | id_jumpto_6 | Next page |
     And I press "Save page"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I set the field "Your answer" to "5"
     And I press "Submit"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
-    When I navigate to "Edit settings" in current page administration
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I expand all fieldsets
     Then the "Maximum grade" "field" should be disabled

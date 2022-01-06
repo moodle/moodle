@@ -81,7 +81,35 @@ function filter_tex_sanitize_formula(string $texexp): string {
         '\noexpand', '\line', '\mathcode', '\item', '\section', '\mbox', '\declarerobustcommand',
     ];
 
-    return str_ireplace($denylist, 'forbiddenkeyword', $texexp);
+    $allowlist = ['inputenc'];
+
+    // Prepare the denylist for regular expression.
+    $denylist = array_map(function($value){
+        return '/' . preg_quote($value, '/') . '/i';
+    }, $denylist);
+
+    // Prepare the allowlist for regular expression.
+    $allowlist = array_map(function($value){
+        return '/\bforbiddenkeyword_(' . preg_quote($value, '/') . ')\b/i';
+    }, $allowlist);
+
+    // First, mangle all denied words.
+    $texexp = preg_replace_callback($denylist,
+        function($matches) {
+            return 'forbiddenkeyword_' . $matches[0];
+        },
+        $texexp
+    );
+
+    // Then, change back the allowed words.
+    $texexp = preg_replace_callback($allowlist,
+        function($matches) {
+            return $matches[1];
+        },
+        $texexp
+    );
+
+    return $texexp;
 }
 
 function filter_tex_get_cmd($pathname, $texexp) {

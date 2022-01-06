@@ -1,5 +1,7 @@
 <?php
 
+namespace Moodle;
+
 abstract class H5PEditorEndpoints {
 
   /**
@@ -54,7 +56,7 @@ abstract class H5PEditorEndpoints {
 class H5PEditorAjax {
 
   /**
-   * @var \H5PCore
+   * @var H5PCore
    */
   public $core;
 
@@ -225,7 +227,7 @@ class H5PEditorAjax {
   private function isValidEditorToken($token) {
     $isValidToken = $this->editor->ajaxInterface->validateEditorToken($token);
     if (!$isValidToken) {
-      \H5PCore::ajaxError(
+      H5PCore::ajaxError(
         $this->core->h5pF->t('Invalid security token.'),
         'INVALID_TOKEN'
       );

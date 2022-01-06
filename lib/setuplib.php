@@ -898,9 +898,10 @@ function initialise_fullme() {
         $_SERVER['SERVER_PORT'] = 443; // Assume default ssl port for the proxy.
     }
 
-    // hopefully this will stop all those "clever" admins trying to set up moodle
-    // with two different addresses in intranet and Internet
-    if (!empty($CFG->reverseproxy) && $rurl['host'] === $wwwroot['host']) {
+    // Hopefully this will stop all those "clever" admins trying to set up moodle
+    // with two different addresses in intranet and Internet.
+    // Port forwarding is still allowed!
+    if (!empty($CFG->reverseproxy) && $rurl['host'] === $wwwroot['host'] && (empty($wwwroot['port']) || $rurl['port'] === $wwwroot['port'])) {
         print_error('reverseproxyabused', 'error');
     }
 
@@ -951,7 +952,7 @@ function setup_get_remote_url() {
     } else {
         $rurl['host'] = null;
     }
-    $rurl['port'] = $_SERVER['SERVER_PORT'];
+    $rurl['port'] = (int)$_SERVER['SERVER_PORT'];
     $rurl['path'] = $_SERVER['SCRIPT_NAME']; // Script path without slash arguments
     $rurl['scheme'] = (empty($_SERVER['HTTPS']) or $_SERVER['HTTPS'] === 'off' or $_SERVER['HTTPS'] === 'Off' or $_SERVER['HTTPS'] === 'OFF') ? 'http' : 'https';
 

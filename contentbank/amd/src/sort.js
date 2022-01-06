@@ -50,11 +50,24 @@ const registerListenerEvents = (contentBank) => {
     contentBank.addEventListener('click', e => {
         const viewList = contentBank.querySelector(selectors.actions.viewlist);
         const viewGrid = contentBank.querySelector(selectors.actions.viewgrid);
+        const fileArea = contentBank.querySelector(selectors.regions.filearea);
+        const shownItems = fileArea.querySelectorAll(selectors.elements.listitem);
 
         // View as Grid button.
         if (e.target.closest(selectors.actions.viewgrid)) {
             contentBank.classList.remove('view-list');
             contentBank.classList.add('view-grid');
+            if (fileArea && shownItems) {
+                fileArea.setAttribute('role', 'list');
+                shownItems.forEach(listItem => {
+                    listItem.setAttribute('role', 'listitem');
+                    listItem.querySelectorAll(selectors.elements.cell).forEach(cell => cell.removeAttribute('role'));
+                });
+
+                const heading = fileArea.querySelector(selectors.elements.heading);
+                heading.removeAttribute('role');
+                heading.querySelectorAll(selectors.elements.cell).forEach(cell => cell.removeAttribute('role'));
+            }
             viewGrid.classList.add('active');
             viewList.classList.remove('active');
             setViewListPreference(false);
@@ -66,16 +79,23 @@ const registerListenerEvents = (contentBank) => {
         if (e.target.closest(selectors.actions.viewlist)) {
             contentBank.classList.remove('view-grid');
             contentBank.classList.add('view-list');
+            if (fileArea && shownItems) {
+                fileArea.setAttribute('role', 'table');
+                shownItems.forEach(listItem => {
+                    listItem.setAttribute('role', 'row');
+                    listItem.querySelectorAll(selectors.elements.cell).forEach(cell => cell.setAttribute('role', 'cell'));
+                });
+
+                const heading = fileArea.querySelector(selectors.elements.heading);
+                heading.setAttribute('role', 'row');
+                heading.querySelectorAll(selectors.elements.cell).forEach(cell => cell.setAttribute('role', 'columnheader'));
+            }
             viewList.classList.add('active');
             viewGrid.classList.remove('active');
             setViewListPreference(true);
 
             return;
         }
-
-        // TODO: This should _not_ use `document`. Every query should be constrained to the content bank container.
-        const fileArea = document.querySelector(selectors.regions.filearea);
-        const shownItems = fileArea.querySelectorAll(selectors.elements.listitem);
 
         if (fileArea && shownItems) {
 
@@ -168,6 +188,8 @@ const updateSortButtons = (contentBank, sortButton) => {
             button.classList.remove('dir-desc');
             button.classList.add('dir-none');
 
+            button.closest(selectors.elements.cell).setAttribute('aria-sort', 'none');
+
             updateButtonTitle(button, false);
         }
     });
@@ -177,13 +199,16 @@ const updateSortButtons = (contentBank, sortButton) => {
     if (sortButton.classList.contains('dir-none')) {
         sortButton.classList.remove('dir-none');
         sortButton.classList.add('dir-asc');
+        sortButton.closest(selectors.elements.cell).setAttribute('aria-sort', 'ascending');
     } else if (sortButton.classList.contains('dir-asc')) {
         sortButton.classList.remove('dir-asc');
         sortButton.classList.add('dir-desc');
+        sortButton.closest(selectors.elements.cell).setAttribute('aria-sort', 'descending');
         ascending = false;
     } else if (sortButton.classList.contains('dir-desc')) {
         sortButton.classList.remove('dir-desc');
         sortButton.classList.add('dir-asc');
+        sortButton.closest(selectors.elements.cell).setAttribute('aria-sort', 'ascending');
     }
 
     updateButtonTitle(sortButton, ascending);
@@ -220,8 +245,8 @@ const updateButtonTitle = (button, ascending) => {
  * @method updateSortOrder
  * @param {HTMLElement} fileArea the Dom container for the itemlist
  * @param {Array} itemList Nodelist of Dom elements
- * @param {String} attribute, the attribut to sort on
- * @param {Bool} ascending, Sort Ascending
+ * @param {String} attribute the attribut to sort on
+ * @param {Bool} ascending Sort Ascending
  */
 const updateSortOrder = (fileArea, itemList, attribute, ascending) => {
     const sortList = [].slice.call(itemList).sort(function(a, b) {

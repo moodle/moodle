@@ -196,6 +196,12 @@
     margin: 0.5em 0;
 }
 
+#mod_quiz_navblock.nav-disabled > * {
+    opacity: .65;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
 /** mod quiz mod **/
 #page-mod-quiz-mod #id_reviewoptionshdr .fitem {
     width: 23%;

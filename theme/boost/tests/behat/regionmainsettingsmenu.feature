@@ -19,10 +19,10 @@ Feature: Region main settings menu
       | choice   | Choice name | Test choice description | C1     | choice1  | Option 1, Option 2, Option 3 |
 
   Scenario: Teacher can use the region main settings menu
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And "#region-main-settings-menu [role=button]" "css_element" should not exist
-    And I follow "Choice name"
+    Given I log in as "teacher1"
+    When I am on "Course 1" course homepage
+    Then "#region-main-settings-menu [role=button]" "css_element" should not exist
+    And I am on the "Choice name" "Choice activity" page
     And I click on "#region-main-settings-menu [role=button]" "css_element"
     And I choose "Edit settings" in the open action menu
     And I should see "Updating: Choice"
@@ -30,12 +30,10 @@ Feature: Region main settings menu
     And I click on "#region-main-settings-menu [role=button]" "css_element"
     And I choose "Enrolment methods" in the open action menu
     And I should see "Enrolment methods"
-    And I log out
 
   Scenario: Student cannot use all options in the region main settings menu
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I log in as "student1"
+    When I am on "Course 1" course homepage
+    Then "#region-main-settings-menu [role=button]" "css_element" should not exist
+    And I am on the "Choice name" "Choice activity" page
     And "#region-main-settings-menu [role=button]" "css_element" should not exist
-    And I follow "Choice name"
-    And "#region-main-settings-menu [role=button]" "css_element" should not exist
-    And I log out

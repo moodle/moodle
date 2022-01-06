@@ -746,6 +746,26 @@ abstract class info {
                         return format_string($cm->get_name(), true, ['context' => $context]);
                     }
                 }, $info);
+        $info = preg_replace_callback('~<AVAILABILITY_FORMAT_STRING>(.*?)</AVAILABILITY_FORMAT_STRING>~s',
+                function($matches) use ($context) {
+                    $decoded = htmlspecialchars_decode($matches[1], ENT_NOQUOTES);
+                    return format_string($decoded, true, ['context' => $context]);
+                }, $info);
+        $info = preg_replace_callback('~<AVAILABILITY_CALLBACK type="([a-z0-9_]+)">(.*?)</AVAILABILITY_CALLBACK>~s',
+                function($matches) use ($modinfo, $context) {
+                    // Find the class, it must have already been loaded by now.
+                    $fullclassname = 'availability_' . $matches[1] . '\condition';
+                    if (!class_exists($fullclassname, false)) {
+                        return '<!-- Error finding class ' . $fullclassname .' -->';
+                    }
+                    // Load the parameters.
+                    $params = [];
+                    $encodedparams = preg_split('~<P/>~', $matches[2], 0);
+                    foreach ($encodedparams as $encodedparam) {
+                        $params[] = htmlspecialchars_decode($encodedparam, ENT_NOQUOTES);
+                    }
+                    return $fullclassname::get_description_callback_value($modinfo, $context, $params);
+                }, $info);
 
         return $info;
     }

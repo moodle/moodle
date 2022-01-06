@@ -108,29 +108,29 @@ class report_log_table_log extends table_sql {
      * @return string|false
      */
     protected function get_user_fullname($userid) {
-        global $DB;
-
         if (empty($userid)) {
             return false;
         }
 
-        if (!empty($this->userfullnames[$userid])) {
-            return $this->userfullnames[$userid];
+        // Check if we already have this users' fullname.
+        $userfullname = $this->userfullnames[$userid] ?? null;
+        if (!empty($userfullname)) {
+            return $userfullname;
         }
 
         // We already looked for the user and it does not exist.
-        if ($this->userfullnames[$userid] === false) {
+        if ($userfullname === false) {
             return false;
         }
 
         // If we reach that point new users logs have been generated since the last users db query.
-        list($usql, $uparams) = $DB->get_in_or_equal($userid);
-        $sql = "SELECT id," . get_all_user_name_fields(true) . " FROM {user} WHERE id " . $usql;
-        if (!$user = $DB->get_records_sql($sql, $uparams)) {
-            return false;
+        $fields = get_all_user_name_fields(true);
+        if ($user = \core_user::get_user($userid, $fields)) {
+            $this->userfullnames[$userid] = fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context()));
+        } else {
+            $this->userfullnames[$userid] = false;
         }
 
-        $this->userfullnames[$userid] = fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context()));
         return $this->userfullnames[$userid];
     }
 

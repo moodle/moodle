@@ -28,10 +28,10 @@ namespace core_h5p;
 defined('MOODLE_INTERNAL') || die();
 
 use core_h5p\local\library\autoloader;
-use H5PContentValidator as content_validator;
-use H5peditor;
-use H5PStorage as storage;
-use H5PValidator as validator;
+use Moodle\H5PContentValidator as content_validator;
+use Moodle\H5peditor;
+use Moodle\H5PStorage as storage;
+use Moodle\H5PValidator as validator;
 
 /**
  * H5P factory class.
@@ -122,9 +122,9 @@ class factory {
     }
 
     /**
-     * Returns an instance of the \H5PStorage class.
+     * Returns an instance of the H5PStorage class.
      *
-     * @return \H5PStorage
+     * @return \Moodle\H5PStorage
      */
     public function get_storage(): storage {
         if (null === $this->storage) {
@@ -135,9 +135,9 @@ class factory {
     }
 
     /**
-     * Returns an instance of the \H5PValidator class.
+     * Returns an instance of the H5PValidator class.
      *
-     * @return \H5PValidator
+     * @return \Moodle\H5PValidator
      */
     public function get_validator(): validator {
         if (null === $this->validator) {
@@ -148,9 +148,9 @@ class factory {
     }
 
     /**
-     * Returns an instance of the \H5PContentValidator class.
+     * Returns an instance of the H5PContentValidator class.
      *
-     * @return \H5PContentValidator
+     * @return Moodle\H5PContentValidator
      */
     public function get_content_validator(): content_validator {
         if (null === $this->content_validator) {
