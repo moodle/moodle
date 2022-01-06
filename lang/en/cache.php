@@ -217,7 +217,3 @@ $string['usage_totalmargin'] = 'Error margin (95%)';
 $string['usage_realtotal'] = 'Actual usage (if known)';
 $string['userinputsharingkey'] = 'Custom key for sharing';
 $string['userinputsharingkey_help'] = 'Enter your own private key here. When you set up other stores on other sites you wish to share data with make sure you set the exact same key there.';
-
-// Deprecated since Moodle 3.8.
-$string['purgedefinitionsuccess'] = 'Successfully purged the requested definition.';
-$string['purgestoresuccess'] = 'Successfully purged the requested store.';

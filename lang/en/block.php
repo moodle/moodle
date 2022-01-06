@@ -73,11 +73,3 @@ $string['thisspecificpage'] = 'This specific page';
 $string['visible'] = 'Visible';
 $string['weight'] = 'Weight';
 $string['wherethisblockappears'] = 'Where this block appears';
-
-// Deprecated since Moodle 3.7.
-$string['addtodock'] = 'Move this to the dock';
-$string['dockblock'] = 'Dock {$a} block';
-$string['hidedockpanel'] = 'Hide the dock panel';
-$string['undockall'] = 'Undock all';
-$string['undockblock'] = 'Undock {$a} block';
-$string['undockitem'] = 'Undock this item';

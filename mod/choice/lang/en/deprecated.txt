@@ -1,2 +1,0 @@
-choiceactivityname,mod_choice
-choicecloseson,mod_choice

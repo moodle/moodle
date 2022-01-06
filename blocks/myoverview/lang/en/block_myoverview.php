@@ -89,7 +89,3 @@ $string['privacy:request:preference:set'] = 'The value of the setting \'{$a->nam
 
 // Deprecated since Moodle 4.0.
 $string['clearsearch'] = "Clear search";
-
-// Deprecated since Moodle 3.7.
-$string['complete'] = 'complete';
-$string['nocourses'] = 'No courses';

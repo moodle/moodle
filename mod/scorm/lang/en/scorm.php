@@ -456,8 +456,5 @@ $string['width'] = 'Width';
 $string['window'] = 'Window';
 $string['youmustselectastatus'] = 'You must select a status to require';
 
-// Deprecated since Moodle 3.8.
-$string['duedate'] = 'Due date';
-
 // Deprecated since Moodle 4.0.
 $string['info'] = 'Info';
