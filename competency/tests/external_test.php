@@ -826,12 +826,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             'competencyframeworkid' => $framework->id,
             'sortorder' => 0
         );
-        // TODO: MDL-69700 - Analyse if the throw exception is happening
-        // in the correct place and decide what happens with the trailing
-        // code that is never executed.
+
         $this->expectException(invalid_parameter_exception::class);
+        $this->expectExceptionMessage('Invalid external api parameter');
         $result = external::create_competency($competency);
-        $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
     }
 
     /**
