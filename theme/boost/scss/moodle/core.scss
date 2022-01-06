@@ -363,11 +363,6 @@ a.autolink.glossary:hover {
     font-weight: bold;
 }
 
-img.userpicture,
-.userinitials {
-    margin-right: 0.5rem;
-}
-
 img.resize {
     height: 1em;
     width: 1em;
@@ -2916,4 +2911,14 @@ body.dragging {
             padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
         }
     }
+}
+
+.dropdown-toggle::after {
+    content: $fa-var-chevron-down;
+    margin-right: 0;
+    margin-left: 4px;
+    @include fa-icon();
+    font-size: 9px;
+    width: 9px;
+    border: 0;
 }
