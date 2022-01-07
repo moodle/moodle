@@ -7138,6 +7138,11 @@ class admin_setting_manageauths extends admin_setting {
         }
 
         $return = $OUTPUT->heading(get_string('actauthhdr', 'auth'), 3, 'main');
+        if (in_array('mnet', $authsenabled)) {
+            $notify = new \core\output\notification(get_string('xmlrpcmnetauthenticationenabled', 'admin'),
+                \core\output\notification::NOTIFY_WARNING);
+            $return .= $OUTPUT->render($notify);
+        }
         $return .= $OUTPUT->box_start('generalbox authsui');
 
         $table = new html_table();
@@ -10382,16 +10387,21 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
         $strversion = get_string('version');
 
         $protocols_available = core_component::get_plugin_list('webservice');
-        $active_protocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+        $activeprotocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
         ksort($protocols_available);
 
-        foreach ($active_protocols as $key=>$protocol) {
+        foreach ($activeprotocols as $key => $protocol) {
             if (empty($protocols_available[$protocol])) {
-                unset($active_protocols[$key]);
+                unset($activeprotocols[$key]);
             }
         }
 
         $return = $OUTPUT->heading(get_string('actwebserviceshhdr', 'webservice'), 3, 'main');
+        if (in_array('xmlrpc', $activeprotocols)) {
+            $notify = new \core\output\notification(get_string('xmlrpcwebserviceenabled', 'admin'),
+                \core\output\notification::NOTIFY_WARNING);
+            $return .= $OUTPUT->render($notify);
+        }
         $return .= $OUTPUT->box_start('generalbox webservicesui');
 
         $table = new html_table();
@@ -10413,7 +10423,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
             $version = isset($plugin->version) ? $plugin->version : '';
 
             // hide/show link
-            if (in_array($protocol, $active_protocols)) {
+            if (in_array($protocol, $activeprotocols)) {
                 $hideshow = "<a href=\"$url&amp;action=disable&amp;webservice=$protocol\">";
                 $hideshow .= $OUTPUT->pix_icon('t/hide', $strdisable) . '</a>';
                 $displayname = "<span>$name</span>";

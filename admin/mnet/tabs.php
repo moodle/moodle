@@ -44,4 +44,5 @@ if (isset($mnet_peer->id) && $mnet_peer->id > 0) {
 } else {
     $tabs[] = new tabobject('mnetdetails', '#', $strmnetedithost, $strmnetedithost, false);
 }
+echo $OUTPUT->render(mnet_get_deprecation_notice());
 print_tabs(array($tabs), $currenttab);

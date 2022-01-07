@@ -27,6 +27,11 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/lib/outputlib.php');
 
+    $notify = new \core\output\notification(get_string('xmlrpcmnetauthenticationenabled', 'admin'),
+        \core\output\notification::NOTIFY_WARNING);
+    $settings->add(new admin_setting_heading('auth_mnet/xmlrpcmnet', '',
+        $OUTPUT->render($notify)));
+
     // Introductory explanation.
     $settings->add(new admin_setting_heading('auth_mnet/pluginname', '',
             new lang_string('auth_mnetdescription', 'auth_mnet')));

@@ -916,6 +916,12 @@ $showfeedbackencouragement = empty($CFG->enableuserfeedback);
 // Check if the service and support content setting is enabled or not.
 $servicesandsupportcontent = !isset($CFG->showservicesandsupportcontent) || $CFG->showservicesandsupportcontent;
 
+// Check whether the XML-RPC protocol is enabled or not.
+require_once($CFG->libdir . '/environmentlib.php');
+$result = new environment_results('custom_checks');
+$result = check_xmlrpc_usage($result);
+$xmlrpcwarning = !is_null($result) ? get_string($result->getFeedbackStr(), 'admin') : '';
+
 admin_externalpage_setup('adminnotifications');
 
 $output = $PAGE->get_renderer('core', 'admin');
@@ -924,4 +930,5 @@ echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisp
                                        $maintenancemode, $availableupdates, $availableupdatesfetch, $buggyiconvnomb,
                                        $registered, $cachewarnings, $eventshandlers, $themedesignermode, $devlibdir,
                                        $mobileconfigured, $overridetossl, $invalidforgottenpasswordurl, $croninfrequent,
-                                       $showcampaigncontent, $showfeedbackencouragement, $servicesandsupportcontent);
+                                       $showcampaigncontent, $showfeedbackencouragement, $servicesandsupportcontent,
+                                       $xmlrpcwarning);
