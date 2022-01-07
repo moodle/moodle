@@ -269,7 +269,7 @@ function mnet_encrypt_message($message, $remote_certificate) {
     $symmetric_keys = array();
 
     //        passed by ref ->     &$encryptedstring &$symmetric_keys
-    $bool = openssl_seal($message, $encryptedstring, $symmetric_keys, array($publickey));
+    $bool = openssl_seal($message, $encryptedstring, $symmetric_keys, array($publickey), 'RC4');
     $message = $encryptedstring;
     $symmetrickey = array_pop($symmetric_keys);
 
