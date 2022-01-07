@@ -1,0 +1,29 @@
+.atto-fullscreen .block {
+    display: none;
+    visibility: hidden;
+}
+
+.atto-fullscreen header {
+    display: none;
+    visibility: hidden;
+}
+
+.atto-fullscreen #dock {
+    display: none;
+    visibility: hidden;
+}
+
+.atto-fullscreen .back-to-top {
+    display: none;
+    visibility: hidden;
+}
+
+.atto-fullscreen #nav-drawer {
+    display: none;
+    visibility: hidden;
+}
+
+.atto-fullscreen nav {
+    display: none;
+    visibility: hidden;
+}
