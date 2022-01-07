@@ -12,33 +12,21 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_scorm/report_actionbar
+    @template mod_scorm/player_exitbar
     Actions bar for the user reports page UI.
     Classes required for JS:
     * none
     Data attributes required for JS:
     * none
     Context variables required for this template:
-    * see mod/scorm/classes/output/userreportsactionbar.php
+    * action
     Example context (json):
     {
-        "userreport": {
-            "id": "url_select_test",
-            "options": [
-                {"name": "Learning objects", "value": "/mod/scorm/report/userreport.php?id=70&user=13&attempt=1"},
-                {"name": "Interactions", "value": "/mod/scorm/report/userreportinteractions.php?id=70&user=13&attempt=1"}
-            ]
-        },
-        "backurl": "http://localhost/moodle/mod/scorm/report.php?id=70&mode=interactions",
-        "heading": "Sub page heading"
+        "action": "http://localhost/moodle/mod/scorm/report.php?id=70&mode=interactions"
     }
 }}
-<div class="container-fluid mb-3">
-    <div class="row">
-        <a class="btn btn-secondary mr-2" href="{{backurl}}">{{#str}}back, core {{/str}}</a>
-        {{#userreport}}
-            {{>core/url_select}}
-        {{/userreport}}
-    </div>
+<div class="d-flex flex-row-reverse mb-2">
+    <a class="btn btn-secondary" href="{{{action}}}" title="{{#str}}exitactivity, mod_scorm{{/str}}">
+        {{#str}}exitactivity, mod_scorm{{/str}}
+    </a>
 </div>
-{{#heading}}<h2>{{heading}}</h2>{{/heading}}

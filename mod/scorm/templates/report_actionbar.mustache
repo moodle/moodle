@@ -22,6 +22,7 @@
     * see mod/scorm/classes/output/actionbar.php
     Example context (json):
     {
+        "heading": "Heading",
         "scormreports": {
             "id": "url_select_test",
             "options": [
@@ -39,25 +40,26 @@
 }}
 <div class="container-fluid mb-3">
     <div class="row justify-content-between">
-        <div class="mr-5">
-            {{#scormreports}}
-                {{>core/url_select}}
-            {{/scormreports}}
+        {{#scormreports}}
+        <div>
+            {{>core/url_select}}
         </div>
-        <div class="mr-5">
-            {{#candownload}}
-                <div class="dropdown show">
-                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{#str}} download {{/str}}
-                    </a>
+        {{/scormreports}}
 
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="{{ downloadods }}">{{#str}} downloadods {{/str}}</a>
-                        <a class="dropdown-item" href="{{ downloadexcel }}">{{#str}} downloadexcel {{/str}}</a>
-                        <a class="dropdown-item" href="{{ downloadtext }}">{{#str}} downloadtext {{/str}}</a>
-                    </div>
-                </div>
-            {{/candownload}}
+        {{#candownload}}
+        <div class="dropdown show">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{#str}} download {{/str}}
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="{{ downloadods }}">{{#str}} downloadods {{/str}}</a>
+                <a class="dropdown-item" href="{{ downloadexcel }}">{{#str}} downloadexcel {{/str}}</a>
+                <a class="dropdown-item" href="{{ downloadtext }}">{{#str}} downloadtext {{/str}}</a>
+            </div>
         </div>
+        {{/candownload}}
+
     </div>
 </div>
+{{#heading}}<h2>{{heading}}</h2>{{/heading}}
