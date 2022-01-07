@@ -53,6 +53,22 @@ Feature: Manage custom report columns sorting
     And "First name" "text" should appear before "Surname" "text" in the "#settingssorting" "css_element"
     And "user01" "table_row" should appear before "user02" "table_row"
 
+  Scenario: Configured report sorting is always applied when editing
+    Given I change window size to "large"
+    And I click on "Show/hide 'Sorting'" "button"
+    # Sort by last name descending.
+    When I click on "Enable sorting for column 'Surname'" "checkbox"
+    Then "user02" "table_row" should appear before "user01" "table_row"
+    # Switching to preview mode should observe report config.
+    And I click on "Switch to preview mode" "button"
+    And "user02" "table_row" should appear before "user01" "table_row"
+    # Custom sorting for the user.
+    And I click on "Sort by First name Ascending" "link"
+    And "user01" "table_row" should appear before "user02" "table_row"
+    # Switching back to edit mode should observe report config.
+    And I click on "Switch to edit mode" "button"
+    And "user02" "table_row" should appear before "user01" "table_row"
+
   Scenario: Sortable columns are updated when column is added to report
     Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
