@@ -2727,11 +2727,6 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
                 $SESSION->wantsurl = qualified_me();
             }
 
-            $referer = get_local_referer(false);
-            if (!empty($referer)) {
-                $SESSION->fromurl = $referer;
-            }
-
             // Give auth plugins an opportunity to authenticate or redirect to an external login page
             $authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
             foreach($authsequence as $authname) {

@@ -160,8 +160,6 @@ if (!empty($forum)) {
             );
     }
 
-    $SESSION->fromurl = get_local_referer(false);
-
     // Load up the $post variable.
 
     $post = new stdClass();
@@ -780,11 +778,7 @@ if ($mformpost->is_cancelled()) {
     }
 } else if ($mformpost->is_submitted() && !$mformpost->no_submit_button_pressed() && $fromform = $mformpost->get_data()) {
 
-    if (empty($SESSION->fromurl)) {
-        $errordestination = $urlfactory->get_forum_view_url_from_forum($forumentity);
-    } else {
-        $errordestination = $SESSION->fromurl;
-    }
+    $errordestination = get_local_referer(false) ?: $urlfactory->get_forum_view_url_from_forum($forumentity);
 
     $fromform->itemid        = $fromform->message['itemid'];
     $fromform->messageformat = $fromform->message['format'];
