@@ -91,9 +91,7 @@ class previeweditaction implements templatable, renderable {
                     (new moodle_url('/mod/quiz/startattempt.php', ['cmid' => $this->cmid, 'sesskey' => sesskey()]))->out(false);
             }
         } else {
-            if ($this->canedit) {
-                $data['addquestionlink'] = (new moodle_url('/mod/quiz/edit.php', ['cmid' => $this->cmid]))->out(false);
-            }
+            $data['addquestionlink'] = (new moodle_url('/mod/quiz/edit.php', ['cmid' => $this->cmid]))->out(false);
         }
 
         return $data;
