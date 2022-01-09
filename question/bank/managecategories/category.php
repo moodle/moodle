@@ -50,11 +50,13 @@ $param->confirm = optional_param('confirm', 0, PARAM_INT);
 $param->cancel = optional_param('cancel', '', PARAM_ALPHA);
 $param->move = optional_param('move', 0, PARAM_INT);
 $param->moveto = optional_param('moveto', 0, PARAM_INT);
-$param->edit = optional_param('edit', 0, PARAM_INT);
+$param->edit = optional_param('edit', null, PARAM_INT);
 
 $url = new moodle_url($thispageurl);
 foreach ((array)$param as $key => $value) {
-    if (($key !== 'cancel' && $value !== 0) || ($key === 'cancel' && $value !== '')) {
+    if (($key !== 'cancel' && $key !== 'edit' && $value !== 0) ||
+            ($key === 'cancel' && $value !== '') ||
+            ($key === 'edit' && $value !== null)) {
         $url->param($key, $value);
     }
 }
@@ -144,7 +146,7 @@ if ($qcobject->catform->is_cancelled()) {
     redirect($thispageurl);
 }
 
-if ($param->edit) {
+if ($param->edit !== null) {
     $PAGE->navbar->add(get_string('editingcategory', 'question'));
 }
 
@@ -156,10 +158,12 @@ echo $OUTPUT->header();
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
-echo $renderer->extra_horizontal_navigation();
+
+$qbankaction = new \core_question\output\qbank_action_menu($url);
+echo $renderer->render($qbankaction);
 
 // Display the UI.
-if (!empty($param->edit)) {
+if ($param->edit !== null) {
     $qcobject->edit_single_category($param->edit);
 } else if ($questionstomove) {
     $qcobject->display_move_form($questionstomove, $category);

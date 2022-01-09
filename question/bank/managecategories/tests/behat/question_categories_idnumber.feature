@@ -23,18 +23,22 @@ Feature: A teacher can put questions with idnumbers in categories with idnumbers
       | contextlevel | reference | questioncategory | name           | idnumber |
       | Course       | C1        | Top              | top            |          |
       | Course       | C1        | top              | Used category  | c1used   |
-    And I navigate to "Question bank > Categories" in current page administration
+    And I navigate to "Question bank" in current page administration
+    And I select "Categories" from the "questionbankactionselect" singleselect
+    And I follow "Add category"
     And I set the following fields to these values:
       | Name            | Sub used category |
       | Parent category | Used category     |
       | Category info   | Created as a test |
       | ID number       | c1used            |
-    And I press "Add category"
+    # Press the Add category button in category page.
+    And I click on "Add category" "button" in the "[id='fitem_id_submitbutton']" "css_element"
     # Standard warning.
     Then I should see "This ID number is already in use"
     # Correction to a unique idnumber for the context.
     And I set the field "ID number" to "c1unused"
-    And I press "Add category"
+    # Press the Add category button in the addcategory page.
+    And I click on "[id='id_submitbutton']" "css_element"
     Then I should see "Sub used category"
     And I should see "ID number"
     And I should see "c1unused"
@@ -46,7 +50,8 @@ Feature: A teacher can put questions with idnumbers in categories with idnumbers
       | contextlevel | reference | questioncategory | name           | idnumber |
       | Course       | C1        | Top              | top            |          |
       | Course       | C1        | top              | Used category  | c1used   |
-    And I navigate to "Question bank > Categories" in current page administration
+    And I navigate to "Question bank" in current page administration
+    And I select "Categories" from the "questionbankactionselect" singleselect
     And I click on "Edit this category" "link" in the "Used category" "list_item"
     And I press "Save changes"
     Then I should not see "This ID number is already in use"

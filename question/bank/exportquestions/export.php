@@ -52,7 +52,9 @@ echo $OUTPUT->header();
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
-echo $renderer->extra_horizontal_navigation();
+
+$qbankaction = new \core_question\output\qbank_action_menu($thispageurl);
+echo $renderer->render($qbankaction);
 
 $exportform = new export_form($thispageurl,
         ['contexts' => $contexts->having_one_edit_tab_cap('export'), 'defaultcategory' => $pagevars['cat']]);

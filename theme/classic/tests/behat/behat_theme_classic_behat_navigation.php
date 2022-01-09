@@ -158,7 +158,7 @@ class behat_theme_classic_behat_navigation extends behat_navigation {
             $this->find('xpath', $menuxpath, $exception);
         } catch (Exception $e) {
             // For question bank a different approach.
-            $menuxpath = $rootxpath . "//div[contains(@class, 'dropdown-menu')]";
+            $menuxpath = $rootxpath;
             if ($selectortype === 'link') {
                 $menuxpath .= "//a[contains(text(), 'Categories')]";
             }

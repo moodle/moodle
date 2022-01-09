@@ -27,7 +27,9 @@ Feature: A teacher can put questions in categories in the question bank
     And I am on "Course 1" course homepage
 
   Scenario: A new question category can be created
-    When I navigate to "Question bank > Categories" in current page administration
+    When I navigate to "Question bank" in current page administration
+    And I select "Categories" from the "questionbankactionselect" singleselect
+    And I follow "Add category"
     And I set the following fields to these values:
       | Name            | New Category 1    |
       | Parent category | Top               |
@@ -39,10 +41,12 @@ Feature: A teacher can put questions in categories in the question bank
     And I should see "newcatidnumber"
     And I should see "(0)"
     And I should see "Created as a test" in the "New Category 1" "list_item"
+    And I follow "Add category"
     And "New Category 1 [newcatidnumber]" "option" should exist in the "Parent category" "select"
 
   Scenario: A question category can be edited
-    When I navigate to "Question bank > Categories" in current page administration
+    When I navigate to "Question bank" in current page administration
+    And I select "Categories" from the "questionbankactionselect" singleselect
     And I click on "Edit this category" "link" in the "Subcategory" "list_item"
     And the field "parent" matches value "&nbsp;&nbsp;&nbsp;Default for C1"
     And I set the following fields to these values:
@@ -53,14 +57,17 @@ Feature: A teacher can put questions in categories in the question bank
     And I should see "I was edited" in the "New name" "list_item"
 
   Scenario: An empty question category can be deleted
-    When I navigate to "Question bank > Categories" in current page administration
+    When I navigate to "Question bank" in current page administration
+    And I select "Categories" from the "questionbankactionselect" singleselect
     And I click on "Delete" "link" in the "Subcategory" "list_item"
     Then I should not see "Subcategory"
 
   Scenario: An non-empty question category can be deleted if you move the contents elsewhere
-    When I navigate to "Question bank > Categories" in current page administration
+    When I navigate to "Question bank" in current page administration
+    And I select "Categories" from the "questionbankactionselect" singleselect
     And I click on "Delete" "link" in the "Used category" "list_item"
     And I should see "The category 'Used category' contains 1 questions"
     And I press "Save in category"
     Then I should not see "Used category"
+    And I follow "Add category"
     And I should see "Default for C1 (1)"
