@@ -48,13 +48,11 @@ $PAGE->set_title($strexportquestions);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 
-// Print horizontal nav if needed.
-$renderer = $PAGE->get_renderer('core_question', 'bank');
-
 echo $OUTPUT->header();
 
-$qbankaction = new \core_question\output\qbank_actionbar($thispageurl);
-echo $renderer->qbank_action_menu($qbankaction);
+// Print horizontal nav if needed.
+$renderer = $PAGE->get_renderer('core_question', 'bank');
+echo $renderer->extra_horizontal_navigation();
 
 $exportform = new export_form($thispageurl,
         ['contexts' => $contexts->having_one_edit_tab_cap('export'), 'defaultcategory' => $pagevars['cat']]);

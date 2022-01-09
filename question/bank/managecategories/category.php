@@ -152,13 +152,11 @@ $PAGE->set_title(get_string('editcategories', 'question'));
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 
-// Print horizontal nav if needed.
-$renderer = $PAGE->get_renderer('core_question', 'bank');
-
 echo $OUTPUT->header();
 
-$qbankaction = new \core_question\output\qbank_actionbar($url);
-echo $renderer->qbank_action_menu($qbankaction);
+// Print horizontal nav if needed.
+$renderer = $PAGE->get_renderer('core_question', 'bank');
+echo $renderer->extra_horizontal_navigation();
 
 // Display the UI.
 if (!empty($param->edit)) {

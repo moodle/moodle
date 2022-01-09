@@ -183,17 +183,6 @@ class core_question_bank_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Get the rendered HTML for the action area in Question bank.
-     *
-     * @param \core_question\output\qbank_actionbar $qbankactionbar qbankactionbar object.
-     * @return string rendered HTML string from template.
-     */
-    public function qbank_action_menu(\core_question\output\qbank_actionbar $qbankactionbar): string {
-        return $this->render_from_template('core_question/qbank_action_menu',
-                $qbankactionbar->export_for_template($this));
-    }
-
-    /**
      * Build the HTML for a specified set of question types.
      *
      * @param array $types A set of question types as used by the qbank_chooser_module function
