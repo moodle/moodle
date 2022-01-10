@@ -7,7 +7,9 @@ Feature: Manage availability conditions
   @javascript
   Scenario: Display list of availability conditions
     # Check the report doesn't show when not enabled.
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
+    And I log in as "admin"
     And I turn editing mode on
     And I add the "Administration" block if not present
     And the following config values are set as admin:

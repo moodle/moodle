@@ -12,6 +12,8 @@ Feature: Store the content bank view preference
     And I click on "Save changes" "button"
     And I am on site homepage
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     And I configure the "Navigation" block
     And I set the following fields to these values:

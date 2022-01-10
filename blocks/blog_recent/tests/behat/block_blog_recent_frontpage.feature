@@ -12,6 +12,8 @@ Feature: Feature: Students can use the recent blog entries block to view recent 
     And I am on site homepage
     And I turn editing mode on
     And I add the "Recent blog entries" block
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     # TODO MDL-57120 site "Blogs" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I log out

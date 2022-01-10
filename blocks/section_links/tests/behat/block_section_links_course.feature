@@ -21,14 +21,18 @@ Feature: The section links block allows users to quickly navigate around a moodl
     And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Add the section links block to a course.
-    Given I add the "Section links" block
+    Given the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
+    And I add the "Section links" block
     And I turn editing mode off
     And I should see "5" in the "Section links" "block"
     When I follow "5"
     Then I should see "Test assignment 1"
 
   Scenario: Add the section links block to a course and limit the sections displayed.
-    Given I add the "Section links" block
+    Given the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
+    And I add the "Section links" block
     And I configure the "Section links" block
     And I set the following fields to these values:
       | id_config_numsections1 | 5 |
@@ -42,7 +46,9 @@ Feature: The section links block allows users to quickly navigate around a moodl
     Then I should see "Test assignment 1"
 
   Scenario: Add the section links block to a course and limit the sections displayed using the alternative number of sections.
-    Given I add the "Section links" block
+    Given the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
+    And I add the "Section links" block
     And I configure the "Section links" block
     And I set the following fields to these values:
       | id_config_numsections1 | 5 |

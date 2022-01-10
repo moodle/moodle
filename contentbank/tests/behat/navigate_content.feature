@@ -29,6 +29,8 @@ Feature: Navigate to different contexts in the content bank
   Scenario: Admins can view and navigate to all the contexts in the content bank
     Given I am on site homepage
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     When I click on "Content bank" "link"
@@ -64,6 +66,8 @@ Feature: Navigate to different contexts in the content bank
     And I log out
     And I am on the "C0" "Course" page logged in as "teacher"
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     When I click on "Content bank" "link"

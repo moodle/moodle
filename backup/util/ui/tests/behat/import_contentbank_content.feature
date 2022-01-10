@@ -6,6 +6,8 @@ Feature: Import course content bank content
 
   Background:
     Given I log in as "admin"
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I am on site homepage
     And I turn editing mode on
     And I add the "Navigation" block if not present
