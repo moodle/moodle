@@ -50,7 +50,10 @@ class Google_Verifier_Pem extends Google_Verifier_Abstract
   public function __destruct()
   {
     if ($this->publicKey) {
-      openssl_x509_free($this->publicKey);
+      // TODO: Remove this block once PHP 8.0 becomes required.
+      if (PHP_MAJOR_VERSION < 8) {
+          openssl_x509_free($this->publicKey);
+      }
     }
   }
 
