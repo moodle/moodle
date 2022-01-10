@@ -826,6 +826,43 @@ class core_blocklib_testcase extends advanced_testcase {
         $this->assertEquals('8', $mybr[5]->instance->weight);
         $PAGE = $storedpage;
     }
+
+    /**
+     * Test get_unaddable_by_theme_block_types() method to return expected result depending on the theme.
+     *
+     * @covers \block_manager::get_unaddable_by_theme_block_types
+     */
+    public function test_get_unaddable_by_theme_block_types(): void {
+        global $CFG, $PAGE;
+
+        $this->setAdminUser();
+        $this->resetAfterTest();
+        $regionname = 'side-pre';
+        $context = context_system::instance();
+
+        $PAGE->reset_theme_and_output();
+        $CFG->theme = 'boost';
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager([$regionname], $context, 'page-type');
+        $blockmanager->load_blocks();
+        $blocks = $blockmanager->get_unaddable_by_theme_block_types();
+        // Assert that a few blocks are excluded for boost theme.
+        $this->assertCount(4, $blocks);
+        $this->assertContains('navigation', $blocks);
+        $this->assertContains('settings', $blocks);
+        $this->assertContains('course_list', $blocks);
+        $this->assertContains('section_links', $blocks);
+
+        // Change to a theme without unaddable blocks.
+        $PAGE->reset_theme_and_output();
+        $CFG->theme = 'classic';
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager([$regionname], $context, 'page-type');
+        $blockmanager->load_blocks();
+        $blocks = $blockmanager->get_unaddable_by_theme_block_types();
+        // Assert that no blocks are excluded for classic theme.
+        $this->assertEmpty($blocks);
+    }
 }
 
 /**
