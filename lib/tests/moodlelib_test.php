@@ -3444,7 +3444,7 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // Verify attachment in message body (attachment is in MIME format, but we can detect some Content fields).
         $messagebody = reset($messages)->body;
-        $this->assertContains('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
+        $this->assertStringContainsString('Content-Type: text/plain; name=' . $filename, $messagebody);
         $this->assertContains('Content-Disposition: attachment; filename=' . $filename, $messagebody);
 
         // Cleanup.
