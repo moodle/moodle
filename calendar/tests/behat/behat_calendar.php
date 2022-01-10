@@ -46,6 +46,7 @@ class behat_calendar extends behat_base {
     public static function get_partial_named_selectors(): array {
         return [
             new behat_component_named_selector('mini calendar block', [".//*[@data-block='calendar_month']"]),
+            new behat_component_named_selector('full calendar page', [".//*[@id='page-calendar-view']"]),
             new behat_component_named_selector('calendar day', [".//*[@data-day=%locator%]"]),
         ];
     }
@@ -98,6 +99,17 @@ class behat_calendar extends behat_base {
     public function i_hover_over_day_of_this_month_in_mini_calendar_block(int $day): void {
         $this->execute("behat_general::i_hover_in_the",
             [$day, 'core_calendar > calendar day', '', 'core_calendar > mini calendar block']);
+    }
+
+    /**
+     * Hover over a specific day in the full calendar page.
+     *
+     * @Given /^I hover over day "(?P<dayofmonth>\d+)" of this month in the full calendar page$/
+     * @param int $day The day of the current month
+     */
+    public function i_hover_over_day_of_this_month_in_full_calendar_page(int $day): void {
+        $this->execute("behat_general::i_hover_in_the",
+            [$day, 'core_calendar > calendar day', '', 'core_calendar > full calendar page']);
     }
 
     /**
