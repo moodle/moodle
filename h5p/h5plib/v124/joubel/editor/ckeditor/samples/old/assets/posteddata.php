@@ -32,7 +32,7 @@ if (!empty($_POST))
 		if ( ( !is_string($value) && !is_numeric($value) ) || !is_string($key) )
 			continue;
 
-		if ( get_magic_quotes_gpc() )
+		if ( function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() )
 			$value = htmlspecialchars( stripslashes((string)$value) );
 		else
 			$value = htmlspecialchars( (string)$value );
