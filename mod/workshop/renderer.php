@@ -38,6 +38,16 @@ class mod_workshop_renderer extends plugin_renderer_base {
     ////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Renders the tertiary nav for the allocation pages
+     *
+     * @param \mod_workshop\output\actionbar $actionbar
+     * @return bool|string the rendered output
+     */
+    public function render_allocation_menu(\mod_workshop\output\actionbar $actionbar): string {
+        return $this->render_from_template('mod_workshop/action_bar', $actionbar->export_for_template($this));
+    }
+
+    /**
      * Renders workshop message
      *
      * @param workshop_message $message to display
