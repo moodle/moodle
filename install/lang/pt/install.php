@@ -75,5 +75,5 @@ $string['welcomep30'] = 'Esta versão do pacote <strong>{$a->installername}</str
 $string['welcomep40'] = 'Este pacote inclui o lançamento <strong>{$a->moodlerelease} ({$a->moodleversion})</strong> do Moodle .';
 $string['welcomep50'] = 'A utilização de todas as aplicações incluídas neste pacote é limitada pelas respetivas licenças. O pacote completo <strong>{$a->installername}</strong> é <ahref="https://www.opensource.org/docs/definition_plain.html">código aberto</a> e é distribuído nos termos da licença <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'As páginas seguintes irão acompanhá-lo através de algumas etapas simples para configurar e definir o <strong>Moodle</strong> no seu computador. Pode aceitar as configurações predefinidas ou, opcionalmente, alterá-las para adaptar às suas próprias necessidades.';
-$string['welcomep70'] = 'Clique no botão "Seguinte" para continuar a configuração do <strong>Moodle</strong>.';
+$string['welcomep70'] = 'Clique no botão \'Seguinte\' para continuar a configuração do <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Endereço web';
