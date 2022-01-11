@@ -114,7 +114,7 @@ require_once($CFG->libdir.'/messagelib.php');
 // Add classes, traits, and interfaces which should be autoloaded.
 // The autoloader is configured late in setup.php, after ABORT_AFTER_CONFIG.
 // This is also required where the setup system is not included at all.
-require_once($CFG->dirroot.'/admin/classes/local/settings/linkable_settings_page.php');
+require_once($CFG->dirroot.'/'.$CFG->admin.'/classes/local/settings/linkable_settings_page.php');
 
 define('INSECURE_DATAROOT_WARNING', 1);
 define('INSECURE_DATAROOT_ERROR', 2);
