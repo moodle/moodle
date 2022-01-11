@@ -61,6 +61,8 @@ if ($course = $DB->get_record('course', array('id' => $courseid))) {
     $PAGE->set_url('/badges/view.php', array('type' => $type, 'sort' => $sortby, 'dir' => $sorthow));
 }
 
+$PAGE->add_body_class('limitedwidth');
+
 if ($type == BADGE_TYPE_SITE) {
     $PAGE->set_context(context_system::instance());
     $PAGE->set_pagelayout('admin');
