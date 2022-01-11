@@ -477,8 +477,6 @@ class accessibility {
     public static function get_summary_data(int $id): \stdClass {
         global $CFG, $DB;
 
-        $components = $DB->get_records(manager::DB_AREAS);
-
         $summarydata = new \stdClass();
         $summarydata->siteurl = (substr($CFG->wwwroot, -1) !== '/') ? $CFG->wwwroot . '/' : $CFG->wwwroot;
         $summarydata->moodlerelease = (preg_match('/^(\d+\.\d.*?)[. ]/', $CFG->release, $matches)) ? $matches[1] : $CFG->release;
@@ -488,7 +486,7 @@ class accessibility {
         $summarydata->numfactivities = $DB->count_records('course_modules');
         $summarydata->mobileservice = (int)$CFG->enablemobilewebservice === 1 ? true : false;
         $summarydata->usersmobileregistered = $DB->count_records('user_devices');
-        $summarydata->contenttyperesults = static::get_contenttyperesults($id, $components);
+        $summarydata->contenttyperesults = static::get_contenttyperesults($id);
         $summarydata->contenttypeerrors = static::get_contenttypeerrors();
         $summarydata->percheckerrors = static::get_percheckerrors();
         return $summarydata;
@@ -497,22 +495,24 @@ class accessibility {
     /**
      * Get content type results.
      * @param int $id
-     * @param array $components
      * @return \stdClass
      */
-    private static function get_contenttyperesults(int $id, array $components): \stdClass {
+    private static function get_contenttyperesults(int $id): \stdClass {
+        global $DB;
+        $sql = 'SELECT component, COUNT(id) AS count
+                  FROM {' . manager::DB_AREAS . '}
+              GROUP BY component';
+        $components = $DB->get_recordset_sql($sql);
         $contenttyperesults = new \stdClass();
         $contenttyperesults->id = $id;
-        $datacomponents = array();
-        foreach ($components as $component) {
-            $datacomponents[$component->component][] = $component;
-        }
         $contenttyperesults->contenttype = new \stdClass();
-        foreach ($datacomponents as $key => $component) {
-            $contenttyperesults->contenttype->$key = count($component);
+        foreach ($components as $component) {
+            $componentname = $component->component;
+            $contenttyperesults->contenttype->$componentname = $component->count;
         }
+        $components->close();
         $contenttyperesults->summarydatastorage = static::get_summary_data_storage();
-        $contenttyperesults->datachecked = time(); // Correct??
+        $contenttyperesults->datachecked = time();
         return $contenttyperesults;
     }
 
