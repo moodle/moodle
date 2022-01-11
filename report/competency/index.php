@@ -96,7 +96,6 @@ if ($currentuser > 0) {
     $top .= $output->context_header($userheading, 3);
 }
 echo $output->container($top, 'clearfix');
-echo $output->heading($title, 3);
 
 if ($currentuser > 0) {
     $page = new \report_competency\output\report($course->id, $currentuser, $currentmodule);

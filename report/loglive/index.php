@@ -80,8 +80,8 @@ $strupdatesevery = get_string('updatesevery', 'moodle', $refresh);
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);
-$PAGE->set_title("$coursename: $strlivelogs ($strupdatesevery)");
-$PAGE->set_heading("$coursename: $strlivelogs ($strupdatesevery)");
+$PAGE->set_title("$coursename: $strlivelogs");
+$PAGE->set_heading($coursename);
 
 $output = $PAGE->get_renderer('report_loglive');
 echo $output->header();
@@ -89,6 +89,7 @@ echo $output->header();
 // Print selector dropdown.
 $pluginname = get_string('pluginname', 'report_loglive');
 report_helper::print_report_selector($pluginname);
+echo html_writer::div(get_string('livelogswithupdate', 'report_loglive', $strupdatesevery), 'mb-3');
 echo $output->reader_selector($renderable);
 echo $output->toggle_liveupdate_button($renderable);
 echo $output->render($renderable);

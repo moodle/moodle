@@ -192,7 +192,7 @@ if (empty($readers)) {
         // Print selector dropdown.
         $pluginname = get_string('pluginname', 'report_log');
         report_helper::print_report_selector($pluginname);
-        echo $output->heading(get_string('chooselogs') .':');
+        echo $output->heading(get_string('chooselogs') .':', 3);
         echo $output->render($reportlog);
     }
 }
