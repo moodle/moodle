@@ -54,6 +54,7 @@ $PAGE->activityheader->set_attrs([
 ]);
 $PAGE->add_body_class('limitedwidth');
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('analysis', 'mod_feedback'), 3);
 
 //get the groupid
 $mygroupid = groups_get_activity_group($cm, true);
