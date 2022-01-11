@@ -3,11 +3,13 @@ PHPComplex
 
 ---
 
-PHP Class for handling Complex numbers
+PHP Class Library for working with Complex numbers
 
-Master: [![Build Status](https://travis-ci.org/MarkBaker/PHPComplex.png?branch=master)](http://travis-ci.org/MarkBaker/PHPComplex)
+[![Build Status](https://github.com/MarkBaker/PHPComplex/workflows/main/badge.svg)](https://github.com/MarkBaker/PHPComplex/actions)
+[![Total Downloads](https://img.shields.io/packagist/dt/markbaker/complex)](https://packagist.org/packages/markbaker/complex)
+[![Latest Stable Version](https://img.shields.io/github/v/release/MarkBaker/PHPComplex)](https://packagist.org/packages/markbaker/complex)
+[![License](https://img.shields.io/github/license/MarkBaker/PHPComplex)](https://packagist.org/packages/markbaker/complex)
 
-Develop: [![Build Status](https://travis-ci.org/MarkBaker/PHPComplex.png?branch=develop)](http://travis-ci.org/MarkBaker/PHPComplex)
 
 [![Complex Numbers](https://imgs.xkcd.com/comics/complex_numbers_2x.png)](https://xkcd.com/2028/)
 
@@ -63,19 +65,37 @@ together with functions for
  
 ---
 
+# Installation
+
+```shell
+composer require markbaker/complex:^3.0
+```
+
+# Important BC Note
+
+If you've previously been using procedural calls to functions and operations using this library, then from version 3.0 you should use [MarkBaker/PHPComplexFunctions](https://github.com/MarkBaker/PHPComplexFunctions) instead (available on packagist as [markbaker/complex-functions](https://packagist.org/packages/markbaker/complex-functions)).
+
+You'll need to replace `markbaker/complex`in your `composer.json` file with the new library, but otherwise there should be no difference in the namespacing, or in the way that you have called the Complex functions in the past, so no actual code changes are required.
+
+```shell
+composer require markbaker/complex-functions:^1.0
+```
+
+You should not reference this library (`markbaker/complex`) in your `composer.json`, composer wil take care of that for you.
+
 # Usage
 
 To create a new complex object, you can provide either the real, imaginary and suffix parts as individual values, or as an array of values passed passed to the constructor; or a string representing the value. e.g
 
-```
+```php
 $real = 1.23;
 $imaginary = -4.56;
 $suffix = 'i';
 
 $complexObject = new Complex\Complex($real, $imaginary, $suffix);
 ```
-or
-```
+or as an array
+```php
 $real = 1.23;
 $imaginary = -4.56;
 $suffix = 'i';
@@ -84,8 +104,8 @@ $arguments = [$real, $imaginary, $suffix];
 
 $complexObject = new Complex\Complex($arguments);
 ```
-or
-```
+or as a string
+```php
 $complexString = '1.23-4.56i';
 
 $complexObject = new Complex\Complex($complexString);
@@ -98,57 +118,54 @@ This also allows you to chain multiple methods as you would for a fluent interfa
 
 To perform mathematical operations with Complex values, you can call the appropriate method against a complex value, passing other values as arguments
 
-```
+```php
 $complexString1 = '1.23-4.56i';
 $complexString2 = '2.34+5.67i';
 
 $complexObject = new Complex\Complex($complexString1);
 echo $complexObject->add($complexString2);
 ```
-or pass all values to the appropriate function
-```
+
+or use the static Operation methods
+```php
 $complexString1 = '1.23-4.56i';
 $complexString2 = '2.34+5.67i';
 
-echo Complex\add($complexString1, $complexString2);
+echo Complex\Operations::add($complexString1, $complexString2);
 ```
 If you want to perform the same operation against multiple values (e.g. to add three or more complex numbers), then you can pass multiple arguments to any of the operations.
 
-You can pass these arguments as Complex objects, or as an array or string that will parse to a complex object.
+You can pass these arguments as Complex objects, or as an array, or string that will parse to a complex object.
 
 ## Using functions
 
 When calling any of the available functions for a complex value, you can either call the relevant method for the Complex object
-```
+```php
 $complexString = '1.23-4.56i';
 
 $complexObject = new Complex\Complex($complexString);
 echo $complexObject->sinh();
 ```
-or you can call the function as you would in procedural code, passing the Complex object as an argument 
+
+or use the static Functions methods
+```php
+$complexString = '1.23-4.56i';
+
+echo Complex\Functions::sinh($complexString);
 ```
+As with operations, you can pass these arguments as Complex objects, or as an array or string that will parse to a complex object.
+
+
+In the case of the `pow()` function (the only implemented function that requires an additional argument) you need to pass both arguments when calling the function
+
+```php
 $complexString = '1.23-4.56i';
 
 $complexObject = new Complex\Complex($complexString);
-echo Complex\sinh($complexObject);
-```
-When called procedurally using the function, you can pass in the argument as a Complex object, or as an array or string that will parse to a complex object.
-```
-$complexString = '1.23-4.56i';
-
-echo Complex\sinh($complexString);
-```
-
-In the case of the `pow()` function (the only implemented function that requires an additional argument) you need to pass both arguments when calling the function procedurally
-
-```
-$complexString = '1.23-4.56i';
-
-$complexObject = new Complex\Complex($complexString);
-echo Complex\pow($complexObject, 2);
+echo Complex\Functions::pow($complexObject, 2);
 ```
 or pass the additional argument when calling the method
-```
+```php
 $complexString = '1.23-4.56i';
 
 $complexObject = new Complex\Complex($complexString);
