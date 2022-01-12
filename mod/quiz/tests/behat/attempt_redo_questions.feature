@@ -118,7 +118,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
       | slot | actualquestion |
       | 1    | TF1            |
     And I am on the "Quiz 2" "mod_quiz > View" page logged in as "student"
-    When I press "Continue the last attempt"
+    When I press "Continue your attempt"
     And I should see "First question"
     And I click on "False" "radio"
     And I click on "Check" "button"
