@@ -884,8 +884,9 @@ class courselib_test extends advanced_testcase {
         $this->assertEquals($cmids[0] . ',' . $cmids[1], $sequence);
 
         // Check that modinfo cache was reset but not rebuilt (important for performance if calling repeatedly).
-        $this->assertGreaterThan($coursecacherev, $DB->get_field('course', 'cacherev', array('id' => $course->id)));
-        $this->assertEmpty(cache::make('core', 'coursemodinfo')->get($course->id));
+        $newcacherev = $DB->get_field('course', 'cacherev', ['id' => $course->id]);
+        $this->assertGreaterThan($coursecacherev, $newcacherev);
+        $this->assertEmpty(cache::make('core', 'coursemodinfo')->get_versioned($course->id, $newcacherev));
 
         // Add one to section that doesn't exist (this might rebuild modinfo).
         course_add_cm_to_section($course, $cmids[2], 2);

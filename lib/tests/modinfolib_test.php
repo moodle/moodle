@@ -260,28 +260,28 @@ class modinfolib_test extends advanced_testcase {
         rebuild_course_cache($course->id, true);
         $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
         $this->assertGreaterThan($prevcacherev, $cacherev);
-        $this->assertEmpty($cache->get($course->id));
+        $this->assertEmpty($cache->get_versioned($course->id, $prevcacherev));
         $prevcacherev = $cacherev;
 
         // Build course cache. Cacherev should not change but cache is now not empty. Make sure cacherev is the same everywhere.
         $modinfo = get_fast_modinfo($course->id);
         $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
         $this->assertEquals($prevcacherev, $cacherev);
-        $cachedvalue = $cache->get($course->id);
+        $cachedvalue = $cache->get_versioned($course->id, $cacherev);
         $this->assertNotEmpty($cachedvalue);
         $this->assertEquals($cacherev, $cachedvalue->cacherev);
         $this->assertEquals($cacherev, $modinfo->get_course()->cacherev);
         $prevcacherev = $cacherev;
 
         // Little trick to check that cache is not rebuilt druing the next step - substitute the value in MUC and later check that it is still there.
-        $cache->set($course->id, (object)array_merge((array)$cachedvalue, array('secretfield' => 1)));
+        $cache->set_versioned($course->id, $cacherev, (object)array_merge((array)$cachedvalue, array('secretfield' => 1)));
 
         // Clear static cache and call get_fast_modinfo() again (pretend we are in another request). Cache should not be rebuilt.
         course_modinfo::clear_instance_cache();
         $modinfo = get_fast_modinfo($course->id);
         $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
         $this->assertEquals($prevcacherev, $cacherev);
-        $cachedvalue = $cache->get($course->id);
+        $cachedvalue = $cache->get_versioned($course->id, $cacherev);
         $this->assertNotEmpty($cachedvalue);
         $this->assertEquals($cacherev, $cachedvalue->cacherev);
         $this->assertNotEmpty($cachedvalue->secretfield);
@@ -292,7 +292,7 @@ class modinfolib_test extends advanced_testcase {
         rebuild_course_cache($course->id);
         $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
         $this->assertGreaterThan($prevcacherev, $cacherev);
-        $cachedvalue = $cache->get($course->id);
+        $cachedvalue = $cache->get_versioned($course->id, $cacherev);
         $this->assertNotEmpty($cachedvalue);
         $this->assertEquals($cacherev, $cachedvalue->cacherev);
         $modinfo = get_fast_modinfo($course->id);
@@ -306,7 +306,7 @@ class modinfolib_test extends advanced_testcase {
         $modinfo = get_fast_modinfo($course->id);
         $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
         $this->assertGreaterThan($prevcacherev, $cacherev);
-        $cachedvalue = $cache->get($course->id);
+        $cachedvalue = $cache->get_versioned($course->id, $cacherev);
         $this->assertNotEmpty($cachedvalue);
         $this->assertEquals($cacherev, $cachedvalue->cacherev);
         $this->assertEquals($cacherev, $modinfo->get_course()->cacherev);
@@ -316,10 +316,10 @@ class modinfolib_test extends advanced_testcase {
         rebuild_course_cache(0, true);
         $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
         $this->assertGreaterThan($prevcacherev, $cacherev);
-        $this->assertEmpty($cache->get($course->id));
+        $this->assertEmpty($cache->get_versioned($course->id, $cacherev));
         // Rebuild again.
         $modinfo = get_fast_modinfo($course->id);
-        $cachedvalue = $cache->get($course->id);
+        $cachedvalue = $cache->get_versioned($course->id, $cacherev);
         $this->assertNotEmpty($cachedvalue);
         $this->assertEquals($cacherev, $cachedvalue->cacherev);
         $this->assertEquals($cacherev, $modinfo->get_course()->cacherev);
