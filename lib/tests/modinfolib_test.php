@@ -14,23 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+use advanced_testcase;
+use cache;
+use cm_info;
+use coding_exception;
+use context_course;
+use context_module;
+use course_modinfo;
+use moodle_exception;
+use moodle_url;
+use Exception;
+
 /**
  * Unit tests for lib/modinfolib.php.
  *
  * @package    core
  * @category   phpunit
  * @copyright  2012 Andrew Davis
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/modinfolib.php');
-
-/**
- * Unit tests for modinfolib.php
- *
- * @copyright 2012 Andrew Davis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class modinfolib_test extends advanced_testcase {

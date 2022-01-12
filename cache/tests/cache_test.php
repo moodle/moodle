@@ -14,32 +14,44 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_cache;
+
+use advanced_testcase;
+use cache;
+use cache_config;
+use cache_config_testing;
+use cache_factory;
+use cache_helper;
+use cache_loader;
+use cache_phpunit_application;
+use cache_phpunit_cache;
+use cache_phpunit_dummy_object;
+use cache_phpunit_factory;
+use cache_phpunit_session;
+use cacheable_object_array;
+use cache_store;
+use coding_exception;
+use Exception;
+use stdClass;
+
 /**
  * PHPunit tests for the cache API
  *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are requried in order to use caching.
- *
- * @package    core
- * @category   cache
+ * @package    core_cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class cache_test extends advanced_testcase {
 
-defined('MOODLE_INTERNAL') || die();
+    /**
+     * Load required libraries and fixtures.
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
 
-// Include the necessary evils.
-global $CFG;
-require_once($CFG->dirroot.'/cache/locallib.php');
-require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
-
-/**
- * PHPunit tests for the cache API
- *
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class core_cache_testcase extends advanced_testcase {
+        require_once($CFG->dirroot . '/cache/locallib.php');
+        require_once($CFG->dirroot . '/cache/tests/fixtures/lib.php');
+    }
 
     /**
      * Set things back to the default before each test.
