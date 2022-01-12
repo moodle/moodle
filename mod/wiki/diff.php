@@ -38,7 +38,6 @@ require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
 
 require_once($CFG->dirroot . '/mod/wiki/diff/difflib.php');
-require_once($CFG->dirroot . '/mod/wiki/diff/diff_nwiki.php');
 
 $pageid = required_param('pageid', PARAM_TEXT);
 $compare = required_param('compare', PARAM_INT);
