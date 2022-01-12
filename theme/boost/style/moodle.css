@@ -21234,19 +21234,26 @@ div.editor_atto_toolbar button .icon {
     font-weight: bold; }
   .courseindex .courseindex-item .icons-collapse-expand {
     padding-right: 4px; }
-  .courseindex .courseindex-item .courseindex-link {
+  .courseindex .courseindex-item .courseindex-link,
+  .courseindex .courseindex-item .courseindex-chevron {
     color: #495057; }
-    .courseindex .courseindex-item .courseindex-link:hover, .courseindex .courseindex-item .courseindex-link:focus {
+    .courseindex .courseindex-item .courseindex-link:hover, .courseindex .courseindex-item .courseindex-link:focus,
+    .courseindex .courseindex-item .courseindex-chevron:hover,
+    .courseindex .courseindex-item .courseindex-chevron:focus {
       color: black;
       text-decoration: none; }
   .courseindex .courseindex-item:hover, .courseindex .courseindex-item:focus {
     color: black; }
-    .courseindex .courseindex-item:hover .courseindex-link, .courseindex .courseindex-item:focus .courseindex-link {
+    .courseindex .courseindex-item:hover .courseindex-link,
+    .courseindex .courseindex-item:hover .courseindex-chevron, .courseindex .courseindex-item:focus .courseindex-link,
+    .courseindex .courseindex-item:focus .courseindex-chevron {
       color: black;
       cursor: pointer; }
     .courseindex .courseindex-item:hover.dimmed, .courseindex .courseindex-item:focus.dimmed {
       color: black; }
-      .courseindex .courseindex-item:hover.dimmed .courseindex-link, .courseindex .courseindex-item:focus.dimmed .courseindex-link {
+      .courseindex .courseindex-item:hover.dimmed .courseindex-link,
+      .courseindex .courseindex-item:hover.dimmed .courseindex-chevron, .courseindex .courseindex-item:focus.dimmed .courseindex-link,
+      .courseindex .courseindex-item:focus.dimmed .courseindex-chevron {
         color: black; }
     .courseindex .courseindex-item:hover.draggable, .courseindex .courseindex-item:focus.draggable {
       cursor: pointer; }
@@ -21258,7 +21265,8 @@ div.editor_atto_toolbar button .icon {
     border-color: #dee2e6; }
   .courseindex .courseindex-item.dimmed {
     color: #6a737b; }
-    .courseindex .courseindex-item.dimmed .courseindex-link {
+    .courseindex .courseindex-item.dimmed .courseindex-link,
+    .courseindex .courseindex-item.dimmed .courseindex-chevron {
       color: #6a737b; }
   .courseindex .courseindex-item .courseindex-locked {
     display: none; }
@@ -21266,9 +21274,12 @@ div.editor_atto_toolbar button .icon {
     display: block; }
   .courseindex .courseindex-item.pageitem {
     background-color: #e9ecef;
-    color: black; }
+    color: black;
+    scroll-margin: 6rem; }
     .courseindex .courseindex-item.pageitem a {
       color: black; }
+    .courseindex .courseindex-item.pageitem .courseindex-link {
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3); }
   .courseindex .courseindex-item .completioninfo {
     min-width: 24px; }
     .courseindex .courseindex-item .completioninfo.completion_complete {

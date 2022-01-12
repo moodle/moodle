@@ -49,6 +49,7 @@ export default class Component extends BaseComponent {
             SECTION_CMLIST: `[data-for='cmlist']`,
             COURSE_SECTIONLIST: `[data-for='course_sectionlist']`,
             CM: `[data-for='cmitem']`,
+            PAGE: `#page`,
             TOGGLER: `[data-action="togglecoursecontentsection"]`,
             COLLAPSE: `[data-toggle="collapse"]`,
             TOGGLEALL: `[data-toggle="toggleall"]`,
@@ -123,6 +124,13 @@ export default class Component extends BaseComponent {
             this.element,
             CourseEvents.manualCompletionToggled,
             this._completionHandler
+        );
+
+        // Capture page scroll to update page item.
+        this.addEventListener(
+            document.querySelector(this.selectors.PAGE),
+            "scroll",
+            this._scrollHandler
         );
     }
 
@@ -289,6 +297,33 @@ export default class Component extends BaseComponent {
             return;
         }
         this.reactive.dispatch('cmCompletion', [detail.cmid], detail.completed);
+    }
+
+    /**
+     * Check the current page scroll and update the active element if necessary.
+     */
+    _scrollHandler() {
+        const pageOffset = document.querySelector(this.selectors.PAGE).scrollTop;
+        const items = this.reactive.getExporter().allItemsArray(this.reactive.state);
+        // Check what is the active element now.
+        let pageItem = null;
+        items.every(item => {
+            const index = (item.type === 'section') ? this.sections : this.cms;
+            if (index[item.id] === undefined) {
+                return true;
+            }
+
+            const element = index[item.id].element;
+            // Activities without url can only be page items in edit mode.
+            if (item.type === 'cm' && !item.url && !this.reactive.isEditing) {
+                return pageOffset >= element.offsetTop;
+            }
+            pageItem = item;
+            return pageOffset >= element.offsetTop;
+        });
+        if (pageItem) {
+            this.reactive.dispatch('setPageItem', pageItem.type, pageItem.id);
+        }
     }
 
     /**

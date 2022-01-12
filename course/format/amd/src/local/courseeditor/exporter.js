@@ -177,4 +177,27 @@ export default class {
         }
         return data;
     }
+
+    /**
+     * Return a sorted list of all sections and cms items in the state.
+     *
+     * @param {Object} state the current state.
+     * @returns {Array} all sections and cms items in the state.
+     */
+    allItemsArray(state) {
+        const items = [];
+        const sectionlist = state.course.sectionlist ?? [];
+        // Add sections.
+        sectionlist.forEach(sectionid => {
+            const sectioninfo = state.section.get(sectionid);
+            items.push({type: 'section', id: sectioninfo.id, url: sectioninfo.sectionurl});
+            // Add cms.
+            const cmlist = sectioninfo.cmlist ?? [];
+            cmlist.forEach(cmid => {
+                const cminfo = state.cm.get(cmid);
+                items.push({type: 'cm', id: cminfo.id, url: cminfo.url});
+            });
+        });
+        return items;
+    }
 }

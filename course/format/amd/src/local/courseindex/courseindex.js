@@ -74,8 +74,10 @@ export default class Component extends BaseComponent {
 
     /**
      * Initial state ready method.
+     *
+     * @param {Object} state the state data
      */
-    stateReady() {
+    stateReady(state) {
         // Activate section togglers.
         this.addEventListener(this.element, 'click', this._sectionTogglers);
 
@@ -89,6 +91,9 @@ export default class Component extends BaseComponent {
             this.cms[cm.dataset.id] = cm;
         });
 
+        // Set the page item if any.
+        this._refreshPageItem({element: state.course, state});
+
         // Configure Aria Tree.
         this.contentTree = new ContentTree(this.element, this.selectors, this.reactive.isEditing);
     }
@@ -100,6 +105,8 @@ export default class Component extends BaseComponent {
             {watch: `cm:deleted`, handler: this._deleteCm},
             {watch: `section:created`, handler: this._createSection},
             {watch: `section:deleted`, handler: this._deleteSection},
+            {watch: `course.pageItem:created`, handler: this._refreshPageItem},
+            {watch: `course.pageItem:updated`, handler: this._refreshPageItem},
             // Sections and cm sorting.
             {watch: `course.sectionlist:updated`, handler: this._refreshCourseSectionlist},
             {watch: `section.cmlist:updated`, handler: this._refreshSectionCmlist},
@@ -190,6 +197,28 @@ export default class Component extends BaseComponent {
         // it does not require jQuery anymore (when MDL-79179 is integrated).
         const togglerValue = (forceValue) ? 'show' : 'hide';
         jQuery(collapsible).collapse(togglerValue);
+    }
+
+    /**
+     * Handle a page item update.
+     *
+     * @param {Object} details the update details
+     * @param {Object} details.state the state data.
+     * @param {Object} details.element the course state data.
+     */
+    _refreshPageItem({element, state}) {
+        if (!element?.pageItem?.isStatic || element.pageItem.type != 'cm') {
+            return;
+        }
+        // Check if we need to uncollapse the section and scroll to the element.
+        const section = state.section.get(element.pageItem.sectionId);
+        if (section.indexcollapsed) {
+            this._expandSectionNode(section, true);
+            setTimeout(
+                () => this.cms[element.pageItem.id]?.scrollIntoView({block: "nearest"}),
+                250
+            );
+        }
     }
 
     /**
