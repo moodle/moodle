@@ -77,9 +77,6 @@ class FuzzyCMeans implements Clusterer
         return $this->membership;
     }
 
-    /**
-     * @param Point[]|int[][] $samples
-     */
     public function cluster(array $samples): array
     {
         // Initialize variables, clusters and membership matrix
@@ -142,7 +139,7 @@ class FuzzyCMeans implements Clusterer
                 $total += $val;
             }
 
-            $this->membership[] = array_map(function ($val) use ($total) {
+            $this->membership[] = array_map(static function ($val) use ($total): float {
                 return $val / $total;
             }, $row);
         }
@@ -210,7 +207,7 @@ class FuzzyCMeans implements Clusterer
                 $this->samples[$col]
             );
 
-            $val = ($dist1 / $dist2) ** 2.0 / ($this->fuzziness - 1);
+            $val = (($dist1 / $dist2) ** 2.0) / ($this->fuzziness - 1);
             $sum += $val;
         }
 

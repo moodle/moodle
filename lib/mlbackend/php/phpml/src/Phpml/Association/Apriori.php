@@ -104,11 +104,11 @@ class Apriori implements Associator
      */
     protected function predictSample(array $sample): array
     {
-        $predicts = array_values(array_filter($this->getRules(), function ($rule) use ($sample) {
+        $predicts = array_values(array_filter($this->getRules(), function ($rule) use ($sample): bool {
             return $this->equals($rule[self::ARRAY_KEY_ANTECEDENT], $sample);
         }));
 
-        return array_map(function ($rule) {
+        return array_map(static function ($rule) {
             return $rule[self::ARRAY_KEY_CONSEQUENT];
         }, $predicts);
     }
@@ -177,7 +177,7 @@ class Apriori implements Associator
         $cardinality = count($sample);
         $antecedents = $this->powerSet($sample);
 
-        return array_filter($antecedents, function ($antecedent) use ($cardinality) {
+        return array_filter($antecedents, static function ($antecedent) use ($cardinality): bool {
             return (count($antecedent) != $cardinality) && ($antecedent != []);
         });
     }
@@ -199,7 +199,7 @@ class Apriori implements Associator
             }
         }
 
-        return array_map(function ($entry) {
+        return array_map(static function ($entry): array {
             return [$entry];
         }, $items);
     }
@@ -213,7 +213,7 @@ class Apriori implements Associator
      */
     private function frequent(array $samples): array
     {
-        return array_values(array_filter($samples, function ($entry) {
+        return array_values(array_filter($samples, function ($entry): bool {
             return $this->support($entry) >= $this->support;
         }));
     }
@@ -288,7 +288,7 @@ class Apriori implements Associator
      */
     private function frequency(array $sample): int
     {
-        return count(array_filter($this->samples, function ($entry) use ($sample) {
+        return count(array_filter($this->samples, function ($entry) use ($sample): bool {
             return $this->subset($entry, $sample);
         }));
     }
@@ -303,7 +303,7 @@ class Apriori implements Associator
      */
     private function contains(array $system, array $set): bool
     {
-        return (bool) array_filter($system, function ($entry) use ($set) {
+        return (bool) array_filter($system, function ($entry) use ($set): bool {
             return $this->equals($entry, $set);
         });
     }

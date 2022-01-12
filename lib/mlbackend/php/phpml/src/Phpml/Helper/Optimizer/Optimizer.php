@@ -48,6 +48,11 @@ abstract class Optimizer
         return $this;
     }
 
+    public function theta(): array
+    {
+        return $this->theta;
+    }
+
     /**
      * Executes the optimization with the given samples & targets
      * and returns the weights
