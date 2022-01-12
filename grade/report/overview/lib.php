@@ -272,6 +272,12 @@ class grade_report_overview extends grade_report {
         if ($this->courses) {
             $coursesdata = $this->setup_courses_data($studentcoursesonly);
 
+            // Check whether current user can view all grades of this user - parent most probably.
+            $viewasuser = $this->course->showgrades && has_any_capability([
+                'moodle/grade:viewall',
+                'moodle/user:viewuseractivitiesreport',
+            ], context_user::instance($this->user->id));
+
             foreach ($coursesdata as $coursedata) {
 
                 $course = $coursedata['course'];
@@ -282,13 +288,15 @@ class grade_report_overview extends grade_report {
                 $coursenamelink = format_string(get_course_display_name_for_list($course), true, ['context' => $coursecontext]);
 
                 // Link to the course grade report pages (performing same capability checks as the pages themselves).
-                if ($activitylink && has_capability('gradereport/' . $CFG->grade_profilereport .':view', $coursecontext)) {
+                if ($activitylink &&
+                        (has_capability('gradereport/' . $CFG->grade_profilereport .':view', $coursecontext) || $viewasuser)) {
+
                     $coursenamelink = html_writer::link(new moodle_url('/course/user.php', [
                         'mode' => 'grade',
                         'id' => $course->id,
                         'user' => $this->user->id,
                     ]), $coursenamelink);
-                } else if (!$activitylink && has_capability('gradereport/user:view', $coursecontext)) {
+                } else if (!$activitylink && (has_capability('gradereport/user:view', $coursecontext) || $viewasuser)) {
                     $coursenamelink = html_writer::link(new moodle_url('/grade/report/user/index.php', [
                         'id' => $course->id,
                         'userid' => $this->user->id,
