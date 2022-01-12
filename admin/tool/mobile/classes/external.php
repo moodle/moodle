@@ -311,9 +311,12 @@ class external extends external_api {
         // Between each request 6 minutes are required.
         $last = get_user_preferences('tool_mobile_autologin_request_last', 0, $USER);
         // Check if we must reset the count.
+        $mintimereq = get_config('tool_mobile', 'autologinmintimebetweenreq');
+        $mintimereq = empty($mintimereq) ? 6 * MINSECS : $mintimereq;
         $timenow = time();
-        if ($timenow - $last < 6 * MINSECS) {
-            throw new moodle_exception('autologinkeygenerationlockout', 'tool_mobile');
+        if ($timenow - $last < $mintimereq) {
+            $minutes = $mintimereq / MINSECS;
+            throw new moodle_exception('autologinkeygenerationlockout', 'tool_mobile', $minutes);
         }
         set_user_preference('tool_mobile_autologin_request_last', $timenow, $USER);
 

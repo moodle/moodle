@@ -149,8 +149,9 @@ function tool_mobile_myprofile_navigation(\core_user\output\myprofile\tree $tree
             } else {
                 $qrcodeimg = tool_mobile\api::generate_login_qrcode($mobilesettings);
 
-                $minutes = tool_mobile\api::LOGIN_QR_KEY_TTL / MINSECS;
-                $mobileqr = html_writer::tag('p', get_string('qrcodeformobileapploginabout', 'tool_mobile', $minutes));
+                $qrkeyttl = !empty($mobilesettings->qrkeyttl) ? $mobilesettings->qrkeyttl : tool_mobile\api::LOGIN_QR_KEY_TTL;
+                $mobileqr = html_writer::tag('p', get_string('qrcodeformobileapploginabout', 'tool_mobile',
+                    format_time($qrkeyttl)));
                 $mobileqr .= html_writer::link('#qrcode', get_string('viewqrcode', 'tool_mobile'),
                     ['class' => 'btn btn-primary mt-2', 'data-toggle' => 'collapse',
                     'role' => 'button', 'aria-expanded' => 'false']);
