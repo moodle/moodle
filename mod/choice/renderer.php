@@ -140,7 +140,6 @@ class mod_choice_renderer extends plugin_renderer_base {
      */
     public function display_publish_name_vertical($choices) {
         $html ='';
-        $html .= html_writer::tag('h3',format_string(get_string("responses", "choice")));
 
         $attributes = array('method'=>'POST');
         $attributes['action'] = new moodle_url($this->page->url);
