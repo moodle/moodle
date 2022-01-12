@@ -303,7 +303,7 @@ class core_files_renderer extends plugin_renderer_base {
         } else {
             $maxsize = get_string('maxfilesize', 'moodle', $maxbytes);
         }
-        // TODO MDL-32020 also should say about 'File types accepted'
+
         return '<span>'. $maxsize . '</span>';
     }
 

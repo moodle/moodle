@@ -10764,7 +10764,7 @@ class admin_setting_configstoredfile extends admin_setting {
     }
 
     public function output_html($data, $query = '') {
-        global $PAGE, $CFG;
+        global $CFG;
 
         $options = $this->get_options();
         $id = $this->get_id();
@@ -10780,24 +10780,17 @@ class admin_setting_configstoredfile extends admin_setting {
         $fmoptions->mainfile       = $options['mainfile'];
         $fmoptions->maxbytes       = $options['maxbytes'];
         $fmoptions->maxfiles       = $options['maxfiles'];
-        $fmoptions->client_id      = uniqid();
-        $fmoptions->itemid         = $draftitemid;
         $fmoptions->subdirs        = $options['subdirs'];
-        $fmoptions->target         = $id;
         $fmoptions->accepted_types = $options['accepted_types'];
         $fmoptions->return_types   = $options['return_types'];
         $fmoptions->context        = $options['context'];
         $fmoptions->areamaxbytes   = $options['areamaxbytes'];
 
-        $fm = new form_filemanager($fmoptions);
-        $output = $PAGE->get_renderer('core', 'files');
-        $html = $output->render($fm);
-
-        $html .= '<input value="'.$draftitemid.'" name="'.$elname.'" type="hidden" />';
-        $html .= '<input value="" id="'.$id.'" type="hidden" />';
+        $fm = new MoodleQuickForm_filemanager($elname, $this->visiblename, ['id' => $id], $fmoptions);
+        $fm->setValue($draftitemid);
 
         return format_admin_setting($this, $this->visiblename,
-            '<div class="form-filemanager" data-fieldtype="filemanager">'.$html.'</div>',
+            '<div class="form-filemanager" data-fieldtype="filemanager">' . $fm->toHtml() . '</div>',
             $this->description, true, '', '', $query);
     }
 }
