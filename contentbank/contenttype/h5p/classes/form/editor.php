@@ -69,6 +69,8 @@ class editor extends edit_content {
 
         $this->h5peditor = new h5peditor();
 
+        $this->set_display_vertical();
+
         if ($id) {
             // The H5P editor needs the H5P content id (h5p table).
             $record = $DB->get_record('contentbank_content', ['id' => $id]);
