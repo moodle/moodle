@@ -24,7 +24,7 @@
  */
 
 require_once('../config.php');
-require($CFG->dirroot . '/webservice/lib.php');
+require_once($CFG->dirroot . '/webservice/lib.php');
 
 require_login();
 

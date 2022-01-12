@@ -40,7 +40,7 @@ $rsstokenboxhtml = $webservicetokenboxhtml = '';
 if ( !is_siteadmin($USER->id)
     && !empty($CFG->enablewebservices)
     && has_capability('moodle/webservice:createtoken', $usercontext )) {
-    require($CFG->dirroot.'/webservice/lib.php');
+    require_once($CFG->dirroot.'/webservice/lib.php');
 
     $action  = optional_param('action', '', PARAM_ALPHANUMEXT);
     $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
