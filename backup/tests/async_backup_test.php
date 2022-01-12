@@ -59,6 +59,10 @@ class core_backup_async_backup_testcase extends \core_privacy\tests\provider_tes
         $forum2 = $generator->create_module('forum', array(
                 'course' => $course->id, 'completion' => COMPLETION_TRACKING_MANUAL));
 
+        // Create a teacher user to call the backup.
+        $teacher = $generator->create_user();
+        $generator->enrol_user($teacher->id, $course->id, 'editingteacher');
+
         // We need a grade, easiest is to add an assignment.
         $assignrow = $generator->create_module('assign', array(
                 'course' => $course->id));
@@ -79,6 +83,15 @@ class core_backup_async_backup_testcase extends \core_privacy\tests\provider_tes
         $DB->set_field('course_sections', 'availability', $availability, array(
                 'course' => $course->id, 'section' => 1));
 
+        // Enable logging.
+        $this->preventResetByRollback();
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        set_config('buffersize', 0, 'logstore_standard');
+        get_log_manager(true);
+
+        // Start backup process.
+        $this->setUser($teacher->id);
+
         // Make the backup controller for an async backup.
         $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
                 backup::INTERACTIVE_YES, backup::MODE_ASYNC, $USER->id);
@@ -96,6 +109,7 @@ class core_backup_async_backup_testcase extends \core_privacy\tests\provider_tes
         $asynctask = new \core\task\asynchronous_backup_task();
         $asynctask->set_blocking(false);
         $asynctask->set_custom_data(['backupid' => $backupid]);
+        $asynctask->set_userid($USER->id);
         \core\task\manager::queue_adhoc_task($asynctask);
 
         // We are expecting trace output during this test.
@@ -108,11 +122,18 @@ class core_backup_async_backup_testcase extends \core_privacy\tests\provider_tes
         $task->execute();
         \core\task\manager::adhoc_task_complete($task);
 
-        $postbackuprec = $DB->get_record('backup_controllers', array('backupid' => $backupid));
+        $postbackuprec = $DB->get_record('backup_controllers', ['backupid' => $backupid]);
 
         // Check backup was created successfully.
         $this->assertEquals(backup::STATUS_FINISHED_OK, $postbackuprec->status);
         $this->assertEquals(1.0, $postbackuprec->progress);
+        $this->assertEquals($teacher->id, $postbackuprec->userid);
+
+        // Check that the backupid was logged correctly.
+        $logrec = $DB->get_record('logstore_standard_log', ['userid' => $postbackuprec->userid,
+                'target' => 'course_backup'], '*', MUST_EXIST);
+        $otherdata = json_decode($logrec->other);
+        $this->assertEquals($backupid, $otherdata->backupid);
     }
 
     /**
