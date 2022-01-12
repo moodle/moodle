@@ -380,7 +380,7 @@ class core_badges_renderer extends plugin_renderer_base {
             $localhtml .= $backpackconnect . $countmessage . $searchform;
             $localhtml .= $htmlpagingbar . $htmllist . $htmlpagingbar . $downloadall;
         } else {
-            $localhtml .= $searchform . $this->output->notification(get_string('nobadges', 'badges'));
+            $localhtml .= $searchform . $this->output->notification(get_string('nobadges', 'badges'), 'info');
         }
         $localhtml .= html_writer::end_tag('div');
 
