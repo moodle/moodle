@@ -22,7 +22,8 @@
         "drawerclasses": "drawer drawer-right",
         "drawertrigger": "toggleblocks",
         "tooltipplacement": "right",
-        "drawerconent": "Content for the blocks region"
+        "drawerconent": "Content for the blocks region",
+        "closebuttontext": "Close drawer"
     }
 }}
 <div {{!
@@ -42,9 +43,9 @@
             data-target="{{$id}}{{/id}}"
             data-toggle="tooltip"
             data-placement="{{$tooltipplacement}}right{{/tooltipplacement}}"
-            title="{{#str}}closedrawer, core{{/str}}"
+            title="{{$closebuttontext}}{{#str}}closedrawer, core{{/str}}{{/closebuttontext}}"
         >
-            {{#pix}}e/cancel, core, {{#str}}closedrawer, core{{/str}}{{/pix}}
+            {{#pix}} e/cancel, core {{/pix}}
         </button>
     </div>
     <div class="drawercontent" data-usertour="scroller">

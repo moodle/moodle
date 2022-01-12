@@ -17,7 +17,7 @@ Feature: Verify that courseindex is usable with the keyboard
       | book     | Activity sample 2 | Test book description       | C1     | sample2  | 2       |
       | choice   | Activity sample 3 | Test choice description     | C1     | sample3  | 3       |
     Given I am on the "C1" "Course" page logged in as "admin"
-    And I click on "Open course index drawer" "button"
+    And I click on "Open course index" "button"
     And I should see "Topic 1" in the "courseindex-content" "region"
     And the focused element is "[data-preference='drawer-open-index'] .drawertoggle" "css_element"
     And I press the tab key
@@ -29,6 +29,14 @@ Feature: Verify that courseindex is usable with the keyboard
     And the focused element is "[data-preference='drawer-open-index'] .drawertoggle" "css_element"
     And I press enter
     Then I should not see "Topic 1" in the "courseindex-content" "region"
+
+  @javascript @accessibility
+  Scenario: Course index should be accessible.
+    When I press the shift tab key
+    And I press enter
+    Then the page should meet accessibility standards with "wcag143" extra tests
+    And I press enter
+    And the page should meet accessibility standards with "wcag143" extra tests
 
   @javascript
   Scenario: Opening and closing sections.

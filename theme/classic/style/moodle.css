@@ -20250,10 +20250,13 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     border-radius: 200px;
     padding: 16px;
     background-color: #dee2e6;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     transition: padding 200ms; }
     .drawer-toggles .drawer-toggler .btn .icon {
       width: auto;
       height: auto; }
+    .drawer-toggles .drawer-toggler .btn:focus {
+      box-shadow: 0 0 0 0.2rem rgba(15, 108, 191, 0.75); }
 
 .drawer-toggles .drawer-left-toggle {
   left: 0; }

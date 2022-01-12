@@ -99,11 +99,11 @@
     }
 
 }}
-<nav id="{{uniqid}}-course-index" class="courseindex {{#editmode}} editing {{/editmode}}" role="tree">
+<div id="{{uniqid}}-course-index" class="courseindex {{#editmode}} editing {{/editmode}}" role="tree">
     {{#sections}}
     {{> core_courseformat/local/courseindex/section }}
     {{/sections}}
-</nav>
+</div>
 {{#js}}
 require(['core_courseformat/local/courseindex/courseindex'], function(component) {
     component.init('{{uniqid}}-course-index');
