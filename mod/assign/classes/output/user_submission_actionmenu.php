@@ -121,7 +121,7 @@ class user_submission_actionmenu implements templatable, renderable {
                 $data['edit']['help'] = $newattempthelp->export_for_template($output);
             }
             if ($status === ASSIGN_SUBMISSION_STATUS_NEW) {
-                $newattemptbutton = new single_button($url, get_string('addsubmission', 'mod_assign'), 'get');
+                $newattemptbutton = new single_button($url, get_string('addsubmission', 'mod_assign'), 'get', true);
                 $data['edit']['button'] = $newattemptbutton->export_for_template($output);
                 $data['edit']['help'] = '';
             }

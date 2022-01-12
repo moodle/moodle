@@ -4521,7 +4521,7 @@ class assign {
      * @return string
      */
     protected function view_grading_table() {
-        global $USER, $CFG, $SESSION;
+        global $USER, $CFG, $SESSION, $PAGE;
 
         // Include grading options form.
         require_once($CFG->dirroot . '/mod/assign/gradingoptionsform.php');
@@ -4563,6 +4563,7 @@ class assign {
 
         $gradingactions = new url_select($links);
         $gradingactions->set_label(get_string('choosegradingaction', 'assign'));
+        $gradingactions->class .= ' mb-1';
 
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
 
@@ -4643,6 +4644,7 @@ class assign {
         $buttons = new \mod_assign\output\grading_actionmenu($this->get_course_module()->id);
         $actionformtext = $this->get_renderer()->render($buttons);
         $actionformtext .= $this->get_renderer()->render($gradingactions);
+        $PAGE->activityheader->set_attrs(['hidecompletion' => true]);
 
         $currenturl = new moodle_url('/mod/assign/view.php', ['id' => $this->get_course_module()->id, 'action' => 'grading']);
 
@@ -4651,11 +4653,14 @@ class assign {
                                     false,
                                     $this->get_course_module()->id,
                                     get_string('grading', 'assign'),
-                                    $actionformtext,
+                                    '',
                                     '',
                                     $currenturl);
         $o .= $this->get_renderer()->render($header);
 
+        $o .= $actionformtext;
+
+        $o .= $this->get_renderer()->heading(get_string('gradeitem:submissions', 'mod_assign'), 2);
 
         $o .= groups_print_activity_menu($this->get_course_module(), $currenturl, true);
 
@@ -4924,6 +4929,8 @@ class assign {
             $bc->content = $navbc;
             $PAGE->blocks->add_fake_block($bc, reset($regions));
         }
+        $PAGE->activityheader->disable();
+
         $o .= $this->get_renderer()->render(
             new assign_header($this->get_instance(),
                               $this->get_context(),
@@ -5835,7 +5842,8 @@ class assign {
                 $course->relativedatesmode,
                 $course->startdate,
                 $this->can_grade(),
-                $isvisible
+                $isvisible,
+                $this->get_course_module()
             );
         } else {
             // The active group has already been updated in groups_print_activity_menu().
@@ -5856,7 +5864,8 @@ class assign {
                 $course->relativedatesmode,
                 $course->startdate,
                 $this->can_grade(),
-                $isvisible
+                $isvisible,
+                $this->get_course_module()
             );
         }
 
@@ -5921,10 +5930,6 @@ class assign {
         if ($this->can_view_grades()) {
             $actionbuttons = new \mod_assign\output\actionmenu($this->get_course_module()->id);
             $o .= $this->get_renderer()->submission_actionmenu($actionbuttons);
-
-            // Group selector will only be displayed if necessary.
-            $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
-            $o .= groups_print_activity_menu($this->get_course_module(), $currenturl->out(), true);
 
             $summary = $this->get_assign_grading_summary_renderable();
             $o .= $this->get_renderer()->render($summary);
@@ -8206,6 +8211,8 @@ class assign {
         if (empty($submissionstatement)) {
             $requiresubmissionstatement = false;
         }
+
+        $mform->addElement('header', 'submission header', get_string('addsubmission', 'mod_assign'));
 
         // Only show submission statement if we are editing our own submission.
         if ($requiresubmissionstatement && !$draftsenabled && $userid == $USER->id) {
