@@ -51,6 +51,33 @@ class load_test extends \advanced_testcase {
         $action->show();
     }
 
+
+    /**
+     * Test the behaviour of preview() method when the preset id doesn't exist.
+     *
+     * @covers ::preview
+     */
+    public function test_load_preview_unexisting_preset(): void {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create some presets.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
+        $presetid = $generator->create_preset();
+
+        // Initialise the parameters and create the load class.
+        $_POST['action'] = 'load';
+        $_POST['mode'] = 'preview';
+        $_POST['id'] = $presetid * 2; // Unexisting preset identifier.
+
+        $action = new load();
+        $action->preview();
+        $outputs = $generator->access_protected($action, 'outputs');
+        // In that case, no exception should be raised and the text of no preset found should be displayed.
+        $this->assertEquals(get_string('errornopreset', 'core_adminpresets'), $outputs);
+    }
+
     /**
      * Test the behaviour of execute() method.
      *
