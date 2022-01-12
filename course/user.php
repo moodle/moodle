@@ -174,7 +174,9 @@ switch ($mode) {
         require_once $CFG->dirroot.'/grade/report/'.$CFG->grade_profilereport.'/lib.php';
 
         // User must be able to view this grade report.
-        require_capability('gradereport/' . $CFG->grade_profilereport .':view', $coursecontext);
+        if (!$viewasuser) {
+            require_capability('gradereport/' . $CFG->grade_profilereport . ':view', $coursecontext);
+        }
 
         $functionname = 'grade_report_'.$CFG->grade_profilereport.'_profilereport';
         if (function_exists($functionname)) {
