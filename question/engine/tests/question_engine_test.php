@@ -23,20 +23,29 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_question;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once(__DIR__ . '/../lib.php');
-
+use advanced_testcase;
+use moodle_exception;
+use question_engine;
+use testable_core_question_renderer;
 
 /**
- *Unit tests for the question_engine class.
+ * Unit tests for the question_engine class.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_engine_test extends advanced_testcase {
+
+    /**
+     * Load required libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        require_once("{$CFG->dirroot}/question/engine/lib.php");
+    }
 
     public function test_load_behaviour_class() {
         // Exercise SUT
@@ -131,7 +140,9 @@ class question_engine_test extends advanced_testcase {
     }
 
     public function test_render_question_number() {
-        global $PAGE;
+        global $CFG, $PAGE;
+
+        require_once("{$CFG->dirroot}/question/engine/tests/helpers.php");
         $renderer = new testable_core_question_renderer($PAGE, 'core_question');
 
         // Test with number is i character.
