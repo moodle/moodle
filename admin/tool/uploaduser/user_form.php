@@ -147,6 +147,11 @@ class admin_uploaduser_form2 extends moodleform {
 
         $mform->addElement('selectyesno', 'uuallowdeletes', get_string('allowdeletes', 'tool_uploaduser'));
         $mform->setDefault('uuallowdeletes', 0);
+        // Ensure user is able to perform user deletion.
+        if (!has_capability('moodle/user:delete', context_system::instance())) {
+            $mform->hardFreeze('uuallowdeletes');
+            $mform->setConstant('uuallowdeletes', 0);
+        }
         $mform->hideIf('uuallowdeletes', 'uutype', 'eq', UU_USER_ADDNEW);
         $mform->hideIf('uuallowdeletes', 'uutype', 'eq', UU_USER_ADDINC);
 
