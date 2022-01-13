@@ -60,7 +60,7 @@
     <location>minify/matthiasmullie-minify</location>
     <name>MatthiasMullie\Minify</name>
     <license>MIT</license>
-    <version>1.3.63</version>
+    <version>1.3.66</version>
     <licenseversion></licenseversion>
   </library>
   <library>
