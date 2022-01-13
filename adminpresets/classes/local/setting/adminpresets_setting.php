@@ -113,13 +113,6 @@ class adminpresets_setting {
         }
     }
 
-    /**
-     * Returns the TreeView node identifier
-     */
-    public function get_id() {
-        return $this->settingdata->name . '@@' . $this->settingdata->plugin;
-    }
-
     public function get_value() {
         return $this->value;
     }
@@ -147,23 +140,6 @@ class adminpresets_setting {
      */
     protected function set_visiblevalue() {
         $this->visiblevalue = $this->value;
-    }
-
-    public function get_description() {
-        // PARAM_TEXT clean because the alt attribute does not support html.
-        $description = clean_param($this->settingdata->description, PARAM_TEXT);
-        return $this->encode_string($description);
-    }
-
-    /**
-     * Encodes a string to send it to js
-     *
-     * @param string $string
-     * @return string
-     */
-    protected function encode_string($string) {
-        $encoded = rawurlencode($string);
-        return $encoded;
     }
 
     public function get_attributes() {
