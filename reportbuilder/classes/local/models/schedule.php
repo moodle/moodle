@@ -19,6 +19,9 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\models;
 
 use context;
+use core_reportbuilder\event\schedule_created;
+use core_reportbuilder\event\schedule_deleted;
+use core_reportbuilder\event\schedule_updated;
 use lang_string;
 use core\persistent;
 
@@ -191,5 +194,34 @@ class schedule extends persistent {
         }
 
         return format_string($this->raw_get('name'), true, ['context' => $context]);
+    }
+
+    /**
+     * Hook to execute after creation
+     */
+    protected function after_create(): void {
+        schedule_created::create_from_object($this)->trigger();
+    }
+
+    /**
+     * Hook to execute after update
+     *
+     * @param bool $result
+     */
+    protected function after_update($result): void {
+        if ($result) {
+            schedule_updated::create_from_object($this)->trigger();
+        }
+    }
+
+    /**
+     * Hook to execute after deletion
+     *
+     * @param bool $result
+     */
+    protected function after_delete($result): void {
+        if ($result) {
+            schedule_deleted::create_from_object($this)->trigger();
+        }
     }
 }

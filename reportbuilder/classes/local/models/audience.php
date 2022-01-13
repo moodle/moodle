@@ -19,6 +19,9 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\models;
 
 use context;
+use core_reportbuilder\event\audience_created;
+use core_reportbuilder\event\audience_deleted;
+use core_reportbuilder\event\audience_updated;
 use lang_string;
 use core\persistent;
 use core_reportbuilder\local\helpers\audience as helper;
@@ -86,6 +89,7 @@ class audience extends persistent {
      * Hook to execute after creation
      */
     protected function after_create(): void {
+        audience_created::create_from_object($this)->trigger();
         helper::purge_caches();
     }
 
@@ -96,6 +100,7 @@ class audience extends persistent {
      */
     protected function after_update($result): void {
         if ($result) {
+            audience_updated::create_from_object($this)->trigger();
             helper::purge_caches();
         }
     }
@@ -107,6 +112,7 @@ class audience extends persistent {
      */
     protected function after_delete($result): void {
         if ($result) {
+            audience_deleted::create_from_object($this)->trigger();
             helper::purge_caches();
         }
     }

@@ -20,11 +20,11 @@ namespace core_reportbuilder\event;
 
 use coding_exception;
 use core\event\base;
-use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\models\schedule;
 use moodle_url;
 
 /**
- * Report builder custom report updated event class.
+ * Report builder custom report schedule created event class.
  *
  * @package     core_reportbuilder
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
@@ -33,38 +33,36 @@ use moodle_url;
  * @property-read array $other {
  *      Extra information about the event.
  *
- *      - string    name:      The name of the report
- *      - string    source:    The report source class
+ *      - int    reportid:      The id of the report
  * }
  */
-class report_updated extends base {
+class schedule_created extends base {
 
     /**
      * Initialise the event data.
      */
     protected function init() {
-        $this->data['objecttable'] = report::TABLE;
-        $this->data['crud'] = 'u';
+        $this->data['objecttable'] = schedule::TABLE;
+        $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**
-     * Creates an instance from a report object
+     * Creates an instance from a report schedule object
      *
-     * @param report $report
+     * @param schedule $schedule
      * @return self
      */
-    public static function create_from_object(report $report): self {
+    public static function create_from_object(schedule $schedule): self {
         $eventparams = [
-            'context'  => $report->get_context(),
-            'objectid' => $report->get('id'),
+            'context'  => $schedule->get_report()->get_context(),
+            'objectid' => $schedule->get('id'),
             'other' => [
-                'name'     => $report->get('name'),
-                'source'   => $report->get('source'),
+                'reportid' => $schedule->get('reportid'),
             ]
         ];
         $event = self::create($eventparams);
-        $event->add_record_snapshot($event->objecttable, $report->to_record());
+        $event->add_record_snapshot($event->objecttable, $schedule->to_record());
         return $event;
     }
 
@@ -74,7 +72,7 @@ class report_updated extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('reportupdated', 'core_reportbuilder');
+        return get_string('schedulecreated', 'core_reportbuilder');
     }
 
     /**
@@ -83,7 +81,8 @@ class report_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' updated the custom report with id '$this->objectid'.";
+        $reportid = $this->other['reportid'];
+        return "The user with id '$this->userid' created a schedule in the custom report with id '$reportid'.";
     }
 
     /**
@@ -96,6 +95,9 @@ class report_updated extends base {
         if (!isset($this->objectid)) {
             throw new coding_exception('The \'objectid\' must be set.');
         }
+        if (!isset($this->other['reportid'])) {
+            throw new coding_exception('The \'reportid\' must be set in other.');
+        }
     }
 
     /**
@@ -104,6 +106,6 @@ class report_updated extends base {
      * @return moodle_url
      */
     public function get_url(): moodle_url {
-        return new moodle_url('/reportbuilder/edit.php', ['id' => $this->objectid]);
+        return new moodle_url('/reportbuilder/edit.php', ['id' => $this->other['reportid']], 'schedules');
     }
 }
