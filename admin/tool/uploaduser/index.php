@@ -408,7 +408,7 @@ if ($formdata = $mform2->is_cancelled()) {
 
         // delete user
         if (!empty($user->deleted)) {
-            if (!$allowdeletes or $remoteuser) {
+            if (!$allowdeletes or $remoteuser or !has_capability('moodle/user:delete', context_system::instance())) {
                 $usersskipped++;
                 $upt->track('status', $strusernotdeletedoff, 'warning');
                 continue;
