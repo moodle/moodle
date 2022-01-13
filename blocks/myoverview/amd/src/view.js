@@ -456,8 +456,10 @@ const setCourseFavouriteState = (courseId, status) => {
  */
 const noCoursesRender = root => {
     const nocoursesimg = root.find(SELECTORS.courseView.region).attr('data-nocoursesimg');
+    const newcourseurl = root.find(SELECTORS.courseView.region).attr('data-newcourseurl');
     return Templates.render(TEMPLATES.NOCOURSES, {
-        nocoursesimg: nocoursesimg
+        nocoursesimg: nocoursesimg,
+        newcourseurl: newcourseurl
     });
 };
 
