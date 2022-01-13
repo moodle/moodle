@@ -1750,7 +1750,7 @@ class core_course_renderer extends plugin_renderer_base {
         $output .= $this->coursecat_tree($chelper, $coursecat);
 
         // Add action buttons
-        $output .= $this->container_start('buttons');
+        $output .= $this->container_start('buttons mt-3');
         if ($coursecat->is_uservisible()) {
             $context = get_category_or_system_context($coursecat->id);
             if (has_capability('moodle/course:create', $context)) {
