@@ -36,7 +36,7 @@ $courseindex-item-current: $primary !default;
 
 @mixin courseindex-item-dragging() {
     &.dragging {
-        border: $border-width $courseindex-item-dragging-border;
+        border: $border-width solid $courseindex-item-dragging-border;
         background-color: $courseindex-item-dragging-bg;
     }
 }

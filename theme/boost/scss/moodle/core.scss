@@ -200,7 +200,6 @@ button.close,
 .inline-list li,
 .block .list,
 .block .list li,
-.section li.activity,
 .section li.movehere,
 .tabtree li {
     list-style: none;
@@ -2851,15 +2850,19 @@ $scrollbar-track: lighten($primary, 40%);
 body.dragging {
 
     .drop-zone {
-        border: 2px dashed $dropzone-border;
+        border: 1px dashed $dropzone-border;
     }
 
     .drop-up {
-        border-top: 2px solid $dropzone-border;
+        border-top: 1px solid $dropzone-border;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
     }
 
     .drop-down {
-        border-bottom: 2px solid $dropzone-border;
+        border-bottom: 1px solid $dropzone-border;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
     }
 
     .dragging {
