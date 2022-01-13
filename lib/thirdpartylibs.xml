@@ -324,7 +324,7 @@
     <location>emoji-data</location>
     <name>Emoji data</name>
     <license>MIT</license>
-    <version>6.0.0</version>
+    <version>7.0.2</version>
   </library>
   <library>
     <location>polyfills</location>
