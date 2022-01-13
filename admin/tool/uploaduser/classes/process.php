@@ -26,6 +26,7 @@ namespace tool_uploaduser;
 
 defined('MOODLE_INTERNAL') || die();
 
+use context_system;
 use tool_uploaduser\local\field_value_validators;
 
 require_once($CFG->dirroot.'/user/profile/lib.php');
@@ -554,7 +555,8 @@ class process {
 
         // Delete user.
         if (!empty($user->deleted)) {
-            if (!$this->get_allow_deletes() or $remoteuser) {
+            if (!$this->get_allow_deletes() or $remoteuser or
+                    !has_capability('moodle/user:delete', context_system::instance())) {
                 $this->usersskipped++;
                 $this->upt->track('status', get_string('usernotdeletedoff', 'error'), 'warning');
                 return;
