@@ -247,3 +247,24 @@ Feature: Course index depending on role
     And I should not see "Activity sample 3" in the "region-main" "region"
     And I click on "Activity sample 3" "link" in the "courseindex-content" "region"
     Then I should see "Activity sample 3" in the "region-main" "region"
+
+  @javascript
+  Scenario Outline: Course index is displayed by default depending on the screen size.
+    When I change window size to "<device>"
+    And I am on the "C1" "Course" page logged in as "student1"
+    Then "courseindex-content" "region" should <bydefault> visible
+    And I reload the page
+    And "courseindex-content" "region" should <bydefault> visible
+    # Check whenever preferences are saved.
+    And I click on "<action1> course index" "button"
+    And I reload the page
+    And "courseindex-content" "region" should <visible1> visible
+    And I click on "<action2> course index" "button"
+    And I reload the page
+    And "courseindex-content" "region" should <visible2> visible
+
+    Examples:
+      | device | bydefault | action1 | visible1 | action2 | visible2 |
+      | large  | be        | Close   | not be   | Open    | be       |
+      | tablet | not be    | Open    | not be   | Open    | not be   |
+      | mobile | not be    | Open    | not be   | Open    | not be   |
