@@ -16,6 +16,11 @@
 
 namespace tool_brickfield;
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/admin/tool/brickfield/tests/area_test_base.php');
+
 /**
  * Class tool_brickfield_area_testcase
  *
@@ -23,8 +28,7 @@ namespace tool_brickfield;
  * @copyright  2020 onward: Brickfield Education Labs, https://www.brickfield.ie
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class area_test extends \advanced_testcase {
-
+class area_test extends area_test_base {
     /**
      * Test for the area assign intro
      */
@@ -46,7 +50,7 @@ class area_test extends \advanced_testcase {
         $resultsrs = $c->find_course_areas($course1->id);
         $resultsrs2 = $c->find_course_areas($course2->id);
         // Set up a results array from the recordset for easier testing.
-        $results = array_merge(self::array_from_recordset($resultsrs), self::array_from_recordset($resultsrs2));
+        $results = array_merge($this->array_from_recordset($resultsrs), $this->array_from_recordset($resultsrs2));
         $this->assertEquals([
             (object)[
                 'type' => area_base::TYPE_FIELD,
@@ -76,7 +80,7 @@ class area_test extends \advanced_testcase {
         $event = \core\event\course_module_updated::create_from_cm($cm1);
         $relevantresultsrs = $c->find_relevant_areas($event);
         // Set up a relevantresults array from the recordset for easier testing.
-        $relevantresults = self::array_from_recordset($relevantresultsrs);
+        $relevantresults = $this->array_from_recordset($relevantresultsrs);
         $this->assertEquals([$results[0]], $relevantresults);
     }
 
@@ -87,43 +91,57 @@ class area_test extends \advanced_testcase {
         $this->resetAfterTest();
         /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $component = 'core_question';
+
         list($category1, $course1, $qcat1, $questions1) = $generator->setup_course_and_questions('course');
         list($category2, $course2, $qcat2, $questions2) = $generator->setup_course_and_questions('category');
         list($category3, $course3, $qcat3, $questions3) = $generator->setup_course_and_questions('system');
 
         $c = new \tool_brickfield\local\areas\core_question\questiontext();
-        $results1 = self::array_from_recordset($c->find_course_areas($course1->id));
-        $results2 = self::array_from_recordset($c->find_course_areas($course2->id));
-        $results3 = self::array_from_recordset($c->find_course_areas($course3->id));
-        $results4 = self::array_from_recordset($c->find_system_areas());
-        // Set up a results array from the recordset for easier testing.
+        // Set up results arrays from the recordset for easier testing.
+        $course1areas = $this->array_from_recordset($c->find_course_areas($course1->id));
+        $course2areas = $c->find_course_areas($course2->id);
+        $course3areas = $c->find_course_areas($course3->id);
+        $sysareas = $this->array_from_recordset($c->find_system_areas());
 
-        $this->assertCount(2, $results1);
-        $this->assertCount(0, $results2);
-        $this->assertCount(0, $results3);
-        $this->assertCount(4, $results4);
-
-        // Validate the contexts, courseid and categoryid of the returned results.
-        $this->assertEquals(\context_course::instance($course1->id)->id, $results1[0]->contextid);
-        $this->assertEquals($course1->id, $results1[0]->courseid);
-        $this->assertEmpty($results1[0]->categoryid);
-        $this->assertEquals(\context_coursecat::instance($category2->id)->id, $results4[0]->contextid);
-        $this->assertEquals(SITEID, $results4[0]->courseid);
-        $this->assertEquals($category2->id, $results4[0]->categoryid);
-        $this->assertEquals(\context_system::instance()->id, $results4[2]->contextid);
-        $this->assertEmpty($results4[2]->categoryid);
-        $this->assertEquals(SITEID, $results4[2]->courseid);
-        // Results4 should contain id's for questions 1 and 2.
-        $this->assertTrue(($questions3[0]->id == $results4[2]->itemid) || ($questions3[0]->id == $results4[3]->itemid));
-        $this->assertTrue(($questions3[1]->id == $results4[2]->itemid) || ($questions3[1]->id == $results4[3]->itemid));
+        // Assert the core_question area exists for the individual question's context, courseid and categoryid.
+        $this->assert_area_in_array(
+            $course1areas,
+            $component,
+            \context_course::instance($course1->id)->id,
+            $questions1[0]->id,
+            $course1->id,
+            null
+        );
+        $this->assert_area_in_array(
+            $sysareas,
+            $component,
+            \context_coursecat::instance($category2->id)->id,
+            $questions2[0]->id,
+            SITEID,
+            $category2->id
+        );
+        $this->assert_area_in_array(
+            $sysareas,
+            $component,
+            \context_system::instance()->id,
+            $questions3[0]->id,
+            SITEID,
+            null
+        );
 
         // Emulate the question_created event.
         $event = \core\event\question_created::create_from_question_instance($questions1[1],
             \context_course::instance($course1->id));
-        $relevantresultsrs = $c->find_relevant_areas($event);
-        // Set up a relevantresults array from the recordset for easier testing.
-        $relevantresults = self::array_from_recordset($relevantresultsrs);
-        $this->assertEquals([$results1[1]], $relevantresults);
+        $relevantresults = $this->array_from_recordset($c->find_relevant_areas($event));
+        $this->assert_area_in_array(
+            $course1areas,
+            $component,
+            \context_course::instance($relevantresults[0]->courseid)->id,
+            $relevantresults[0]->itemid,
+            $relevantresults[0]->courseid,
+            $relevantresults[0]->categoryid
+        );
     }
 
     /**
@@ -147,7 +165,7 @@ class area_test extends \advanced_testcase {
 
         $c = new \tool_brickfield\local\areas\core_question\questionanswers();
         $resultsrs = $c->find_course_areas($course->id);
-        $results = self::array_from_recordset($resultsrs);
+        $results = $this->array_from_recordset($resultsrs);
 
         // There will be the same number of results as the number of records in the question_answers table.
         $this->assertEquals(count($dbanswers), count($results));
@@ -157,7 +175,7 @@ class area_test extends \advanced_testcase {
             \context_course::instance($course->id));
         $relevantresultsrs = $c->find_relevant_areas($event);
         // Set up a relevantresults array from the recordset for easier testing.
-        $relevantresults = self::array_from_recordset($relevantresultsrs);
+        $relevantresults = $this->array_from_recordset($relevantresultsrs);
 
         $dbanswers = array_values($DB->get_records('question_answers', ['question' => $question1->id], 'id'));
         $this->assertEquals(count($dbanswers), count($relevantresults));
@@ -190,7 +208,7 @@ class area_test extends \advanced_testcase {
         $c = new \tool_brickfield\local\areas\mod_choice\intro();
         $resultsrs = $c->find_course_areas($course->id);
         // Set up a results array from the recordset for easier testing.
-        $results = self::array_from_recordset($resultsrs);
+        $results = $this->array_from_recordset($resultsrs);
 
         $this->assertCount(2, $results);
         $this->assertEquals($cm1->id, $results[0]->cmid);
@@ -199,14 +217,14 @@ class area_test extends \advanced_testcase {
         // Emulate the course_module_created event.
         $event = \core\event\course_module_created::create_from_cm($cm1);
         $relevantresultsrs = $c->find_relevant_areas($event);
-        $relevantresults = self::array_from_recordset($relevantresultsrs);
+        $relevantresults = $this->array_from_recordset($relevantresultsrs);
         $this->assertEquals([$results[0]], $relevantresults);
 
         // Testing the choice options.
         $c = new \tool_brickfield\local\areas\mod_choice\option();
         $resultsrs = $c->find_course_areas($course->id);
         // Set up a results array from the recordset for easier testing.
-        $results = self::array_from_recordset($resultsrs);
+        $results = $this->array_from_recordset($resultsrs);
 
         $this->assertCount(5, $results);
         $this->assertEquals($cm2->id, $results[3]->cmid);
@@ -220,21 +238,7 @@ class area_test extends \advanced_testcase {
         // Emulate the course_module_updated event.
         $event = \core\event\course_module_updated::create_from_cm($cm2);
         $relevantresultsrs = $c->find_relevant_areas($event);
-        $relevantresults = self::array_from_recordset($relevantresultsrs);
+        $relevantresults = $this->array_from_recordset($relevantresultsrs);
         $this->assertEquals([$results[3], $results[4]], $relevantresults);
-    }
-
-    /**
-     * Array from recordset.
-     * @param \moodle_recordset $rs
-     * @return array
-     */
-    private static function array_from_recordset($rs) {
-        $records = [];
-        foreach ($rs as $record) {
-            $records[] = $record;
-        }
-        $rs->close();
-        return $records;
     }
 }
