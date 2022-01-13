@@ -13,8 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 namespace tool_brickfield\local\areas\core_question;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/admin/tool/brickfield/tests/area_test_base.php');
+
+use tool_brickfield\area_test_base;
 
 /**
  * Tests for questiontext.
@@ -23,8 +29,7 @@ namespace tool_brickfield\local\areas\core_question;
  * @copyright   2020 onward: Brickfield Education Labs, https://www.brickfield.ie
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questiontext_test extends \advanced_testcase {
-
+class questiontext_test extends area_test_base {
     /**
      * Set up before class.
      */
@@ -158,30 +163,31 @@ class questiontext_test extends \advanced_testcase {
         $catcontext = \context_coursecat::instance($category->id);
         $systemcontext = \context_system::instance();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $component = 'core_question';
+
         $cat = $generator->create_question_category(['contextid' => $catcontext->id]);
         $cat2 = $generator->create_question_category(['contextid' => $systemcontext->id]);
         $question = $generator->create_question('multichoice', null, ['category' => $cat2->id]);
         $question2 = $generator->create_question('multichoice', null, ['category' => $cat->id]);
         $questiontext = new questiontext();
-        $rs = $questiontext->find_system_areas();
-        $this->assertNotNull($rs);
+        $areas = $this->array_from_recordset($questiontext->find_system_areas());
 
-        $count = 0;
-        foreach ($rs as $rec) {
-            $count++;
-            if ($count <= 1) {
-                $this->assertEquals($systemcontext->id, $rec->contextid);
-                $this->assertEquals(1, $rec->courseid);
-                $this->assertEquals(0, $rec->categoryid);
-                $this->assertEquals($question->id, $rec->itemid);
-            } else {
-                $this->assertEquals($catcontext->id, $rec->contextid);
-                $this->assertEquals(1, $rec->courseid);
-                $this->assertEquals($category->id, $rec->categoryid);
-                $this->assertEquals($question2->id, $rec->itemid);
-            }
-        }
-        $rs->close();
-        $this->assertEquals(2, $count);
+        // Assert the core_question area exists for the individual question's context, courseid and categoryid.
+        $this->assert_area_in_array(
+            $areas,
+            $component,
+            $systemcontext->id,
+            $question->id,
+            SITEID,
+            null
+        );
+        $this->assert_area_in_array(
+            $areas,
+            $component,
+            $catcontext->id,
+            $question2->id,
+            SITEID,
+            $category->id
+        );
     }
 }
