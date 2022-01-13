@@ -137,14 +137,14 @@
     <location>jquery</location>
     <name>jQuery</name>
     <license>MIT</license>
-    <version>3.5.1</version>
+    <version>3.6.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
     <location>jquery</location>
     <name>jQuery UI</name>
     <license>MIT</license>
-    <version>1.12.1</version>
+    <version>1.13.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
