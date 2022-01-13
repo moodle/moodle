@@ -89,6 +89,7 @@ $activityheader->set_attrs([
     'title' => $activityheader->is_title_allowed() ? format_string($assign->name, true, ['context' => $context]) : ""
 ]);
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('overrides', 'mod_assign'), 2);
 $overridemenu = new \mod_assign\output\override_actionmenu($url, $cm);
 $renderer = $PAGE->get_renderer('mod_assign');
 echo $renderer->render($overridemenu);
@@ -298,7 +299,14 @@ foreach ($overrides as $override) {
 echo html_writer::start_tag('div', array('id' => 'assignoverrides'));
 if (count($table->data)) {
     echo html_writer::table($table);
+} else {
+    if ($groupmode) {
+        echo $OUTPUT->notification(get_string('nogroupoverrides', 'mod_assign'), 'info');
+    } else {
+        echo $OUTPUT->notification(get_string('nouseroverrides', 'mod_assign'), 'info');
+    }
 }
+
 if ($hasinactive) {
     echo $OUTPUT->notification(get_string('inactiveoverridehelp', 'assign'), 'dimmed_text');
 }

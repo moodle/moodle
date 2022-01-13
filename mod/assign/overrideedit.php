@@ -257,6 +257,7 @@ $PAGE->navbar->add($pagetitle);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_secondary_active_tab('mod_assign_useroverrides');
 $activityheader = $PAGE->activityheader;
 $activityheader->set_attrs([
     'description' => '',
