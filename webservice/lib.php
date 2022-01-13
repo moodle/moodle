@@ -904,7 +904,7 @@ class webservice_access_exception extends moodle_exception {
 function webservice_protocol_is_enabled($protocol) {
     global $CFG;
 
-    if (empty($CFG->enablewebservices)) {
+    if (empty($CFG->enablewebservices) || empty($CFG->webserviceprotocols)) {
         return false;
     }
 
