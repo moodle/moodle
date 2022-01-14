@@ -300,9 +300,15 @@ $string['cookiesenabled_help'] = 'Two cookies are used on this site:
 The essential one is the session cookie, usually called MoodleSession. You must allow this cookie in your browser to provide continuity and to remain logged in when browsing the site. When you log out or close the browser, this cookie is destroyed (in your browser and on the server).
 
 The other cookie is purely for convenience, usually called MOODLEID or similar. It just remembers your username in the browser. This means that when you return to this site, the username field on the login page is already filled in for you. It is safe to refuse this cookie - you will just have to retype your username each time you log in.';
+$string['cookiesenabled_help_html'] = 'Two cookies are used on this site:<br/><br/>
+
+The essential one is the session cookie, usually called MoodleSession. You must allow this cookie in your browser to provide continuity and to remain logged in when browsing the site. When you log out or close the browser, this cookie is destroyed (in your browser and on the server).<br/><br/>
+
+The other cookie is purely for convenience, usually called MOODLEID or similar. It just remembers your username in the browser. This means that when you return to this site, the username field on the login page is already filled in for you. It is safe to refuse this cookie - you will just have to retype your username each time you log in.';
 $string['cookiesenabledonlysession'] = 'Cookies must be enabled in your browser';
 $string['cookiesenabledonlysession_help'] = 'This site uses one session cookie, usually called MoodleSession. You must allow this cookie in your browser to provide continuity and to remain logged in when browsing the site. When you log out or close the browser, this cookie is destroyed (in your browser and on the server).';
 $string['cookiesnotenabled'] = 'Unfortunately, cookies are currently not enabled in your browser';
+$string['cookiesnotice'] = 'Cookies notice';
 $string['copy'] = 'copy';
 $string['copyasnoun'] = 'copy';
 $string['copycourse'] = 'Copy course';
@@ -2250,7 +2256,7 @@ $string['userlist'] = 'User list';
 $string['usermenu'] = 'User menu';
 $string['usermenugoback'] = 'Go back to user menu';
 $string['username'] = 'Username';
-$string['usernameemail'] = 'Username / email';
+$string['usernameemail'] = 'Username or email';
 $string['usernameemailmatch'] = 'The username and email address do not relate to the same user';
 $string['usernameexists'] = 'This username already exists, choose another';
 $string['usernamelowercase'] = 'Only lowercase letters allowed';

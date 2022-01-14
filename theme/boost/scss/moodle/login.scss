@@ -35,8 +35,7 @@ $login-identity-provider-btn-border: $border-color !default;
     margin-bottom: 2rem;
     .login-languagemenu {
         display: flex;
-        justify-content: flex-end;
-        margin-bottom: 1rem;
+        justify-content: flex-start;
     }
     .login-logo {
         display: flex;
@@ -59,6 +58,16 @@ $login-identity-provider-btn-border: $border-color !default;
     .login-identityproviders {
         .login-identityprovider-btn {
             border: $border-width solid $login-identity-provider-btn-border;
+        }
+    }
+    .divider {
+        width: $border-width;
+        background-color: $gray-300;
+        height: $font-size-base * 2;
+    }
+    .action-menu-trigger {
+        a {
+            margin: 0.5rem 0;
         }
     }
 }
