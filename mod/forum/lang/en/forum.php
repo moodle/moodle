@@ -782,9 +782,3 @@ $string['viewgrades'] = 'View grades';
 $string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
 
 To reply click on this link: {$a->replylink}';
-
-// Deprecated since Moodle 3.8.
-$string['cannotdeletediscussioninsinglediscussion'] = 'You cannot delete the first post in a single discussion';
-$string['inpagereplysubject'] = 'Re: {$a}';
-$string['overviewnumpostssince'] = '{$a} posts since last login';
-$string['overviewnumunread'] = '{$a} total unread';

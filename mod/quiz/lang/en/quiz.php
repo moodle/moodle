@@ -1039,12 +1039,6 @@ $string['xhtml'] = 'XHTML';
 $string['youneedtoenrol'] = 'You need to enrol in this course before you can attempt this quiz';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is {$a}.';
 
-// Deprecated since Moodle 3.8.
-$string['numattemptsmade'] = '{$a} attempts made on this quiz';
-$string['reviewofattempt'] = 'Review of attempt {$a}';
-$string['reviewofpreview'] = 'Review of preview';
-$string['settingsoverrides'] = 'Settings overrides';
-
 // Deprecated since Moodle 3.11.
 $string['completionattemptsexhausteddesc'] = 'Complete if all available attempts are exhausted';
 

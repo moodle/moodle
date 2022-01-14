@@ -653,17 +653,8 @@ $string['viewrevealidentitiesconfirm'] = 'View reveal student identities confirm
 $string['workflowfilter'] = 'Workflow filter';
 $string['xofy'] = '{$a->x} of {$a->y}';
 
-// Deprecated since Moodle 3.8.
-$string['duedateno'] = 'No due date';
-$string['mysubmission'] = 'My submission: ';
-$string['nolatesubmissions'] = 'No late submissions accepted. ';
-$string['nosubmissionsacceptedafter'] = 'No submissions accepted after ';
-$string['notsubmittedyet'] = 'Not submitted yet';
-$string['submissionsnotgraded'] = 'Submissions not graded: {$a}';
-
 // Deprecated since Moodle 3.11.
 $string['allowsubmissionsfromdatesummary'] = 'This assignment will accept submissions from <strong>{$a}</strong>';
 $string['allowsubmissionsanddescriptionfromdatesummary'] = 'The assignment details and submission form will be available from <strong>{$a}</strong>';
 $string['relativedatessubmissionduedateafter'] = '{$a->datediffstr} after course start';
 $string['relativedatessubmissionduedatebefore'] = '{$a->datediffstr} before course start';
-

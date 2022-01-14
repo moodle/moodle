@@ -240,6 +240,7 @@ $string['eventroleallowoverrideupdated'] = 'Allow role override';
 $string['eventroleallowswitchupdated'] = 'Allow role switch';
 $string['eventroleallowviewupdated'] = 'Allow role view';
 $string['eventroleassigned'] = 'Role assigned';
+$string['eventrolecapabilitiesupdated'] = 'Role capabilities updated';
 $string['eventroledeleted'] = 'Role deleted';
 $string['eventroleunassigned'] = 'Role unassigned';
 $string['eventroleupdated'] = 'Role updated';
@@ -517,6 +518,3 @@ $string['privacy:metadata:role_capabilities:tableexplanation'] = 'The capabiliti
 $string['privacy:metadata:role_capabilities:timemodified'] = 'The date when the capability was created or modified.';
 $string['privacy:metadata:role_cohortroles'] = 'Roles to cohort';
 $string['course:togglecompletion'] = 'Manually mark activities as complete';
-
-// Deprecated since Moodle 3.8.
-$string['eventrolecapabilitiesupdated'] = 'Role capabilities updated';

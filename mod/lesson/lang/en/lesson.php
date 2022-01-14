@@ -605,9 +605,3 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is {$a}';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is {$a->grade} out of {$a->total}';
 $string['youshouldview'] = 'You should answer at least: {$a}';
-
-// Deprecated since Moodle 3.8.
-$string['additionalattemptsremaining'] = 'Completed, You can re-attempt this lesson';
-$string['lessoncloseson'] = 'Lesson closes on {$a}';
-$string['lessonname'] = 'Lesson: {$a}';
-$string['xattempts'] = '{$a} attempts';
