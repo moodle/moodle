@@ -145,7 +145,18 @@ class core_filelib_testcase extends advanced_testcase {
         $contents = download_file_content("$testurl?redir=2");
         $this->assertSame('done', $contents);
 
+        $contents = download_file_content("$testurl?redir=2&verbose=1");
+        $this->assertSame('done', $contents);
+
         $response = download_file_content("$testurl?redir=2", null, null, true);
+        $this->assertInstanceOf('stdClass', $response);
+        $this->assertSame('200', $response->status);
+        $this->assertTrue(is_array($response->headers));
+        $this->assertMatchesRegularExpression('|^HTTP/1\.[01] 200 OK$|', rtrim($response->response_code));
+        $this->assertSame('done', $response->results);
+        $this->assertSame('', $response->error);
+
+        $response = download_file_content("$testurl?redir=2&verbose=1", null, null, true);
         $this->assertInstanceOf('stdClass', $response);
         $this->assertSame('200', $response->status);
         $this->assertTrue(is_array($response->headers));
@@ -330,7 +341,27 @@ class core_filelib_testcase extends advanced_testcase {
         $curl = new curl();
         $tofile = "$CFG->tempdir/test.html";
         @unlink($tofile);
+        $fp = fopen($tofile, 'w');
+        $result = $curl->get("$testurl?redir=1&verbose=1", array(), array('CURLOPT_FILE' => $fp));
+        $this->assertTrue($result);
+        fclose($fp);
+        $this->assertFileExists($tofile);
+        $this->assertSame('done', file_get_contents($tofile));
+        @unlink($tofile);
+
+        $curl = new curl();
+        $tofile = "$CFG->tempdir/test.html";
+        @unlink($tofile);
         $result = $curl->download_one("$testurl?redir=1", array(), array('filepath'=>$tofile));
+        $this->assertTrue($result);
+        $this->assertFileExists($tofile);
+        $this->assertSame('done', file_get_contents($tofile));
+        @unlink($tofile);
+
+        $curl = new curl();
+        $tofile = "$CFG->tempdir/test.html";
+        @unlink($tofile);
+        $result = $curl->download_one("$testurl?redir=1&verbose=1", array(), array('filepath' => $tofile));
         $this->assertTrue($result);
         $this->assertFileExists($tofile);
         $this->assertSame('done', file_get_contents($tofile));
