@@ -23,3 +23,6 @@ Removed:
 Added:
  * index.html - prevent directory browsing on misconfigured servers
  * readme_moodle.txt - this file ;-)
+
+Our changes (to be checked on next update if they are already applied upstream):
+ * https://github.com/ADOdb/ADOdb/issues/791
