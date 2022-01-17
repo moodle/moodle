@@ -58,7 +58,7 @@ class Adaline extends Perceptron
     protected function runTraining(array $samples, array $targets): void
     {
         // The cost function is the sum of squares
-        $callback = function ($weights, $sample, $target) {
+        $callback = function ($weights, $sample, $target): array {
             $this->weights = $weights;
 
             $output = $this->output($sample);

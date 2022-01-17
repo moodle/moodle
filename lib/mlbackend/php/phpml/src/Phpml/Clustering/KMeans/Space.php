@@ -88,7 +88,7 @@ class Space extends SplObjectStorage
         $min = $this->newPoint(array_fill(0, $this->dimension, null));
         $max = $this->newPoint(array_fill(0, $this->dimension, null));
 
-        /** @var self $point */
+        /** @var Point $point */
         foreach ($this as $point) {
             for ($n = 0; $n < $this->dimension; ++$n) {
                 if ($min[$n] === null || $min[$n] > $point[$n]) {
@@ -166,6 +166,10 @@ class Space extends SplObjectStorage
         foreach ($clusters as $cluster) {
             foreach ($cluster as $point) {
                 $closest = $point->getClosest($clusters);
+
+                if ($closest === null) {
+                    continue;
+                }
 
                 if ($closest !== $cluster) {
                     $attach[$closest] ?? $attach[$closest] = new SplObjectStorage();

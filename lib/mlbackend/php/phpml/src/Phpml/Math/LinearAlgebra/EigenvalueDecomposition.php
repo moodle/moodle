@@ -502,7 +502,8 @@ class EigenvalueDecomposition
                     }
 
                     // Double division avoids possible underflow
-                    $g = ($g / $this->ort[$m]) / $this->H[$m][$m - 1];
+                    $g /= $this->ort[$m];
+                    $g /= $this->H[$m][$m - 1];
                     for ($i = $m; $i <= $high; ++$i) {
                         $this->V[$i][$j] += $g * $this->ort[$i];
                     }
@@ -734,7 +735,7 @@ class EigenvalueDecomposition
 
                 // Double QR step involving rows l:n and columns m:n
                 for ($k = $m; $k <= $n - 1; ++$k) {
-                    $notlast = ($k != $n - 1);
+                    $notlast = $k != $n - 1;
                     if ($k != $m) {
                         $p = $this->H[$k][$k - 1];
                         $q = $this->H[$k + 1][$k - 1];

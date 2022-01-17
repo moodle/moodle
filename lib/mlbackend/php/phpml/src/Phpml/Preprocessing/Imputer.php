@@ -49,7 +49,7 @@ class Imputer implements Preprocessor
         $this->samples = $samples;
     }
 
-    public function transform(array &$samples): void
+    public function transform(array &$samples, ?array &$targets = null): void
     {
         if ($this->samples === []) {
             throw new InvalidOperationException('Missing training samples for Imputer.');
