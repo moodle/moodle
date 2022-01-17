@@ -17,16 +17,22 @@ Feature: Allow students to manually mark an activity as complete
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity | forum                  |
+      | course   | C1                     |
+      | section  | 1                      |
+      | name     | Test forum name        |
+      | intro    | Test forum description |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name          | Test forum name |
-      | Description         | Test forum description |
-      | Completion tracking | Students can manually mark the activity as completed |
+    And I am on the "Test forum name" "forum activity editing" page
+    And I set the following fields to these values:
+      | completion | 1 |
+    And I press "Save and return to course"
     And "Student First" user has not completed "Test forum name" activity
     And I log out
     And I log in as "student1"

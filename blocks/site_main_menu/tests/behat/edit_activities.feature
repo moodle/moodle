@@ -26,14 +26,16 @@ Feature: Edit activities in main menu block
   Scenario: Activities in main menu block can be made available but not visible on a course page
     Given the following config values are set as admin:
       | allowstealth | 1 |
+    And the following "blocks" exist:
+      | blockname      | contextlevel | reference | pagetypepattern | defaultregion |
+      | site_main_menu | System       | 1         | site-index      | side-post     |
+    And the following "activities" exist:
+      | activity | course               | section | name          |
+      | forum    | Acceptance test site | 0       | Visible forum |
+      | forum    | Acceptance test site | 0       | My forum name |
     And I log in as "admin"
     And I am on site homepage
     And I navigate to "Turn editing on" in current page administration
-    And I add the "Main menu" block
-    When I add a "Forum" to section "0" and I fill the form with:
-      | Forum name | Visible forum |
-    When I add a "Forum" to section "0" and I fill the form with:
-      | Forum name | My forum name |
     And "My forum name" activity in site main menu block should have "Hide" editing icon
     And "My forum name" activity in site main menu block should not have "Show" editing icon
     And "My forum name" activity in site main menu block should not have "Make available" editing icon
