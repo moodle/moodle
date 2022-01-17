@@ -1,4 +1,4 @@
-@mod @mod_forum @core_grades
+@mod @mod_forum @core_grades @javascript
 Feature: I can grade a students interaction across a forum
   In order to assess a student's contributions
   As a teacher
@@ -23,18 +23,22 @@ Feature: I can grade a students interaction across a forum
     And the following "scales" exist:
       | name | scale |
       | Test Scale 1 | Disappointing, Good, Very good, Excellent |
+    And the following "activity" exists:
+      | activity    | forum        |
+      | course      | C1           |
+      | idnumber    | 0001         |
+      | name        | Test Forum 1 |
+      | description | Test         |
+      | section     | 1            |
     And I log in as "teacher1"
     And I change window size to "large"
     And I am on "Course 1" course homepage
     And I turn editing mode on
 
-  @javascript
   Scenario: Ensure that forum grade settings do not leak to Ratings
-    Given I add a "Forum" to section "1"
+    Given I am on the "Test Forum 1" "forum activity" page
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And I set the following fields to these values:
-      | Forum name     | Test Forum 1    |
-      | Description    | Test               |
 
     # Fields should be hidden when grading is not set.
     When I set the field "Whole forum grading > Type" to "None"
@@ -73,13 +77,10 @@ Feature: I can grade a students interaction across a forum
     Then the field "Grade to pass" matches value "4"
     And I should see "Tutor" in the "Parent category" "fieldset"
 
-  @javascript
   Scenario: Ensure that Ratings settings do not leak to Forum grading
-    Given I add a "Forum" to section "1"
+    Given I am on the "Test Forum 1" "forum activity" page
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And I set the following fields to these values:
-      | Forum name     | Test Forum 1    |
-      | Description    | Test               |
 
     # Fields should be hidden when grading is not set.
     When I set the field "Ratings > Aggregate type" to "No ratings"
@@ -130,16 +131,10 @@ Feature: I can grade a students interaction across a forum
     And I should see "Tutor" in the "Parent category" "fieldset"
 
   Scenario: Setting both a rating and a whole forum grade does not bleed
-    Given the following "activity" exists:
-      | activity                      | forum        |
-      | course                        | C1           |
-      | idnumber                      | 0001         |
-      | name                          | Test Forum 1 |
-      | intro                         | Test         |
-      | section                       | 1            |
-    And I am on "Course 1" course homepage
-    And I follow "Test Forum 1"
+    Given I am on the "Test Forum 1" "forum activity" page
     And I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+
     And I set the field "Ratings > Aggregate type" to "Count of ratings"
     And I set the field "Ratings > Type" to "Point"
     And I set the field "Ratings > Maximum grade" to "100"
