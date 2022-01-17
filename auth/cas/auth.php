@@ -29,7 +29,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/auth/ldap/auth.php');
-require_once($CFG->dirroot.'/auth/cas/CAS/CAS.php');
+require_once($CFG->dirroot.'/auth/cas/CAS/vendor/autoload.php');
+require_once($CFG->dirroot.'/auth/cas/CAS/vendor/apereo/phpcas/source/CAS.php');
 
 /**
  * CAS authentication plugin.
