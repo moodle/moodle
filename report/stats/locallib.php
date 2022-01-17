@@ -236,7 +236,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                 ' - ' .
                 get_string('statsreport' . $report) .
                 $rolename .
-                $userdisplayname
+                $userdisplayname, 3
             );
 
             if ($mode == STATS_MODE_DETAILED) {
