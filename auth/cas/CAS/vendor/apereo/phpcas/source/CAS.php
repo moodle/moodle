@@ -35,6 +35,7 @@
  * @ingroup public
  */
 
+use Psr\Log\LoggerInterface;
 
 //
 // hack by Vangelis Haniotakis to handle the absence of $_SERVER['REQUEST_URI']
@@ -42,11 +43,6 @@
 //
 if (!isset($_SERVER['REQUEST_URI']) && isset($_SERVER['SCRIPT_NAME']) && isset($_SERVER['QUERY_STRING'])) {
     $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] . '?' . $_SERVER['QUERY_STRING'];
-}
-
-// Add a E_USER_DEPRECATED for php versions <= 5.2
-if (!defined('E_USER_DEPRECATED')) {
-    define('E_USER_DEPRECATED', E_USER_NOTICE);
 }
 
 
@@ -61,7 +57,7 @@ if (!defined('E_USER_DEPRECATED')) {
 /**
  * phpCAS version. accessible for the user by phpCAS::getVersion().
  */
-define('PHPCAS_VERSION', '1.3.8');
+define('PHPCAS_VERSION', '1.4.0');
 
 /**
  * @addtogroup public
@@ -224,6 +220,8 @@ define("PHPCAS_LANG_JAPANESE", 'CAS_Languages_Japanese');
 define("PHPCAS_LANG_SPANISH", 'CAS_Languages_Spanish');
 define("PHPCAS_LANG_CATALAN", 'CAS_Languages_Catalan');
 define("PHPCAS_LANG_CHINESE_SIMPLIFIED", 'CAS_Languages_ChineseSimplified');
+define("PHPCAS_LANG_GALEGO", 'CAS_Languages_Galego');
+define("PHPCAS_LANG_PORTUGUESE", 'CAS_Languages_Portuguese');
 
 /** @} */
 
@@ -261,7 +259,7 @@ define('DEFAULT_DEBUG_DIR', gettmpdir()."/");
 /** @} */
 
 // include the class autoloader
-require_once dirname(__FILE__) . '/CAS/Autoload.php';
+require_once __DIR__ . '/CAS/Autoload.php';
 
 /**
  * The phpCAS class is a simple container for the phpCAS library. It provides CAS
@@ -330,12 +328,14 @@ class phpCAS
     /**
      * phpCAS client initializer.
      *
-     * @param string $server_version  the version of the CAS server
-     * @param string $server_hostname the hostname of the CAS server
-     * @param int    $server_port     the port the CAS server is running on
-     * @param string $server_uri      the URI the CAS server is responding on
-     * @param bool   $changeSessionID Allow phpCAS to change the session_id (Single
-     * Sign Out/handleLogoutRequests is based on that change)
+     * @param string                   $server_version  the version of the CAS server
+     * @param string                   $server_hostname the hostname of the CAS server
+     * @param int                      $server_port     the port the CAS server is running on
+     * @param string                   $server_uri      the URI the CAS server is responding on
+     * @param bool                     $changeSessionID Allow phpCAS to change the session_id
+     *                                                  (Single Sign Out/handleLogoutRequests
+     *                                                  is based on that change)
+     * @param \SessionHandlerInterface $sessionHandler  the session handler
      *
      * @return void a newly created CAS_Client object
      * @note Only one of the phpCAS::client() and phpCAS::proxy functions should be
@@ -343,7 +343,7 @@ class phpCAS
      * and phpCAS::setDebug()).
      */
     public static function client($server_version, $server_hostname,
-        $server_port, $server_uri, $changeSessionID = true
+        $server_port, $server_uri, $changeSessionID = true, \SessionHandlerInterface $sessionHandler = null
     ) {
         phpCAS :: traceBegin();
         if (is_object(self::$_PHPCAS_CLIENT)) {
@@ -363,7 +363,7 @@ class phpCAS
         try {
             self::$_PHPCAS_CLIENT = new CAS_Client(
                 $server_version, false, $server_hostname, $server_port, $server_uri,
-                $changeSessionID
+                $changeSessionID, $sessionHandler
             );
         } catch (Exception $e) {
             phpCAS :: error(get_class($e) . ': ' . $e->getMessage());
@@ -374,12 +374,14 @@ class phpCAS
     /**
      * phpCAS proxy initializer.
      *
-     * @param string $server_version  the version of the CAS server
-     * @param string $server_hostname the hostname of the CAS server
-     * @param int    $server_port     the port the CAS server is running on
-     * @param string $server_uri      the URI the CAS server is responding on
-     * @param bool   $changeSessionID Allow phpCAS to change the session_id (Single
-     * Sign Out/handleLogoutRequests is based on that change)
+     * @param string                   $server_version  the version of the CAS server
+     * @param string                   $server_hostname the hostname of the CAS server
+     * @param string                   $server_port     the port the CAS server is running on
+     * @param string                   $server_uri      the URI the CAS server is responding on
+     * @param bool                     $changeSessionID Allow phpCAS to change the session_id
+     *                                                  (Single Sign Out/handleLogoutRequests
+     *                                                  is based on that change)
+     * @param \SessionHandlerInterface $sessionHandler  the session handler
      *
      * @return void a newly created CAS_Client object
      * @note Only one of the phpCAS::client() and phpCAS::proxy functions should be
@@ -387,7 +389,7 @@ class phpCAS
      * and phpCAS::setDebug()).
      */
     public static function proxy($server_version, $server_hostname,
-        $server_port, $server_uri, $changeSessionID = true
+        $server_port, $server_uri, $changeSessionID = true, \SessionHandlerInterface $sessionHandler = null
     ) {
         phpCAS :: traceBegin();
         if (is_object(self::$_PHPCAS_CLIENT)) {
@@ -407,7 +409,7 @@ class phpCAS
         try {
             self::$_PHPCAS_CLIENT = new CAS_Client(
                 $server_version, true, $server_hostname, $server_port, $server_uri,
-                $changeSessionID
+                $changeSessionID, $sessionHandler
             );
         } catch (Exception $e) {
             phpCAS :: error(get_class($e) . ': ' . $e->getMessage());
@@ -436,15 +438,37 @@ class phpCAS
      */
 
     /**
+     * Set/unset PSR-3 logger
+     *
+     * @param LoggerInterface $logger the PSR-3 logger used for logging, or
+     * null to stop logging.
+     *
+     * @return void
+     */
+    public static function setLogger($logger = null)
+    {
+        if (empty(self::$_PHPCAS_DEBUG['unique_id'])) {
+            self::$_PHPCAS_DEBUG['unique_id'] = substr(strtoupper(md5(uniqid(''))), 0, 4);
+        }
+        self::$_PHPCAS_DEBUG['logger'] = $logger;
+        self::$_PHPCAS_DEBUG['indent'] = 0;
+        phpCAS :: trace('START ('.date("Y-m-d H:i:s").') phpCAS-' . PHPCAS_VERSION . ' ******************');
+    }
+
+    /**
      * Set/unset debug mode
      *
      * @param string $filename the name of the file used for logging, or false
      * to stop debugging.
      *
      * @return void
+     *
+     * @deprecated
      */
     public static function setDebug($filename = '')
     {
+        trigger_error('phpCAS::setDebug() is deprecated in favor of phpCAS::setLogger().', E_USER_DEPRECATED);
+
         if ($filename != false && gettype($filename) != 'string') {
             phpCAS :: error('type mismatched for parameter $dbg (should be false or the name of the log file)');
         }
@@ -518,14 +542,7 @@ class phpCAS
         $indent_str = ".";
 
 
-        if (!empty(self::$_PHPCAS_DEBUG['filename'])) {
-            // Check if file exists and modifiy file permissions to be only
-            // readable by the webserver
-            if (!file_exists(self::$_PHPCAS_DEBUG['filename'])) {
-                touch(self::$_PHPCAS_DEBUG['filename']);
-                // Chmod will fail on windows
-                @chmod(self::$_PHPCAS_DEBUG['filename'], 0600);
-            }
+        if (isset(self::$_PHPCAS_DEBUG['logger']) || !empty(self::$_PHPCAS_DEBUG['filename'])) {
             for ($i = 0; $i < self::$_PHPCAS_DEBUG['indent']; $i++) {
 
                 $indent_str .= '|    ';
@@ -533,7 +550,20 @@ class phpCAS
             // allow for multiline output with proper identing. Usefull for
             // dumping cas answers etc.
             $str2 = str_replace("\n", "\n" . self::$_PHPCAS_DEBUG['unique_id'] . ' ' . $indent_str, $str);
-            error_log(self::$_PHPCAS_DEBUG['unique_id'] . ' ' . $indent_str . $str2 . "\n", 3, self::$_PHPCAS_DEBUG['filename']);
+            $str3 = self::$_PHPCAS_DEBUG['unique_id'] . ' ' . $indent_str . $str2;
+            if (isset(self::$_PHPCAS_DEBUG['logger'])) {
+                self::$_PHPCAS_DEBUG['logger']->info($str3);
+            }
+            if (!empty(self::$_PHPCAS_DEBUG['filename'])) {
+                // Check if file exists and modifiy file permissions to be only
+                // readable by the webserver
+                if (!file_exists(self::$_PHPCAS_DEBUG['filename'])) {
+                    touch(self::$_PHPCAS_DEBUG['filename']);
+                    // Chmod will fail on windows
+                    @chmod(self::$_PHPCAS_DEBUG['filename'], 0600);
+                }
+                error_log($str3 . "\n", 3, self::$_PHPCAS_DEBUG['filename']);
+            }
         }
 
     }
@@ -1867,6 +1897,14 @@ class phpCAS
         if (!is_object(self::$_PHPCAS_CLIENT)) {
             throw new CAS_OutOfSequenceBeforeProxyException();
         }
+    }
+
+    /**
+     * @return CAS_Client
+     */
+    public static function getCasClient()
+    {
+        return self::$_PHPCAS_CLIENT;
     }
 
     /**
