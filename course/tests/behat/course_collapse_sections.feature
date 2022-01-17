@@ -44,12 +44,15 @@ Feature: Collapse course sections
 
   @javascript
   Scenario: No chevron on site home
-    Given I log in as "admin"
+    Given the following activity" exists:
+      | activity | forum                              |
+      | course   | Acceptance test site               |
+      | section  | 1                                  |
+      | name     | Test forum post backup name        |
+      | intro    | Test forum post backup description |
+    And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name  | Test forum post backup name        |
-      | Description | Test forum post backup description |
     And I click on "Edit summary" "link" in the "region-main" "region"
     And I click on "Custom" "checkbox"
     And I set the field "New value for Section name" to "New section name"

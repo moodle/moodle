@@ -17,31 +17,6 @@ Feature: Show/hide course sections
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test hidden forum 11 name |
-      | Description | Test hidden forum 11 description |
-      | Availability | Hide on course page |
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test hidden forum 12 name |
-      | Description | Test hidden forum 12 description |
-      | Availability | Show on course page |
-    And I add a "Forum" to section "2" and I fill the form with:
-      | Forum name | Test hidden forum 21 name |
-      | Description | Test hidden forum 21 description |
-      | Availability | Hide on course page |
-    And I add a "Forum" to section "2" and I fill the form with:
-      | Forum name | Test hidden forum 22 name |
-      | Description | Test hidden forum 22 description |
-      | Availability | Show on course page |
-    And I add a "Forum" to section "3" and I fill the form with:
-      | Forum name | Test hidden forum 31 name |
-      | Description | Test hidden forum 31 description |
-      | Availability | Hide on course page |
-    And I add a "Forum" to section "3" and I fill the form with:
-      | Forum name | Test hidden forum 32 name |
-      | Description | Test hidden forum 32 description |
-      | Availability | Show on course page |
 
   @javascript
   Scenario: Show / hide section icon functions correctly
@@ -75,7 +50,7 @@ Feature: Show/hide course sections
 
   @javascript
   Scenario: Students can not navigate to hidden sections
-    Given I am on "Course 1" course homepage
+    Given I am on "Course 1" course homepage with editing mode on
     And I hide section "2"
     Given I navigate to "Settings" in current page administration
     And I set the following fields to these values:
@@ -98,7 +73,7 @@ Feature: Show/hide course sections
 
   @javascript
   Scenario: Students can not navigate to restricted sections
-    Given I am on "Course 1" course homepage
+    Given I am on "Course 1" course homepage with editing mode on
     Given I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
