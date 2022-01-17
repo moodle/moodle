@@ -29,7 +29,7 @@ Feature: Changes to the subscription mode of a forum can change subcribers of a 
   Scenario: A change from Forced subscription to Auto subcription causes all participants to be subscribed
     Given I follow "Test forum name"
     And I navigate to "Subscriptions" in current page administration
-    When I select "Auto subscription" from the "Subscriptions" singleselect
+    When I select "Auto subscription" from the "Subscription mode" singleselect
     Then I should not see "There are no subscribers yet for this forum"
     And I navigate to "Subscriptions" in current page administration
     And I should see "Student 1"
