@@ -607,7 +607,7 @@ class secondary extends view {
         // tab. Note this value refers to being present on the page itself, before a search has been performed.
         $isadminsearchpage = $PAGE->url->compare(new \moodle_url('/admin/search.php', ['query' => '']), URL_MATCH_PARAMS);
         if ($node) {
-            $siteadminnode = $this->add($node->text, "#link$node->key", null, null, 'siteadminnode');
+            $siteadminnode = $this->add(get_string('general'), "#link$node->key", null, null, 'siteadminnode');
             if ($isadminsearchpage) {
                 $siteadminnode->action = false;
                 $siteadminnode->tab = "#link$node->key";
