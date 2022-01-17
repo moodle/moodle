@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['autoenablenotification'] = '<p>In Moodle 4.0 onwards, the <a href="https://moodle.net/">MoodleNet</a> integration is enabled by default in Advanced features. Users with the capability to create and manage activities can browse MoodleNet via the activity chooser and import MoodleNet resources into their courses.</p><p>If desired, an alternative MoodleNet instance may be specified in the <a href="{$a->settingslink}">MoodleNet settings</a>.</p>';
+$string['autoenablenotification_subject'] = 'Default MoodleNet setting changed.';
 $string['addingaresource'] = 'Adding content from MoodleNet';
 $string['aria:enterprofile'] = "Enter your MoodleNet profile URL";
 $string['aria:footermessage'] = "Browse for content on MoodleNet";
