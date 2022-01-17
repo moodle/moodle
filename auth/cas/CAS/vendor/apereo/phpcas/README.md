@@ -6,22 +6,21 @@ users via a Central Authentication Service (CAS) server.
 
 Please see the wiki website for more information:
 
-https://wiki.jasig.org/display/CASC/phpCAS
+https://apereo.github.io/phpCAS/
 
 Api documentation can be found here:
 
-https://apereo.github.io/phpCAS/
+https://apereo.github.io/phpCAS/api/
 
 
 [![Build Status](https://travis-ci.org/apereo/phpCAS.png)](https://travis-ci.org/apereo/phpCAS)
 
-
 LICENSE
 -------
 
-Copyright 2007-2015, JA-SIG, Inc.
-This project includes software developed by Jasig.
-http://www.jasig.org/
+Copyright 2007-2020, Apereo Foundation.
+This project includes software developed by Apereo Foundation.
+http://www.apereo.org/
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this software except in compliance with the License.
