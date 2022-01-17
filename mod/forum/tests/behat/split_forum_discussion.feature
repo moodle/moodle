@@ -21,12 +21,9 @@ Feature: Forum discussions can be split
     And the following "activities" exist:
       | activity   | name                   | intro                              | course | idnumber | type    |
       | forum      | Study discussions      | Forum to discuss your coursework.  | C1     | forump1  | general |
-    And I log in as "teacher1"
-    And I am on "Science 101" course homepage
-    And I add a new discussion to "Study discussions" forum with:
-      | Subject | Photosynthesis discussion |
-      | Message | Lets discuss our learning about Photosynthesis this week in this thread. |
-    And I log out
+    And the following "mod_forum > discussions" exist:
+      | forum   | course | user     | name                      | message                                                                  |
+      | forump1 | C1     | teacher1 | Photosynthesis discussion | Lets discuss our learning about Photosynthesis this week in this thread. |
     And I log in as "student1"
     And I am on "Science 101" course homepage
     And I reply "Photosynthesis discussion" post from "Study discussions" forum with:

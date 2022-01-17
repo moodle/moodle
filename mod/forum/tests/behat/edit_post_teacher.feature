@@ -19,12 +19,9 @@ Feature: Teachers can edit or delete any forum post
     And the following "activities" exist:
       | activity   | name              | intro                    | course | section | idnumber |
       | forum      | Test forum name   | Test forum description   | C1     | 1       | forum1   |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Teacher post subject |
-      | Message | Teacher post message |
-    And I log out
+    And the following "mod_forum > discussions" exist:
+      | forum  | course | user     | name                 | message              |
+      | forum1 | C1     | teacher1 | Teacher post subject | Teacher post message |
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I reply "Teacher post subject" post from "Test forum name" forum with:
