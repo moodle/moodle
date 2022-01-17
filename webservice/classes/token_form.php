@@ -25,6 +25,8 @@
 
 namespace core_webservice;
 
+use core_user;
+
 /**
  * Form to create and edit a web service token.
  *
@@ -52,11 +54,11 @@ class token_form extends \moodleform {
             'multiple' => false,
             'ajax' => 'core_user/form_user_selector',
             'valuehtmlcallback' => function($userid) {
-                global $DB, $OUTPUT;
+                global $OUTPUT;
 
                 $context = \context_system::instance();
                 $fields = \core_user\fields::for_name()->with_identity($context, false);
-                $record = $DB->get_record('user', ['id' => $userid], $fields, MUST_EXIST);
+                $record = core_user::get_user($userid, 'id ' . $fields->get_sql()->selects, MUST_EXIST);
 
                 $user = (object)[
                     'id' => $record->id,
