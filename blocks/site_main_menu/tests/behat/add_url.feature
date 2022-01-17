@@ -10,11 +10,18 @@ Feature: Add URL to main menu block
     And I am on site homepage
     And I turn editing mode on
     And I add the "Main menu" block
-    When I add a "URL" to section "0" and I fill the form with:
-      | Name         | reference link        |
-      | Description  | mooooooooodle         |
-      | External URL | http://www.moodle.com |
-      | id_display   | In pop-up             |
+    And the following "activity" exists:
+      | activity    | url                   |
+      | course      | Acceptance test site  |
+      | name        | reference link        |
+      | intro       | mooooooooodle         |
+      | externalurl | http://www.moodle.com |
+      | section     | 0                     |
+    When I am on the "reference link" "url activity editing" page
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | id_display | In pop-up |
+    And I press "Save and return to course"
     Then "reference link" "link" should exist in the "Main menu" "block"
     And "Add an activity or resource" "button" should exist in the "Main menu" "block"
 
@@ -33,12 +40,18 @@ Feature: Add URL to main menu block
     And I set the following fields to these values:
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
-    When I am on the "C1" Course page
-    And I add a "URL" to section "0" and I fill the form with:
-      | Name                               | reference link        |
-      | Description                        | mooooooooodle         |
-      | External URL                       | http://www.moodle.com |
-      | Display description on course page | 1                     |
-      | id_display                         | In pop-up             |
+    When the following "activity" exists:
+      | activity        | url                   |
+      | course          | C1                    |
+      | name            | reference link        |
+      | intro           | mooooooooodle         |
+      | externalurl     | http://www.moodle.com |
+      | section         | 0                     |
+      | showdescription | 1                     |
+    And I am on the "reference link" "url activity editing" page
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | id_display | In pop-up |
+    And I press "Save and return to course"
     Then "reference link" "link" should not exist in the "Main menu" "block"
     And I should see "mooooooooodle" in the "region-main" "region"
