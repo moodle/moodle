@@ -83,8 +83,16 @@ if (!empty($id)) {
 $PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab('modulepage');
-$PAGE->activityheader->set_hidecompletion(true);
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
 echo $OUTPUT->header();
+if (!$id) {
+    echo $OUTPUT->heading(get_string('addsingleentry', 'mod_glossary'));
+} else {
+    echo $OUTPUT->heading(get_string('editentry', 'mod_glossary'));
+}
 
 $data = new StdClass();
 $data->tags = core_tag_tag::get_item_tags_array('mod_glossary', 'glossary_entries', $id);

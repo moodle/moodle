@@ -175,6 +175,7 @@ class standard_action_bar implements renderable, templatable {
         global $USER, $CFG;
         $items = [];
         $buttons = [];
+        $openinnewwindow = [];
 
         if (has_capability('mod/glossary:import', $this->context)) {
             $items['button'] = new single_button(
@@ -204,6 +205,7 @@ class standard_action_bar implements renderable, templatable {
             );
             $printurl = new moodle_url('/mod/glossary/print.php', $params);
             $buttons[get_string('printerfriendly', 'glossary')] = $printurl->out(false);
+            $openinnewwindow[] = $printurl->out(false);
         }
 
         if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds)
@@ -213,6 +215,7 @@ class standard_action_bar implements renderable, templatable {
             $string = get_string('rssfeed', 'glossary');
             $url = new moodle_url(rss_get_url($this->context->id, $USER->id, 'mod_glossary', $this->cm->instance));
             $buttons[$string] = $url->out(false);
+            $openinnewwindow[] = $url->out(false);
         }
 
         foreach ($items as $key => $value) {
@@ -223,7 +226,8 @@ class standard_action_bar implements renderable, templatable {
             foreach ($buttons as $index => $value) {
                 $items['select']['options'][] = [
                     'url' => $value,
-                    'string' => $index
+                    'string' => $index,
+                    'openinnewwindow' => ($openinnewwindow ? in_array($value, $openinnewwindow) : false)
                 ];
             }
         }
