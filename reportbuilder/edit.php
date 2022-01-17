@@ -67,6 +67,6 @@ $tabs = [
 ];
 
 echo $OUTPUT->render_from_template('core/dynamic_tabs',
-    (new dynamic_tabs($tabdata, $tabs))->export_for_template($OUTPUT));
+    (new dynamic_tabs($tabs))->export_for_template($OUTPUT));
 
 echo $OUTPUT->footer();
