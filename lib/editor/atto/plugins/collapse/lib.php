@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 function atto_collapse_strings_for_js() {
     global $PAGE;
 
-    $PAGE->requires->strings_for_js(array('showmore', 'showfewer'), 'atto_collapse');
+    $PAGE->requires->strings_for_js(array('showmore', 'showfewer', 'youareonsecondrow'), 'atto_collapse');
 }
 
 /**
