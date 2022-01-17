@@ -24,6 +24,7 @@
 
 namespace mod_lesson\output;
 
+use core\output\notification;
 use moodle_url;
 use templatable;
 use renderable;
@@ -38,20 +39,29 @@ use single_button;
  */
 class edit_action_buttons implements templatable, renderable {
 
-    /** @var int The course module ID. */
-    protected $cmid;
-    /** @var bool Whether the user can edit this lesson. */
-    protected $canmanage;
+    /** @var \lesson The lesson object. */
+    protected $lesson;
+    /** @var int The currently viewed lesson page id. */
+    protected $currentpage;
 
     /**
      * Constructor for this object.
      *
-     * @param int  $cmid      The course module ID.
-     * @param bool $canmanage Whether the user can edit this lesson.
+     * @param \lesson $lesson The lesson object.
+     * @param int|null $currentpage The current lesson page that is being viewed
      */
-    public function __construct(int $cmid, bool $canmanage) {
-        $this->cmid = $cmid;
-        $this->canmanage = $canmanage;
+    public function __construct(\lesson $lesson, ?int $currentpage = null) {
+        $this->lesson = $lesson;
+        $this->currentpage = $currentpage;
+    }
+
+    /**
+     * Sets the current page being viewed.
+     *
+     * @param int|null $page
+     */
+    public function set_currentpage(?int $page) {
+        $this->currentpage = $page;
     }
 
     /**
@@ -63,23 +73,41 @@ class edit_action_buttons implements templatable, renderable {
     public function export_for_template(\renderer_base $output) {
         global $PAGE;
 
-        if (!$this->canmanage || !$PAGE->has_secondary_navigation()) {
-            return [];
+        $data = [];
+
+        // A shortcut to edit the lesson's question page.
+        if (has_capability('mod/lesson:edit', $this->lesson->context) &&
+                !empty($this->currentpage) && $this->currentpage != LESSON_EOL) {
+            $url = new moodle_url('/mod/lesson/editpage.php', [
+                'id'       => $this->lesson->get_cm()->id,
+                'pageid'   => $this->currentpage,
+                'edit'     => 1,
+                'returnto' => $PAGE->url->out_as_local_url(false)
+            ]);
+            $editcontent = new single_button($url, get_string('editpagecontent', 'lesson'));
+            $data['editcontents']['button'] = $editcontent->export_for_template($output);
         }
 
-        $url = new moodle_url('/mod/lesson/edit.php', ['id' => $this->cmid]);
-        $editbutton = new single_button($url, get_string('edit', 'mod_lesson'), 'get', true);
-        $url = new moodle_url('/mod/lesson/essay.php', ['id' => $this->cmid]);
-        $essaybutton = new single_button($url, get_string('manualgrading', 'mod_lesson'), 'get');
-        $data = [
-            'edit' => [
-                'button' => $editbutton->export_for_template($output),
-            ],
-            'gradeessays' => [
-                'button' => $essaybutton->export_for_template($output),
-            ]
-        ];
+        if ($this->lesson->can_manage()) {
+            $url = new moodle_url('/mod/lesson/edit.php', ['id' => $this->lesson->get_cm()->id]);
+            $editbutton = new single_button($url, get_string('editlesson', 'mod_lesson'), 'get', true);
+            $url = new moodle_url('/mod/lesson/essay.php', ['id' => $this->lesson->get_cm()->id]);
+            $essaybutton = new single_button($url, get_string('manualgrading', 'mod_lesson'), 'get');
+            $data += [
+                'edit' => [
+                    'button' => $editbutton->export_for_template($output),
+                ],
+                'gradeessays' => [
+                    'button' => $essaybutton->export_for_template($output),
+                ]
+            ];
+        }
+
+        // Standard notification to indicate the lesson is being previewed.
+        if ($data) {
+            $message = new notification(get_string('lessonbeingpreviewed', 'mod_lesson'), notification::NOTIFY_INFO);
+            $data['notification'] = $message->export_for_template($output);
+        }
         return $data;
     }
-
 }

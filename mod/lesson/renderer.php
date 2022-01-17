@@ -52,7 +52,6 @@ class mod_lesson_renderer extends plugin_renderer_base {
         // Header setup.
         $this->page->set_title($title);
         $this->page->set_heading($this->page->course->fullname);
-        lesson_add_header_buttons($cm, $context, $extraeditbuttons, $lessonpageid);
 
         $canmanage = has_capability('mod/lesson:manage', $context);
         $activityheader = $this->page->activityheader;
@@ -72,12 +71,6 @@ class mod_lesson_renderer extends plugin_renderer_base {
         }
 
         $output = $this->output->header();
-        if ($canmanage && !empty($currenttab) && !$this->page->has_secondary_navigation()) {
-            ob_start();
-            include($CFG->dirroot.'/mod/lesson/tabs.php');
-            $output .= ob_get_contents();
-            ob_end_clean();
-        }
 
         foreach ($lesson->messages as $message) {
             $output .= $this->output->notification($message[0], $message[1], $message[2]);

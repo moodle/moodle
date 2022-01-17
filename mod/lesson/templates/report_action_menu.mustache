@@ -63,7 +63,10 @@
 
 }}
 <div class="container-fluid mb-2">
-    <div class="row">
-        {{>core/url_select}}
-    </div>
+    {{#reportselect}}
+        <div class="row">
+            {{>core/url_select}}
+        </div>
+    {{/reportselect}}
 </div>
+<h3>{{heading}}</h3>

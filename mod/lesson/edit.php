@@ -48,6 +48,7 @@ $PAGE->set_url($url);
 $PAGE->force_settings_menu();
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->add_body_class('limitedwidth');
+$PAGE->activityheader->set_description('');
 
 if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'single') {
     set_user_preference('lesson_view', $mode);
@@ -57,10 +58,8 @@ $lessonoutput = $PAGE->get_renderer('mod_lesson');
 $PAGE->navbar->add(get_string('edit'));
 
 echo $lessonoutput->header($lesson, $cm, $mode, false, null, get_string('edit', 'lesson'));
-if ($PAGE->has_secondary_navigation()) {
-    $actionarea = new \mod_lesson\output\edit_action_area($id, $url);
-    echo $lessonoutput->render($actionarea);
-}
+$actionarea = new \mod_lesson\output\edit_action_area($id, $url);
+echo $lessonoutput->render($actionarea);
 
 if (!$lesson->has_pages()) {
     // There are no pages; give teacher some options

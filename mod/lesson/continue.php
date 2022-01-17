@@ -84,6 +84,9 @@ $PAGE->set_subpage($page->id);
 lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
 echo $lessonoutput->header($lesson, $cm, 'view', true, $page->id, get_string('continue', 'lesson'));
 
+$editbuttons = new \mod_lesson\output\edit_action_buttons($lesson, $page->id ?? null);
+echo $lessonoutput->render($editbuttons);
+
 if ($lesson->displayleft) {
     echo '<a name="maincontent" id="maincontent" title="'.get_string('anchortitle', 'lesson').'"></a>';
 }

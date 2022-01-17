@@ -570,6 +570,8 @@ function lesson_menu_block_contents($cmid, $lesson) {
 /**
  * Adds header buttons to the page for the lesson
  *
+ * @deprecated since Moodle 4.0 in favour of tertiary navigation.
+ * @todo MDL-73545 This will be deleted in Moodle 4.4
  * @param object $cm
  * @param object $context
  * @param bool $extraeditbuttons
@@ -577,6 +579,9 @@ function lesson_menu_block_contents($cmid, $lesson) {
  */
 function lesson_add_header_buttons($cm, $context, $extraeditbuttons=false, $lessonpageid=null) {
     global $CFG, $PAGE, $OUTPUT;
+
+    debugging('lesson_add_header_buttons() is deprecated in favour of tertiary navigation.', DEBUG_DEVELOPER);
+
     if (has_capability('mod/lesson:edit', $context) && $extraeditbuttons) {
         if ($lessonpageid === null) {
             print_error('invalidpageid', 'lesson');
