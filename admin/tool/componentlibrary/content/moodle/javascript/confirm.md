@@ -16,7 +16,7 @@ to the element that will trigger the confirmation modal.
 
 ## Source files
 
-* `lib/amd/src/confirm.js` 
+* `lib/amd/src/confirm.js`
 * `lib/templates/modal.mustache`
 
 ## Usage
@@ -99,6 +99,6 @@ data-confirmation-toast-confirmation-str='["deleteblockinprogress", "block", "On
 
 {{< example >}}
 <button type="button" class="btn btn-primary" data-confirmation="modal" data-confirmation-title-str='["delete", "core"]'
-data-confirmation-question-str='["areyousure"]' data-confirmation-yes-button-str='["delete", "core"]' 
+data-confirmation-question-str='["areyousure"]' data-confirmation-yes-button-str='["delete", "core"]'
 data-confirmation-destination="http://moodle.com">Show confirmation modal</button>
 {{< /example >}}
