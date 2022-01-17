@@ -32,10 +32,16 @@ Feature: I can grade a students by group with separate groups
       | student1 | G3 |
       | student2 | G3 |
       | student3 | G3 |
+    And the following "activity" exists:
+      | activity | forum        |
+      | course   | C1           |
+      | section  | 1            |
+      | name     | Test Forum 1 |
+      | intro    | Test         |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I turn editing mode on
-    And I add a "Forum" to section "1"
+    And I am on the "Test Forum 1" "forum activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
       | Forum name | Test Forum 1 |
