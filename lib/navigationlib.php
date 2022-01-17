@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_contentbank\contentbank;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -5355,6 +5357,13 @@ class settings_navigation extends navigation_node {
                 'moodle/role:override', 'moodle/role:assign'), $catcontext)) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid' => $catcontext->id));
             $categorynode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null, 'checkpermissions', new pix_icon('i/checkpermissions', ''));
+        }
+
+        $cb = new contentbank();
+        if ($cb->is_context_allowed($catcontext)
+                && has_capability('moodle/contentbank:access', $catcontext)) {
+            $url = new \moodle_url('/contentbank/index.php', ['contextid' => $catcontext->id]);
+            $categorynode->add(get_string('contentbank'), $url, self::TYPE_CUSTOM, null, 'contentbank', new \pix_icon('i/contentbank', ''));
         }
 
         // Add the context locking node.

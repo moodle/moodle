@@ -36,6 +36,10 @@ if (($lastchanged = optional_param('lastchanged', 0, PARAM_INT)) !== 0) {
 }
 $PAGE->set_url($url);
 
+if ($PAGE->course->id == $SITE->id) {
+    $PAGE->set_primary_active_tab('home');
+}
+
 $questionbank = new core_question\local\bank\view($contexts, $thispageurl, $COURSE, $cm);
 
 $context = $contexts->lowest();

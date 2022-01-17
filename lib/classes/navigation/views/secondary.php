@@ -120,8 +120,22 @@ class secondary extends view {
             ],
             self::TYPE_CUSTOM => [
                 'advgrading' => 2,
+                'contentbank' => 12,
             ],
         ];
+    }
+
+    /**
+     * Defines the default structure for the secondary nav in a category context.
+     *
+     * In a category context, we are curating nodes from the settingsnav object.
+     * The following mapping construct specifies the type of the node, the key
+     * and in what order we want the node - defined as per the mockups.
+     *
+     * @return array
+     */
+    protected function get_default_category_mapping(): array {
+        return [];
     }
 
     /**
@@ -174,11 +188,9 @@ class secondary extends view {
 
         switch ($context->contextlevel) {
             case CONTEXT_COURSE:
-                if ($this->page->course->id != $SITE->id) {
-                    $this->headertitle = get_string('courseheader');
-                    $this->load_course_navigation();
-                    $defaultmoremenunodes = $this->get_default_course_more_menu_nodes();
-                }
+                $this->headertitle = get_string('courseheader');
+                $this->load_course_navigation();
+                $defaultmoremenunodes = $this->get_default_course_more_menu_nodes();
                 break;
             case CONTEXT_MODULE:
                 $this->headertitle = get_string('activityheader');
@@ -371,7 +383,7 @@ class secondary extends view {
         } else {
             $node = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
         }
-        $coursesettings = $node->get_children_key_list();
+        $coursesettings = $node ? $node->get_children_key_list() : [];
         $thissettings = $this->get_children_key_list();
         $diff = array_diff($coursesettings, $thissettings);
 
@@ -565,10 +577,19 @@ class secondary extends view {
     protected function load_category_navigation(): void {
         $settingsnav = $this->page->settingsnav;
         $mainnode = $settingsnav->find('categorysettings', self::TYPE_CONTAINER);
+        $nodes = $this->get_default_category_mapping();
+
         if ($mainnode) {
             $url = new \moodle_url('/course/index.php', ['categoryid' => $this->context->instanceid]);
             $this->add($this->context->get_context_name(), $url, self::TYPE_CONTAINER, null, 'categorymain');
-            $this->load_remaining_nodes($mainnode, []);
+
+            // Add the initial nodes.
+            $nodesordered = $this->get_leaf_nodes($mainnode, $nodes);
+            $this->add_ordered_nodes($nodesordered);
+
+            // We have finished inserting the initial structure.
+            // Populate the menu with the rest of the nodes available.
+            $this->load_remaining_nodes($mainnode, $nodes);
         }
     }
 
@@ -576,7 +597,7 @@ class secondary extends view {
      * Load the site admin navigation
      */
     protected function load_admin_navigation(): void {
-        global $PAGE;
+        global $PAGE, $SITE;
 
         $settingsnav = $this->page->settingsnav;
         $node = $settingsnav->find('root', self::TYPE_SITE_ADMIN);
@@ -607,6 +628,8 @@ class secondary extends view {
                     $siteadminnode->add_node(clone $child);
                 }
             }
+        } else if ($this->page->course->id == $SITE->id) {
+            $this->load_course_navigation();
         }
     }
 

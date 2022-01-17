@@ -339,6 +339,9 @@ $PAGE->set_title($streditingquestion);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 $PAGE->navbar->add($streditingquestion);
+if ($PAGE->course->id == $SITE->id) {
+    $PAGE->set_primary_active_tab('home');
+}
 
 // Display a heading, question editing form and possibly some extra content needed for
 // for this question type.

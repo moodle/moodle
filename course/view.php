@@ -207,7 +207,7 @@
 
     if ($course->id == SITEID) {
         // This course is not a real course.
-        redirect($CFG->wwwroot .'/');
+        redirect($CFG->wwwroot .'/?redirect=0');
     }
 
     // Determine whether the user has permission to download course content.
