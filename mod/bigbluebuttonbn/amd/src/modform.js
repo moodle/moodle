@@ -296,8 +296,7 @@ const participantListRoleUpdate = (type, id) => {
     const pList = getParticipantList();
 
     for (var i = 0; i < pList.length; i++) {
-        if (pList[i].selectiontype === type &&
-            pList[i].selectionid === (id === '' ? null : parseInt(id))) {
+        if (pList[i].selectiontype === type && pList[i].selectionid === id) {
             pList[i].role = participantListRoleSelection.value;
         }
     }

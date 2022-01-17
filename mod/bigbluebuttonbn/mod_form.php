@@ -58,16 +58,13 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
                 \mod_bigbluebuttonbn\local\config::get('server_url')
             );
         }
-        $bigbluebuttonbn = null;
-        if ($this->current->id) {
-            $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', ['id' => $this->current->id], '*', MUST_EXIST);
-        }
         // UI configuration options.
         $cfg = \mod_bigbluebuttonbn\local\config::get_options();
 
         // Get only those that are allowed.
         $course = $this->_course;
         $context = context_course::instance($course->id);
+        $bigbluebuttonbn = empty($this->get_current()->id) ? null : $this->get_current();
 
         $instancetyperofiles = $this->get_instance_type_profiles();
         $this->bigbluebuttonbn_mform_add_block_profiles($mform, $instancetyperofiles);
