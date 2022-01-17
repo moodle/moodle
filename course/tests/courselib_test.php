@@ -1044,6 +1044,51 @@ class courselib_test extends advanced_testcase {
         $this->assertEquals(3, $course->marker);
     }
 
+    /**
+     * Test move_section_to method with caching
+     *
+     * @covers ::move_section_to
+     * @return void
+     */
+    public function test_move_section_with_section_cache(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $cache = cache::make('core', 'coursemodinfo');
+
+        // Generate the course and pre-requisite module.
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 3], ['createsections' => true]);
+        // Reset course cache.
+        rebuild_course_cache($course->id, true);
+
+        // Build course cache.
+        get_fast_modinfo($course->id);
+        // Get the course modinfo cache.
+        $coursemodinfo = $cache->get($course->id);
+        // Get the section cache.
+        $sectioncaches = $coursemodinfo->sectioncache;
+
+        // Make sure that we will have 4 section caches here.
+        $this->assertCount(4, $sectioncaches);
+        $this->assertArrayHasKey(0, $sectioncaches);
+        $this->assertArrayHasKey(1, $sectioncaches);
+        $this->assertArrayHasKey(2, $sectioncaches);
+        $this->assertArrayHasKey(3, $sectioncaches);
+
+        // Move section.
+        move_section_to($course, 2, 3);
+        // Get the course modinfo cache.
+        $coursemodinfo = $cache->get($course->id);
+        // Get the section cache.
+        $sectioncaches = $coursemodinfo->sectioncache;
+
+        // Make sure that we will have 2 section caches left.
+        $this->assertCount(2, $sectioncaches);
+        $this->assertArrayHasKey(0, $sectioncaches);
+        $this->assertArrayHasKey(1, $sectioncaches);
+        $this->assertArrayNotHasKey(2, $sectioncaches);
+        $this->assertArrayNotHasKey(3, $sectioncaches);
+    }
+
     public function test_course_can_delete_section() {
         global $DB;
         $this->resetAfterTest(true);
