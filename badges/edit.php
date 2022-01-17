@@ -69,6 +69,7 @@ $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
 $PAGE->set_heading($heading);
 $PAGE->set_title($badge->name);
+$PAGE->add_body_class('limitedwidth');
 $PAGE->navbar->add($badge->name);
 
 $output = $PAGE->get_renderer('core', 'badges');

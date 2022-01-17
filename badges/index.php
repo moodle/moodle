@@ -73,6 +73,7 @@ if ($course = $DB->get_record('course', array('id' => $courseid))) {
 $hdr = get_string('managebadges', 'badges');
 $returnurl = new moodle_url('/badges/index.php', $urlparams);
 $PAGE->set_url($returnurl);
+$PAGE->add_body_class('limitedwidth');
 
 if ($type == BADGE_TYPE_SITE) {
     $title = get_string('sitebadges', 'badges');
