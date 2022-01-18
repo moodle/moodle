@@ -20325,6 +20325,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     height: calc(100vh - 50px); }
   #page.drawers {
     position: relative;
+    overflow-y: auto;
     transition: 0.2s;
     height: calc(100vh - 50px);
     margin-top: 50px;
