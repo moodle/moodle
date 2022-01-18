@@ -11,7 +11,7 @@
     <location>behat/axe</location>
     <name>axe-core</name>
     <license>MPL</license>
-    <version>3.5.5</version>
+    <version>4.3.5</version>
     <licenseversion>2.0</licenseversion>
   </library>
   <library>
