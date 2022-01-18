@@ -209,7 +209,7 @@ class tour {
     /**
      * Fetch all steps in the tour.
      *
-     * @return  stdClass[]
+     * @return  step[]
      */
     public function get_steps() {
         if (empty($this->steps)) {
