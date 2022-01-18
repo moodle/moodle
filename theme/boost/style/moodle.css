@@ -21377,13 +21377,18 @@ div.editor_atto_toolbar button .icon {
   .courseindex .courseindex-item.rectrictions .courseindex-locked {
     display: block; }
   .courseindex .courseindex-item.pageitem {
-    background-color: #e9ecef;
-    color: black;
+    background-color: #0f6cbf;
+    color: #fff;
     scroll-margin: 6rem; }
     .courseindex .courseindex-item.pageitem a {
-      color: black; }
+      color: #fff; }
     .courseindex .courseindex-item.pageitem .courseindex-link {
-      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3); }
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3); }
+    .courseindex .courseindex-item.pageitem:hover, .courseindex .courseindex-item.pageitem:focus {
+      background-color: #0c589c;
+      color: #e6e5e5; }
+      .courseindex .courseindex-item.pageitem:hover .courseindex-link, .courseindex .courseindex-item.pageitem:focus .courseindex-link {
+        color: #e6e5e5; }
   .courseindex .courseindex-item .completioninfo {
     min-width: 24px; }
     .courseindex .courseindex-item .completioninfo.completion_complete {
