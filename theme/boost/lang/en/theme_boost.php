@@ -50,7 +50,13 @@ $string['rawscsspre'] = 'Raw initial SCSS';
 $string['rawscsspre_desc'] = 'In this field you can provide initialising SCSS code, it will be injected before everything else. Most of the time you will use this setting to define variables.';
 $string['region-side-pre'] = 'Right';
 $string['showfooter'] = 'Show footer';
+$string['privacy:metadata:preference:draweropenblock'] = 'The user\'s preference for hiding or showing the drawer with blocks.';
+$string['privacy:metadata:preference:draweropenindex'] = 'The user\'s preference for hiding or showing the drawer with course index.';
 $string['privacy:metadata:preference:draweropennav'] = 'The user\'s preference for hiding or showing the drawer menu navigation.';
+$string['privacy:drawerindexclosed'] = 'The current preference for the index drawer is closed.';
+$string['privacy:drawerindexopen'] = 'The current preference for the index drawer is open.';
+$string['privacy:drawerblockclosed'] = 'The current preference for the blocks drawer is closed.';
+$string['privacy:drawerblockopen'] = 'The current preference for the blocks drawer is open.';
 $string['privacy:drawernavclosed'] = 'The current preference for the navigation drawer is closed.';
 $string['privacy:drawernavopen'] = 'The current preference for the navigation drawer is open.';
 
