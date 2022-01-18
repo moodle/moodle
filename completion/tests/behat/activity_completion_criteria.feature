@@ -141,7 +141,6 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | Grade for Test assignment name | 10.00 |
       | Feedback for Test assignment name | test data |
     And I press "Save"
-    And I press "Continue"
     And I log out
     And I log in as "student1"
     And I am on "Completion course" course homepage
