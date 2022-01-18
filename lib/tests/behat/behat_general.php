@@ -2155,4 +2155,16 @@ EOF;
         $this->execute('behat_general::i_click_on_in_the',
             [$tabname, 'link', $xpath, 'xpath_element']);
     }
+
+    /**
+     * Enable an specific plugin.
+     *
+     * @When /^I enable "(?P<plugin_string>(?:[^"]|\\")*)" "(?P<plugintype_string>[^"]*)" plugin$/
+     * @param string $plugin Plugin we look for
+     * @param string $plugintype The type of the plugin
+     */
+    public function i_enable_plugin($plugin, $plugintype) {
+        $class = core_plugin_manager::resolve_plugininfo_class($plugintype);
+        $class::enable_plugin($plugin, true);
+    }
 }

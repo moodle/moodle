@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return boolean
  */
 function xmldb_block_rss_client_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
@@ -44,6 +44,17 @@ function xmldb_block_rss_client_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2021121600) {
+        // From Moodle 4.0, this block has been disabled by default in new installations.
+        // If the site has no instances of this block, it will disabled during the upgrading process too.
+        $totalcount = $DB->count_records('block_instances', ['blockname' => 'rss_client']);
+        if ($totalcount == 0) {
+            $DB->set_field('block', 'visible', 0, ['name' => 'rss_client']);
+        }
+
+        upgrade_block_savepoint(true, 2021121600, 'rss_client', false);
+    }
 
     return true;
 }

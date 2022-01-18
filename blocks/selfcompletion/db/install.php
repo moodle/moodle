@@ -15,15 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Selfcompletion block installation.
  *
- * @package    block_course_summary
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @package    block_selfcompletion
+ * @copyright  2021 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Perform the post-install procedures.
+ */
+function xmldb_block_selfcompletion_install() {
+    global $DB;
 
-$plugin->version   = 2021121600;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2021052500;        // Requires this Moodle version.
-$plugin->component = 'block_course_summary'; // Full name of the plugin (used for diagnostics)
+    // Disable selfcompletion on new installs by default.
+    $DB->set_field('block', 'visible', 0, ['name' => 'selfcompletion']);
+}

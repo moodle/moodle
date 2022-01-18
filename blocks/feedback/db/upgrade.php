@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file keeps track of upgrades to the course summary block
+ * This file keeps track of upgrades to the feedback block
  *
  * Sometimes, changes between versions involve alterations to database structures
  * and other major things that may break installations.
@@ -31,10 +31,9 @@
  * Please do not forget to use upgrade_set_timeout()
  * before any action that may take longer time to finish.
  *
- * @since Moodle 2.0
- * @package block_course_summary
- * @copyright 2012 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    block_feedback
+ * @copyright  2021 Sara Arjona (sara@moodle.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -45,30 +44,18 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion
  * @param object $block
  */
-function xmldb_block_course_summary_upgrade($oldversion, $block) {
+function xmldb_block_feedback_upgrade($oldversion, $block) {
     global $CFG, $DB;
-
-    // Automatically generated Moodle v3.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.7.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
 
     if ($oldversion < 2021121600) {
         // From Moodle 4.0, this block has been disabled by default in new installations.
         // If the site has no instances of this block, it will disabled during the upgrading process too.
-        $totalcount = $DB->count_records('block_instances', ['blockname' => 'course_summary']);
+        $totalcount = $DB->count_records('block_instances', ['blockname' => 'feedback']);
         if ($totalcount == 0) {
-            $DB->set_field('block', 'visible', 0, ['name' => 'course_summary']);
+            $DB->set_field('block', 'visible', 0, ['name' => 'feedback']);
         }
 
-        upgrade_block_savepoint(true, 2021121600, 'course_summary', false);
+        upgrade_block_savepoint(true, 2021121600, 'feedback', false);
     }
 
     return true;
