@@ -87,11 +87,12 @@ class secondary_test extends \advanced_testcase {
      * @param string $expectedfirstnode The expected first node
      * @param string $header The expected string
      * @param string $activenode The expected active node
+     * @param string $courseformat The used course format (only applicable in the course and module context).
      * @return void
      * @dataProvider test_setting_initialise_provider
      */
     public function test_setting_initialise(string $context, string $expectedfirstnode,
-            string $header, string $activenode): void {
+            string $header, string $activenode, string $courseformat = 'topics'): void {
         global $PAGE, $SITE;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -99,12 +100,16 @@ class secondary_test extends \advanced_testcase {
         $pageurl = '/';
         switch ($context) {
             case 'course':
-                $pagecourse = $this->getDataGenerator()->create_course();
+                $pagecourse = $this->getDataGenerator()->create_course(['format' => $courseformat]);
                 $contextrecord = \context_course::instance($pagecourse->id, MUST_EXIST);
-                $pageurl = new \moodle_url('/course/view.php', ['id' => $pagecourse->id]);
+                if ($courseformat === 'singleactivity') {
+                    $pageurl = new \moodle_url('/course/edit.php', ['id' => $pagecourse->id]);
+                } else {
+                    $pageurl = new \moodle_url('/course/view.php', ['id' => $pagecourse->id]);
+                }
                 break;
             case 'module':
-                $pagecourse = $this->getDataGenerator()->create_course();
+                $pagecourse = $this->getDataGenerator()->create_course(['format' => $courseformat]);
                 $assign = $this->getDataGenerator()->create_module('assign', ['course' => $pagecourse->id]);
                 $cm = get_coursemodule_from_id('assign', $assign->cmid);
                 $contextrecord = \context_module::instance($cm->id);
@@ -137,7 +142,11 @@ class secondary_test extends \advanced_testcase {
     public function test_setting_initialise_provider(): array {
         return [
             'Testing in a course context' => ['course', 'coursehome', 'courseheader', 'Course'],
+            'Testing in a course context using a single activity course format' =>
+                ['course', 'course', 'courseheader', 'Course', 'singleactivity'],
             'Testing in a module context' => ['module', 'modulepage', 'activityheader', 'Assignment'],
+            'Testing in a module context using a single activity course format' =>
+                ['module', 'course', 'activityheader', 'Activity', 'singleactivity'],
             'Testing in a site admin' => ['system', 'siteadminnode', 'homeheader', 'General'],
         ];
     }
