@@ -32,13 +32,13 @@
 }}
 {{#haschildren}}
     <li class="dropdown nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
-        <a class="dropdown-toggle nav-link" id="drop-down-{{moremenuid}}" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" aria-controls="drop-down-menu-{{moremenuid}}" tabindex="-1">
+        <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" id="drop-down-{{moremenuid}}" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" aria-controls="drop-down-menu-{{moremenuid}}" tabindex="-1">
             {{{text}}}
         </a>
         <div class="dropdown-menu" role="menu" id="drop-down-menu-{{moremenuid}}" aria-labelledby="drop-down-{{moremenuid}}">
             {{#children}}
                 {{^divider}}
-                    <a class="dropdown-item" role="menuitem" href="{{{url}}}">{{{text}}}</a>
+                    <a class="dropdown-item" role="menuitem" href="{{{url}}}{{{action}}}">{{{text}}}</a>
                 {{/divider}}
                 {{#divider}}
                     <div class="dropdown-divider"></div>

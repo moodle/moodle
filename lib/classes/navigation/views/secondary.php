@@ -18,6 +18,7 @@ namespace core\navigation\views;
 
 use navigation_node;
 use url_select;
+use settings_navigation;
 
 /**
  * Class secondary_navigation_view.
@@ -190,13 +191,21 @@ class secondary extends view {
         switch ($context->contextlevel) {
             case CONTEXT_COURSE:
                 $this->headertitle = get_string('courseheader');
-                $this->load_course_navigation();
-                $defaultmoremenunodes = $this->get_default_course_more_menu_nodes();
+                if ($this->page->course->format === 'singleactivity') {
+                    $this->load_single_activity_course_navigation();
+                } else {
+                    $this->load_course_navigation();
+                    $defaultmoremenunodes = $this->get_default_course_more_menu_nodes();
+                }
                 break;
             case CONTEXT_MODULE:
                 $this->headertitle = get_string('activityheader');
-                $this->load_module_navigation();
-                $defaultmoremenunodes = $this->get_default_module_more_menu_nodes();
+                if ($this->page->course->format === 'singleactivity') {
+                    $this->load_single_activity_course_navigation();
+                } else {
+                    $this->load_module_navigation($this->page->settingsnav);
+                    $defaultmoremenunodes = $this->get_default_module_more_menu_nodes();
+                }
                 break;
             case CONTEXT_COURSECAT:
                 $this->headertitle = get_string('categoryheader');
@@ -215,7 +224,7 @@ class secondary extends view {
                 break;
         }
 
-        $this->remove_unwanted_nodes();
+        $this->remove_unwanted_nodes($this);
 
         // Don't need to show anything if only the view node is available. Remove it.
         if ($this->children->count() == 1) {
@@ -315,8 +324,13 @@ class secondary extends view {
     /**
      * Load the course secondary navigation. Since we are sourcing all the info from existing objects that already do
      * the relevant checks, we don't do it again here.
+     *
+     * @param navigation_node|null $rootnode The node where the course navigation nodes should be added into as children.
+     *                                       If not explicitly defined, the nodes will be added to the secondary root
+     *                                       node by default.
      */
-    protected function load_course_navigation(): void {
+    protected function load_course_navigation(?navigation_node $rootnode = null): void {
+        $rootnode = $rootnode ?? $this;
         $course = $this->page->course;
         // Initialise the main navigation and settings nav.
         // It is important that this is done before we try anything.
@@ -324,12 +338,12 @@ class secondary extends view {
         $navigation = $this->page->navigation;
 
         $url = new \moodle_url('/course/view.php', ['id' => $course->id]);
-        $this->add(get_string('course'), $url, self::TYPE_COURSE, null, 'coursehome');
+        $rootnode->add(get_string('course'), $url, self::TYPE_COURSE, null, 'coursehome');
 
         $nodes = $this->get_default_course_mapping();
         $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings'] ?? []);
         $nodesordered += $this->get_leaf_nodes($navigation, $nodes['navigation'] ?? []);
-        $this->add_ordered_nodes($nodesordered);
+        $this->add_ordered_nodes($nodesordered, $rootnode);
 
         // Try to get any custom nodes defined by a user which may include containers.
         $expectedcourseadmin = $this->get_expected_course_admin_nodes();
@@ -341,9 +355,9 @@ class secondary extends view {
                         $othernode = $this->get_first_action_for_node($other);
                         // Get the first node and check whether it's been added already.
                         if ($othernode && !$this->get($othernode->key)) {
-                            $this->add_node($othernode);
+                            $rootnode->add_node($othernode);
                         } else {
-                            $this->add_node($other);
+                            $rootnode->add_node($other);
                         }
                     }
                 }
@@ -352,25 +366,29 @@ class secondary extends view {
 
         $coursecontext = \context_course::instance($course->id);
         if (has_capability('moodle/course:update', $coursecontext)) {
-            $overflownode = $this->get_course_overflow_nodes();
+            $overflownode = $this->get_course_overflow_nodes($rootnode);
             if (is_null($overflownode)) {
                 return;
             }
             $actionnode = $this->get_first_action_for_node($overflownode);
             // All additional nodes will be available under the 'Course reuse' page.
             $text = get_string('coursereuse');
-            $this->add($text, $actionnode->action, null, null, 'courseadmin', new \pix_icon('t/edit', $text));
+            $rootnode->add($text, $actionnode->action, navigation_node::TYPE_COURSE, null, 'coursereuse', new \pix_icon('t/edit', $text));
         }
     }
 
     /**
      * Gets the overflow navigation nodes for the course administration category.
      *
+     * @param navigation_node|null $rootnode The node from where the course overflow nodes should be obtained.
+     *                                       If not explicitly defined, the nodes will be obtained from the secondary root
+     *                                       node by default.
      * @return navigation_node  The course overflow nodes.
      */
-    protected function get_course_overflow_nodes(): ?navigation_node {
+    protected function get_course_overflow_nodes(?navigation_node $rootnode = null): ?navigation_node {
         global $SITE;
 
+        $rootnode = $rootnode ?? $this;
         // This gets called twice on some pages, and so trying to create this navigation node twice results in no children being
         // present the second time this is called.
         if (isset($this->courseoverflownode)) {
@@ -385,7 +403,7 @@ class secondary extends view {
             $node = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
         }
         $coursesettings = $node ? $node->get_children_key_list() : [];
-        $thissettings = $this->get_children_key_list();
+        $thissettings = $rootnode->get_children_key_list();
         $diff = array_diff($coursesettings, $thissettings);
 
         // Remove our specific created elements (user - participants, badges - coursebadges, grades - gradebooksetup,
@@ -453,10 +471,12 @@ class secondary extends view {
             return null;
         }
 
+        $issingleactivitycourse = $this->page->course->format === 'singleactivity';
+        $rootnode = $issingleactivitycourse ? $this->find('course', self::TYPE_COURSE) : $this;
         $activenode = $this->find_active_node();
         $incourseadmin = false;
 
-        if (!$activenode) {
+        if (!$activenode || ($issingleactivitycourse && $activenode->key === 'course')) {
             // Could be in the course admin section.
             $courseadmin = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
             if (!$courseadmin) {
@@ -470,13 +490,20 @@ class secondary extends view {
             $incourseadmin = true;
         }
 
-        if ($activenode->key == 'courseadmin' || $incourseadmin) {
-            $courseoverflownode = $this->get_course_overflow_nodes();
+        if ($activenode->key === 'coursereuse' || $incourseadmin) {
+            $courseoverflownode = $this->get_course_overflow_nodes($rootnode);
             if (is_null($courseoverflownode)) {
                 return null;
             }
+            if ($incourseadmin) {
+                // Validate whether the active node is part of the expected course overflow nodes.
+                if (($activenode->key !== $courseoverflownode->key) &&
+                    !$courseoverflownode->find($activenode->key, $activenode->type)) {
+                    return null;
+                }
+            }
             $menuarray = static::create_menu_element([$courseoverflownode]);
-            if ($activenode->key != 'courseadmin') {
+            if ($activenode->key != 'coursereuse') {
                 $inmenu = false;
                 foreach ($menuarray as $key => $value) {
                     if ($this->page->url->out(false) == $key) {
@@ -549,26 +576,33 @@ class secondary extends view {
      * It populates the tree based on the nav mockup
      *
      * If nodes change, we will have to explicitly call the callback again.
+     *
+     * @param settings_navigation $settingsnav The settings navigation object related to the module page
+     * @param navigation_node|null $rootnode The node where the module navigation nodes should be added into as children.
+     *                                       If not explicitly defined, the nodes will be added to the secondary root
+     *                                       node by default.
      */
-    protected function load_module_navigation(): void {
-        $settingsnav = $this->page->settingsnav;
+    protected function load_module_navigation(settings_navigation $settingsnav, ?navigation_node $rootnode = null): void {
+        $rootnode = $rootnode ?? $this;
         $mainnode = $settingsnav->find('modulesettings', self::TYPE_SETTING);
         $nodes = $this->get_default_module_mapping();
 
         if ($mainnode) {
-            $url = new \moodle_url('/mod/' . $this->page->activityname . '/view.php', ['id' => $this->page->cm->id]);
-            $setactive = $url->compare($this->page->url, URL_MATCH_BASE);
-            $node = $this->add(get_string('modulename', $this->page->activityname), $url, null, null, 'modulepage');
+            $url = new \moodle_url('/mod/' . $settingsnav->get_page()->activityname . '/view.php',
+                ['id' => $settingsnav->get_page()->cm->id]);
+            $setactive = $url->compare($settingsnav->get_page()->url, URL_MATCH_BASE);
+            $node = $rootnode->add(get_string('modulename', $settingsnav->get_page()->activityname), $url,
+                null, null, 'modulepage');
             if ($setactive) {
                 $node->make_active();
             }
             // Add the initial nodes.
             $nodesordered = $this->get_leaf_nodes($mainnode, $nodes);
-            $this->add_ordered_nodes($nodesordered);
+            $this->add_ordered_nodes($nodesordered, $rootnode);
 
             // We have finished inserting the initial structure.
             // Populate the menu with the rest of the nodes available.
-            $this->load_remaining_nodes($mainnode, $nodes);
+            $this->load_remaining_nodes($mainnode, $nodes, $rootnode);
         }
     }
 
@@ -635,12 +669,15 @@ class secondary extends view {
     }
 
     /**
-     * Adds the indexed nodes to the current view. The key should indicate it's position in the tree. Any sub nodes
-     * needs to be numbered appropriately, e.g. 3.1 would make the identified node be listed  under #3 node.
+     * Adds the indexed nodes to the current view or a given node. The key should indicate it's position in the tree.
+     * Any sub nodes needs to be numbered appropriately, e.g. 3.1 would make the identified node be listed  under #3 node.
      *
      * @param array $nodes An array of navigation nodes to be added.
+     * @param navigation_node|null $rootnode The node where the nodes should be added into as children. If not explicitly
+     *                                       defined, the nodes will be added to the secondary root node by default.
      */
-    protected function add_ordered_nodes(array $nodes): void {
+    protected function add_ordered_nodes(array $nodes, ?navigation_node $rootnode = null): void {
+        $rootnode = $rootnode ?? $this;
         ksort($nodes);
         foreach ($nodes as $key => $node) {
             // If the key is a string then we are assuming this is a nested element.
@@ -650,19 +687,24 @@ class secondary extends view {
                     $parentnode->add_node(clone $node);
                 }
             } else {
-                $this->add_node(clone $node);
+                $rootnode->add_node(clone $node);
             }
         }
     }
 
     /**
-     * Find the remaining nodes that need to be loaded into secondary based on the current context
+     * Find the remaining nodes that need to be loaded into secondary based on the current context or a given node.
      *
      * @param navigation_node $completenode The original node that we are sourcing information from
      * @param array           $nodesmap The map used to populate secondary nav in the given context
+     * @param navigation_node|null $rootnode The node where the remaining nodes should be added into as children. If not
+     *                                       explicitly defined, the nodes will be added to the secondary root node by
+     *                                       default.
      */
-    protected function load_remaining_nodes(navigation_node $completenode, array $nodesmap): void {
+    protected function load_remaining_nodes(navigation_node $completenode, array $nodesmap,
+            ?navigation_node $rootnode = null): void {
         $flattenednodes = [];
+        $rootnode = $rootnode ?? $this;
         foreach ($nodesmap as $nodecontainer) {
             $flattenednodes = array_merge(array_keys($nodecontainer), $flattenednodes);
         }
@@ -679,7 +721,7 @@ class secondary extends view {
 
                 // Confirm we have a valid object to add.
                 if ($leftovernode) {
-                    $this->add_node(clone $leftovernode);
+                    $rootnode->add_node(clone $leftovernode);
                 }
             }
         }
@@ -714,12 +756,18 @@ class secondary extends view {
     }
 
     /**
-     * Remove navigation nodes that should not be displayed in the secondary navigation.
+     * Recursively remove navigation nodes that should not be displayed in the secondary navigation.
+     *
+     * @param navigation_node $node The starting navigation node.
      */
-    protected function remove_unwanted_nodes() {
-        foreach ($this->children as $child) {
+    protected function remove_unwanted_nodes(navigation_node $node) {
+        foreach ($node->children as $child) {
             if (!$child->showinsecondarynavigation) {
                 $child->remove();
+                continue;
+            }
+            if (!empty($child->children)) {
+                $this->remove_unwanted_nodes($child);
             }
         }
     }
@@ -903,5 +951,59 @@ class secondary extends view {
      */
     protected static function format_node_text(navigation_node $navigationnode): string {
         return (is_a($navigationnode->text, 'lang_string')) ? $navigationnode->text->out() : $navigationnode->text;
+    }
+
+    /**
+     * Load the single activity course secondary navigation.
+     */
+    protected function load_single_activity_course_navigation(): void {
+        $page = $this->page;
+        $course = $page->course;
+        // Create 'Course' node and add it to the secondary navigation.
+        $coursesecondarynode = $this->add(get_string('course'), null, self::TYPE_COURSE, null, 'course');
+        $this->load_course_navigation($coursesecondarynode);
+        // Remove the unnecessary 'Course' child node generated in load_course_navigation().
+        $coursesecondarynode->find('coursehome', self::TYPE_COURSE)->remove();
+
+        // Once all the items have been added to the 'Course' secondary navigation node, set the 'showchildreninsubmenu'
+        // property to true. This is required to force the template to output these items within a dropdown menu.
+        $coursesecondarynode->showchildreninsubmenu = true;
+
+        // Create 'Activity' navigation node.
+        $activitysecondarynode = navigation_node::create(get_string('activity'), null, self::TYPE_ACTIVITY, null, 'activity');
+
+        // We should display the module related navigation in the course context as well. Therefore, we need to
+        // re-initialize the page object and manually set the course module to the one that it is currently visible in
+        // the course in order to obtain the required module settings navigation.
+        if ($page->context instanceof \context_course) {
+            $this->page->set_secondary_active_tab($coursesecondarynode->key);
+            // Get the currently used module in the single activity course.
+            $module = current(array_filter(get_course_mods($course->id), function ($module) {
+                return $module->visible == 1;
+            }));
+            // If the default module for the single course format has not been set yet, skip displaying the module
+            // related navigation in the secondary navigation.
+            if (!$module) {
+                return;
+            }
+            $page = new \moodle_page();
+            $page->set_cm($module, $course);
+            $page->set_url(new \moodle_url('/mod/' . $page->activityname . '/view.php', ['id' => $page->cm->id]));
+        } else if ($page->context instanceof \context_module) {
+            $this->page->set_secondary_active_tab($activitysecondarynode->key);
+        }
+
+        $this->load_module_navigation($page->settingsnav, $activitysecondarynode);
+
+        // Add the 'Activity' node to the secondary navigation only if this node has more that one child node.
+        if (count($activitysecondarynode->children) > 1) {
+            // Set the 'showchildreninsubmenu' property to true to later output the the module navigation items within
+            // a dropdown menu.
+            $activitysecondarynode->showchildreninsubmenu = true;
+            $this->add_node($activitysecondarynode);
+        } else { // Otherwise, add the 'View activity' node to the secondary navigation.
+            $viewactivityurl = new \moodle_url('/mod/' . $page->activityname . '/view.php', ['id' => $page->cm->id]);
+            $this->add(get_string('modulename', $page->activityname), $viewactivityurl, null, null, 'modulepage');
+        }
     }
 }

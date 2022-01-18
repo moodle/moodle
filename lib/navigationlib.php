@@ -155,6 +155,8 @@ class navigation_node implements renderable {
     public $forceintomoremenu = false;
     /** @var bool If set to true this node will be displayed in the "secondary" navigation when applicable */
     public $showinsecondarynavigation = true;
+    /** @var bool If set to true the children of this node will be displayed within a submenu when applicable */
+    public $showchildreninsubmenu = false;
 
     /**
      * Constructs a new navigation_node
@@ -4659,6 +4661,15 @@ class settings_navigation extends navigation_node {
 
         // Return we are done
         return $coursenode;
+    }
+
+    /**
+     * Get the moodle_page object associated to the current settings navigation.
+     *
+     * @return moodle_page
+     */
+    public function get_page(): moodle_page {
+        return $this->page;
     }
 
     /**

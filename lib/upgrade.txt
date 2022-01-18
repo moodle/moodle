@@ -231,7 +231,8 @@ value to get the list of blocks that won't be displayed for a theme.
     components > notifications > processors. loggedin and loggedoff are deprecated but present for backward compatibility.
 * A new parameter $strength of type int is added to method search_for_active_node. This parameter would help us to search for the active nodes based on the
   $strength passed to it.
-
+* A new method get_page() has been added to the settings_navigation class. This method can be used to obtain the
+  moodle_page object associated to the settings navigation.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
