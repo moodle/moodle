@@ -31,14 +31,15 @@
             "user_menu": "<div class='dropdown'>John Doe</div>"
         },
         "config": {
-            "wwwroot": "#"
+            "wwwroot": "#",
+            "homeurl": "/my/"
         },
         "sitename": "Moodle Site"
     }
 }}
 <nav class="fixed-top navbar navbar-bootswatch navbar-expand moodle-has-zindex">
 
-    <a href="{{{ config.wwwroot }}}" class="navbar-brand d-flex align-items-center m-1 p-0 aabtn">
+    <a href="{{{ config.homeurl }}}" class="navbar-brand d-flex align-items-center m-1 p-0 aabtn">
         {{# output.should_display_navbar_logo }}
             <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
         {{/ output.should_display_navbar_logo }}

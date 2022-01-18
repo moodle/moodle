@@ -324,6 +324,7 @@ class page_requirements_manager {
 
             $this->M_cfg = array(
                 'wwwroot'               => $CFG->wwwroot,
+                'homeurl'               => $page->navigation->action,
                 'sesskey'               => sesskey(),
                 'sessiontimeout'        => $CFG->sessiontimeout,
                 'sessiontimeoutwarning' => $CFG->sessiontimeoutwarning,
