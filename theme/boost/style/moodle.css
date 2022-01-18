@@ -10179,10 +10179,6 @@ a.autolink.glossary:hover {
 .pagingbar .thispage {
   font-weight: bold; }
 
-img.userpicture,
-.userinitials {
-  margin-right: 0.5rem; }
-
 img.resize {
   height: 1em;
   width: 1em; }
@@ -12218,6 +12214,20 @@ body.dragging .dragging {
     /* stylelint-disable-line declaration-no-important */
     padding-right: 0 !important;
     /* stylelint-disable-line declaration-no-important */ }
+
+.dropdown-toggle::after {
+  content: "";
+  margin-right: 0;
+  margin-left: 4px;
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 9px;
+  width: 9px;
+  border: 0; }
 
 .icon {
   font-size: 16px;
