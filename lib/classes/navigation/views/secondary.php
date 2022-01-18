@@ -88,6 +88,7 @@ class secondary extends view {
             ],
             self::TYPE_CUSTOM => [
                 'contentbank' => 5,
+                'participants' => 1, // In site home, 'participants' is classified differently.
             ],
         ];
 
@@ -109,7 +110,7 @@ class secondary extends view {
                 'modedit' => 1,
                 "mod_{$this->page->activityname}_useroverrides" => 3, // Overrides are module specific.
                 "mod_{$this->page->activityname}_groupoverrides" => 4,
-                'roleassign' => 5,
+                'roleassign' => 7.2,
                 'filtermanage' => 6,
                 'roleoverride' => 7,
                 'rolecheck' => 7.1,
