@@ -38,12 +38,17 @@ class send_schedule extends adhoc_task {
      * Execute the task
      */
     public function execute(): void {
-        global $USER, $DB;
+        global $CFG, $USER, $DB;
 
         [
             'reportid' => $reportid,
             'scheduleid' => $scheduleid,
         ] = (array) $this->get_custom_data();
+
+        // Custom reports are disabled.
+        if (empty($CFG->enablecustomreports)) {
+            return;
+        }
 
         $schedule = schedule::get_record(['id' => $scheduleid, 'reportid' => $reportid]);
         if ($schedule === false) {

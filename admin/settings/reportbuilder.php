@@ -30,7 +30,13 @@ use core_reportbuilder\permission;
 defined('MOODLE_INTERNAL') || die;
 
 /** @var admin_root $ADMIN */
-$ADMIN->add('reports', new admin_category('reportbuilder', new lang_string('reportbuilder', 'core_reportbuilder')));
+$ADMIN->add(
+    'reports', new admin_category(
+        'reportbuilder',
+        new lang_string('reportbuilder', 'core_reportbuilder'),
+        empty($CFG->enablecustomreports)
+    )
+);
 
 $ADMIN->add(
     'reportbuilder', new accesscallback(
@@ -39,6 +45,7 @@ $ADMIN->add(
         (new moodle_url('/reportbuilder/index.php'))->out(),
         static function(accesscallback $accesscallback): bool {
             return permission::can_view_reports_list();
-        }
+        },
+        empty($CFG->enablecustomreports)
     )
 );
