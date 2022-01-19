@@ -133,12 +133,12 @@ Feature: Manage custom report filters
       | report    | uniqueidentifier  |
       | My report | user:fullname     |
       | My report | user:email        |
-    And the following "core_reportbuilder > Conditions" exist:
-      | report    | uniqueidentifier |
-      | My report | user:email       |
-    And the following "core_reportbuilder > Filters" exist:
-      | report    | uniqueidentifier |
-      | My report | user:email       |
+    And the following "core_reportbuilder > Condition" exists:
+      | report           | My report  |
+      | uniqueidentifier | user:email |
+    And the following "core_reportbuilder > Filter" exists:
+      | report           | My report  |
+      | uniqueidentifier | user:email |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I change window size to "large"
     And I should see "user1@example.com" in the ".reportbuilder-table" "css_element"
