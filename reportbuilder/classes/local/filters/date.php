@@ -46,8 +46,11 @@ class date extends base {
     /** @var int Date within defined range */
     public const DATE_RANGE = 3;
 
-    /** @var int Date in the previous [X relative date unit(s)] */
-    public const DATE_PREVIOUS = 4;
+    /** @var int Date in the last [X relative date unit(s)] */
+    public const DATE_LAST = 4;
+
+    /** @var int Date in the previous [X relative date unit(s)] Kept for backwards compatibility */
+    public const DATE_PREVIOUS = self::DATE_LAST;
 
     /** @var int Date in current [relative date unit] */
     public const DATE_CURRENT = 5;
@@ -78,7 +81,7 @@ class date extends base {
             self::DATE_NOT_EMPTY => new lang_string('filterisnotempty', 'core_reportbuilder'),
             self::DATE_EMPTY => new lang_string('filterisempty', 'core_reportbuilder'),
             self::DATE_RANGE => new lang_string('filterrange', 'core_reportbuilder'),
-            self::DATE_PREVIOUS => new lang_string('filterdateprevious', 'core_reportbuilder'),
+            self::DATE_LAST => new lang_string('filterdatelast', 'core_reportbuilder'),
             self::DATE_CURRENT => new lang_string('filterdatecurrent', 'core_reportbuilder'),
             self::DATE_NEXT => new lang_string('filterdatenext', 'core_reportbuilder'),
         ];
@@ -99,7 +102,7 @@ class date extends base {
         $mform->setType("{$this->name}_operator", PARAM_INT);
         $mform->setDefault("{$this->name}_operator", self::DATE_ANY);
 
-        // Value selector for previous and next operators.
+        // Value selector for last and next operators.
         $valuelabel = get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header());
 
         $elements[] = $mform->createElement('text', "{$this->name}_value", $valuelabel, ['size' => 3]);
@@ -111,7 +114,7 @@ class date extends base {
         $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_RANGE);
         $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'eq', self::DATE_CURRENT);
 
-        // Unit selector for previous and next operators.
+        // Unit selector for last and next operators.
         $unitlabel = get_string('filterdurationunit', 'core_reportbuilder', $this->get_header());
         $units = [
             self::DATE_UNIT_DAY => get_string('filterdatedays', 'core_reportbuilder'),
@@ -187,11 +190,11 @@ class date extends base {
 
                 break;
             // Relative helper method can handle these three cases.
-            case self::DATE_PREVIOUS:
+            case self::DATE_LAST:
             case self::DATE_CURRENT:
             case self::DATE_NEXT:
 
-                // Previous and next operators require a unit value greater than zero.
+                // Last and next operators require a unit value greater than zero.
                 if ($operator !== self::DATE_CURRENT && $dateunitvalue === 0) {
                     return ['', []];
                 }
@@ -217,80 +220,65 @@ class date extends base {
     /**
      * Return start and end time of given relative date period
      *
-     * @param int $operator
-     * @param int $dateunitvalue
-     * @param int $dateunit
-     * @return int[]
+     * @param int $operator One of the ::DATE_LAST/CURRENT/NEXT constants
+     * @param int $dateunitvalue Unit multiplier of the date unit
+     * @param int $dateunit One of the ::DATE_UNIT_DAY/WEEK/MONTH/YEAR constants
+     * @return int[] Timestamps representing the start/end of timeframe
      */
     private static function get_relative_timeframe(int $operator, int $dateunitvalue, int $dateunit): array {
-        $datenow = new DateTimeImmutable();
+        // Initialise start/end time to now.
+        $datestart = $dateend = new DateTimeImmutable();
 
         switch ($dateunit) {
             case self::DATE_UNIT_DAY:
-                // Current day.
-                $datestart = $dateend = $datenow;
-
-                if ($operator === self::DATE_PREVIOUS) {
+                if ($operator === self::DATE_CURRENT) {
+                    $datestart = $datestart->setTime(0, 0);
+                    $dateend = $dateend->setTime(23, 59, 59);
+                } else if ($operator === self::DATE_LAST) {
                     $datestart = $datestart->modify("-{$dateunitvalue} day");
-                    $dateend = $dateend->modify('-1 day');
                 } else if ($operator === self::DATE_NEXT) {
-                    $datestart = $datestart->modify('+1 day');
                     $dateend = $dateend->modify("+{$dateunitvalue} day");
                 }
 
                 break;
             case self::DATE_UNIT_WEEK:
-                // Current week.
-                $datestart = $datenow->modify('monday this week');
-                $dateend = $datenow->modify('sunday this week');
-
-                if ($operator === self::DATE_PREVIOUS) {
+                if ($operator === self::DATE_CURRENT) {
+                    $datestart = $datestart->modify('monday this week')->setTime(0, 0);
+                    $dateend = $dateend->modify('sunday this week')->setTime(23, 59, 59);
+                } else if ($operator === self::DATE_LAST) {
                     $datestart = $datestart->modify("-{$dateunitvalue} week");
-                    $dateend = $dateend->modify('-1 week');
                 } else if ($operator === self::DATE_NEXT) {
-                    $datestart = $datestart->modify('+1 week');
                     $dateend = $dateend->modify("+{$dateunitvalue} week");
                 }
 
                 break;
             case self::DATE_UNIT_MONTH:
-                // Current month.
-                $datestart = $datenow->modify('first day of this month');
-                $dateend = $datenow->modify('last day of this month');
-
-                [$dateyear, $datemonth] = explode('/', $datenow->format('Y/m'));
-                if ($operator === self::DATE_PREVIOUS) {
-                    $datestart = $datestart->setDate((int) $dateyear, $datemonth - $dateunitvalue, 1);
-                    $dateend = $dateend->modify('last day of last month');
+                if ($operator === self::DATE_CURRENT) {
+                    $datestart = $datestart->modify('first day of this month')->setTime(0, 0);
+                    $dateend = $dateend->modify('last day of this month')->setTime(23, 59, 59);
+                } else if ($operator === self::DATE_LAST) {
+                    $datestart = $datestart->modify("-{$dateunitvalue} month");
                 } else if ($operator === self::DATE_NEXT) {
-                    $datestart = $datestart->modify('first day of next month');
-                    $dateend = $dateend->setDate((int) $dateyear, $datemonth + $dateunitvalue, 1)
-                        ->modify('last day of this month');
+                    $dateend = $dateend->modify("+{$dateunitvalue} month");
                 }
 
                 break;
             case self::DATE_UNIT_YEAR:
-                // Current year.
-                $datestart = $datenow->modify('first day of january this year');
-                $dateend = $datenow->modify('last day of december this year');
-
-                $dateyear = (int) $datenow->format('Y');
-                if ($operator === self::DATE_PREVIOUS) {
-                    $datestart = $datestart->setDate($dateyear - $dateunitvalue, 1, 1);
-                    $dateend = $dateend->modify('last day of december last year');
+                if ($operator === self::DATE_CURRENT) {
+                    $datestart = $datestart->modify('first day of january this year')->setTime(0, 0);
+                    $dateend = $dateend->modify('last day of december this year')->setTime(23, 59, 59);
+                } else if ($operator === self::DATE_LAST) {
+                    $datestart = $datestart->modify("-{$dateunitvalue} year");
                 } else if ($operator === self::DATE_NEXT) {
-                    $datestart = $datestart->modify('first day of january next year');
-                    $dateend = $dateend->setDate($dateyear + $dateunitvalue, 12, 31);
+                    $dateend = $dateend->modify("+{$dateunitvalue} year");
                 }
 
                 break;
-            default:
-                return [0, 0];
         }
 
         return [
-            $datestart->setTime(0, 0)->getTimestamp(),
-            $dateend->setTime(23, 59, 59)->getTimestamp(),
+            $datestart->getTimestamp(),
+            $dateend->getTimestamp(),
         ];
     }
 }
