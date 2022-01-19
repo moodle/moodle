@@ -837,18 +837,19 @@ function h5pactivity_fetch_recent_activity(array $submissions, int $courseid) : 
  */
 function h5pactivity_extend_settings_navigation(settings_navigation $settingsnav,
         navigation_node $h5pactivitynode = null) {
-    global $PAGE, $USER;
+    global $USER;
 
-    $manager = manager::create_from_coursemodule($PAGE->cm);
+    $manager = manager::create_from_coursemodule($settingsnav->get_page()->cm);
 
     // Attempts report.
     if ($manager->can_view_all_attempts()) {
-        $attemptsreporturl = new moodle_url('/mod/h5pactivity/report.php', ['a' => $PAGE->cm->instance]);
+        $attemptsreporturl = new moodle_url('/mod/h5pactivity/report.php',
+            ['a' => $settingsnav->get_page()->cm->instance]);
         $h5pactivitynode->add(get_string('attempts_report', 'h5pactivity'), $attemptsreporturl,
             settings_navigation::TYPE_SETTING, '', 'attemptsreport');
     } else if ($manager->can_view_own_attempts() && $manager->count_attempts($USER->id)) {
         $attemptsreporturl = new moodle_url('/mod/h5pactivity/report.php',
-            ['a' => $PAGE->cm->instance, 'userid' => $USER->id]);
+            ['a' => $settingsnav->get_page()->cm->instance, 'userid' => $USER->id]);
         $h5pactivitynode->add(get_string('attempts_report', 'h5pactivity'), $attemptsreporturl,
             settings_navigation::TYPE_SETTING, '', 'attemptsreport');
     }

@@ -3,6 +3,10 @@ information provided here is intended especially for developers.
 
 === 4.0 ===
 * A new API function introduced to handle custom completion logic. Refer to completion/upgrade.txt for additional information.
+* Modules that extend the settings navigation via '_extend_settings_navigation()' should use the get_page() method from
+  the settings_navigation class in order to obtain the correct moodle_page information associated to the given settings
+  navigation. After the recent changes to the navigation in single activity courses, using the global $PAGE may result
+  in returning inaccurate data in this course format, therefore it is advisable to use $settingsnavigation->get_page().
 
 === 3.9 ===
 

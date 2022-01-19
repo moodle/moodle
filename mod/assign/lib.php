@@ -408,7 +408,7 @@ function assign_supports($feature) {
  * @return void
  */
 function assign_extend_settings_navigation(settings_navigation $settings, navigation_node $navref) {
-    global $PAGE, $DB;
+    global $DB;
 
     // We want to add these new nodes after the Edit settings node, and before the
     // Locally assigned roles node. Of course, both of those are controlled by capabilities.
@@ -421,20 +421,20 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
         $beforekey = $keys[$i + 1];
     }
 
-    $cm = $PAGE->cm;
+    $cm = $settings->get_page()->cm;
     if (!$cm) {
         return;
     }
 
     $context = $cm->context;
-    $course = $PAGE->course;
+    $course = $settings->get_page()->course;
 
     if (!$course) {
         return;
     }
 
-    if (has_capability('mod/assign:manageoverrides', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/assign/overrides.php', array('cmid' => $PAGE->cm->id, 'mode' => 'user'));
+    if (has_capability('mod/assign:manageoverrides', $settings->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/assign/overrides.php', ['cmid' => $settings->get_page()->cm->id, 'mode' => 'user']);
 
         $node = navigation_node::create(get_string('overrides', 'assign'),
             $url,

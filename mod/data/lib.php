@@ -3588,38 +3588,39 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
  * @param navigation_node $datanode The node to add module settings to
  */
 function data_extend_settings_navigation(settings_navigation $settings, navigation_node $datanode) {
-    global $PAGE, $DB, $CFG, $USER;
+    global $DB, $CFG, $USER;
 
-    $data = $DB->get_record('data', array("id" => $PAGE->cm->instance));
+    $data = $DB->get_record('data', array("id" => $settings->get_page()->cm->instance));
 
-    $currentgroup = groups_get_activity_group($PAGE->cm);
-    $groupmode = groups_get_activity_groupmode($PAGE->cm);
+    $currentgroup = groups_get_activity_group($settings->get_page()->cm);
+    $groupmode = groups_get_activity_groupmode($settings->get_page()->cm);
 
-    if (data_user_can_add_entry($data, $currentgroup, $groupmode, $PAGE->cm->context)) { // took out participation list here!
+    // Took out participation list here!
+    if (data_user_can_add_entry($data, $currentgroup, $groupmode, $settings->get_page()->cm->context)) {
         if (empty($editentry)) { //TODO: undefined
             $addstring = get_string('add', 'data');
         } else {
             $addstring = get_string('editentry', 'data');
         }
         $addentrynode = $datanode->add($addstring,
-            new moodle_url('/mod/data/edit.php', array('d' => $PAGE->cm->instance)));
+            new moodle_url('/mod/data/edit.php', array('d' => $settings->get_page()->cm->instance)));
         $addentrynode->set_show_in_secondary_navigation(false);
     }
 
-    if (has_capability(DATA_CAP_EXPORT, $PAGE->cm->context)) {
+    if (has_capability(DATA_CAP_EXPORT, $settings->get_page()->cm->context)) {
         // The capability required to Export database records is centrally defined in 'lib.php'
         // and should be weaker than those required to edit Templates, Fields and Presets.
         $exportentriesnode = $datanode->add(get_string('exportentries', 'data'),
             new moodle_url('/mod/data/export.php', array('d' => $data->id)));
         $exportentriesnode->set_show_in_secondary_navigation(false);
     }
-    if (has_capability('mod/data:manageentries', $PAGE->cm->context)) {
+    if (has_capability('mod/data:manageentries', $settings->get_page()->cm->context)) {
         $importentriesnode = $datanode->add(get_string('importentries', 'data'),
             new moodle_url('/mod/data/import.php', array('d' => $data->id)));
         $importentriesnode->set_show_in_secondary_navigation(false);
     }
 
-    if (has_capability('mod/data:managetemplates', $PAGE->cm->context)) {
+    if (has_capability('mod/data:managetemplates', $settings->get_page()->cm->context)) {
         $currenttab = '';
         if ($currenttab == 'list') {
             $defaultemplate = 'listtemplate';
@@ -3643,7 +3644,7 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
 
         $string = get_string('rsstype', 'data');
 
-        $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $USER->id, 'mod_data', $data->id));
+        $url = new moodle_url(rss_get_url($settings->get_page()->cm->context->id, $USER->id, 'mod_data', $data->id));
         $datanode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }
 }
