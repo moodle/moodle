@@ -171,6 +171,10 @@ $right-drawer-width: 320px;
     position: fixed;
     height: 100vh;
     top: 0;
+
+    &.not-initialized {
+        display: none;
+    }
 }
 
 @mixin drawertypes() {
@@ -220,6 +224,10 @@ $right-drawer-width: 320px;
 @include media-breakpoint-up(lg) {
     .drawer {
         z-index: inherit;
+
+        &.not-initialized {
+            display: block;
+        }
     }
 }
 

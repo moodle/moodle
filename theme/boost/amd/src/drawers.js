@@ -45,6 +45,8 @@ const SELECTORS = {
 
 const CLASSES = {
     SCROLLED: 'scrolled',
+    SHOW: 'show',
+    NOTINITIALISED: 'not-initialized',
 };
 
 /**
@@ -281,7 +283,11 @@ export default class Drawers {
     constructor(drawerNode) {
         this.drawerNode = drawerNode;
 
-        if (this.drawerNode.classList.contains('show')) {
+        if (isSmall()) {
+            this.closeDrawer({focusOnOpenButton: false, updatePreferences: false});
+        }
+
+        if (this.drawerNode.classList.contains(CLASSES.SHOW)) {
             this.openDrawer({focusOnCloseButton: false});
         } else if (this.drawerNode.dataset.forceopen == 1) {
             if (!isSmall()) {
@@ -299,6 +305,8 @@ export default class Drawers {
         addInnerScrollListener(this.drawerNode);
 
         drawerMap.set(drawerNode, this);
+
+        drawerNode.classList.remove(CLASSES.NOTINITIALISED);
     }
 
     /**
@@ -307,7 +315,7 @@ export default class Drawers {
      * @returns {boolean}
      */
     get isOpen() {
-        return this.drawerNode.classList.contains('show');
+        return this.drawerNode.classList.contains(CLASSES.SHOW);
     }
 
     /**
@@ -430,7 +438,7 @@ export default class Drawers {
         }
 
         Aria.unhide(this.drawerNode);
-        this.drawerNode.classList.add('show');
+        this.drawerNode.classList.add(CLASSES.SHOW);
 
         const preference = this.drawerNode.dataset.preference;
         if (preference && !isSmall() && (this.drawerNode.dataset.forceopen != 1)) {
@@ -472,8 +480,12 @@ export default class Drawers {
 
     /**
      * Close the drawer.
+     *
+     * @param {object} args
+     * @param {boolean} [args.focusOnOpenButton=true] Whether to alter page focus when opening the drawer
+     * @param {boolean} [args.updatePreferences=true] Whether to update the user prewference
      */
-    closeDrawer() {
+    closeDrawer({focusOnOpenButton = true, updatePreferences = true} = {}) {
 
         const pendingPromise = new Pending('theme_boost/drawers:close');
 
@@ -492,7 +504,7 @@ export default class Drawers {
         }
 
         const preference = this.drawerNode.dataset.preference;
-        if (preference) {
+        if (preference && updatePreferences && !isSmall()) {
             M.util.set_user_preference(preference, false);
         }
 
@@ -503,7 +515,7 @@ export default class Drawers {
         }
 
         Aria.hide(this.drawerNode);
-        this.drawerNode.classList.remove('show');
+        this.drawerNode.classList.remove(CLASSES.SHOW);
 
         getBackdrop().then(backdrop => {
             backdrop.hide();
@@ -522,7 +534,7 @@ export default class Drawers {
             disableButtonTooltip(openButton, true);
         }
         setTimeout(() => {
-            if (openButton) {
+            if (openButton && focusOnOpenButton) {
                 openButton.focus();
             }
             pendingPromise.resolve();
@@ -535,7 +547,7 @@ export default class Drawers {
      * Toggle visibility of the drawer.
      */
     toggleVisibility() {
-        if (this.drawerNode.classList.contains('show')) {
+        if (this.drawerNode.classList.contains(CLASSES.SHOW)) {
             this.closeDrawer();
         } else {
             this.openDrawer();

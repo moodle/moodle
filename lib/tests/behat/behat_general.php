@@ -1250,16 +1250,24 @@ EOF;
     }
 
     /**
-     * Change browser window size small: 640x480, medium: 1024x768, large: 2560x1600, custom: widthxheight
+     * Change browser window size
+     *
+     * Allowed sizes:
+     * - mobile: 425x750
+     * - tablet: 768x1024
+     * - small: 1024x768
+     * - medium: 1366x768
+     * - large: 2560x1600
+     * - custom: widthxheight
      *
      * Example: I change window size to "small" or I change window size to "1024x768"
      * or I change viewport size to "800x600". The viewport option is useful to guarantee that the
      * browser window has same viewport size even when you run Behat on multiple operating systems.
      *
      * @throws ExpectationException
-     * @Then /^I change (window|viewport) size to "(small|medium|large|\d+x\d+)"$/
-     * @Then /^I change the (window|viewport) size to "(small|medium|large|\d+x\d+)"$/
-     * @param string $windowsize size of the window (small|medium|large|wxh).
+     * @Then /^I change (window|viewport) size to "(mobile|tablet|small|medium|large|\d+x\d+)"$/
+     * @Then /^I change the (window|viewport) size to "(mobile|tablet|small|medium|large|\d+x\d+)"$/
+     * @param string $windowsize size of the window (mobile|tablet|small|medium|large|wxh).
      */
     public function i_change_window_size_to($windowviewport, $windowsize) {
         $this->resize_window($windowsize, $windowviewport === 'viewport');

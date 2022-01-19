@@ -22,19 +22,19 @@ Feature: Course index completion icons
       | user     | course | role           |
       | student1 | C1     | student        |
       | teacher1 | C1     | editingteacher |
+    # The course index is hidden by default in small devices.
+    And I change window size to "large"
 
   @javascript
   Scenario: Teacher does not see completion icons.
-    Given I am on the "C1" "Course" page logged in as "teacher1"
-    When I click on "Open course index" "button"
+    When I am on the "C1" "Course" page logged in as "teacher1"
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
     And "To do" "icon" should not exist in the "courseindex-content" "region"
 
   @javascript
   Scenario: User should see the completion icons
-    Given I am on the "C1" "Course" page logged in as "student1"
-    When I click on "Open course index" "button"
+    When I am on the "C1" "Course" page logged in as "student1"
     Then I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
     And "To do" "icon" should exist in the "courseindex-content" "region"
@@ -42,7 +42,6 @@ Feature: Course index completion icons
   @javascript
   Scenario: Manual completion shoudl update the course index completion
     Given I am on the "C1" "Course" page logged in as "student1"
-    And I click on "Open course index" "button"
     And "To do" "icon" should exist in the "courseindex-content" "region"
     When I press "Mark as done"
     And I wait until "Done" "button" exists
@@ -54,7 +53,6 @@ Feature: Course index completion icons
   @javascript
   Scenario: Refresh the page should keep the completion consistent
     Given I am on the "C1" "Course" page logged in as "student1"
-    And I click on "Open course index" "button"
     And "To do" "icon" should exist in the "courseindex-content" "region"
     When I press "Mark as done"
     And I wait until "Done" "button" exists
@@ -68,7 +66,6 @@ Feature: Course index completion icons
       | assign   | Activity sample 2 | Test assignment description | C1     | sample2  | 1       | 1          | 1              |
     When I am on the "sample2" "Activity" page logged in as "student1"
     And I am on the "C1" "Course" page
-    And I click on "Open course index" "button"
     Then "Done" "icon" should exist in the "courseindex-content" "region"
 
   @javascript
@@ -89,7 +86,6 @@ Feature: Course index completion icons
       | slot | response |
       | 1    | False    |
     When I am on the "C1" "Course" page logged in as "student1"
-    And I click on "Open course index" "button"
     And "Failed" "icon" should exist in the "courseindex-content" "region"
 
   @javascript
@@ -110,5 +106,4 @@ Feature: Course index completion icons
       | slot | response |
       | 1    | True    |
     When I am on the "C1" "Course" page logged in as "student1"
-    And I click on "Open course index" "button"
     And "Done" "icon" should exist in the "courseindex-content" "region"
