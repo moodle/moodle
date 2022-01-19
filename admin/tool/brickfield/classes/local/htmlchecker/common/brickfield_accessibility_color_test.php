@@ -25,7 +25,7 @@ namespace tool_brickfield\local\htmlchecker\common;
  */
 class brickfield_accessibility_color_test extends brickfield_accessibility_test {
 
-    /** @var string[] Mapping of colours to hex codes. */
+    /** @var string[] Define colour codes. */
     public $colornames = [
         'aliceblue' => 'f0f8ff',
         'antiquewhite' => 'faebd7',
@@ -183,6 +183,12 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
         }
         $forergb = $this->get_rgb($foreground);
         $backrgb = $this->get_rgb($background);
+
+        // If get_rgb returns null for either, return 0.
+        if ($forergb === null || $backrgb === null) {
+            return 0;
+        }
+
         return $this->luminosity($forergb['r'], $backrgb['r'],
             $forergb['g'], $backrgb['g'],
             $forergb['b'], $backrgb['b']);
@@ -227,15 +233,15 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
 
 
     /**
-     * Returns the decimal equivalents for a HEX color
+     * Returns the decimal equivalents for a HEX color. Returns null if it cannot be determined.
      * @param string $color The hex color value
-     * @return array An array where 'r' is the Red value, 'g' is Green, and 'b' is Blue
+     * @return array|null An array where 'r' is the Red value, 'g' is Green, and 'b' is Blue
      */
-    public function get_rgb(string $color) {
+    public function get_rgb(string $color): ?array {
         $color = $this->convert_color($color);
         $c = str_split($color, 2);
         if (count($c) != 3) {
-            return false;
+            return null;
         }
         $results = ['r' => hexdec($c[0]), 'g' => hexdec($c[1]), 'b' => hexdec($c[2])];
         return $results;
@@ -307,6 +313,12 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
     public function get_wai_ert_contrast(string $foreground, string $background): array {
         $forergb = $this->get_rgb($foreground);
         $backrgb = $this->get_rgb($background);
+
+        // If get_rgb returns null for either, return 0.
+        if ($forergb === null || $backrgb === null) {
+            return [];
+        }
+
         $diffs = $this->get_wai_diffs($forergb, $backrgb);
 
         return $diffs['red'] + $diffs['green'] + $diffs['blue'];
@@ -321,12 +333,18 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
     public function get_wai_ert_brightness(string $foreground, string $background): float {
         $forergb = $this->get_rgb($foreground);
         $backrgb = $this->get_rgb($background);
+
+        // If get_rgb returns null for either, return 0.
+        if ($forergb === null || $backrgb === null) {
+            return 0;
+        }
+
         $color = $this->get_wai_diffs($forergb, $backrgb);
         return (($color['red'] * 299) + ($color['green'] * 587) + ($color['blue'] * 114)) / 1000;
     }
 
     /**
-     * Get wai diffs.
+     * Get the wai differences.
      * @param array $forergb
      * @param array $backrgb
      * @return array
