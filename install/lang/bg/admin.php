@@ -41,3 +41,4 @@ $string['cliunknowoption'] = 'Неразпознати опции:
 $string['cliyesnoprompt'] = 'Въведете y (означава да) или n (означава не)';
 $string['environmentrequireinstall'] = 'Трябва да бъде инсталиран и разрешен';
 $string['environmentrequireversion'] = 'Необходима е версия {$a->needed} а Вие имате  {$a->current}';
+$string['upgradekeyset'] = 'Ключ за надграждане (оставете празно, ако не искате да го задавате)';
