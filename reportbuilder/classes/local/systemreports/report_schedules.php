@@ -121,11 +121,19 @@ class report_schedules extends system_report {
                 global $PAGE;
 
                 $renderer = $PAGE->get_renderer('core_reportbuilder');
-
-                return $renderer->render_from_template('core_reportbuilder/local/toggle', [
-                    'action' => 'schedule-toggle',
-                    'id' => $row->id,
-                    'enabled' => $row->enabled,
+                $attributes = [
+                    ['name' => 'id', 'value' => $row->id],
+                    ['name' => 'action', 'value' => 'schedule-toggle'],
+                    ['name' => 'state', 'value' => $row->enabled],
+                ];
+                $label = $row->enabled ? get_string('disableschedule', 'core_reportbuilder')
+                    : get_string('enableschedule', 'core_reportbuilder');
+                return $renderer->render_from_template('core/toggle', [
+                    'id' => 'schedule-toggle-' . $row->id,
+                    'checked' => $row->enabled,
+                    'dataattributes' => $attributes,
+                    'label' => $label,
+                    'labelclasses' => 'sr-only'
                 ]);
             })
         );
