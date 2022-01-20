@@ -657,24 +657,6 @@ class fields {
 
         // Some fields have language strings which are not the same as field name.
         switch ($field) {
-            case 'url' : {
-                return get_string('webpage');
-            }
-            case 'icq' : {
-                return get_string('icqnumber');
-            }
-            case 'skype' : {
-                return get_string('skypeid');
-            }
-            case 'aim' : {
-                return get_string('aimid');
-            }
-            case 'yahoo' : {
-                return get_string('yahooid');
-            }
-            case 'msn' : {
-                return get_string('msnid');
-            }
             case 'picture' : {
                 return get_string('pictureofuser');
             }
