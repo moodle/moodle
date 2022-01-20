@@ -53,7 +53,7 @@ class backup_qtype_truefalse_plugin extends backup_qtype_plugin {
 
         // Now create the qtype own structures.
         $truefalse = new backup_nested_element('truefalse', array('id'), array(
-            'trueanswer', 'falseanswer'));
+            'trueanswer', 'falseanswer', 'showstandardinstruction'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($truefalse);

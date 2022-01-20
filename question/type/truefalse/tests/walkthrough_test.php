@@ -66,4 +66,38 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 new \question_no_pattern_expectation('/' . preg_quote($tf->falsefeedback, '/') . '/'));
 
     }
+
+    /**
+     * @covers \qtype_truefalse_renderer::formulation_and_controls
+     */
+    public function test_deferredfeedback_feedback_multichoice_single_showstandardinstruction_yes() {
+
+        // Create a true-false question with correct answer false.
+        $tf = \test_question_maker::make_question('truefalse', 'false');
+        $tf->showstandardinstruction = true;
+
+        $this->start_attempt_at_question($tf, 'deferredfeedback', 1);
+        $this->render();
+
+        // Check for 'Show standard instruction'.
+        $standardinstruction = get_string('selectone', 'qtype_truefalse');
+        $this->assertStringContainsString($standardinstruction, $this->currentoutput);
+    }
+
+    /**
+     * @covers \qtype_truefalse_renderer::formulation_and_controls
+     */
+    public function test_deferredfeedback_feedback_multichoice_single_showstandardinstruction_no() {
+
+        // Create a true-false question with correct answer false.
+        $tf = \test_question_maker::make_question('truefalse', 'false');
+        $tf->showstandardinstruction = false;
+
+        $this->start_attempt_at_question($tf, 'deferredfeedback', 1);
+        $this->render();
+
+        // Check for 'Show standard instruction'.
+        $standardinstruction = get_string('selectone', 'qtype_truefalse');
+        $this->assertStringNotContainsString($standardinstruction, $this->currentoutput);
+    }
 }
