@@ -245,9 +245,11 @@ class renderer extends \plugin_renderer_base {
         $this->page->set_heading($this->page->course->fullname);
 
         $description = $header->preface;
-        if ($header->showintro) {
+        if ($header->showintro || $header->activity) {
             $description = $this->output->box_start('generalbox boxaligncenter', 'intro');
-            $description .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
+            if ($header->showintro) {
+                $description .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
+            }
             if ($header->activity) {
                 $description .= $this->format_activity_text($header->assign, $header->coursemoduleid);
             }

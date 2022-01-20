@@ -4929,12 +4929,13 @@ class assign {
             $bc->content = $navbc;
             $PAGE->blocks->add_fake_block($bc, reset($regions));
         }
-        $PAGE->activityheader->disable();
+
+        $PAGE->activityheader->set_hidecompletion(true);
 
         $o .= $this->get_renderer()->render(
             new assign_header($this->get_instance(),
                               $this->get_context(),
-                              $this->show_intro(),
+                              false,
                               $this->get_course_module()->id,
                               $title,
                               '',
@@ -5979,7 +5980,8 @@ class assign {
             $showsubmit,
             $showedit,
             $submission,
-            $teamsubmission
+            $teamsubmission,
+            $instance->timelimit
         );
 
         return $this->get_renderer()->render($actionbuttons);
