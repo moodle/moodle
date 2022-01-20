@@ -1378,12 +1378,12 @@ function move_section_to($course, $section, $destination, $ignorenumsections = f
     // uniqueness constraint
     $transaction = $DB->start_delegated_transaction();
     foreach ($movedsections as $id => $position) {
-        if ($sections[$id] !== $position) {
+        if ((int) $sections[$id] !== $position) {
             $DB->set_field('course_sections', 'section', -$position, array('id' => $id));
         }
     }
     foreach ($movedsections as $id => $position) {
-        if ($sections[$id] !== $position) {
+        if ((int) $sections[$id] !== $position) {
             $DB->set_field('course_sections', 'section', $position, array('id' => $id));
         }
     }
