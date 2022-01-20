@@ -4255,7 +4255,7 @@ EOD;
         }
 
         // The user context currently has images and buttons. Other contexts may follow.
-        if (isset($headerinfo['user']) || $context->contextlevel == CONTEXT_USER) {
+        if ((isset($headerinfo['user']) || $context->contextlevel == CONTEXT_USER) && $this->page->pagetype !== 'my-index') {
             if (isset($headerinfo['user'])) {
                 $user = $headerinfo['user'];
             } else {
@@ -4420,7 +4420,7 @@ EOD;
         $homepage = get_home_page();
         $homepagetype = null;
         // Add a special case since /my/courses is a part of the /my subsystem.
-        if ($homepage == HOMEPAGE_MY && $this->page->title !== get_string('mycourses')) {
+        if ($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES) {
             $homepagetype = 'my-index';
         } else if ($homepage == HOMEPAGE_SITE) {
             $homepagetype = 'site-index';

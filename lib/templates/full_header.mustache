@@ -45,18 +45,19 @@
             </div>
         </div>
         <div class="d-sm-flex align-items-center">
-            {{#contextheader}}
-                <div class="mr-auto">
-                    {{{contextheader}}}
-                </div>
-            {{/contextheader}}
-            <div class="header-actions-container flex-shrink-0" data-region="header-actions-container">
+            {{^welcomemessage}}
+                {{#contextheader}}
+                    <div class="mr-auto">
+                        {{{contextheader}}}
+                    </div>
+                {{/contextheader}}
+            {{/welcomemessage}}
+            {{> core/welcome }}
+            <div class="header-actions-container ml-auto" data-region="header-actions-container">
                 {{#headeractions}}
                     <div class="header-action ml-2">{{{.}}}</div>
                 {{/headeractions}}
             </div>
         </div>
-
-        {{> core/welcome }}
     </div>
 </header>
