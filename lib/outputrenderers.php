@@ -4154,7 +4154,9 @@ EOD;
     public function services_support_link(): string {
         global $CFG;
 
-        if ((isset($CFG->showservicesandsupportcontent) && $CFG->showservicesandsupportcontent == false) || !is_siteadmin()) {
+        if (during_initial_install() ||
+            (isset($CFG->showservicesandsupportcontent) && $CFG->showservicesandsupportcontent == false) ||
+            !is_siteadmin()) {
             return '';
         }
 
