@@ -422,7 +422,10 @@ function mnet_generate_keypair($dn = null, $days=28) {
 
     // We export our self-signed certificate to a string.
     openssl_x509_export($selfSignedCert, $keypair['certificate']);
-    openssl_x509_free($selfSignedCert);
+    // TODO: Remove this block once PHP 8.0 becomes required.
+    if (PHP_MAJOR_VERSION < 8) {
+        openssl_x509_free($selfSignedCert);
+    }
 
     // Export your public/private key pair as a PEM encoded string. You
     // can protect it with an optional passphrase if you wish.
@@ -431,7 +434,10 @@ function mnet_generate_keypair($dn = null, $days=28) {
     } else {
         $export = openssl_pkey_export($new_key, $keypair['keypair_PEM'] /* , $passphrase */);
     }
-    openssl_pkey_free($new_key);
+    // TODO: Remove this block once PHP 8.0 becomes required.
+    if (PHP_MAJOR_VERSION < 8) {
+        openssl_pkey_free($new_key);
+    }
     unset($new_key); // Free up the resource
 
     return $keypair;
