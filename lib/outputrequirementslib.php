@@ -1041,11 +1041,12 @@ class page_requirements_manager {
     public function js_call_amd($fullmodule, $func = null, $params = array()) {
         global $CFG;
 
-        list($component, $module) = explode('/', $fullmodule, 2);
+        $modulepath = explode('/', $fullmodule);
 
-        $component = clean_param($component, PARAM_COMPONENT);
-        $module = clean_param($module, PARAM_ALPHANUMEXT);
-        $modname = "{$component}/{$module}";
+        $modname = clean_param(array_shift($modulepath), PARAM_COMPONENT);
+        foreach ($modulepath as $module) {
+            $modname .= '/' . clean_param($module, PARAM_ALPHANUMEXT);
+        }
 
         $functioncode = [];
         if ($func !== null) {
