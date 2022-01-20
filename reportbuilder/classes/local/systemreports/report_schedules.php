@@ -265,22 +265,28 @@ class report_schedules extends system_report {
         // Edit action.
         $this->add_action(new action(
             new moodle_url('#'),
-            new pix_icon('t/edit', get_string('editscheduledetails', 'core_reportbuilder')),
-            ['data-action' => 'schedule-edit', 'data-schedule-id' => ':id']
+            new pix_icon('t/edit', ''),
+            ['data-action' => 'schedule-edit', 'data-schedule-id' => ':id'],
+            false,
+            new lang_string('editscheduledetails', 'core_reportbuilder')
         ));
 
         // Send now action.
         $this->add_action(new action(
             new moodle_url('#'),
-            new pix_icon('t/email', get_string('sendschedule', 'core_reportbuilder')),
-            ['data-action' => 'schedule-send', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name']
+            new pix_icon('t/email', ''),
+            ['data-action' => 'schedule-send', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name'],
+            false,
+            new lang_string('sendschedule', 'core_reportbuilder')
         ));
 
         // Delete action.
         $this->add_action(new action(
             new moodle_url('#'),
-            new pix_icon('t/delete', get_string('deleteschedule', 'core_reportbuilder')),
-            ['data-action' => 'schedule-delete', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name']
+            new pix_icon('t/delete', ''),
+            ['data-action' => 'schedule-delete', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name'],
+            false,
+            new lang_string('deleteschedule', 'core_reportbuilder')
         ));
     }
 }

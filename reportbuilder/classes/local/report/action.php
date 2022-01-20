@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\report;
 
+use lang_string;
 use moodle_url;
 use pix_icon;
 use popup_action;
@@ -47,6 +48,9 @@ final class action {
     /** @var callable[] $callbacks */
     protected $callbacks = [];
 
+    /** @var lang_string|string $title */
+    protected $title;
+
     /**
      * Create an instance of an action to be added to a report. Both the parameters of the URL, and the attributes parameter
      * support placeholders which will be replaced with appropriate row values, e.g.:
@@ -59,17 +63,21 @@ final class action {
      * @param pix_icon $icon
      * @param array $attributes
      * @param bool $popup
+     * @param ?lang_string $title
      */
     public function __construct(
         moodle_url $url,
         pix_icon $icon,
         array $attributes = [],
-        bool $popup = false
+        bool $popup = false,
+        ?lang_string $title = null
     ) {
         $this->url = $url;
         $this->icon = $icon;
         $this->attributes = $attributes;
         $this->popup = $popup;
+        // If title is not passed, check the title attribute from the icon.
+        $this->title = $title ?? $icon->attributes['title'] ?? '';
     }
 
     /**
@@ -108,6 +116,9 @@ final class action {
             $this->url->out_omit_querystring(true),
             self::replace_placeholders($this->url->params(), $row)
         );
+
+        $this->attributes['role'] = 'button';
+        $this->attributes['title'] = $this->attributes['aria-label'] = (string) $this->title;
 
         if ($this->popup) {
             $this->attributes['data-action'] = 'report-action-popup';
