@@ -125,7 +125,7 @@ final class action {
             $this->attributes['data-popup-action'] = json_encode(new popup_action('click', $url));
         }
 
-        return $OUTPUT->action_icon($url, $this->icon, null, self::replace_placeholders($this->attributes, $row));
+        return $OUTPUT->action_link($url, $this->title, null, self::replace_placeholders($this->attributes, $row), $this->icon);
     }
 
     /**

@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\table;
 
+use action_menu;
 use core_table\local\filter\filterset;
 use html_writer;
 use moodle_exception;
@@ -212,11 +213,14 @@ class system_report_table extends base_report_table {
      * @return string
      */
     private function format_row_actions(stdClass $row): string {
-        $actions = array_map(static function(action $action) use ($row): string {
-            return (string) $action->get_action_link($row);
-        }, $this->report->get_actions());
+        global $OUTPUT;
 
-        return implode('', $actions);
+        $menu = new action_menu();
+        $menu->set_menu_trigger($OUTPUT->pix_icon('a/setting', get_string('actions', 'core_reportbuilder')));
+        foreach ($this->report->get_actions() as $action) {
+            $menu->add($action->get_action_link($row));
+        }
+        return $OUTPUT->render($menu);
     }
 
     /**
