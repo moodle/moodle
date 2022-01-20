@@ -43,6 +43,12 @@ class provider implements
     /** The user preference for the navigation drawer. */
     const DRAWER_OPEN_NAV = 'drawer-open-nav';
 
+    /** The user preferences for the course index. */
+    const DRAWER_OPEN_INDEX = 'drawer-open-index';
+
+    /** The user preferences for the blocks drawer. */
+    const DRAWER_OPEN_BLOCK = 'drawer-open-block';
+
     /**
      * Returns meta data about this system.
      *
@@ -51,6 +57,8 @@ class provider implements
      */
     public static function get_metadata(collection $items) : collection {
         $items->add_user_preference(self::DRAWER_OPEN_NAV, 'privacy:metadata:preference:draweropennav');
+        $items->add_user_preference(self::DRAWER_OPEN_INDEX, 'privacy:metadata:preference:draweropenindex');
+        $items->add_user_preference(self::DRAWER_OPEN_BLOCK, 'privacy:metadata:preference:draweropenblock');
         return $items;
     }
 
@@ -71,6 +79,36 @@ class provider implements
                 'theme_boost',
                 self::DRAWER_OPEN_NAV,
                 $draweropennavpref,
+                $preferencestring
+            );
+        }
+
+        $draweropenindexpref = get_user_preferences(self::DRAWER_OPEN_INDEX, null, $userid);
+
+        if (isset($draweropenindexpref)) {
+            $preferencestring = get_string('privacy:drawerindexclosed', 'theme_boost');
+            if ($draweropenindexpref == 1) {
+                $preferencestring = get_string('privacy:drawerindexopen', 'theme_boost');
+            }
+            \core_privacy\local\request\writer::export_user_preference(
+                'theme_boost',
+                self::DRAWER_OPEN_INDEX,
+                $draweropenindexpref,
+                $preferencestring
+            );
+        }
+
+        $draweropenblockpref = get_user_preferences(self::DRAWER_OPEN_BLOCK, null, $userid);
+
+        if (isset($draweropenblockpref)) {
+            $preferencestring = get_string('privacy:drawerblockclosed', 'theme_boost');
+            if ($draweropenblockpref == 1) {
+                $preferencestring = get_string('privacy:drawerblockopen', 'theme_boost');
+            }
+            \core_privacy\local\request\writer::export_user_preference(
+                'theme_boost',
+                self::DRAWER_OPEN_BLOCK,
+                $draweropenblockpref,
                 $preferencestring
             );
         }
