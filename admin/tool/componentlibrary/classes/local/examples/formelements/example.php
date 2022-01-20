@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_componentlibrary;
+namespace tool_componentlibrary\local\examples\formelements;
 
 /**
  * Example form to showcase the rendering of form fields.
@@ -30,7 +30,7 @@ namespace tool_componentlibrary;
  * @copyright  2021 Bas Brands <bas@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exampleform extends \moodleform {
+class example extends \moodleform {
     /**
      * Elements of the test form.
      */
