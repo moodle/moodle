@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Restore date tests.
- *
- * @package    mod_data
- * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_data\backup;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +29,7 @@ require_once($CFG->dirroot . '/rating/lib.php');
  * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_data_restore_date_testcase extends restore_date_testcase {
+class restore_date_test extends \restore_date_testcase {
 
     /**
      * Test restore dates.
@@ -51,7 +45,7 @@ class mod_data_restore_date_testcase extends restore_date_testcase {
         // Data field/record.
         $timestamp = 996699;
         $diff = $this->get_diff();
-        $record = new StdClass();
+        $record = new \stdClass();
         $record->name = 'field-1';
         $record->type = 'text';
         $field = $gg->create_field($record, $data);
@@ -59,14 +53,14 @@ class mod_data_restore_date_testcase extends restore_date_testcase {
         $datarecord = $DB->get_record('data_records', ['id' => $datarecordid]);
 
         // Ratings.
-        $ratingoptions = new stdClass;
-        $ratingoptions->context = context_module::instance($data->cmid);
+        $ratingoptions = new \stdClass;
+        $ratingoptions->context = \context_module::instance($data->cmid);
         $ratingoptions->ratingarea = 'entry';
         $ratingoptions->component = 'mod_data';
         $ratingoptions->itemid  = $datarecord->id;
         $ratingoptions->scaleid = 2;
         $ratingoptions->userid  = $USER->id;
-        $rating = new rating($ratingoptions);
+        $rating = new \rating($ratingoptions);
         $rating->update_rating(2);
         $rating = $DB->get_record('rating', ['itemid' => $datarecord->id]);
 
@@ -86,7 +80,7 @@ class mod_data_restore_date_testcase extends restore_date_testcase {
         $this->assertEquals($datarecord->timemodified, $newdatarecord->timemodified);
 
         // Rating test.
-        $newrating = $DB->get_record('rating', ['contextid' => context_module::instance($newcm->id)->id]);
+        $newrating = $DB->get_record('rating', ['contextid' => \context_module::instance($newcm->id)->id]);
         $this->assertEquals($rating->timecreated, $newrating->timecreated);
         $this->assertEquals($rating->timemodified, $newrating->timemodified);
     }

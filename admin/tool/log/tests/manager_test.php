@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_log;
+
 /**
  * Log manager and log API tests.
  *
@@ -21,10 +23,7 @@
  * @copyright  2014 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die;
-
-class tool_log_manager_testcase extends advanced_testcase {
+class manager_test extends \advanced_testcase {
     public function test_get_log_manager() {
         global $CFG;
         $this->resetAfterTest();

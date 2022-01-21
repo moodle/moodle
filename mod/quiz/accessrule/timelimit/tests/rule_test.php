@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the quizaccess_timelimit plugin.
- *
- * @package    quizaccess
- * @subpackage timelimit
- * @copyright  2008 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace quizaccess_timelimit;
 
+use quiz;
+use quizaccess_timelimit;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,19 +28,20 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/timelimit/rule.php');
 /**
  * Unit tests for the quizaccess_timelimit plugin.
  *
+ * @package    quizaccess_timelimit
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_timelimit_testcase extends basic_testcase {
+class rule_test extends \basic_testcase {
     public function test_time_limit_access_rule() {
-        $quiz = new stdClass();
+        $quiz = new \stdClass();
         $quiz->timeclose = 0;
         $quiz->timelimit = 3600;
-        $cm = new stdClass();
+        $cm = new \stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
         $rule = new quizaccess_timelimit($quizobj, 10000);
-        $attempt = new stdClass();
+        $attempt = new \stdClass();
 
         $this->assertEquals($rule->description(),
             get_string('quiztimelimit', 'quizaccess_timelimit', format_time(3600)));
@@ -87,14 +83,14 @@ class quizaccess_timelimit_testcase extends basic_testcase {
     public function test_time_limit_access_rule_with_time_close($timetoclose, $timelimit, $displaylimit, $actuallimit) {
         $timenow = 10000;
 
-        $quiz = new stdClass();
+        $quiz = new \stdClass();
         $quiz->timeclose = $timenow + $timetoclose;
         $quiz->timelimit = $timelimit;
-        $cm = new stdClass();
+        $cm = new \stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
         $rule = new quizaccess_timelimit($quizobj, $timenow);
-        $attempt = new stdClass();
+        $attempt = new \stdClass();
 
         $this->assertEquals($rule->description(),
             get_string('quiztimelimit', 'quizaccess_timelimit', format_time($displaylimit)));

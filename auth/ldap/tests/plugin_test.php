@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace auth_ldap;
+
 /**
  * LDAP authentication plugin tests.
  *
@@ -31,10 +33,7 @@
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-class auth_ldap_plugin_testcase extends advanced_testcase {
+class plugin_test extends \advanced_testcase {
 
     /**
      * Data provider for auth_ldap tests
@@ -164,7 +163,7 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $this->assertEquals(2, $DB->count_records('user'));
         $this->assertEquals(0, $DB->count_records('role_assignments'));
 
-        /** @var auth_plugin_ldap $auth */
+        /** @var \auth_plugin_ldap $auth */
         $auth = get_auth_plugin('ldap');
 
         ob_start();
@@ -224,7 +223,7 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
 
         set_config('removeuser', AUTH_REMOVEUSER_SUSPEND, 'auth_ldap');
 
-        /** @var auth_plugin_ldap $auth */
+        /** @var \auth_plugin_ldap $auth */
         $auth = get_auth_plugin('ldap');
 
         ob_start();
@@ -288,7 +287,7 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
 
         set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth_ldap');
 
-        /** @var auth_plugin_ldap $auth */
+        /** @var \auth_plugin_ldap $auth */
         $auth = get_auth_plugin('ldap');
 
         $this->delete_ldap_user($connection, $topdn, 1);
@@ -357,7 +356,7 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
 
         // Note: we are just going to trigger the function that calls the event,
         // not actually perform a LDAP login, for the sake of sanity.
-        $ldap = new auth_plugin_ldap();
+        $ldap = new \auth_plugin_ldap();
 
         // Set the key for the cache flag we want to set which is used by LDAP.
         set_cache_flag($ldap->pluginconfig . '/ntlmsess', sesskey(), $user->username, AUTH_NTLMTIMEOUT);
@@ -379,7 +378,7 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\user_loggedin', $event);
         $this->assertEquals('user', $event->objecttable);
         $this->assertEquals('2', $event->objectid);
-        $this->assertEquals(context_system::instance()->id, $event->contextid);
+        $this->assertEquals(\context_system::instance()->id, $event->contextid);
         $expectedlog = array(SITEID, 'user', 'login', 'view.php?id=' . $USER->id . '&course=' . SITEID, $user->id,
             0, $user->id);
         $this->assertEventLegacyLogData($expectedlog, $event);
@@ -488,7 +487,7 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $this->assertEquals(2, $DB->count_records('user'));
         $this->assertEquals(0, $DB->count_records('role_assignments'));
 
-        /** @var auth_plugin_ldap $auth */
+        /** @var \auth_plugin_ldap $auth */
         $auth = get_auth_plugin('ldap');
 
         $sink = $this->redirectEvents();
@@ -510,7 +509,7 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\user_created', $event);
         $this->assertEquals($user['id'], $event->objectid);
         $this->assertEquals('user_created', $event->get_legacy_eventname());
-        $this->assertEquals(context_user::instance($user['id']), $event->get_context());
+        $this->assertEquals(\context_user::instance($user['id']), $event->get_context());
         $expectedlogdata = array(SITEID, 'user', 'add', '/view.php?id='.$event->objectid, fullname($dbuser));
         $this->assertEventLegacyLogData($expectedlogdata, $event);
 

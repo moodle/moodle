@@ -14,18 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for class customfield_textarea
- *
- * @package    customfield_textarea
- * @copyright  2019 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace customfield_textarea;
 
-defined('MOODLE_INTERNAL') || die();
-
-use customfield_textarea\field_controller;
-use customfield_textarea\data_controller;
+use core_customfield_generator;
+use core_customfield_test_instance_form;
 
 /**
  * Functional test for customfield_textarea
@@ -34,7 +26,7 @@ use customfield_textarea\data_controller;
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class customfield_textarea_plugin_testcase extends advanced_testcase {
+class plugin_test extends \advanced_testcase {
 
     /** @var stdClass[]  */
     private $courses = [];
@@ -169,7 +161,7 @@ class customfield_textarea_plugin_testcase extends advanced_testcase {
         $handler->instance_form_save($form->get_data());
 
         $this->assertEquals($submitdata['customfield_myfield1_editor']['text'],
-            core_customfield\data_controller::create($this->cfdata[1]->get('id'))->export_value());
+            \core_customfield\data_controller::create($this->cfdata[1]->get('id'))->export_value());
 
         // Now empty our non-required field.
         $submitdata['customfield_myfield1_editor']['text'] = '';
@@ -178,7 +170,7 @@ class customfield_textarea_plugin_testcase extends advanced_testcase {
         $form = new core_customfield_test_instance_form('post', ['handler' => $handler, 'instance' => $this->courses[1]]);
         $handler->instance_form_save($form->get_data());
 
-        $this->assertEmpty(core_customfield\data_controller::create($this->cfdata[1]->get('id'))->export_value());
+        $this->assertEmpty(\core_customfield\data_controller::create($this->cfdata[1]->get('id'))->export_value());
     }
 
     /**
@@ -189,7 +181,7 @@ class customfield_textarea_plugin_testcase extends advanced_testcase {
         $this->assertEquals('<div class="text_to_html">Value1</div>', $this->cfdata[1]->export_value());
 
         // Field without data but with a default value.
-        $d = core_customfield\data_controller::create(0, null, $this->cfields[3]);
+        $d = \core_customfield\data_controller::create(0, null, $this->cfields[3]);
         $this->assertEquals('Value3', $d->get_value());
         $this->assertEquals('<div class="text_to_html">Value3</div>', $d->export_value());
     }

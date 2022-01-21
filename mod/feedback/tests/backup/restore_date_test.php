@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Restore date tests.
- *
- * @package    mod_feedback
- * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_feedback\backup;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +28,7 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_feedback_restore_date_testcase extends restore_date_testcase {
+class restore_date_test extends \restore_date_testcase {
 
     public function test_restore_dates() {
         global $DB, $USER;
@@ -43,7 +37,7 @@ class mod_feedback_restore_date_testcase extends restore_date_testcase {
         list($course, $feedback) = $this->create_course_and_module('feedback', ['timeopen' => $time, 'timeclose' => $time]);
 
         // Create response.
-        $response = new stdClass();
+        $response = new \stdClass();
         $response->feedback = $feedback->id;
         $response->userid = $USER->id;
         $response->anonymous_response = FEEDBACK_ANONYMOUS_NO;
