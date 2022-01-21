@@ -14,18 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Manager tests.
- *
- * @package    tool_messageinbound
- * @category   test
- * @copyright  2018 Frédéric Massart
- * @author     Frédéric Massart <fred@branchup.tech>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
+namespace tool_messageinbound;
 
 use core_privacy\tests\provider_testcase;
 use core_privacy\local\request\approved_contextlist;
@@ -42,7 +31,7 @@ use tool_messageinbound\privacy\provider;
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_messageinbound_manager_testcase extends provider_testcase {
+class manager_test extends provider_testcase {
 
     public function setUp(): void {
         global $CFG;

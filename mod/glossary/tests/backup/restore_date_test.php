@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Restore date tests.
- *
- * @package    mod_glossary
- * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_glossary\backup;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +29,7 @@ require_once($CFG->dirroot . '/rating/lib.php');
  * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_glossary_restore_date_testcase extends restore_date_testcase {
+class restore_date_test extends \restore_date_testcase {
 
     /**
      * Test restore dates.
@@ -55,14 +49,14 @@ class mod_glossary_restore_date_testcase extends restore_date_testcase {
         $timestamp = 10000;
         $DB->set_field('glossary_entries', 'timecreated', $timestamp);
         $DB->set_field('glossary_entries', 'timemodified', $timestamp);
-        $ratingoptions = new stdClass;
-        $ratingoptions->context = context_module::instance($glossary->cmid);
+        $ratingoptions = new \stdClass;
+        $ratingoptions->context = \context_module::instance($glossary->cmid);
         $ratingoptions->ratingarea = 'entry';
         $ratingoptions->component = 'mod_glossary';
         $ratingoptions->itemid  = $entry1->id;
         $ratingoptions->scaleid = 2;
         $ratingoptions->userid  = $USER->id;
-        $rating = new rating($ratingoptions);
+        $rating = new \rating($ratingoptions);
         $rating->update_rating(2);
         $rating = $DB->get_record('rating', ['itemid' => $entry1->id]);
 
@@ -84,7 +78,7 @@ class mod_glossary_restore_date_testcase extends restore_date_testcase {
         }
 
         // Rating test.
-        $newrating = $DB->get_record('rating', ['contextid' => context_module::instance($newcm->id)->id]);
+        $newrating = $DB->get_record('rating', ['contextid' => \context_module::instance($newcm->id)->id]);
         $this->assertEquals($rating->timecreated, $newrating->timecreated);
         $this->assertEquals($rating->timemodified, $newrating->timemodified);
     }

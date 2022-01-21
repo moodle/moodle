@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Restore date tests.
- *
- * @package    mod_chat
- * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_chat\backup;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,18 +28,18 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_chat_restore_date_testcase extends restore_date_testcase {
+class restore_date_test extends \restore_date_testcase {
 
     public function test_restore_dates() {
         global $DB;
 
         list($course, $chat) = $this->create_course_and_module('chat');
-        $result = mod_chat_external::login_user($chat->id);
-        $result = external_api::clean_returnvalue(mod_chat_external::login_user_returns(), $result);
+        $result = \mod_chat_external::login_user($chat->id);
+        $result = \external_api::clean_returnvalue(\mod_chat_external::login_user_returns(), $result);
         $chatsid = $result['chatsid'];
 
-        $result = mod_chat_external::send_chat_message($chatsid, 'hello!');
-        $result = external_api::clean_returnvalue(mod_chat_external::send_chat_message_returns(), $result);
+        $result = \mod_chat_external::send_chat_message($chatsid, 'hello!');
+        $result = \external_api::clean_returnvalue(\mod_chat_external::send_chat_message_returns(), $result);
         $message = $DB->get_record('chat_messages', ['id' => $result['messageid']]);
         $timestamp = 1000;
         $DB->set_field('chat_messages', 'timestamp', $timestamp);
