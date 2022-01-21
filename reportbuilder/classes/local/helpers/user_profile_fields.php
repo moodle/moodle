@@ -23,6 +23,7 @@ use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
 use lang_string;
@@ -155,25 +156,34 @@ class user_profile_fields {
         foreach ($this->userprofilefields as $profilefield) {
             $userinfotablealias = database::generate_alias();
             $field = "{$userinfotablealias}.data";
+            $params = [];
 
             switch ($profilefield->field->datatype) {
                 case 'checkbox':
                     $classname = boolean_select::class;
-                    $field = $DB->sql_cast_char2int("COALESCE({$field}, 0)");
+                    $fieldsql = "COALESCE(" . $DB->sql_cast_char2int($field, true) . ", 0)";
                     break;
                 case 'datetime':
                     $classname = date::class;
-                    $field = $DB->sql_cast_char2int($field);
+                    $fieldsql = $DB->sql_cast_char2int($field);
                     break;
                 case 'menu':
                     $classname = select::class;
-                    $field = "COALESCE({$field}, '')";
+
+                    $emptyparam = database::generate_param_name();
+                    $fieldsql = "COALESCE(" . $DB->sql_compare_text($field, 255) . ", :{$emptyparam})";
+                    $params[$emptyparam] = '';
+
                     break;
                 case 'text':
                 case 'textarea':
                 default:
-                    $field = $DB->sql_compare_text("COALESCE({$field}, '')", 255);
                     $classname = text::class;
+
+                    $emptyparam = database::generate_param_name();
+                    $fieldsql = "COALESCE(" . $DB->sql_compare_text($field, 255) . ", :{$emptyparam})";
+                    $params[$emptyparam] = '';
+
                     break;
             }
 
@@ -184,7 +194,8 @@ class user_profile_fields {
                     format_string($profilefield->field->name, true,
                         ['escape' => false, 'context' => context_system::instance()])),
                 $this->entityname,
-                $field
+                $fieldsql,
+                $params
             ))
                 ->add_joins($this->get_joins())
                 ->add_join("LEFT JOIN {user_info_data} {$userinfotablealias} " .

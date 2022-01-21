@@ -19,12 +19,13 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\entities;
 
 use advanced_testcase;
-use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\date;
 use moodle_url;
 use core_reportbuilder\manager;
 use core_reportbuilder\testable_system_report_table;
 use core_reportbuilder\user_entity_report;
+use core_reportbuilder\local\filters\boolean_select;
+use core_reportbuilder\local\filters\date;
+use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\helpers\user_filter_manager;
 
@@ -249,6 +250,60 @@ class user_test extends advanced_testcase {
         $this->assertEquals([
             'Donald Duck',
         ], array_column($tablerows, 'fullname'));
+    }
+
+    /**
+     * Data provider for {@see test_userprofilefield_filter_empty}
+     *
+     * @return array
+     */
+    public function userprofilefield_filter_empty_provider(): array {
+        return [
+            ['checkbox', 1, boolean_select::NOT_CHECKED],
+            ['text', 'Hello', text::IS_EMPTY],
+            ['text', 'Hello', text::IS_NOT_EQUAL_TO],
+            ['text', 'Hello', text::DOES_NOT_CONTAIN],
+            ['menu', 'one', select::NOT_EQUAL_TO, "one\ntwo"],
+        ];
+    }
+
+    /**
+     * Test filtering report by a user profile field with negated operators (contains the "empty" value appropriate to the field
+     * type, or is not set/null)
+     *
+     * @param string $datatype
+     * @param mixed $userfieldvalue
+     * @param int $operator
+     * @param string $datatypeparam1
+     *
+     * @dataProvider userprofilefield_filter_empty_provider
+     */
+    public function test_userprofilefield_filter_empty(string $datatype, $userfieldvalue, int $operator,
+            string $datatypeparam1 = ''): void {
+
+        $this->resetAfterTest();
+
+        $this->getDataGenerator()->create_custom_profile_field([
+            'datatype' => $datatype,
+            'shortname' => 'test',
+            'name' => 'My test field',
+            'param1' => $datatypeparam1,
+        ]);
+
+        // At this point, the custom profile field was created after the admin account, so the value will be not set/null.
+        $filtervalues = [
+            'user:profilefield_test_operator' => $operator,
+            'user:profilefield_test_value' => $userfieldvalue,
+        ];
+
+        // Create a user who does have the field set.
+        $user = $this->getDataGenerator()->create_user(['profile_field_test' => $userfieldvalue]);
+
+        $rows = $this->get_report_table_rows($filtervalues);
+
+        $usernames = array_column($rows, 'username');
+        $this->assertContains('admin', $usernames);
+        $this->assertNotContains($user->username, $usernames);
     }
 
     /**
