@@ -59,12 +59,24 @@ export default class extends Reactive {
      *
      * The course can only be loaded once per instance. Otherwise an error is thrown.
      *
+     * The backend can inform the module of the current state key. This key changes every time some
+     * update in the course affect the current user state. Some examples are:
+     *  - The course content has been edited
+     *  - The user marks some activity as completed
+     *  - The user collapses or uncollapses a section (it is stored as a user preference)
+     *
      * @param {number} courseId course id
+     * @param {string} serverStateKey the current backend course cache reference
      */
-    async loadCourse(courseId) {
+    async loadCourse(courseId, serverStateKey) {
 
         if (this.courseId) {
             throw new Error(`Cannot load ${courseId}, course already loaded with id ${this.courseId}`);
+        }
+
+        if (!serverStateKey) {
+            // The server state key is not provided, we use a invalid statekey to force reloading.
+            serverStateKey = `invalidStateKey_${Date.now()}`;
         }
 
         // Default view format setup.
@@ -75,8 +87,16 @@ export default class extends Reactive {
 
         let stateData;
 
+        const storeStateKey = Storage.get(`course/${courseId}/stateKey`);
         try {
-            stateData = await this.getServerCourseState();
+            // Check if the backend state key is the same we have in our session storage.
+            if (!this.isEditing && serverStateKey == storeStateKey) {
+                stateData = JSON.parse(Storage.get(`course/${courseId}/staticState`));
+            }
+            if (!stateData) {
+                stateData = await this.getServerCourseState();
+            }
+
         } catch (error) {
             log.error("EXCEPTION RAISED WHILE INIT COURSE EDITOR");
             log.error(error);
@@ -92,9 +112,9 @@ export default class extends Reactive {
             // Check if the last state is the same as the cached one.
             const newState = JSON.stringify(stateData);
             const previousState = Storage.get(`course/${courseId}/staticState`);
-            if (previousState !== newState) {
+            if (previousState !== newState || storeStateKey !== serverStateKey) {
                 Storage.set(`course/${courseId}/staticState`, newState);
-                Storage.set(`course/${courseId}/stateKey`, Date.now());
+                Storage.set(`course/${courseId}/stateKey`, stateData?.course?.statekey ?? serverStateKey);
             }
             this.stateKey = Storage.get(`course/${courseId}/stateKey`);
         }
@@ -106,6 +126,7 @@ export default class extends Reactive {
      * @param {Object} setup format, page and course settings
      * @param {boolean} setup.editing if the page is in edit mode
      * @param {boolean} setup.supportscomponents if the format supports components for content
+     * @param {string} setup.cacherev the backend cached state revision
      */
     setViewFormat(setup) {
         this._editing = setup.editing ?? false;

@@ -226,6 +226,48 @@ abstract class base {
     }
 
     /**
+     * Reset the current user course format cache.
+     *
+     * The course format cache resets every time the course cache resets but
+     * also when the user changes their course format preference, complete
+     * an activity...
+     *
+     * @param stdClass $course the course object
+     * @return string the new statekey
+     */
+    public static function session_cache_reset(stdClass $course): string {
+        $statecache = cache::make('core', 'courseeditorstate');
+        $newkey = $course->cacherev . '_' . time();
+        $statecache->set($course->id, $newkey);
+        return $newkey;
+    }
+
+    /**
+     * Return the current user course format cache key.
+     *
+     * The course format session cache can be used to cache the
+     * user course representation. The statekey will be reset when the
+     * the course state changes. For example when the course is edited,
+     * the user completes an activity or simply some course preference
+     * like collapsing a section happens.
+     *
+     * @param stdClass $course the course object
+     * @return string the current statekey
+     */
+    public static function session_cache(stdClass $course): string {
+        $statecache = cache::make('core', 'courseeditorstate');
+        $statekey = $statecache->get($course->id);
+        // Validate the statekey code.
+        if (preg_match('/^[0-9]+_[0-9]+$/', $statekey)) {
+            list($cacherev) = explode('_', $statekey);
+            if ($cacherev == $course->cacherev) {
+                return $statekey;
+            }
+        }
+        return self::session_cache_reset($course);
+    }
+
+    /**
      * Returns the format name used by this course
      *
      * @return string

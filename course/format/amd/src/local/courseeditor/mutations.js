@@ -295,8 +295,8 @@ export default class {
      */
     async sectionPreferences(stateManager, sectionIds, preferences) {
         stateManager.setReadOnly(false);
+        const affectedSections = new Set();
         // Check if we need to update preferences.
-        let updatePreferences = false;
         sectionIds.forEach(sectionId => {
             const section = stateManager.get('section', sectionId);
             if (section === undefined) {
@@ -305,17 +305,17 @@ export default class {
             let newValue = preferences.contentcollapsed ?? section.contentcollapsed;
             if (section.contentcollapsed != newValue) {
                 section.contentcollapsed = newValue;
-                updatePreferences = true;
+                affectedSections.add(section.id);
             }
             newValue = preferences.indexcollapsed ?? section.indexcollapsed;
             if (section.indexcollapsed != newValue) {
                 section.indexcollapsed = newValue;
-                updatePreferences = true;
+                affectedSections.add(section.id);
             }
         });
         stateManager.setReadOnly(true);
 
-        if (updatePreferences) {
+        if (affectedSections.size > 0) {
             // Build the preference structures.
             const course = stateManager.get('course');
             const state = stateManager.state;
@@ -334,6 +334,8 @@ export default class {
             });
             const jsonString = JSON.stringify(preferences);
             M.util.set_user_preference(prefKey, jsonString);
+            // Inform the backend of the change.
+            await this._callEditWebservice('topic_preferences_updated', course.id, [...affectedSections]);
         }
     }
 

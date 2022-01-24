@@ -16,6 +16,7 @@
 
 namespace core_courseformat;
 
+use core_courseformat\base as course_format;
 use core_courseformat\stateupdates;
 use cm_info;
 use section_info;
@@ -24,6 +25,7 @@ use course_modinfo;
 use moodle_exception;
 use context_module;
 use context_course;
+use cache;
 
 /**
  * Contains the core course state actions.
@@ -284,6 +286,30 @@ class stateactions {
             $sections[$sectionid] = $modinfo->get_section_info_by_id($sectionid);
         }
         return $sections;
+    }
+
+    /**
+     * Some of the topic preferences has been updated.
+     *
+     * Section preferences can be handled by many user actions and even some of them can affect
+     * only the frontend part. Format plugins can override this method to add extra logic to the
+     * section preferences.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids the collapsed section ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function topic_preferences_updated(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        // Format plugins may override this method to provide extra functionalities to
+        // section preferences.
     }
 
     /**
