@@ -151,3 +151,10 @@ Feature: The timeline block allows users to see upcoming activities
     Then "Test assign 1" "link" should exist in the "Timeline" "block"
     And I click on "Show more activities" "button"
     And "Test feedback 2" "link" should exist in the "Timeline" "block"
+
+  Scenario: Student not enrolled in any courses sees a message
+    Given I log in as "student2"
+    When I click on "Sort timeline items" "button" in the "Timeline" "block"
+    And I click on "Sort by dates" "link" in the "Timeline" "block"
+    Then I should see "No in-progress courses" in the "Timeline" "block"
+    And I should not see "Test choice 1"
