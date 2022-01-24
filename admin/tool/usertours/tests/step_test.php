@@ -823,4 +823,26 @@ class step_testcase extends advanced_testcase {
 
         $this->assertEquals($value, $step->$getter());
     }
+
+    /**
+     * Ensure that the get_step_image_from_input function replace PIXICON placeholder with the correct images correctly.
+     */
+    public function test_get_step_image_from_input() {
+        $stepcontent = '@@PIXICON::tour/tour_mycourses::tool_usertours@@<br>Test';
+        $stepcontent = \tool_usertours\step::get_step_image_from_input($stepcontent);
+
+        // If the format is correct, PIXICON placeholder will be replaced with the img tag.
+        $this->assertStringStartsWith('<img', $stepcontent);
+        $this->assertStringEndsWith('Test', $stepcontent);
+        $this->assertStringNotContainsString('PIXICON', $stepcontent);
+
+        $stepcontent = '@@PIXICON::tour/tour_mycourses<br>Test';
+        $stepcontent = \tool_usertours\step::get_step_image_from_input($stepcontent);
+
+        // If the format is not correct, PIXICON placeholder will not be replaced with the img tag.
+        $this->assertStringStartsNotWith('<img', $stepcontent);
+        $this->assertStringStartsWith('@@PIXICON', $stepcontent);
+        $this->assertStringEndsWith('Test', $stepcontent);
+        $this->assertStringContainsString('PIXICON', $stepcontent);
+    }
 }

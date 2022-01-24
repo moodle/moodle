@@ -68,6 +68,9 @@ class step implements \renderable {
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $systemcontext->id,
             'tool_usertours', 'stepcontent', $step->get_id());
 
+        $content = helper::get_string_from_input($content);
+        $content = $step::get_step_image_from_input($content);
+
         $result = (object) [
             'stepid'    => $step->get_id(),
             'title'     => external_format_text(
@@ -77,7 +80,7 @@ class step implements \renderable {
                     'tool_usertours'
                 )[0],
             'content'   => external_format_text(
-                    helper::get_string_from_input($content),
+                    $content,
                     $step->get_contentformat(),
                     $PAGE->context->id,
                     'tool_usertours'

@@ -1,0 +1,40 @@
+{
+  "name": "tour_navigation_course_teacher_tour_name,tool_usertours",
+  "description": "tour_navigation_course_teacher_tour_des,tool_usertours",
+  "pathmatch": "\/course\/view.php%",
+  "enabled": "1",
+  "sortorder": "2",
+  "endtourlabel": "",
+  "configdata": "{\"placement\":\"bottom\",\"orphan\":\"0\",\"backdrop\":\"1\",\"reflex\":\"0\",\"filtervalues\":{\"accessdate\":{\"filter_accessdate\":\"tool_usertours_accountcreation\",\"filter_accessdate_range\":0,\"filter_accessdate_enabled\":\"0\"},\"category\":[],\"course\":[],\"courseformat\":[],\"role\":[\"-1\",\"coursecreator\",\"manager\",\"teacher\",\"editingteacher\"],\"theme\":[\"boost\"],\"cssselector\":[]},\"majorupdatetime\":1641972470,\"shipped_tour\":true,\"shipped_filename\":\"40_tour_navigation_course_teacher.json\",\"shipped_version\":1}",
+  "displaystepnumbers": true,
+  "version": "2021101301",
+  "steps": [
+    {
+      "title": "tour_navigation_course_edit_teacher_title,tool_usertours",
+      "content": "tour_navigation_course_edit_teacher_content,tool_usertours",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "form.editmode-switch-form",
+      "sortorder": "0",
+      "configdata": "{}"
+    },
+    {
+      "title": "tour_navigation_course_index_teacher_title,tool_usertours",
+      "content": "tour_navigation_course_index_teacher_content,tool_usertours",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#theme_boost-drawers-courseindex .drawercontent",
+      "sortorder": "1",
+      "configdata": "{\"placement\":\"right\"}"
+    },
+    {
+      "title": "tour_navigation_course_announcements_teacher_title,tool_usertours",
+      "content": "tour_navigation_course_announcements_teacher_content,tool_usertours",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": ".course-content .course-content-item-content .activity-item[data-activityname=\"Announcements\"]",
+      "sortorder": "2",
+      "configdata": "{\"placement\":\"left\"}"
+    }
+  ]
+}

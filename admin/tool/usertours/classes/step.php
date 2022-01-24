@@ -817,4 +817,29 @@ class step {
 
         return $string;
     }
+
+    /**
+     * Attempt to replace PIXICON placeholder with the correct images for tour step content.
+     *
+     * @param string $content Tour content
+     * @return string Processed tour content
+     */
+    public static function get_step_image_from_input(string $content): string {
+        global $OUTPUT;
+
+        if (preg_match('/(?<=@@PIXICON::).*?(?=@@)/', $content, $matches)) {
+            $bits = explode('::', $matches[0]);
+            $identifier = $bits[0];
+            $component = $bits[1];
+            if ($component == 'moodle') {
+                $component = 'core';
+            }
+            $image = \html_writer::img($OUTPUT->image_url($identifier, $component)->out(false),
+                '', ['class' => 'img-fluid']);
+            $contenttoreplace = '@@PIXICON::' . $matches[0] . '@@';
+            $content = str_replace($contenttoreplace, $image, $content);
+        }
+
+        return $content;
+    }
 }
