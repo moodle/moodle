@@ -228,7 +228,7 @@
     <location>amd/src/chartjs-lazy.js</location>
     <name>Chart.js</name>
     <license>MIT</license>
-    <version>2.9.4</version>
+    <version>3.8.0</version>
   </library>
   <library>
     <location>maxmind/GeoIp2</location>

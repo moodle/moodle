@@ -11612,6 +11612,13 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   margin-top: -20px; }
 
 /** Chart area. */
+@media (min-width: 992px) {
+  .chart-area .chart-image {
+    position: relative;
+    margin: auto;
+    height: 48vh;
+    width: 46vw; } }
+
 .chart-area .chart-table-data {
   display: none; }
 
