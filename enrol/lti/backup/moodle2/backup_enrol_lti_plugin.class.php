@@ -46,7 +46,7 @@ class backup_enrol_lti_plugin extends backup_enrol_plugin {
         $tool = new backup_nested_element('tool', array('id'), array(
             'enrolid', 'contextid', 'institution', 'lang', 'timezone', 'maxenrolled', 'maildisplay', 'city',
             'country', 'gradesync', 'gradesynccompletion', 'membersync', 'membersyncmode',  'roleinstructor',
-            'rolelearner', 'secret', 'timecreated', 'timemodified'));
+            'rolelearner', 'secret', 'ltiversion', 'timecreated', 'timemodified'));
 
         $users = new backup_nested_element('users');
 
