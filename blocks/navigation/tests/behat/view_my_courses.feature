@@ -32,6 +32,8 @@ Feature: View my courses in navigation block
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     And I configure the "Navigation" block
     And I set the following fields to these values:

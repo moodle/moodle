@@ -34,6 +34,8 @@ Feature: Updating a file in the content bank after using in a course
     And I switch to the main frame
     # Now edit the content in the content bank.
     When I am on "Course1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     And I click on "Content bank" "link"
@@ -73,6 +75,8 @@ Feature: Updating a file in the content bank after using in a course
     And I switch to the main frame
     # Now edit the content in the content bank.
     When I am on "Course1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     And I click on "Content bank" "link"

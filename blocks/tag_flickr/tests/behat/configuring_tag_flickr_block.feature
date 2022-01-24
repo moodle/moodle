@@ -8,6 +8,8 @@ Feature: Adding and configuring Flickr block
   Scenario: Adding Flickr block to the tags site page
     Given I log in as "admin"
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"

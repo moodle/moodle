@@ -25,6 +25,8 @@ Feature: Manage H5P content from the content bank
       | Course       | C1        | contenttype_h5p | admin    | filltheblanks.h5p | /h5p/tests/fixtures/filltheblanks.h5p   |
       | Course       | C1        | contenttype_h5p | teacher1 | ipsums.h5p        | /h5p/tests/fixtures/ipsums.h5p          |
     And I am on "Course 1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     And I log out
 
