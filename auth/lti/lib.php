@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LTI authentication plugin version information
+ * Callbacks for auth_lti.
  *
- * @package auth_lti
- * @copyright 2016 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   auth_lti
+ * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2021100500; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2021052500; // Requires this Moodle version.
-$plugin->component = 'auth_lti'; // Full name of the plugin (used for diagnostics).
+/**
+ * Callback to remove linked logins for deleted users.
+ *
+ * @param stdClass $user the user being deleted.
+ */
+function auth_lti_pre_user_delete($user) {
+    global $DB;
+    $DB->delete_records('auth_lti_linked_login', ['userid' => $user->id]);
+}
