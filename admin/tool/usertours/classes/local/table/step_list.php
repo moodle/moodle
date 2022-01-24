@@ -101,7 +101,7 @@ class step_list extends \flexible_table {
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $systemcontext->id,
             'tool_usertours', 'stepcontent', $step->get_id());
 
-        return format_text(step::get_string_from_input($content), $step->get_contentformat());
+        return format_text(helper::get_string_from_input($content), $step->get_contentformat());
     }
 
     /**

@@ -823,49 +823,4 @@ class step_testcase extends advanced_testcase {
 
         $this->assertEquals($value, $step->$getter());
     }
-
-    /**
-     * Data Provider for get_string_from_input.
-     *
-     * @return array
-     */
-    public function get_string_from_input_provider() {
-        return [
-            'Text'  => [
-                'example',
-                'example',
-            ],
-            'Text which looks like a langstring' => [
-                'example,fakecomponent',
-                'example,fakecomponent',
-            ],
-            'Text which is a langstring' => [
-                'administration,core',
-                'Administration',
-            ],
-            'Text which is a langstring but uses "moodle" instead of "core"' => [
-                'administration,moodle',
-                'Administration',
-            ],
-            'Text which is a langstring, but with extra whitespace' => [
-                '  administration,moodle  ',
-                'Administration',
-            ],
-            'Looks like a langstring, but has incorrect space around comma' => [
-                'administration , moodle',
-                'administration , moodle',
-            ],
-        ];
-    }
-
-    /**
-     * Ensure that the get_string_from_input function returns langstring strings correctly.
-     *
-     * @dataProvider get_string_from_input_provider
-     * @param   string  $string     The string to test
-     * @param   string  $expected   The expected result
-     */
-    public function test_get_string_from_input($string, $expected) {
-        $this->assertEquals($expected, \tool_usertours\step::get_string_from_input($string));
-    }
 }

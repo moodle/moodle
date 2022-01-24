@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/filelib.php");
 
+use tool_usertours\helper;
 use tool_usertours\step as stepsource;
 
 /**
@@ -70,13 +71,13 @@ class step implements \renderable {
         $result = (object) [
             'stepid'    => $step->get_id(),
             'title'     => external_format_text(
-                    stepsource::get_string_from_input($step->get_title()),
+                    helper::get_string_from_input($step->get_title()),
                     FORMAT_HTML,
                     $PAGE->context->id,
                     'tool_usertours'
                 )[0],
             'content'   => external_format_text(
-                    stepsource::get_string_from_input($content),
+                    helper::get_string_from_input($content),
                     $step->get_contentformat(),
                     $PAGE->context->id,
                     'tool_usertours'

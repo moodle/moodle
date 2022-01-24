@@ -11,6 +11,11 @@ Feature: Apply content type to a tour
       | Description        | My first tour |
       | Apply to URL match | /my/%         |
       | Tour is enabled    | 1             |
+    And I add a new user tour with:
+      | Name               | tour_activityinfo_activity_student_title,tool_usertours   |
+      | Description        | tour_activityinfo_activity_student_content,tool_usertours |
+      | Apply to URL match | /my/%                                                     |
+      | Tour is enabled    | 0                                                         |
 
   @javascript
   Scenario: User can choose the the content type of the tour step
@@ -42,6 +47,7 @@ Feature: Apply content type to a tour
     And I should see "New: Activity information"
     And I should see "New course settings 'Show completion conditions' and 'Show activity dates' enable you to choose whether activity completion conditions (if set) and/or dates are displayed for students on the course page."
     And I click on "Edit" "link" in the "New: Activity information" "table_row"
+    And I should see "Editing \"New: Activity information\""
     And the field "Title" matches value "tour_activityinfo_course_teacher_title,tool_usertours"
     And the field "Moodle language identifier" matches value "tour_activityinfo_course_teacher_content,tool_usertours"
 
@@ -57,6 +63,20 @@ Feature: Apply content type to a tour
     And I should see "New: Activity information"
     And I should see "Test content"
     And I click on "Edit" "link" in the "New: Activity information" "table_row"
+    And I should see "Editing \"New: Activity information\""
     And I should not see "Moodle language identifier"
     And the field "Title" matches value "tour_activityinfo_course_teacher_title,tool_usertours"
     And the field "id_content" matches value "<b>Test content</b>"
+
+  @javascript
+  Scenario: Tour name and description can be translatable
+    Given I open the User tour settings page
+    And I should see "New: Activity information"
+    And I should see "Activity dates plus what to do to complete the activity are shown on the activity page."
+    When I click on "View" "link" in the "New: Activity information" "table_row"
+    Then I should see "New: Activity information"
+    And I should see "This is the 'New: Activity information' tour. It applies to the path '/my/%'."
+    And I click on "edit the tour defaults" "link"
+    And I should see "New: Activity information"
+    And the field "Name" matches value "tour_activityinfo_activity_student_title,tool_usertours"
+    And the field "Description" matches value "tour_activityinfo_activity_student_content,tool_usertours"

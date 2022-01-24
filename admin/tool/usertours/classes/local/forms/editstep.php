@@ -25,6 +25,7 @@
 namespace tool_usertours\local\forms;
 
 use stdClass;
+use tool_usertours\helper;
 use tool_usertours\step;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
@@ -188,7 +189,7 @@ class editstep extends \moodleform {
     public function set_data($data): void {
         $data = (object) $data;
         if (!isset($data->contenttype)) {
-            if (!empty($data->content['text']) && step::is_language_string_from_input($data->content['text'])) {
+            if (!empty($data->content['text']) && helper::is_language_string_from_input($data->content['text'])) {
                 $data->contenttype = static::CONTENTTYPE_LANGSTRING;
                 $data->contentlangstring = $data->content['text'];
 
