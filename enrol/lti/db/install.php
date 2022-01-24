@@ -15,18 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LTI enrolment plugin version information
+ * Post installation code for enrol_lti.
  *
- * @package enrol_lti
- * @copyright 2016 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol_lti
+ * @copyright  2022 Jake Dallimore <jrhdallimore@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2021052514; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2021052500; // Requires this Moodle version.
-$plugin->component = 'enrol_lti'; // Full name of the plugin (used for diagnostics).
-$plugin->dependencies = [
-    'auth_lti' => 2021100500, // The auth_lti authentication plugin version 2021100500 or higher must be present.
-];
+/**
+ * Stub for database installation.
+ */
+function xmldb_enrol_lti_install() {
+    global $CFG, $OUTPUT;
+
+    // LTI 1.3: Set a private key for this site (which is acting as a tool in LTI 1.3).
+    require_once($CFG->dirroot . '/enrol/lti/upgradelib.php');
+
+    $warning = enrol_lti_verify_private_key();
+    if (!empty($warning)) {
+        echo $OUTPUT->notification($warning, 'notifyproblem');
+    }
+}
