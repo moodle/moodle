@@ -731,9 +731,10 @@ EOF;
      */
     public function should_show_recording_button(): bool {
         global $CFG;
-
         if (!empty($CFG->bigbluebuttonbn_recording_hide_button_editable)) {
-            return (bool) $this->get_instance_var('recordhidebutton');
+            $recordhidebutton = (bool) $this->get_instance_var('recordhidebutton');
+            $recordallfromstart = (bool) $this->get_instance_var('recordallfromstart');
+            return !($recordhidebutton || $recordallfromstart);
         }
 
         return !$CFG->bigbluebuttonbn_recording_hide_button_default;

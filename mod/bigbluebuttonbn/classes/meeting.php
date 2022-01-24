@@ -336,10 +336,10 @@ class meeting {
         // Check if auto_start_record is enable.
         if ($data['record'] == 'true' && $this->instance->should_record_from_start()) {
             $data['autoStartRecording'] = 'true';
-            // Check if hide_record_button is enable.
-            if (!$this->instance->should_show_recording_button()) {
-                $data['allowStartStopRecording'] = 'false';
-            }
+        }
+        // Check if hide_record_button is enable.
+        if (!$this->instance->should_show_recording_button()) {
+            $data['allowStartStopRecording'] = 'false';
         }
         $data['welcome'] = trim($this->instance->get_welcome_message());
         $voicebridge = intval($this->instance->get_voice_bridge());
