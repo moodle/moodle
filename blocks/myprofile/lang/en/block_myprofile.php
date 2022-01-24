@@ -42,7 +42,7 @@ $string['myprofile_settings'] = 'Visible user information';
 $string['pluginname'] = 'Logged in user';
 $string['privacy:metadata'] = 'The Logged in user block only shows information about the logged in user and does not store data itself.';
 
-// Deprecated since Moodle 4.0.
+// Deprecated since Moodle 3.11.
 $string['display_icq'] = 'Display ICQ';
 $string['display_skype'] = 'Display Skype';
 $string['display_yahoo'] = 'Display Yahoo';
