@@ -32,7 +32,8 @@ class profile_define_text extends profile_define_base {
 
     /**
      * Add elements for creating/editing a text profile field.
-     * @param moodleform $form
+     *
+     * @param MoodleQuickForm $form
      */
     public function define_form_specific($form) {
         // Default data.
@@ -48,6 +49,7 @@ class profile_define_text extends profile_define_base {
         $form->addElement('text', 'param2', get_string('profilefieldmaxlength', 'admin'), 'size="6"');
         $form->setDefault('param2', 2048);
         $form->setType('param2', PARAM_INT);
+        $form->addHelpButton('param2', 'profilefieldmaxlength', 'admin');
 
         // Param 3 for text type detemines if this is a password field or not.
         $form->addElement('selectyesno', 'param3', get_string('profilefieldispassword', 'admin'));
