@@ -24,6 +24,11 @@
  * @since      Moodle 3.1
  */
 
+namespace core_question;
+
+use core_question_external;
+use externallib_advanced_testcase;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -40,7 +45,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.1
  */
-class core_question_external_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Set up for every test
@@ -71,17 +76,17 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         // Create a question category.
         $cat = $questiongenerator->create_question_category();
 
-        $quba = question_engine::make_questions_usage_by_activity('core_question_update_flag', context_system::instance());
+        $quba = \question_engine::make_questions_usage_by_activity('core_question_update_flag', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $questiondata = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
-        $question = question_bank::load_question($questiondata->id);
+        $question = \question_bank::load_question($questiondata->id);
         $slot = $quba->add_question($question);
         $qa = $quba->get_question_attempt($slot);
 
         self::setUser($this->student);
 
         $quba->start_all_questions();
-        question_engine::save_questions_usage_by_activity($quba);
+        \question_engine::save_questions_usage_by_activity($quba);
 
         $qubaid = $quba->get_id();
         $questionid = $question->id;
@@ -98,7 +103,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
 
             core_question_external::update_flag($qubaid, $questionid, $qaid, $slot, $checksum, true);
             $this->fail('Exception expected due to invalid checksum.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('errorsavingflags', $e->errorcode);
         }
     }
@@ -110,7 +115,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
     public function test_submit_tags_form_incorrect_question_id() {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         list ($category, $course, $qcat, $questions) = $questiongenerator->setup_course_and_questions();
-        $questioncontext = context::instance_by_id($qcat->contextid);
+        $questioncontext = \context::instance_by_id($qcat->contextid);
         $editingcontext = $questioncontext;
         $question = $questions[0];
         // Generate an id for a question that doesn't exist.
@@ -130,7 +135,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
     public function test_submit_tags_form_incorrect_context_id() {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         list ($category, $course, $qcat, $questions) = $questiongenerator->setup_course_and_questions();
-        $questioncontext = context::instance_by_id($qcat->contextid);
+        $questioncontext = \context::instance_by_id($qcat->contextid);
         $editingcontext = $questioncontext;
         $question = $questions[0];
         // Generate an id for a context that doesn't exist.
@@ -150,7 +155,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         list ($category, $course, $qcat, $questions) = $questiongenerator->setup_course_and_questions();
-        $questioncontext = context::instance_by_id($qcat->contextid);
+        $questioncontext = \context::instance_by_id($qcat->contextid);
         $editingcontext = $questioncontext;
         $question = $questions[0];
         $user = $this->create_user_can_tag($course);
@@ -176,7 +181,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
         $questiongenerator = $generator->get_plugin_generator('core_question');
         list ($category, $course, $qcat, $questions) = $questiongenerator->setup_course_and_questions();
-        $questioncontext = context::instance_by_id($qcat->contextid);
+        $questioncontext = \context::instance_by_id($qcat->contextid);
         $editingcontext = $questioncontext;
         $question = $questions[0];
         $formdata = $this->generate_encoded_submit_tags_form_string(
@@ -212,7 +217,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
         $questiongenerator = $generator->get_plugin_generator('core_question');
         list ($category, $course, $qcat, $questions) = $questiongenerator->setup_course_and_questions();
-        $questioncontext = context::instance_by_id($qcat->contextid);
+        $questioncontext = \context::instance_by_id($qcat->contextid);
         $editingcontext = $questioncontext;
         $question = $questions[0];
         $formdata = $this->generate_encoded_submit_tags_form_string(
@@ -343,20 +348,20 @@ class core_question_external_testcase extends externallib_advanced_testcase {
     ) {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         list ($category, $course, $qcat, $questions) = $questiongenerator->setup_course_and_questions($questioncontext);
-        $coursecontext = context_course::instance($course->id);
-        $questioncontext = context::instance_by_id($qcat->contextid);
+        $coursecontext = \context_course::instance($course->id);
+        $questioncontext = \context::instance_by_id($qcat->contextid);
 
         switch($editingcontext) {
             case 'system':
-                $editingcontext = context_system::instance();
+                $editingcontext = \context_system::instance();
                 break;
 
             case 'category':
-                $editingcontext = context_coursecat::instance($category->id);
+                $editingcontext = \context_coursecat::instance($category->id);
                 break;
 
             default:
-                $editingcontext = context_course::instance($course->id);
+                $editingcontext = \context_course::instance($course->id);
         }
 
         $user = $this->create_user_can_tag($course);
@@ -375,7 +380,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
 
         $this->assertTrue($result['status']);
 
-        $tagobjects = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+        $tagobjects = \core_tag_tag::get_item_tags('core_question', 'question', $question->id);
         $coursetagobjects = [];
         $questiontagobjects = [];
 
@@ -418,8 +423,8 @@ class core_question_external_testcase extends externallib_advanced_testcase {
     /**
      * Build the encoded form data expected by the submit_tags_form external function.
      *
-     * @param  stdClass $question         The question record
-     * @param  stdClass $questioncategory The question category record
+     * @param  \stdClass $question         The question record
+     * @param  \stdClass $questioncategory The question category record
      * @param  context  $questioncontext  Context for the question category
      * @param  array  $tags               A list of tag names for the question
      * @param  array  $coursetags         A list of course tag names for the question
@@ -441,7 +446,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
             'tags' => $tags,
             'coursetags' => $coursetags
         ];
-        $data = core_question\form\tags::mock_generate_submit_keys($data);
+        $data = \core_question\form\tags::mock_generate_submit_keys($data);
 
         return http_build_query($data, '', '&');
     }
@@ -450,7 +455,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
      * Create a user, enrol them in the course, and give them the capability to
      * tag all questions in the system context.
      *
-     * @param  stdClass $course The course record to enrol in
+     * @param  \stdClass $course The course record to enrol in
      * @return stdClass         The user record
      */
     protected function create_user_can_tag($course) {
@@ -460,7 +465,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         $user = $generator->create_user();
         $roleid = $generator->create_role();
         $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
 
         $generator->role_assign($roleid, $user->id, $systemcontext->id);
         $generator->enrol_user($user->id, $course->id, $teacherrole->id, 'manual');
@@ -562,7 +567,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
     ) {
         $this->resetAfterTest();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
         $categories = [];
         $questions = [];
         $tagnames = [
@@ -571,8 +576,8 @@ class core_question_external_testcase extends externallib_advanced_testcase {
             'subcat',
             'foo'
         ];
-        $collid = core_tag_collection::get_default();
-        $tags = core_tag_tag::create_if_missing($collid, $tagnames);
+        $collid = \core_tag_collection::get_default();
+        $tags = \core_tag_tag::create_if_missing($collid, $tagnames);
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         // First category and questions.
@@ -624,8 +629,8 @@ class core_question_external_testcase extends externallib_advanced_testcase {
     public function test_get_random_question_summaries_invalid_category_id_param() {
         $this->resetAfterTest();
 
-        $context = context_system::instance();
-        $this->expectException('invalid_parameter_exception');
+        $context = \context_system::instance();
+        $this->expectException('\invalid_parameter_exception');
         core_question_external::get_random_question_summaries('invalid value', false, [], $context->id);
     }
 
@@ -636,8 +641,8 @@ class core_question_external_testcase extends externallib_advanced_testcase {
     public function test_get_random_question_summaries_invalid_includesubcategories_param() {
         $this->resetAfterTest();
 
-        $context = context_system::instance();
-        $this->expectException('invalid_parameter_exception');
+        $context = \context_system::instance();
+        $this->expectException('\invalid_parameter_exception');
         core_question_external::get_random_question_summaries(1, 'invalid value', [], $context->id);
     }
 
@@ -648,8 +653,8 @@ class core_question_external_testcase extends externallib_advanced_testcase {
     public function test_get_random_question_summaries_invalid_tagids_param() {
         $this->resetAfterTest();
 
-        $context = context_system::instance();
-        $this->expectException('invalid_parameter_exception');
+        $context = \context_system::instance();
+        $this->expectException('\invalid_parameter_exception');
         core_question_external::get_random_question_summaries(1, false, ['invalid', 'values'], $context->id);
     }
 
@@ -660,7 +665,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
     public function test_get_random_question_summaries_invalid_context() {
         $this->resetAfterTest();
 
-        $this->expectException('invalid_parameter_exception');
+        $this->expectException('\invalid_parameter_exception');
         core_question_external::get_random_question_summaries(1, false, [1, 2], 'context');
     }
 
@@ -673,8 +678,8 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
-        $systemcontext = context_system::instance();
+        $coursecontext = \context_course::instance($course->id);
+        $systemcontext = \context_system::instance();
         // Restrict access to external functions for the logged in user to only
         // the course we just created. External functions should not be allowed
         // to execute in any contexts above the course context.
@@ -686,7 +691,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
             // Do this in a try/catch statement to allow the context restriction
             // to be reset afterwards.
             core_question_external::get_random_question_summaries(1, false, [], $systemcontext->id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('restricted_context_exception', $e);
         }
         // Reset the restriction so that other tests don't fail aftwards.
@@ -700,7 +705,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest();
 
         list($category, $questions) = $this->create_category_and_questions(1);
-        $context = context_system::instance();
+        $context = \context_system::instance();
         $question = $questions[0];
         $expected = (object) [
             'id' => $question->id,
@@ -736,7 +741,7 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         $tagids = [];
         $limit = 1;
         $offset = 0;
-        $context = context_system::instance();
+        $context = \context_system::instance();
         list($category, $questions) = $this->create_category_and_questions($numberofquestions);
 
         // Sort the questions by id to match the ordering of the result.
@@ -781,13 +786,13 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $roleid = $generator->create_role();
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $numberofquestions = 5;
         $includesubcategories = false;
         $tagids = [];
-        $context = context_system::instance();
+        $context = \context_system::instance();
         list($category, $questions) = $this->create_category_and_questions($numberofquestions);
-        $categorycontext = context::instance_by_id($category->contextid);
+        $categorycontext = \context::instance_by_id($category->contextid);
 
         $generator->role_assign($roleid, $user->id, $systemcontext->id);
         // Prohibit all of the tag capabilities.
@@ -829,8 +834,8 @@ class core_question_external_testcase extends externallib_advanced_testcase {
         }
 
         if (!empty($tagnames) && !empty($questions)) {
-            $context = context::instance_by_id($category->contextid);
-            core_tag_tag::set_item_tags('core_question', 'question', $questions[0]->id, $context, $tagnames);
+            $context = \context::instance_by_id($category->contextid);
+            \core_tag_tag::set_item_tags('core_question', 'question', $questions[0]->id, $context, $tagnames);
         }
 
         return [$category, $questions];

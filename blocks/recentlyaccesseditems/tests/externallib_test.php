@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External block functions unit tests
- *
- * @package    block_recentlyaccesseditems
- * @category   external
- * @copyright  2018 Victor Deniz <victor@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.6
- */
+namespace block_recentlyaccesseditems;
+
+use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,7 +33,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.6
  */
-class block_recentlyaccesseditems_externallib_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test the get_recent_items function.
@@ -76,7 +70,7 @@ class block_recentlyaccesseditems_externallib_testcase extends externallib_advan
 
         // Student access all forums.
         foreach ($forum as $module) {
-            $event = \mod_forum\event\course_module_viewed::create(array('context' => context_module::instance($module->cmid),
+            $event = \mod_forum\event\course_module_viewed::create(array('context' => \context_module::instance($module->cmid),
                     'objectid' => $module->id));
             $event->trigger();
             $this->waitForSecond();
@@ -88,7 +82,7 @@ class block_recentlyaccesseditems_externallib_testcase extends externallib_advan
 
         // Student access all assignments.
         foreach ($chat as $module) {
-            $event = \mod_chat\event\course_module_viewed::create(array('context' => context_module::instance($module->cmid),
+            $event = \mod_chat\event\course_module_viewed::create(array('context' => \context_module::instance($module->cmid),
                     'objectid' => $module->id));
             $event->trigger();
             $this->waitForSecond();

@@ -74,7 +74,7 @@ class events_test extends \advanced_testcase {
         $record = new \stdClass();
         $record->courseid = 0;
         $time = time();
-        $calevent = core_calendar_externallib_testcase::create_calendar_event('event', $this->user->id, 'user', 0, $time,
+        $calevent = \core_calendar\externallib_test::create_calendar_event('event', $this->user->id, 'user', 0, $time,
                 $record); // User event.
 
         // Capture the event.
@@ -96,7 +96,7 @@ class events_test extends \advanced_testcase {
         // Now we create a repeated course event.
         $record = new \stdClass();
         $record->courseid = $this->course->id;
-        $calevent = core_calendar_externallib_testcase::create_calendar_event('course', $this->user->id, 'course', 10, $time,
+        $calevent = \core_calendar\externallib_test::create_calendar_event('course', $this->user->id, 'course', 10, $time,
                 $record);
         $events = $sink->get_events();
         $sink->close();
@@ -177,7 +177,7 @@ class events_test extends \advanced_testcase {
         $record = new \stdClass();
         $record->courseid = 0;
         $time = time();
-        $calevent = core_calendar_externallib_testcase::create_calendar_event('event', $this->user->id, 'user', 0, $time,
+        $calevent = \core_calendar\externallib_test::create_calendar_event('event', $this->user->id, 'user', 0, $time,
                 $record); // User event.
 
         // Catch the events.
@@ -203,7 +203,7 @@ class events_test extends \advanced_testcase {
         // Now we create a repeated course event and update it.
         $record = new \stdClass();
         $record->courseid = $this->course->id;
-        $calevent = core_calendar_externallib_testcase::create_calendar_event('course', $this->user->id, 'course', 10, time(),
+        $calevent = \core_calendar\externallib_test::create_calendar_event('course', $this->user->id, 'course', 10, time(),
                 $record);
 
         $sink->clear();
@@ -234,7 +234,7 @@ class events_test extends \advanced_testcase {
 
         // Create a calendar event.
         $time = time();
-        $calevent = core_calendar_externallib_testcase::create_calendar_event('Some wickedly awesome event yo!',
+        $calevent = \core_calendar\externallib_test::create_calendar_event('Some wickedly awesome event yo!',
             $this->user->id, 'user', 0, $time);
 
         // Updated the visibility of the calendar event.
@@ -327,7 +327,7 @@ class events_test extends \advanced_testcase {
         $record->courseid = 0;
         $record->repeatid = 0;
         $time = time();
-        $calevent = core_calendar_externallib_testcase::create_calendar_event('event', $this->user->id, 'user', 0, $time,
+        $calevent = \core_calendar\externallib_test::create_calendar_event('event', $this->user->id, 'user', 0, $time,
             $record); // User event.
         $dbrecord = $DB->get_record('event', array('id' => $calevent->id), '*', MUST_EXIST);
 
@@ -350,7 +350,7 @@ class events_test extends \advanced_testcase {
         // Now we create a repeated course event and delete it.
         $record = new \stdClass();
         $record->courseid = $this->course->id;
-        $calevent = core_calendar_externallib_testcase::create_calendar_event('course', $this->user->id, 'course', 10, time(),
+        $calevent = \core_calendar\externallib_test::create_calendar_event('course', $this->user->id, 'course', 10, time(),
             $record);
 
         $sink->clear();

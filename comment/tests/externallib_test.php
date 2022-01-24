@@ -14,15 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External comment functions unit tests
- *
- * @package    core_comment
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 2.9
- */
+namespace core_comment;
+
+use comment_exception;
+use core_comment_external;
+use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,7 +35,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 2.9
  */
-class core_comment_externallib_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Tests set up
@@ -71,7 +67,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($teacher1->id, $course1->id, $teacherrole->id);
 
         // Create a database module instance.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $course1->id;
         $record->name = "Mod data test";
         $record->intro = "Some intro of some sort";
@@ -80,7 +76,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
         $module1 = $this->getDataGenerator()->create_module('data', $record);
         $field = data_get_field_new('text', $module1);
 
-        $fielddetail = new stdClass();
+        $fielddetail = new \stdClass();
         $fielddetail->name = 'Name';
         $fielddetail->description = 'Some name';
 
@@ -125,7 +121,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
             ]
         ];
         $result = core_comment_external::add_comments($inputdata);
-        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
         $ids = array_column($result, 'id');
 
         // Verify we can get the comments.
@@ -136,7 +132,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
         $area = 'database_entry';
         $page = 0;
         $result = core_comment_external::get_comments($contextlevel, $instanceid, $component, $itemid, $area, $page);
-        $result = external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['comments']);
@@ -153,7 +149,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
         // Test sort direction and pagination.
         $CFG->commentsperpage = 1;
         $result = core_comment_external::get_comments($contextlevel, $instanceid, $component, $itemid, $area, $page, 'ASC');
-        $result = external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['comments']); // Only one per page.
@@ -163,7 +159,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
 
         // Next page.
         $result = core_comment_external::get_comments($contextlevel, $instanceid, $component, $itemid, $area, $page + 1, 'ASC');
-        $result = external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::get_comments_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['comments']);
@@ -239,7 +235,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
                 'area' => 'database_entry'
             ]
         ]);
-        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
 
         // Verify the result contains 1 result having the correct structure.
         $this->assertCount(1, $result);
@@ -322,7 +318,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
             ]
         ];
         $result = core_comment_external::add_comments($inputdata);
-        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
 
         // Two comments should have been created.
         $this->assertCount(2, $result);
@@ -394,14 +390,14 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
                 'area' => 'database_entry'
             ]
         ]);
-        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
 
         // Delete those comments we just created.
         $result = core_comment_external::delete_comments([
             $result[0]['id'],
             $result[1]['id']
         ]);
-        $result = external_api::clean_returnvalue(core_comment_external::delete_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::delete_comments_returns(), $result);
         $this->assertEquals([], $result);
     }
 
@@ -423,7 +419,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
                 'area' => 'database_entry'
             ]
         ]);
-        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
 
         // Now, as student 2, try to delete the comment made by student 1. Verify we can't.
         $this->setUser($student2);
@@ -449,12 +445,12 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
                 'area' => 'database_entry'
             ]
         ]);
-        $result = external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::add_comments_returns(), $result);
 
         // Verify teachers can delete the comment.
         $this->setUser($teacher1);
         $result = core_comment_external::delete_comments([$result[0]['id']]);
-        $result = external_api::clean_returnvalue(core_comment_external::delete_comments_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_comment_external::delete_comments_returns(), $result);
         $this->assertEquals([], $result);
     }
 }

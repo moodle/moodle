@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Generator tests.
- *
- * @package    mod_choice
- * @copyright  2013 Adrian Greeve <adrian@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_choice;
 
 /**
  * Generator tests class.
@@ -29,7 +23,7 @@
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_choice_generator_testcase extends advanced_testcase {
+class generator_test extends \advanced_testcase {
 
     public function test_create_instance() {
         global $DB;
@@ -49,7 +43,7 @@ class mod_choice_generator_testcase extends advanced_testcase {
         $this->assertEquals(2, $DB->count_records('choice', array('course' => $course->id)));
         $this->assertEquals('One more choice', $DB->get_field_select('choice', 'name', 'id = :id', array('id' => $choice->id)));
 
-        $params = new stdClass();
+        $params = new \stdClass();
         $params->course = $course->id;
         $params->option = array('fried rice', 'spring rolls', 'sweet and sour pork', 'satay beef', 'gyouza');
         $choice = $this->getDataGenerator()->create_module('choice', $params);
