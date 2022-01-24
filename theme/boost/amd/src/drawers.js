@@ -199,6 +199,7 @@ const enableButtonTooltip = (button) => {
     // The jQuery is still used in Boostrap 4. It can we removed when MDL-71979 is integrated.
     if (button.hasAttribute('data-original-title')) {
         jQuery(button).tooltip('enable');
+        button.removeAttribute('title');
     } else if (button.dataset.disabledToggle) {
         button.dataset.toggle = button.dataset.disabledToggle;
         jQuery(button).tooltip();
