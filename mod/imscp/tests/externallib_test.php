@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External mod_imscp functions unit tests
- *
- * @package    mod_imscp
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
- */
+namespace mod_imscp;
+
+use externallib_advanced_testcase;
+use mod_imscp_external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,7 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class mod_imscp_external_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test view_imscp
@@ -53,14 +48,14 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $imscp = $this->getDataGenerator()->create_module('imscp', array('course' => $course->id));
-        $context = context_module::instance($imscp->cmid);
+        $context = \context_module::instance($imscp->cmid);
         $cm = get_coursemodule_from_instance('imscp', $imscp->id);
 
         // Test invalid instance id.
         try {
             mod_imscp_external::view_imscp(0);
             $this->fail('Exception expected due to invalid mod_imscp instance id.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('invalidrecord', $e->errorcode);
         }
 
@@ -70,7 +65,7 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
         try {
             mod_imscp_external::view_imscp($imscp->id);
             $this->fail('Exception expected due to not enrolled user.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
@@ -82,7 +77,7 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_imscp_external::view_imscp($imscp->id);
-        $result = external_api::clean_returnvalue(mod_imscp_external::view_imscp_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_imscp_external::view_imscp_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -101,12 +96,12 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
         assign_capability('mod/imscp:view', CAP_PROHIBIT, $studentrole->id, $context->id);
         // Empty all the caches that may be affected by this change.
         accesslib_clear_all_caches_for_unit_testing();
-        course_modinfo::clear_instance_cache();
+        \course_modinfo::clear_instance_cache();
 
         try {
             mod_imscp_external::view_imscp($imscp->id);
             $this->fail('Exception expected due to missing capability.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
@@ -142,7 +137,7 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($student1);
         $imscps = mod_imscp_external::get_imscps_by_courses(array());
-        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $imscps = \external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
         $this->assertCount(1, $imscps['imscps']);
         $this->assertEquals('First IMSCP', $imscps['imscps'][0]['name']);
         // As Student you cannot see some IMSCP properties like 'section'.
@@ -151,7 +146,7 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
         // Student1 is not enrolled in this Course.
         // The webservice will give a warning!
         $imscps = mod_imscp_external::get_imscps_by_courses(array($course2->id));
-        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $imscps = \external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
         $this->assertCount(0, $imscps['imscps']);
         $this->assertEquals(1, $imscps['warnings'][0]['warningcode']);
 
@@ -159,7 +154,7 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
         $this->setAdminUser();
         // As Admin we can see this IMSCP.
         $imscps = mod_imscp_external::get_imscps_by_courses(array($course2->id));
-        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $imscps = \external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
         $this->assertCount(1, $imscps['imscps']);
         $this->assertEquals('Second IMSCP', $imscps['imscps'][0]['name']);
         // As an Admin you can see some IMSCP properties like 'section'.
@@ -167,15 +162,15 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
 
         // Now, prohibit capabilities.
         $this->setUser($student1);
-        $contextcourse1 = context_course::instance($course1->id);
+        $contextcourse1 = \context_course::instance($course1->id);
         // Prohibit capability = mod:imscp:view on Course1 for students.
         assign_capability('mod/imscp:view', CAP_PROHIBIT, $studentrole->id, $contextcourse1->id);
         // Empty all the caches that may be affected by this change.
         accesslib_clear_all_caches_for_unit_testing();
-        course_modinfo::clear_instance_cache();
+        \course_modinfo::clear_instance_cache();
 
         $imscps = mod_imscp_external::get_imscps_by_courses(array($course1->id));
-        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $imscps = \external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
         $this->assertCount(0, $imscps['imscps']);
     }
 }

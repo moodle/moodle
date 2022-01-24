@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Data generators tests
- *
- * @package    core
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
+namespace core;
 
 /**
  * Test data generator
@@ -34,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_test_generator_testcase extends advanced_testcase {
+class testing_generator_test extends \advanced_testcase {
     public function test_get_plugin_generator_good_case() {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $this->assertInstanceOf('core_question_generator', $generator);
@@ -56,7 +46,7 @@ class core_test_generator_testcase extends advanced_testcase {
      * Test plugin generator, with no component directory.
      */
     public function test_get_plugin_generator_no_component_dir() {
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         $this->expectExceptionMessage('Component core_completion does not support generators yet. Missing tests/generator/lib.php.');
         $generator = $this->getDataGenerator()->get_plugin_generator('core_completion');
     }
@@ -72,8 +62,8 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->setCurrentTimeStart();
         $user = $generator->create_user();
         $this->assertEquals($count + 1, $DB->count_records('user'));
-        $this->assertSame($user->username, core_user::clean_field($user->username, 'username'));
-        $this->assertSame($user->email, core_user::clean_field($user->email, 'email'));
+        $this->assertSame($user->username, \core_user::clean_field($user->username, 'username'));
+        $this->assertSame($user->email, \core_user::clean_field($user->email, 'email'));
         $this->assertNotEmpty($user->firstnamephonetic);
         $this->assertNotEmpty($user->lastnamephonetic);
         $this->assertNotEmpty($user->alternatename);
@@ -155,7 +145,7 @@ class core_test_generator_testcase extends advanced_testcase {
         $count = $DB->count_records('cohort');
         $cohort = $generator->create_cohort();
         $this->assertEquals($count+1, $DB->count_records('cohort'));
-        $this->assertEquals(context_system::instance()->id, $cohort->contextid);
+        $this->assertEquals(\context_system::instance()->id, $cohort->contextid);
         $this->assertMatchesRegularExpression('/^Cohort \d/', $cohort->name);
         $this->assertSame('', $cohort->idnumber);
         $this->assertMatchesRegularExpression("/^Description for '{$cohort->name}' \\n/", $cohort->description);
@@ -180,7 +170,7 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $section->course);
 
         $course = $generator->create_course(array('tags' => 'Cat, Dog'));
-        $this->assertEquals(array('Cat', 'Dog'), array_values(core_tag_tag::get_item_tags_array('core', 'course', $course->id)));
+        $this->assertEquals(array('Cat', 'Dog'), array_values(\core_tag_tag::get_item_tags_array('core', 'course', $course->id)));
 
         $scale = $generator->create_scale();
         $this->assertNotEmpty($scale);
@@ -210,7 +200,7 @@ class core_test_generator_testcase extends advanced_testcase {
 
         $page = $generator->create_module('page', array('course' => $SITE->id, 'tags' => 'Cat, Dog'));
         $this->assertEquals(array('Cat', 'Dog'),
-            array_values(core_tag_tag::get_item_tags_array('core', 'course_modules', $page->cmid)));
+            array_values(\core_tag_tag::get_item_tags_array('core', 'course_modules', $page->cmid)));
 
         // Prepare environment to generate modules with all possible options.
 
@@ -226,7 +216,7 @@ class core_test_generator_testcase extends advanced_testcase {
         $course = $generator->create_course(array('enablecompletion' => true));
 
         // Create new grading category in this course.
-        $grade_category = new grade_category();
+        $grade_category = new \grade_category();
         $grade_category->courseid = $course->id;
         $grade_category->fullname = 'Grade category';
         $grade_category->insert();
@@ -295,7 +285,7 @@ class core_test_generator_testcase extends advanced_testcase {
             $featuregrade);
 
         // We need id of the grading item for the second module to create availability dependency in the 3rd module.
-        $gradingitem = grade_item::fetch(array('courseid'=>$course->id, 'itemtype'=>'mod', 'itemmodule' => 'assign', 'iteminstance' => $m3->id));
+        $gradingitem = \grade_item::fetch(array('courseid'=>$course->id, 'itemtype'=>'mod', 'itemmodule' => 'assign', 'iteminstance' => $m3->id));
 
         // Now prepare option to create the 4th module with an availability condition.
         $optionsavailability = array(
@@ -335,7 +325,7 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertEquals($featurecompletionautomatic['completionview'], $cm3->completionview);
         $this->assertEquals($featurecompletionautomatic['completionpassgrade'], $cm3->completionpassgrade);
         $this->assertEquals(0, $cm3->completiongradeitemnumber); // Zero instead of default null since 'completionusegrade' was set.
-        $gradingitem = grade_item::fetch(array('courseid'=>$course->id, 'itemtype'=>'mod', 'itemmodule' => 'assign', 'iteminstance' => $m3->id));
+        $gradingitem = \grade_item::fetch(array('courseid'=>$course->id, 'itemtype'=>'mod', 'itemmodule' => 'assign', 'iteminstance' => $m3->id));
         $this->assertEquals(0, $gradingitem->grademin);
         $this->assertEquals($featuregrade['grade'], $gradingitem->grademax);
         $this->assertEquals($featuregrade['gradecat'], $gradingitem->categoryid);
@@ -379,9 +369,9 @@ class core_test_generator_testcase extends advanced_testcase {
         $course2 = $this->getDataGenerator()->create_course();
         $course3 = $this->getDataGenerator()->create_course();
 
-        $context1 = context_course::instance($course1->id);
-        $context2 = context_course::instance($course2->id);
-        $context3 = context_course::instance($course3->id);
+        $context1 = \context_course::instance($course1->id);
+        $context2 = \context_course::instance($course2->id);
+        $context3 = \context_course::instance($course3->id);
 
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
