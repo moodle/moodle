@@ -362,6 +362,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/calc_off' => 'fa-calculator', // TODO: Change to better icon once we have stacked icon support or more icons.
             'core:t/calc' => 'fa-calculator',
             'core:t/check' => 'fa-check',
+            'core:t/clipboard' => 'fa-clipboard',
             'core:t/cohort' => 'fa-users',
             'core:t/collapsed_empty_rtl' => 'fa-caret-square-o-left',
             'core:t/collapsed_empty' => 'fa-caret-square-o-right',
