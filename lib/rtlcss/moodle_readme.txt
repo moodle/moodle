@@ -1,8 +1,6 @@
 RTLCSS
 ------
 
-Import git ref: v1.0.0
-
 Downloaded from: https://github.com/moodlehq/rtlcss-php
 
 Import procedure:
