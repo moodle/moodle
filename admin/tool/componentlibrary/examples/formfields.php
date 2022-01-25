@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../../config.php');
+require_once(__DIR__ . '/../../../../config.php');
 require_once($CFG->dirroot.'/lib/formslib.php');
 
 require_login();
@@ -34,14 +34,15 @@ $repeatcount = optional_param('test_repeat', 1, PARAM_INT);
 
 $PAGE->set_pagelayout('embedded');
 
-$url = new moodle_url('/admin/tool/componentlibrary/formfields.php');
+$url = new moodle_url('/admin/tool/componentlibrary/examples/formfields.php');
 
 $toggles  = (object)[];
 $toggles->defaulturl = $url;
-$toggles->helpurl = new moodle_url('/admin/tool/componentlibrary/formfields.php', ['help' => 1]);
-$toggles->requiredurl = new moodle_url('/admin/tool/componentlibrary/formfields.php', ['required' => 1]);
-$toggles->bothurl = new moodle_url('/admin/tool/componentlibrary/formfields.php', ['help' => 1, 'required' => 1]);
-$toggles->mixedurl = new moodle_url('/admin/tool/componentlibrary/formfields.php', ['help' => 1, 'required' => 1, 'mixed' => 1]);
+$toggles->helpurl = new moodle_url('/admin/tool/componentlibrary/examples/formfields.php', ['help' => 1]);
+$toggles->requiredurl = new moodle_url('/admin/tool/componentlibrary/examples/formfields.php', ['required' => 1]);
+$toggles->bothurl = new moodle_url('/admin/tool/componentlibrary/examples/formfields.php', ['help' => 1, 'required' => 1]);
+$toggles->mixedurl = new moodle_url('/admin/tool/componentlibrary/examples/formfields.php',
+    ['help' => 1, 'required' => 1, 'mixed' => 1]);
 
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
@@ -49,10 +50,10 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_heading('Moodle form fields');
 $PAGE->set_title('Moodle form fields');
 
-$form = new \tool_componentlibrary\exampleform($url, ['repeatcount' => $repeatcount]);
+$form = new \tool_componentlibrary\local\examples\formelements\example($url, ['repeatcount' => $repeatcount]);
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->render_from_template('tool_componentlibrary/moodleformtoggles', $toggles);
+echo $OUTPUT->render_from_template('tool_componentlibrary/examples/formelements/toggles', $toggles);
 $form->display();
 echo $OUTPUT->footer();

@@ -26,7 +26,7 @@
 
 declare(strict_types=1);
 
-require_once('../../../config.php');
+require_once(__DIR__ . '/../../../../config.php');
 
 use core\output\dynamic_tabs;
 
@@ -34,12 +34,12 @@ require_login();
 require_capability('moodle/site:configview', context_system::instance());
 
 global $PAGE, $OUTPUT;
-$PAGE->set_url(new moodle_url('/local/componentlibrary/dynamictabs/dynamictabs.php'));
+$PAGE->set_url(new moodle_url('/admin/tool/componentlibrary/examples/dynamictabs.php'));
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('embedded');
 
-$PAGE->set_heading('Moodle dynamic fields');
-$PAGE->set_title('Moodle dynamic fields');
+$PAGE->set_heading('Moodle dynamic tabs');
+$PAGE->set_title('Moodle dynamic tabs');
 
 echo $OUTPUT->header();
 
