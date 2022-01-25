@@ -24,7 +24,6 @@ use moodle_exception;
 use moodle_url;
 use stdClass;
 use core_reportbuilder\manager;
-use core_reportbuilder\local\models\column as column_model;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\output\column_aggregation_editable;
@@ -173,15 +172,15 @@ class custom_report_table extends base_report_table {
             $sortcolumns = [];
             $columns = $this->get_active_columns();
 
-            $instances = column_model::get_records([
-                'reportid' => $this->report->get_report_persistent()->get('id'),
-                'sortenabled' => 1,
-            ], 'sortorder');
+            // We need to sort the columns by the configured sorting order.
+            usort($columns, static function(column $a, column $b): int {
+                return ($a->get_persistent()->get('sortorder') < $b->get_persistent()->get('sortorder')) ? -1 : 1;
+            });
 
-            foreach ($instances as $instance) {
-                $column = $columns[$instance->get('id')] ?? null;
-                if ($column !== null && $column->get_is_sortable()) {
-                    $sortcolumns[$column->get_column_alias()] = $instance->get('sortdirection');
+            foreach ($columns as $column) {
+                $persistent = $column->get_persistent();
+                if ($column->get_is_sortable() && $persistent->get('sortenabled')) {
+                    $sortcolumns[$column->get_column_alias()] = $persistent->get('sortdirection');
                 }
             }
         }
@@ -218,24 +217,10 @@ class custom_report_table extends base_report_table {
     /**
      * Get the columns of the custom report, returned instances being valid and available for the user
      *
-     * @return column[] Indexed by column ID
+     * @return column[]
      */
     private function get_active_columns(): array {
-        $columns = [];
-
-        $instances = column_model::get_records(['reportid' => $this->report->get_report_persistent()->get('id')], 'columnorder');
-        foreach ($instances as $index => $instance) {
-            $column = $this->report->get_column($instance->get('uniqueidentifier'));
-            if ($column !== null && $column->get_is_available()) {
-                $column->set_persistent($instance);
-                // We should clone the report column to ensure if it's added twice to a report, each operates independently.
-                $columns[$instance->get('id')] = clone $column
-                    ->set_index($index)
-                    ->set_aggregation($instance->get('aggregation'));
-            }
-        }
-
-        return $columns;
+        return $this->report->get_active_columns();
     }
 
     /**

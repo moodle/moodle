@@ -189,18 +189,10 @@ class system_report_table extends base_report_table {
     public function format_row($row) {
         $this->report->row_callback((object) $row);
 
-        /** @var column[] $columnsbyalias */
-        $columnsbyalias = [];
-
-        // Create a lookup for convenience, indexed by column alias.
-        $columns = $this->report->get_columns();
-        foreach ($columns as $column) {
-            $columnsbyalias[$column->get_column_alias()] = $column;
-        }
-
         // Walk over the row, and for any key that matches one of our column aliases, call that columns format method.
+        $columnsbyalias = $this->report->get_active_columns_by_alias();
         $row = (array) $row;
-        array_walk($row, static function(&$value, $key) use ($row, $columnsbyalias): void {
+        array_walk($row, static function(&$value, $key) use ($columnsbyalias, $row): void {
             if (array_key_exists($key, $columnsbyalias)) {
                 $value = $columnsbyalias[$key]->format_value($row);
             }
