@@ -3253,7 +3253,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertTrue($navoptions->blogs);
         $this->assertFalse($navoptions->notes);
         $this->assertTrue($navoptions->participants);
-        $this->assertTrue($navoptions->badges);
+        $this->assertFalse($navoptions->badges);
 
         // Disable some options.
         $CFG->badges_allowcoursebadges = 0;
@@ -3266,6 +3266,13 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertFalse($navoptions->notes);
         $this->assertFalse($navoptions->participants);
         $this->assertFalse($navoptions->badges);
+
+        // Re-enable some options to check badges are displayed as expected.
+        $CFG->badges_allowcoursebadges = 1;
+        assign_capability('moodle/badges:createbadge', CAP_ALLOW, $roleid, $context);
+
+        $navoptions = course_get_user_navigation_options($context);
+        $this->assertTrue($navoptions->badges);
     }
 
     /**
