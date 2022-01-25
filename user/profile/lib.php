@@ -506,9 +506,11 @@ class profile_field_base {
         }
 
         // Checking for mentors have capability to edit user's profile.
-        $usercontext = context_user::instance($this->userid);
-        if ($this->userid != $USER->id && has_capability('moodle/user:editprofile', $usercontext, $USER->id)) {
-            return true;
+        if ($this->userid > 0) {
+            $usercontext = context_user::instance($this->userid);
+            if ($this->userid != $USER->id && has_capability('moodle/user:editprofile', $usercontext, $USER->id)) {
+                return true;
+            }
         }
 
         return false;
