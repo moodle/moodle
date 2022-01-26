@@ -15,16 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_myoverview/progress-bar
+    @template block_myoverview/placeholder-course-list-item
 
-    This template renders a simple progress bar.
+    This template renders the loading placeholder for the list & summary course items.
 
     Example context (json):
-    {
-        "progress": 50
-    }
+    {}
 }}
-<div class="progress-text">
-    <span class="sr-only">{{#str}}aria:courseprogress, block_myoverview{{/str}}</span>
-    {{#str}}completepercent, block_myoverview, <span>{{progress}}</span>{{/str}}
-</div>
+<li class="list-group-item course-listitem border-left-0 border-right-0 border-top-0 px-2 rounded-0">
+    <div class="row">
+        <div class="col-md-2 d-flex align-items-center">
+            <div class="bg-pulse-grey card-img dashboard-list-img w-100" style="height: 1rem; width: 1rem;"></div>
+        </div>
+        <div class="col-md-10 d-flex flex-column">
+            <div class="bg-pulse-grey w-50" style="height: 1rem; margin: 0.5rem 0"></div>
+        </div>
+    </div>
+</li>
