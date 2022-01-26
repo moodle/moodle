@@ -20946,6 +20946,9 @@ div.editor_atto_toolbar button .icon {
     content: "\f00c";
     font-size: 0.75rem;
     padding-left: .25rem; }
+  @media (max-width: 767.98px) {
+    .navbar.fixed-top .langmenu .langbutton {
+      display: none; } }
   .navbar.fixed-top .moodle-actionmenu .menubar,
   .navbar.fixed-top .action-menu-trigger .dropdown {
     height: 100%;
